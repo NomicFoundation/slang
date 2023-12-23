@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ leave                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - YulLeaveStatement: # 0..5 "leave"
+      - (leave_keyword) YulLeaveKeyword: "leave" # 0..5

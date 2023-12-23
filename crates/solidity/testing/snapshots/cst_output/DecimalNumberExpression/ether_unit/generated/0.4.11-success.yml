@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 10 ether                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - DecimalNumberExpression: # 0..8 "10 ether"
+      - (literal) DecimalLiteral: "10" # 0..2
+      - (unit) NumberUnit: # 2..8 " ether"
+          - (variant) EtherKeyword: "ether" # 3..8

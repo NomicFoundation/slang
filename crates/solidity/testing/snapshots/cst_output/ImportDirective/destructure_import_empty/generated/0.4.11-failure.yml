@@ -4,16 +4,33 @@ Source: >
   1  │ // Empty imports are not valid                                                   │ 0..30
   2  │ import {} from "foo";                                                            │ 31..52
 
-Errors: # 1 total
+Errors: # 2 total
   - >
-    Error: Expected ImportKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:1:1]
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:2:9]
        │
-     1 │ ╭─▶ // Empty imports are not valid
-     2 │ ├─▶ import {} from "foo";
-       │ │                           
-       │ ╰─────────────────────────── Error occurred here.
+     2 │ import {} from "foo";
+       │         │ 
+       │         ╰─ Error occurred here.
+    ───╯
+  - >
+    Error: Expected FromKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:2:11]
+       │
+     2 │ import {} from "foo";
+       │           ─────┬────  
+       │                ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: '// Empty imports are not valid\nimport {} from "foo...' # 0..53
+  - ImportDirective: # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
+      - LeadingTrivia: # 0..31 "// Empty imports are not valid\n"
+          - SingleLineComment: "// Empty imports are not valid" # 0..30
+      - (import_keyword) ImportKeyword: "import" # 31..37
+      - (clause) ImportClause: # 37..40 " {}"
+          - (variant) ImportDeconstruction: # 37..40 " {}"
+              - (open_brace) OpenBrace: "{" # 38..39
+              - SKIPPED: "" # 39..39
+              - (close_brace) CloseBrace: "}" # 39..40
+      - SKIPPED: 'from "foo"' # 41..51
+      - (semicolon) Semicolon: ";" # 51..52

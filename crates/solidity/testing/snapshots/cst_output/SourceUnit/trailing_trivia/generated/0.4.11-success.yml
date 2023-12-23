@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract First {}                                                                │ 0..17
+  2  │                                                                                  │ 18..18
+  3  │                                                                                  │ 19..19
+  4  │ // Newlines both before and after this comment should                            │ 20..73
+  5  │ // be included in the trivia of the second contract.                             │ 74..126
+  6  │                                                                                  │ 127..127
+  7  │                                                                                  │ 128..128
+  8  │ contract Second {}                                                               │ 129..147
+
+Errors: []
+
+Tree:
+  - SourceUnit: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
+      - (members) SourceUnitMembers: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
+          - (item) SourceUnitMember: # 0..18 "contract First {}\n"
+              - (variant) ContractDefinition: # 0..18 "contract First {}\n"
+                  - (contract_keyword) ContractKeyword: "contract" # 0..8
+                  - (name) Identifier: "First" # 9..14
+                  - (open_brace) OpenBrace: "{" # 15..16
+                  - (close_brace) CloseBrace: "}" # 16..17
+          - (item) SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
+              - (variant) ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
+                  - LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
+                      - SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73
+                      - SingleLineComment: "// be included in the trivia of the second contrac..." # 74..126
+                  - (contract_keyword) ContractKeyword: "contract" # 129..137
+                  - (name) Identifier: "Second" # 138..144
+                  - (open_brace) OpenBrace: "{" # 145..146
+                  - (close_brace) CloseBrace: "}" # 146..147

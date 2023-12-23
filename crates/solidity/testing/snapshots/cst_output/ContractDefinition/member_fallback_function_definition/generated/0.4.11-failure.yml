@@ -8,15 +8,25 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ContractKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol:1:1]
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol:2:11]
        │
-     1 │ ╭─▶ contract Sample {
-       ┆ ┆   
-     4 │ ├─▶ }
-       │ │      
-       │ ╰────── Error occurred here.
+     2 │ ╭─▶   fallback() {
+     3 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: "contract Sample {\n  fallback() {\n  }\n}" # 0..38
+  - ContractDefinition: # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..28 "  fallback"
+          - (item) ContractMember: # 18..28 "  fallback"
+              - (variant) StateVariableDefinition: # 18..28 "  fallback"
+                  - (type_name) TypeName: # 18..28 "  fallback"
+                      - (variant) IdentifierPath: # 18..28 "  fallback"
+                          - (item) Identifier: "fallback" # 20..28
+      - SKIPPED: "() {\n  }\n" # 28..37
+      - (close_brace) CloseBrace: "}" # 37..38

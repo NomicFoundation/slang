@@ -5,13 +5,22 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ImportKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/named_import/input.sol:1:1]
+    Error: Expected FromKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/named_import/input.sol:1:17]
        │
      1 │ import * as foo from "bar";
-       │ ─────────────┬─────────────  
-       │              ╰─────────────── Error occurred here.
+       │                 ─────┬────  
+       │                      ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: 'import * as foo from "bar";' # 0..27
+  - ImportDirective: # 0..27 'import * as foo from "bar";'
+      - (import_keyword) ImportKeyword: "import" # 0..6
+      - (clause) ImportClause: # 6..15 " * as foo"
+          - (variant) NamedImport: # 6..15 " * as foo"
+              - (asterisk) Asterisk: "*" # 7..8
+              - (alias) ImportAlias: # 8..15 " as foo"
+                  - (as_keyword) AsKeyword: "as" # 9..11
+                  - (identifier) Identifier: "foo" # 12..15
+      - SKIPPED: 'from "bar"' # 16..26
+      - (semicolon) Semicolon: ";" # 26..27

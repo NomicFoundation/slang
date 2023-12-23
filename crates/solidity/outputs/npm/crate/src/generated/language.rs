@@ -6693,6 +6693,6043 @@ impl Language {
         self.raw_identifier(input)
     }
 
+    // Keyword scanners
+    #[allow(clippy::ifs_same_cond)]
+    fn abicoder_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn abstract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn address_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn after_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn alias_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn anonymous_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn apply_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn as_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn assembly_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn auto_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'u', 't', 'o') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn bool_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'o', 'o', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn break_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn byte_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'y', 't', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_8_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn bytes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn call_data_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn case_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 's', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn catch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn constant_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn constructor_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_4_22 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn continue_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn contract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn copy_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn days_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'a', 'y', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn default_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn define_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn delete_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn do_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'o') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn else_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'l', 's', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn emit_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'm', 'i', 't') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_4_21 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn enum_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'n', 'u', 'm') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn error_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'r', 'r', 'o', 'r') {
+                KeywordScan::Absent
+            } else if false {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_8_4 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn ether_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn event_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn experimental_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn external_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn fallback_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn false_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn final_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn finney_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn fixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn for_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'o', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn from_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'r', 'o', 'm') {
+                KeywordScan::Absent
+            } else if false {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn function_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn global_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'g', 'l', 'o', 'b', 'a', 'l') {
+                KeywordScan::Absent
+            } else if false {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_8_13 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn gwei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'g', 'w', 'e', 'i') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_7_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_11 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn hex_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'h', 'e', 'x') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn hours_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn if_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'f') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn immutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_5 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn implements_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn import_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn in_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn indexed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn inline_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn int_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn interface_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn internal_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn is_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn let_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'l', 'e', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn library_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn macro_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn mapping_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn match_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn memory_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn minutes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn modifier_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn mutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn new_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'n', 'e', 'w') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn null_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'n', 'u', 'l', 'l') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'o', 'f') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn override_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn partial_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn payable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn pragma_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn private_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn promise_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn public_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn pure_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'u', 'r', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn receive_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn reference_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn relocatable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn return_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn returns_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn revert_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
+                KeywordScan::Absent
+            } else if false {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_8_4 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn sealed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn seconds_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn size_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn solidity_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn static_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn storage_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn string_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn struct_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn supports_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn switch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn szabo_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn throw_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_5_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn true_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'r', 'u', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn try_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'r', 'y') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn type_def_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn type_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_5_3 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn type_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn unchecked_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_8_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn using_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn var_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'a', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_5_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn view_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'i', 'e', 'w') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn virtual_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn weeks_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn wei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'e', 'i') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn while_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn years_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if !self.version_is_at_least_0_5_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_abstract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_address_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_after_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_alias_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_anonymous_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_apply_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_as_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_assembly_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_auto_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'a', 'u', 't', 'o') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_bool_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'o', 'o', 'l') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_5_10 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_break_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_byte_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'b', 'y', 't', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_call_data_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_case_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 's', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_catch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_constant_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_constructor_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_continue_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_contract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_copy_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_days_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'a', 'y', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_default_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_define_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_delete_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_do_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'd', 'o') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_else_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'l', 's', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_emit_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'm', 'i', 't') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_enum_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'n', 'u', 'm') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_ether_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_event_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_external_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_fallback_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_false_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_final_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_finney_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_for_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'o', 'r') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_function_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_gwei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'g', 'w', 'e', 'i') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_hex_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'h', 'e', 'x') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_hours_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_if_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'f') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_immutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_implements_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_import_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_in_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_6_8 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_indexed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_inline_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_int_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_interface_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_internal_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_is_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'i', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_leave_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'l', 'e', 'a', 'v', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if self.version_is_at_least_0_6_0 {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_let_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'l', 'e', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_library_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_macro_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_mapping_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_match_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_memory_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_minutes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_modifier_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_mutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_new_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'n', 'e', 'w') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_null_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'n', 'u', 'l', 'l') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'o', 'f') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_override_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_partial_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_payable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_pragma_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_private_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_promise_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_public_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_pure_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'p', 'u', 'r', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_receive_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_reference_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_relocatable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_return_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_returns_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_revert_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_sealed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_seconds_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_size_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_static_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_storage_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_string_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_struct_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_supports_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_switch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_szabo_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_0 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_throw_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_true_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'r', 'u', 'e') {
+                KeywordScan::Absent
+            } else if true {
+                KeywordScan::Reserved
+            } else if true {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_try_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'r', 'y') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_type_def_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_type_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_type_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            },
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_sequence!(
+                scan_chars!(input, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            ) {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_unchecked_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_using_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_var_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'a', 'r') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_6_5 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_view_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'i', 'e', 'w') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_virtual_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
+                KeywordScan::Absent
+            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_weeks_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_wei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'e', 'i') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_while_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(clippy::ifs_same_cond)]
+    fn yul_years_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        let save = input.position();
+        let scanned = self.yul_identifier(input);
+        input.set_position(save);
+        if !scanned {
+            return KeywordScan::Absent;
+        }
+        scan_keyword_choice!(
+            input,
+            if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
+                KeywordScan::Absent
+            } else if !self.version_is_at_least_0_7_1 {
+                KeywordScan::Reserved
+            } else if false {
+                KeywordScan::Present
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
@@ -7027,6 +13064,7 @@ impl Lexer for Language {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;
+        // Whether we've seen a keyword
 
         macro_rules! longest_match {
             ($( { $kind:ident = $function:ident } )*) => {
@@ -7034,6 +13072,27 @@ impl Lexer for Language {
                     if self.$function(input) && input.position() > furthest_position {
                         furthest_position = input.position();
                         longest_token = Some(TokenKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+        macro_rules! longest_keyword_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    match self.$function(input) {
+                        KeywordScan::Absent => {/* To do - rollback */},
+                        KeywordScan::Present => {
+                            // Only bump if we're strictly longer?
+                        }
+                        KeywordScan::Reserved if input.position() >= furthest_position => {
+                            furthest_position = input.position();
+                            longest_token = Some(TokenKind::$kind);
+                            // We're running after the identifier and we're checking if it's a reserved keyword
+                            input.set_position(furthest_position);
+                            return longest_token;
+                        }
+                        _ => {}
                     }
                     input.set_position(save);
                 )*
@@ -7194,2908 +13253,6 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
-                let abstract_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let address_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let after_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let alias_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let anonymous_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let apply_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let as_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let assembly_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let auto_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'u', 't', 'o') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let bool_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'o', 'o', 'l') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let break_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let byte_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'y', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_8_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let bytes_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7'),
-                                    scan_chars!(input, '6'),
-                                    scan_chars!(input, '5'),
-                                    scan_chars!(input, '4'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '3', '1'),
-                                    scan_chars!(input, '3', '0'),
-                                    scan_chars!(input, '3'),
-                                    scan_chars!(input, '2', '9'),
-                                    scan_chars!(input, '2', '8'),
-                                    scan_chars!(input, '2', '7'),
-                                    scan_chars!(input, '2', '6'),
-                                    scan_chars!(input, '2', '5'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3'),
-                                    scan_chars!(input, '2', '2'),
-                                    scan_chars!(input, '2', '1'),
-                                    scan_chars!(input, '2', '0'),
-                                    scan_chars!(input, '2'),
-                                    scan_chars!(input, '1', '9'),
-                                    scan_chars!(input, '1', '8'),
-                                    scan_chars!(input, '1', '7'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5'),
-                                    scan_chars!(input, '1', '4'),
-                                    scan_chars!(input, '1', '3'),
-                                    scan_chars!(input, '1', '2'),
-                                    scan_chars!(input, '1', '1'),
-                                    scan_chars!(input, '1', '0'),
-                                    scan_chars!(input, '1')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let call_data_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let case_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let catch_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let constant_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let constructor_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(
-                            input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r'
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_4_22 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let continue_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let contract_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let copy_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let days_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'a', 'y', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let default_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let define_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let delete_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let do_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'o') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let else_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'l', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let emit_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'm', 'i', 't') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_4_21 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let enum_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'n', 'u', 'm') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let error_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'r', 'r', 'o', 'r') {
-                            KeywordScan::Absent
-                        } else if false {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_8_4 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let ether_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let event_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let external_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let fallback_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let false_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let final_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let finney_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let fixed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '4', '8', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '5', '6'),
-                                scan_chars!(input, '2', '4', '8'),
-                                scan_chars!(input, '2', '4', '0'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '2', '3', '2'),
-                                scan_chars!(input, '2', '2', '4'),
-                                scan_chars!(input, '2', '1', '6'),
-                                scan_chars!(input, '2', '0', '8'),
-                                scan_chars!(input, '2', '0', '0'),
-                                scan_chars!(input, '1', '9', '2'),
-                                scan_chars!(input, '1', '8', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9'),
-                                scan_chars!(input, '7', '9'),
-                                scan_chars!(input, '7', '8'),
-                                scan_chars!(input, '7', '7'),
-                                scan_chars!(input, '7', '6'),
-                                scan_chars!(input, '7', '5'),
-                                scan_chars!(input, '7', '4'),
-                                scan_chars!(input, '7', '3'),
-                                scan_chars!(input, '7', '1'),
-                                scan_chars!(input, '7', '0'),
-                                scan_chars!(input, '7'),
-                                scan_chars!(input, '6', '9'),
-                                scan_chars!(input, '6', '8'),
-                                scan_chars!(input, '6', '7'),
-                                scan_chars!(input, '6', '6'),
-                                scan_chars!(input, '6', '5'),
-                                scan_chars!(input, '6', '3'),
-                                scan_chars!(input, '6', '2'),
-                                scan_chars!(input, '6', '1'),
-                                scan_chars!(input, '6', '0'),
-                                scan_chars!(input, '6'),
-                                scan_chars!(input, '5', '9'),
-                                scan_chars!(input, '5', '8'),
-                                scan_chars!(input, '5', '7'),
-                                scan_chars!(input, '5', '5'),
-                                scan_chars!(input, '5', '4'),
-                                scan_chars!(input, '5', '3'),
-                                scan_chars!(input, '5', '2'),
-                                scan_chars!(input, '5', '1'),
-                                scan_chars!(input, '5', '0'),
-                                scan_chars!(input, '5'),
-                                scan_chars!(input, '4', '9'),
-                                scan_chars!(input, '4', '7'),
-                                scan_chars!(input, '4', '6'),
-                                scan_chars!(input, '4', '5'),
-                                scan_chars!(input, '4', '4'),
-                                scan_chars!(input, '4', '3'),
-                                scan_chars!(input, '4', '2'),
-                                scan_chars!(input, '4', '1'),
-                                scan_chars!(input, '4'),
-                                scan_chars!(input, '3', '9'),
-                                scan_chars!(input, '3', '8'),
-                                scan_chars!(input, '3', '7'),
-                                scan_chars!(input, '3', '6'),
-                                scan_chars!(input, '3', '5'),
-                                scan_chars!(input, '3', '4'),
-                                scan_chars!(input, '3', '3'),
-                                scan_chars!(input, '3', '1'),
-                                scan_chars!(input, '3', '0'),
-                                scan_chars!(input, '3'),
-                                scan_chars!(input, '2', '9'),
-                                scan_chars!(input, '2', '8'),
-                                scan_chars!(input, '2', '7'),
-                                scan_chars!(input, '2', '6'),
-                                scan_chars!(input, '2', '5'),
-                                scan_chars!(input, '2', '3'),
-                                scan_chars!(input, '2', '2'),
-                                scan_chars!(input, '2', '1'),
-                                scan_chars!(input, '2', '0'),
-                                scan_chars!(input, '2'),
-                                scan_chars!(input, '1', '9'),
-                                scan_chars!(input, '1', '8'),
-                                scan_chars!(input, '1', '7'),
-                                scan_chars!(input, '1', '5'),
-                                scan_chars!(input, '1', '4'),
-                                scan_chars!(input, '1', '3'),
-                                scan_chars!(input, '1', '2'),
-                                scan_chars!(input, '1', '1'),
-                                scan_chars!(input, '1', '0'),
-                                scan_chars!(input, '1'),
-                                scan_chars!(input, '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let for_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'o', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let from_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'r', 'o', 'm') {
-                            KeywordScan::Absent
-                        } else if false {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let function_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let global_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'g', 'l', 'o', 'b', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if false {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_8_13 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let gwei_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'g', 'w', 'e', 'i') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_7_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_11 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let hex_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'h', 'e', 'x') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let hours_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let if_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'f') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let immutable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_5 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let implements_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let import_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let in_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let indexed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let inline_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let int_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'i', 'n', 't'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9', '6'),
-                                    scan_chars!(input, '8', '8'),
-                                    scan_chars!(input, '8', '0'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7', '2'),
-                                    scan_chars!(input, '6', '4'),
-                                    scan_chars!(input, '5', '6'),
-                                    scan_chars!(input, '4', '8'),
-                                    scan_chars!(input, '4', '0'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '2', '5', '6'),
-                                    scan_chars!(input, '2', '4', '8'),
-                                    scan_chars!(input, '2', '4', '0'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3', '2'),
-                                    scan_chars!(input, '2', '2', '4'),
-                                    scan_chars!(input, '2', '1', '6'),
-                                    scan_chars!(input, '2', '0', '8'),
-                                    scan_chars!(input, '2', '0', '0'),
-                                    scan_chars!(input, '1', '9', '2'),
-                                    scan_chars!(input, '1', '8', '4'),
-                                    scan_chars!(input, '1', '7', '6'),
-                                    scan_chars!(input, '1', '6', '8'),
-                                    scan_chars!(input, '1', '6', '0'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5', '2'),
-                                    scan_chars!(input, '1', '4', '4'),
-                                    scan_chars!(input, '1', '3', '6'),
-                                    scan_chars!(input, '1', '2', '8'),
-                                    scan_chars!(input, '1', '2', '0'),
-                                    scan_chars!(input, '1', '1', '2'),
-                                    scan_chars!(input, '1', '0', '4')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let interface_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let internal_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let is_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let let_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'l', 'e', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let library_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let macro_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let mapping_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let match_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let memory_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let minutes_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let modifier_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let mutable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let new_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'n', 'e', 'w') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let null_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'n', 'u', 'l', 'l') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let override_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let partial_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let payable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let pragma_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let private_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let promise_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let public_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let pure_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'u', 'r', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let receive_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let reference_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let relocatable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(
-                            input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let return_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let returns_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let revert_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
-                            KeywordScan::Absent
-                        } else if false {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_8_4 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let sealed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let seconds_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let size_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let static_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let storage_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let string_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let struct_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let supports_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let switch_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let szabo_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let throw_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_5_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let true_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'r', 'u', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let try_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let type_def_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let type_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_5_3 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let type_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let ufixed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '4', '8', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '5', '6'),
-                                scan_chars!(input, '2', '4', '8'),
-                                scan_chars!(input, '2', '4', '0'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '2', '3', '2'),
-                                scan_chars!(input, '2', '2', '4'),
-                                scan_chars!(input, '2', '1', '6'),
-                                scan_chars!(input, '2', '0', '8'),
-                                scan_chars!(input, '2', '0', '0'),
-                                scan_chars!(input, '1', '9', '2'),
-                                scan_chars!(input, '1', '8', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9'),
-                                scan_chars!(input, '7', '9'),
-                                scan_chars!(input, '7', '8'),
-                                scan_chars!(input, '7', '7'),
-                                scan_chars!(input, '7', '6'),
-                                scan_chars!(input, '7', '5'),
-                                scan_chars!(input, '7', '4'),
-                                scan_chars!(input, '7', '3'),
-                                scan_chars!(input, '7', '1'),
-                                scan_chars!(input, '7', '0'),
-                                scan_chars!(input, '7'),
-                                scan_chars!(input, '6', '9'),
-                                scan_chars!(input, '6', '8'),
-                                scan_chars!(input, '6', '7'),
-                                scan_chars!(input, '6', '6'),
-                                scan_chars!(input, '6', '5'),
-                                scan_chars!(input, '6', '3'),
-                                scan_chars!(input, '6', '2'),
-                                scan_chars!(input, '6', '1'),
-                                scan_chars!(input, '6', '0'),
-                                scan_chars!(input, '6'),
-                                scan_chars!(input, '5', '9'),
-                                scan_chars!(input, '5', '8'),
-                                scan_chars!(input, '5', '7'),
-                                scan_chars!(input, '5', '5'),
-                                scan_chars!(input, '5', '4'),
-                                scan_chars!(input, '5', '3'),
-                                scan_chars!(input, '5', '2'),
-                                scan_chars!(input, '5', '1'),
-                                scan_chars!(input, '5', '0'),
-                                scan_chars!(input, '5'),
-                                scan_chars!(input, '4', '9'),
-                                scan_chars!(input, '4', '7'),
-                                scan_chars!(input, '4', '6'),
-                                scan_chars!(input, '4', '5'),
-                                scan_chars!(input, '4', '4'),
-                                scan_chars!(input, '4', '3'),
-                                scan_chars!(input, '4', '2'),
-                                scan_chars!(input, '4', '1'),
-                                scan_chars!(input, '4'),
-                                scan_chars!(input, '3', '9'),
-                                scan_chars!(input, '3', '8'),
-                                scan_chars!(input, '3', '7'),
-                                scan_chars!(input, '3', '6'),
-                                scan_chars!(input, '3', '5'),
-                                scan_chars!(input, '3', '4'),
-                                scan_chars!(input, '3', '3'),
-                                scan_chars!(input, '3', '1'),
-                                scan_chars!(input, '3', '0'),
-                                scan_chars!(input, '3'),
-                                scan_chars!(input, '2', '9'),
-                                scan_chars!(input, '2', '8'),
-                                scan_chars!(input, '2', '7'),
-                                scan_chars!(input, '2', '6'),
-                                scan_chars!(input, '2', '5'),
-                                scan_chars!(input, '2', '3'),
-                                scan_chars!(input, '2', '2'),
-                                scan_chars!(input, '2', '1'),
-                                scan_chars!(input, '2', '0'),
-                                scan_chars!(input, '2'),
-                                scan_chars!(input, '1', '9'),
-                                scan_chars!(input, '1', '8'),
-                                scan_chars!(input, '1', '7'),
-                                scan_chars!(input, '1', '5'),
-                                scan_chars!(input, '1', '4'),
-                                scan_chars!(input, '1', '3'),
-                                scan_chars!(input, '1', '2'),
-                                scan_chars!(input, '1', '1'),
-                                scan_chars!(input, '1', '0'),
-                                scan_chars!(input, '1'),
-                                scan_chars!(input, '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let uint_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'i', 'n', 't'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9', '6'),
-                                    scan_chars!(input, '8', '8'),
-                                    scan_chars!(input, '8', '0'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7', '2'),
-                                    scan_chars!(input, '6', '4'),
-                                    scan_chars!(input, '5', '6'),
-                                    scan_chars!(input, '4', '8'),
-                                    scan_chars!(input, '4', '0'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '2', '5', '6'),
-                                    scan_chars!(input, '2', '4', '8'),
-                                    scan_chars!(input, '2', '4', '0'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3', '2'),
-                                    scan_chars!(input, '2', '2', '4'),
-                                    scan_chars!(input, '2', '1', '6'),
-                                    scan_chars!(input, '2', '0', '8'),
-                                    scan_chars!(input, '2', '0', '0'),
-                                    scan_chars!(input, '1', '9', '2'),
-                                    scan_chars!(input, '1', '8', '4'),
-                                    scan_chars!(input, '1', '7', '6'),
-                                    scan_chars!(input, '1', '6', '8'),
-                                    scan_chars!(input, '1', '6', '0'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5', '2'),
-                                    scan_chars!(input, '1', '4', '4'),
-                                    scan_chars!(input, '1', '3', '6'),
-                                    scan_chars!(input, '1', '2', '8'),
-                                    scan_chars!(input, '1', '2', '0'),
-                                    scan_chars!(input, '1', '1', '2'),
-                                    scan_chars!(input, '1', '0', '4')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let unchecked_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_8_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let using_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let var_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'a', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_5_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let view_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'i', 'e', 'w') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let virtual_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let weeks_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let wei_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'e', 'i') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let while_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let years_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if !self.version_is_at_least_0_5_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
@@ -10108,6 +13265,118 @@ impl Lexer for Language {
                         { UnicodeStringLiteral = unicode_string_literal }
                         { Whitespace = whitespace }
                         { Identifier = identifier }
+                }
+
+                longest_keyword_match! {
+                        { AbstractKeyword = abstract_keyword }
+                        { AddressKeyword = address_keyword }
+                        { AfterKeyword = after_keyword }
+                        { AliasKeyword = alias_keyword }
+                        { AnonymousKeyword = anonymous_keyword }
+                        { ApplyKeyword = apply_keyword }
+                        { AsKeyword = as_keyword }
+                        { AssemblyKeyword = assembly_keyword }
+                        { AutoKeyword = auto_keyword }
+                        { BoolKeyword = bool_keyword }
+                        { BreakKeyword = break_keyword }
+                        { ByteKeyword = byte_keyword }
+                        { BytesKeyword = bytes_keyword }
+                        { CallDataKeyword = call_data_keyword }
+                        { CaseKeyword = case_keyword }
+                        { CatchKeyword = catch_keyword }
+                        { ConstantKeyword = constant_keyword }
+                        { ConstructorKeyword = constructor_keyword }
+                        { ContinueKeyword = continue_keyword }
+                        { ContractKeyword = contract_keyword }
+                        { CopyOfKeyword = copy_of_keyword }
+                        { DaysKeyword = days_keyword }
+                        { DefaultKeyword = default_keyword }
+                        { DefineKeyword = define_keyword }
+                        { DeleteKeyword = delete_keyword }
+                        { DoKeyword = do_keyword }
+                        { ElseKeyword = else_keyword }
+                        { EmitKeyword = emit_keyword }
+                        { EnumKeyword = enum_keyword }
+                        { ErrorKeyword = error_keyword }
+                        { EtherKeyword = ether_keyword }
+                        { EventKeyword = event_keyword }
+                        { ExternalKeyword = external_keyword }
+                        { FallbackKeyword = fallback_keyword }
+                        { FalseKeyword = false_keyword }
+                        { FinalKeyword = final_keyword }
+                        { FinneyKeyword = finney_keyword }
+                        { FixedKeyword = fixed_keyword }
+                        { ForKeyword = for_keyword }
+                        { FromKeyword = from_keyword }
+                        { FunctionKeyword = function_keyword }
+                        { GlobalKeyword = global_keyword }
+                        { GweiKeyword = gwei_keyword }
+                        { HexKeyword = hex_keyword }
+                        { HoursKeyword = hours_keyword }
+                        { IfKeyword = if_keyword }
+                        { ImmutableKeyword = immutable_keyword }
+                        { ImplementsKeyword = implements_keyword }
+                        { ImportKeyword = import_keyword }
+                        { InKeyword = in_keyword }
+                        { IndexedKeyword = indexed_keyword }
+                        { InlineKeyword = inline_keyword }
+                        { IntKeyword = int_keyword }
+                        { InterfaceKeyword = interface_keyword }
+                        { InternalKeyword = internal_keyword }
+                        { IsKeyword = is_keyword }
+                        { LetKeyword = let_keyword }
+                        { LibraryKeyword = library_keyword }
+                        { MacroKeyword = macro_keyword }
+                        { MappingKeyword = mapping_keyword }
+                        { MatchKeyword = match_keyword }
+                        { MemoryKeyword = memory_keyword }
+                        { MinutesKeyword = minutes_keyword }
+                        { ModifierKeyword = modifier_keyword }
+                        { MutableKeyword = mutable_keyword }
+                        { NewKeyword = new_keyword }
+                        { NullKeyword = null_keyword }
+                        { OfKeyword = of_keyword }
+                        { OverrideKeyword = override_keyword }
+                        { PartialKeyword = partial_keyword }
+                        { PayableKeyword = payable_keyword }
+                        { PragmaKeyword = pragma_keyword }
+                        { PrivateKeyword = private_keyword }
+                        { PromiseKeyword = promise_keyword }
+                        { PublicKeyword = public_keyword }
+                        { PureKeyword = pure_keyword }
+                        { ReceiveKeyword = receive_keyword }
+                        { ReferenceKeyword = reference_keyword }
+                        { RelocatableKeyword = relocatable_keyword }
+                        { ReturnKeyword = return_keyword }
+                        { ReturnsKeyword = returns_keyword }
+                        { RevertKeyword = revert_keyword }
+                        { SealedKeyword = sealed_keyword }
+                        { SecondsKeyword = seconds_keyword }
+                        { SizeOfKeyword = size_of_keyword }
+                        { StaticKeyword = static_keyword }
+                        { StorageKeyword = storage_keyword }
+                        { StringKeyword = string_keyword }
+                        { StructKeyword = struct_keyword }
+                        { SupportsKeyword = supports_keyword }
+                        { SwitchKeyword = switch_keyword }
+                        { SzaboKeyword = szabo_keyword }
+                        { ThrowKeyword = throw_keyword }
+                        { TrueKeyword = true_keyword }
+                        { TryKeyword = try_keyword }
+                        { TypeDefKeyword = type_def_keyword }
+                        { TypeKeyword = type_keyword }
+                        { TypeOfKeyword = type_of_keyword }
+                        { UfixedKeyword = ufixed_keyword }
+                        { UintKeyword = uint_keyword }
+                        { UncheckedKeyword = unchecked_keyword }
+                        { UsingKeyword = using_keyword }
+                        { VarKeyword = var_keyword }
+                        { ViewKeyword = view_keyword }
+                        { VirtualKeyword = virtual_keyword }
+                        { WeeksKeyword = weeks_keyword }
+                        { WeiKeyword = wei_keyword }
+                        { WhileKeyword = while_keyword }
+                        { YearsKeyword = years_keyword }
                 }
             }
             LexicalContext::Pragma => {
@@ -10146,93 +13415,18 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
-                let abicoder_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let experimental_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(
-                            input, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
-                        ) {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let pragma_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let solidity_keyword = || {
-                    let save = input.position();
-                    let scanned = self.identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
                         { VersionPragmaValue = version_pragma_value }
                         { Identifier = identifier }
+                }
+
+                longest_keyword_match! {
+                        { AbicoderKeyword = abicoder_keyword }
+                        { ExperimentalKeyword = experimental_keyword }
+                        { PragmaKeyword = pragma_keyword }
+                        { SolidityKeyword = solidity_keyword }
                 }
             }
             LexicalContext::Yul => {
@@ -10256,2897 +13450,6 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
-                let yul_abstract_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_address_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_after_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_alias_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_anonymous_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_apply_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_as_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_assembly_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_auto_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'a', 'u', 't', 'o') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_bool_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'o', 'o', 'l') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_5_10 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_break_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_byte_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'b', 'y', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_bytes_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7'),
-                                    scan_chars!(input, '6'),
-                                    scan_chars!(input, '5'),
-                                    scan_chars!(input, '4'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '3', '1'),
-                                    scan_chars!(input, '3', '0'),
-                                    scan_chars!(input, '3'),
-                                    scan_chars!(input, '2', '9'),
-                                    scan_chars!(input, '2', '8'),
-                                    scan_chars!(input, '2', '7'),
-                                    scan_chars!(input, '2', '6'),
-                                    scan_chars!(input, '2', '5'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3'),
-                                    scan_chars!(input, '2', '2'),
-                                    scan_chars!(input, '2', '1'),
-                                    scan_chars!(input, '2', '0'),
-                                    scan_chars!(input, '2'),
-                                    scan_chars!(input, '1', '9'),
-                                    scan_chars!(input, '1', '8'),
-                                    scan_chars!(input, '1', '7'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5'),
-                                    scan_chars!(input, '1', '4'),
-                                    scan_chars!(input, '1', '3'),
-                                    scan_chars!(input, '1', '2'),
-                                    scan_chars!(input, '1', '1'),
-                                    scan_chars!(input, '1', '0'),
-                                    scan_chars!(input, '1')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_call_data_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_case_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_catch_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_constant_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_constructor_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(
-                            input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r'
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_continue_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_contract_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_copy_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_days_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'a', 'y', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_default_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_define_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_delete_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_do_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'd', 'o') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_else_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'l', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_emit_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'm', 'i', 't') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_enum_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'n', 'u', 'm') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_ether_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_event_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_external_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_fallback_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_false_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_final_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_finney_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_fixed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '4', '8', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '5', '6'),
-                                scan_chars!(input, '2', '4', '8'),
-                                scan_chars!(input, '2', '4', '0'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '2', '3', '2'),
-                                scan_chars!(input, '2', '2', '4'),
-                                scan_chars!(input, '2', '1', '6'),
-                                scan_chars!(input, '2', '0', '8'),
-                                scan_chars!(input, '2', '0', '0'),
-                                scan_chars!(input, '1', '9', '2'),
-                                scan_chars!(input, '1', '8', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9'),
-                                scan_chars!(input, '7', '9'),
-                                scan_chars!(input, '7', '8'),
-                                scan_chars!(input, '7', '7'),
-                                scan_chars!(input, '7', '6'),
-                                scan_chars!(input, '7', '5'),
-                                scan_chars!(input, '7', '4'),
-                                scan_chars!(input, '7', '3'),
-                                scan_chars!(input, '7', '1'),
-                                scan_chars!(input, '7', '0'),
-                                scan_chars!(input, '7'),
-                                scan_chars!(input, '6', '9'),
-                                scan_chars!(input, '6', '8'),
-                                scan_chars!(input, '6', '7'),
-                                scan_chars!(input, '6', '6'),
-                                scan_chars!(input, '6', '5'),
-                                scan_chars!(input, '6', '3'),
-                                scan_chars!(input, '6', '2'),
-                                scan_chars!(input, '6', '1'),
-                                scan_chars!(input, '6', '0'),
-                                scan_chars!(input, '6'),
-                                scan_chars!(input, '5', '9'),
-                                scan_chars!(input, '5', '8'),
-                                scan_chars!(input, '5', '7'),
-                                scan_chars!(input, '5', '5'),
-                                scan_chars!(input, '5', '4'),
-                                scan_chars!(input, '5', '3'),
-                                scan_chars!(input, '5', '2'),
-                                scan_chars!(input, '5', '1'),
-                                scan_chars!(input, '5', '0'),
-                                scan_chars!(input, '5'),
-                                scan_chars!(input, '4', '9'),
-                                scan_chars!(input, '4', '7'),
-                                scan_chars!(input, '4', '6'),
-                                scan_chars!(input, '4', '5'),
-                                scan_chars!(input, '4', '4'),
-                                scan_chars!(input, '4', '3'),
-                                scan_chars!(input, '4', '2'),
-                                scan_chars!(input, '4', '1'),
-                                scan_chars!(input, '4'),
-                                scan_chars!(input, '3', '9'),
-                                scan_chars!(input, '3', '8'),
-                                scan_chars!(input, '3', '7'),
-                                scan_chars!(input, '3', '6'),
-                                scan_chars!(input, '3', '5'),
-                                scan_chars!(input, '3', '4'),
-                                scan_chars!(input, '3', '3'),
-                                scan_chars!(input, '3', '1'),
-                                scan_chars!(input, '3', '0'),
-                                scan_chars!(input, '3'),
-                                scan_chars!(input, '2', '9'),
-                                scan_chars!(input, '2', '8'),
-                                scan_chars!(input, '2', '7'),
-                                scan_chars!(input, '2', '6'),
-                                scan_chars!(input, '2', '5'),
-                                scan_chars!(input, '2', '3'),
-                                scan_chars!(input, '2', '2'),
-                                scan_chars!(input, '2', '1'),
-                                scan_chars!(input, '2', '0'),
-                                scan_chars!(input, '2'),
-                                scan_chars!(input, '1', '9'),
-                                scan_chars!(input, '1', '8'),
-                                scan_chars!(input, '1', '7'),
-                                scan_chars!(input, '1', '5'),
-                                scan_chars!(input, '1', '4'),
-                                scan_chars!(input, '1', '3'),
-                                scan_chars!(input, '1', '2'),
-                                scan_chars!(input, '1', '1'),
-                                scan_chars!(input, '1', '0'),
-                                scan_chars!(input, '1'),
-                                scan_chars!(input, '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_for_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'o', 'r') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_function_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_gwei_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'g', 'w', 'e', 'i') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_hex_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'h', 'e', 'x') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_hours_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_if_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'f') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_immutable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_implements_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_import_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_in_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_6_8 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_indexed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_inline_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_int_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'i', 'n', 't'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9', '6'),
-                                    scan_chars!(input, '8', '8'),
-                                    scan_chars!(input, '8', '0'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7', '2'),
-                                    scan_chars!(input, '6', '4'),
-                                    scan_chars!(input, '5', '6'),
-                                    scan_chars!(input, '4', '8'),
-                                    scan_chars!(input, '4', '0'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '2', '5', '6'),
-                                    scan_chars!(input, '2', '4', '8'),
-                                    scan_chars!(input, '2', '4', '0'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3', '2'),
-                                    scan_chars!(input, '2', '2', '4'),
-                                    scan_chars!(input, '2', '1', '6'),
-                                    scan_chars!(input, '2', '0', '8'),
-                                    scan_chars!(input, '2', '0', '0'),
-                                    scan_chars!(input, '1', '9', '2'),
-                                    scan_chars!(input, '1', '8', '4'),
-                                    scan_chars!(input, '1', '7', '6'),
-                                    scan_chars!(input, '1', '6', '8'),
-                                    scan_chars!(input, '1', '6', '0'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5', '2'),
-                                    scan_chars!(input, '1', '4', '4'),
-                                    scan_chars!(input, '1', '3', '6'),
-                                    scan_chars!(input, '1', '2', '8'),
-                                    scan_chars!(input, '1', '2', '0'),
-                                    scan_chars!(input, '1', '1', '2'),
-                                    scan_chars!(input, '1', '0', '4')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_interface_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_internal_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_is_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'i', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_leave_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'l', 'e', 'a', 'v', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if self.version_is_at_least_0_6_0 {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_let_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'l', 'e', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_library_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_macro_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_mapping_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_match_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_memory_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_minutes_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_modifier_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_mutable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_new_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'n', 'e', 'w') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_null_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'n', 'u', 'l', 'l') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_override_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_partial_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_payable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_pragma_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_private_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_promise_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_public_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_pure_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'p', 'u', 'r', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_receive_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_reference_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_relocatable_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(
-                            input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_return_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_returns_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_revert_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_sealed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_seconds_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_size_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_static_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_storage_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_string_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_struct_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_supports_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_switch_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_szabo_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_0 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_throw_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_true_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'r', 'u', 'e') {
-                            KeywordScan::Absent
-                        } else if true {
-                            KeywordScan::Reserved
-                        } else if true {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_try_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'r', 'y') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_type_def_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_type_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_type_of_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_ufixed_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '4', '8', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        },
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9', '6'),
-                                scan_chars!(input, '8', '8'),
-                                scan_chars!(input, '8', '0'),
-                                scan_chars!(input, '8'),
-                                scan_chars!(input, '7', '2'),
-                                scan_chars!(input, '6', '4'),
-                                scan_chars!(input, '5', '6'),
-                                scan_chars!(input, '4', '8'),
-                                scan_chars!(input, '4', '0'),
-                                scan_chars!(input, '3', '2'),
-                                scan_chars!(input, '2', '5', '6'),
-                                scan_chars!(input, '2', '4', '8'),
-                                scan_chars!(input, '2', '4', '0'),
-                                scan_chars!(input, '2', '4'),
-                                scan_chars!(input, '2', '3', '2'),
-                                scan_chars!(input, '2', '2', '4'),
-                                scan_chars!(input, '2', '1', '6'),
-                                scan_chars!(input, '2', '0', '8'),
-                                scan_chars!(input, '2', '0', '0'),
-                                scan_chars!(input, '1', '9', '2'),
-                                scan_chars!(input, '1', '8', '4'),
-                                scan_chars!(input, '1', '7', '6'),
-                                scan_chars!(input, '1', '6', '8'),
-                                scan_chars!(input, '1', '6', '0'),
-                                scan_chars!(input, '1', '6'),
-                                scan_chars!(input, '1', '5', '2'),
-                                scan_chars!(input, '1', '4', '4'),
-                                scan_chars!(input, '1', '3', '6'),
-                                scan_chars!(input, '1', '2', '8'),
-                                scan_chars!(input, '1', '2', '0'),
-                                scan_chars!(input, '1', '1', '2'),
-                                scan_chars!(input, '1', '0', '4')
-                            ),
-                            scan_chars!(input, 'x'),
-                            scan_choice!(
-                                input,
-                                scan_chars!(input, '9'),
-                                scan_chars!(input, '7', '9'),
-                                scan_chars!(input, '7', '8'),
-                                scan_chars!(input, '7', '7'),
-                                scan_chars!(input, '7', '6'),
-                                scan_chars!(input, '7', '5'),
-                                scan_chars!(input, '7', '4'),
-                                scan_chars!(input, '7', '3'),
-                                scan_chars!(input, '7', '1'),
-                                scan_chars!(input, '7', '0'),
-                                scan_chars!(input, '7'),
-                                scan_chars!(input, '6', '9'),
-                                scan_chars!(input, '6', '8'),
-                                scan_chars!(input, '6', '7'),
-                                scan_chars!(input, '6', '6'),
-                                scan_chars!(input, '6', '5'),
-                                scan_chars!(input, '6', '3'),
-                                scan_chars!(input, '6', '2'),
-                                scan_chars!(input, '6', '1'),
-                                scan_chars!(input, '6', '0'),
-                                scan_chars!(input, '6'),
-                                scan_chars!(input, '5', '9'),
-                                scan_chars!(input, '5', '8'),
-                                scan_chars!(input, '5', '7'),
-                                scan_chars!(input, '5', '5'),
-                                scan_chars!(input, '5', '4'),
-                                scan_chars!(input, '5', '3'),
-                                scan_chars!(input, '5', '2'),
-                                scan_chars!(input, '5', '1'),
-                                scan_chars!(input, '5', '0'),
-                                scan_chars!(input, '5'),
-                                scan_chars!(input, '4', '9'),
-                                scan_chars!(input, '4', '7'),
-                                scan_chars!(input, '4', '6'),
-                                scan_chars!(input, '4', '5'),
-                                scan_chars!(input, '4', '4'),
-                                scan_chars!(input, '4', '3'),
-                                scan_chars!(input, '4', '2'),
-                                scan_chars!(input, '4', '1'),
-                                scan_chars!(input, '4'),
-                                scan_chars!(input, '3', '9'),
-                                scan_chars!(input, '3', '8'),
-                                scan_chars!(input, '3', '7'),
-                                scan_chars!(input, '3', '6'),
-                                scan_chars!(input, '3', '5'),
-                                scan_chars!(input, '3', '4'),
-                                scan_chars!(input, '3', '3'),
-                                scan_chars!(input, '3', '1'),
-                                scan_chars!(input, '3', '0'),
-                                scan_chars!(input, '3'),
-                                scan_chars!(input, '2', '9'),
-                                scan_chars!(input, '2', '8'),
-                                scan_chars!(input, '2', '7'),
-                                scan_chars!(input, '2', '6'),
-                                scan_chars!(input, '2', '5'),
-                                scan_chars!(input, '2', '3'),
-                                scan_chars!(input, '2', '2'),
-                                scan_chars!(input, '2', '1'),
-                                scan_chars!(input, '2', '0'),
-                                scan_chars!(input, '2'),
-                                scan_chars!(input, '1', '9'),
-                                scan_chars!(input, '1', '8'),
-                                scan_chars!(input, '1', '7'),
-                                scan_chars!(input, '1', '5'),
-                                scan_chars!(input, '1', '4'),
-                                scan_chars!(input, '1', '3'),
-                                scan_chars!(input, '1', '2'),
-                                scan_chars!(input, '1', '1'),
-                                scan_chars!(input, '1', '0'),
-                                scan_chars!(input, '1'),
-                                scan_chars!(input, '0')
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_uint_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_sequence!(
-                            scan_chars!(input, 'u', 'i', 'n', 't'),
-                            scan_optional!(
-                                input,
-                                scan_choice!(
-                                    input,
-                                    scan_chars!(input, '9', '6'),
-                                    scan_chars!(input, '8', '8'),
-                                    scan_chars!(input, '8', '0'),
-                                    scan_chars!(input, '8'),
-                                    scan_chars!(input, '7', '2'),
-                                    scan_chars!(input, '6', '4'),
-                                    scan_chars!(input, '5', '6'),
-                                    scan_chars!(input, '4', '8'),
-                                    scan_chars!(input, '4', '0'),
-                                    scan_chars!(input, '3', '2'),
-                                    scan_chars!(input, '2', '5', '6'),
-                                    scan_chars!(input, '2', '4', '8'),
-                                    scan_chars!(input, '2', '4', '0'),
-                                    scan_chars!(input, '2', '4'),
-                                    scan_chars!(input, '2', '3', '2'),
-                                    scan_chars!(input, '2', '2', '4'),
-                                    scan_chars!(input, '2', '1', '6'),
-                                    scan_chars!(input, '2', '0', '8'),
-                                    scan_chars!(input, '2', '0', '0'),
-                                    scan_chars!(input, '1', '9', '2'),
-                                    scan_chars!(input, '1', '8', '4'),
-                                    scan_chars!(input, '1', '7', '6'),
-                                    scan_chars!(input, '1', '6', '8'),
-                                    scan_chars!(input, '1', '6', '0'),
-                                    scan_chars!(input, '1', '6'),
-                                    scan_chars!(input, '1', '5', '2'),
-                                    scan_chars!(input, '1', '4', '4'),
-                                    scan_chars!(input, '1', '3', '6'),
-                                    scan_chars!(input, '1', '2', '8'),
-                                    scan_chars!(input, '1', '2', '0'),
-                                    scan_chars!(input, '1', '1', '2'),
-                                    scan_chars!(input, '1', '0', '4')
-                                )
-                            )
-                        ) {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_unchecked_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_using_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_var_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'a', 'r') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_6_5 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_view_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'i', 'e', 'w') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_virtual_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
-                            KeywordScan::Absent
-                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
-                        {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_weeks_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_wei_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'e', 'i') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_while_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
-                let yul_years_keyword = || {
-                    let save = input.position();
-                    let scanned = self.yul_identifier(input);
-                    input.set_position(save);
-                    if !scanned {
-                        return KeywordScan::Absent;
-                    }
-                    scan_keyword_choice!(
-                        input,
-                        if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
-                            KeywordScan::Absent
-                        } else if !self.version_is_at_least_0_7_1 {
-                            KeywordScan::Reserved
-                        } else if false {
-                            KeywordScan::Present
-                        } else {
-                            KeywordScan::Absent
-                        }
-                    )
-                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
@@ -13154,6 +13457,116 @@ impl Lexer for Language {
                         { YulDecimalLiteral = yul_decimal_literal }
                         { YulHexLiteral = yul_hex_literal }
                         { YulIdentifier = yul_identifier }
+                }
+
+                longest_keyword_match! {
+                        { YulAbstractKeyword = yul_abstract_keyword }
+                        { YulAddressKeyword = yul_address_keyword }
+                        { YulAfterKeyword = yul_after_keyword }
+                        { YulAliasKeyword = yul_alias_keyword }
+                        { YulAnonymousKeyword = yul_anonymous_keyword }
+                        { YulApplyKeyword = yul_apply_keyword }
+                        { YulAsKeyword = yul_as_keyword }
+                        { YulAssemblyKeyword = yul_assembly_keyword }
+                        { YulAutoKeyword = yul_auto_keyword }
+                        { YulBoolKeyword = yul_bool_keyword }
+                        { YulBreakKeyword = yul_break_keyword }
+                        { YulByteKeyword = yul_byte_keyword }
+                        { YulBytesKeyword = yul_bytes_keyword }
+                        { YulCallDataKeyword = yul_call_data_keyword }
+                        { YulCaseKeyword = yul_case_keyword }
+                        { YulCatchKeyword = yul_catch_keyword }
+                        { YulConstantKeyword = yul_constant_keyword }
+                        { YulConstructorKeyword = yul_constructor_keyword }
+                        { YulContinueKeyword = yul_continue_keyword }
+                        { YulContractKeyword = yul_contract_keyword }
+                        { YulCopyOfKeyword = yul_copy_of_keyword }
+                        { YulDaysKeyword = yul_days_keyword }
+                        { YulDefaultKeyword = yul_default_keyword }
+                        { YulDefineKeyword = yul_define_keyword }
+                        { YulDeleteKeyword = yul_delete_keyword }
+                        { YulDoKeyword = yul_do_keyword }
+                        { YulElseKeyword = yul_else_keyword }
+                        { YulEmitKeyword = yul_emit_keyword }
+                        { YulEnumKeyword = yul_enum_keyword }
+                        { YulEtherKeyword = yul_ether_keyword }
+                        { YulEventKeyword = yul_event_keyword }
+                        { YulExternalKeyword = yul_external_keyword }
+                        { YulFallbackKeyword = yul_fallback_keyword }
+                        { YulFalseKeyword = yul_false_keyword }
+                        { YulFinalKeyword = yul_final_keyword }
+                        { YulFinneyKeyword = yul_finney_keyword }
+                        { YulFixedKeyword = yul_fixed_keyword }
+                        { YulForKeyword = yul_for_keyword }
+                        { YulFunctionKeyword = yul_function_keyword }
+                        { YulGweiKeyword = yul_gwei_keyword }
+                        { YulHexKeyword = yul_hex_keyword }
+                        { YulHoursKeyword = yul_hours_keyword }
+                        { YulIfKeyword = yul_if_keyword }
+                        { YulImmutableKeyword = yul_immutable_keyword }
+                        { YulImplementsKeyword = yul_implements_keyword }
+                        { YulImportKeyword = yul_import_keyword }
+                        { YulInKeyword = yul_in_keyword }
+                        { YulIndexedKeyword = yul_indexed_keyword }
+                        { YulInlineKeyword = yul_inline_keyword }
+                        { YulIntKeyword = yul_int_keyword }
+                        { YulInterfaceKeyword = yul_interface_keyword }
+                        { YulInternalKeyword = yul_internal_keyword }
+                        { YulIsKeyword = yul_is_keyword }
+                        { YulLeaveKeyword = yul_leave_keyword }
+                        { YulLetKeyword = yul_let_keyword }
+                        { YulLibraryKeyword = yul_library_keyword }
+                        { YulMacroKeyword = yul_macro_keyword }
+                        { YulMappingKeyword = yul_mapping_keyword }
+                        { YulMatchKeyword = yul_match_keyword }
+                        { YulMemoryKeyword = yul_memory_keyword }
+                        { YulMinutesKeyword = yul_minutes_keyword }
+                        { YulModifierKeyword = yul_modifier_keyword }
+                        { YulMutableKeyword = yul_mutable_keyword }
+                        { YulNewKeyword = yul_new_keyword }
+                        { YulNullKeyword = yul_null_keyword }
+                        { YulOfKeyword = yul_of_keyword }
+                        { YulOverrideKeyword = yul_override_keyword }
+                        { YulPartialKeyword = yul_partial_keyword }
+                        { YulPayableKeyword = yul_payable_keyword }
+                        { YulPragmaKeyword = yul_pragma_keyword }
+                        { YulPrivateKeyword = yul_private_keyword }
+                        { YulPromiseKeyword = yul_promise_keyword }
+                        { YulPublicKeyword = yul_public_keyword }
+                        { YulPureKeyword = yul_pure_keyword }
+                        { YulReceiveKeyword = yul_receive_keyword }
+                        { YulReferenceKeyword = yul_reference_keyword }
+                        { YulRelocatableKeyword = yul_relocatable_keyword }
+                        { YulReturnKeyword = yul_return_keyword }
+                        { YulReturnsKeyword = yul_returns_keyword }
+                        { YulRevertKeyword = yul_revert_keyword }
+                        { YulSealedKeyword = yul_sealed_keyword }
+                        { YulSecondsKeyword = yul_seconds_keyword }
+                        { YulSizeOfKeyword = yul_size_of_keyword }
+                        { YulStaticKeyword = yul_static_keyword }
+                        { YulStorageKeyword = yul_storage_keyword }
+                        { YulStringKeyword = yul_string_keyword }
+                        { YulStructKeyword = yul_struct_keyword }
+                        { YulSupportsKeyword = yul_supports_keyword }
+                        { YulSwitchKeyword = yul_switch_keyword }
+                        { YulSzaboKeyword = yul_szabo_keyword }
+                        { YulThrowKeyword = yul_throw_keyword }
+                        { YulTrueKeyword = yul_true_keyword }
+                        { YulTryKeyword = yul_try_keyword }
+                        { YulTypeDefKeyword = yul_type_def_keyword }
+                        { YulTypeKeyword = yul_type_keyword }
+                        { YulTypeOfKeyword = yul_type_of_keyword }
+                        { YulUfixedKeyword = yul_ufixed_keyword }
+                        { YulUintKeyword = yul_uint_keyword }
+                        { YulUncheckedKeyword = yul_unchecked_keyword }
+                        { YulUsingKeyword = yul_using_keyword }
+                        { YulVarKeyword = yul_var_keyword }
+                        { YulViewKeyword = yul_view_keyword }
+                        { YulVirtualKeyword = yul_virtual_keyword }
+                        { YulWeeksKeyword = yul_weeks_keyword }
+                        { YulWeiKeyword = yul_wei_keyword }
+                        { YulWhileKeyword = yul_while_keyword }
+                        { YulYearsKeyword = yul_years_keyword }
                 }
             }
         }

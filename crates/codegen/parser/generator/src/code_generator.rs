@@ -30,6 +30,8 @@ pub struct CodeGenerator {
 
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
+    // All of the keyword scanners (for now we assume we don't have context-specific keywords)
+    keyword_scanners: BTreeMap<&'static str, String>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
@@ -221,6 +223,18 @@ impl GrammarVisitor for CodeGenerator {
             }
         }
 
+        // Collect all of the keyword scanners into a single list to be defined at top-level
+        self.keyword_scanners = self
+            .scanner_contexts
+            .values()
+            .flat_map(|context| {
+                context
+                    .keyword_scanners
+                    .iter()
+                    .map(|(name, code)| (*name, code.to_string()))
+            })
+            .collect();
+
         // Just being anal about tidying up :)
         self.all_scanners.clear();
         self.current_context_name = "";
@@ -321,6 +335,7 @@ impl GrammarVisitor for CodeGenerator {
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
                 self.token_kinds.insert(scanner.name());
 
+                // Assume we don't have context-specific keywords for now
                 self.current_context()
                     .keyword_scanners
                     .insert(scanner.name(), scanner.to_scanner_code().to_string());

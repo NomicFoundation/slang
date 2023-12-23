@@ -1,0 +1,80 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ library SafeMath {                                                               │ 0..18
+  2  │   function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {  │ 19..98
+  3  │     unchecked {                                                                  │ 99..114
+  4  │       uint256 c = a + b;                                                         │ 115..139
+  5  │       if (c < a) return (false, 0);                                              │ 140..175
+  6  │       return (true, c);                                                          │ 176..199
+  7  │     }                                                                            │ 200..205
+  8  │   }                                                                              │ 206..209
+  9  │ }                                                                                │ 210..211
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:5]
+       │
+     3 │ ╭─▶     unchecked {
+       ┆ ┆   
+     8 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+      - (members) SourceUnitMembers: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+          - (item) SourceUnitMember: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+              - (variant) LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+                  - (library_keyword) LibraryKeyword: "library" # 0..7
+                  - (name) Identifier: "SafeMath" # 8..16
+                  - (open_brace) OpenBrace: "{" # 17..18
+                  - (members) LibraryMembers: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                      - (item) ContractMember: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                          - (variant) FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                              - (function_keyword) FunctionKeyword: "function" # 21..29
+                              - (name) FunctionName: # 29..36 " tryAdd"
+                                  - (variant) Identifier: "tryAdd" # 30..36
+                              - (parameters) ParametersDeclaration: # 36..58 "(uint256 a, uint256 b)"
+                                  - (open_paren) OpenParen: "(" # 36..37
+                                  - (parameters) Parameters: # 37..57 "uint256 a, uint256 b"
+                                      - (item) Parameter: # 37..46 "uint256 a"
+                                          - (type_name) TypeName: # 37..44 "uint256"
+                                              - (variant) ElementaryType: # 37..44 "uint256"
+                                                  - (variant) UintKeyword: "uint256" # 37..44
+                                          - (name) Identifier: "a" # 45..46
+                                      - (separator) Comma: "," # 46..47
+                                      - (item) Parameter: # 47..57 " uint256 b"
+                                          - (type_name) TypeName: # 47..55 " uint256"
+                                              - (variant) ElementaryType: # 47..55 " uint256"
+                                                  - (variant) UintKeyword: "uint256" # 48..55
+                                          - (name) Identifier: "b" # 56..57
+                                  - (close_paren) CloseParen: ")" # 57..58
+                              - (attributes) FunctionAttributes: # 58..72 " internal pure"
+                                  - (item) FunctionAttribute: # 58..67 " internal"
+                                      - (variant) InternalKeyword: "internal" # 59..67
+                                  - (item) FunctionAttribute: # 67..72 " pure"
+                                      - (variant) PureKeyword: "pure" # 68..72
+                              - (returns) ReturnsDeclaration: # 72..96 " returns (bool, uint256)"
+                                  - (returns_keyword) ReturnsKeyword: "returns" # 73..80
+                                  - (variables) ParametersDeclaration: # 80..96 " (bool, uint256)"
+                                      - (open_paren) OpenParen: "(" # 81..82
+                                      - (parameters) Parameters: # 82..95 "bool, uint256"
+                                          - (item) Parameter: # 82..86 "bool"
+                                              - (type_name) TypeName: # 82..86 "bool"
+                                                  - (variant) ElementaryType: # 82..86 "bool"
+                                                      - (variant) BoolKeyword: "bool" # 82..86
+                                          - (separator) Comma: "," # 86..87
+                                          - (item) Parameter: # 87..95 " uint256"
+                                              - (type_name) TypeName: # 87..95 " uint256"
+                                                  - (variant) ElementaryType: # 87..95 " uint256"
+                                                      - (variant) UintKeyword: "uint256" # 88..95
+                                      - (close_paren) CloseParen: ")" # 95..96
+                              - (body) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                  - (variant) Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                      - (open_brace) OpenBrace: "{" # 97..98
+                                      - SKIPPED: "unchecked {\n      uint256 c = a + b;\n      if (c <..." # 103..208
+                                      - (close_brace) CloseBrace: "}" # 208..209
+                  - (close_brace) CloseBrace: "}" # 210..211

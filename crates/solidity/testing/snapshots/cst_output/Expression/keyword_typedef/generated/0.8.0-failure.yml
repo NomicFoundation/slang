@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ typedef                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or BytesKeyword or DecimalLiteral or FalseKeyword or FixedKeyword or HexLiteral or HexStringLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UnicodeStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/keyword_typedef/input.sol:1:1]
+       │
+     1 │ typedef
+       │ ───┬───  
+       │    ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "typedef" # 0..7

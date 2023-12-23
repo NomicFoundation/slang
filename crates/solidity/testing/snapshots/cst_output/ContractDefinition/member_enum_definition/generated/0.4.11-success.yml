@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   enum State {                                                                   │ 18..32
+  3  │     A,                                                                           │ 33..39
+  4  │     B,                                                                           │ 40..46
+  5  │     C                                                                            │ 47..52
+  6  │   }                                                                              │ 53..56
+  7  │ }                                                                                │ 57..58
+
+Errors: []
+
+Tree:
+  - ContractDefinition: # 0..58 "contract Sample {\n  enum State {\n    A,\n    B,\n   ..."
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+          - (item) ContractMember: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+              - (variant) EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+                  - (enum_keyword) EnumKeyword: "enum" # 20..24
+                  - (name) Identifier: "State" # 25..30
+                  - (open_brace) OpenBrace: "{" # 31..32
+                  - (members) EnumMembers: # 33..53 "    A,\n    B,\n    C\n"
+                      - (item) Identifier: "A" # 37..38
+                      - (separator) Comma: "," # 38..39
+                      - (item) Identifier: "B" # 44..45
+                      - (separator) Comma: "," # 45..46
+                      - (item) Identifier: "C" # 51..52
+                  - (close_brace) CloseBrace: "}" # 55..56
+      - (close_brace) CloseBrace: "}" # 57..58

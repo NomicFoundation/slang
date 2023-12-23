@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor () {}                                                                │ 0..17
+
+Errors: []
+
+Tree:
+  - ConstructorDefinition: # 0..17 "constructor () {}"
+      - (constructor_keyword) ConstructorKeyword: "constructor" # 0..11
+      - (parameters) ParametersDeclaration: # 11..14 " ()"
+          - (open_paren) OpenParen: "(" # 12..13
+          - (close_paren) CloseParen: ")" # 13..14
+      - (body) Block: # 14..17 " {}"
+          - (open_brace) OpenBrace: "{" # 15..16
+          - (close_brace) CloseBrace: "}" # 16..17

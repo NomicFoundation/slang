@@ -7,12 +7,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Colon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:8]
+    Error: Expected CloseBrace or Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:3]
        │
      3 │ { throw;
-       │        │ 
-       │        ╰─ Error occurred here.
+       │   ──┬──  
+       │     ╰──── Error occurred here.
     ───╯
 
 Tree:
@@ -30,7 +30,7 @@ Tree:
                       - (name) Identifier: "b" # 4..5
       - (close_paren) CloseParen: ")" # 5..6
       - (equal) Equal: "=" # 7..8
-      - (expression) Expression: # 8..32 " (123, 135)\n/**/\n{ throw"
+      - (expression) Expression: # 8..26 " (123, 135)\n/**/\n{"
           - (variant) TupleExpression: # 8..20 " (123, 135)\n"
               - (open_paren) OpenParen: "(" # 9..10
               - (items) TupleValues: # 10..18 "123, 135"
@@ -44,13 +44,10 @@ Tree:
                           - (variant) DecimalNumberExpression: # 14..18 " 135"
                               - (literal) DecimalLiteral: "135" # 15..18
               - (close_paren) CloseParen: ")" # 18..19
-          - (options) FunctionCallOptions: # 20..32 "/**/\n{ throw"
-              - (variant) NamedArgumentGroup: # 20..32 "/**/\n{ throw"
+          - (options) FunctionCallOptions: # 20..26 "/**/\n{"
+              - (variant) NamedArgumentGroup: # 20..26 "/**/\n{"
                   - LeadingTrivia: # 20..25 "/**/\n"
                       - MultilineComment: "/**/" # 20..24
                   - (open_brace) OpenBrace: "{" # 25..26
-                  - (arguments) NamedArguments: # 26..32 " throw"
-                      - (item) NamedArgument: # 26..32 " throw"
-                          - (name) Identifier: "throw" # 27..32
-      - SKIPPED: "" # 32..32
+      - SKIPPED: "throw" # 27..32
       - (semicolon) Semicolon: ";" # 32..33

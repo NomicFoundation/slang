@@ -1,0 +1,137 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Contract {                                                              │ 0..19
+  2  │ 	function _transfer(address while) private {                                     │ 20..64
+  3  │ 		if(while == pair && !_isExcludedFromFee[to]){                                  │ 65..112
+  4  │ 			uint256 a = 1;                                                                │ 113..130
+  5  │ 		}                                                                              │ 131..134
+  6  │ 	}                                                                               │ 135..137
+  7  │                                                                                  │ 138..138
+  8  │ 	function abc() {                                                                │ 139..156
+  9  │ 		uint256 x = 0;                                                                 │ 157..173
+  10 │ 		unchecked { invalid sequence }                                                 │ 174..206
+  11 │ 	}                                                                               │ 207..209
+  12 │ }                                                                                │ 210..211
+
+Errors: # 3 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:2:29]
+       │
+     2 │     function _transfer(address while) private {
+       │                                ──┬──  
+       │                                  ╰──── Error occurred here.
+    ───╯
+  - >
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or BytesKeyword or DecimalLiteral or FalseKeyword or FixedKeyword or HexLiteral or HexStringLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UnicodeStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:6]
+       │
+     3 │        if(while == pair && !_isExcludedFromFee[to]){
+       │           ────────────────────┬───────────────────  
+       │                               ╰───────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected Equal or Semicolon.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:32]
+        │
+     10 │        unchecked { invalid sequence }
+        │                                     │ 
+        │                                     ╰─ Error occurred here.
+    ────╯
+
+Tree:
+  - ContractDefinition: # 0..212 "contract Contract {\n\tfunction _transfer(address wh..."
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Contract" # 9..17
+      - (open_brace) OpenBrace: "{" # 18..19
+      - (members) ContractMembers: # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
+          - (item) ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+              - (variant) FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+                  - (function_keyword) FunctionKeyword: "function" # 21..29
+                  - (name) FunctionName: # 29..39 " _transfer"
+                      - (variant) Identifier: "_transfer" # 30..39
+                  - (parameters) ParametersDeclaration: # 39..54 "(address while)"
+                      - (open_paren) OpenParen: "(" # 39..40
+                      - (parameters) Parameters: # 40..47 "address"
+                          - (item) Parameter: # 40..47 "address"
+                              - (type_name) TypeName: # 40..47 "address"
+                                  - (variant) ElementaryType: # 40..47 "address"
+                                      - (variant) AddressType: # 40..47 "address"
+                                          - (address_keyword) AddressKeyword: "address" # 40..47
+                      - SKIPPED: "while" # 48..53
+                      - (close_paren) CloseParen: ")" # 53..54
+                  - (attributes) FunctionAttributes: # 54..62 " private"
+                      - (item) FunctionAttribute: # 54..62 " private"
+                          - (variant) PrivateKeyword: "private" # 55..62
+                  - (body) FunctionBody: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
+                      - (variant) Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
+                          - (open_brace) OpenBrace: "{" # 63..64
+                          - (statements) Statements: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                              - (item) Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                                  - (variant) IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                                      - (if_keyword) IfKeyword: "if" # 67..69
+                                      - (open_paren) OpenParen: "(" # 69..70
+                                      - SKIPPED: "while == pair && !_isExcludedFromFee[to]" # 70..110
+                                      - (close_paren) CloseParen: ")" # 110..111
+                                      - (body) Statement: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                          - (variant) Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                              - (open_brace) OpenBrace: "{" # 111..112
+                                              - (statements) Statements: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                  - (item) Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                      - (variant) VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                          - (variable_type) VariableDeclarationType: # 113..123 "\t\t\tuint256"
+                                                              - (variant) TypeName: # 113..123 "\t\t\tuint256"
+                                                                  - (variant) ElementaryType: # 113..123 "\t\t\tuint256"
+                                                                      - (variant) UintKeyword: "uint256" # 116..123
+                                                          - (name) Identifier: "a" # 124..125
+                                                          - (value) VariableDeclarationValue: # 125..129 " = 1"
+                                                              - (equal) Equal: "=" # 126..127
+                                                              - (expression) Expression: # 127..129 " 1"
+                                                                  - (variant) DecimalNumberExpression: # 127..129 " 1"
+                                                                      - (literal) DecimalLiteral: "1" # 128..129
+                                                          - (semicolon) Semicolon: ";" # 129..130
+                                              - (close_brace) CloseBrace: "}" # 133..134
+                          - (close_brace) CloseBrace: "}" # 136..137
+          - (item) ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+              - (variant) FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+                  - (function_keyword) FunctionKeyword: "function" # 140..148
+                  - (name) FunctionName: # 148..152 " abc"
+                      - (variant) Identifier: "abc" # 149..152
+                  - (parameters) ParametersDeclaration: # 152..154 "()"
+                      - (open_paren) OpenParen: "(" # 152..153
+                      - (close_paren) CloseParen: ")" # 153..154
+                  - (body) FunctionBody: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
+                      - (variant) Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
+                          - (open_brace) OpenBrace: "{" # 155..156
+                          - (statements) Statements: # 157..207 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n"
+                              - (item) Statement: # 157..174 "\t\tuint256 x = 0;\n"
+                                  - (variant) VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
+                                      - (variable_type) VariableDeclarationType: # 157..166 "\t\tuint256"
+                                          - (variant) TypeName: # 157..166 "\t\tuint256"
+                                              - (variant) ElementaryType: # 157..166 "\t\tuint256"
+                                                  - (variant) UintKeyword: "uint256" # 159..166
+                                      - (name) Identifier: "x" # 167..168
+                                      - (value) VariableDeclarationValue: # 168..172 " = 0"
+                                          - (equal) Equal: "=" # 169..170
+                                          - (expression) Expression: # 170..172 " 0"
+                                              - (variant) DecimalNumberExpression: # 170..172 " 0"
+                                                  - (literal) DecimalLiteral: "0" # 171..172
+                                      - (semicolon) Semicolon: ";" # 172..173
+                              - (item) Statement: # 174..207 "\t\tunchecked { invalid sequence }\n"
+                                  - (variant) UncheckedBlock: # 174..207 "\t\tunchecked { invalid sequence }\n"
+                                      - (unchecked_keyword) UncheckedKeyword: "unchecked" # 176..185
+                                      - (block) Block: # 185..207 " { invalid sequence }\n"
+                                          - (open_brace) OpenBrace: "{" # 186..187
+                                          - (statements) Statements: # 187..205 " invalid sequence "
+                                              - (item) Statement: # 187..205 " invalid sequence "
+                                                  - (variant) VariableDeclarationStatement: # 187..205 " invalid sequence "
+                                                      - (variable_type) VariableDeclarationType: # 187..195 " invalid"
+                                                          - (variant) TypeName: # 187..195 " invalid"
+                                                              - (variant) IdentifierPath: # 187..195 " invalid"
+                                                                  - (item) Identifier: "invalid" # 188..195
+                                                      - (name) Identifier: "sequence" # 196..204
+                                          - SKIPPED: "" # 205..205
+                                          - (close_brace) CloseBrace: "}" # 205..206
+                          - (close_brace) CloseBrace: "}" # 208..209
+      - (close_brace) CloseBrace: "}" # 210..211

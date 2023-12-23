@@ -8,15 +8,25 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ContractKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:1:1]
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:14]
        │
-     1 │ ╭─▶ contract Sample {
-       ┆ ┆   
-     4 │ ├─▶ }
-       │ │      
-       │ ╰────── Error occurred here.
+     2 │ ╭─▶   constructor() public {
+     3 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: "contract Sample {\n  constructor() public {\n  }\n}" # 0..48
+  - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..31 "  constructor"
+          - (item) ContractMember: # 18..31 "  constructor"
+              - (variant) StateVariableDefinition: # 18..31 "  constructor"
+                  - (type_name) TypeName: # 18..31 "  constructor"
+                      - (variant) IdentifierPath: # 18..31 "  constructor"
+                          - (item) Identifier: "constructor" # 20..31
+      - SKIPPED: "() public {\n  }\n" # 31..47
+      - (close_brace) CloseBrace: "}" # 47..48

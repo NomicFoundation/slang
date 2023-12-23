@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {div as /} for Int global;                                                 │ 0..32
+
+Errors: # 1 total
+  - >
+    Error: Expected GlobalKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:26]
+       │
+     1 │ using {div as /} for Int global;
+       │                          ───┬──  
+       │                             ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - UsingDirective: # 0..32 "using {div as /} for Int global;"
+      - (using_keyword) UsingKeyword: "using" # 0..5
+      - (clause) UsingClause: # 5..16 " {div as /}"
+          - (variant) UsingDeconstruction: # 5..16 " {div as /}"
+              - (open_brace) OpenBrace: "{" # 6..7
+              - (symbols) UsingDeconstructionSymbols: # 7..15 "div as /"
+                  - (item) UsingDeconstructionSymbol: # 7..15 "div as /"
+                      - (name) IdentifierPath: # 7..10 "div"
+                          - (item) Identifier: "div" # 7..10
+                      - (alias) UsingAlias: # 10..15 " as /"
+                          - (as_keyword) AsKeyword: "as" # 11..13
+                          - (operator) UsingOperator: # 13..15 " /"
+                              - (variant) Slash: "/" # 14..15
+              - (close_brace) CloseBrace: "}" # 15..16
+      - (for_keyword) ForKeyword: "for" # 17..20
+      - (target) UsingTarget: # 20..24 " Int"
+          - (variant) TypeName: # 20..24 " Int"
+              - (variant) IdentifierPath: # 20..24 " Int"
+                  - (item) Identifier: "Int" # 21..24
+      - SKIPPED: "global" # 25..31
+      - (semicolon) Semicolon: ";" # 31..32

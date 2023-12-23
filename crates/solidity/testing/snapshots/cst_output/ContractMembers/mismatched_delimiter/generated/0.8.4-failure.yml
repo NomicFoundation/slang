@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function someFunc() public {                                                     │ 0..28
+  2  │     {                                                                            │ 29..34
+  3  │         uint256 arg = (1 + 2;                                                    │ 35..64
+  4  │     })                                                                           │ 65..71
+  5  │ }                                                                                │ 72..73
+
+Errors: # 2 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:3:29]
+       │
+     3 │ ╭─▶         uint256 arg = (1 + 2;
+     4 │ ├─▶     })
+       │ │            
+       │ ╰──────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UncheckedKeyword or UnicodeStringLiteral or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:4:6]
+       │
+     4 │     })
+       │      ─┬  
+       │       ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractMembers: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+      - (item) ContractMember: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+          - (variant) FunctionDefinition: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+              - (function_keyword) FunctionKeyword: "function" # 0..8
+              - (name) FunctionName: # 8..17 " someFunc"
+                  - (variant) Identifier: "someFunc" # 9..17
+              - (parameters) ParametersDeclaration: # 17..19 "()"
+                  - (open_paren) OpenParen: "(" # 17..18
+                  - (close_paren) CloseParen: ")" # 18..19
+              - (attributes) FunctionAttributes: # 19..26 " public"
+                  - (item) FunctionAttribute: # 19..26 " public"
+                      - (variant) PublicKeyword: "public" # 20..26
+              - (body) FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                  - (variant) Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                      - (open_brace) OpenBrace: "{" # 27..28
+                      - (statements) Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                          - (item) Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                              - (variant) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                                  - (open_brace) OpenBrace: "{" # 33..34
+                                  - (statements) Statements: # 35..63 "        uint256 arg = (1 + 2"
+                                      - (item) Statement: # 35..63 "        uint256 arg = (1 + 2"
+                                          - (variant) VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
+                                              - (variable_type) VariableDeclarationType: # 35..50 "        uint256"
+                                                  - (variant) TypeName: # 35..50 "        uint256"
+                                                      - (variant) ElementaryType: # 35..50 "        uint256"
+                                                          - (variant) UintKeyword: "uint256" # 43..50
+                                              - (name) Identifier: "arg" # 51..54
+                                              - (value) VariableDeclarationValue: # 54..63 " = (1 + 2"
+                                                  - (equal) Equal: "=" # 55..56
+                                                  - (expression) Expression: # 56..63 " (1 + 2"
+                                                      - (variant) TupleExpression: # 56..63 " (1 + 2"
+                                                          - (open_paren) OpenParen: "(" # 57..58
+                                                          - (items) TupleValues: # 58..63 "1 + 2"
+                                                              - (item) TupleValue: # 58..63 "1 + 2"
+                                                                  - (expression) Expression: # 58..63 "1 + 2"
+                                                                      - (variant) AdditiveExpression: # 58..63 "1 + 2"
+                                                                          - (left_operand) Expression: # 58..59 "1"
+                                                                              - (variant) DecimalNumberExpression: # 58..59 "1"
+                                                                                  - (literal) DecimalLiteral: "1" # 58..59
+                                                                          - (operator) Plus: "+" # 60..61
+                                                                          - (right_operand) Expression: # 61..63 " 2"
+                                                                              - (variant) DecimalNumberExpression: # 61..63 " 2"
+                                                                                  - (literal) DecimalLiteral: "2" # 62..63
+                                  - SKIPPED: ";\n    " # 63..69
+                                  - (close_brace) CloseBrace: "}" # 69..70
+                      - SKIPPED: ")\n" # 70..72
+                      - (close_brace) CloseBrace: "}" # 72..73

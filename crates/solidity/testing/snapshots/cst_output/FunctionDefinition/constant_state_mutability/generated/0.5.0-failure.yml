@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function a() constant {}                                                         │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionDefinition/constant_state_mutability/input.sol:1:13]
+       │
+     1 │ function a() constant {}
+       │             ──────┬─────  
+       │                   ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - FunctionDefinition: # 0..24 "function a() constant {}"
+      - (function_keyword) FunctionKeyword: "function" # 0..8
+      - (name) FunctionName: # 8..10 " a"
+          - (variant) Identifier: "a" # 9..10
+      - (parameters) ParametersDeclaration: # 10..12 "()"
+          - (open_paren) OpenParen: "(" # 10..11
+          - (close_paren) CloseParen: ")" # 11..12
+      - SKIPPED: " constant {}" # 12..24

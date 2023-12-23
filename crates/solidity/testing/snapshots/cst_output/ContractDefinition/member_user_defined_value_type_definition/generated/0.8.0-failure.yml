@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   type Foo is bool;                                                              │ 18..37
+  3  │ }                                                                                │ 38..39
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FallbackKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or ModifierKeyword or PayableKeyword or ReceiveKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword or UsingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:2:3]
+       │
+     2 │   type Foo is bool;
+       │   ─────────┬────────  
+       │            ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - SKIPPED: "type Foo is bool;\n" # 20..38
+      - (close_brace) CloseBrace: "}" # 38..39

@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..3 "int"
-      - (variant) IdentifierPath: # 0..3 "int"
-          - (item) Identifier: "int" # 0..3
+      - (variant) ElementaryType: # 0..3 "int"
+          - (variant) IntKeyword: "int" # 0..3

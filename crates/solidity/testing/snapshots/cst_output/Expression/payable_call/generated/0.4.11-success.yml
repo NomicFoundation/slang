@@ -9,7 +9,8 @@ Tree:
   - Expression: # 0..14 "payable(value)"
       - (variant) FunctionCallExpression: # 0..14 "payable(value)"
           - (operand) Expression: # 0..7 "payable"
-              - (variant) Identifier: "payable" # 0..7
+              - (variant) ElementaryType: # 0..7 "payable"
+                  - (variant) PayableKeyword: "payable" # 0..7
           - (arguments) ArgumentsDeclaration: # 7..14 "(value)"
               - (variant) PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - (open_paren) OpenParen: "(" # 7..8

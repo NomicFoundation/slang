@@ -8,9 +8,7 @@ Errors: []
 Tree:
   - VariableDeclarationStatement: # 0..10 "var z = 0;"
       - (variable_type) VariableDeclarationType: # 0..3 "var"
-          - (variant) TypeName: # 0..3 "var"
-              - (variant) IdentifierPath: # 0..3 "var"
-                  - (item) Identifier: "var" # 0..3
+          - (variant) VarKeyword: "var" # 0..3
       - (name) Identifier: "z" # 4..5
       - (value) VariableDeclarationValue: # 5..9 " = 0"
           - (equal) Equal: "=" # 6..7

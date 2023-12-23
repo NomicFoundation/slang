@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ solidity 0.6.0 - 0.7.0                                                           │ 0..22
+
+Errors: []
+
+Tree:
+  - VersionPragma: # 0..22 "solidity 0.6.0 - 0.7.0"
+      - (solidity_keyword) SolidityKeyword: "solidity" # 0..8
+      - (expressions) VersionPragmaExpressions: # 8..22 " 0.6.0 - 0.7.0"
+          - (item) VersionPragmaExpression: # 8..22 " 0.6.0 - 0.7.0"
+              - (variant) VersionPragmaRangeExpression: # 8..22 " 0.6.0 - 0.7.0"
+                  - (left_operand) VersionPragmaExpression: # 8..14 " 0.6.0"
+                      - VersionPragmaSpecifier: # 8..14 " 0.6.0"
+                          - (item) VersionPragmaValue: "0" # 9..10
+                          - (separator) Period: "." # 10..11
+                          - (item) VersionPragmaValue: "6" # 11..12
+                          - (separator) Period: "." # 12..13
+                          - (item) VersionPragmaValue: "0" # 13..14
+                  - (operator) Minus: "-" # 15..16
+                  - (right_operand) VersionPragmaExpression: # 16..22 " 0.7.0"
+                      - VersionPragmaSpecifier: # 16..22 " 0.7.0"
+                          - (item) VersionPragmaValue: "0" # 17..18
+                          - (separator) Period: "." # 18..19
+                          - (item) VersionPragmaValue: "7" # 19..20
+                          - (separator) Period: "." # 20..21
+                          - (item) VersionPragmaValue: "0" # 21..22

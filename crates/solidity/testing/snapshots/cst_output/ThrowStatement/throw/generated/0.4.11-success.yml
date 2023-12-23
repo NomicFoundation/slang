@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ throw;                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - ThrowStatement: # 0..6 "throw;"
+      - (throw_keyword) ThrowKeyword: "throw" # 0..5
+      - (semicolon) Semicolon: ";" # 5..6

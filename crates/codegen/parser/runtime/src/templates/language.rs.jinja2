@@ -91,6 +91,12 @@ impl Language {
         fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ scanner_code }} }
     {% endfor %}
 
+    // Keyword scanners
+    {%- for keyword_name, code in code.keyword_scanners %}
+        #[allow(clippy::ifs_same_cond)]
+        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> KeywordScan { {{ code }} }
+    {%- endfor %}
+
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
@@ -135,6 +141,9 @@ impl Lexer for Language {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;
+        // Whether we've seen a keyword
+        {# let mut ambiguous = None; #}
+        {# let mut results = [TokenKind::SKIPPED; 2]; #}
 
         macro_rules! longest_match {
             ($( { $kind:ident = $function:ident } )*) => {
@@ -142,6 +151,27 @@ impl Lexer for Language {
                     if self.$function(input) && input.position() > furthest_position {
                         furthest_position = input.position();
                         longest_token = Some(TokenKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+        macro_rules! longest_keyword_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    match self.$function(input) {
+                        KeywordScan::Absent => {/* To do - rollback */},
+                        KeywordScan::Present => {
+                            // Only bump if we're strictly longer?
+                        }
+                        KeywordScan::Reserved if input.position() >= furthest_position => {
+                            furthest_position = input.position();
+                            longest_token = Some(TokenKind::$kind);
+                            // We're running after the identifier and we're checking if it's a reserved keyword
+                            input.set_position(furthest_position);
+                            return longest_token;
+                        }
+                        _ => {}
                     }
                     input.set_position(save);
                 )*
@@ -158,13 +188,15 @@ impl Lexer for Language {
                     }
                     input.set_position(save);
 
-                    {%- for keyword_name, code in context.keyword_scanners %}
-                        let {{ keyword_name | snake_case }} = || { {{ code }} };
-                    {%- endfor %}
-
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}
                             { {{ name }} = {{ name | snake_case }} }
+                        {%- endfor %}
+                    }
+
+                    longest_keyword_match! {
+                        {%- for keyword_name, code in context.keyword_scanners %}
+                            { {{ keyword_name }} = {{ keyword_name | snake_case }} }
                         {%- endfor %}
                     }
                 },

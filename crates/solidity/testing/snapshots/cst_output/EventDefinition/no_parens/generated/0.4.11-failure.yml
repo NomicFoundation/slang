@@ -5,13 +5,17 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EventKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:1:1]
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:1:14]
        │
      1 │ event MyEvent;
-       │ ───────┬───────  
-       │        ╰───────── Error occurred here.
+       │              │ 
+       │              ╰─ Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: "event MyEvent;\n" # 0..15
+  - EventDefinition: # 0..15 "event MyEvent;\n"
+      - (event_keyword) EventKeyword: "event" # 0..5
+      - (name) Identifier: "MyEvent" # 6..13
+      - SKIPPED: "" # 13..13
+      - (semicolon) Semicolon: ";" # 13..14

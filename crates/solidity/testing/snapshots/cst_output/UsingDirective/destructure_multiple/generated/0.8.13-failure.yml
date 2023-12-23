@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {add as +, sub, mul, div as /} for Int global;                             │ 0..52
+
+Errors: # 2 total
+  - >
+    Error: Expected CloseBrace or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:12]
+       │
+     1 │ using {add as +, sub, mul, div as /} for Int global;
+       │            ────────────┬───────────  
+       │                        ╰───────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected GlobalKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:46]
+       │
+     1 │ using {add as +, sub, mul, div as /} for Int global;
+       │                                              ───┬──  
+       │                                                 ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
+      - (using_keyword) UsingKeyword: "using" # 0..5
+      - (clause) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
+          - (variant) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
+              - (open_brace) OpenBrace: "{" # 6..7
+              - (symbols) UsingDeconstructionSymbols: # 7..10 "add"
+                  - (item) UsingDeconstructionSymbol: # 7..10 "add"
+                      - (name) IdentifierPath: # 7..10 "add"
+                          - (item) Identifier: "add" # 7..10
+              - SKIPPED: "as +, sub, mul, div as /" # 11..35
+              - (close_brace) CloseBrace: "}" # 35..36
+      - (for_keyword) ForKeyword: "for" # 37..40
+      - (target) UsingTarget: # 40..44 " Int"
+          - (variant) TypeName: # 40..44 " Int"
+              - (variant) IdentifierPath: # 40..44 " Int"
+                  - (item) Identifier: "Int" # 41..44
+      - SKIPPED: "global" # 45..51
+      - (semicolon) Semicolon: ";" # 51..52

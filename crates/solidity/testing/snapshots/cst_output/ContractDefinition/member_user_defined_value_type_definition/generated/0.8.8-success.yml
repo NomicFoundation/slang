@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   type Foo is bool;                                                              │ 18..37
+  3  │ }                                                                                │ 38..39
+
+Errors: []
+
+Tree:
+  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..38 "  type Foo is bool;\n"
+          - (item) ContractMember: # 18..38 "  type Foo is bool;\n"
+              - (variant) UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
+                  - (type_keyword) TypeKeyword: "type" # 20..24
+                  - (name) Identifier: "Foo" # 25..28
+                  - (is_keyword) IsKeyword: "is" # 29..31
+                  - (value_type) ElementaryType: # 31..36 " bool"
+                      - (variant) BoolKeyword: "bool" # 32..36
+                  - (semicolon) Semicolon: ";" # 36..37
+      - (close_brace) CloseBrace: "}" # 38..39

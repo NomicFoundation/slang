@@ -13,16 +13,16 @@ Tree:
               - (member) TupleMember: # 1..9 "uint32 a"
                   - (variant) TypedTupleMember: # 1..9 "uint32 a"
                       - (type_name) TypeName: # 1..7 "uint32"
-                          - (variant) IdentifierPath: # 1..7 "uint32"
-                              - (item) Identifier: "uint32" # 1..7
+                          - (variant) ElementaryType: # 1..7 "uint32"
+                              - (variant) UintKeyword: "uint32" # 1..7
                       - (name) Identifier: "a" # 8..9
           - (separator) Comma: "," # 9..10
           - (item) TupleDeconstructionElement: # 10..19 " uint32 b"
               - (member) TupleMember: # 10..19 " uint32 b"
                   - (variant) TypedTupleMember: # 10..19 " uint32 b"
                       - (type_name) TypeName: # 10..17 " uint32"
-                          - (variant) IdentifierPath: # 10..17 " uint32"
-                              - (item) Identifier: "uint32" # 11..17
+                          - (variant) ElementaryType: # 10..17 " uint32"
+                              - (variant) UintKeyword: "uint32" # 11..17
                       - (name) Identifier: "b" # 18..19
       - (close_paren) CloseParen: ")" # 19..20
       - (equal) Equal: "=" # 21..22
@@ -48,11 +48,13 @@ Tree:
                                   - (items) TupleValues: # 41..55 "uint32, uint32"
                                       - (item) TupleValue: # 41..47 "uint32"
                                           - (expression) Expression: # 41..47 "uint32"
-                                              - (variant) Identifier: "uint32" # 41..47
+                                              - (variant) ElementaryType: # 41..47 "uint32"
+                                                  - (variant) UintKeyword: "uint32" # 41..47
                                       - (separator) Comma: "," # 47..48
                                       - (item) TupleValue: # 48..55 " uint32"
                                           - (expression) Expression: # 48..55 " uint32"
-                                              - (variant) Identifier: "uint32" # 49..55
+                                              - (variant) ElementaryType: # 48..55 " uint32"
+                                                  - (variant) UintKeyword: "uint32" # 49..55
                                   - (close_paren) CloseParen: ")" # 55..56
                       - (close_paren) CloseParen: ")" # 56..57
       - (semicolon) Semicolon: ";" # 57..58

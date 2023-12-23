@@ -5,13 +5,16 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected UsingKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:1]
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:7]
        │
      1 │ using {add as +, sub, mul, div as /} for Int global;
-       │ ──────────────────────────┬─────────────────────────  
-       │                           ╰─────────────────────────── Error occurred here.
+       │       ──────────────────────┬──────────────────────  
+       │                             ╰──────────────────────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED: "using {add as +, sub, mul, div as /} for Int globa..." # 0..52
+  - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
+      - (using_keyword) UsingKeyword: "using" # 0..5
+      - SKIPPED: "{add as +, sub, mul, div as /} for Int global" # 6..51
+      - (semicolon) Semicolon: ";" # 51..52

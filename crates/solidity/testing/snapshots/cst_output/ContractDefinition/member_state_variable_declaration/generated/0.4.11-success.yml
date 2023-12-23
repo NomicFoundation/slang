@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   uint public a;                                                                 │ 18..34
+  3  │ }                                                                                │ 35..36
+
+Errors: []
+
+Tree:
+  - ContractDefinition: # 0..36 "contract Sample {\n  uint public a;\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..35 "  uint public a;\n"
+          - (item) ContractMember: # 18..35 "  uint public a;\n"
+              - (variant) StateVariableDefinition: # 18..35 "  uint public a;\n"
+                  - (type_name) TypeName: # 18..24 "  uint"
+                      - (variant) ElementaryType: # 18..24 "  uint"
+                          - (variant) UintKeyword: "uint" # 20..24
+                  - (attributes) StateVariableAttributes: # 24..31 " public"
+                      - (item) StateVariableAttribute: # 24..31 " public"
+                          - (variant) PublicKeyword: "public" # 25..31
+                  - (name) Identifier: "a" # 32..33
+                  - (semicolon) Semicolon: ";" # 33..34
+      - (close_brace) CloseBrace: "}" # 35..36

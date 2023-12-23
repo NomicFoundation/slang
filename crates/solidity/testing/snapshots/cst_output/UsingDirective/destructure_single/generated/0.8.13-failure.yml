@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {add} for Int global;                                                      │ 0..27
+
+Errors: # 1 total
+  - >
+    Error: Expected GlobalKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:1:21]
+       │
+     1 │ using {add} for Int global;
+       │                     ───┬──  
+       │                        ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - UsingDirective: # 0..27 "using {add} for Int global;"
+      - (using_keyword) UsingKeyword: "using" # 0..5
+      - (clause) UsingClause: # 5..11 " {add}"
+          - (variant) UsingDeconstruction: # 5..11 " {add}"
+              - (open_brace) OpenBrace: "{" # 6..7
+              - (symbols) UsingDeconstructionSymbols: # 7..10 "add"
+                  - (item) UsingDeconstructionSymbol: # 7..10 "add"
+                      - (name) IdentifierPath: # 7..10 "add"
+                          - (item) Identifier: "add" # 7..10
+              - (close_brace) CloseBrace: "}" # 10..11
+      - (for_keyword) ForKeyword: "for" # 12..15
+      - (target) UsingTarget: # 15..19 " Int"
+          - (variant) TypeName: # 15..19 " Int"
+              - (variant) IdentifierPath: # 15..19 " Int"
+                  - (item) Identifier: "Int" # 16..19
+      - SKIPPED: "global" # 20..26
+      - (semicolon) Semicolon: ";" # 26..27

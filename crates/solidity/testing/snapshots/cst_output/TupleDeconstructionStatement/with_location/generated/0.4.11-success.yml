@@ -11,10 +11,9 @@ Tree:
       - (elements) TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
           - (item) TupleDeconstructionElement: # 1..21 "memory with_location"
               - (member) TupleMember: # 1..21 "memory with_location"
-                  - (variant) TypedTupleMember: # 1..21 "memory with_location"
-                      - (type_name) TypeName: # 1..7 "memory"
-                          - (variant) IdentifierPath: # 1..7 "memory"
-                              - (item) Identifier: "memory" # 1..7
+                  - (variant) UntypedTupleMember: # 1..21 "memory with_location"
+                      - (storage_location) StorageLocation: # 1..7 "memory"
+                          - (variant) MemoryKeyword: "memory" # 1..7
                       - (name) Identifier: "with_location" # 8..21
           - (separator) Comma: "," # 21..22
           - (item) TupleDeconstructionElement: # 22..39 " without_location"

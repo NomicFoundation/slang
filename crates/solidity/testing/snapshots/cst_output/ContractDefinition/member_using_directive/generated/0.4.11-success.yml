@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   using x for *;                                                                 │ 18..34
+  3  │ }                                                                                │ 35..36
+
+Errors: []
+
+Tree:
+  - ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..35 "  using x for *;\n"
+          - (item) ContractMember: # 18..35 "  using x for *;\n"
+              - (variant) UsingDirective: # 18..35 "  using x for *;\n"
+                  - (using_keyword) UsingKeyword: "using" # 20..25
+                  - (clause) UsingClause: # 25..27 " x"
+                      - (variant) IdentifierPath: # 25..27 " x"
+                          - (item) Identifier: "x" # 26..27
+                  - (for_keyword) ForKeyword: "for" # 28..31
+                  - (target) UsingTarget: # 31..33 " *"
+                      - (variant) Asterisk: "*" # 32..33
+                  - (semicolon) Semicolon: ";" # 33..34
+      - (close_brace) CloseBrace: "}" # 35..36
