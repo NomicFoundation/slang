@@ -8464,20 +8464,20 @@ impl Lexer for Language {
         let mut furthest_position = input.position();
         let mut longest_token = None;
 
+        macro_rules! longest_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    if self.$function(input) && input.position() > furthest_position {
+                        furthest_position = input.position();
+                        longest_token = Some(TokenKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+
         match LexCtx::value() {
             LexicalContext::Default => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
                 // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('!') => match input.next() {
@@ -9383,18 +9383,6 @@ impl Lexer for Language {
                 }
             }
             LexicalContext::Pragma => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
                 // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('-') => Some(TokenKind::Minus),
@@ -9448,18 +9436,6 @@ impl Lexer for Language {
                 }
             }
             LexicalContext::Yul => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
                 // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('(') => Some(TokenKind::OpenParen),
