@@ -151,21 +151,14 @@ impl Lexer for Language {
                         };
                     }
 
-                    if let Some(kind) = {{ context.alpha_literal_scanner }} {
-                        // Make sure that this is not the start of an identifier
-                        if !self.identifier_part(input) {
-                            furthest_position = input.position();
-                            longest_token = Some(kind);
-                        }
-                    }
-                    input.set_position(save);
-
-                    if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
+                    // TODO: Handle keywords using a separate keword scanner promotion mechanism
+                    if let Some(kind) = {{ context.literal_scanner }} {
                         furthest_position = input.position();
                         longest_token = Some(kind);
                     }
                     input.set_position(save);
 
+                    {{ context.keyword_scanners }}
 
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}

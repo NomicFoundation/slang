@@ -8478,7 +8478,136 @@ impl Lexer for Language {
                         };
                     }
 
+                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
+                    Some('!') => match input.next() {
+                        Some('=') => Some(TokenKind::BangEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Bang)
+                        }
+                        None => Some(TokenKind::Bang),
+                    },
+                    Some('%') => match input.next() {
+                        Some('=') => Some(TokenKind::PercentEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Percent)
+                        }
+                        None => Some(TokenKind::Percent),
+                    },
+                    Some('&') => match input.next() {
+                        Some('&') => Some(TokenKind::AmpersandAmpersand),
+                        Some('=') => Some(TokenKind::AmpersandEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Ampersand)
+                        }
+                        None => Some(TokenKind::Ampersand),
+                    },
+                    Some('(') => Some(TokenKind::OpenParen),
+                    Some(')') => Some(TokenKind::CloseParen),
+                    Some('*') => match input.next() {
+                        Some('*') => Some(TokenKind::AsteriskAsterisk),
+                        Some('=') => Some(TokenKind::AsteriskEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Asterisk)
+                        }
+                        None => Some(TokenKind::Asterisk),
+                    },
+                    Some('+') => match input.next() {
+                        Some('+') => Some(TokenKind::PlusPlus),
+                        Some('=') => Some(TokenKind::PlusEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Plus)
+                        }
+                        None => Some(TokenKind::Plus),
+                    },
+                    Some(',') => Some(TokenKind::Comma),
+                    Some('-') => match input.next() {
+                        Some('-') => Some(TokenKind::MinusMinus),
+                        Some('=') => Some(TokenKind::MinusEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Minus)
+                        }
+                        None => Some(TokenKind::Minus),
+                    },
+                    Some('.') => Some(TokenKind::Period),
+                    Some('/') => match input.next() {
+                        Some('=') => Some(TokenKind::SlashEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Slash)
+                        }
+                        None => Some(TokenKind::Slash),
+                    },
+                    Some(':') => Some(TokenKind::Colon),
+                    Some(';') => Some(TokenKind::Semicolon),
+                    Some('<') => match input.next() {
+                        Some('<') => match input.next() {
+                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
+                            Some(_) => {
+                                input.undo();
+                                Some(TokenKind::LessThanLessThan)
+                            }
+                            None => Some(TokenKind::LessThanLessThan),
+                        },
+                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::LessThan)
+                        }
+                        None => Some(TokenKind::LessThan),
+                    },
+                    Some('=') => match input.next() {
+                        Some('=') => Some(TokenKind::EqualEqual),
+                        Some('>') => Some(TokenKind::EqualGreaterThan),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Equal)
+                        }
+                        None => Some(TokenKind::Equal),
+                    },
+                    Some('>') => match input.next() {
+                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some('>') => match input.next() {
+                            Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
+                            Some('>') => match input.next() {
+                                Some('=') => {
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
+                                }
+                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
+                            },
+                            Some(_) => {
+                                input.undo();
+                                Some(TokenKind::GreaterThanGreaterThan)
+                            }
+                            None => Some(TokenKind::GreaterThanGreaterThan),
+                        },
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::GreaterThan)
+                        }
+                        None => Some(TokenKind::GreaterThan),
+                    },
+                    Some('?') => Some(TokenKind::QuestionMark),
+                    Some('[') => Some(TokenKind::OpenBracket),
+                    Some(']') => Some(TokenKind::CloseBracket),
+                    Some('^') => match input.next() {
+                        Some('=') => Some(TokenKind::CaretEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Caret)
+                        }
+                        None => Some(TokenKind::Caret),
+                    },
                     Some('a') => match input.next() {
                         Some('b') => scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
                             .then_some(TokenKind::AbstractKeyword),
@@ -9212,149 +9341,6 @@ impl Lexer for Language {
                     Some('y') => {
                         scan_chars!(input, 'e', 'a', 'r', 's').then_some(TokenKind::YearsKeyword)
                     }
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
-
-                if let Some(kind) = match input.next() {
-                    Some('!') => match input.next() {
-                        Some('=') => Some(TokenKind::BangEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Bang)
-                        }
-                        None => Some(TokenKind::Bang),
-                    },
-                    Some('%') => match input.next() {
-                        Some('=') => Some(TokenKind::PercentEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Percent)
-                        }
-                        None => Some(TokenKind::Percent),
-                    },
-                    Some('&') => match input.next() {
-                        Some('&') => Some(TokenKind::AmpersandAmpersand),
-                        Some('=') => Some(TokenKind::AmpersandEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Ampersand)
-                        }
-                        None => Some(TokenKind::Ampersand),
-                    },
-                    Some('(') => Some(TokenKind::OpenParen),
-                    Some(')') => Some(TokenKind::CloseParen),
-                    Some('*') => match input.next() {
-                        Some('*') => Some(TokenKind::AsteriskAsterisk),
-                        Some('=') => Some(TokenKind::AsteriskEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Asterisk)
-                        }
-                        None => Some(TokenKind::Asterisk),
-                    },
-                    Some('+') => match input.next() {
-                        Some('+') => Some(TokenKind::PlusPlus),
-                        Some('=') => Some(TokenKind::PlusEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Plus)
-                        }
-                        None => Some(TokenKind::Plus),
-                    },
-                    Some(',') => Some(TokenKind::Comma),
-                    Some('-') => match input.next() {
-                        Some('-') => Some(TokenKind::MinusMinus),
-                        Some('=') => Some(TokenKind::MinusEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Minus)
-                        }
-                        None => Some(TokenKind::Minus),
-                    },
-                    Some('.') => Some(TokenKind::Period),
-                    Some('/') => match input.next() {
-                        Some('=') => Some(TokenKind::SlashEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Slash)
-                        }
-                        None => Some(TokenKind::Slash),
-                    },
-                    Some(':') => Some(TokenKind::Colon),
-                    Some(';') => Some(TokenKind::Semicolon),
-                    Some('<') => match input.next() {
-                        Some('<') => match input.next() {
-                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::LessThanLessThan)
-                            }
-                            None => Some(TokenKind::LessThanLessThan),
-                        },
-                        Some('=') => Some(TokenKind::LessThanEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::LessThan)
-                        }
-                        None => Some(TokenKind::LessThan),
-                    },
-                    Some('=') => match input.next() {
-                        Some('=') => Some(TokenKind::EqualEqual),
-                        Some('>') => Some(TokenKind::EqualGreaterThan),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Equal)
-                        }
-                        None => Some(TokenKind::Equal),
-                    },
-                    Some('>') => match input.next() {
-                        Some('=') => Some(TokenKind::GreaterThanEqual),
-                        Some('>') => match input.next() {
-                            Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
-                            Some('>') => match input.next() {
-                                Some('=') => {
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
-                                }
-                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
-                            },
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::GreaterThanGreaterThan)
-                            }
-                            None => Some(TokenKind::GreaterThanGreaterThan),
-                        },
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::GreaterThan)
-                        }
-                        None => Some(TokenKind::GreaterThan),
-                    },
-                    Some('?') => Some(TokenKind::QuestionMark),
-                    Some('[') => Some(TokenKind::OpenBracket),
-                    Some(']') => Some(TokenKind::CloseBracket),
-                    Some('^') => match input.next() {
-                        Some('=') => Some(TokenKind::CaretEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Caret)
-                        }
-                        None => Some(TokenKind::Caret),
-                    },
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('|') => match input.next() {
                         Some('=') => Some(TokenKind::BarEqual),
@@ -9409,31 +9395,7 @@ impl Lexer for Language {
                         };
                     }
 
-                if let Some(kind) = match input.next() {
-                    Some('a') => scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r')
-                        .then_some(TokenKind::AbicoderKeyword),
-                    Some('e') => {
-                        scan_chars!(input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
-                            .then_some(TokenKind::ExperimentalKeyword)
-                    }
-                    Some('p') => scan_chars!(input, 'r', 'a', 'g', 'm', 'a')
-                        .then_some(TokenKind::PragmaKeyword),
-                    Some('s') => scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y')
-                        .then_some(TokenKind::SolidityKeyword),
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
-
+                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('-') => Some(TokenKind::Minus),
                     Some('.') => Some(TokenKind::Period),
@@ -9456,6 +9418,16 @@ impl Lexer for Language {
                         None => Some(TokenKind::GreaterThan),
                     },
                     Some('^') => Some(TokenKind::Caret),
+                    Some('a') => scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r')
+                        .then_some(TokenKind::AbicoderKeyword),
+                    Some('e') => {
+                        scan_chars!(input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
+                            .then_some(TokenKind::ExperimentalKeyword)
+                    }
+                    Some('p') => scan_chars!(input, 'r', 'a', 'g', 'm', 'a')
+                        .then_some(TokenKind::PragmaKeyword),
+                    Some('s') => scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y')
+                        .then_some(TokenKind::SolidityKeyword),
                     Some('|') => scan_chars!(input, '|').then_some(TokenKind::BarBar),
                     Some('~') => Some(TokenKind::Tilde),
                     Some(_) => {
@@ -9488,7 +9460,14 @@ impl Lexer for Language {
                         };
                     }
 
+                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
+                    Some('(') => Some(TokenKind::OpenParen),
+                    Some(')') => Some(TokenKind::CloseParen),
+                    Some(',') => Some(TokenKind::Comma),
+                    Some('-') => scan_chars!(input, '>').then_some(TokenKind::MinusGreaterThan),
+                    Some('.') => Some(TokenKind::Period),
+                    Some(':') => scan_chars!(input, '=').then_some(TokenKind::ColonEqual),
                     Some('a') => match input.next() {
                         Some('b') => {
                             if !self.version_is_at_least_0_7_1 {
@@ -10581,27 +10560,6 @@ impl Lexer for Language {
                             None
                         }
                     }
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
-
-                if let Some(kind) = match input.next() {
-                    Some('(') => Some(TokenKind::OpenParen),
-                    Some(')') => Some(TokenKind::CloseParen),
-                    Some(',') => Some(TokenKind::Comma),
-                    Some('-') => scan_chars!(input, '>').then_some(TokenKind::MinusGreaterThan),
-                    Some('.') => Some(TokenKind::Period),
-                    Some(':') => scan_chars!(input, '=').then_some(TokenKind::ColonEqual),
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some(_) => {

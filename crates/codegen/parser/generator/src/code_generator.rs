@@ -44,8 +44,9 @@ pub struct CodeGenerator {
 struct ScannerContext {
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
-    alpha_literal_scanner: String,
-    non_alpha_literal_scanner: String,
+    literal_scanner: String,
+    // TODO:
+    keyword_scanners: String,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -187,8 +188,7 @@ impl GrammarVisitor for CodeGenerator {
             .collect();
 
         for context in self.scanner_contexts.values_mut() {
-            let mut alpha_literal_trie = Trie::new();
-            let mut non_alpha_literal_trie = Trie::new();
+            let mut literal_trie = Trie::new();
 
             // Dr Hackity McHackerson
             // Identifier at the end so it doesn't grab other things.
@@ -203,19 +203,12 @@ impl GrammarVisitor for CodeGenerator {
                     context.compound_scanner_names.push(scanner_name);
                 } else {
                     for literal in literals {
-                        // This is good enough until we switch to a DFA
-                        if literal.chars().next().unwrap().is_alphabetic() {
-                            alpha_literal_trie.insert(literal.as_str(), scanner.clone());
-                        } else {
-                            non_alpha_literal_trie.insert(literal.as_str(), scanner.clone());
-                        }
+                        literal_trie.insert(&literal, scanner.clone());
                     }
                 }
             }
 
-            context.alpha_literal_scanner = alpha_literal_trie.to_scanner_code().to_string();
-            context.non_alpha_literal_scanner =
-                non_alpha_literal_trie.to_scanner_code().to_string();
+            context.literal_scanner = literal_trie.to_scanner_code().to_string();
 
             if have_identifier_scanner {
                 context.compound_scanner_names.push("Identifier");
