@@ -85,8 +85,8 @@ fn definition() {
                                 ]
                                 .into()
                             }
-                        }
-                        .into(),
+                            .into()
+                        },
                         Item::Token {
                             item: TokenItem {
                                 name: "Bar".into(),
@@ -96,8 +96,8 @@ fn definition() {
                                 }]
                                 .into()
                             }
-                        }
-                        .into(),
+                            .into()
+                        },
                         Item::Token {
                             item: TokenItem {
                                 name: "Baz".into(),
@@ -107,8 +107,8 @@ fn definition() {
                                 }]
                                 .into()
                             }
+                            .into()
                         }
-                        .into()
                     ]
                     .into()
                 }],

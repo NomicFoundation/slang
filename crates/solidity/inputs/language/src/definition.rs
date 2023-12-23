@@ -38,7 +38,7 @@ codegen_language_macros::compile!(Language(
                             name = SourceUnit,
                             fields = (members = Optional(reference = SourceUnitMembers))
                         ),
-                        Repeated(name = SourceUnitMembers, repeated = SourceUnitMember),
+                        Repeated(name = SourceUnitMembers, reference = SourceUnitMember),
                         Enum(
                             name = SourceUnitMember,
                             variants = [
@@ -119,7 +119,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = VersionPragmaExpressions,
-                            repeated = VersionPragmaExpression
+                            reference = VersionPragmaExpression
                         ),
                         Precedence(
                             name = VersionPragmaExpression,
@@ -177,7 +177,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = VersionPragmaSpecifier,
-                            separated = VersionPragmaValue,
+                            reference = VersionPragmaValue,
                             separator = Period
                         ),
                         Token(
@@ -260,7 +260,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = ImportDeconstructionSymbols,
-                            separated = ImportDeconstructionSymbol,
+                            reference = ImportDeconstructionSymbol,
                             separator = Comma
                         ),
                         Struct(
@@ -320,7 +320,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = UsingDeconstructionSymbols,
-                            separated = UsingDeconstructionSymbol,
+                            reference = UsingDeconstructionSymbol,
                             separator = Comma,
                             enabled = From("0.8.13")
                         ),
@@ -2007,7 +2007,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = InheritanceTypes,
-                            separated = InheritanceType,
+                            reference = InheritanceType,
                             separator = Comma
                         ),
                         Struct(
@@ -2017,7 +2017,7 @@ codegen_language_macros::compile!(Language(
                                 arguments = Optional(reference = ArgumentsDeclaration)
                             )
                         ),
-                        Repeated(name = ContractMembers, repeated = ContractMember),
+                        Repeated(name = ContractMembers, reference = ContractMember),
                         Enum(
                             name = ContractMember,
                             variants = [
@@ -2071,7 +2071,7 @@ codegen_language_macros::compile!(Language(
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = InterfaceMembers, repeated = ContractMember)
+                        Repeated(name = InterfaceMembers, reference = ContractMember)
                     ]
                 ),
                 Topic(
@@ -2091,7 +2091,7 @@ codegen_language_macros::compile!(Language(
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = LibraryMembers, repeated = ContractMember)
+                        Repeated(name = LibraryMembers, reference = ContractMember)
                     ]
                 ),
                 Topic(
@@ -2111,7 +2111,7 @@ codegen_language_macros::compile!(Language(
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = StructMembers, repeated = StructMember),
+                        Repeated(name = StructMembers, reference = StructMember),
                         Struct(
                             name = StructMember,
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
@@ -2142,7 +2142,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = EnumMembers,
-                            separated = Identifier,
+                            reference = Identifier,
                             separator = Comma
                         )
                     ]
@@ -2183,7 +2183,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = StateVariableAttributes,
-                            repeated = StateVariableAttribute
+                            reference = StateVariableAttribute
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2232,7 +2232,7 @@ codegen_language_macros::compile!(Language(
                                 close_paren = Required(CloseParen)
                             )
                         ),
-                        Separated(name = Parameters, separated = Parameter, separator = Comma),
+                        Separated(name = Parameters, reference = Parameter, separator = Comma),
                         Struct(
                             name = Parameter,
                             fields = (
@@ -2241,7 +2241,7 @@ codegen_language_macros::compile!(Language(
                                 name = Optional(reference = Identifier)
                             )
                         ),
-                        Repeated(name = FunctionAttributes, repeated = FunctionAttribute),
+                        Repeated(name = FunctionAttributes, reference = FunctionAttribute),
                         Enum(
                             name = FunctionAttribute,
                             variants = [
@@ -2279,7 +2279,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = OverridePaths,
-                            separated = IdentifierPath,
+                            reference = IdentifierPath,
                             separator = Comma
                         ),
                         Struct(
@@ -2308,7 +2308,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = ConstructorAttributes,
-                            repeated = ConstructorAttribute,
+                            reference = ConstructorAttribute,
                             enabled = From("0.4.22")
                         ),
                         Enum(
@@ -2333,7 +2333,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = UnnamedFunctionAttributes,
-                            repeated = UnnamedFunctionAttribute,
+                            reference = UnnamedFunctionAttribute,
                             enabled = Till("0.6.0")
                         ),
                         Enum(
@@ -2361,7 +2361,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = FallbackFunctionAttributes,
-                            repeated = FallbackFunctionAttribute,
+                            reference = FallbackFunctionAttribute,
                             enabled = From("0.6.0")
                         ),
                         Enum(
@@ -2389,7 +2389,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = ReceiveFunctionAttributes,
-                            repeated = ReceiveFunctionAttribute,
+                            reference = ReceiveFunctionAttribute,
                             enabled = From("0.6.0")
                         ),
                         Enum(
@@ -2418,7 +2418,7 @@ codegen_language_macros::compile!(Language(
                                 body = Required(FunctionBody)
                             )
                         ),
-                        Repeated(name = ModifierAttributes, repeated = ModifierAttribute),
+                        Repeated(name = ModifierAttributes, reference = ModifierAttribute),
                         Enum(
                             name = ModifierAttribute,
                             variants = [
@@ -2463,7 +2463,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = EventParameters,
-                            separated = EventParameter,
+                            reference = EventParameter,
                             separator = Comma
                         ),
                         Struct(
@@ -2520,7 +2520,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = ErrorParameters,
-                            separated = ErrorParameter,
+                            reference = ErrorParameter,
                             separator = Comma,
                             enabled = From("0.8.4")
                         ),
@@ -2579,7 +2579,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
-                            repeated = FunctionTypeAttribute
+                            reference = FunctionTypeAttribute
                         ),
                         Enum(
                             name = FunctionTypeAttribute,
@@ -2678,7 +2678,7 @@ codegen_language_macros::compile!(Language(
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = Statements, repeated = Statement),
+                        Repeated(name = Statements, reference = Statement),
                         Enum(
                             name = Statement,
                             variants = [
@@ -2743,7 +2743,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = AssemblyFlags,
-                            separated = AsciiStringLiteral,
+                            reference = AsciiStringLiteral,
                             separator = Comma
                         )
                     ]
@@ -2769,7 +2769,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = TupleDeconstructionElements,
-                            separated = TupleDeconstructionElement,
+                            reference = TupleDeconstructionElement,
                             separator = Comma
                         ),
                         Struct(
@@ -2981,7 +2981,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = CatchClauses,
-                            repeated = CatchClause,
+                            reference = CatchClause,
                             enabled = From("0.6.0")
                         ),
                         Struct(
@@ -3391,7 +3391,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = PositionalArguments,
-                            separated = Expression,
+                            reference = Expression,
                             separator = Comma
                         ),
                         Struct(
@@ -3408,7 +3408,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = NamedArgumentGroups,
-                            repeated = NamedArgumentGroup,
+                            reference = NamedArgumentGroup,
                             enabled = Range(from = "0.6.2", till = "0.8.0")
                         ),
                         Struct(
@@ -3425,7 +3425,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = NamedArguments,
-                            separated = NamedArgument,
+                            reference = NamedArgument,
                             separator = Comma
                         ),
                         Struct(
@@ -3476,7 +3476,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = TupleValues,
-                            separated = TupleValue,
+                            reference = TupleValue,
                             separator = Comma
                         ),
                         Struct(
@@ -3497,7 +3497,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = ArrayValues,
-                            separated = Expression,
+                            reference = Expression,
                             separator = Comma
                         )
                     ]
@@ -3664,7 +3664,7 @@ codegen_language_macros::compile!(Language(
                                 )
                             ]
                         ),
-                        Repeated(name = HexStringLiterals, repeated = HexStringLiteral),
+                        Repeated(name = HexStringLiterals, reference = HexStringLiteral),
                         Token(
                             name = HexStringLiteral,
                             definitions = [
@@ -3708,7 +3708,7 @@ codegen_language_macros::compile!(Language(
                                 Range(inclusive_start = 'A', inclusive_end = 'F')
                             ])
                         ),
-                        Repeated(name = AsciiStringLiterals, repeated = AsciiStringLiteral),
+                        Repeated(name = AsciiStringLiterals, reference = AsciiStringLiteral),
                         Token(
                             name = AsciiStringLiteral,
                             definitions = [
@@ -3744,7 +3744,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = UnicodeStringLiterals,
-                            repeated = UnicodeStringLiteral,
+                            reference = UnicodeStringLiteral,
                             enabled = From("0.7.0")
                         ),
                         Token(
@@ -3833,7 +3833,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Separated(
                             name = IdentifierPath,
-                            separated = Identifier,
+                            reference = Identifier,
                             separator = Period
                         ),
                         Token(
@@ -3886,7 +3886,7 @@ codegen_language_macros::compile!(Language(
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = YulStatements, repeated = YulStatement),
+                        Repeated(name = YulStatements, reference = YulStatement),
                         Enum(
                             name = YulStatement,
                             variants = [
@@ -3927,7 +3927,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = YulParameters,
-                            separated = YulIdentifier,
+                            reference = YulIdentifier,
                             separator = Comma
                         ),
                         Struct(
@@ -3939,7 +3939,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = YulReturnVariables,
-                            separated = YulIdentifier,
+                            reference = YulIdentifier,
                             separator = Comma
                         ),
                         Struct(
@@ -4004,7 +4004,7 @@ codegen_language_macros::compile!(Language(
                                 cases = Required(YulSwitchCases)
                             )
                         ),
-                        Repeated(name = YulSwitchCases, repeated = YulSwitchCase),
+                        Repeated(name = YulSwitchCases, reference = YulSwitchCase),
                         Enum(
                             name = YulSwitchCase,
                             variants = [
@@ -4057,17 +4057,17 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = YulArguments,
-                            separated = YulExpression,
+                            reference = YulExpression,
                             separator = Comma
                         ),
                         Separated(
                             name = YulIdentifierPaths,
-                            separated = YulIdentifierPath,
+                            reference = YulIdentifierPath,
                             separator = Comma
                         ),
                         Separated(
                             name = YulIdentifierPath,
-                            separated = YulIdentifier,
+                            reference = YulIdentifier,
                             separator = Period
                         ),
                         Token(

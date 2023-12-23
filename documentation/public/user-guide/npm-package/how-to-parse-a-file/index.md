@@ -63,14 +63,32 @@ Let's do that:
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/reconstruct-source.ts:step-2-assertion"
 ```
 
-### Example 2: List the top-level contracts and their names
+### Example 2: Reading Contracts using Cursors
 
 The `Cursor` type provides procedural-style functions that allow you to navigate the source in a step-by-step manner. In addition to `goToNext`, we can go to the parent, first child, next sibling, etc., as well as nodes with a given kind.
 
-To list the top-level contracts and their names, we need to visit the `ContractDefinition` rule nodes and then their `Identifier` children.
-
-Let's do that:
+Let's start with this piece of solidity source code:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/list-contract-names.ts"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/list-contract-names.ts:step-1-imports"
+
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/list-contract-names.ts:step-2-source"
+```
+
+To list the top-level contracts and their names, we need to visit the `ContractDefinition` rule nodes and then their `Identifier` children:
+
+```{ .ts }
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/list-contract-names.ts:step-3-cursor"
+```
+
+### Example 3: Reading Contracts using AST Types
+
+AST types are a set of TypeScript classes that provide a typed view of the untyped CST nodes.
+You can convert any untyped CST node to its corresponding AST type using their constructors.
+AST types are immutable, and are constructed on the fly, as they are used/accessed for the first time.
+
+Let's try to perform the same task using AST types:
+
+```{ .ts }
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/list-contract-names.ts:step-4-ast"
 ```

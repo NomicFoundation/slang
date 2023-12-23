@@ -1,10 +1,7 @@
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 
-use crate::cargo::CargoWorkspace;
 use crate::commands::Command;
 use crate::paths::PathExtensions;
 
@@ -15,40 +12,12 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
     match run_formatter(file_path, &unformatted) {
         Ok(formatted) => Ok(formatted),
         Err(formatter_error) => {
-            // Try to backup the unformatted version to disk, to be able to debug what went wrong.
-            let backup_error = match backup_raw_file(file_path, &unformatted) {
-                Ok(backup_file_path) => {
-                    anyhow!("The raw unformatted version was backed up to: {backup_file_path:?}")
-                }
-                Err(backup_error) => backup_error.context("Failed to back up unformatted version"),
-            };
+            // Still write the unformatted version to disk, to be able to debug what went wrong:
+            file_path.write_string(unformatted)?;
 
-            Err(formatter_error)
-                .context(backup_error)
-                .with_context(|| format!("Failed to format {file_path:?}"))
+            Err(formatter_error).context(format!("Failed to format {file_path:?}"))
         }
     }
-}
-
-fn backup_raw_file(file_path: &Path, unformatted: &str) -> Result<PathBuf> {
-    let backup_file_path = {
-        let backup_file_hash = {
-            let mut hasher = DefaultHasher::new();
-            unformatted.hash(&mut hasher);
-            hasher.finish().to_string()
-        };
-
-        CargoWorkspace::locate_source_crate("infra_utils")?
-            .join("target/formatter_backup")
-            .join(backup_file_hash)
-            .join(file_path.unwrap_name())
-    };
-
-    std::fs::create_dir_all(backup_file_path.unwrap_parent())?;
-
-    backup_file_path.write_string(unformatted)?;
-
-    Ok(backup_file_path)
 }
 
 fn generate_header(file_path: &Path) -> String {

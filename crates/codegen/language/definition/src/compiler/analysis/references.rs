@@ -114,7 +114,7 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &Vers
 fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablement: &VersionSet) {
     let SpannedRepeatedItem {
         name,
-        repeated,
+        reference,
         enabled,
     } = item;
 
@@ -123,7 +123,7 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
     check_reference(
         analysis,
         Some(name),
-        repeated,
+        reference,
         &enablement,
         &[
             Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
@@ -134,7 +134,7 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
 fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablement: &VersionSet) {
     let SpannedSeparatedItem {
         name,
-        separated,
+        reference,
         separator,
         enabled,
     } = item;
@@ -144,7 +144,7 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablem
     check_reference(
         analysis,
         Some(name),
-        separated,
+        reference,
         &enablement,
         &[
             Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
@@ -169,7 +169,7 @@ fn check_precedence(
     let enablement = update_enablement(analysis, enablement, enabled);
 
     for precedence_expression in precedence_expressions {
-        let SpannedPrecedenceExpression { name: _, operators } = precedence_expression;
+        let SpannedPrecedenceExpression { name: _, operators } = precedence_expression.as_ref();
 
         for operator in operators {
             let SpannedPrecedenceOperator {
@@ -230,8 +230,6 @@ fn check_fields(
                     reference,
                     &enablement,
                     &[
-                        // TODO(#638): remove [Separated] and [Repeated] from here, once they are allowed to be empty.
-                        // Therefore, we ensure we always produce the parent node, even if it has no children.
                         Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
                     ],
                 );
@@ -256,8 +254,8 @@ fn check_trivia_parser(
         | SpannedTriviaParser::Optional { parser } => {
             check_trivia_parser(analysis, parser, enablement);
         }
-        SpannedTriviaParser::Trivia { trivia } => {
-            check_reference(analysis, None, trivia, enablement, &[Trivia]);
+        SpannedTriviaParser::Trivia { reference } => {
+            check_reference(analysis, None, reference, enablement, &[Trivia]);
         }
     };
 }
@@ -376,7 +374,7 @@ fn check_reference(
         );
     }
 
-    let actual_kind: SpannedItemDiscriminants = target.item.as_ref().into();
+    let actual_kind: SpannedItemDiscriminants = target.item.clone().into();
     if !expected_kinds.contains(&actual_kind) {
         analysis.errors.add(
             reference,

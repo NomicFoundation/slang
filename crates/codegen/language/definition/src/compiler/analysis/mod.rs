@@ -23,7 +23,7 @@ pub(crate) struct Analysis {
 
 pub(crate) struct ItemMetadata {
     pub name: Spanned<Identifier>,
-    pub item: Rc<SpannedItem>,
+    pub item: SpannedItem,
 
     pub defined_in: VersionSet,
     pub used_in: VersionSet,
@@ -68,7 +68,7 @@ impl Analysis {
 }
 
 impl SpannedLanguage {
-    fn items(&self) -> impl Iterator<Item = &Rc<SpannedItem>> {
+    fn items(&self) -> impl Iterator<Item = &SpannedItem> {
         return self
             .sections
             .iter()

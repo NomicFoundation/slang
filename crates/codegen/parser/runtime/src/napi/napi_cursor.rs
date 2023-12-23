@@ -132,6 +132,14 @@ impl Cursor {
     }
 
     #[napi(catch_unwind)]
+    pub fn go_to_next_token_with_kind(
+        &mut self,
+        #[napi(ts_arg_type = "kinds.TokenKind")] kind: TokenKind,
+    ) -> bool {
+        self.0.go_to_next_token_with_kind(kind)
+    }
+
+    #[napi(catch_unwind)]
     pub fn go_to_next_token_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
@@ -142,6 +150,14 @@ impl Cursor {
     #[napi(catch_unwind)]
     pub fn go_to_next_rule(&mut self) -> bool {
         self.0.go_to_next_rule()
+    }
+
+    #[napi(catch_unwind)]
+    pub fn go_to_next_rule_with_kind(
+        &mut self,
+        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+    ) -> bool {
+        self.0.go_to_next_rule_with_kind(kind)
     }
 
     #[napi(catch_unwind)]

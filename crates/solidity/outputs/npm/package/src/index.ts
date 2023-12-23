@@ -1,3 +1,4 @@
+export * as ast from "./ast";
 export * as cst from "./cst";
 export * as cursor from "./cursor";
 export * as kinds from "./kinds";

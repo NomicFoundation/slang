@@ -1,5 +1,4 @@
 use std::collections::BTreeSet;
-use std::rc::Rc;
 
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexSet;
@@ -9,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Language {
     pub name: Identifier,
 
@@ -24,20 +23,20 @@ pub struct Language {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Section {
     pub title: String,
     pub topics: Vec<Topic>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Topic {
     pub title: String,
     pub notes_file: Option<String>,
     pub lexical_context: Option<Identifier>,
 
-    pub items: Vec<Rc<Item>>,
+    pub items: Vec<Item>,
 }
 
 impl Language {
@@ -45,12 +44,12 @@ impl Language {
     pub fn items(&self) -> impl Iterator<Item = &Item> {
         self.sections
             .iter()
-            .flat_map(|section| &*section.topics)
-            .flat_map(|topic| topic.items.iter().map(Rc::as_ref))
+            .flat_map(|section| &section.topics)
+            .flat_map(|topic| &topic.items)
     }
 
     /// Returns a flattened iterator over items along with section and topic they belong to.
-    pub fn items_with_section(&self) -> impl Iterator<Item = (&Section, &Topic, &Rc<Item>)> {
+    pub fn items_with_section(&self) -> impl Iterator<Item = (&Section, &Topic, &Item)> {
         self.sections.iter().flat_map(|section| {
             section
                 .topics

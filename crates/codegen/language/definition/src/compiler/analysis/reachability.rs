@@ -64,8 +64,8 @@ fn collect_trivia<'l>(parser: &'l SpannedTriviaParser, acc: &mut Vec<&'l Identif
         | SpannedTriviaParser::Optional { parser } => {
             collect_trivia(parser, acc);
         }
-        SpannedTriviaParser::Trivia { trivia } => {
-            acc.push(trivia);
+        SpannedTriviaParser::Trivia { reference } => {
+            acc.push(reference);
         }
     };
 }
