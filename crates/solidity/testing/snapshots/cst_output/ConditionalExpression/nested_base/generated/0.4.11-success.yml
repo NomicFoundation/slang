@@ -22,7 +22,7 @@ Tree:
               - (close_paren) CloseParen: ")" # 11..12
       - (question_mark) QuestionMark: "?" # 13..14
       - (true_expression) Expression: # 14..19 " true"
-          - (variant) TrueKeyword: "true" # 15..19
+          - (variant) Identifier: "true" # 15..19
       - (colon) Colon: ":" # 20..21
       - (false_expression) Expression: # 21..27 " false"
-          - (variant) FalseKeyword: "false" # 22..27
+          - (variant) Identifier: "false" # 22..27

@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract First {}                                                                │ 0..17
+  2  │                                                                                  │ 18..18
+  3  │                                                                                  │ 19..19
+  4  │ // Newlines both before and after this comment should                            │ 20..73
+  5  │ // be included in the trivia of the second contract.                             │ 74..126
+  6  │                                                                                  │ 127..127
+  7  │                                                                                  │ 128..128
+  8  │ contract Second {}                                                               │ 129..147
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia/input.sol:1:9]
+       │
+     1 │ ╭─▶ contract First {}
+       ┆ ┆   
+     8 │ ├─▶ contract Second {}
+       │ │                        
+       │ ╰──────────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
+      - (members) SourceUnitMembers: # 0..8 "contract"
+          - (item) SourceUnitMember: # 0..8 "contract"
+              - (variant) ConstantDefinition: # 0..8 "contract"
+                  - (type_name) TypeName: # 0..8 "contract"
+                      - (variant) IdentifierPath: # 0..8 "contract"
+                          - (item) Identifier: "contract" # 0..8
+      - SKIPPED: " First {}\n\n\n// Newlines both before and after this..." # 8..148

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ import { x as y } from "foo";                                                    │ 0..29
+
+Errors: # 1 total
+  - >
+    Error: Expected ImportKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_single/input.sol:1:1]
+       │
+     1 │ import { x as y } from "foo";
+       │ ──────────────┬──────────────  
+       │               ╰──────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: 'import { x as y } from "foo";' # 0..29

@@ -5,15 +5,7 @@ Source: >
   2  │ throw invalid ;                                                                  │ 1..16
   3  │ { 1 * 2; 3 * b invalid; }                                                        │ 17..42
 
-Errors: # 2 total
-  - >
-    Error: Expected Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Statements/invalid_termination/input.sol:2:7]
-       │
-     2 │ throw invalid ;
-       │       ────┬───  
-       │           ╰───── Error occurred here.
-    ───╯
+Errors: # 1 total
   - >
     Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/Statements/invalid_termination/input.sol:3:16]
@@ -26,9 +18,12 @@ Errors: # 2 total
 Tree:
   - Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
       - (item) Statement: # 0..17 "\nthrow invalid ;\n"
-          - (variant) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
-              - (throw_keyword) ThrowKeyword: "throw" # 1..6
-              - SKIPPED: "invalid " # 7..15
+          - (variant) VariableDeclarationStatement: # 0..17 "\nthrow invalid ;\n"
+              - (variable_type) VariableDeclarationType: # 0..6 "\nthrow"
+                  - (variant) TypeName: # 0..6 "\nthrow"
+                      - (variant) IdentifierPath: # 0..6 "\nthrow"
+                          - (item) Identifier: "throw" # 1..6
+              - (name) Identifier: "invalid" # 7..14
               - (semicolon) Semicolon: ";" # 15..16
       - (item) Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
           - (variant) Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"

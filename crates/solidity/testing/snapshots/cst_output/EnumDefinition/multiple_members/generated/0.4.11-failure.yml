@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ enum Foo {                                                                       │ 0..10
+  2  │     Bar1,                                                                        │ 11..20
+  3  │     Bar2,                                                                        │ 21..30
+  4  │     Bar3                                                                         │ 31..39
+  5  │ }                                                                                │ 40..41
+
+Errors: # 1 total
+  - >
+    Error: Expected EnumKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/EnumDefinition/multiple_members/input.sol:1:1]
+       │
+     1 │ ╭─▶ enum Foo {
+       ┆ ┆   
+     5 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" # 0..41

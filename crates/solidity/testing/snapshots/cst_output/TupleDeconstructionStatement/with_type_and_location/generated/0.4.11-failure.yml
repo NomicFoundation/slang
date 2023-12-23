@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (bool memory x, bool storage y) = rhs;                                           │ 0..38
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type_and_location/input.sol:1:14]
+       │
+     1 │ (bool memory x, bool storage y) = rhs;
+       │              ────────┬────────  
+       │                      ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - TupleDeconstructionStatement: # 0..38 "(bool memory x, bool storage y) = rhs;"
+      - (open_paren) OpenParen: "(" # 0..1
+      - (elements) TupleDeconstructionElements: # 1..12 "bool memory"
+          - (item) TupleDeconstructionElement: # 1..12 "bool memory"
+              - (member) TupleMember: # 1..12 "bool memory"
+                  - (variant) TypedTupleMember: # 1..12 "bool memory"
+                      - (type_name) TypeName: # 1..5 "bool"
+                          - (variant) IdentifierPath: # 1..5 "bool"
+                              - (item) Identifier: "bool" # 1..5
+                      - (name) Identifier: "memory" # 6..12
+      - SKIPPED: "x, bool storage y" # 13..30
+      - (close_paren) CloseParen: ")" # 30..31
+      - (equal) Equal: "=" # 32..33
+      - (expression) Expression: # 33..37 " rhs"
+          - (variant) Identifier: "rhs" # 34..37
+      - (semicolon) Semicolon: ";" # 37..38

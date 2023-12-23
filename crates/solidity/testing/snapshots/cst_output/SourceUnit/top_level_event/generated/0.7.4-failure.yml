@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event E1(uint256 value);                                                         │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:1:7]
+       │
+     1 │ event E1(uint256 value);
+       │       ────────┬────────  
+       │               ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit: # 0..25 "event E1(uint256 value);\n"
+      - (members) SourceUnitMembers: # 0..25 "event E1(uint256 value);\n"
+          - (item) SourceUnitMember: # 0..25 "event E1(uint256 value);\n"
+              - (variant) ConstantDefinition: # 0..25 "event E1(uint256 value);\n"
+                  - (type_name) TypeName: # 0..5 "event"
+                      - (variant) IdentifierPath: # 0..5 "event"
+                          - (item) Identifier: "event" # 0..5
+                  - SKIPPED: "E1(uint256 value)" # 6..23
+                  - (semicolon) Semicolon: ";" # 23..24

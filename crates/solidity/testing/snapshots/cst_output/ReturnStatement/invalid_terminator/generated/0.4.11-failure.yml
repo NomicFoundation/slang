@@ -7,30 +7,15 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ReturnStatement/invalid_terminator/input.sol:1:21]
+    Error: Expected ReturnKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ReturnStatement/invalid_terminator/input.sol:1:1]
        │
      1 │ ╭─▶ return a + 2 * some invalid tokens
-     2 │ ├─▶ 
-       │ │      
-       │ ╰────── Error occurred here.
+       ┆ ┆   
+     3 │ ├─▶ ;
+       │ │       
+       │ ╰─────── Error occurred here.
     ───╯
 
 Tree:
-  - ReturnStatement: # 0..38 "return a + 2 * some invalid tokens\n\n;\n"
-      - (return_keyword) ReturnKeyword: "return" # 0..6
-      - (expression) Expression: # 6..19 " a + 2 * some"
-          - (variant) AdditiveExpression: # 6..19 " a + 2 * some"
-              - (left_operand) Expression: # 6..8 " a"
-                  - (variant) Identifier: "a" # 7..8
-              - (operator) Plus: "+" # 9..10
-              - (right_operand) Expression: # 10..19 " 2 * some"
-                  - (variant) MultiplicativeExpression: # 10..19 " 2 * some"
-                      - (left_operand) Expression: # 10..12 " 2"
-                          - (variant) DecimalNumberExpression: # 10..12 " 2"
-                              - (literal) DecimalLiteral: "2" # 11..12
-                      - (operator) Asterisk: "*" # 13..14
-                      - (right_operand) Expression: # 14..19 " some"
-                          - (variant) Identifier: "some" # 15..19
-      - SKIPPED: "invalid tokens\n\n" # 20..36
-      - (semicolon) Semicolon: ";" # 36..37
+  - SKIPPED: "return a + 2 * some invalid tokens\n\n;\n" # 0..38

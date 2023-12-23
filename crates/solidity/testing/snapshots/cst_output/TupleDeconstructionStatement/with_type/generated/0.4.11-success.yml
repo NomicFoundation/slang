@@ -13,8 +13,8 @@ Tree:
               - (member) TupleMember: # 1..15 "bool with_type"
                   - (variant) TypedTupleMember: # 1..15 "bool with_type"
                       - (type_name) TypeName: # 1..5 "bool"
-                          - (variant) ElementaryType: # 1..5 "bool"
-                              - (variant) BoolKeyword: "bool" # 1..5
+                          - (variant) IdentifierPath: # 1..5 "bool"
+                              - (item) Identifier: "bool" # 1..5
                       - (name) Identifier: "with_type" # 6..15
           - (separator) Comma: "," # 15..16
           - (item) TupleDeconstructionElement: # 16..29 " without_type"

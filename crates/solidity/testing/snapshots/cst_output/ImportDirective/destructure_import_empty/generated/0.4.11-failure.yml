@@ -6,24 +6,14 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:2:9]
+    Error: Expected ImportKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:1:1]
        │
-     2 │ import {} from "foo";
-       │         │ 
-       │         ╰─ Error occurred here.
+     1 │ ╭─▶ // Empty imports are not valid
+     2 │ ├─▶ import {} from "foo";
+       │ │                           
+       │ ╰─────────────────────────── Error occurred here.
     ───╯
 
 Tree:
-  - ImportDirective: # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
-      - LeadingTrivia: # 0..31 "// Empty imports are not valid\n"
-          - SingleLineComment: "// Empty imports are not valid" # 0..30
-      - (import_keyword) ImportKeyword: "import" # 31..37
-      - (clause) ImportClause: # 37..51 ' {} from "foo"'
-          - (variant) ImportDeconstruction: # 37..51 ' {} from "foo"'
-              - (open_brace) OpenBrace: "{" # 38..39
-              - SKIPPED: "" # 39..39
-              - (close_brace) CloseBrace: "}" # 39..40
-              - (from_keyword) FromKeyword: "from" # 41..45
-              - (path) AsciiStringLiteral: '"foo"' # 46..51
-      - (semicolon) Semicolon: ";" # 51..52
+  - SKIPPED: '// Empty imports are not valid\nimport {} from "foo...' # 0..53

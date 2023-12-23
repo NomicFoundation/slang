@@ -1,8 +1,9 @@
 use codegen_grammar::{
     KeywordScannerDefinitionNode, KeywordScannerDefinitionRef, ScannerDefinitionNode,
 };
+use inflector::Inflector;
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
 
 use crate::parser_definition::VersionQualityRangeVecExtensions;
 use crate::scanner_definition::ScannerDefinitionNodeExtensions;
@@ -26,7 +27,7 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                 quote! {
                     if !#scanner {
                         KeywordScan::Absent
-                    } if #reserved_cond {
+                    } else if #reserved_cond {
                         KeywordScan::Reserved
                     } else if #enabled_cond {
                         // The keyword is enabled (reachable in this version), so is contextually present
@@ -39,10 +40,13 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
             })
             .collect();
 
+        let underlying_scanner = format_ident!("{}", ident_scanner.to_snake_case());
         quote! {
             // First scan using the underlying scanner (for completeness) and then check if it
             // matches the keyword (and whether it's reserved)
-            let scanned = self.#ident_scanner(input);
+            let save = input.position();
+            let scanned = self.#underlying_scanner(input);
+            input.set_position(save);
             if !scanned {
                 return KeywordScan::Absent;
             }

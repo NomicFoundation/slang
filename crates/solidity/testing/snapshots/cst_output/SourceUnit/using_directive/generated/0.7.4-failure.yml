@@ -1,0 +1,92 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                    │ 0..31
+  2  │ pragma solidity ^0.8.0;                                                            │ 32..55
+  3  │                                                                                    │ 56..56
+  4  │ using EnvelopeUtils for Envelope global;                                           │ 57..97
+  5  │ using TransactionUtils for Transaction global;                                     │ 98..144
+  6  │                                                                                    │ 145..145
+  7  │ /**                                                                                │ 146..149
+  8  │  * @notice Object with the necessary information to define a unique envelope       │ 150..226
+  9  │  * @param nonce sequential (unique) numeric indicator of the Envelope creation     │ 227..305
+  10 │  * @param origin address that originated the bridging of a message                 │ 306..372
+  11 │  * @param destination address where the message needs to be sent                   │ 373..437
+  12 │  * @param originChainId id of the chain where the message originated               │ 438..506
+  13 │  * @param destinationChainId id of the chain where the message needs to be bridged │ 507..589
+  14 │  * @param message bytes that needs to be bridged                                   │ 590..638
+  15 │  */                                                                                │ 639..642
+  16 │ struct Envelope {                                                                  │ 643..660
+  17 │   uint256 nonce;                                                                   │ 661..677
+  18 │   address origin;                                                                  │ 678..695
+  19 │   address destination;                                                             │ 696..718
+  20 │   uint256 originChainId;                                                           │ 719..743
+  21 │   uint256 destinationChainId;                                                      │ 744..773
+  22 │   bytes message;                                                                   │ 774..790
+  23 │ }                                                                                  │ 791..792
+
+Errors: # 4 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:2:8]
+       │
+     2 │ pragma solidity ^0.8.0;
+       │        ───────┬───────  
+       │               ╰───────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:7]
+       │
+     4 │ using EnvelopeUtils for Envelope global;
+       │       ────────────────┬────────────────  
+       │                       ╰────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:5:7]
+       │
+     5 │ using TransactionUtils for Transaction global;
+       │       ───────────────────┬───────────────────  
+       │                          ╰───────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:16:1]
+        │
+     16 │ ╭─▶ struct Envelope {
+        ┆ ┆   
+     23 │ ├─▶ }
+        │ │       
+        │ ╰─────── Error occurred here.
+    ────╯
+
+Tree:
+  - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - (members) SourceUnitMembers: # 0..145 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+          - (item) SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+              - (variant) ConstantDefinition: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+                  - (type_name) TypeName: # 0..38 "// SPDX-License-Identifier: MIT\npragma"
+                      - (variant) IdentifierPath: # 0..38 "// SPDX-License-Identifier: MIT\npragma"
+                          - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
+                              - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+                          - (item) Identifier: "pragma" # 32..38
+                  - SKIPPED: "solidity ^0.8.0" # 39..54
+                  - (semicolon) Semicolon: ";" # 54..55
+          - (item) SourceUnitMember: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
+              - (variant) ConstantDefinition: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
+                  - (type_name) TypeName: # 56..62 "\nusing"
+                      - (variant) IdentifierPath: # 56..62 "\nusing"
+                          - (item) Identifier: "using" # 57..62
+                  - SKIPPED: "EnvelopeUtils for Envelope global" # 63..96
+                  - (semicolon) Semicolon: ";" # 96..97
+          - (item) SourceUnitMember: # 98..145 "using TransactionUtils for Transaction global;\n"
+              - (variant) ConstantDefinition: # 98..145 "using TransactionUtils for Transaction global;\n"
+                  - (type_name) TypeName: # 98..103 "using"
+                      - (variant) IdentifierPath: # 98..103 "using"
+                          - (item) Identifier: "using" # 98..103
+                  - SKIPPED: "TransactionUtils for Transaction global" # 104..143
+                  - (semicolon) Semicolon: ";" # 143..144
+      - EndOfFileTrivia: # 145..643 "\n/**\n * @notice Object with the necessary informat..."
+          - MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
+      - SKIPPED: "struct Envelope {\n  uint256 nonce;\n  address origi..." # 643..793

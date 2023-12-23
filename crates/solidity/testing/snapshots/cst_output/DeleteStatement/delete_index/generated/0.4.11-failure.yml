@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ delete foo[bar];                                                                 │ 0..16
+
+Errors: # 1 total
+  - >
+    Error: Expected DeleteKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/DeleteStatement/delete_index/input.sol:1:1]
+       │
+     1 │ delete foo[bar];
+       │ ────────┬───────  
+       │         ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "delete foo[bar];" # 0..16

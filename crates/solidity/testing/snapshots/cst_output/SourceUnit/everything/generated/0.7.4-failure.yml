@@ -1,0 +1,143 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity 0.0.0;                                                           │ 0..22
+  2  │                                                                                  │ 23..23
+  3  │ import "foo.sol";                                                                │ 24..41
+  4  │                                                                                  │ 42..42
+  5  │ using A for B;                                                                   │ 43..57
+  6  │                                                                                  │ 58..58
+  7  │ contract C { }                                                                   │ 59..73
+  8  │                                                                                  │ 74..74
+  9  │ interface I { }                                                                  │ 75..90
+  10 │                                                                                  │ 91..91
+  11 │ library L { }                                                                    │ 92..105
+  12 │                                                                                  │ 106..106
+  13 │ struct S { }                                                                     │ 107..119
+  14 │                                                                                  │ 120..120
+  15 │ enum E { }                                                                       │ 121..131
+  16 │                                                                                  │ 132..132
+  17 │ uint32 constant x = 0;                                                           │ 133..155
+  18 │                                                                                  │ 156..156
+  19 │ function f() public { }                                                          │ 157..180
+  20 │                                                                                  │ 181..181
+  21 │ error E1(string);                                                                │ 182..199
+  22 │                                                                                  │ 200..200
+  23 │ type T is bool;                                                                  │ 201..216
+  24 │                                                                                  │ 217..217
+  25 │ event E1(uint256 value);                                                         │ 218..242
+
+Errors: # 7 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:1:8]
+       │
+     1 │ pragma solidity 0.0.0;
+       │        ───────┬──────  
+       │               ╰──────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:3:8]
+       │
+     3 │ import "foo.sol";
+       │        ────┬────  
+       │            ╰────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:5:7]
+       │
+     5 │ using A for B;
+       │       ───┬───  
+       │          ╰───── Error occurred here.
+    ───╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:7:10]
+        │
+      7 │ ╭─▶ contract C { }
+        ┆ ┆   
+     17 │ ├─▶ uint32 constant x = 0;
+        │ │                            
+        │ ╰──────────────────────────── Error occurred here.
+    ────╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:19:10]
+        │
+     19 │ ╭─▶ function f() public { }
+        ┆ ┆   
+     21 │ ├─▶ error E1(string);
+        │ │                       
+        │ ╰─────────────────────── Error occurred here.
+    ────╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:23:6]
+        │
+     23 │ type T is bool;
+        │      ────┬────  
+        │          ╰────── Error occurred here.
+    ────╯
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:25:7]
+        │
+     25 │ event E1(uint256 value);
+        │       ────────┬────────  
+        │               ╰────────── Error occurred here.
+    ────╯
+
+Tree:
+  - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - (members) SourceUnitMembers: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+          - (item) SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
+              - (variant) ConstantDefinition: # 0..23 "pragma solidity 0.0.0;\n"
+                  - (type_name) TypeName: # 0..6 "pragma"
+                      - (variant) IdentifierPath: # 0..6 "pragma"
+                          - (item) Identifier: "pragma" # 0..6
+                  - SKIPPED: "solidity 0.0.0" # 7..21
+                  - (semicolon) Semicolon: ";" # 21..22
+          - (item) SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
+              - (variant) ConstantDefinition: # 23..42 '\nimport "foo.sol";\n'
+                  - (type_name) TypeName: # 23..30 "\nimport"
+                      - (variant) IdentifierPath: # 23..30 "\nimport"
+                          - (item) Identifier: "import" # 24..30
+                  - SKIPPED: '"foo.sol"' # 31..40
+                  - (semicolon) Semicolon: ";" # 40..41
+          - (item) SourceUnitMember: # 42..58 "\nusing A for B;\n"
+              - (variant) ConstantDefinition: # 42..58 "\nusing A for B;\n"
+                  - (type_name) TypeName: # 42..48 "\nusing"
+                      - (variant) IdentifierPath: # 42..48 "\nusing"
+                          - (item) Identifier: "using" # 43..48
+                  - SKIPPED: "A for B" # 49..56
+                  - (semicolon) Semicolon: ";" # 56..57
+          - (item) SourceUnitMember: # 58..156 "\ncontract C { }\n\ninterface I { }\n\nlibrary L { }\n\ns..."
+              - (variant) ConstantDefinition: # 58..156 "\ncontract C { }\n\ninterface I { }\n\nlibrary L { }\n\ns..."
+                  - (type_name) TypeName: # 58..67 "\ncontract"
+                      - (variant) IdentifierPath: # 58..67 "\ncontract"
+                          - (item) Identifier: "contract" # 59..67
+                  - SKIPPED: "C { }\n\ninterface I { }\n\nlibrary L { }\n\nstruct S { ..." # 68..154
+                  - (semicolon) Semicolon: ";" # 154..155
+          - (item) SourceUnitMember: # 156..200 "\nfunction f() public { }\n\nerror E1(string);\n"
+              - (variant) ConstantDefinition: # 156..200 "\nfunction f() public { }\n\nerror E1(string);\n"
+                  - (type_name) TypeName: # 156..165 "\nfunction"
+                      - (variant) IdentifierPath: # 156..165 "\nfunction"
+                          - (item) Identifier: "function" # 157..165
+                  - SKIPPED: "f() public { }\n\nerror E1(string)" # 166..198
+                  - (semicolon) Semicolon: ";" # 198..199
+          - (item) SourceUnitMember: # 200..217 "\ntype T is bool;\n"
+              - (variant) ConstantDefinition: # 200..217 "\ntype T is bool;\n"
+                  - (type_name) TypeName: # 200..205 "\ntype"
+                      - (variant) IdentifierPath: # 200..205 "\ntype"
+                          - (item) Identifier: "type" # 201..205
+                  - SKIPPED: "T is bool" # 206..215
+                  - (semicolon) Semicolon: ";" # 215..216
+          - (item) SourceUnitMember: # 217..243 "\nevent E1(uint256 value);\n"
+              - (variant) ConstantDefinition: # 217..243 "\nevent E1(uint256 value);\n"
+                  - (type_name) TypeName: # 217..223 "\nevent"
+                      - (variant) IdentifierPath: # 217..223 "\nevent"
+                          - (item) Identifier: "event" # 218..223
+                  - SKIPPED: "E1(uint256 value)" # 224..241
+                  - (semicolon) Semicolon: ";" # 241..242

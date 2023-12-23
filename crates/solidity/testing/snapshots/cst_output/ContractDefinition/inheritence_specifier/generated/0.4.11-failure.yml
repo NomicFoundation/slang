@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample is Foo, Bar(1, 2), Baz {}                                        │ 0..41
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/inheritence_specifier/input.sol:1:1]
+       │
+     1 │ contract Sample is Foo, Bar(1, 2), Baz {}
+       │ ────────────────────┬────────────────────  
+       │                     ╰────────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "contract Sample is Foo, Bar(1, 2), Baz {}" # 0..41

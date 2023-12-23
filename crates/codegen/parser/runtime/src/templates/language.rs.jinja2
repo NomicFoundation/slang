@@ -158,7 +158,9 @@ impl Lexer for Language {
                     }
                     input.set_position(save);
 
-                    {{ context.keyword_scanners }}
+                    {%- for keyword_name, code in context.keyword_scanners %}
+                        let {{ keyword_name | snake_case }} = || { {{ code }} };
+                    {%- endfor %}
 
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}

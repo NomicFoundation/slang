@@ -7,26 +7,15 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Equal or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:2:15]
+    Error: Expected ContractKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:1:1]
        │
-     2 │   error Error1();
-       │               ─┬  
-       │                ╰── Error occurred here.
+     1 │ ╭─▶ contract Sample {
+       ┆ ┆   
+     3 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..37 "contract Sample {\n  error Error1();\n}"
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..36 "  error Error1();\n"
-          - (item) ContractMember: # 18..36 "  error Error1();\n"
-              - (variant) StateVariableDefinition: # 18..36 "  error Error1();\n"
-                  - (type_name) TypeName: # 18..25 "  error"
-                      - (variant) IdentifierPath: # 18..25 "  error"
-                          - (item) Identifier: "error" # 20..25
-                  - (name) Identifier: "Error1" # 26..32
-                  - SKIPPED: "()" # 32..34
-                  - (semicolon) Semicolon: ";" # 34..35
-      - (close_brace) CloseBrace: "}" # 36..37
+  - SKIPPED: "contract Sample {\n  error Error1();\n}" # 0..37

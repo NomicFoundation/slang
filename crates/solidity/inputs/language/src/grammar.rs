@@ -920,8 +920,8 @@ impl IntoParserDefNode for GrammarElement {
             GrammarElement::ScannerDefinition(parser) => {
                 ParserDefinitionNode::ScannerDefinition(parser)
             }
-            GrammarElement::KeywordScannerDefinition(_) => {
-                unimplemented!("IntoParserDefNode for KeywordScannerDefinition")
+            GrammarElement::KeywordScannerDefinition(scanner) => {
+                ParserDefinitionNode::KeywordScannerDefinition(scanner)
             }
             GrammarElement::TriviaParserDefinition(parser) => {
                 ParserDefinitionNode::TriviaParserDefinition(parser)

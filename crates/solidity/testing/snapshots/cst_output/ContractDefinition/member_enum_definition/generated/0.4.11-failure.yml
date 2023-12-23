@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   enum State {                                                                   │ 18..32
+  3  │     A,                                                                           │ 33..39
+  4  │     B,                                                                           │ 40..46
+  5  │     C                                                                            │ 47..52
+  6  │   }                                                                              │ 53..56
+  7  │ }                                                                                │ 57..58
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_enum_definition/input.sol:1:1]
+       │
+     1 │ ╭─▶ contract Sample {
+       ┆ ┆   
+     7 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." # 0..58

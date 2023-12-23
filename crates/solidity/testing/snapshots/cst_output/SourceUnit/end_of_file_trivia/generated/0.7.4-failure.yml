@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract X { }                                                                   │ 0..14
+  2  │                                                                                  │ 15..19
+  3  │ // spaces before this                                                            │ 20..41
+  4  │                                                                                  │ 42..42
+  5  │ /* new lines after this */                                                       │ 43..69
+  6  │                                                                                  │ 70..70
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia/input.sol:1:9]
+       │
+     1 │ ╭─▶ contract X { }
+       ┆ ┆   
+     6 │ ├─▶ 
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit: # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
+      - (members) SourceUnitMembers: # 0..8 "contract"
+          - (item) SourceUnitMember: # 0..8 "contract"
+              - (variant) ConstantDefinition: # 0..8 "contract"
+                  - (type_name) TypeName: # 0..8 "contract"
+                      - (variant) IdentifierPath: # 0..8 "contract"
+                          - (item) Identifier: "contract" # 0..8
+      - SKIPPED: " X { }\n    \n// spaces before this\n\n/* new lines af..." # 8..71

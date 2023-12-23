@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ interface ICounter {                                                             │ 0..20
+  2  │     // returns the current count                                                 │ 21..53
+  3  │     function count() external view returns (uint);                               │ 54..104
+  4  │                                                                                  │ 105..105
+  5  │     // increments the counter                                                    │ 106..135
+  6  │     function increment() external;                                               │ 136..170
+  7  │ }                                                                                │ 171..172
+
+Errors: # 1 total
+  - >
+    Error: Expected InterfaceKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/InterfaceDefinition/sample_counter/input.sol:1:1]
+       │
+     1 │ ╭─▶ interface ICounter {
+       ┆ ┆   
+     7 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "interface ICounter {\n    // returns the current co..." # 0..172

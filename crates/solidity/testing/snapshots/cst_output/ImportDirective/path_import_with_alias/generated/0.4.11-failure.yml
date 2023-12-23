@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ import "foo" as bar;                                                             │ 0..20
+
+Errors: # 1 total
+  - >
+    Error: Expected ImportKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import_with_alias/input.sol:1:1]
+       │
+     1 │ import "foo" as bar;
+       │ ──────────┬─────────  
+       │           ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: 'import "foo" as bar;' # 0..20

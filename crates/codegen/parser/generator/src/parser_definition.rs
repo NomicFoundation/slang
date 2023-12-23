@@ -5,6 +5,7 @@ use codegen_grammar::{
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+use semver::Version;
 
 pub trait ParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
@@ -117,6 +118,21 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::ScannerDefinition(scanner_definition) => {
+                let kind = format_ident!("{name}", name = scanner_definition.name());
+
+                let parse_token = if is_trivia {
+                    format_ident!("parse_token")
+                } else {
+                    format_ident!("parse_token_with_trivia")
+                };
+
+                quote! {
+                    self.#parse_token::<#lex_ctx>(input, TokenKind::#kind)
+                }
+            }
+
+            // Keyword scanner uses the promotion inside the parse_token
+            Self::KeywordScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
                 let parse_token = if is_trivia {
@@ -294,6 +310,15 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
         if self.is_empty() {
             quote!(true)
         } else {
+            // Optimize for legibility; return `false` for "never enabled"
+            match self.as_slice() {
+                [VersionQualityRange {
+                    from,
+                    quality: VersionQuality::Removed,
+                }] if from == &Version::new(0, 0, 0) => return quote!(false),
+                _ => {}
+            }
+
             let flags = self.iter().map(|vqr| {
                 let flag = format_ident!(
                     "version_is_at_least_{v}",

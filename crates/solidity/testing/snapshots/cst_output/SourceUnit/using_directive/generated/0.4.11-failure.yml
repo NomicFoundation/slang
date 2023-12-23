@@ -28,9 +28,9 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:2:1]
         │
-      4 │ ╭─▶ using EnvelopeUtils for Envelope global;
+      2 │ ╭─▶ pragma solidity ^0.8.0;
         ┆ ┆   
      23 │ ├─▶ }
         │ │       
@@ -39,25 +39,6 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-      - (members) SourceUnitMembers: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-          - (item) SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-              - (variant) PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-                  - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
-                      - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
-                  - (pragma_keyword) PragmaKeyword: "pragma" # 32..38
-                  - (pragma) Pragma: # 38..54 " solidity ^0.8.0"
-                      - (variant) VersionPragma: # 38..54 " solidity ^0.8.0"
-                          - (solidity_keyword) SolidityKeyword: "solidity" # 39..47
-                          - (expressions) VersionPragmaExpressions: # 47..54 " ^0.8.0"
-                              - (item) VersionPragmaExpression: # 47..54 " ^0.8.0"
-                                  - (variant) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
-                                      - (operator) Caret: "^" # 48..49
-                                      - (operand) VersionPragmaExpression: # 49..54 "0.8.0"
-                                          - VersionPragmaSpecifier: # 49..54 "0.8.0"
-                                              - (item) VersionPragmaValue: "0" # 49..50
-                                              - (separator) Period: "." # 50..51
-                                              - (item) VersionPragmaValue: "8" # 51..52
-                                              - (separator) Period: "." # 52..53
-                                              - (item) VersionPragmaValue: "0" # 53..54
-                  - (semicolon) Semicolon: ";" # 54..55
-      - SKIPPED: "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793
+      - EndOfFileTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
+          - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+      - SKIPPED: "pragma solidity ^0.8.0;\n\nusing EnvelopeUtils for E..." # 32..793

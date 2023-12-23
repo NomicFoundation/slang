@@ -5,21 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EqualGreaterThan.
-       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol:1:16]
+    Error: Expected MappingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol:1:1]
        │
      1 │ mapping(string Foo => bytes32)
-       │                ───────┬──────  
-       │                       ╰──────── Error occurred here.
+       │ ───────────────┬──────────────  
+       │                ╰──────────────── Error occurred here.
     ───╯
 
 Tree:
-  - MappingType: # 0..30 "mapping(string Foo => bytes32)"
-      - (mapping_keyword) MappingKeyword: "mapping" # 0..7
-      - (open_paren) OpenParen: "(" # 7..8
-      - (key_type) MappingKey: # 8..14 "string"
-          - (key_type) MappingKeyType: # 8..14 "string"
-              - (variant) ElementaryType: # 8..14 "string"
-                  - (variant) StringKeyword: "string" # 8..14
-      - SKIPPED: "Foo => bytes32" # 15..29
-      - (close_paren) CloseParen: ")" # 29..30
+  - SKIPPED: "mapping(string Foo => bytes32)" # 0..30

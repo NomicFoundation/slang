@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ type Foo is bool;                                                                │ 0..17
+
+Errors: # 1 total
+  - >
+    Error: Expected TypeKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol:1:1]
+       │
+     1 │ type Foo is bool;
+       │ ────────┬────────  
+       │         ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "type Foo is bool;" # 0..17

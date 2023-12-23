@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ address payable(value)                                                           │ 0..22
+
+Errors: # 1 total
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/address_payable_call/input.sol:1:8]
+       │
+     1 │ address payable(value)
+       │        ───────┬───────  
+       │               ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - Expression: # 0..22 "address payable(value)"
+      - (variant) Identifier: "address" # 0..7
+      - SKIPPED: " payable(value)" # 7..22

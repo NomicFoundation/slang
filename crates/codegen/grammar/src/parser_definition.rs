@@ -2,7 +2,10 @@ use std::fmt::Debug;
 use std::rc::Rc;
 
 use crate::visitor::{GrammarVisitor, Visitable};
-use crate::{PrecedenceParserDefinitionRef, ScannerDefinitionRef, VersionQualityRange};
+use crate::{
+    KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
+    VersionQualityRange,
+};
 
 /// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
 #[derive(Clone, Debug)]
@@ -59,6 +62,7 @@ pub enum ParserDefinitionNode {
     Sequence(Vec<Named<Self>>),
     Choice(Named<Vec<Self>>),
     ScannerDefinition(ScannerDefinitionRef),
+    KeywordScannerDefinition(KeywordScannerDefinitionRef),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
@@ -128,6 +132,7 @@ impl Visitable for ParserDefinitionNode {
             }
 
             Self::ScannerDefinition(_)
+            | Self::KeywordScannerDefinition(_)
             | Self::TriviaParserDefinition(_)
             | Self::ParserDefinition(_)
             | Self::PrecedenceParserDefinition(_) => {}

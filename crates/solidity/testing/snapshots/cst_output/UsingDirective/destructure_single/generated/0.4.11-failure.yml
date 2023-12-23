@@ -5,16 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:1:7]
+    Error: Expected UsingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:1:1]
        │
      1 │ using {add} for Int global;
-       │       ──────────┬─────────  
-       │                 ╰─────────── Error occurred here.
+       │ ─────────────┬─────────────  
+       │              ╰─────────────── Error occurred here.
     ───╯
 
 Tree:
-  - UsingDirective: # 0..27 "using {add} for Int global;"
-      - (using_keyword) UsingKeyword: "using" # 0..5
-      - SKIPPED: "{add} for Int global" # 6..26
-      - (semicolon) Semicolon: ";" # 26..27
+  - SKIPPED: "using {add} for Int global;" # 0..27

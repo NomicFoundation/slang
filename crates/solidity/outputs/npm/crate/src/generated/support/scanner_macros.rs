@@ -75,7 +75,7 @@ macro_rules! scan_keyword_choice {
             let save = $stream.position();
             $(
                 {
-                    if let value @ KeywordScan::Present | KeywordScan::Reserved = ($scanner) {
+                    if let value @ (KeywordScan::Present | KeywordScan::Reserved) = ($scanner) {
                         break value;
                     }
                 }

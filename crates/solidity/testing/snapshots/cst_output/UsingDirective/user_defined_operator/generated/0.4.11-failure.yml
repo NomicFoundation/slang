@@ -5,16 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:7]
+    Error: Expected UsingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:1]
        │
      1 │ using {div as /} for Int global;
-       │       ────────────┬────────────  
-       │                   ╰────────────── Error occurred here.
+       │ ────────────────┬───────────────  
+       │                 ╰───────────────── Error occurred here.
     ───╯
 
 Tree:
-  - UsingDirective: # 0..32 "using {div as /} for Int global;"
-      - (using_keyword) UsingKeyword: "using" # 0..5
-      - SKIPPED: "{div as /} for Int global" # 6..31
-      - (semicolon) Semicolon: ";" # 31..32
+  - SKIPPED: "using {div as /} for Int global;" # 0..32

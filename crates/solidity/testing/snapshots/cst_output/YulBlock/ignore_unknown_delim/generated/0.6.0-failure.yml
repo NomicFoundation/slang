@@ -11,9 +11,10 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected AsciiStringLiteral or CloseBrace or HexStringLiteral or OpenBrace or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLeaveKeyword or YulLetKeyword or YulSwitchKeyword or YulTrueKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:2:22]
        │
-     4 │ ╭─▶        result := [mul(a, b)
+     2 │ ╭─▶     function mult(a, b) -> result {
+       ┆ ┆   
      5 │ ├─▶     }
        │ │           
        │ ╰─────────── Error occurred here.
@@ -22,50 +23,26 @@ Errors: # 1 total
 Tree:
   - YulBlock: # 0..85 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
       - (open_brace) OpenBrace: "{" # 0..1
-      - (statements) YulStatements: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-          - (item) YulStatement: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-              - (variant) YulFunctionDefinition: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-                  - (function_keyword) YulFunctionKeyword: "function" # 3..11
-                  - (name) YulIdentifier: "mult" # 12..16
-                  - (parameters) YulParametersDeclaration: # 16..22 "(a, b)"
+      - (statements) YulStatements: # 2..22 "\tfunction mult(a, b)"
+          - (item) YulStatement: # 2..11 "\tfunction"
+              - (variant) YulExpression: # 2..11 "\tfunction"
+                  - (variant) YulIdentifierPath: # 2..11 "\tfunction"
+                      - (item) YulIdentifier: "function" # 3..11
+          - (item) YulStatement: # 11..22 " mult(a, b)"
+              - (variant) YulExpression: # 11..22 " mult(a, b)"
+                  - (variant) YulFunctionCallExpression: # 11..22 " mult(a, b)"
+                      - (operand) YulExpression: # 11..16 " mult"
+                          - (variant) YulIdentifierPath: # 11..16 " mult"
+                              - (item) YulIdentifier: "mult" # 12..16
                       - (open_paren) OpenParen: "(" # 16..17
-                      - (parameters) YulParameters: # 17..21 "a, b"
-                          - (item) YulIdentifier: "a" # 17..18
+                      - (arguments) YulArguments: # 17..21 "a, b"
+                          - (item) YulExpression: # 17..18 "a"
+                              - (variant) YulIdentifierPath: # 17..18 "a"
+                                  - (item) YulIdentifier: "a" # 17..18
                           - (separator) Comma: "," # 18..19
-                          - (item) YulIdentifier: "b" # 20..21
+                          - (item) YulExpression: # 19..21 " b"
+                              - (variant) YulIdentifierPath: # 19..21 " b"
+                                  - (item) YulIdentifier: "b" # 20..21
                       - (close_paren) CloseParen: ")" # 21..22
-                  - (returns) YulReturnsDeclaration: # 22..32 " -> result"
-                      - (minus_greater_than) MinusGreaterThan: "->" # 23..25
-                      - (variables) YulReturnVariables: # 25..32 " result"
-                          - (item) YulIdentifier: "result" # 26..32
-                  - (body) YulBlock: # 32..83 " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..."
-                      - (open_brace) OpenBrace: "{" # 33..34
-                      - (statements) YulStatements: # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
-                          - (item) YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
-                              - (variant) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
-                                  - (names) YulIdentifierPaths: # 35..43 "\t\tresult"
-                                      - (item) YulIdentifierPath: # 35..43 "\t\tresult"
-                                          - (item) YulIdentifier: "result" # 37..43
-                                  - (colon_equal) ColonEqual: ":=" # 44..46
-                                  - (expression) YulExpression: # 46..57 " mul(a, b)\n"
-                                      - (variant) YulFunctionCallExpression: # 46..57 " mul(a, b)\n"
-                                          - (operand) YulExpression: # 46..50 " mul"
-                                              - (variant) YulIdentifierPath: # 46..50 " mul"
-                                                  - (item) YulIdentifier: "mul" # 47..50
-                                          - (open_paren) OpenParen: "(" # 50..51
-                                          - (arguments) YulArguments: # 51..55 "a, b"
-                                              - (item) YulExpression: # 51..52 "a"
-                                                  - (variant) YulIdentifierPath: # 51..52 "a"
-                                                      - (item) YulIdentifier: "a" # 51..52
-                                              - (separator) Comma: "," # 52..53
-                                              - (item) YulExpression: # 53..55 " b"
-                                                  - (variant) YulIdentifierPath: # 53..55 " b"
-                                                      - (item) YulIdentifier: "b" # 54..55
-                                          - (close_paren) CloseParen: ")" # 55..56
-                          - (item) YulStatement: # 57..65 "\t\tresult"
-                              - (variant) YulExpression: # 57..65 "\t\tresult"
-                                  - (variant) YulIdentifierPath: # 57..65 "\t\tresult"
-                                      - (item) YulIdentifier: "result" # 59..65
-                      - SKIPPED: ":= [mul(a, b)\n\t" # 66..81
-                      - (close_brace) CloseBrace: "}" # 81..82
+      - SKIPPED: "-> result {\n\t\tresult := mul(a, b)\n\t\tresult := [mul..." # 23..83
       - (close_brace) CloseBrace: "}" # 83..84

@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor() public {}                                                          │ 0..23
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/constructor/input.sol:1:12]
+       │
+     1 │ constructor() public {}
+       │            ──────┬──────  
+       │                  ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractMembers: # 0..24 "constructor() public {}\n"
+      - (item) ContractMember: # 0..11 "constructor"
+          - (variant) StateVariableDefinition: # 0..11 "constructor"
+              - (type_name) TypeName: # 0..11 "constructor"
+                  - (variant) IdentifierPath: # 0..11 "constructor"
+                      - (item) Identifier: "constructor" # 0..11
+      - SKIPPED: "() public {}\n" # 11..24

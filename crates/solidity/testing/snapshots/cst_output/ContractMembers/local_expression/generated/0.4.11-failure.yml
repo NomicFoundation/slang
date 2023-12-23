@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function func() {                                                                │ 0..17
+  2  │   uint a = 1 + 2 * 3;                                                            │ 18..39
+  3  │ }                                                                                │ 40..41
+
+Errors: # 1 total
+  - >
+    Error: Expected Equal or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/local_expression/input.sol:1:14]
+       │
+     1 │ ╭─▶ function func() {
+       ┆ ┆   
+     3 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractMembers: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+      - (item) ContractMember: # 0..13 "function func"
+          - (variant) StateVariableDefinition: # 0..13 "function func"
+              - (type_name) TypeName: # 0..8 "function"
+                  - (variant) IdentifierPath: # 0..8 "function"
+                      - (item) Identifier: "function" # 0..8
+              - (name) Identifier: "func" # 9..13
+      - SKIPPED: "() {\n  uint a = 1 + 2 * 3;\n}\n" # 13..42

@@ -29,6 +29,7 @@ use crate::support::{
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
+    pub(crate) version_is_at_least_0_0_0: bool,
     pub(crate) version_is_at_least_0_4_14: bool,
     pub(crate) version_is_at_least_0_4_21: bool,
     pub(crate) version_is_at_least_0_4_22: bool,
@@ -153,6 +154,7 @@ impl Language {
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
+                version_is_at_least_0_0_0: Version::new(0, 0, 0) <= version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
@@ -6273,51 +6275,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -6463,289 +6420,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-            scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
-                )
-            ),
-            scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                )
-            ),
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn hex_byte_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'x'),
@@ -6856,51 +6530,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'i', 'n', 't'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn multiline_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '/'),
@@ -6982,334 +6611,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-            scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
-                )
-            ),
-            scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                )
-            ),
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'u', 'i', 'n', 't'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn unicode_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u'),
@@ -7360,55 +6661,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
-            scan_sequence!(
-                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1')
-                    )
-                )
-            )
-        } else {
-            false
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_not_followed_by!(
             input,
@@ -7421,301 +6673,6 @@ impl Language {
                 )
             ),
             self.identifier_start(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            if !self.version_is_at_least_0_7_1 {
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd')
-            } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '4', '8', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
         )
     }
 
@@ -7734,399 +6691,6 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier(&self, input: &mut ParserContext<'_>) -> bool {
         self.raw_identifier(input)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
-            scan_sequence!(
-                scan_chars!(input, 'i', 'n', 't'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    )
-                )
-            )
-        } else {
-            false
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            if !self.version_is_at_least_0_7_1 {
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd')
-            } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '4', '8', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
-            scan_sequence!(
-                scan_chars!(input, 'u', 'i', 'n', 't'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    )
-                )
-            )
-        } else {
-            false
-        }
     }
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
@@ -8608,739 +7172,6 @@ impl Lexer for Language {
                         }
                         None => Some(TokenKind::Caret),
                     },
-                    Some('a') => match input.next() {
-                        Some('b') => scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
-                            .then_some(TokenKind::AbstractKeyword),
-                        Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
-                            .then_some(TokenKind::AddressKeyword),
-                        Some('f') => {
-                            scan_chars!(input, 't', 'e', 'r').then_some(TokenKind::AfterKeyword)
-                        }
-                        Some('l') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'i', 'a', 's').then_some(TokenKind::AliasKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's')
-                            .then_some(TokenKind::AnonymousKeyword),
-                        Some('p') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'p', 'l', 'y').then_some(TokenKind::ApplyKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => match input.next() {
-                            Some('s') => scan_chars!(input, 'e', 'm', 'b', 'l', 'y')
-                                .then_some(TokenKind::AssemblyKeyword),
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::AsKeyword)
-                            }
-                            None => Some(TokenKind::AsKeyword),
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 't', 'o').then_some(TokenKind::AutoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('b') => match input.next() {
-                        Some('o') => scan_chars!(input, 'o', 'l').then_some(TokenKind::BoolKeyword),
-                        Some('r') => {
-                            scan_chars!(input, 'e', 'a', 'k').then_some(TokenKind::BreakKeyword)
-                        }
-                        Some('y') => scan_chars!(input, 't', 'e').then_some(TokenKind::ByteKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('c') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('l') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'l', 'd', 'a', 't', 'a')
-                                        .then_some(TokenKind::CallDataKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('s') => scan_chars!(input, 'e').then_some(TokenKind::CaseKeyword),
-                            Some('t') => {
-                                scan_chars!(input, 'c', 'h').then_some(TokenKind::CatchKeyword)
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => match input.next() {
-                            Some('n') => match input.next() {
-                                Some('s') => {
-                                    if scan_chars!(input, 't') {
-                                        match input.next() {
-                                            Some('a') => scan_chars!(input, 'n', 't')
-                                                .then_some(TokenKind::ConstantKeyword),
-                                            Some('r') => {
-                                                if self.version_is_at_least_0_4_22 {
-                                                    scan_chars!(input, 'u', 'c', 't', 'o', 'r')
-                                                        .then_some(TokenKind::ConstructorKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                None
-                                            }
-                                            None => None,
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'u', 'e')
-                                        .then_some(TokenKind::ContinueKeyword),
-                                    Some('r') => scan_chars!(input, 'a', 'c', 't')
-                                        .then_some(TokenKind::ContractKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('p') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'y', 'o', 'f')
-                                        .then_some(TokenKind::CopyOfKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('d') => match input.next() {
-                        Some('a') => scan_chars!(input, 'y', 's').then_some(TokenKind::DaysKeyword),
-                        Some('e') => match input.next() {
-                            Some('f') => match input.next() {
-                                Some('a') => scan_chars!(input, 'u', 'l', 't')
-                                    .then_some(TokenKind::DefaultKeyword),
-                                Some('i') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'n', 'e')
-                                            .then_some(TokenKind::DefineKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('l') => scan_chars!(input, 'e', 't', 'e')
-                                .then_some(TokenKind::DeleteKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => Some(TokenKind::DoKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('e') => match input.next() {
-                        Some('l') => scan_chars!(input, 's', 'e').then_some(TokenKind::ElseKeyword),
-                        Some('m') => {
-                            if self.version_is_at_least_0_4_21 {
-                                scan_chars!(input, 'i', 't').then_some(TokenKind::EmitKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => scan_chars!(input, 'u', 'm').then_some(TokenKind::EnumKeyword),
-                        Some('r') => {
-                            if self.version_is_at_least_0_8_4 {
-                                scan_chars!(input, 'r', 'o', 'r').then_some(TokenKind::ErrorKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            scan_chars!(input, 'h', 'e', 'r').then_some(TokenKind::EtherKeyword)
-                        }
-                        Some('v') => {
-                            scan_chars!(input, 'e', 'n', 't').then_some(TokenKind::EventKeyword)
-                        }
-                        Some('x') => scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
-                            .then_some(TokenKind::ExternalKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            if scan_chars!(input, 'l') {
-                                match input.next() {
-                                    Some('l') => {
-                                        if self.version_is_at_least_0_6_0 {
-                                            scan_chars!(input, 'b', 'a', 'c', 'k')
-                                                .then_some(TokenKind::FallbackKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('s') => {
-                                        scan_chars!(input, 'e').then_some(TokenKind::FalseKeyword)
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if scan_chars!(input, 'n') {
-                                match input.next() {
-                                    Some('a') => {
-                                        scan_chars!(input, 'l').then_some(TokenKind::FinalKeyword)
-                                    }
-                                    Some('n') => {
-                                        if !self.version_is_at_least_0_7_0 {
-                                            scan_chars!(input, 'e', 'y')
-                                                .then_some(TokenKind::FinneyKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::ForKeyword),
-                        Some('r') => scan_chars!(input, 'o', 'm').then_some(TokenKind::FromKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::FunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('g') => match input.next() {
-                        Some('l') => {
-                            if self.version_is_at_least_0_8_13 {
-                                scan_chars!(input, 'o', 'b', 'a', 'l')
-                                    .then_some(TokenKind::GlobalKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => {
-                            if self.version_is_at_least_0_6_11 {
-                                scan_chars!(input, 'e', 'i').then_some(TokenKind::GweiKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('h') => match input.next() {
-                        Some('e') => scan_chars!(input, 'x').then_some(TokenKind::HexKeyword),
-                        Some('o') => {
-                            scan_chars!(input, 'u', 'r', 's').then_some(TokenKind::HoursKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('i') => match input.next() {
-                        Some('f') => Some(TokenKind::IfKeyword),
-                        Some('m') => match input.next() {
-                            Some('m') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::ImmutableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => match input.next() {
-                                Some('l') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's')
-                                            .then_some(TokenKind::ImplementsKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('o') => {
-                                    scan_chars!(input, 'r', 't').then_some(TokenKind::ImportKeyword)
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('n') => match input.next() {
-                            Some('d') => scan_chars!(input, 'e', 'x', 'e', 'd')
-                                .then_some(TokenKind::IndexedKeyword),
-                            Some('l') => scan_chars!(input, 'i', 'n', 'e')
-                                .then_some(TokenKind::InlineKeyword),
-                            Some('t') => {
-                                if scan_chars!(input, 'e', 'r') {
-                                    match input.next() {
-                                        Some('f') => scan_chars!(input, 'a', 'c', 'e')
-                                            .then_some(TokenKind::InterfaceKeyword),
-                                        Some('n') => scan_chars!(input, 'a', 'l')
-                                            .then_some(TokenKind::InternalKeyword),
-                                        Some(_) => {
-                                            input.undo();
-                                            None
-                                        }
-                                        None => None,
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::InKeyword)
-                            }
-                            None => Some(TokenKind::InKeyword),
-                        },
-                        Some('s') => Some(TokenKind::IsKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('l') => match input.next() {
-                        Some('e') => scan_chars!(input, 't').then_some(TokenKind::LetKeyword),
-                        Some('i') => scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
-                            .then_some(TokenKind::LibraryKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('m') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('c') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'r', 'o').then_some(TokenKind::MacroKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => scan_chars!(input, 'p', 'i', 'n', 'g')
-                                .then_some(TokenKind::MappingKeyword),
-                            Some('t') => {
-                                scan_chars!(input, 'c', 'h').then_some(TokenKind::MatchKeyword)
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('e') => scan_chars!(input, 'm', 'o', 'r', 'y')
-                            .then_some(TokenKind::MemoryKeyword),
-                        Some('i') => scan_chars!(input, 'n', 'u', 't', 'e', 's')
-                            .then_some(TokenKind::MinutesKeyword),
-                        Some('o') => scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r')
-                            .then_some(TokenKind::ModifierKeyword),
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 't', 'a', 'b', 'l', 'e')
-                                    .then_some(TokenKind::MutableKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('n') => match input.next() {
-                        Some('e') => scan_chars!(input, 'w').then_some(TokenKind::NewKeyword),
-                        Some('u') => scan_chars!(input, 'l', 'l').then_some(TokenKind::NullKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('o') => match input.next() {
-                        Some('f') => Some(TokenKind::OfKeyword),
-                        Some('v') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
-                                    .then_some(TokenKind::OverrideKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('p') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('r') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 't', 'i', 'a', 'l')
-                                        .then_some(TokenKind::PartialKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('y') => scan_chars!(input, 'a', 'b', 'l', 'e')
-                                .then_some(TokenKind::PayableKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('r') => match input.next() {
-                            Some('a') => scan_chars!(input, 'g', 'm', 'a')
-                                .then_some(TokenKind::PragmaKeyword),
-                            Some('i') => scan_chars!(input, 'v', 'a', 't', 'e')
-                                .then_some(TokenKind::PrivateKeyword),
-                            Some('o') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'm', 'i', 's', 'e')
-                                        .then_some(TokenKind::PromiseKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => match input.next() {
-                            Some('b') => scan_chars!(input, 'l', 'i', 'c')
-                                .then_some(TokenKind::PublicKeyword),
-                            Some('r') => scan_chars!(input, 'e').then_some(TokenKind::PureKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('r') => {
-                        if scan_chars!(input, 'e') {
-                            match input.next() {
-                                Some('c') => {
-                                    if self.version_is_at_least_0_6_0 {
-                                        scan_chars!(input, 'e', 'i', 'v', 'e')
-                                            .then_some(TokenKind::ReceiveKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('f') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')
-                                            .then_some(TokenKind::ReferenceKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('l') => {
-                                    scan_chars!(input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::RelocatableKeyword)
-                                }
-                                Some('t') => {
-                                    if scan_chars!(input, 'u', 'r', 'n') {
-                                        match input.next() {
-                                            Some('s') => Some(TokenKind::ReturnsKeyword),
-                                            Some(_) => {
-                                                input.undo();
-                                                Some(TokenKind::ReturnKeyword)
-                                            }
-                                            None => Some(TokenKind::ReturnKeyword),
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('v') => {
-                                    if self.version_is_at_least_0_8_4 {
-                                        scan_chars!(input, 'e', 'r', 't')
-                                            .then_some(TokenKind::RevertKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        } else {
-                            None
-                        }
-                    }
-                    Some('s') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'l', 'e', 'd')
-                                        .then_some(TokenKind::SealedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('c') => scan_chars!(input, 'o', 'n', 'd', 's')
-                                .then_some(TokenKind::SecondsKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'z', 'e', 'o', 'f')
-                                    .then_some(TokenKind::SizeOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            match input.next() {
-                                Some('a') => scan_chars!(input, 't', 'i', 'c')
-                                    .then_some(TokenKind::StaticKeyword),
-                                Some('o') => scan_chars!(input, 'r', 'a', 'g', 'e')
-                                    .then_some(TokenKind::StorageKeyword),
-                                Some('r') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'g')
-                                        .then_some(TokenKind::StringKeyword),
-                                    Some('u') => scan_chars!(input, 'c', 't')
-                                        .then_some(TokenKind::StructKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        }
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's')
-                                    .then_some(TokenKind::SupportsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => scan_chars!(input, 'i', 't', 'c', 'h')
-                            .then_some(TokenKind::SwitchKeyword),
-                        Some('z') => {
-                            if !self.version_is_at_least_0_7_0 {
-                                scan_chars!(input, 'a', 'b', 'o').then_some(TokenKind::SzaboKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('t') => match input.next() {
-                        Some('h') => {
-                            scan_chars!(input, 'r', 'o', 'w').then_some(TokenKind::ThrowKeyword)
-                        }
-                        Some('r') => match input.next() {
-                            Some('u') => scan_chars!(input, 'e').then_some(TokenKind::TrueKeyword),
-                            Some('y') => Some(TokenKind::TryKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('y') => {
-                            if scan_chars!(input, 'p', 'e') {
-                                match input.next() {
-                                    Some('d') => {
-                                        if self.version_is_at_least_0_5_0 {
-                                            scan_chars!(input, 'e', 'f')
-                                                .then_some(TokenKind::TypeDefKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('o') => {
-                                        scan_chars!(input, 'f').then_some(TokenKind::TypeOfKeyword)
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        Some(TokenKind::TypeKeyword)
-                                    }
-                                    None => Some(TokenKind::TypeKeyword),
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('u') => match input.next() {
-                        Some('n') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-                                    .then_some(TokenKind::UncheckedKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => {
-                            scan_chars!(input, 'i', 'n', 'g').then_some(TokenKind::UsingKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('v') => match input.next() {
-                        Some('a') => scan_chars!(input, 'r').then_some(TokenKind::VarKeyword),
-                        Some('i') => match input.next() {
-                            Some('e') => scan_chars!(input, 'w').then_some(TokenKind::ViewKeyword),
-                            Some('r') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    scan_chars!(input, 't', 'u', 'a', 'l')
-                                        .then_some(TokenKind::VirtualKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('w') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('e') => {
-                                scan_chars!(input, 'k', 's').then_some(TokenKind::WeeksKeyword)
-                            }
-                            Some('i') => Some(TokenKind::WeiKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('h') => {
-                            scan_chars!(input, 'i', 'l', 'e').then_some(TokenKind::WhileKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('y') => {
-                        scan_chars!(input, 'e', 'a', 'r', 's').then_some(TokenKind::YearsKeyword)
-                    }
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('|') => match input.next() {
                         Some('=') => Some(TokenKind::BarEqual),
@@ -9363,20 +7194,2917 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
+                let abstract_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let address_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let after_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let alias_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let anonymous_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let apply_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let as_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let assembly_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let auto_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'u', 't', 'o') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let bool_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'o', 'o', 'l') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let break_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let byte_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'y', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_8_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let bytes_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7'),
+                                    scan_chars!(input, '6'),
+                                    scan_chars!(input, '5'),
+                                    scan_chars!(input, '4'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '3', '1'),
+                                    scan_chars!(input, '3', '0'),
+                                    scan_chars!(input, '3'),
+                                    scan_chars!(input, '2', '9'),
+                                    scan_chars!(input, '2', '8'),
+                                    scan_chars!(input, '2', '7'),
+                                    scan_chars!(input, '2', '6'),
+                                    scan_chars!(input, '2', '5'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3'),
+                                    scan_chars!(input, '2', '2'),
+                                    scan_chars!(input, '2', '1'),
+                                    scan_chars!(input, '2', '0'),
+                                    scan_chars!(input, '2'),
+                                    scan_chars!(input, '1', '9'),
+                                    scan_chars!(input, '1', '8'),
+                                    scan_chars!(input, '1', '7'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5'),
+                                    scan_chars!(input, '1', '4'),
+                                    scan_chars!(input, '1', '3'),
+                                    scan_chars!(input, '1', '2'),
+                                    scan_chars!(input, '1', '1'),
+                                    scan_chars!(input, '1', '0'),
+                                    scan_chars!(input, '1')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let call_data_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let case_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let catch_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let constant_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let constructor_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(
+                            input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r'
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_4_22 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let continue_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let contract_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let copy_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let days_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'a', 'y', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let default_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let define_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let delete_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let do_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'o') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let else_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'l', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let emit_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'm', 'i', 't') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_4_21 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let enum_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'n', 'u', 'm') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let error_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'r', 'r', 'o', 'r') {
+                            KeywordScan::Absent
+                        } else if false {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_8_4 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let ether_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let event_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let external_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let fallback_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let false_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let final_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let finney_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let fixed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '4', '8', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '5', '6'),
+                                scan_chars!(input, '2', '4', '8'),
+                                scan_chars!(input, '2', '4', '0'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '2', '3', '2'),
+                                scan_chars!(input, '2', '2', '4'),
+                                scan_chars!(input, '2', '1', '6'),
+                                scan_chars!(input, '2', '0', '8'),
+                                scan_chars!(input, '2', '0', '0'),
+                                scan_chars!(input, '1', '9', '2'),
+                                scan_chars!(input, '1', '8', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9'),
+                                scan_chars!(input, '7', '9'),
+                                scan_chars!(input, '7', '8'),
+                                scan_chars!(input, '7', '7'),
+                                scan_chars!(input, '7', '6'),
+                                scan_chars!(input, '7', '5'),
+                                scan_chars!(input, '7', '4'),
+                                scan_chars!(input, '7', '3'),
+                                scan_chars!(input, '7', '1'),
+                                scan_chars!(input, '7', '0'),
+                                scan_chars!(input, '7'),
+                                scan_chars!(input, '6', '9'),
+                                scan_chars!(input, '6', '8'),
+                                scan_chars!(input, '6', '7'),
+                                scan_chars!(input, '6', '6'),
+                                scan_chars!(input, '6', '5'),
+                                scan_chars!(input, '6', '3'),
+                                scan_chars!(input, '6', '2'),
+                                scan_chars!(input, '6', '1'),
+                                scan_chars!(input, '6', '0'),
+                                scan_chars!(input, '6'),
+                                scan_chars!(input, '5', '9'),
+                                scan_chars!(input, '5', '8'),
+                                scan_chars!(input, '5', '7'),
+                                scan_chars!(input, '5', '5'),
+                                scan_chars!(input, '5', '4'),
+                                scan_chars!(input, '5', '3'),
+                                scan_chars!(input, '5', '2'),
+                                scan_chars!(input, '5', '1'),
+                                scan_chars!(input, '5', '0'),
+                                scan_chars!(input, '5'),
+                                scan_chars!(input, '4', '9'),
+                                scan_chars!(input, '4', '7'),
+                                scan_chars!(input, '4', '6'),
+                                scan_chars!(input, '4', '5'),
+                                scan_chars!(input, '4', '4'),
+                                scan_chars!(input, '4', '3'),
+                                scan_chars!(input, '4', '2'),
+                                scan_chars!(input, '4', '1'),
+                                scan_chars!(input, '4'),
+                                scan_chars!(input, '3', '9'),
+                                scan_chars!(input, '3', '8'),
+                                scan_chars!(input, '3', '7'),
+                                scan_chars!(input, '3', '6'),
+                                scan_chars!(input, '3', '5'),
+                                scan_chars!(input, '3', '4'),
+                                scan_chars!(input, '3', '3'),
+                                scan_chars!(input, '3', '1'),
+                                scan_chars!(input, '3', '0'),
+                                scan_chars!(input, '3'),
+                                scan_chars!(input, '2', '9'),
+                                scan_chars!(input, '2', '8'),
+                                scan_chars!(input, '2', '7'),
+                                scan_chars!(input, '2', '6'),
+                                scan_chars!(input, '2', '5'),
+                                scan_chars!(input, '2', '3'),
+                                scan_chars!(input, '2', '2'),
+                                scan_chars!(input, '2', '1'),
+                                scan_chars!(input, '2', '0'),
+                                scan_chars!(input, '2'),
+                                scan_chars!(input, '1', '9'),
+                                scan_chars!(input, '1', '8'),
+                                scan_chars!(input, '1', '7'),
+                                scan_chars!(input, '1', '5'),
+                                scan_chars!(input, '1', '4'),
+                                scan_chars!(input, '1', '3'),
+                                scan_chars!(input, '1', '2'),
+                                scan_chars!(input, '1', '1'),
+                                scan_chars!(input, '1', '0'),
+                                scan_chars!(input, '1'),
+                                scan_chars!(input, '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let for_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'o', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let from_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'r', 'o', 'm') {
+                            KeywordScan::Absent
+                        } else if false {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let function_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let global_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'g', 'l', 'o', 'b', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if false {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_8_13 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let gwei_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'g', 'w', 'e', 'i') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_7_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_11 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let hex_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'h', 'e', 'x') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let hours_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let if_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'f') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let immutable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_5 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let implements_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let import_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let in_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let indexed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let inline_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let int_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'i', 'n', 't'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9', '6'),
+                                    scan_chars!(input, '8', '8'),
+                                    scan_chars!(input, '8', '0'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7', '2'),
+                                    scan_chars!(input, '6', '4'),
+                                    scan_chars!(input, '5', '6'),
+                                    scan_chars!(input, '4', '8'),
+                                    scan_chars!(input, '4', '0'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '2', '5', '6'),
+                                    scan_chars!(input, '2', '4', '8'),
+                                    scan_chars!(input, '2', '4', '0'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3', '2'),
+                                    scan_chars!(input, '2', '2', '4'),
+                                    scan_chars!(input, '2', '1', '6'),
+                                    scan_chars!(input, '2', '0', '8'),
+                                    scan_chars!(input, '2', '0', '0'),
+                                    scan_chars!(input, '1', '9', '2'),
+                                    scan_chars!(input, '1', '8', '4'),
+                                    scan_chars!(input, '1', '7', '6'),
+                                    scan_chars!(input, '1', '6', '8'),
+                                    scan_chars!(input, '1', '6', '0'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5', '2'),
+                                    scan_chars!(input, '1', '4', '4'),
+                                    scan_chars!(input, '1', '3', '6'),
+                                    scan_chars!(input, '1', '2', '8'),
+                                    scan_chars!(input, '1', '2', '0'),
+                                    scan_chars!(input, '1', '1', '2'),
+                                    scan_chars!(input, '1', '0', '4')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let interface_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let internal_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let is_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let let_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'l', 'e', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let library_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let macro_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let mapping_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let match_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let memory_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let minutes_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let modifier_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let mutable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let new_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'n', 'e', 'w') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let null_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'n', 'u', 'l', 'l') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let override_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let partial_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let payable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let pragma_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let private_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let promise_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let public_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let pure_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'u', 'r', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let receive_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let reference_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let relocatable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(
+                            input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let return_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let returns_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let revert_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
+                            KeywordScan::Absent
+                        } else if false {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_8_4 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let sealed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let seconds_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let size_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let static_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let storage_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let string_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let struct_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let supports_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let switch_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let szabo_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let throw_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_5_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let true_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'r', 'u', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let try_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let type_def_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let type_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_5_3 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let type_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let ufixed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '4', '8', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '5', '6'),
+                                scan_chars!(input, '2', '4', '8'),
+                                scan_chars!(input, '2', '4', '0'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '2', '3', '2'),
+                                scan_chars!(input, '2', '2', '4'),
+                                scan_chars!(input, '2', '1', '6'),
+                                scan_chars!(input, '2', '0', '8'),
+                                scan_chars!(input, '2', '0', '0'),
+                                scan_chars!(input, '1', '9', '2'),
+                                scan_chars!(input, '1', '8', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9'),
+                                scan_chars!(input, '7', '9'),
+                                scan_chars!(input, '7', '8'),
+                                scan_chars!(input, '7', '7'),
+                                scan_chars!(input, '7', '6'),
+                                scan_chars!(input, '7', '5'),
+                                scan_chars!(input, '7', '4'),
+                                scan_chars!(input, '7', '3'),
+                                scan_chars!(input, '7', '1'),
+                                scan_chars!(input, '7', '0'),
+                                scan_chars!(input, '7'),
+                                scan_chars!(input, '6', '9'),
+                                scan_chars!(input, '6', '8'),
+                                scan_chars!(input, '6', '7'),
+                                scan_chars!(input, '6', '6'),
+                                scan_chars!(input, '6', '5'),
+                                scan_chars!(input, '6', '3'),
+                                scan_chars!(input, '6', '2'),
+                                scan_chars!(input, '6', '1'),
+                                scan_chars!(input, '6', '0'),
+                                scan_chars!(input, '6'),
+                                scan_chars!(input, '5', '9'),
+                                scan_chars!(input, '5', '8'),
+                                scan_chars!(input, '5', '7'),
+                                scan_chars!(input, '5', '5'),
+                                scan_chars!(input, '5', '4'),
+                                scan_chars!(input, '5', '3'),
+                                scan_chars!(input, '5', '2'),
+                                scan_chars!(input, '5', '1'),
+                                scan_chars!(input, '5', '0'),
+                                scan_chars!(input, '5'),
+                                scan_chars!(input, '4', '9'),
+                                scan_chars!(input, '4', '7'),
+                                scan_chars!(input, '4', '6'),
+                                scan_chars!(input, '4', '5'),
+                                scan_chars!(input, '4', '4'),
+                                scan_chars!(input, '4', '3'),
+                                scan_chars!(input, '4', '2'),
+                                scan_chars!(input, '4', '1'),
+                                scan_chars!(input, '4'),
+                                scan_chars!(input, '3', '9'),
+                                scan_chars!(input, '3', '8'),
+                                scan_chars!(input, '3', '7'),
+                                scan_chars!(input, '3', '6'),
+                                scan_chars!(input, '3', '5'),
+                                scan_chars!(input, '3', '4'),
+                                scan_chars!(input, '3', '3'),
+                                scan_chars!(input, '3', '1'),
+                                scan_chars!(input, '3', '0'),
+                                scan_chars!(input, '3'),
+                                scan_chars!(input, '2', '9'),
+                                scan_chars!(input, '2', '8'),
+                                scan_chars!(input, '2', '7'),
+                                scan_chars!(input, '2', '6'),
+                                scan_chars!(input, '2', '5'),
+                                scan_chars!(input, '2', '3'),
+                                scan_chars!(input, '2', '2'),
+                                scan_chars!(input, '2', '1'),
+                                scan_chars!(input, '2', '0'),
+                                scan_chars!(input, '2'),
+                                scan_chars!(input, '1', '9'),
+                                scan_chars!(input, '1', '8'),
+                                scan_chars!(input, '1', '7'),
+                                scan_chars!(input, '1', '5'),
+                                scan_chars!(input, '1', '4'),
+                                scan_chars!(input, '1', '3'),
+                                scan_chars!(input, '1', '2'),
+                                scan_chars!(input, '1', '1'),
+                                scan_chars!(input, '1', '0'),
+                                scan_chars!(input, '1'),
+                                scan_chars!(input, '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let uint_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'i', 'n', 't'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9', '6'),
+                                    scan_chars!(input, '8', '8'),
+                                    scan_chars!(input, '8', '0'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7', '2'),
+                                    scan_chars!(input, '6', '4'),
+                                    scan_chars!(input, '5', '6'),
+                                    scan_chars!(input, '4', '8'),
+                                    scan_chars!(input, '4', '0'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '2', '5', '6'),
+                                    scan_chars!(input, '2', '4', '8'),
+                                    scan_chars!(input, '2', '4', '0'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3', '2'),
+                                    scan_chars!(input, '2', '2', '4'),
+                                    scan_chars!(input, '2', '1', '6'),
+                                    scan_chars!(input, '2', '0', '8'),
+                                    scan_chars!(input, '2', '0', '0'),
+                                    scan_chars!(input, '1', '9', '2'),
+                                    scan_chars!(input, '1', '8', '4'),
+                                    scan_chars!(input, '1', '7', '6'),
+                                    scan_chars!(input, '1', '6', '8'),
+                                    scan_chars!(input, '1', '6', '0'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5', '2'),
+                                    scan_chars!(input, '1', '4', '4'),
+                                    scan_chars!(input, '1', '3', '6'),
+                                    scan_chars!(input, '1', '2', '8'),
+                                    scan_chars!(input, '1', '2', '0'),
+                                    scan_chars!(input, '1', '1', '2'),
+                                    scan_chars!(input, '1', '0', '4')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let unchecked_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_8_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let using_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let var_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'a', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_5_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let view_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'i', 'e', 'w') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let virtual_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let weeks_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let wei_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'e', 'i') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let while_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let years_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if !self.version_is_at_least_0_5_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
-                        { BytesKeyword = bytes_keyword }
                         { DecimalLiteral = decimal_literal }
                         { EndOfLine = end_of_line }
-                        { FixedKeyword = fixed_keyword }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
-                        { IntKeyword = int_keyword }
                         { MultilineComment = multiline_comment }
                         { SingleLineComment = single_line_comment }
-                        { UfixedKeyword = ufixed_keyword }
-                        { UintKeyword = uint_keyword }
                         { UnicodeStringLiteral = unicode_string_literal }
                         { Whitespace = whitespace }
                         { Identifier = identifier }
@@ -9406,16 +10134,6 @@ impl Lexer for Language {
                         None => Some(TokenKind::GreaterThan),
                     },
                     Some('^') => Some(TokenKind::Caret),
-                    Some('a') => scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r')
-                        .then_some(TokenKind::AbicoderKeyword),
-                    Some('e') => {
-                        scan_chars!(input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
-                            .then_some(TokenKind::ExperimentalKeyword)
-                    }
-                    Some('p') => scan_chars!(input, 'r', 'a', 'g', 'm', 'a')
-                        .then_some(TokenKind::PragmaKeyword),
-                    Some('s') => scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y')
-                        .then_some(TokenKind::SolidityKeyword),
                     Some('|') => scan_chars!(input, '|').then_some(TokenKind::BarBar),
                     Some('~') => Some(TokenKind::Tilde),
                     Some(_) => {
@@ -9428,6 +10146,88 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
+                let abicoder_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let experimental_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(
+                            input, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
+                        ) {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let pragma_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let solidity_keyword = || {
+                    let save = input.position();
+                    let scanned = self.identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
@@ -9444,1098 +10244,6 @@ impl Lexer for Language {
                     Some('-') => scan_chars!(input, '>').then_some(TokenKind::MinusGreaterThan),
                     Some('.') => Some(TokenKind::Period),
                     Some(':') => scan_chars!(input, '=').then_some(TokenKind::ColonEqual),
-                    Some('a') => match input.next() {
-                        Some('b') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
-                                    .then_some(TokenKind::YulAbstractKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
-                            .then_some(TokenKind::YulAddressKeyword),
-                        Some('f') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'e', 'r')
-                                    .then_some(TokenKind::YulAfterKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('l') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'a', 's')
-                                    .then_some(TokenKind::YulAliasKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's')
-                                    .then_some(TokenKind::YulAnonymousKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('p') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'p', 'l', 'y')
-                                    .then_some(TokenKind::YulApplyKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => match input.next() {
-                            Some('s') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 'm', 'b', 'l', 'y')
-                                        .then_some(TokenKind::YulAssemblyKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulAsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            None => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulAsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'o').then_some(TokenKind::YulAutoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('b') => match input.next() {
-                        Some('o') => {
-                            if !self.version_is_at_least_0_5_10 {
-                                scan_chars!(input, 'o', 'l').then_some(TokenKind::YulBoolKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('r') => {
-                            scan_chars!(input, 'e', 'a', 'k').then_some(TokenKind::YulBreakKeyword)
-                        }
-                        Some('y') => {
-                            scan_chars!(input, 't', 'e').then_some(TokenKind::YulByteKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('c') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('l') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'l', 'd', 'a', 't', 'a')
-                                        .then_some(TokenKind::YulCallDataKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('s') => {
-                                scan_chars!(input, 'e').then_some(TokenKind::YulCaseKeyword)
-                            }
-                            Some('t') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'c', 'h')
-                                        .then_some(TokenKind::YulCatchKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => match input.next() {
-                            Some('n') => match input.next() {
-                                Some('s') => {
-                                    if scan_chars!(input, 't') {
-                                        match input.next() {
-                                            Some('a') => {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    scan_chars!(input, 'n', 't')
-                                                        .then_some(TokenKind::YulConstantKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some('r') => {
-                                                if self.version_is_at_least_0_5_0
-                                                    && !self.version_is_at_least_0_7_1
-                                                {
-                                                    scan_chars!(input, 'u', 'c', 't', 'o', 'r')
-                                                        .then_some(TokenKind::YulConstructorKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                None
-                                            }
-                                            None => None,
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'u', 'e')
-                                        .then_some(TokenKind::YulContinueKeyword),
-                                    Some('r') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'a', 'c', 't')
-                                                .then_some(TokenKind::YulContractKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('p') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'y', 'o', 'f')
-                                        .then_some(TokenKind::YulCopyOfKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('d') => match input.next() {
-                        Some('a') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'y', 's').then_some(TokenKind::YulDaysKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('e') => match input.next() {
-                            Some('f') => match input.next() {
-                                Some('a') => scan_chars!(input, 'u', 'l', 't')
-                                    .then_some(TokenKind::YulDefaultKeyword),
-                                Some('i') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'n', 'e')
-                                            .then_some(TokenKind::YulDefineKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('l') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 't', 'e')
-                                        .then_some(TokenKind::YulDeleteKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulDoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('e') => match input.next() {
-                        Some('l') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 's', 'e').then_some(TokenKind::YulElseKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('m') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 't').then_some(TokenKind::YulEmitKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'u', 'm').then_some(TokenKind::YulEnumKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'h', 'e', 'r')
-                                    .then_some(TokenKind::YulEtherKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('v') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'e', 'n', 't')
-                                    .then_some(TokenKind::YulEventKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('x') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
-                                    .then_some(TokenKind::YulExternalKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            if scan_chars!(input, 'l') {
-                                match input.next() {
-                                    Some('l') => {
-                                        if self.version_is_at_least_0_6_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            scan_chars!(input, 'b', 'a', 'c', 'k')
-                                                .then_some(TokenKind::YulFallbackKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('s') => scan_chars!(input, 'e')
-                                        .then_some(TokenKind::YulFalseKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if scan_chars!(input, 'n') {
-                                match input.next() {
-                                    Some('a') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'l')
-                                                .then_some(TokenKind::YulFinalKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('n') => {
-                                        if !self.version_is_at_least_0_7_0 {
-                                            scan_chars!(input, 'e', 'y')
-                                                .then_some(TokenKind::YulFinneyKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::YulForKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::YulFunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('g') => {
-                        if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
-                            scan_chars!(input, 'w', 'e', 'i').then_some(TokenKind::YulGweiKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('h') => match input.next() {
-                        Some('e') => scan_chars!(input, 'x').then_some(TokenKind::YulHexKeyword),
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'u', 'r', 's')
-                                    .then_some(TokenKind::YulHoursKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('i') => match input.next() {
-                        Some('f') => Some(TokenKind::YulIfKeyword),
-                        Some('m') => match input.next() {
-                            Some('m') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::YulImmutableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => match input.next() {
-                                Some('l') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's')
-                                            .then_some(TokenKind::YulImplementsKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('o') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'r', 't')
-                                            .then_some(TokenKind::YulImportKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('n') => match input.next() {
-                            Some('d') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 'x', 'e', 'd')
-                                        .then_some(TokenKind::YulIndexedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('l') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'i', 'n', 'e')
-                                        .then_some(TokenKind::YulInlineKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => {
-                                if scan_chars!(input, 'e', 'r') {
-                                    match input.next() {
-                                        Some('f') => {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                scan_chars!(input, 'a', 'c', 'e')
-                                                    .then_some(TokenKind::YulInterfaceKeyword)
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some('n') => {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                scan_chars!(input, 'a', 'l')
-                                                    .then_some(TokenKind::YulInternalKeyword)
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            None
-                                        }
-                                        None => None,
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                if !self.version_is_at_least_0_6_8 {
-                                    Some(TokenKind::YulInKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            None => {
-                                if !self.version_is_at_least_0_6_8 {
-                                    Some(TokenKind::YulInKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                        },
-                        Some('s') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulIsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('l') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    scan_chars!(input, 'v', 'e')
-                                        .then_some(TokenKind::YulLeaveKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => Some(TokenKind::YulLetKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
-                                    .then_some(TokenKind::YulLibraryKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('m') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('c') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'r', 'o')
-                                        .then_some(TokenKind::YulMacroKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'p', 'i', 'n', 'g')
-                                        .then_some(TokenKind::YulMappingKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'c', 'h')
-                                        .then_some(TokenKind::YulMatchKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('e') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'm', 'o', 'r', 'y')
-                                    .then_some(TokenKind::YulMemoryKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'n', 'u', 't', 'e', 's')
-                                    .then_some(TokenKind::YulMinutesKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r')
-                                    .then_some(TokenKind::YulModifierKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'a', 'b', 'l', 'e')
-                                    .then_some(TokenKind::YulMutableKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('n') => match input.next() {
-                        Some('e') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'w').then_some(TokenKind::YulNewKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('u') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'l', 'l').then_some(TokenKind::YulNullKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('o') => match input.next() {
-                        Some('f') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('v') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
-                                    .then_some(TokenKind::YulOverrideKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('p') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('r') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 't', 'i', 'a', 'l')
-                                        .then_some(TokenKind::YulPartialKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('y') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::YulPayableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('r') => match input.next() {
-                            Some('a') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'g', 'm', 'a')
-                                        .then_some(TokenKind::YulPragmaKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('i') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'v', 'a', 't', 'e')
-                                        .then_some(TokenKind::YulPrivateKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('o') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'm', 'i', 's', 'e')
-                                        .then_some(TokenKind::YulPromiseKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => match input.next() {
-                            Some('b') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'l', 'i', 'c')
-                                        .then_some(TokenKind::YulPublicKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e').then_some(TokenKind::YulPureKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('r') => {
-                        if scan_chars!(input, 'e') {
-                            match input.next() {
-                                Some('c') => {
-                                    if self.version_is_at_least_0_6_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'i', 'v', 'e')
-                                            .then_some(TokenKind::YulReceiveKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('f') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')
-                                            .then_some(TokenKind::YulReferenceKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('l') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                                            .then_some(TokenKind::YulRelocatableKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => {
-                                    if scan_chars!(input, 'u', 'r', 'n') {
-                                        match input.next() {
-                                            Some('s') => {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    Some(TokenKind::YulReturnsKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                Some(TokenKind::YulReturnKeyword)
-                                            }
-                                            None => Some(TokenKind::YulReturnKeyword),
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('v') => scan_chars!(input, 'e', 'r', 't')
-                                    .then_some(TokenKind::YulRevertKeyword),
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        } else {
-                            None
-                        }
-                    }
-                    Some('s') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'l', 'e', 'd')
-                                        .then_some(TokenKind::YulSealedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('c') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'o', 'n', 'd', 's')
-                                        .then_some(TokenKind::YulSecondsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'z', 'e', 'o', 'f')
-                                    .then_some(TokenKind::YulSizeOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => match input.next() {
-                            Some('a') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 't', 'i', 'c')
-                                        .then_some(TokenKind::YulStaticKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('o') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'r', 'a', 'g', 'e')
-                                        .then_some(TokenKind::YulStorageKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => match input.next() {
-                                Some('i') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'n', 'g')
-                                            .then_some(TokenKind::YulStringKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('u') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'c', 't')
-                                            .then_some(TokenKind::YulStructKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's')
-                                    .then_some(TokenKind::YulSupportsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => scan_chars!(input, 'i', 't', 'c', 'h')
-                            .then_some(TokenKind::YulSwitchKeyword),
-                        Some('z') => {
-                            if !self.version_is_at_least_0_7_0 {
-                                scan_chars!(input, 'a', 'b', 'o')
-                                    .then_some(TokenKind::YulSzaboKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('t') => match input.next() {
-                        Some('h') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'r', 'o', 'w')
-                                    .then_some(TokenKind::YulThrowKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('r') => match input.next() {
-                            Some('u') => {
-                                scan_chars!(input, 'e').then_some(TokenKind::YulTrueKeyword)
-                            }
-                            Some('y') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulTryKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('y') => {
-                            if scan_chars!(input, 'p', 'e') {
-                                match input.next() {
-                                    Some('d') => {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            scan_chars!(input, 'e', 'f')
-                                                .then_some(TokenKind::YulTypeDefKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('o') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'f')
-                                                .then_some(TokenKind::YulTypeOfKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        if !self.version_is_at_least_0_7_1 {
-                                            Some(TokenKind::YulTypeKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    None => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            Some(TokenKind::YulTypeKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('u') => match input.next() {
-                        Some('n') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-                                    .then_some(TokenKind::YulUncheckedKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'n', 'g')
-                                    .then_some(TokenKind::YulUsingKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('v') => match input.next() {
-                        Some('a') => {
-                            if !self.version_is_at_least_0_6_5 {
-                                scan_chars!(input, 'r').then_some(TokenKind::YulVarKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => match input.next() {
-                            Some('e') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'w').then_some(TokenKind::YulViewKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => {
-                                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 't', 'u', 'a', 'l')
-                                        .then_some(TokenKind::YulVirtualKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('w') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('e') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'k', 's')
-                                        .then_some(TokenKind::YulWeeksKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('i') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulWeiKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('h') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'l', 'e')
-                                    .then_some(TokenKind::YulWhileKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('y') => {
-                        if !self.version_is_at_least_0_7_1 {
-                            scan_chars!(input, 'e', 'a', 'r', 's')
-                                .then_some(TokenKind::YulYearsKeyword)
-                        } else {
-                            None
-                        }
-                    }
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some(_) => {
@@ -10548,18 +10256,2904 @@ impl Lexer for Language {
                     longest_token = Some(kind);
                 }
                 input.set_position(save);
+                let yul_abstract_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_address_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_after_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_alias_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_anonymous_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_apply_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_as_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_assembly_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_auto_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'a', 'u', 't', 'o') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_bool_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'o', 'o', 'l') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_5_10 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_break_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_byte_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'b', 'y', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_bytes_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7'),
+                                    scan_chars!(input, '6'),
+                                    scan_chars!(input, '5'),
+                                    scan_chars!(input, '4'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '3', '1'),
+                                    scan_chars!(input, '3', '0'),
+                                    scan_chars!(input, '3'),
+                                    scan_chars!(input, '2', '9'),
+                                    scan_chars!(input, '2', '8'),
+                                    scan_chars!(input, '2', '7'),
+                                    scan_chars!(input, '2', '6'),
+                                    scan_chars!(input, '2', '5'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3'),
+                                    scan_chars!(input, '2', '2'),
+                                    scan_chars!(input, '2', '1'),
+                                    scan_chars!(input, '2', '0'),
+                                    scan_chars!(input, '2'),
+                                    scan_chars!(input, '1', '9'),
+                                    scan_chars!(input, '1', '8'),
+                                    scan_chars!(input, '1', '7'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5'),
+                                    scan_chars!(input, '1', '4'),
+                                    scan_chars!(input, '1', '3'),
+                                    scan_chars!(input, '1', '2'),
+                                    scan_chars!(input, '1', '1'),
+                                    scan_chars!(input, '1', '0'),
+                                    scan_chars!(input, '1')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_call_data_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_case_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_catch_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_constant_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_constructor_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(
+                            input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r'
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_continue_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_contract_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_copy_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_days_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'a', 'y', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_default_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_define_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_delete_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_do_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'd', 'o') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_else_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'l', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_emit_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'm', 'i', 't') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_enum_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'n', 'u', 'm') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_ether_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_event_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_external_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_fallback_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_false_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_final_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_finney_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_fixed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '4', '8', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '5', '6'),
+                                scan_chars!(input, '2', '4', '8'),
+                                scan_chars!(input, '2', '4', '0'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '2', '3', '2'),
+                                scan_chars!(input, '2', '2', '4'),
+                                scan_chars!(input, '2', '1', '6'),
+                                scan_chars!(input, '2', '0', '8'),
+                                scan_chars!(input, '2', '0', '0'),
+                                scan_chars!(input, '1', '9', '2'),
+                                scan_chars!(input, '1', '8', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9'),
+                                scan_chars!(input, '7', '9'),
+                                scan_chars!(input, '7', '8'),
+                                scan_chars!(input, '7', '7'),
+                                scan_chars!(input, '7', '6'),
+                                scan_chars!(input, '7', '5'),
+                                scan_chars!(input, '7', '4'),
+                                scan_chars!(input, '7', '3'),
+                                scan_chars!(input, '7', '1'),
+                                scan_chars!(input, '7', '0'),
+                                scan_chars!(input, '7'),
+                                scan_chars!(input, '6', '9'),
+                                scan_chars!(input, '6', '8'),
+                                scan_chars!(input, '6', '7'),
+                                scan_chars!(input, '6', '6'),
+                                scan_chars!(input, '6', '5'),
+                                scan_chars!(input, '6', '3'),
+                                scan_chars!(input, '6', '2'),
+                                scan_chars!(input, '6', '1'),
+                                scan_chars!(input, '6', '0'),
+                                scan_chars!(input, '6'),
+                                scan_chars!(input, '5', '9'),
+                                scan_chars!(input, '5', '8'),
+                                scan_chars!(input, '5', '7'),
+                                scan_chars!(input, '5', '5'),
+                                scan_chars!(input, '5', '4'),
+                                scan_chars!(input, '5', '3'),
+                                scan_chars!(input, '5', '2'),
+                                scan_chars!(input, '5', '1'),
+                                scan_chars!(input, '5', '0'),
+                                scan_chars!(input, '5'),
+                                scan_chars!(input, '4', '9'),
+                                scan_chars!(input, '4', '7'),
+                                scan_chars!(input, '4', '6'),
+                                scan_chars!(input, '4', '5'),
+                                scan_chars!(input, '4', '4'),
+                                scan_chars!(input, '4', '3'),
+                                scan_chars!(input, '4', '2'),
+                                scan_chars!(input, '4', '1'),
+                                scan_chars!(input, '4'),
+                                scan_chars!(input, '3', '9'),
+                                scan_chars!(input, '3', '8'),
+                                scan_chars!(input, '3', '7'),
+                                scan_chars!(input, '3', '6'),
+                                scan_chars!(input, '3', '5'),
+                                scan_chars!(input, '3', '4'),
+                                scan_chars!(input, '3', '3'),
+                                scan_chars!(input, '3', '1'),
+                                scan_chars!(input, '3', '0'),
+                                scan_chars!(input, '3'),
+                                scan_chars!(input, '2', '9'),
+                                scan_chars!(input, '2', '8'),
+                                scan_chars!(input, '2', '7'),
+                                scan_chars!(input, '2', '6'),
+                                scan_chars!(input, '2', '5'),
+                                scan_chars!(input, '2', '3'),
+                                scan_chars!(input, '2', '2'),
+                                scan_chars!(input, '2', '1'),
+                                scan_chars!(input, '2', '0'),
+                                scan_chars!(input, '2'),
+                                scan_chars!(input, '1', '9'),
+                                scan_chars!(input, '1', '8'),
+                                scan_chars!(input, '1', '7'),
+                                scan_chars!(input, '1', '5'),
+                                scan_chars!(input, '1', '4'),
+                                scan_chars!(input, '1', '3'),
+                                scan_chars!(input, '1', '2'),
+                                scan_chars!(input, '1', '1'),
+                                scan_chars!(input, '1', '0'),
+                                scan_chars!(input, '1'),
+                                scan_chars!(input, '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_for_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'o', 'r') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_function_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_gwei_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'g', 'w', 'e', 'i') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_hex_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'h', 'e', 'x') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_hours_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_if_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'f') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_immutable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_implements_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_import_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_in_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_6_8 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_indexed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_inline_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_int_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'i', 'n', 't'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9', '6'),
+                                    scan_chars!(input, '8', '8'),
+                                    scan_chars!(input, '8', '0'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7', '2'),
+                                    scan_chars!(input, '6', '4'),
+                                    scan_chars!(input, '5', '6'),
+                                    scan_chars!(input, '4', '8'),
+                                    scan_chars!(input, '4', '0'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '2', '5', '6'),
+                                    scan_chars!(input, '2', '4', '8'),
+                                    scan_chars!(input, '2', '4', '0'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3', '2'),
+                                    scan_chars!(input, '2', '2', '4'),
+                                    scan_chars!(input, '2', '1', '6'),
+                                    scan_chars!(input, '2', '0', '8'),
+                                    scan_chars!(input, '2', '0', '0'),
+                                    scan_chars!(input, '1', '9', '2'),
+                                    scan_chars!(input, '1', '8', '4'),
+                                    scan_chars!(input, '1', '7', '6'),
+                                    scan_chars!(input, '1', '6', '8'),
+                                    scan_chars!(input, '1', '6', '0'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5', '2'),
+                                    scan_chars!(input, '1', '4', '4'),
+                                    scan_chars!(input, '1', '3', '6'),
+                                    scan_chars!(input, '1', '2', '8'),
+                                    scan_chars!(input, '1', '2', '0'),
+                                    scan_chars!(input, '1', '1', '2'),
+                                    scan_chars!(input, '1', '0', '4')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_interface_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_internal_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_is_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'i', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_leave_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'l', 'e', 'a', 'v', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if self.version_is_at_least_0_6_0 {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_let_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'l', 'e', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_library_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_macro_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_mapping_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_match_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_memory_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_minutes_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_modifier_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_mutable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_new_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'n', 'e', 'w') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_null_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'n', 'u', 'l', 'l') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_override_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_partial_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_payable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_pragma_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_private_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_promise_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_public_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_pure_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'p', 'u', 'r', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_receive_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_reference_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_relocatable_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(
+                            input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_return_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_returns_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_revert_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_sealed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_seconds_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_size_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_static_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_storage_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_string_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_struct_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_supports_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_switch_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_szabo_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_0 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_throw_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_true_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'r', 'u', 'e') {
+                            KeywordScan::Absent
+                        } else if true {
+                            KeywordScan::Reserved
+                        } else if true {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_try_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'r', 'y') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_type_def_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_type_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_type_of_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_ufixed_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '4', '8', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                                scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                                scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                                scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                                scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                                scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                                scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                                scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                                scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                                scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                                scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                                scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                                scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                                scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                                scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                                scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                                scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                                scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                                scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                                scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                                scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                                scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                                scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                                scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                                scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                                scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                                scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                                scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                                scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                                scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                                scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                                scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                                scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                                scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        },
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9', '6'),
+                                scan_chars!(input, '8', '8'),
+                                scan_chars!(input, '8', '0'),
+                                scan_chars!(input, '8'),
+                                scan_chars!(input, '7', '2'),
+                                scan_chars!(input, '6', '4'),
+                                scan_chars!(input, '5', '6'),
+                                scan_chars!(input, '4', '8'),
+                                scan_chars!(input, '4', '0'),
+                                scan_chars!(input, '3', '2'),
+                                scan_chars!(input, '2', '5', '6'),
+                                scan_chars!(input, '2', '4', '8'),
+                                scan_chars!(input, '2', '4', '0'),
+                                scan_chars!(input, '2', '4'),
+                                scan_chars!(input, '2', '3', '2'),
+                                scan_chars!(input, '2', '2', '4'),
+                                scan_chars!(input, '2', '1', '6'),
+                                scan_chars!(input, '2', '0', '8'),
+                                scan_chars!(input, '2', '0', '0'),
+                                scan_chars!(input, '1', '9', '2'),
+                                scan_chars!(input, '1', '8', '4'),
+                                scan_chars!(input, '1', '7', '6'),
+                                scan_chars!(input, '1', '6', '8'),
+                                scan_chars!(input, '1', '6', '0'),
+                                scan_chars!(input, '1', '6'),
+                                scan_chars!(input, '1', '5', '2'),
+                                scan_chars!(input, '1', '4', '4'),
+                                scan_chars!(input, '1', '3', '6'),
+                                scan_chars!(input, '1', '2', '8'),
+                                scan_chars!(input, '1', '2', '0'),
+                                scan_chars!(input, '1', '1', '2'),
+                                scan_chars!(input, '1', '0', '4')
+                            ),
+                            scan_chars!(input, 'x'),
+                            scan_choice!(
+                                input,
+                                scan_chars!(input, '9'),
+                                scan_chars!(input, '7', '9'),
+                                scan_chars!(input, '7', '8'),
+                                scan_chars!(input, '7', '7'),
+                                scan_chars!(input, '7', '6'),
+                                scan_chars!(input, '7', '5'),
+                                scan_chars!(input, '7', '4'),
+                                scan_chars!(input, '7', '3'),
+                                scan_chars!(input, '7', '1'),
+                                scan_chars!(input, '7', '0'),
+                                scan_chars!(input, '7'),
+                                scan_chars!(input, '6', '9'),
+                                scan_chars!(input, '6', '8'),
+                                scan_chars!(input, '6', '7'),
+                                scan_chars!(input, '6', '6'),
+                                scan_chars!(input, '6', '5'),
+                                scan_chars!(input, '6', '3'),
+                                scan_chars!(input, '6', '2'),
+                                scan_chars!(input, '6', '1'),
+                                scan_chars!(input, '6', '0'),
+                                scan_chars!(input, '6'),
+                                scan_chars!(input, '5', '9'),
+                                scan_chars!(input, '5', '8'),
+                                scan_chars!(input, '5', '7'),
+                                scan_chars!(input, '5', '5'),
+                                scan_chars!(input, '5', '4'),
+                                scan_chars!(input, '5', '3'),
+                                scan_chars!(input, '5', '2'),
+                                scan_chars!(input, '5', '1'),
+                                scan_chars!(input, '5', '0'),
+                                scan_chars!(input, '5'),
+                                scan_chars!(input, '4', '9'),
+                                scan_chars!(input, '4', '7'),
+                                scan_chars!(input, '4', '6'),
+                                scan_chars!(input, '4', '5'),
+                                scan_chars!(input, '4', '4'),
+                                scan_chars!(input, '4', '3'),
+                                scan_chars!(input, '4', '2'),
+                                scan_chars!(input, '4', '1'),
+                                scan_chars!(input, '4'),
+                                scan_chars!(input, '3', '9'),
+                                scan_chars!(input, '3', '8'),
+                                scan_chars!(input, '3', '7'),
+                                scan_chars!(input, '3', '6'),
+                                scan_chars!(input, '3', '5'),
+                                scan_chars!(input, '3', '4'),
+                                scan_chars!(input, '3', '3'),
+                                scan_chars!(input, '3', '1'),
+                                scan_chars!(input, '3', '0'),
+                                scan_chars!(input, '3'),
+                                scan_chars!(input, '2', '9'),
+                                scan_chars!(input, '2', '8'),
+                                scan_chars!(input, '2', '7'),
+                                scan_chars!(input, '2', '6'),
+                                scan_chars!(input, '2', '5'),
+                                scan_chars!(input, '2', '3'),
+                                scan_chars!(input, '2', '2'),
+                                scan_chars!(input, '2', '1'),
+                                scan_chars!(input, '2', '0'),
+                                scan_chars!(input, '2'),
+                                scan_chars!(input, '1', '9'),
+                                scan_chars!(input, '1', '8'),
+                                scan_chars!(input, '1', '7'),
+                                scan_chars!(input, '1', '5'),
+                                scan_chars!(input, '1', '4'),
+                                scan_chars!(input, '1', '3'),
+                                scan_chars!(input, '1', '2'),
+                                scan_chars!(input, '1', '1'),
+                                scan_chars!(input, '1', '0'),
+                                scan_chars!(input, '1'),
+                                scan_chars!(input, '0')
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_uint_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_sequence!(
+                            scan_chars!(input, 'u', 'i', 'n', 't'),
+                            scan_optional!(
+                                input,
+                                scan_choice!(
+                                    input,
+                                    scan_chars!(input, '9', '6'),
+                                    scan_chars!(input, '8', '8'),
+                                    scan_chars!(input, '8', '0'),
+                                    scan_chars!(input, '8'),
+                                    scan_chars!(input, '7', '2'),
+                                    scan_chars!(input, '6', '4'),
+                                    scan_chars!(input, '5', '6'),
+                                    scan_chars!(input, '4', '8'),
+                                    scan_chars!(input, '4', '0'),
+                                    scan_chars!(input, '3', '2'),
+                                    scan_chars!(input, '2', '5', '6'),
+                                    scan_chars!(input, '2', '4', '8'),
+                                    scan_chars!(input, '2', '4', '0'),
+                                    scan_chars!(input, '2', '4'),
+                                    scan_chars!(input, '2', '3', '2'),
+                                    scan_chars!(input, '2', '2', '4'),
+                                    scan_chars!(input, '2', '1', '6'),
+                                    scan_chars!(input, '2', '0', '8'),
+                                    scan_chars!(input, '2', '0', '0'),
+                                    scan_chars!(input, '1', '9', '2'),
+                                    scan_chars!(input, '1', '8', '4'),
+                                    scan_chars!(input, '1', '7', '6'),
+                                    scan_chars!(input, '1', '6', '8'),
+                                    scan_chars!(input, '1', '6', '0'),
+                                    scan_chars!(input, '1', '6'),
+                                    scan_chars!(input, '1', '5', '2'),
+                                    scan_chars!(input, '1', '4', '4'),
+                                    scan_chars!(input, '1', '3', '6'),
+                                    scan_chars!(input, '1', '2', '8'),
+                                    scan_chars!(input, '1', '2', '0'),
+                                    scan_chars!(input, '1', '1', '2'),
+                                    scan_chars!(input, '1', '0', '4')
+                                )
+                            )
+                        ) {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_unchecked_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_using_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_var_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'a', 'r') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_6_5 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_view_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'i', 'e', 'w') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_virtual_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
+                            KeywordScan::Absent
+                        } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
+                        {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_weeks_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_wei_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'e', 'i') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_while_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
+                let yul_years_keyword = || {
+                    let save = input.position();
+                    let scanned = self.yul_identifier(input);
+                    input.set_position(save);
+                    if !scanned {
+                        return KeywordScan::Absent;
+                    }
+                    scan_keyword_choice!(
+                        input,
+                        if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
+                            KeywordScan::Absent
+                        } else if !self.version_is_at_least_0_7_1 {
+                            KeywordScan::Reserved
+                        } else if false {
+                            KeywordScan::Present
+                        } else {
+                            KeywordScan::Absent
+                        }
+                    )
+                };
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
                         { HexStringLiteral = hex_string_literal }
-                        { YulBytesKeyword = yul_bytes_keyword }
                         { YulDecimalLiteral = yul_decimal_literal }
-                        { YulFixedKeyword = yul_fixed_keyword }
                         { YulHexLiteral = yul_hex_literal }
                         { YulIdentifier = yul_identifier }
-                        { YulIntKeyword = yul_int_keyword }
-                        { YulUfixedKeyword = yul_ufixed_keyword }
-                        { YulUintKeyword = yul_uint_keyword }
                 }
             }
         }

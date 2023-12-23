@@ -14,6 +14,7 @@ use semver::Version;
 use serde::Serialize;
 
 use crate::ast_model::AstModel;
+use crate::keyword_scanner_definition::KeywordScannerDefinitionExtensions;
 use crate::parser_definition::ParserDefinitionExtensions;
 use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
 use crate::scanner_definition::ScannerDefinitionExtensions;
@@ -45,8 +46,7 @@ struct ScannerContext {
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
     literal_scanner: String,
-    // TODO:
-    keyword_scanners: String,
+    keyword_scanners: BTreeMap<&'static str, String>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -230,9 +230,13 @@ impl GrammarVisitor for CodeGenerator {
         self.all_scanners.insert(scanner.name(), scanner.clone());
     }
 
-    fn keyword_scanner_definition_enter(&mut self, _scanner: &KeywordScannerDefinitionRef) {
-        // TODO
-        // self.current_context().literal_scanner = "Keyword".to_string();
+    fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
+        for def in scanner.definitions() {
+            self.referenced_versions
+                .extend(def.enabled.iter().map(|vqr| vqr.from.clone()));
+            self.referenced_versions
+                .extend(def.reserved.iter().map(|vqr| vqr.from.clone()));
+        }
     }
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
@@ -313,6 +317,13 @@ impl GrammarVisitor for CodeGenerator {
                 self.current_context()
                     .scanner_definitions
                     .insert(scanner.name());
+            }
+            ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
+                self.token_kinds.insert(scanner.name());
+
+                self.current_context()
+                    .keyword_scanners
+                    .insert(scanner.name(), scanner.to_scanner_code().to_string());
             }
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {

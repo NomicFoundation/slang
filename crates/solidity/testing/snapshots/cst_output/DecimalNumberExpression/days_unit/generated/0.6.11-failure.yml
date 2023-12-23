@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 10 days                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or GweiKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/days_unit/input.sol:1:3]
+       │
+     1 │ 10 days
+       │   ──┬──  
+       │     ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - DecimalNumberExpression: # 0..7 "10 days"
+      - (literal) DecimalLiteral: "10" # 0..2
+      - SKIPPED: " days" # 2..7

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor () {}                                                                │ 0..17
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstructorKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ConstructorDefinition/simple/input.sol:1:1]
+       │
+     1 │ constructor () {}
+       │ ────────┬────────  
+       │         ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "constructor () {}" # 0..17
