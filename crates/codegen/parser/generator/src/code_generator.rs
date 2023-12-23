@@ -3,9 +3,9 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, KeywordScannerDefinitionNode, KeywordScannerDefinitionRef,
-    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
-    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, KeywordScannerDefinitionRef, ParserDefinitionNode,
+    ParserDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
+    ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;

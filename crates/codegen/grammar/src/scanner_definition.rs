@@ -69,7 +69,7 @@ impl Visitable for ScannerDefinitionNode {
 pub trait KeywordScannerDefinition: Debug {
     fn name(&self) -> &'static str;
     fn identifier_scanner(&self) -> &'static str;
-    fn node(&self) -> &KeywordScannerDefinitionNode;
+    // fn node(&self) -> &KeywordScannerDefinitionNode;
     fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode];
 }
 
@@ -78,10 +78,11 @@ pub type KeywordScannerDefinitionRef = Rc<dyn KeywordScannerDefinition>;
 impl Visitable for KeywordScannerDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.keyword_scanner_definition_enter(self);
-        self.node().accept_visitor(visitor);
+        // self.node().accept_visitor(visitor);
     }
 }
 
+#[derive(Debug)]
 pub struct KeywordScannerDefinitionVersionedNode {
     // Underlying keyword scanner
     pub value: KeywordScannerDefinitionNode,
