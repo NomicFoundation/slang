@@ -170,6 +170,12 @@ impl CodeGenerator {
         self.current_context_name = name;
         self.scanner_contexts.entry(name).or_default();
     }
+
+    fn current_context(&mut self) -> &mut ScannerContext {
+        self.scanner_contexts
+            .get_mut(&self.current_context_name)
+            .expect("context must be set with `set_current_context`")
+    }
 }
 
 impl GrammarVisitor for CodeGenerator {
@@ -298,9 +304,8 @@ impl GrammarVisitor for CodeGenerator {
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
                 self.token_kinds.insert(scanner.name());
-                self.scanner_contexts
-                    .get_mut(&self.current_context_name)
-                    .unwrap()
+
+                self.current_context()
                     .scanner_definitions
                     .insert(scanner.name());
             }
@@ -314,11 +319,7 @@ impl GrammarVisitor for CodeGenerator {
                     _ => panic!("DelimitedBy must be delimited by scanners"),
                 };
 
-                let delimiters = &mut self
-                    .scanner_contexts
-                    .get_mut(&self.current_context_name)
-                    .unwrap()
-                    .delimiters;
+                let delimiters = &mut self.current_context().delimiters;
 
                 assert!(
                     delimiters.get(close).is_none(),
