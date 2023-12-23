@@ -3,9 +3,9 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, KeywordScannerDefinitionNode, KeywordScannerDefinitionRef,
+    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
+    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
@@ -228,6 +228,11 @@ impl GrammarVisitor for CodeGenerator {
 
     fn scanner_definition_enter(&mut self, scanner: &ScannerDefinitionRef) {
         self.all_scanners.insert(scanner.name(), scanner.clone());
+    }
+
+    fn keyword_scanner_definition_enter(&mut self, _scanner: &KeywordScannerDefinitionRef) {
+        // TODO
+        // self.current_context().literal_scanner = "Keyword".to_string();
     }
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {

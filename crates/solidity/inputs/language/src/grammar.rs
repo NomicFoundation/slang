@@ -411,7 +411,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                 },
                 Item::Keyword { item } => NamedScanner {
                     name: ident.to_string().leak(),
-                    def: resolve_keyword(item.deref().clone()),
+                    def: resolve_keyword(item.deref().clone(), ctx),
                 },
                 _ => unreachable!("Only terminals can be resolved here"),
             };
@@ -490,7 +490,7 @@ fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDe
     }
 }
 
-fn resolve_keyword(keyword: model::KeywordItem) -> ScannerDefinitionNode {
+fn resolve_keyword(keyword: model::KeywordItem, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     // TODO(#568): Handle reserved keywords using the given "Identifier" parser
     let _ = keyword.identifier;
 
@@ -871,6 +871,9 @@ impl IntoParserDefNode for GrammarElement {
             }
             GrammarElement::ScannerDefinition(parser) => {
                 ParserDefinitionNode::ScannerDefinition(parser)
+            }
+            GrammarElement::KeywordScannerDefinition(_) => {
+                unimplemented!("IntoParserDefNode for KeywordScannerDefinition")
             }
             GrammarElement::TriviaParserDefinition(parser) => {
                 ParserDefinitionNode::TriviaParserDefinition(parser)

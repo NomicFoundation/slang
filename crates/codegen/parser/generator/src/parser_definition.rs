@@ -285,12 +285,14 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
 pub trait VersionQualityRangeVecExtensions {
     fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream;
+    // Quotes a boolean expression that is satisfied for the given version quality ranges
+    fn as_bool_expr(&self) -> TokenStream;
 }
 
 impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
-    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream {
+    fn as_bool_expr(&self) -> TokenStream {
         if self.is_empty() {
-            if_true
+            quote!(true)
         } else {
             let flags = self.iter().map(|vqr| {
                 let flag = format_ident!(
@@ -303,8 +305,18 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
                     quote! { !self.#flag }
                 }
             });
+            quote! { #(#flags)&&* }
+        }
+    }
+
+    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream {
+        if self.is_empty() {
+            if_true
+        } else {
+            let condition = self.as_bool_expr();
+
             let else_part = if_false.map(|if_false| quote! { else { #if_false } });
-            quote! { if #(#flags)&&* { #if_true } #else_part }
+            quote! { if #condition { #if_true } #else_part }
         }
     }
 }

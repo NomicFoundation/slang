@@ -16,7 +16,7 @@ use semver::Version;
 use crate::cst;
 pub use crate::kinds::LexicalContext;
 use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
-use crate::lexer::Lexer;
+use crate::lexer::{KeywordScan, Lexer};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;

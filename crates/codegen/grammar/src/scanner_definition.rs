@@ -65,3 +65,72 @@ impl Visitable for ScannerDefinitionNode {
         }
     }
 }
+
+pub trait KeywordScannerDefinition: Debug {
+    fn name(&self) -> &'static str;
+    fn identifier_scanner(&self) -> &'static str;
+    fn node(&self) -> &KeywordScannerDefinitionNode;
+    fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode];
+}
+
+pub type KeywordScannerDefinitionRef = Rc<dyn KeywordScannerDefinition>;
+
+impl Visitable for KeywordScannerDefinitionRef {
+    fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
+        visitor.keyword_scanner_definition_enter(self);
+        self.node().accept_visitor(visitor);
+    }
+}
+
+pub struct KeywordScannerDefinitionVersionedNode {
+    // Underlying keyword scanner
+    pub value: KeywordScannerDefinitionNode,
+    /// When the keyword scanner is enabled
+    pub enabled: Vec<VersionQualityRange>,
+    /// When the keyword is reserved, i.e. can't be used in other position (e.g. as a name)
+    pub reserved: Vec<VersionQualityRange>,
+}
+
+#[derive(Clone, Debug)]
+pub enum KeywordScannerDefinitionNode {
+    Optional(Box<Self>),
+    Sequence(Vec<Self>),
+    Choice(Vec<Self>),
+    Atom(String),
+    // No repeatable combinators, because keywords are assumed to not be over a regular language
+}
+
+impl Visitable for KeywordScannerDefinitionNode {
+    fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
+        visitor.keyword_scanner_definition_node_enter(self);
+
+        match self {
+            Self::Optional(node) => {
+                node.accept_visitor(visitor);
+            }
+            Self::Sequence(nodes) | Self::Choice(nodes) => {
+                for node in nodes {
+                    node.accept_visitor(visitor);
+                }
+            }
+            Self::Atom(_) => {}
+        }
+    }
+}
+
+impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
+    fn from(val: KeywordScannerDefinitionNode) -> Self {
+        match val {
+            KeywordScannerDefinitionNode::Optional(node) => {
+                ScannerDefinitionNode::Optional(Box::new((*node).into()))
+            }
+            KeywordScannerDefinitionNode::Sequence(nodes) => {
+                ScannerDefinitionNode::Sequence(nodes.into_iter().map(Into::into).collect())
+            }
+            KeywordScannerDefinitionNode::Atom(string) => ScannerDefinitionNode::Literal(string),
+            KeywordScannerDefinitionNode::Choice(nodes) => {
+                ScannerDefinitionNode::Choice(nodes.into_iter().map(Into::into).collect())
+            }
+        }
+    }
+}

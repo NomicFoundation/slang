@@ -14,7 +14,7 @@ use napi_derive::napi;
 use crate::cst;
 pub use crate::kinds::LexicalContext;
 use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
-use crate::lexer::Lexer;
+use crate::lexer::{KeywordScan, Lexer};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
@@ -136,21 +136,21 @@ impl Lexer for Language {
         let mut furthest_position = input.position();
         let mut longest_token = None;
 
+        macro_rules! longest_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    if self.$function(input) && input.position() > furthest_position {
+                        furthest_position = input.position();
+                        longest_token = Some(TokenKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+
         match LexCtx::value() {
             {%- for context_name, context in code.scanner_contexts %}
                 LexicalContext::{{ context_name }} => {
-                    macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
                     // TODO: Handle keywords using a separate keword scanner promotion mechanism
                     if let Some(kind) = {{ context.literal_scanner }} {
                         furthest_position = input.position();

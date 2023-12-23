@@ -1,5 +1,6 @@
 mod ast_model;
 mod code_generator;
+mod keyword_scanner_definition;
 mod parser_definition;
 mod precedence_parser_definition;
 mod scanner_definition;
