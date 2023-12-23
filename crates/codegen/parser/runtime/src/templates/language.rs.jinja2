@@ -93,7 +93,8 @@ impl Language {
 
     // Keyword scanners
     {%- for keyword_name, code in code.keyword_scanners %}
-        #[allow(clippy::ifs_same_cond)]
+        #[allow(clippy::ifs_same_cond, clippy::eq_op, clippy::nonminimal_bool, clippy::overly_complex_bool_expr)]
+        #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
         fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> KeywordScan { {{ code }} }
     {%- endfor %}
 
@@ -140,10 +141,7 @@ impl Lexer for Language {
     fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Vec<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
-        {# let mut longest_token = None; #}
-        {# let mut ambiguous = None; #}
-        // Whether we've seen a keyword
-        {# let mut results = [TokenKind::SKIPPED; 2]; #}
+        // TODO: Replace by a SmallVec<[_; 2]> or similar
         let mut longest_tokens = vec![];
 
         macro_rules! longest_match {
@@ -153,7 +151,6 @@ impl Lexer for Language {
                         furthest_position = input.position();
 
                         longest_tokens = vec![TokenKind::$kind];
-                        {# longest_token = Some(TokenKind::$kind); #}
                     }
                     input.set_position(save);
                 )*
@@ -190,11 +187,9 @@ impl Lexer for Language {
         match LexCtx::value() {
             {%- for context_name, context in code.scanner_contexts %}
                 LexicalContext::{{ context_name }} => {
-                    // TODO: Handle keywords using a separate keword scanner promotion mechanism
                     if let Some(kind) = {{ context.literal_scanner }} {
                         furthest_position = input.position();
                         longest_tokens = vec![kind];
-                        {# longest_token = Some(kind); #}
                     }
                     input.set_position(save);
 
@@ -214,37 +209,17 @@ impl Lexer for Language {
         }
 
         match longest_tokens.as_slice() {
-            {# &[token, ..] => { #}
-                {# input.set_position(furthest_position); #}
-                {# vec![token] #}
-            {# } #}
-             // TODO: Handle returning ambiguous tokens
-            &[_, ..] => {
+            [_, ..] => {
                 input.set_position(furthest_position);
                 longest_tokens
-                {# vec![token] #}
             },
             // Skip a character if possible and if we didn't recognize a token
-            &[] if input.peek().is_some() => {
+            [] if input.peek().is_some() => {
                 let _ = input.next();
                 vec![TokenKind::SKIPPED]
             },
-            &[] => vec![],
+            [] => vec![],
         }
-
-        {# match longest_token {
-            Some(..) => {
-                input.set_position(furthest_position);
-                longest_token
-            },
-            // Skip a character if possible and if we didn't recognize a token
-            None if input.peek().is_some() => {
-                let _ = input.next();
-                Some(TokenKind::SKIPPED)
-            },
-            // EOF
-            None => None,
-        } #}
     }
 }
 

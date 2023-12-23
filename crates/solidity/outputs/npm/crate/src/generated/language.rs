@@ -6694,1493 +6694,1099 @@ impl Language {
     }
 
     // Keyword scanners
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn abicoder_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn abstract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_6_0 || true)
+                && scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn address_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn after_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn alias_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'a', 'l', 'i', 'a', 's')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn anonymous_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn apply_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'a', 'p', 'p', 'l', 'y')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn as_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'a', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn assembly_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn auto_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'a', 'u', 't', 'o') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0) && scan_chars!(input, 'a', 'u', 't', 'o') {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn bool_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'b', 'o', 'o', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'b', 'o', 'o', 'l') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn break_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn byte_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'b', 'y', 't', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_8_0 {
-                KeywordScan::Present
+            if (!self.version_is_at_least_0_8_0 || true) && scan_chars!(input, 'b', 'y', 't', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn bytes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_sequence!(
-                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                    scan_optional!(
                         input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1')
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7'),
+                            scan_chars!(input, '6'),
+                            scan_chars!(input, '5'),
+                            scan_chars!(input, '4'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '3', '1'),
+                            scan_chars!(input, '3', '0'),
+                            scan_chars!(input, '3'),
+                            scan_chars!(input, '2', '9'),
+                            scan_chars!(input, '2', '8'),
+                            scan_chars!(input, '2', '7'),
+                            scan_chars!(input, '2', '6'),
+                            scan_chars!(input, '2', '5'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3'),
+                            scan_chars!(input, '2', '2'),
+                            scan_chars!(input, '2', '1'),
+                            scan_chars!(input, '2', '0'),
+                            scan_chars!(input, '2'),
+                            scan_chars!(input, '1', '9'),
+                            scan_chars!(input, '1', '8'),
+                            scan_chars!(input, '1', '7'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5'),
+                            scan_chars!(input, '1', '4'),
+                            scan_chars!(input, '1', '3'),
+                            scan_chars!(input, '1', '2'),
+                            scan_chars!(input, '1', '1'),
+                            scan_chars!(input, '1', '0'),
+                            scan_chars!(input, '1')
+                        )
                     )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn call_data_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_5_0 || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn case_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 's', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'c', 'a', 's', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn catch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_6_0 || true)
+                && scan_chars!(input, 'c', 'a', 't', 'c', 'h')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn constant_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn constructor_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_4_22 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_4_22 || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn continue_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn contract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn copy_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn days_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'a', 'y', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'd', 'a', 'y', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn default_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn define_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn delete_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn do_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'o') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'd', 'o') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn else_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'l', 's', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'e', 'l', 's', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn emit_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'm', 'i', 't') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_4_21 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_4_21 || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'e', 'm', 'i', 't')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn enum_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'n', 'u', 'm') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'e', 'n', 'u', 'm') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn error_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'r', 'r', 'o', 'r') {
-                KeywordScan::Absent
-            } else if false {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_8_4 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_8_4 || false)
+                && scan_chars!(input, 'e', 'r', 'r', 'o', 'r')
+            {
+                if false {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn ether_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn event_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn experimental_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true)
+                && scan_chars!(input, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn external_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn fallback_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || self.version_is_at_least_0_6_0)
+                && scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k')
+            {
+                if self.version_is_at_least_0_6_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn false_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn final_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn finney_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Present
+            if (!self.version_is_at_least_0_7_0 || !self.version_is_at_least_0_7_0)
+                && scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y')
+            {
+                if !self.version_is_at_least_0_7_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn fixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+            if (true || self.version_is_at_least_0_4_14)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '7', '9'),
-                    scan_chars!(input, '7', '8'),
-                    scan_chars!(input, '7', '7'),
-                    scan_chars!(input, '7', '6'),
-                    scan_chars!(input, '7', '5'),
-                    scan_chars!(input, '7', '4'),
-                    scan_chars!(input, '7', '3'),
-                    scan_chars!(input, '7', '1'),
-                    scan_chars!(input, '7', '0'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6', '9'),
-                    scan_chars!(input, '6', '8'),
-                    scan_chars!(input, '6', '7'),
-                    scan_chars!(input, '6', '6'),
-                    scan_chars!(input, '6', '5'),
-                    scan_chars!(input, '6', '3'),
-                    scan_chars!(input, '6', '2'),
-                    scan_chars!(input, '6', '1'),
-                    scan_chars!(input, '6', '0'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5', '9'),
-                    scan_chars!(input, '5', '8'),
-                    scan_chars!(input, '5', '7'),
-                    scan_chars!(input, '5', '5'),
-                    scan_chars!(input, '5', '4'),
-                    scan_chars!(input, '5', '3'),
-                    scan_chars!(input, '5', '2'),
-                    scan_chars!(input, '5', '1'),
-                    scan_chars!(input, '5', '0'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4', '9'),
-                    scan_chars!(input, '4', '7'),
-                    scan_chars!(input, '4', '6'),
-                    scan_chars!(input, '4', '5'),
-                    scan_chars!(input, '4', '4'),
-                    scan_chars!(input, '4', '3'),
-                    scan_chars!(input, '4', '2'),
-                    scan_chars!(input, '4', '1'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '9'),
-                    scan_chars!(input, '3', '8'),
-                    scan_chars!(input, '3', '7'),
-                    scan_chars!(input, '3', '6'),
-                    scan_chars!(input, '3', '5'),
-                    scan_chars!(input, '3', '4'),
-                    scan_chars!(input, '3', '3'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1'),
-                    scan_chars!(input, '0')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn for_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'f', 'o', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn from_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'f', 'r', 'o', 'm') {
-                KeywordScan::Absent
-            } else if false {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn function_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn global_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'g', 'l', 'o', 'b', 'a', 'l') {
-                KeywordScan::Absent
-            } else if false {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_8_13 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn gwei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'g', 'w', 'e', 'i') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_7_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_11 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn hex_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'h', 'e', 'x') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn hours_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn if_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'f') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn immutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_5 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn implements_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn import_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn in_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'n') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn indexed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn inline_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn int_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_sequence!(
-                scan_chars!(input, 'i', 'n', 't'),
-                scan_optional!(
-                    input,
+            if (true || self.version_is_at_least_0_4_14)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
                         scan_chars!(input, '9', '6'),
@@ -8215,1830 +7821,57 @@ impl Language {
                         scan_chars!(input, '1', '2', '0'),
                         scan_chars!(input, '1', '1', '2'),
                         scan_chars!(input, '1', '0', '4')
-                    )
-                )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn interface_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn internal_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn is_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'i', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn let_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'l', 'e', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn library_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn macro_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn mapping_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn match_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn memory_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn minutes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn modifier_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn mutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn new_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'n', 'e', 'w') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn null_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'n', 'u', 'l', 'l') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'o', 'f') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn override_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn partial_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn payable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn pragma_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn private_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn promise_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn public_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn pure_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'p', 'u', 'r', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn receive_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn reference_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn relocatable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn return_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn returns_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn revert_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
-                KeywordScan::Absent
-            } else if false {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_8_4 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn sealed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn seconds_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn size_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn solidity_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn static_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn storage_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn string_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn struct_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn supports_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn switch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn szabo_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn throw_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_5_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn true_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'r', 'u', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn try_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'r', 'y') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn type_def_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn type_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_5_3 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn type_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '7', '9'),
-                    scan_chars!(input, '7', '8'),
-                    scan_chars!(input, '7', '7'),
-                    scan_chars!(input, '7', '6'),
-                    scan_chars!(input, '7', '5'),
-                    scan_chars!(input, '7', '4'),
-                    scan_chars!(input, '7', '3'),
-                    scan_chars!(input, '7', '1'),
-                    scan_chars!(input, '7', '0'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6', '9'),
-                    scan_chars!(input, '6', '8'),
-                    scan_chars!(input, '6', '7'),
-                    scan_chars!(input, '6', '6'),
-                    scan_chars!(input, '6', '5'),
-                    scan_chars!(input, '6', '3'),
-                    scan_chars!(input, '6', '2'),
-                    scan_chars!(input, '6', '1'),
-                    scan_chars!(input, '6', '0'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5', '9'),
-                    scan_chars!(input, '5', '8'),
-                    scan_chars!(input, '5', '7'),
-                    scan_chars!(input, '5', '5'),
-                    scan_chars!(input, '5', '4'),
-                    scan_chars!(input, '5', '3'),
-                    scan_chars!(input, '5', '2'),
-                    scan_chars!(input, '5', '1'),
-                    scan_chars!(input, '5', '0'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4', '9'),
-                    scan_chars!(input, '4', '7'),
-                    scan_chars!(input, '4', '6'),
-                    scan_chars!(input, '4', '5'),
-                    scan_chars!(input, '4', '4'),
-                    scan_chars!(input, '4', '3'),
-                    scan_chars!(input, '4', '2'),
-                    scan_chars!(input, '4', '1'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '9'),
-                    scan_chars!(input, '3', '8'),
-                    scan_chars!(input, '3', '7'),
-                    scan_chars!(input, '3', '6'),
-                    scan_chars!(input, '3', '5'),
-                    scan_chars!(input, '3', '4'),
-                    scan_chars!(input, '3', '3'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1'),
-                    scan_chars!(input, '0')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'i', 'n', 't'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    )
-                )
-            ) {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn unchecked_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_8_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn using_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn var_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'v', 'a', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_5_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn view_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'v', 'i', 'e', 'w') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn virtual_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn weeks_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn wei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'w', 'e', 'i') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn while_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn years_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if !self.version_is_at_least_0_5_0 {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_abstract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_address_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_after_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'f', 't', 'e', 'r') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_alias_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'l', 'i', 'a', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_anonymous_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_apply_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'p', 'p', 'l', 'y') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_as_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_assembly_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_auto_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'a', 'u', 't', 'o') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_bool_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'b', 'o', 'o', 'l') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_5_10 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_break_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_byte_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_chars!(input, 'b', 'y', 't', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_sequence!(
-                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                scan_optional!(
-                    input,
+                    ),
+                    scan_chars!(input, 'x'),
                     scan_choice!(
                         input,
                         scan_chars!(input, '9'),
-                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
                         scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
                         scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
                         scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
                         scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
                         scan_chars!(input, '3', '1'),
                         scan_chars!(input, '3', '0'),
                         scan_chars!(input, '3'),
@@ -10047,7 +7880,6 @@ impl Language {
                         scan_chars!(input, '2', '7'),
                         scan_chars!(input, '2', '6'),
                         scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '4'),
                         scan_chars!(input, '2', '3'),
                         scan_chars!(input, '2', '2'),
                         scan_chars!(input, '2', '1'),
@@ -10056,2443 +7888,4724 @@ impl Language {
                         scan_chars!(input, '1', '9'),
                         scan_chars!(input, '1', '8'),
                         scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '6'),
                         scan_chars!(input, '1', '5'),
                         scan_chars!(input, '1', '4'),
                         scan_chars!(input, '1', '3'),
                         scan_chars!(input, '1', '2'),
                         scan_chars!(input, '1', '1'),
                         scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1')
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
                     )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn for_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'f', 'o', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn from_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || false) && scan_chars!(input, 'f', 'r', 'o', 'm') {
+                if false {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn function_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn global_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_8_13 || false)
+                && scan_chars!(input, 'g', 'l', 'o', 'b', 'a', 'l')
+            {
+                if false {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn gwei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_6_11 || self.version_is_at_least_0_7_0)
+                && scan_chars!(input, 'g', 'w', 'e', 'i')
+            {
+                if self.version_is_at_least_0_7_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn hex_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'h', 'e', 'x') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn hours_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn if_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 'f') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn immutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_6_5 || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn implements_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn import_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn in_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'i', 'n') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn indexed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn inline_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn int_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'i', 'n', 't'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
+                    )
+                )
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn interface_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn internal_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn is_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'i', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn let_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'l', 'e', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn library_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn macro_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'm', 'a', 'c', 'r', 'o')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn mapping_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn match_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn memory_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn minutes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn modifier_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn mutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn new_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'n', 'e', 'w') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn null_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'n', 'u', 'l', 'l') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'o', 'f') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn override_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn partial_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn payable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn pragma_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn private_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn promise_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn public_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn pure_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'p', 'u', 'r', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn receive_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || self.version_is_at_least_0_6_0)
+                && scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e')
+            {
+                if self.version_is_at_least_0_6_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn reference_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn relocatable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true)
+                && scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn return_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn returns_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn revert_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_8_4 || false)
+                && scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't')
+            {
+                if false {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn sealed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn seconds_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn size_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn solidity_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn static_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn storage_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn string_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn struct_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn supports_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn switch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn szabo_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (!self.version_is_at_least_0_7_0 || !self.version_is_at_least_0_7_0)
+                && scan_chars!(input, 's', 'z', 'a', 'b', 'o')
+            {
+                if !self.version_is_at_least_0_7_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn throw_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (!self.version_is_at_least_0_5_0 || true)
+                && scan_chars!(input, 't', 'h', 'r', 'o', 'w')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn true_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 't', 'r', 'u', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn try_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_6_0 || true) && scan_chars!(input, 't', 'r', 'y') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn type_def_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn type_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_5_3 || true) && scan_chars!(input, 't', 'y', 'p', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn type_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
+                )
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
+                )
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if (true || self.version_is_at_least_0_4_14)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if (true || self.version_is_at_least_0_4_14)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'i', 'n', 't'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
+                    )
+                )
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn unchecked_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_8_0 || self.version_is_at_least_0_5_0)
+                && scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd')
+            {
+                if self.version_is_at_least_0_5_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn using_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn var_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (!self.version_is_at_least_0_5_0 || true) && scan_chars!(input, 'v', 'a', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn view_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'v', 'i', 'e', 'w') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn virtual_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (self.version_is_at_least_0_6_0 || self.version_is_at_least_0_6_0)
+                && scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l')
+            {
+                if self.version_is_at_least_0_6_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn weeks_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn wei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'w', 'e', 'i') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn while_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn years_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (!self.version_is_at_least_0_5_0 || true)
+                && scan_chars!(input, 'y', 'e', 'a', 'r', 's')
+            {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_abstract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'b', 's', 't', 'r', 'a', 'c', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_address_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_after_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'f', 't', 'e', 'r')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_alias_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'l', 'i', 'a', 's')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_anonymous_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_apply_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'p', 'p', 'l', 'y')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_as_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'a', 's') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_assembly_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_auto_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'a', 'u', 't', 'o')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_bool_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_5_10) && scan_chars!(input, 'b', 'o', 'o', 'l')
+            {
+                if !self.version_is_at_least_0_5_10 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_break_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (true || true) && scan_chars!(input, 'b', 'r', 'e', 'a', 'k') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_byte_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || true) && scan_chars!(input, 'b', 'y', 't', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7'),
+                            scan_chars!(input, '6'),
+                            scan_chars!(input, '5'),
+                            scan_chars!(input, '4'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '3', '1'),
+                            scan_chars!(input, '3', '0'),
+                            scan_chars!(input, '3'),
+                            scan_chars!(input, '2', '9'),
+                            scan_chars!(input, '2', '8'),
+                            scan_chars!(input, '2', '7'),
+                            scan_chars!(input, '2', '6'),
+                            scan_chars!(input, '2', '5'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3'),
+                            scan_chars!(input, '2', '2'),
+                            scan_chars!(input, '2', '1'),
+                            scan_chars!(input, '2', '0'),
+                            scan_chars!(input, '2'),
+                            scan_chars!(input, '1', '9'),
+                            scan_chars!(input, '1', '8'),
+                            scan_chars!(input, '1', '7'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5'),
+                            scan_chars!(input, '1', '4'),
+                            scan_chars!(input, '1', '3'),
+                            scan_chars!(input, '1', '2'),
+                            scan_chars!(input, '1', '1'),
+                            scan_chars!(input, '1', '0'),
+                            scan_chars!(input, '1')
+                        )
+                    )
+                )
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_call_data_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_case_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 's', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'c', 'a', 's', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_catch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'a', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'a', 't', 'c', 'h')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_constant_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'o', 'n', 's', 't', 'a', 'n', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_constructor_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_continue_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_contract_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_copy_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'c', 'o', 'p', 'y', 'o', 'f')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_days_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'a', 'y', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'd', 'a', 'y', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_default_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_define_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'd', 'e', 'f', 'i', 'n', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_delete_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'd', 'e', 'l', 'e', 't', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_do_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'd', 'o') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'd', 'o') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_else_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'l', 's', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'e', 'l', 's', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_emit_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'm', 'i', 't') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'e', 'm', 'i', 't')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_enum_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'n', 'u', 'm') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'e', 'n', 'u', 'm')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_ether_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 't', 'h', 'e', 'r') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'e', 't', 'h', 'e', 'r')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_event_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'v', 'e', 'n', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'e', 'v', 'e', 'n', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_external_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_fallback_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k')
+            {
+                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_false_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'f', 'a', 'l', 's', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_final_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'f', 'i', 'n', 'a', 'l')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_finney_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_0)
+                && scan_chars!(input, 'f', 'i', 'n', 'n', 'e', 'y')
+            {
+                if !self.version_is_at_least_0_7_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'f', 'i', 'x', 'e', 'd')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '7', '9'),
-                    scan_chars!(input, '7', '8'),
-                    scan_chars!(input, '7', '7'),
-                    scan_chars!(input, '7', '6'),
-                    scan_chars!(input, '7', '5'),
-                    scan_chars!(input, '7', '4'),
-                    scan_chars!(input, '7', '3'),
-                    scan_chars!(input, '7', '1'),
-                    scan_chars!(input, '7', '0'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6', '9'),
-                    scan_chars!(input, '6', '8'),
-                    scan_chars!(input, '6', '7'),
-                    scan_chars!(input, '6', '6'),
-                    scan_chars!(input, '6', '5'),
-                    scan_chars!(input, '6', '3'),
-                    scan_chars!(input, '6', '2'),
-                    scan_chars!(input, '6', '1'),
-                    scan_chars!(input, '6', '0'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5', '9'),
-                    scan_chars!(input, '5', '8'),
-                    scan_chars!(input, '5', '7'),
-                    scan_chars!(input, '5', '5'),
-                    scan_chars!(input, '5', '4'),
-                    scan_chars!(input, '5', '3'),
-                    scan_chars!(input, '5', '2'),
-                    scan_chars!(input, '5', '1'),
-                    scan_chars!(input, '5', '0'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4', '9'),
-                    scan_chars!(input, '4', '7'),
-                    scan_chars!(input, '4', '6'),
-                    scan_chars!(input, '4', '5'),
-                    scan_chars!(input, '4', '4'),
-                    scan_chars!(input, '4', '3'),
-                    scan_chars!(input, '4', '2'),
-                    scan_chars!(input, '4', '1'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '9'),
-                    scan_chars!(input, '3', '8'),
-                    scan_chars!(input, '3', '7'),
-                    scan_chars!(input, '3', '6'),
-                    scan_chars!(input, '3', '5'),
-                    scan_chars!(input, '3', '4'),
-                    scan_chars!(input, '3', '3'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1'),
-                    scan_chars!(input, '0')
+            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_for_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'o', 'r') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'f', 'o', 'r') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_function_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_gwei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'g', 'w', 'e', 'i') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'g', 'w', 'e', 'i')
+            {
+                if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_hex_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'h', 'e', 'x') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'h', 'e', 'x') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_hours_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'h', 'o', 'u', 'r', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'h', 'o', 'u', 'r', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_if_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'f') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'i', 'f') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_immutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_implements_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_import_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'm', 'p', 'o', 'r', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_in_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'n') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_6_8 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_6_8) && scan_chars!(input, 'i', 'n') {
+                if !self.version_is_at_least_0_6_8 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_indexed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'n', 'd', 'e', 'x', 'e', 'd')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_inline_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'n', 'l', 'i', 'n', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_int_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_sequence!(
-                scan_chars!(input, 'i', 'n', 't'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'i', 'n', 't'),
+                    scan_optional!(
                         input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
                     )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_interface_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_internal_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_is_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'i', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'i', 's') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_leave_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'l', 'e', 'a', 'v', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if self.version_is_at_least_0_6_0 {
-                KeywordScan::Present
+            if (self.version_is_at_least_0_6_0 || self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'l', 'e', 'a', 'v', 'e')
+            {
+                if self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_let_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'l', 'e', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 'l', 'e', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_library_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'l', 'i', 'b', 'r', 'a', 'r', 'y')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_macro_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'a', 'c', 'r', 'o') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'a', 'c', 'r', 'o')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_mapping_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'a', 'p', 'p', 'i', 'n', 'g')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_match_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'a', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'a', 't', 'c', 'h')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_memory_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'e', 'm', 'o', 'r', 'y')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_minutes_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'i', 'n', 'u', 't', 'e', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_modifier_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_mutable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'm', 'u', 't', 'a', 'b', 'l', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_new_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'n', 'e', 'w') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'n', 'e', 'w') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_null_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'n', 'u', 'l', 'l') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'n', 'u', 'l', 'l')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'o', 'f') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'o', 'f') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_override_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_partial_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'a', 'r', 't', 'i', 'a', 'l')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_payable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'a', 'y', 'a', 'b', 'l', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_pragma_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'r', 'a', 'g', 'm', 'a')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_private_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'r', 'i', 'v', 'a', 't', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_promise_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'r', 'o', 'm', 'i', 's', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_public_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'p', 'u', 'b', 'l', 'i', 'c')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_pure_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'p', 'u', 'r', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'p', 'u', 'r', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_receive_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'r', 'e', 'c', 'e', 'i', 'v', 'e')
+            {
+                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_reference_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'r', 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_relocatable_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'r', 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_return_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_returns_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'r', 'e', 't', 'u', 'r', 'n', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_revert_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || true) && scan_chars!(input, 'r', 'e', 'v', 'e', 'r', 't') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_sealed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 'e', 'a', 'l', 'e', 'd')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_seconds_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 'e', 'c', 'o', 'n', 'd', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_size_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 'i', 'z', 'e', 'o', 'f')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_static_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 't', 'a', 't', 'i', 'c') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 't', 'a', 't', 'i', 'c')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_storage_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 't', 'o', 'r', 'a', 'g', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_string_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 't', 'r', 'i', 'n', 'g')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_struct_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 't', 'r', 'u', 'c', 't') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 't', 'r', 'u', 'c', 't')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_supports_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 's', 'u', 'p', 'p', 'o', 'r', 't', 's')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_switch_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 's', 'w', 'i', 't', 'c', 'h') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_szabo_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 's', 'z', 'a', 'b', 'o') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_0 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_0)
+                && scan_chars!(input, 's', 'z', 'a', 'b', 'o')
+            {
+                if !self.version_is_at_least_0_7_0 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_throw_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'h', 'r', 'o', 'w') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 't', 'h', 'r', 'o', 'w')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_true_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'r', 'u', 'e') {
-                KeywordScan::Absent
-            } else if true {
-                KeywordScan::Reserved
-            } else if true {
-                KeywordScan::Present
+            if (true || true) && scan_chars!(input, 't', 'r', 'u', 'e') {
+                if true {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_try_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'r', 'y') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 't', 'r', 'y') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_type_def_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 't', 'y', 'p', 'e', 'd', 'e', 'f')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_type_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 't', 'y', 'p', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_type_of_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 't', 'y', 'p', 'e', 'o', 'f')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             },
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '7', '9'),
-                    scan_chars!(input, '7', '8'),
-                    scan_chars!(input, '7', '7'),
-                    scan_chars!(input, '7', '6'),
-                    scan_chars!(input, '7', '5'),
-                    scan_chars!(input, '7', '4'),
-                    scan_chars!(input, '7', '3'),
-                    scan_chars!(input, '7', '1'),
-                    scan_chars!(input, '7', '0'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6', '9'),
-                    scan_chars!(input, '6', '8'),
-                    scan_chars!(input, '6', '7'),
-                    scan_chars!(input, '6', '6'),
-                    scan_chars!(input, '6', '5'),
-                    scan_chars!(input, '6', '3'),
-                    scan_chars!(input, '6', '2'),
-                    scan_chars!(input, '6', '1'),
-                    scan_chars!(input, '6', '0'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5', '9'),
-                    scan_chars!(input, '5', '8'),
-                    scan_chars!(input, '5', '7'),
-                    scan_chars!(input, '5', '5'),
-                    scan_chars!(input, '5', '4'),
-                    scan_chars!(input, '5', '3'),
-                    scan_chars!(input, '5', '2'),
-                    scan_chars!(input, '5', '1'),
-                    scan_chars!(input, '5', '0'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4', '9'),
-                    scan_chars!(input, '4', '7'),
-                    scan_chars!(input, '4', '6'),
-                    scan_chars!(input, '4', '5'),
-                    scan_chars!(input, '4', '4'),
-                    scan_chars!(input, '4', '3'),
-                    scan_chars!(input, '4', '2'),
-                    scan_chars!(input, '4', '1'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '9'),
-                    scan_chars!(input, '3', '8'),
-                    scan_chars!(input, '3', '7'),
-                    scan_chars!(input, '3', '6'),
-                    scan_chars!(input, '3', '5'),
-                    scan_chars!(input, '3', '4'),
-                    scan_chars!(input, '3', '3'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1'),
-                    scan_chars!(input, '0')
-                )
-            ) {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(clippy::ifs_same_cond)]
-    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
-        scan_keyword_choice!(
-            input,
-            if !scan_sequence!(
-                scan_chars!(input, 'u', 'i', 'n', 't'),
-                scan_optional!(
-                    input,
+            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
                         scan_chars!(input, '9', '6'),
@@ -12527,203 +12640,354 @@ impl Language {
                         scan_chars!(input, '1', '2', '0'),
                         scan_chars!(input, '1', '1', '2'),
                         scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
                     )
                 )
-            ) {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            {
+                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'i', 'n', 't'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
+                    )
+                )
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_unchecked_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd')
+            {
+                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_using_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'u', 's', 'i', 'n', 'g') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'u', 's', 'i', 'n', 'g')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_var_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'v', 'a', 'r') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_6_5 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_6_5) && scan_chars!(input, 'v', 'a', 'r') {
+                if !self.version_is_at_least_0_6_5 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_view_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'v', 'i', 'e', 'w') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'v', 'i', 'e', 'w')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_virtual_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
-                KeywordScan::Absent
-            } else if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'v', 'i', 'r', 't', 'u', 'a', 'l')
+            {
+                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_weeks_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'w', 'e', 'e', 'k', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'w', 'e', 'e', 'k', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_wei_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'w', 'e', 'i') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1) && scan_chars!(input, 'w', 'e', 'i') {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_while_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'w', 'h', 'i', 'l', 'e') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'w', 'h', 'i', 'l', 'e')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(clippy::ifs_same_cond)]
+    #[allow(
+        clippy::ifs_same_cond,
+        clippy::eq_op,
+        clippy::nonminimal_bool,
+        clippy::overly_complex_bool_expr
+    )]
+    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     fn yul_years_keyword(&self, input: &mut ParserContext<'_>) -> KeywordScan {
-        let save = input.position();
-        let scanned = self.yul_identifier(input);
-        input.set_position(save);
-        if !scanned {
-            return KeywordScan::Absent;
-        }
         scan_keyword_choice!(
             input,
-            if !scan_chars!(input, 'y', 'e', 'a', 'r', 's') {
-                KeywordScan::Absent
-            } else if !self.version_is_at_least_0_7_1 {
-                KeywordScan::Reserved
-            } else if false {
-                KeywordScan::Present
+            if (false || !self.version_is_at_least_0_7_1)
+                && scan_chars!(input, 'y', 'e', 'a', 'r', 's')
+            {
+                if !self.version_is_at_least_0_7_1 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
             } else {
                 KeywordScan::Absent
             }
@@ -13063,9 +13327,7 @@ impl Lexer for Language {
     ) -> Vec<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
-
-        // Whether we've seen a keyword
-
+        // TODO: Replace by a SmallVec<[_; 2]> or similar
         let mut longest_tokens = vec![];
 
         macro_rules! longest_match {
@@ -13075,7 +13337,6 @@ impl Lexer for Language {
                         furthest_position = input.position();
 
                         longest_tokens = vec![TokenKind::$kind];
-
                     }
                     input.set_position(save);
                 )*
@@ -13111,7 +13372,6 @@ impl Lexer for Language {
 
         match LexCtx::value() {
             LexicalContext::Default => {
-                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('!') => match input.next() {
                         Some('=') => Some(TokenKind::BangEqual),
@@ -13390,7 +13650,6 @@ impl Lexer for Language {
                 }
             }
             LexicalContext::Pragma => {
-                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('-') => Some(TokenKind::Minus),
                     Some('.') => Some(TokenKind::Period),
@@ -13440,7 +13699,6 @@ impl Lexer for Language {
                 }
             }
             LexicalContext::Yul => {
-                // TODO: Handle keywords using a separate keword scanner promotion mechanism
                 if let Some(kind) = match input.next() {
                     Some('(') => Some(TokenKind::OpenParen),
                     Some(')') => Some(TokenKind::CloseParen),
@@ -13582,17 +13840,16 @@ impl Lexer for Language {
         }
 
         match longest_tokens.as_slice() {
-            // TODO: Handle returning ambiguous tokens
-            &[_, ..] => {
+            [_, ..] => {
                 input.set_position(furthest_position);
                 longest_tokens
             }
             // Skip a character if possible and if we didn't recognize a token
-            &[] if input.peek().is_some() => {
+            [] if input.peek().is_some() => {
                 let _ = input.next();
                 vec![TokenKind::SKIPPED]
             }
-            &[] => vec![],
+            [] => vec![],
         }
     }
 }
