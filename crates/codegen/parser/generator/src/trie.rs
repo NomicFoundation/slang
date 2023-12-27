@@ -143,16 +143,46 @@ impl Payload for KeywordScannerAtomic {
         let enabled_cond = enabled.as_bool_expr();
         let reserved_cond = reserved.as_bool_expr();
 
-        // TODO: Simplify generated code if we trivially know that reserved or enabled is true
-        quote! {
-            // Optimize to only attempt scanning if it's enabled or reserved; the (bool) checks are trivial
-            if #reserved_cond {
-                Some((KeywordScan::Reserved, TokenKind::#kind))
-            } else if #enabled_cond {
-                Some((KeywordScan::Present, TokenKind::#kind))
-            } else {
-                None
-            }
+        // Simplify the emitted code if we trivially know that reserved or enabled is true
+        match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
+            ("true", _) => quote!(Some((KeywordScan::Reserved, TokenKind::#kind))),
+            ("false", _) => quote! {
+                if #enabled_cond {
+                    Some((KeywordScan::Present, TokenKind::#kind))
+                } else {
+                    None
+                }
+            },
+            (_, "false") => quote! {
+                if #reserved_cond {
+                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                } else {
+                    None
+                }
+            },
+            (_, "true") => quote! {
+                if #reserved_cond {
+                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                } else {
+                    Some((KeywordScan::Present, TokenKind::#kind))
+                }
+            },
+            (reserved, enabled) if reserved == enabled => quote! {
+                if #reserved_cond {
+                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                } else {
+                    None
+                }
+            },
+            _ => quote! {
+                if #reserved_cond {
+                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                } else if #enabled_cond {
+                    Some((KeywordScan::Present, TokenKind::#kind))
+                } else {
+                    None
+                }
+            },
         }
     }
 

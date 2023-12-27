@@ -261,10 +261,15 @@ impl GrammarVisitor for CodeGenerator {
 
     fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
         for def in scanner.definitions() {
-            self.referenced_versions
-                .extend(def.enabled.iter().map(|vqr| vqr.from.clone()));
-            self.referenced_versions
-                .extend(def.reserved.iter().map(|vqr| vqr.from.clone()));
+            let versions = def.enabled.iter().chain(def.reserved.iter());
+
+            self.referenced_versions.extend(
+                versions
+                    .map(|vqr| &vqr.from)
+                    // "Removed from 0.0.0" is an alias for "never"
+                    .filter(|v| *v != &Version::new(0, 0, 0))
+                    .cloned(),
+            );
         }
     }
 
