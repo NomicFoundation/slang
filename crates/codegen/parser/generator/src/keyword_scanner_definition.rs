@@ -67,19 +67,6 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                         }
                     },
                 }
-
-                // quote! {
-                //     // Optimize to only attempt scanning if it's enabled or reserved; the (bool) checks are trivial
-                //     if (#enabled_cond || #reserved_cond) && #scanner {
-                //         if #reserved_cond {
-                //             KeywordScan::Reserved
-                //         } else {
-                //             KeywordScan::Present
-                //         }
-                //     } else {
-                //         KeywordScan::Absent
-                //     }
-                // }
             })
             .collect();
 
