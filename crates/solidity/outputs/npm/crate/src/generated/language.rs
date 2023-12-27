@@ -6698,7 +6698,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -6763,7 +6762,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7093,7 +7091,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7158,7 +7155,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7488,7 +7484,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7553,7 +7548,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7618,7 +7612,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -7950,7 +7943,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -8015,7 +8007,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
@@ -8347,7 +8338,6 @@ impl Language {
         clippy::nonminimal_bool,
         clippy::overly_complex_bool_expr
     )]
-    #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
     #[inline]
     fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(

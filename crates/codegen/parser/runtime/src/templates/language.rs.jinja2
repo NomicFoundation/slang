@@ -94,7 +94,6 @@ impl Language {
     // Keyword scanners
     {%- for keyword_name, code in code.keyword_compound_scanners %}
         #[allow(clippy::ifs_same_cond, clippy::eq_op, clippy::nonminimal_bool, clippy::overly_complex_bool_expr)]
-        #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
         #[inline]
         fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ code }} }
     {%- endfor %}
