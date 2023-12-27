@@ -440,11 +440,10 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         .iter()
                         .cloned()
                         .map(|def| {
-                            let a = resolve_keyword_value(def.value);
+                            let value = resolve_keyword_value(def.value);
                             KeywordScannerDefinitionVersionedNode {
-                                value: a,
+                                value,
                                 enabled: enabled_to_range(def.enabled),
-
                                 reserved: enabled_to_range(def.reserved),
                             }
                         })
@@ -537,47 +536,6 @@ fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDe
         _ => ScannerDefinitionNode::Choice(resolved_defs),
     }
 }
-
-// fn resolve_keyword(keyword: model::KeywordItem, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
-//     // TODO(#568): Handle reserved keywords using the given "Identifier" parser
-//     let _ = keyword.identifier;
-
-//     let defs: Vec<_> = keyword
-//         .definitions
-//         .into_iter()
-//         .map(|def| {
-//             let value = resolve_keyword_value(def.value);
-//             // If missing, the default is "Always"
-//             match (def.enabled, def.reserved) {
-//                 // Contextual keywords (never reserved)
-//                 // TODO(#568): Properly support contextual keywords.
-//                 // Currently, to minimize the diff and ease the transition to the DSL v2, we treat them as normal keywords.
-//                 // Moreover, since the DSL v1 only treats "enablement" as being reserved, we try to preserve that for now.
-//                 (enabled, Some(model::VersionSpecifier::Never)) => value.versioned(enabled),
-//                 // TODO(#568): If a contextual keyword was enabled at some point and then reserved, for now we treat it
-//                 // as a reserved keyword starting from when it was being used, to preserve the DSL v1 behaviour.
-//                 (
-//                     Some(model::VersionSpecifier::From { from: enabled }),
-//                     Some(model::VersionSpecifier::From { from: reserved }),
-//                 ) if enabled < reserved => ScannerDefinitionNode::Versioned(
-//                     Box::new(value),
-//                     enabled_to_range(model::VersionSpecifier::From { from: enabled }),
-//                 ),
-//                 (_, Some(reserved)) => {
-//                     ScannerDefinitionNode::Versioned(Box::new(value), enabled_to_range(reserved))
-//                 }
-//                 // The keyword is always reserved
-//                 (_, None) => value,
-//             }
-//         })
-//         .collect();
-
-//     match defs.len() {
-//         0 => panic!("Keyword {} has no definitions", keyword.name),
-//         1 => defs.into_iter().next().unwrap(),
-//         _ => ScannerDefinitionNode::Choice(defs),
-//     }
-// }
 
 fn resolve_keyword_value(value: model::KeywordValue) -> KeywordScannerDefinitionNode {
     match value {
