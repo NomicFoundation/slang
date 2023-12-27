@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let bytes1                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_bytes1/input.sol:1:4]
+       │
+     1 │ let bytes1
+       │    ────┬───  
+       │        ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - YulVariableDeclarationStatement: # 0..11 "let bytes1\n"
+      - (let_keyword) YulLetKeyword: "let" # 0..3
+      - SKIPPED: " bytes1\n" # 3..11

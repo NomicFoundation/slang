@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let ufixed8x0                                                                    │ 0..13
+
+Errors: # 1 total
+  - >
+    Error: Expected YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed8x0/input.sol:1:4]
+       │
+     1 │ let ufixed8x0
+       │    ─────┬─────  
+       │         ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - YulVariableDeclarationStatement: # 0..14 "let ufixed8x0\n"
+      - (let_keyword) YulLetKeyword: "let" # 0..3
+      - SKIPPED: " ufixed8x0\n" # 3..14

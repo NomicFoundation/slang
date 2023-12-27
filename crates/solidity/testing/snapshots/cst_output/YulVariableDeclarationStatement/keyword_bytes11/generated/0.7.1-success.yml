@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let bytes11                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - YulVariableDeclarationStatement: # 0..12 "let bytes11\n"
+      - (let_keyword) YulLetKeyword: "let" # 0..3
+      - (names) YulIdentifierPaths: # 3..12 " bytes11\n"
+          - (item) YulIdentifierPath: # 3..12 " bytes11\n"
+              - (item) YulIdentifier: "bytes11" # 4..11

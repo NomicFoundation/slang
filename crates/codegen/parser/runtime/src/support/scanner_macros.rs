@@ -68,13 +68,15 @@ macro_rules! scan_choice {
 
 #[allow(unused_macros)]
 macro_rules! scan_keyword_choice {
-    ($stream:ident, $($scanner:expr),*) => {
+    ($stream:ident, $ident:ident, $($scanner:expr),*) => {
         loop {
             let save = $stream.position();
             $(
                 {
-                    if let value @ (KeywordScan::Present | KeywordScan::Reserved) = ($scanner) {
-                        break value;
+                    if let result @ (KeywordScan::Present | KeywordScan::Reserved) = ($scanner) {
+                        if $ident.len() == $stream.position().utf8 - save.utf8 {
+                            break result;
+                        }
                     }
                 }
                 $stream.set_position(save);

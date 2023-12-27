@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let ufixed184x80                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - YulVariableDeclarationStatement: # 0..17 "let ufixed184x80\n"
+      - (let_keyword) YulLetKeyword: "let" # 0..3
+      - (names) YulIdentifierPaths: # 3..17 " ufixed184x80\n"
+          - (item) YulIdentifierPath: # 3..17 " ufixed184x80\n"
+              - (item) YulIdentifier: "ufixed184x80" # 4..16

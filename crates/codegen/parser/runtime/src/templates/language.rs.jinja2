@@ -96,7 +96,7 @@ impl Language {
         #[allow(clippy::ifs_same_cond, clippy::eq_op, clippy::nonminimal_bool, clippy::overly_complex_bool_expr)]
         #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
         #[inline]
-        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> KeywordScan { {{ code }} }
+        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ code }} }
     {%- endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Vec<TokenKind> {
@@ -157,28 +157,15 @@ impl Lexer for Language {
                 )*
             };
         }
-        macro_rules! longest_keyword_match {
-            ($( { $kind:ident = $function:ident } )*) => {
+        macro_rules! promote_keywords {
+            (test $ident:ident with: $( { $kind:ident = $function:ident } )*) => {
                 $(
-                    match self.$function(input) {
+                    let value = self.$function(input, &$ident);
+                    match value {
+                        _ if input.position() < furthest_position => {/* Prefix, do nothing */},
+                        KeywordScan::Reserved => longest_tokens = vec![TokenKind::$kind],
+                        KeywordScan::Present => longest_tokens.push(TokenKind::$kind),
                         KeywordScan::Absent => {},
-                        KeywordScan::Present => {
-                            if input.position() > furthest_position {
-                                furthest_position = input.position();
-                                longest_tokens = vec![TokenKind::$kind];
-                            } else if input.position() == furthest_position {
-                                longest_tokens.push(TokenKind::$kind);
-                            }
-                        }
-                        KeywordScan::Reserved => {
-                            // If we're reserved, we can't be ambiguous, so always overwrite, even if len is equal
-                            if input.position() >= furthest_position {
-                                furthest_position = input.position();
-                                longest_tokens = vec![TokenKind::$kind];
-                                // We're running after the identifier and we're checking if it's a reserved keyword
-                                input.set_position(furthest_position);
-                            }
-                        }
                     }
                     input.set_position(save);
                 )*
@@ -224,13 +211,18 @@ impl Lexer for Language {
                                 KeywordScan::Absent => unreachable!(),
                             }
                         }
+
+                        {%- if context.keyword_compound_scanners | length > 0 %}
                         input.set_position(save);
 
-                        longest_keyword_match! {
+                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                        promote_keywords! { test ident_value with:
                         {%- for keyword_name, _ in context.keyword_compound_scanners %}
                             { {{ keyword_name }} = {{ keyword_name | snake_case }} }
                         {%- endfor %}
                         }
+                        {% endif %}
                     }
                 },
             {%- endfor %}

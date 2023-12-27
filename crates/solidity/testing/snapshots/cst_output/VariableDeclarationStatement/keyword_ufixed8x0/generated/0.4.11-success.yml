@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint ufixed8x0;                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - VariableDeclarationStatement: # 0..16 "uint ufixed8x0;\n"
+      - (variable_type) VariableDeclarationType: # 0..4 "uint"
+          - (variant) TypeName: # 0..4 "uint"
+              - (variant) ElementaryType: # 0..4 "uint"
+                  - (variant) UintKeyword: "uint" # 0..4
+      - (name) Identifier: "ufixed8x0" # 5..14
+      - (semicolon) Semicolon: ";" # 14..15

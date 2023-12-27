@@ -4,6 +4,7 @@ use crate::cst::{self, NamedNode};
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::support::{ParserContext, ParserResult};
 
+#[derive(Debug, Clone, Copy)]
 pub enum KeywordScan {
     /// The keyword is not present.
     Absent,

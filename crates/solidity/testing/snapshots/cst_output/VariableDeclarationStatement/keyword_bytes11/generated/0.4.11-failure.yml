@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint bytes11;                                                                    │ 0..13
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol:1:6]
+       │
+     1 │ uint bytes11;
+       │      ───┬───  
+       │         ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - VariableDeclarationStatement: # 0..14 "uint bytes11;\n"
+      - (variable_type) VariableDeclarationType: # 0..4 "uint"
+          - (variant) TypeName: # 0..4 "uint"
+              - (variant) ElementaryType: # 0..4 "uint"
+                  - (variant) UintKeyword: "uint" # 0..4
+      - SKIPPED: "bytes11" # 5..12
+      - (semicolon) Semicolon: ";" # 12..13
