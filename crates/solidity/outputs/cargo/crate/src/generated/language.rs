@@ -6692,266 +6692,232 @@ impl Language {
     }
 
     // Keyword scanners
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-                    scan_optional!(
+            if scan_sequence!(
+                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
                         input,
-                        scan_choice!(
-                            input,
-                            scan_chars!(input, '9'),
-                            scan_chars!(input, '8'),
-                            scan_chars!(input, '7'),
-                            scan_chars!(input, '6'),
-                            scan_chars!(input, '5'),
-                            scan_chars!(input, '4'),
-                            scan_chars!(input, '3', '2'),
-                            scan_chars!(input, '3', '1'),
-                            scan_chars!(input, '3', '0'),
-                            scan_chars!(input, '3'),
-                            scan_chars!(input, '2', '9'),
-                            scan_chars!(input, '2', '8'),
-                            scan_chars!(input, '2', '7'),
-                            scan_chars!(input, '2', '6'),
-                            scan_chars!(input, '2', '5'),
-                            scan_chars!(input, '2', '4'),
-                            scan_chars!(input, '2', '3'),
-                            scan_chars!(input, '2', '2'),
-                            scan_chars!(input, '2', '1'),
-                            scan_chars!(input, '2', '0'),
-                            scan_chars!(input, '2'),
-                            scan_chars!(input, '1', '9'),
-                            scan_chars!(input, '1', '8'),
-                            scan_chars!(input, '1', '7'),
-                            scan_chars!(input, '1', '6'),
-                            scan_chars!(input, '1', '5'),
-                            scan_chars!(input, '1', '4'),
-                            scan_chars!(input, '1', '3'),
-                            scan_chars!(input, '1', '2'),
-                            scan_chars!(input, '1', '1'),
-                            scan_chars!(input, '1', '0'),
-                            scan_chars!(input, '1')
-                        )
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1')
                     )
                 )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            ) {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (true || true) && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '6')
-                    )
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
                 )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            ) {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '4', '8', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                    )
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                 )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            ) {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (true || self.version_is_at_least_0_4_14)
-                && scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
                 )
-            {
+            ) {
                 if self.version_is_at_least_0_4_14 {
                     KeywordScan::Reserved
                 } else {
@@ -6960,121 +6926,119 @@ impl Language {
             } else {
                 KeywordScan::Absent
             },
-            if (true || self.version_is_at_least_0_4_14)
-                && scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
                 )
-            {
+            ) {
                 if self.version_is_at_least_0_4_14 {
                     KeywordScan::Reserved
                 } else {
@@ -7085,277 +7049,16 @@ impl Language {
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'i', 'n', 't'),
-                    scan_optional!(
-                        input,
-                        scan_choice!(
-                            input,
-                            scan_chars!(input, '9', '6'),
-                            scan_chars!(input, '8', '8'),
-                            scan_chars!(input, '8', '0'),
-                            scan_chars!(input, '8'),
-                            scan_chars!(input, '7', '2'),
-                            scan_chars!(input, '6', '4'),
-                            scan_chars!(input, '5', '6'),
-                            scan_chars!(input, '4', '8'),
-                            scan_chars!(input, '4', '0'),
-                            scan_chars!(input, '3', '2'),
-                            scan_chars!(input, '2', '5', '6'),
-                            scan_chars!(input, '2', '4', '8'),
-                            scan_chars!(input, '2', '4', '0'),
-                            scan_chars!(input, '2', '4'),
-                            scan_chars!(input, '2', '3', '2'),
-                            scan_chars!(input, '2', '2', '4'),
-                            scan_chars!(input, '2', '1', '6'),
-                            scan_chars!(input, '2', '0', '8'),
-                            scan_chars!(input, '2', '0', '0'),
-                            scan_chars!(input, '1', '9', '2'),
-                            scan_chars!(input, '1', '8', '4'),
-                            scan_chars!(input, '1', '7', '6'),
-                            scan_chars!(input, '1', '6', '8'),
-                            scan_chars!(input, '1', '6', '0'),
-                            scan_chars!(input, '1', '6'),
-                            scan_chars!(input, '1', '5', '2'),
-                            scan_chars!(input, '1', '4', '4'),
-                            scan_chars!(input, '1', '3', '6'),
-                            scan_chars!(input, '1', '2', '8'),
-                            scan_chars!(input, '1', '2', '0'),
-                            scan_chars!(input, '1', '1', '2'),
-                            scan_chars!(input, '1', '0', '4')
-                        )
-                    )
-                )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
-    #[inline]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
-        scan_keyword_choice!(
-            input,
-            ident,
-            if (true || true) && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '6')
-                    )
-                )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '4', '8', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                    )
-                )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if (true || self.version_is_at_least_0_4_14)
-                && scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            {
-                if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if (true || self.version_is_at_least_0_4_14)
-                && scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+            if scan_sequence!(
+                scan_chars!(input, 'i', 'n', 't'),
+                scan_optional!(
+                    input,
                     scan_choice!(
                         input,
                         scan_chars!(input, '9', '6'),
@@ -7390,84 +7093,309 @@ impl Language {
                         scan_chars!(input, '1', '2', '0'),
                         scan_chars!(input, '1', '1', '2'),
                         scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
                     )
                 )
-            {
+            ) {
+                KeywordScan::Reserved
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved
+                } else {
+                    KeywordScan::Present
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
                 if self.version_is_at_least_0_4_14 {
                     KeywordScan::Reserved
                 } else {
@@ -7478,82 +7406,66 @@ impl Language {
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (true || true)
-                && scan_sequence!(
-                    scan_chars!(input, 'u', 'i', 'n', 't'),
-                    scan_optional!(
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
                         input,
-                        scan_choice!(
-                            input,
-                            scan_chars!(input, '9', '6'),
-                            scan_chars!(input, '8', '8'),
-                            scan_chars!(input, '8', '0'),
-                            scan_chars!(input, '8'),
-                            scan_chars!(input, '7', '2'),
-                            scan_chars!(input, '6', '4'),
-                            scan_chars!(input, '5', '6'),
-                            scan_chars!(input, '4', '8'),
-                            scan_chars!(input, '4', '0'),
-                            scan_chars!(input, '3', '2'),
-                            scan_chars!(input, '2', '5', '6'),
-                            scan_chars!(input, '2', '4', '8'),
-                            scan_chars!(input, '2', '4', '0'),
-                            scan_chars!(input, '2', '4'),
-                            scan_chars!(input, '2', '3', '2'),
-                            scan_chars!(input, '2', '2', '4'),
-                            scan_chars!(input, '2', '1', '6'),
-                            scan_chars!(input, '2', '0', '8'),
-                            scan_chars!(input, '2', '0', '0'),
-                            scan_chars!(input, '1', '9', '2'),
-                            scan_chars!(input, '1', '8', '4'),
-                            scan_chars!(input, '1', '7', '6'),
-                            scan_chars!(input, '1', '6', '8'),
-                            scan_chars!(input, '1', '6', '0'),
-                            scan_chars!(input, '1', '6'),
-                            scan_chars!(input, '1', '5', '2'),
-                            scan_chars!(input, '1', '4', '4'),
-                            scan_chars!(input, '1', '3', '6'),
-                            scan_chars!(input, '1', '2', '8'),
-                            scan_chars!(input, '1', '2', '0'),
-                            scan_chars!(input, '1', '1', '2'),
-                            scan_chars!(input, '1', '0', '4')
-                        )
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
                     )
                 )
-            {
-                if true {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            ) {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'b', 'y', 't', 'e', 's'),
                     scan_optional!(
@@ -7596,39 +7508,24 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (false || !self.version_is_at_least_0_7_1)
-                && scan_chars!(input, 'f', 'i', 'x', 'e', 'd')
-            {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -7672,15 +7569,11 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -7733,15 +7626,12 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -7804,15 +7694,12 @@ impl Language {
                     )
                 )
             {
-                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -7927,28 +7814,19 @@ impl Language {
                     )
                 )
             {
-                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'i', 'n', 't'),
                     scan_optional!(
@@ -7991,39 +7869,24 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (false || !self.version_is_at_least_0_7_1)
-                && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd')
-            {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+            if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -8067,15 +7930,11 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -8128,15 +7987,12 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -8199,15 +8055,12 @@ impl Language {
                     )
                 )
             {
-                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             },
-            if (false || self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1)
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
@@ -8322,28 +8175,19 @@ impl Language {
                     )
                 )
             {
-                if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
         )
     }
-    #[allow(
-        clippy::ifs_same_cond,
-        clippy::eq_op,
-        clippy::nonminimal_bool,
-        clippy::overly_complex_bool_expr
-    )]
+
     #[inline]
     fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(
             input,
             ident,
-            if (false || !self.version_is_at_least_0_7_1)
+            if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'i', 'n', 't'),
                     scan_optional!(
@@ -8386,11 +8230,7 @@ impl Language {
                     )
                 )
             {
-                if !self.version_is_at_least_0_7_1 {
-                    KeywordScan::Reserved
-                } else {
-                    KeywordScan::Present
-                }
+                KeywordScan::Reserved
             } else {
                 KeywordScan::Absent
             }
