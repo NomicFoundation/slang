@@ -13540,7 +13540,12 @@ impl Lexer for Language {
                         { Identifier = identifier }
                 }
 
-                longest_keyword_match! {
+                // Attempt keyword promotion if it was lexed as an identifier
+                if longest_tokens
+                    .iter()
+                    .any(|tok| [TokenKind::Identifier].contains(tok))
+                {
+                    longest_keyword_match! {
                         { AbstractKeyword = abstract_keyword }
                         { AddressKeyword = address_keyword }
                         { AfterKeyword = after_keyword }
@@ -13650,6 +13655,7 @@ impl Lexer for Language {
                         { WeiKeyword = wei_keyword }
                         { WhileKeyword = while_keyword }
                         { YearsKeyword = years_keyword }
+                    }
                 }
             }
             LexicalContext::Pragma => {
@@ -13697,11 +13703,17 @@ impl Lexer for Language {
                         { Identifier = identifier }
                 }
 
-                longest_keyword_match! {
+                // Attempt keyword promotion if it was lexed as an identifier
+                if longest_tokens
+                    .iter()
+                    .any(|tok| [TokenKind::Identifier].contains(tok))
+                {
+                    longest_keyword_match! {
                         { AbicoderKeyword = abicoder_keyword }
                         { ExperimentalKeyword = experimental_keyword }
                         { PragmaKeyword = pragma_keyword }
                         { SolidityKeyword = solidity_keyword }
+                    }
                 }
             }
             LexicalContext::Yul => {
@@ -13736,7 +13748,12 @@ impl Lexer for Language {
                         { YulIdentifier = yul_identifier }
                 }
 
-                longest_keyword_match! {
+                // Attempt keyword promotion if it was lexed as an identifier
+                if longest_tokens
+                    .iter()
+                    .any(|tok| [TokenKind::YulIdentifier].contains(tok))
+                {
+                    longest_keyword_match! {
                         { YulAbstractKeyword = yul_abstract_keyword }
                         { YulAddressKeyword = yul_address_keyword }
                         { YulAfterKeyword = yul_after_keyword }
@@ -13844,6 +13861,7 @@ impl Lexer for Language {
                         { YulWeiKeyword = yul_wei_keyword }
                         { YulWhileKeyword = yul_while_keyword }
                         { YulYearsKeyword = yul_years_keyword }
+                    }
                 }
             }
         }

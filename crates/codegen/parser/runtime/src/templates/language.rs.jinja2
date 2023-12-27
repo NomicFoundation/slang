@@ -207,10 +207,18 @@ impl Lexer for Language {
                         {%- endfor %}
                     }
 
-                    longest_keyword_match! {
+                    // Attempt keyword promotion if it was lexed as an identifier
+                    if longest_tokens.iter().any(|tok| [
+                        {% for ident_scanner in context.identifier_scanners %}
+                                TokenKind::{{ ident_scanner }},
+                        {% endfor %}
+                    ].contains(tok))
+                    {
+                        longest_keyword_match! {
                         {%- for keyword_name, code in context.keyword_scanners %}
                             { {{ keyword_name }} = {{ keyword_name | snake_case }} }
                         {%- endfor %}
+                        }
                     }
                 },
             {%- endfor %}
