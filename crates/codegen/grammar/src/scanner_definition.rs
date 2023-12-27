@@ -115,3 +115,44 @@ impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
         }
     }
 }
+
+/// A [`KeywordScannerDefinitionRef`] that only has a single atom value.
+#[derive(Clone)]
+pub struct KeywordScannerAtomic(KeywordScannerDefinitionRef);
+
+impl KeywordScannerAtomic {
+    /// Returns `Some` if the definition is a single atom value, `None` otherwise.
+    pub fn try_from_def(def: &KeywordScannerDefinitionRef) -> Option<Self> {
+        match def.definitions() {
+            [KeywordScannerDefinitionVersionedNode {
+                value: KeywordScannerDefinitionNode::Atom(_),
+                ..
+            }] => Some(Self(def.clone())),
+            _ => None,
+        }
+    }
+}
+
+impl std::ops::Deref for KeywordScannerAtomic {
+    type Target = KeywordScannerDefinitionRef;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl KeywordScannerAtomic {
+    pub fn definition(&self) -> &KeywordScannerDefinitionVersionedNode {
+        let def = &self.0.definitions().get(0);
+        def.expect("KeywordScannerAtomic should have exactly one definition")
+    }
+    pub fn value(&self) -> &str {
+        match self.definition() {
+            KeywordScannerDefinitionVersionedNode {
+                value: KeywordScannerDefinitionNode::Atom(atom),
+                ..
+            } => atom,
+            _ => unreachable!("KeywordScannerAtomic should have a single atom value"),
+        }
+    }
+}

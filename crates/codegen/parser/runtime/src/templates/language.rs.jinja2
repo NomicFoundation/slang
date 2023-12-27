@@ -92,9 +92,10 @@ impl Language {
     {% endfor %}
 
     // Keyword scanners
-    {%- for keyword_name, code in code.keyword_scanners %}
+    {%- for keyword_name, code in code.keyword_compound_scanners %}
         #[allow(clippy::ifs_same_cond, clippy::eq_op, clippy::nonminimal_bool, clippy::overly_complex_bool_expr)]
         #[allow(clippy::wrong_self_convention)] // from_keyword refers to a "from" keyword
+        #[inline]
         fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> KeywordScan { {{ code }} }
     {%- endfor %}
 
@@ -196,26 +197,37 @@ impl Lexer for Language {
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}
                             {%- if name not in context.identifier_scanners %}
-                            { {{name }} = {{ name | snake_case }} }
+                        { {{name }} = {{ name | snake_case }} }
                             {%- endif -%}
                         {%- endfor %}
                     }
-                    // Make sure keyword identifiers are last so they don't grab other things
+                    // Make sure promotable identifiers are last so they don't grab other things
                     longest_match! {
                         {%- for name in context.identifier_scanners %}
-                            { {{ name }} = {{ name | snake_case }} }
+                        { {{ name }} = {{ name | snake_case }} }
                         {%- endfor %}
                     }
 
-                    // Attempt keyword promotion if it was lexed as an identifier
+                    // Attempt keyword promotion if possible
                     if longest_tokens.iter().any(|tok| [
                         {% for ident_scanner in context.identifier_scanners %}
                                 TokenKind::{{ ident_scanner }},
                         {% endfor %}
                     ].contains(tok))
                     {
+                        // Try fast path for atomic keywords
+                        if let Some((scan, kind)) = {{ context.keyword_trie_scanner }} {
+                            match scan {
+                                _ if input.position() < furthest_position => {/* Prefix, do nothing */},
+                                KeywordScan::Reserved => longest_tokens = vec![kind],
+                                KeywordScan::Present => longest_tokens.push(kind),
+                                KeywordScan::Absent => unreachable!(),
+                            }
+                        }
+                        input.set_position(save);
+
                         longest_keyword_match! {
-                        {%- for keyword_name, code in context.keyword_scanners %}
+                        {%- for keyword_name, _ in context.keyword_compound_scanners %}
                             { {{ keyword_name }} = {{ keyword_name | snake_case }} }
                         {%- endfor %}
                         }

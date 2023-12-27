@@ -36,8 +36,10 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
             })
             .collect();
 
-        quote! {
-            scan_keyword_choice!(input, #(#kw_scanners),*)
+        match &kw_scanners[..] {
+            [] => quote! { KeywordScan::Absent },
+            [scanner] => scanner.clone(),
+            multiple => quote! { scan_keyword_choice!(input, #(#multiple),*) },
         }
     }
 }

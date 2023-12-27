@@ -3,9 +3,9 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, KeywordScannerDefinitionRef, ParserDefinitionNode,
-    ParserDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
-    ScannerDefinitionRef, TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
+    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
+    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
@@ -31,7 +31,7 @@ pub struct CodeGenerator {
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
     // All of the keyword scanners (for now we assume we don't have context-specific keywords)
-    keyword_scanners: BTreeMap<&'static str, String>,
+    keyword_compound_scanners: BTreeMap<&'static str, String>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
@@ -48,7 +48,10 @@ struct ScannerContext {
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
     literal_scanner: String,
-    keyword_scanners: BTreeMap<&'static str, (&'static str, String)>,
+    keyword_compound_scanners: BTreeMap<&'static str, String>,
+    keyword_trie_scanner: String,
+    #[serde(skip)]
+    keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
     identifier_scanners: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
@@ -215,21 +218,35 @@ impl GrammarVisitor for CodeGenerator {
             context.literal_scanner = literal_trie.to_scanner_code().to_string();
 
             context.identifier_scanners = context
-                .keyword_scanners
-                .iter()
-                .map(|(_, (ident_scanner, _))| *ident_scanner)
+                .keyword_scanner_defs
+                .values()
+                .map(|def| def.identifier_scanner())
                 .collect();
+
+            let mut keyword_trie = Trie::new();
+            for (name, def) in &context.keyword_scanner_defs {
+                match KeywordScannerAtomic::try_from_def(def) {
+                    Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
+                    None => {
+                        context
+                            .keyword_compound_scanners
+                            .insert(name, def.to_scanner_code().to_string());
+                    }
+                }
+            }
+
+            context.keyword_trie_scanner = keyword_trie.to_scanner_code().to_string();
         }
 
         // Collect all of the keyword scanners into a single list to be defined at top-level
-        self.keyword_scanners = self
+        self.keyword_compound_scanners = self
             .scanner_contexts
             .values()
             .flat_map(|context| {
                 context
-                    .keyword_scanners
+                    .keyword_compound_scanners
                     .iter()
-                    .map(|(name, (_, code))| (*name, code.to_string()))
+                    .map(|(name, code)| (*name, code.clone()))
             })
             .collect();
 
@@ -334,13 +351,9 @@ impl GrammarVisitor for CodeGenerator {
                 self.token_kinds.insert(scanner.name());
 
                 // Assume we don't have context-specific keywords for now
-                self.current_context().keyword_scanners.insert(
-                    scanner.name(),
-                    (
-                        scanner.identifier_scanner(),
-                        scanner.to_scanner_code().to_string(),
-                    ),
-                );
+                self.current_context()
+                    .keyword_scanner_defs
+                    .insert(scanner.name(), scanner.clone());
             }
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {

@@ -1,20 +1,23 @@
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
-use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef, VersionQualityRange};
+use codegen_grammar::{
+    KeywordScannerAtomic, KeywordScannerDefinitionVersionedNode, ScannerDefinitionNode,
+    ScannerDefinitionRef, VersionQualityRange,
+};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::parser_definition::VersionQualityRangeVecExtensions;
 
 #[derive(Clone, Debug, Default)]
-pub struct Trie {
+pub struct Trie<T: Payload> {
     pub subtries: BTreeMap<char, Self>,
     pub key: Option<String>,
-    pub payload: Option<ScannerDefinitionRef>,
+    pub payload: Option<T>,
 }
 
-impl Trie {
+impl<T: Payload> Trie<T> {
     pub fn new() -> Self {
         Self {
             subtries: BTreeMap::new(),
@@ -23,7 +26,7 @@ impl Trie {
         }
     }
 
-    pub fn insert(&mut self, key: &str, payload: ScannerDefinitionRef) {
+    pub fn insert(&mut self, key: &str, payload: T) {
         let mut node = self;
         for char in key.chars() {
             node = node.subtries.entry(char).or_insert_with(Self::new);
@@ -34,7 +37,7 @@ impl Trie {
 
     // Finds the next node that has either a payload or more than one subtrie
     // It returns the path to that node and the node itself
-    pub fn next_interesting_node(&self, prefix: Option<char>) -> (Vec<char>, &Trie) {
+    pub fn next_interesting_node(&self, prefix: Option<char>) -> (Vec<char>, &Self) {
         let mut path = prefix.map(|c| vec![c]).unwrap_or_default();
         let mut node = self;
         while node.payload.is_none() && node.subtries.len() == 1 {
@@ -57,26 +60,10 @@ impl Trie {
             })
             .collect::<Vec<_>>();
 
-        let leaf = if let Some(scanner_definition_ref) = &trie.payload {
-            let kind = format_ident!("{}", scanner_definition_ref.name());
-
-            if branches.is_empty() && !path.is_empty() {
-                // This is an optimisation for a common case
-                let leaf = quote! { scan_chars!(input, #(#path),*).then_some(TokenKind::#kind) };
-
-                return scanner_definition_ref
-                    .node()
-                    .applicable_version_quality_ranges()
-                    .wrap_code(leaf, Some(quote! { None }));
-            }
-
-            scanner_definition_ref
-                .node()
-                .applicable_version_quality_ranges()
-                .wrap_code(quote! { Some(TokenKind::#kind) }, Some(quote! { None }))
-        } else {
-            quote! { None }
-        };
+        let leaf = trie
+            .payload
+            .as_ref()
+            .map_or_else(T::default_case, T::to_leaf_code);
 
         let trie_code = if branches.is_empty() {
             leaf
@@ -90,6 +77,7 @@ impl Trie {
             }
         };
 
+        let default_case = T::default_case();
         if path.is_empty() {
             trie_code
         } else {
@@ -97,7 +85,7 @@ impl Trie {
                 if scan_chars!(input, #(#path),*) {
                     #trie_code
                 } else {
-                    None
+                    #default_case
                 }
             }
         }
@@ -121,5 +109,54 @@ impl VersionWrapped for ScannerDefinitionNode {
 
             _ => vec![],
         }
+    }
+}
+
+pub trait Payload {
+    fn to_leaf_code(&self) -> TokenStream;
+    fn default_case() -> TokenStream;
+}
+
+impl Payload for ScannerDefinitionRef {
+    fn to_leaf_code(&self) -> TokenStream {
+        let kind = format_ident!("{}", self.name());
+
+        self.node().applicable_version_quality_ranges().wrap_code(
+            quote! { Some(TokenKind::#kind) },
+            Some(Self::default_case()),
+        )
+    }
+
+    fn default_case() -> TokenStream {
+        quote! { None }
+    }
+}
+
+impl Payload for KeywordScannerAtomic {
+    fn to_leaf_code(&self) -> TokenStream {
+        let kind = format_ident!("{}", self.name());
+
+        let KeywordScannerDefinitionVersionedNode {
+            enabled, reserved, ..
+        } = self.definition();
+
+        let enabled_cond = enabled.as_bool_expr();
+        let reserved_cond = reserved.as_bool_expr();
+
+        // TODO: Simplify generated code if we trivially know that reserved or enabled is true
+        quote! {
+            // Optimize to only attempt scanning if it's enabled or reserved; the (bool) checks are trivial
+            if #reserved_cond {
+                Some((KeywordScan::Reserved, TokenKind::#kind))
+            } else if #enabled_cond {
+                Some((KeywordScan::Present, TokenKind::#kind))
+            } else {
+                None
+            }
+        }
+    }
+
+    fn default_case() -> TokenStream {
+        quote! { None }
     }
 }
