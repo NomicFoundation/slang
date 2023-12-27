@@ -69,7 +69,6 @@ impl Visitable for ScannerDefinitionNode {
 pub trait KeywordScannerDefinition: Debug {
     fn name(&self) -> &'static str;
     fn identifier_scanner(&self) -> &'static str;
-    // fn node(&self) -> &KeywordScannerDefinitionNode;
     fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode];
 }
 
@@ -78,7 +77,6 @@ pub type KeywordScannerDefinitionRef = Rc<dyn KeywordScannerDefinition>;
 impl Visitable for KeywordScannerDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.keyword_scanner_definition_enter(self);
-        // self.node().accept_visitor(visitor);
     }
 }
 
@@ -99,24 +97,6 @@ pub enum KeywordScannerDefinitionNode {
     Choice(Vec<Self>),
     Atom(String),
     // No repeatable combinators, because keywords are assumed to not be over a regular language
-}
-
-impl Visitable for KeywordScannerDefinitionNode {
-    fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
-        visitor.keyword_scanner_definition_node_enter(self);
-
-        match self {
-            Self::Optional(node) => {
-                node.accept_visitor(visitor);
-            }
-            Self::Sequence(nodes) | Self::Choice(nodes) => {
-                for node in nodes {
-                    node.accept_visitor(visitor);
-                }
-            }
-            Self::Atom(_) => {}
-        }
-    }
 }
 
 impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
