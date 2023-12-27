@@ -4,6 +4,8 @@ use crate::cst::{self, NamedNode};
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::support::{ParserContext, ParserResult};
 
+/// Whether a keyword has been scanned and if so, whether it is reserved (unusable as an identifier)
+/// or not.
 #[derive(Debug, Clone, Copy)]
 pub enum KeywordScan {
     /// The keyword is not present.

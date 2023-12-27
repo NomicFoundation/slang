@@ -6692,7 +6692,6 @@ impl Language {
     }
 
     // Keyword scanners
-
     #[inline]
     fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
         scan_keyword_choice!(

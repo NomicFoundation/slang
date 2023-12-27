@@ -82,7 +82,7 @@ impl Visitable for KeywordScannerDefinitionRef {
 
 #[derive(Debug)]
 pub struct KeywordScannerDefinitionVersionedNode {
-    // Underlying keyword scanner
+    // Underlying keyword scanner (i.e. identifier scanner)
     pub value: KeywordScannerDefinitionNode,
     /// When the keyword scanner is enabled
     pub enabled: Vec<VersionQualityRange>,
@@ -96,7 +96,7 @@ pub enum KeywordScannerDefinitionNode {
     Sequence(Vec<Self>),
     Choice(Vec<Self>),
     Atom(String),
-    // No repeatable combinators, because keywords are assumed to not be over a regular language
+    // No repeatable combinators, because keywords are assumed to be finite
 }
 
 impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
@@ -117,11 +117,15 @@ impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
 }
 
 /// A [`KeywordScannerDefinitionRef`] that only has a single atom value.
+///
+/// The main usage for this type is to construct a keyword trie in parser generator, as trie will
+/// only work with single atom values and keyword promotion needs to additionally account for
+/// keyword reservation, rather than just literal presence.
 #[derive(Clone)]
 pub struct KeywordScannerAtomic(KeywordScannerDefinitionRef);
 
 impl KeywordScannerAtomic {
-    /// Returns `Some` if the definition is a single atom value, `None` otherwise.
+    /// Wraps the keyword scanner definition if it is a single atom value.
     pub fn try_from_def(def: &KeywordScannerDefinitionRef) -> Option<Self> {
         match def.definitions() {
             [KeywordScannerDefinitionVersionedNode {

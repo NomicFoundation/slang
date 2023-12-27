@@ -30,8 +30,7 @@ pub struct CodeGenerator {
 
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
-    // All of the keyword scanners (for now we assume we don't have context-specific keywords)
-    keyword_compound_scanners: BTreeMap<&'static str, String>,
+    keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
@@ -52,6 +51,7 @@ struct ScannerContext {
     keyword_trie_scanner: String,
     #[serde(skip)]
     keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
+    /// Name of the scanners that can be promoted to a keyword
     identifier_scanners: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
@@ -266,7 +266,7 @@ impl GrammarVisitor for CodeGenerator {
             self.referenced_versions.extend(
                 versions
                     .map(|vqr| &vqr.from)
-                    // "Removed from 0.0.0" is an alias for "never"
+                    // "Removed from 0.0.0" is an alias for "never"; it's never directly checked
                     .filter(|v| *v != &Version::new(0, 0, 0))
                     .cloned(),
             );
@@ -355,7 +355,6 @@ impl GrammarVisitor for CodeGenerator {
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
                 self.token_kinds.insert(scanner.name());
 
-                // Assume we don't have context-specific keywords for now
                 self.current_context()
                     .keyword_scanner_defs
                     .insert(scanner.name(), scanner.clone());

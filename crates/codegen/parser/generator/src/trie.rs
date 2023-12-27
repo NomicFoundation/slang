@@ -112,6 +112,11 @@ impl VersionWrapped for ScannerDefinitionNode {
     }
 }
 
+/// Used together with [`Trie`]. Represents the payload of a trie node and can be used to customize
+/// the emitted code.
+///
+/// Implemented for [`ScannerDefinitionRef`] and [`KeywordScannerAtomic`], allows to create
+/// tries for both literal scanner definitions and keyword scanners.
 pub trait Payload {
     fn to_leaf_code(&self) -> TokenStream;
     fn default_case() -> TokenStream;

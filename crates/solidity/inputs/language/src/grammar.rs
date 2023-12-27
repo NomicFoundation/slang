@@ -455,7 +455,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         defs,
                     };
 
-                    // Keywords are special scanners
+                    // Keywords are special scanners and are handled separately
                     let resolved = GrammarElement::KeywordScannerDefinition(Rc::new(kw_scanner));
                     ctx.resolved.insert(ident.clone(), resolved.clone());
                     return resolved;
