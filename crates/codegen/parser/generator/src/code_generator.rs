@@ -191,7 +191,7 @@ impl GrammarVisitor for CodeGenerator {
             .all_scanners
             .iter()
             .filter(|(name, scanner)| {
-                // are compound (does not consist of only literals)
+                // are compound (do not consist of only literals)
                 scanner.literals().is_empty() ||
                 // but make sure to also include a scanner that is referenced by other scanners, even if not compound
                 !self.top_level_scanner_names.contains(*name)
