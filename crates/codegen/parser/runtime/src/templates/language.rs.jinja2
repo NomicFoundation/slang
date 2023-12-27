@@ -195,6 +195,14 @@ impl Lexer for Language {
 
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}
+                            {%- if name not in context.identifier_scanners %}
+                            { {{name }} = {{ name | snake_case }} }
+                            {%- endif -%}
+                        {%- endfor %}
+                    }
+                    // Make sure keyword identifiers are last so they don't grab other things
+                    longest_match! {
+                        {%- for name in context.identifier_scanners %}
                             { {{ name }} = {{ name | snake_case }} }
                         {%- endfor %}
                     }

@@ -13534,6 +13534,9 @@ impl Lexer for Language {
                         { SingleLineComment = single_line_comment }
                         { UnicodeStringLiteral = unicode_string_literal }
                         { Whitespace = whitespace }
+                }
+                // Make sure keyword identifiers are last so they don't grab other things
+                longest_match! {
                         { Identifier = identifier }
                 }
 
@@ -13688,6 +13691,9 @@ impl Lexer for Language {
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
                         { VersionPragmaValue = version_pragma_value }
+                }
+                // Make sure keyword identifiers are last so they don't grab other things
+                longest_match! {
                         { Identifier = identifier }
                 }
 
@@ -13724,6 +13730,9 @@ impl Lexer for Language {
                         { HexStringLiteral = hex_string_literal }
                         { YulDecimalLiteral = yul_decimal_literal }
                         { YulHexLiteral = yul_hex_literal }
+                }
+                // Make sure keyword identifiers are last so they don't grab other things
+                longest_match! {
                         { YulIdentifier = yul_identifier }
                 }
 

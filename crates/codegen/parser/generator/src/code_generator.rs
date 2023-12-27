@@ -48,7 +48,8 @@ struct ScannerContext {
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
     literal_scanner: String,
-    keyword_scanners: BTreeMap<&'static str, String>,
+    keyword_scanners: BTreeMap<&'static str, (&'static str, String)>,
+    identifier_scanners: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -198,11 +199,6 @@ impl GrammarVisitor for CodeGenerator {
         for context in self.scanner_contexts.values_mut() {
             let mut literal_trie = Trie::new();
 
-            // Dr Hackity McHackerson
-            // Identifier at the end so it doesn't grab other things.
-            // Not a problem when we switch to a DFA.
-            let have_identifier_scanner = context.scanner_definitions.remove("Identifier");
-
             for scanner_name in &context.scanner_definitions {
                 let scanner = &self.all_scanners[*scanner_name];
 
@@ -218,9 +214,11 @@ impl GrammarVisitor for CodeGenerator {
 
             context.literal_scanner = literal_trie.to_scanner_code().to_string();
 
-            if have_identifier_scanner {
-                context.compound_scanner_names.push("Identifier");
-            }
+            context.identifier_scanners = context
+                .keyword_scanners
+                .iter()
+                .map(|(_, (ident_scanner, _))| *ident_scanner)
+                .collect();
         }
 
         // Collect all of the keyword scanners into a single list to be defined at top-level
@@ -231,7 +229,7 @@ impl GrammarVisitor for CodeGenerator {
                 context
                     .keyword_scanners
                     .iter()
-                    .map(|(name, code)| (*name, code.to_string()))
+                    .map(|(name, (_, code))| (*name, code.to_string()))
             })
             .collect();
 
@@ -336,9 +334,13 @@ impl GrammarVisitor for CodeGenerator {
                 self.token_kinds.insert(scanner.name());
 
                 // Assume we don't have context-specific keywords for now
-                self.current_context()
-                    .keyword_scanners
-                    .insert(scanner.name(), scanner.to_scanner_code().to_string());
+                self.current_context().keyword_scanners.insert(
+                    scanner.name(),
+                    (
+                        scanner.identifier_scanner(),
+                        scanner.to_scanner_code().to_string(),
+                    ),
+                );
             }
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {
