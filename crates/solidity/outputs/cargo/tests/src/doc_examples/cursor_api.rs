@@ -35,6 +35,7 @@ fn using_spawn() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
+    // --8<-- [start:example-using-spawn]
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.create_tree_cursor();
 
@@ -51,6 +52,7 @@ fn using_spawn() -> Result<()> {
     }
 
     assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
+    // --8<-- [end:example-using-spawn]
     Ok(())
 }
 
@@ -59,6 +61,7 @@ fn using_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
+    // --8<-- [start:example-using-iter]
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.create_tree_cursor();
 
@@ -76,6 +79,7 @@ fn using_iter() -> Result<()> {
     }
 
     assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
+    // --8<-- [end:example-using-iter]
     Ok(())
 }
 
@@ -103,6 +107,7 @@ fn using_iter_combinators() -> Result<()> {
 
 #[test]
 fn using_iter_with_node_names() -> Result<()> {
+    // --8<-- [start:example-using-cursor-with-names]
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
@@ -115,5 +120,6 @@ fn using_iter_with_node_names() -> Result<()> {
         .collect();
 
     assert_eq!(names, &["Foo", "Bar", "Baz"]);
+    // --8<-- [end:example-using-cursor-with-names]
     Ok(())
 }
