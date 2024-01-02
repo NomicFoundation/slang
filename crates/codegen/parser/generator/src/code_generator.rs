@@ -51,8 +51,7 @@ struct ScannerContext {
     keyword_trie_scanner: String,
     #[serde(skip)]
     keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
-    /// Name of the scanners that can be promoted to a keyword
-    identifier_scanners: BTreeSet<&'static str>,
+    identifier_scanner_names: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -217,7 +216,7 @@ impl GrammarVisitor for CodeGenerator {
 
             context.literal_scanner = literal_trie.to_scanner_code().to_string();
 
-            context.identifier_scanners = context
+            context.identifier_scanner_names = context
                 .keyword_scanner_defs
                 .values()
                 .map(|def| def.identifier_scanner())
