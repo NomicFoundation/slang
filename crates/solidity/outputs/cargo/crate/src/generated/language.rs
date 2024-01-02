@@ -6738,7 +6738,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::BytesKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -6751,7 +6751,7 @@ impl Language {
             input,
             ident,
             if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -6797,7 +6797,7 @@ impl Language {
                     scan_chars!(input, '1', '6')
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -6852,7 +6852,7 @@ impl Language {
                     scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -6918,9 +6918,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved
+                    KeywordScan::Reserved(TokenKind::FixedKeyword)
                 } else {
-                    KeywordScan::Present
+                    KeywordScan::Present(TokenKind::FixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7039,9 +7039,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved
+                    KeywordScan::Reserved(TokenKind::FixedKeyword)
                 } else {
-                    KeywordScan::Present
+                    KeywordScan::Present(TokenKind::FixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7095,7 +7095,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::IntKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7108,7 +7108,7 @@ impl Language {
             input,
             ident,
             if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7154,7 +7154,7 @@ impl Language {
                     scan_chars!(input, '1', '6')
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7209,7 +7209,7 @@ impl Language {
                     scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7275,9 +7275,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved
+                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
                 } else {
-                    KeywordScan::Present
+                    KeywordScan::Present(TokenKind::UfixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7396,9 +7396,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved
+                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
                 } else {
-                    KeywordScan::Present
+                    KeywordScan::Present(TokenKind::UfixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7452,7 +7452,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::UintKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7507,7 +7507,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulBytesKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7520,7 +7520,7 @@ impl Language {
             input,
             ident,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7568,7 +7568,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7625,7 +7625,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7693,7 +7693,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7813,7 +7813,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7868,7 +7868,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulIntKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7881,7 +7881,7 @@ impl Language {
             input,
             ident,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7929,7 +7929,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7986,7 +7986,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8054,7 +8054,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8174,7 +8174,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8229,7 +8229,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved
+                KeywordScan::Reserved(TokenKind::YulUintKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8590,8 +8590,8 @@ impl Lexer for Language {
                     let value = self.$function(input, &$ident);
                     match value {
                         _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                        KeywordScan::Reserved => longest_tokens = vec![TokenKind::$kind],
-                        KeywordScan::Present => longest_tokens.push(TokenKind::$kind),
+                        KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                        KeywordScan::Present(token) => longest_tokens.push(token),
                         KeywordScan::Absent => {},
                     }
                     input.set_position(save);
@@ -8775,25 +8775,25 @@ impl Lexer for Language {
                     .any(|tok| [TokenKind::Identifier].contains(tok))
                 {
                     // Try fast path for atomic keywords
-                    if let Some((scan, kind)) = match input.next() {
+                    if let Some(scan) = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
                                 if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
-                                    Some((KeywordScan::Reserved, TokenKind::AbstractKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::AbstractKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::AddressKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::AddressKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::AfterKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::AfterKeyword))
                                 } else {
                                     None
                                 }
@@ -8801,7 +8801,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 'i', 'a', 's') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::AliasKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::AliasKeyword))
                                     } else {
                                         None
                                     }
@@ -8811,7 +8811,7 @@ impl Lexer for Language {
                             }
                             Some('n') => {
                                 if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::AnonymousKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::AnonymousKeyword))
                                 } else {
                                     None
                                 }
@@ -8819,7 +8819,7 @@ impl Lexer for Language {
                             Some('p') => {
                                 if scan_chars!(input, 'p', 'l', 'y') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::ApplyKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::ApplyKeyword))
                                     } else {
                                         None
                                     }
@@ -8830,21 +8830,21 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
-                                        Some((KeywordScan::Reserved, TokenKind::AssemblyKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::AssemblyKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    Some((KeywordScan::Reserved, TokenKind::AsKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::AsKeyword))
                                 }
-                                None => Some((KeywordScan::Reserved, TokenKind::AsKeyword)),
+                                None => Some(KeywordScan::Reserved(TokenKind::AsKeyword)),
                             },
                             Some('u') => {
                                 if scan_chars!(input, 't', 'o') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::AutoKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::AutoKeyword))
                                     } else {
                                         None
                                     }
@@ -8861,21 +8861,21 @@ impl Lexer for Language {
                         Some('b') => match input.next() {
                             Some('o') => {
                                 if scan_chars!(input, 'o', 'l') {
-                                    Some((KeywordScan::Reserved, TokenKind::BoolKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::BoolKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'e', 'a', 'k') {
-                                    Some((KeywordScan::Reserved, TokenKind::BreakKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::BreakKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('y') => {
                                 if scan_chars!(input, 't', 'e') {
-                                    Some((KeywordScan::Reserved, TokenKind::ByteKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ByteKeyword))
                                 } else {
                                     None
                                 }
@@ -8891,10 +8891,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::CallDataKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::CallDataKeyword))
                                         } else {
                                             None
                                         }
@@ -8904,14 +8901,14 @@ impl Lexer for Language {
                                 }
                                 Some('s') => {
                                     if scan_chars!(input, 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::CaseKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::CaseKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
-                                        Some((KeywordScan::Reserved, TokenKind::CatchKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::CatchKeyword))
                                     } else {
                                         None
                                     }
@@ -8929,8 +8926,7 @@ impl Lexer for Language {
                                             match input.next() {
                                                 Some('a') => {
                                                     if scan_chars!(input, 'n', 't') {
-                                                        Some((
-                                                            KeywordScan::Reserved,
+                                                        Some(KeywordScan::Reserved(
                                                             TokenKind::ConstantKeyword,
                                                         ))
                                                     } else {
@@ -8940,13 +8936,11 @@ impl Lexer for Language {
                                                 Some('r') => {
                                                     if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
                                                         if self.version_is_at_least_0_5_0 {
-                                                            Some((
-                                                                KeywordScan::Reserved,
+                                                            Some(KeywordScan::Reserved(
                                                                 TokenKind::ConstructorKeyword,
                                                             ))
                                                         } else if self.version_is_at_least_0_4_22 {
-                                                            Some((
-                                                                KeywordScan::Present,
+                                                            Some(KeywordScan::Present(
                                                                 TokenKind::ConstructorKeyword,
                                                             ))
                                                         } else {
@@ -8969,8 +8963,7 @@ impl Lexer for Language {
                                     Some('t') => match input.next() {
                                         Some('i') => {
                                             if scan_chars!(input, 'n', 'u', 'e') {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::ContinueKeyword,
                                                 ))
                                             } else {
@@ -8979,8 +8972,7 @@ impl Lexer for Language {
                                         }
                                         Some('r') => {
                                             if scan_chars!(input, 'a', 'c', 't') {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::ContractKeyword,
                                                 ))
                                             } else {
@@ -9002,7 +8994,7 @@ impl Lexer for Language {
                                 Some('p') => {
                                     if scan_chars!(input, 'y', 'o', 'f') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::CopyOfKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::CopyOfKeyword))
                                         } else {
                                             None
                                         }
@@ -9025,7 +9017,7 @@ impl Lexer for Language {
                         Some('d') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'y', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::DaysKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::DaysKeyword))
                                 } else {
                                     None
                                 }
@@ -9034,7 +9026,7 @@ impl Lexer for Language {
                                 Some('f') => match input.next() {
                                     Some('a') => {
                                         if scan_chars!(input, 'u', 'l', 't') {
-                                            Some((KeywordScan::Reserved, TokenKind::DefaultKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::DefaultKeyword))
                                         } else {
                                             None
                                         }
@@ -9042,8 +9034,7 @@ impl Lexer for Language {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'e') {
                                             if self.version_is_at_least_0_5_0 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::DefineKeyword,
                                                 ))
                                             } else {
@@ -9061,7 +9052,7 @@ impl Lexer for Language {
                                 },
                                 Some('l') => {
                                     if scan_chars!(input, 'e', 't', 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::DeleteKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::DeleteKeyword))
                                     } else {
                                         None
                                     }
@@ -9072,7 +9063,7 @@ impl Lexer for Language {
                                 }
                                 None => None,
                             },
-                            Some('o') => Some((KeywordScan::Reserved, TokenKind::DoKeyword)),
+                            Some('o') => Some(KeywordScan::Reserved(TokenKind::DoKeyword)),
                             Some(_) => {
                                 input.undo();
                                 None
@@ -9082,7 +9073,7 @@ impl Lexer for Language {
                         Some('e') => match input.next() {
                             Some('l') => {
                                 if scan_chars!(input, 's', 'e') {
-                                    Some((KeywordScan::Reserved, TokenKind::ElseKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ElseKeyword))
                                 } else {
                                     None
                                 }
@@ -9090,9 +9081,9 @@ impl Lexer for Language {
                             Some('m') => {
                                 if scan_chars!(input, 'i', 't') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::EmitKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::EmitKeyword))
                                     } else if self.version_is_at_least_0_4_21 {
-                                        Some((KeywordScan::Present, TokenKind::EmitKeyword))
+                                        Some(KeywordScan::Present(TokenKind::EmitKeyword))
                                     } else {
                                         None
                                     }
@@ -9102,7 +9093,7 @@ impl Lexer for Language {
                             }
                             Some('n') => {
                                 if scan_chars!(input, 'u', 'm') {
-                                    Some((KeywordScan::Reserved, TokenKind::EnumKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::EnumKeyword))
                                 } else {
                                     None
                                 }
@@ -9110,7 +9101,7 @@ impl Lexer for Language {
                             Some('r') => {
                                 if scan_chars!(input, 'r', 'o', 'r') {
                                     if self.version_is_at_least_0_8_4 {
-                                        Some((KeywordScan::Present, TokenKind::ErrorKeyword))
+                                        Some(KeywordScan::Present(TokenKind::ErrorKeyword))
                                     } else {
                                         None
                                     }
@@ -9120,21 +9111,21 @@ impl Lexer for Language {
                             }
                             Some('t') => {
                                 if scan_chars!(input, 'h', 'e', 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::EtherKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::EtherKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'n', 't') {
-                                    Some((KeywordScan::Reserved, TokenKind::EventKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::EventKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('x') => {
                                 if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
-                                    Some((KeywordScan::Reserved, TokenKind::ExternalKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ExternalKeyword))
                                 } else {
                                     None
                                 }
@@ -9152,13 +9143,11 @@ impl Lexer for Language {
                                         Some('l') => {
                                             if scan_chars!(input, 'b', 'a', 'c', 'k') {
                                                 if self.version_is_at_least_0_6_0 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::FallbackKeyword,
                                                     ))
                                                 } else {
-                                                    Some((
-                                                        KeywordScan::Present,
+                                                    Some(KeywordScan::Present(
                                                         TokenKind::FallbackKeyword,
                                                     ))
                                                 }
@@ -9168,10 +9157,7 @@ impl Lexer for Language {
                                         }
                                         Some('s') => {
                                             if scan_chars!(input, 'e') {
-                                                Some((
-                                                    KeywordScan::Reserved,
-                                                    TokenKind::FalseKeyword,
-                                                ))
+                                                Some(KeywordScan::Reserved(TokenKind::FalseKeyword))
                                             } else {
                                                 None
                                             }
@@ -9191,10 +9177,7 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('a') => {
                                             if scan_chars!(input, 'l') {
-                                                Some((
-                                                    KeywordScan::Reserved,
-                                                    TokenKind::FinalKeyword,
-                                                ))
+                                                Some(KeywordScan::Reserved(TokenKind::FinalKeyword))
                                             } else {
                                                 None
                                             }
@@ -9202,8 +9185,7 @@ impl Lexer for Language {
                                         Some('n') => {
                                             if scan_chars!(input, 'e', 'y') {
                                                 if !self.version_is_at_least_0_7_0 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::FinneyKeyword,
                                                     ))
                                                 } else {
@@ -9225,7 +9207,7 @@ impl Lexer for Language {
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::ForKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ForKeyword))
                                 } else {
                                     None
                                 }
@@ -9233,7 +9215,7 @@ impl Lexer for Language {
                             Some('r') => {
                                 if scan_chars!(input, 'o', 'm') {
                                     if true {
-                                        Some((KeywordScan::Present, TokenKind::FromKeyword))
+                                        Some(KeywordScan::Present(TokenKind::FromKeyword))
                                     } else {
                                         None
                                     }
@@ -9243,7 +9225,7 @@ impl Lexer for Language {
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
-                                    Some((KeywordScan::Reserved, TokenKind::FunctionKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::FunctionKeyword))
                                 } else {
                                     None
                                 }
@@ -9258,7 +9240,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'b', 'a', 'l') {
                                     if self.version_is_at_least_0_8_13 {
-                                        Some((KeywordScan::Present, TokenKind::GlobalKeyword))
+                                        Some(KeywordScan::Present(TokenKind::GlobalKeyword))
                                     } else {
                                         None
                                     }
@@ -9269,9 +9251,9 @@ impl Lexer for Language {
                             Some('w') => {
                                 if scan_chars!(input, 'e', 'i') {
                                     if self.version_is_at_least_0_7_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::GweiKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::GweiKeyword))
                                     } else if self.version_is_at_least_0_6_11 {
-                                        Some((KeywordScan::Present, TokenKind::GweiKeyword))
+                                        Some(KeywordScan::Present(TokenKind::GweiKeyword))
                                     } else {
                                         None
                                     }
@@ -9288,14 +9270,14 @@ impl Lexer for Language {
                         Some('h') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'x') {
-                                    Some((KeywordScan::Reserved, TokenKind::HexKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::HexKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'u', 'r', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::HoursKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::HoursKeyword))
                                 } else {
                                     None
                                 }
@@ -9307,20 +9289,14 @@ impl Lexer for Language {
                             None => None,
                         },
                         Some('i') => match input.next() {
-                            Some('f') => Some((KeywordScan::Reserved, TokenKind::IfKeyword)),
+                            Some('f') => Some(KeywordScan::Reserved(TokenKind::IfKeyword)),
                             Some('m') => match input.next() {
                                 Some('m') => {
                                     if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::ImmutableKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::ImmutableKeyword))
                                         } else if self.version_is_at_least_0_6_5 {
-                                            Some((
-                                                KeywordScan::Present,
-                                                TokenKind::ImmutableKeyword,
-                                            ))
+                                            Some(KeywordScan::Present(TokenKind::ImmutableKeyword))
                                         } else {
                                             None
                                         }
@@ -9332,8 +9308,7 @@ impl Lexer for Language {
                                     Some('l') => {
                                         if scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's') {
                                             if self.version_is_at_least_0_5_0 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::ImplementsKeyword,
                                                 ))
                                             } else {
@@ -9345,7 +9320,7 @@ impl Lexer for Language {
                                     }
                                     Some('o') => {
                                         if scan_chars!(input, 'r', 't') {
-                                            Some((KeywordScan::Reserved, TokenKind::ImportKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::ImportKeyword))
                                         } else {
                                             None
                                         }
@@ -9365,14 +9340,14 @@ impl Lexer for Language {
                             Some('n') => match input.next() {
                                 Some('d') => {
                                     if scan_chars!(input, 'e', 'x', 'e', 'd') {
-                                        Some((KeywordScan::Reserved, TokenKind::IndexedKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::IndexedKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('l') => {
                                     if scan_chars!(input, 'i', 'n', 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::InlineKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::InlineKeyword))
                                     } else {
                                         None
                                     }
@@ -9382,8 +9357,7 @@ impl Lexer for Language {
                                         match input.next() {
                                             Some('f') => {
                                                 if scan_chars!(input, 'a', 'c', 'e') {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::InterfaceKeyword,
                                                     ))
                                                 } else {
@@ -9392,8 +9366,7 @@ impl Lexer for Language {
                                             }
                                             Some('n') => {
                                                 if scan_chars!(input, 'a', 'l') {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::InternalKeyword,
                                                     ))
                                                 } else {
@@ -9412,11 +9385,11 @@ impl Lexer for Language {
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    Some((KeywordScan::Reserved, TokenKind::InKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::InKeyword))
                                 }
-                                None => Some((KeywordScan::Reserved, TokenKind::InKeyword)),
+                                None => Some(KeywordScan::Reserved(TokenKind::InKeyword)),
                             },
-                            Some('s') => Some((KeywordScan::Reserved, TokenKind::IsKeyword)),
+                            Some('s') => Some(KeywordScan::Reserved(TokenKind::IsKeyword)),
                             Some(_) => {
                                 input.undo();
                                 None
@@ -9426,14 +9399,14 @@ impl Lexer for Language {
                         Some('l') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 't') {
-                                    Some((KeywordScan::Reserved, TokenKind::LetKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::LetKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('i') => {
                                 if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
-                                    Some((KeywordScan::Reserved, TokenKind::LibraryKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::LibraryKeyword))
                                 } else {
                                     None
                                 }
@@ -9449,7 +9422,7 @@ impl Lexer for Language {
                                 Some('c') => {
                                     if scan_chars!(input, 'r', 'o') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::MacroKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::MacroKeyword))
                                         } else {
                                             None
                                         }
@@ -9459,14 +9432,14 @@ impl Lexer for Language {
                                 }
                                 Some('p') => {
                                     if scan_chars!(input, 'p', 'i', 'n', 'g') {
-                                        Some((KeywordScan::Reserved, TokenKind::MappingKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::MappingKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
-                                        Some((KeywordScan::Reserved, TokenKind::MatchKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::MatchKeyword))
                                     } else {
                                         None
                                     }
@@ -9479,21 +9452,21 @@ impl Lexer for Language {
                             },
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
-                                    Some((KeywordScan::Reserved, TokenKind::MemoryKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::MemoryKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('i') => {
                                 if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::MinutesKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::MinutesKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::ModifierKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ModifierKeyword))
                                 } else {
                                     None
                                 }
@@ -9501,7 +9474,7 @@ impl Lexer for Language {
                             Some('u') => {
                                 if scan_chars!(input, 't', 'a', 'b', 'l', 'e') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::MutableKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::MutableKeyword))
                                     } else {
                                         None
                                     }
@@ -9518,14 +9491,14 @@ impl Lexer for Language {
                         Some('n') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'w') {
-                                    Some((KeywordScan::Reserved, TokenKind::NewKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::NewKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'l', 'l') {
-                                    Some((KeywordScan::Reserved, TokenKind::NullKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::NullKeyword))
                                 } else {
                                     None
                                 }
@@ -9537,13 +9510,13 @@ impl Lexer for Language {
                             None => None,
                         },
                         Some('o') => match input.next() {
-                            Some('f') => Some((KeywordScan::Reserved, TokenKind::OfKeyword)),
+                            Some('f') => Some(KeywordScan::Reserved(TokenKind::OfKeyword)),
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::OverrideKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::OverrideKeyword))
                                     } else {
-                                        Some((KeywordScan::Present, TokenKind::OverrideKeyword))
+                                        Some(KeywordScan::Present(TokenKind::OverrideKeyword))
                                     }
                                 } else {
                                     None
@@ -9560,7 +9533,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 't', 'i', 'a', 'l') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::PartialKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::PartialKeyword))
                                         } else {
                                             None
                                         }
@@ -9570,7 +9543,7 @@ impl Lexer for Language {
                                 }
                                 Some('y') => {
                                     if scan_chars!(input, 'a', 'b', 'l', 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::PayableKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::PayableKeyword))
                                     } else {
                                         None
                                     }
@@ -9584,14 +9557,14 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 'g', 'm', 'a') {
-                                        Some((KeywordScan::Reserved, TokenKind::PragmaKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::PragmaKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('i') => {
                                     if scan_chars!(input, 'v', 'a', 't', 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::PrivateKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::PrivateKeyword))
                                     } else {
                                         None
                                     }
@@ -9599,7 +9572,7 @@ impl Lexer for Language {
                                 Some('o') => {
                                     if scan_chars!(input, 'm', 'i', 's', 'e') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::PromiseKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::PromiseKeyword))
                                         } else {
                                             None
                                         }
@@ -9616,14 +9589,14 @@ impl Lexer for Language {
                             Some('u') => match input.next() {
                                 Some('b') => {
                                     if scan_chars!(input, 'l', 'i', 'c') {
-                                        Some((KeywordScan::Reserved, TokenKind::PublicKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::PublicKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('r') => {
                                     if scan_chars!(input, 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::PureKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::PureKeyword))
                                     } else {
                                         None
                                     }
@@ -9646,13 +9619,11 @@ impl Lexer for Language {
                                     Some('c') => {
                                         if scan_chars!(input, 'e', 'i', 'v', 'e') {
                                             if self.version_is_at_least_0_6_0 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::ReceiveKeyword,
                                                 ))
                                             } else {
-                                                Some((
-                                                    KeywordScan::Present,
+                                                Some(KeywordScan::Present(
                                                     TokenKind::ReceiveKeyword,
                                                 ))
                                             }
@@ -9663,8 +9634,7 @@ impl Lexer for Language {
                                     Some('f') => {
                                         if scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e') {
                                             if self.version_is_at_least_0_5_0 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::ReferenceKeyword,
                                                 ))
                                             } else {
@@ -9678,8 +9648,7 @@ impl Lexer for Language {
                                         if scan_chars!(
                                             input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
                                         ) {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::RelocatableKeyword,
                                             ))
                                         } else {
@@ -9689,19 +9658,16 @@ impl Lexer for Language {
                                     Some('t') => {
                                         if scan_chars!(input, 'u', 'r', 'n') {
                                             match input.next() {
-                                                Some('s') => Some((
-                                                    KeywordScan::Reserved,
+                                                Some('s') => Some(KeywordScan::Reserved(
                                                     TokenKind::ReturnsKeyword,
                                                 )),
                                                 Some(_) => {
                                                     input.undo();
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::ReturnKeyword,
                                                     ))
                                                 }
-                                                None => Some((
-                                                    KeywordScan::Reserved,
+                                                None => Some(KeywordScan::Reserved(
                                                     TokenKind::ReturnKeyword,
                                                 )),
                                             }
@@ -9712,10 +9678,7 @@ impl Lexer for Language {
                                     Some('v') => {
                                         if scan_chars!(input, 'e', 'r', 't') {
                                             if self.version_is_at_least_0_8_4 {
-                                                Some((
-                                                    KeywordScan::Present,
-                                                    TokenKind::RevertKeyword,
-                                                ))
+                                                Some(KeywordScan::Present(TokenKind::RevertKeyword))
                                             } else {
                                                 None
                                             }
@@ -9738,7 +9701,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'l', 'e', 'd') {
                                         if self.version_is_at_least_0_5_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::SealedKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::SealedKeyword))
                                         } else {
                                             None
                                         }
@@ -9748,7 +9711,7 @@ impl Lexer for Language {
                                 }
                                 Some('c') => {
                                     if scan_chars!(input, 'o', 'n', 'd', 's') {
-                                        Some((KeywordScan::Reserved, TokenKind::SecondsKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::SecondsKeyword))
                                     } else {
                                         None
                                     }
@@ -9762,7 +9725,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'z', 'e', 'o', 'f') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::SizeOfKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::SizeOfKeyword))
                                     } else {
                                         None
                                     }
@@ -9773,14 +9736,14 @@ impl Lexer for Language {
                             Some('t') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
-                                        Some((KeywordScan::Reserved, TokenKind::StaticKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::StaticKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('o') => {
                                     if scan_chars!(input, 'r', 'a', 'g', 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::StorageKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::StorageKeyword))
                                     } else {
                                         None
                                     }
@@ -9788,14 +9751,14 @@ impl Lexer for Language {
                                 Some('r') => match input.next() {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'g') {
-                                            Some((KeywordScan::Reserved, TokenKind::StringKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::StringKeyword))
                                         } else {
                                             None
                                         }
                                     }
                                     Some('u') => {
                                         if scan_chars!(input, 'c', 't') {
-                                            Some((KeywordScan::Reserved, TokenKind::StructKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::StructKeyword))
                                         } else {
                                             None
                                         }
@@ -9815,7 +9778,7 @@ impl Lexer for Language {
                             Some('u') => {
                                 if scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::SupportsKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::SupportsKeyword))
                                     } else {
                                         None
                                     }
@@ -9825,7 +9788,7 @@ impl Lexer for Language {
                             }
                             Some('w') => {
                                 if scan_chars!(input, 'i', 't', 'c', 'h') {
-                                    Some((KeywordScan::Reserved, TokenKind::SwitchKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::SwitchKeyword))
                                 } else {
                                     None
                                 }
@@ -9833,7 +9796,7 @@ impl Lexer for Language {
                             Some('z') => {
                                 if scan_chars!(input, 'a', 'b', 'o') {
                                     if !self.version_is_at_least_0_7_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::SzaboKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::SzaboKeyword))
                                     } else {
                                         None
                                     }
@@ -9850,7 +9813,7 @@ impl Lexer for Language {
                         Some('t') => match input.next() {
                             Some('h') => {
                                 if scan_chars!(input, 'r', 'o', 'w') {
-                                    Some((KeywordScan::Reserved, TokenKind::ThrowKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::ThrowKeyword))
                                 } else {
                                     None
                                 }
@@ -9858,12 +9821,12 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::TrueKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::TrueKeyword))
                                     } else {
                                         None
                                     }
                                 }
-                                Some('y') => Some((KeywordScan::Reserved, TokenKind::TryKeyword)),
+                                Some('y') => Some(KeywordScan::Reserved(TokenKind::TryKeyword)),
                                 Some(_) => {
                                     input.undo();
                                     None
@@ -9876,8 +9839,7 @@ impl Lexer for Language {
                                         Some('d') => {
                                             if scan_chars!(input, 'e', 'f') {
                                                 if self.version_is_at_least_0_5_0 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::TypeDefKeyword,
                                                     ))
                                                 } else {
@@ -9889,8 +9851,7 @@ impl Lexer for Language {
                                         }
                                         Some('o') => {
                                             if scan_chars!(input, 'f') {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::TypeOfKeyword,
                                                 ))
                                             } else {
@@ -9899,11 +9860,9 @@ impl Lexer for Language {
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            Some((KeywordScan::Reserved, TokenKind::TypeKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::TypeKeyword))
                                         }
-                                        None => {
-                                            Some((KeywordScan::Reserved, TokenKind::TypeKeyword))
-                                        }
+                                        None => Some(KeywordScan::Reserved(TokenKind::TypeKeyword)),
                                     }
                                 } else {
                                     None
@@ -9919,9 +9878,9 @@ impl Lexer for Language {
                             Some('n') => {
                                 if scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
                                     if self.version_is_at_least_0_5_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::UncheckedKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::UncheckedKeyword))
                                     } else if self.version_is_at_least_0_8_0 {
-                                        Some((KeywordScan::Present, TokenKind::UncheckedKeyword))
+                                        Some(KeywordScan::Present(TokenKind::UncheckedKeyword))
                                     } else {
                                         None
                                     }
@@ -9931,7 +9890,7 @@ impl Lexer for Language {
                             }
                             Some('s') => {
                                 if scan_chars!(input, 'i', 'n', 'g') {
-                                    Some((KeywordScan::Reserved, TokenKind::UsingKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::UsingKeyword))
                                 } else {
                                     None
                                 }
@@ -9945,7 +9904,7 @@ impl Lexer for Language {
                         Some('v') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::VarKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::VarKeyword))
                                 } else {
                                     None
                                 }
@@ -9953,7 +9912,7 @@ impl Lexer for Language {
                             Some('i') => match input.next() {
                                 Some('e') => {
                                     if scan_chars!(input, 'w') {
-                                        Some((KeywordScan::Reserved, TokenKind::ViewKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::ViewKeyword))
                                     } else {
                                         None
                                     }
@@ -9961,7 +9920,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 't', 'u', 'a', 'l') {
                                         if self.version_is_at_least_0_6_0 {
-                                            Some((KeywordScan::Reserved, TokenKind::VirtualKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::VirtualKeyword))
                                         } else {
                                             None
                                         }
@@ -9985,12 +9944,12 @@ impl Lexer for Language {
                             Some('e') => match input.next() {
                                 Some('e') => {
                                     if scan_chars!(input, 'k', 's') {
-                                        Some((KeywordScan::Reserved, TokenKind::WeeksKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::WeeksKeyword))
                                     } else {
                                         None
                                     }
                                 }
-                                Some('i') => Some((KeywordScan::Reserved, TokenKind::WeiKeyword)),
+                                Some('i') => Some(KeywordScan::Reserved(TokenKind::WeiKeyword)),
                                 Some(_) => {
                                     input.undo();
                                     None
@@ -9999,7 +9958,7 @@ impl Lexer for Language {
                             },
                             Some('h') => {
                                 if scan_chars!(input, 'i', 'l', 'e') {
-                                    Some((KeywordScan::Reserved, TokenKind::WhileKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::WhileKeyword))
                                 } else {
                                     None
                                 }
@@ -10012,7 +9971,7 @@ impl Lexer for Language {
                         },
                         Some('y') => {
                             if scan_chars!(input, 'e', 'a', 'r', 's') {
-                                Some((KeywordScan::Reserved, TokenKind::YearsKeyword))
+                                Some(KeywordScan::Reserved(TokenKind::YearsKeyword))
                             } else {
                                 None
                             }
@@ -10026,8 +9985,8 @@ impl Lexer for Language {
                         match scan {
                             _ if input.position() < furthest_position => { /* Prefix, do nothing */
                             }
-                            KeywordScan::Reserved => longest_tokens = vec![kind],
-                            KeywordScan::Present => longest_tokens.push(kind),
+                            KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                            KeywordScan::Present(token) => longest_tokens.push(token),
                             KeywordScan::Absent => unreachable!(),
                         }
                     }
@@ -10101,10 +10060,10 @@ impl Lexer for Language {
                     .any(|tok| [TokenKind::Identifier].contains(tok))
                 {
                     // Try fast path for atomic keywords
-                    if let Some((scan, kind)) = match input.next() {
+                    if let Some(scan) = match input.next() {
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                Some((KeywordScan::Reserved, TokenKind::AbicoderKeyword))
+                                Some(KeywordScan::Reserved(TokenKind::AbicoderKeyword))
                             } else {
                                 None
                             }
@@ -10113,21 +10072,21 @@ impl Lexer for Language {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                Some((KeywordScan::Reserved, TokenKind::ExperimentalKeyword))
+                                Some(KeywordScan::Reserved(TokenKind::ExperimentalKeyword))
                             } else {
                                 None
                             }
                         }
                         Some('p') => {
                             if scan_chars!(input, 'r', 'a', 'g', 'm', 'a') {
-                                Some((KeywordScan::Reserved, TokenKind::PragmaKeyword))
+                                Some(KeywordScan::Reserved(TokenKind::PragmaKeyword))
                             } else {
                                 None
                             }
                         }
                         Some('s') => {
                             if scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                                Some((KeywordScan::Reserved, TokenKind::SolidityKeyword))
+                                Some(KeywordScan::Reserved(TokenKind::SolidityKeyword))
                             } else {
                                 None
                             }
@@ -10141,8 +10100,8 @@ impl Lexer for Language {
                         match scan {
                             _ if input.position() < furthest_position => { /* Prefix, do nothing */
                             }
-                            KeywordScan::Reserved => longest_tokens = vec![kind],
-                            KeywordScan::Present => longest_tokens.push(kind),
+                            KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                            KeywordScan::Present(token) => longest_tokens.push(token),
                             KeywordScan::Absent => unreachable!(),
                         }
                     }
@@ -10198,12 +10157,12 @@ impl Lexer for Language {
                     .any(|tok| [TokenKind::YulIdentifier].contains(tok))
                 {
                     // Try fast path for atomic keywords
-                    if let Some((scan, kind)) = match input.next() {
+                    if let Some(scan) = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
                                 if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAbstractKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAbstractKeyword))
                                     } else {
                                         None
                                     }
@@ -10213,7 +10172,7 @@ impl Lexer for Language {
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulAddressKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulAddressKeyword))
                                 } else {
                                     None
                                 }
@@ -10221,7 +10180,7 @@ impl Lexer for Language {
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAfterKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAfterKeyword))
                                     } else {
                                         None
                                     }
@@ -10234,7 +10193,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAliasKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAliasKeyword))
                                     } else {
                                         None
                                     }
@@ -10245,10 +10204,7 @@ impl Lexer for Language {
                             Some('n') => {
                                 if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((
-                                            KeywordScan::Reserved,
-                                            TokenKind::YulAnonymousKeyword,
-                                        ))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAnonymousKeyword))
                                     } else {
                                         None
                                     }
@@ -10261,7 +10217,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulApplyKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulApplyKeyword))
                                     } else {
                                         None
                                     }
@@ -10273,8 +10229,7 @@ impl Lexer for Language {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulAssemblyKeyword,
                                             ))
                                         } else {
@@ -10287,14 +10242,14 @@ impl Lexer for Language {
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAsKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAsKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 None => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAsKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAsKeyword))
                                     } else {
                                         None
                                     }
@@ -10305,7 +10260,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulAutoKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulAutoKeyword))
                                     } else {
                                         None
                                     }
@@ -10323,7 +10278,7 @@ impl Lexer for Language {
                             Some('o') => {
                                 if scan_chars!(input, 'o', 'l') {
                                     if !self.version_is_at_least_0_5_10 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulBoolKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulBoolKeyword))
                                     } else {
                                         None
                                     }
@@ -10333,14 +10288,14 @@ impl Lexer for Language {
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'e', 'a', 'k') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulBreakKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulBreakKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('y') => {
                                 if scan_chars!(input, 't', 'e') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulByteKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulByteKeyword))
                                 } else {
                                     None
                                 }
@@ -10351,119 +10306,78 @@ impl Lexer for Language {
                             }
                             None => None,
                         },
-                        Some('c') => {
-                            match input.next() {
-                                Some('a') => match input.next() {
-                                    Some('l') => {
-                                        if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
-                                            if self.version_is_at_least_0_5_0
-                                                && !self.version_is_at_least_0_7_1
-                                            {
-                                                Some((
-                                                    KeywordScan::Reserved,
-                                                    TokenKind::YulCallDataKeyword,
-                                                ))
-                                            } else {
-                                                None
-                                            }
+                        Some('c') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('l') => {
+                                    if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            Some(KeywordScan::Reserved(
+                                                TokenKind::YulCallDataKeyword,
+                                            ))
                                         } else {
                                             None
                                         }
-                                    }
-                                    Some('s') => {
-                                        if scan_chars!(input, 'e') {
-                                            Some((KeywordScan::Reserved, TokenKind::YulCaseKeyword))
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('t') => {
-                                        if scan_chars!(input, 'c', 'h') {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
-                                                    TokenKind::YulCatchKeyword,
-                                                ))
-                                            } else {
-                                                None
-                                            }
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
+                                    } else {
                                         None
                                     }
-                                    None => None,
-                                },
-                                Some('o') => {
-                                    match input.next() {
-                                        Some('n') => {
+                                }
+                                Some('s') => {
+                                    if scan_chars!(input, 'e') {
+                                        Some(KeywordScan::Reserved(TokenKind::YulCaseKeyword))
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'c', 'h') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            Some(KeywordScan::Reserved(TokenKind::YulCatchKeyword))
+                                        } else {
+                                            None
+                                        }
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some('o') => match input.next() {
+                                Some('n') => match input.next() {
+                                    Some('s') => {
+                                        if scan_chars!(input, 't') {
                                             match input.next() {
-                                                Some('s') => {
-                                                    if scan_chars!(input, 't') {
-                                                        match input.next() {
-                                                            Some('a') => {
-                                                                if scan_chars!(input, 'n', 't') {
-                                                                    if !self
-                                                                        .version_is_at_least_0_7_1
-                                                                    {
-                                                                        Some ((KeywordScan :: Reserved , TokenKind :: YulConstantKeyword))
-                                                                    } else {
-                                                                        None
-                                                                    }
-                                                                } else {
-                                                                    None
-                                                                }
-                                                            }
-                                                            Some('r') => {
-                                                                if scan_chars!(
-                                                                    input, 'u', 'c', 't', 'o', 'r'
-                                                                ) {
-                                                                    if self . version_is_at_least_0_5_0 && ! self . version_is_at_least_0_7_1 { Some ((KeywordScan :: Reserved , TokenKind :: YulConstructorKeyword)) } else { None }
-                                                                } else {
-                                                                    None
-                                                                }
-                                                            }
-                                                            Some(_) => {
-                                                                input.undo();
-                                                                None
-                                                            }
-                                                            None => None,
+                                                Some('a') => {
+                                                    if scan_chars!(input, 'n', 't') {
+                                                        if !self.version_is_at_least_0_7_1 {
+                                                            Some(KeywordScan::Reserved(
+                                                                TokenKind::YulConstantKeyword,
+                                                            ))
+                                                        } else {
+                                                            None
                                                         }
                                                     } else {
                                                         None
                                                     }
                                                 }
-                                                Some('t') => {
-                                                    match input.next() {
-                                                        Some('i') => {
-                                                            if scan_chars!(input, 'n', 'u', 'e') {
-                                                                Some((
-                                                                    KeywordScan::Reserved,
-                                                                    TokenKind::YulContinueKeyword,
-                                                                ))
-                                                            } else {
-                                                                None
-                                                            }
-                                                        }
-                                                        Some('r') => {
-                                                            if scan_chars!(input, 'a', 'c', 't') {
-                                                                if !self.version_is_at_least_0_7_1 {
-                                                                    Some ((KeywordScan :: Reserved , TokenKind :: YulContractKeyword))
-                                                                } else {
-                                                                    None
-                                                                }
-                                                            } else {
-                                                                None
-                                                            }
-                                                        }
-                                                        Some(_) => {
-                                                            input.undo();
+                                                Some('r') => {
+                                                    if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
+                                                        if self.version_is_at_least_0_5_0
+                                                            && !self.version_is_at_least_0_7_1
+                                                        {
+                                                            Some(KeywordScan::Reserved(
+                                                                TokenKind::YulConstructorKeyword,
+                                                            ))
+                                                        } else {
                                                             None
                                                         }
-                                                        None => None,
+                                                    } else {
+                                                        None
                                                     }
                                                 }
                                                 Some(_) => {
@@ -10472,15 +10386,25 @@ impl Lexer for Language {
                                                 }
                                                 None => None,
                                             }
+                                        } else {
+                                            None
                                         }
-                                        Some('p') => {
-                                            if scan_chars!(input, 'y', 'o', 'f') {
-                                                if self.version_is_at_least_0_5_0
-                                                    && !self.version_is_at_least_0_7_1
-                                                {
-                                                    Some((
-                                                        KeywordScan::Reserved,
-                                                        TokenKind::YulCopyOfKeyword,
+                                    }
+                                    Some('t') => match input.next() {
+                                        Some('i') => {
+                                            if scan_chars!(input, 'n', 'u', 'e') {
+                                                Some(KeywordScan::Reserved(
+                                                    TokenKind::YulContinueKeyword,
+                                                ))
+                                            } else {
+                                                None
+                                            }
+                                        }
+                                        Some('r') => {
+                                            if scan_chars!(input, 'a', 'c', 't') {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    Some(KeywordScan::Reserved(
+                                                        TokenKind::YulContractKeyword,
                                                     ))
                                                 } else {
                                                     None
@@ -10494,6 +10418,24 @@ impl Lexer for Language {
                                             None
                                         }
                                         None => None,
+                                    },
+                                    Some(_) => {
+                                        input.undo();
+                                        None
+                                    }
+                                    None => None,
+                                },
+                                Some('p') => {
+                                    if scan_chars!(input, 'y', 'o', 'f') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            Some(KeywordScan::Reserved(TokenKind::YulCopyOfKeyword))
+                                        } else {
+                                            None
+                                        }
+                                    } else {
+                                        None
                                     }
                                 }
                                 Some(_) => {
@@ -10501,13 +10443,18 @@ impl Lexer for Language {
                                     None
                                 }
                                 None => None,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                None
                             }
-                        }
+                            None => None,
+                        },
                         Some('d') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'y', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulDaysKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulDaysKeyword))
                                     } else {
                                         None
                                     }
@@ -10519,8 +10466,7 @@ impl Lexer for Language {
                                 Some('f') => match input.next() {
                                     Some('a') => {
                                         if scan_chars!(input, 'u', 'l', 't') {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulDefaultKeyword,
                                             ))
                                         } else {
@@ -10532,8 +10478,7 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_5_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulDefineKeyword,
                                                 ))
                                             } else {
@@ -10552,10 +10497,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'e', 't', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulDeleteKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulDeleteKeyword))
                                         } else {
                                             None
                                         }
@@ -10571,7 +10513,7 @@ impl Lexer for Language {
                             },
                             Some('o') => {
                                 if !self.version_is_at_least_0_7_1 {
-                                    Some((KeywordScan::Reserved, TokenKind::YulDoKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulDoKeyword))
                                 } else {
                                     None
                                 }
@@ -10586,7 +10528,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 's', 'e') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulElseKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulElseKeyword))
                                     } else {
                                         None
                                     }
@@ -10599,7 +10541,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulEmitKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulEmitKeyword))
                                     } else {
                                         None
                                     }
@@ -10610,7 +10552,7 @@ impl Lexer for Language {
                             Some('n') => {
                                 if scan_chars!(input, 'u', 'm') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulEnumKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulEnumKeyword))
                                     } else {
                                         None
                                     }
@@ -10621,7 +10563,7 @@ impl Lexer for Language {
                             Some('t') => {
                                 if scan_chars!(input, 'h', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulEtherKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulEtherKeyword))
                                     } else {
                                         None
                                     }
@@ -10632,7 +10574,7 @@ impl Lexer for Language {
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'n', 't') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulEventKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulEventKeyword))
                                     } else {
                                         None
                                     }
@@ -10643,7 +10585,7 @@ impl Lexer for Language {
                             Some('x') => {
                                 if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulExternalKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulExternalKeyword))
                                     } else {
                                         None
                                     }
@@ -10666,8 +10608,7 @@ impl Lexer for Language {
                                                 if self.version_is_at_least_0_6_0
                                                     && !self.version_is_at_least_0_7_1
                                                 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulFallbackKeyword,
                                                     ))
                                                 } else {
@@ -10679,8 +10620,7 @@ impl Lexer for Language {
                                         }
                                         Some('s') => {
                                             if scan_chars!(input, 'e') {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulFalseKeyword,
                                                 ))
                                             } else {
@@ -10703,8 +10643,7 @@ impl Lexer for Language {
                                         Some('a') => {
                                             if scan_chars!(input, 'l') {
                                                 if !self.version_is_at_least_0_7_1 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulFinalKeyword,
                                                     ))
                                                 } else {
@@ -10717,8 +10656,7 @@ impl Lexer for Language {
                                         Some('n') => {
                                             if scan_chars!(input, 'e', 'y') {
                                                 if !self.version_is_at_least_0_7_0 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulFinneyKeyword,
                                                     ))
                                                 } else {
@@ -10740,14 +10678,14 @@ impl Lexer for Language {
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'r') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulForKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulForKeyword))
                                 } else {
                                     None
                                 }
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulFunctionKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulFunctionKeyword))
                                 } else {
                                     None
                                 }
@@ -10762,7 +10700,7 @@ impl Lexer for Language {
                             if scan_chars!(input, 'w', 'e', 'i') {
                                 if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1
                                 {
-                                    Some((KeywordScan::Reserved, TokenKind::YulGweiKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulGweiKeyword))
                                 } else {
                                     None
                                 }
@@ -10773,7 +10711,7 @@ impl Lexer for Language {
                         Some('h') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'x') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulHexKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulHexKeyword))
                                 } else {
                                     None
                                 }
@@ -10781,7 +10719,7 @@ impl Lexer for Language {
                             Some('o') => {
                                 if scan_chars!(input, 'u', 'r', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulHoursKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulHoursKeyword))
                                     } else {
                                         None
                                     }
@@ -10796,15 +10734,14 @@ impl Lexer for Language {
                             None => None,
                         },
                         Some('i') => match input.next() {
-                            Some('f') => Some((KeywordScan::Reserved, TokenKind::YulIfKeyword)),
+                            Some('f') => Some(KeywordScan::Reserved(TokenKind::YulIfKeyword)),
                             Some('m') => match input.next() {
                                 Some('m') => {
                                     if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulImmutableKeyword,
                                             ))
                                         } else {
@@ -10820,8 +10757,7 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_5_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulImplementsKeyword,
                                                 ))
                                             } else {
@@ -10834,8 +10770,7 @@ impl Lexer for Language {
                                     Some('o') => {
                                         if scan_chars!(input, 'r', 't') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulImportKeyword,
                                                 ))
                                             } else {
@@ -10861,8 +10796,7 @@ impl Lexer for Language {
                                 Some('d') => {
                                     if scan_chars!(input, 'e', 'x', 'e', 'd') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulIndexedKeyword,
                                             ))
                                         } else {
@@ -10875,10 +10809,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'i', 'n', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulInlineKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulInlineKeyword))
                                         } else {
                                             None
                                         }
@@ -10892,8 +10823,7 @@ impl Lexer for Language {
                                             Some('f') => {
                                                 if scan_chars!(input, 'a', 'c', 'e') {
                                                     if !self.version_is_at_least_0_7_1 {
-                                                        Some((
-                                                            KeywordScan::Reserved,
+                                                        Some(KeywordScan::Reserved(
                                                             TokenKind::YulInterfaceKeyword,
                                                         ))
                                                     } else {
@@ -10906,8 +10836,7 @@ impl Lexer for Language {
                                             Some('n') => {
                                                 if scan_chars!(input, 'a', 'l') {
                                                     if !self.version_is_at_least_0_7_1 {
-                                                        Some((
-                                                            KeywordScan::Reserved,
+                                                        Some(KeywordScan::Reserved(
                                                             TokenKind::YulInternalKeyword,
                                                         ))
                                                     } else {
@@ -10930,14 +10859,14 @@ impl Lexer for Language {
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_6_8 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulInKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulInKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 None => {
                                     if !self.version_is_at_least_0_6_8 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulInKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulInKeyword))
                                     } else {
                                         None
                                     }
@@ -10945,7 +10874,7 @@ impl Lexer for Language {
                             },
                             Some('s') => {
                                 if !self.version_is_at_least_0_7_1 {
-                                    Some((KeywordScan::Reserved, TokenKind::YulIsKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulIsKeyword))
                                 } else {
                                     None
                                 }
@@ -10961,12 +10890,9 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'v', 'e') {
                                         if self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulLeaveKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulLeaveKeyword))
                                         } else if self.version_is_at_least_0_6_0 {
-                                            Some((KeywordScan::Present, TokenKind::YulLeaveKeyword))
+                                            Some(KeywordScan::Present(TokenKind::YulLeaveKeyword))
                                         } else {
                                             None
                                         }
@@ -10974,9 +10900,7 @@ impl Lexer for Language {
                                         None
                                     }
                                 }
-                                Some('t') => {
-                                    Some((KeywordScan::Reserved, TokenKind::YulLetKeyword))
-                                }
+                                Some('t') => Some(KeywordScan::Reserved(TokenKind::YulLetKeyword)),
                                 Some(_) => {
                                     input.undo();
                                     None
@@ -10986,7 +10910,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulLibraryKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulLibraryKeyword))
                                     } else {
                                         None
                                     }
@@ -11007,10 +10931,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulMacroKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulMacroKeyword))
                                         } else {
                                             None
                                         }
@@ -11021,8 +10942,7 @@ impl Lexer for Language {
                                 Some('p') => {
                                     if scan_chars!(input, 'p', 'i', 'n', 'g') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulMappingKeyword,
                                             ))
                                         } else {
@@ -11035,10 +10955,7 @@ impl Lexer for Language {
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulMatchKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulMatchKeyword))
                                         } else {
                                             None
                                         }
@@ -11055,7 +10972,7 @@ impl Lexer for Language {
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulMemoryKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulMemoryKeyword))
                                     } else {
                                         None
                                     }
@@ -11066,7 +10983,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulMinutesKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulMinutesKeyword))
                                     } else {
                                         None
                                     }
@@ -11077,7 +10994,7 @@ impl Lexer for Language {
                             Some('o') => {
                                 if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulModifierKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulModifierKeyword))
                                     } else {
                                         None
                                     }
@@ -11090,7 +11007,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulMutableKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulMutableKeyword))
                                     } else {
                                         None
                                     }
@@ -11108,7 +11025,7 @@ impl Lexer for Language {
                             Some('e') => {
                                 if scan_chars!(input, 'w') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulNewKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulNewKeyword))
                                     } else {
                                         None
                                     }
@@ -11119,7 +11036,7 @@ impl Lexer for Language {
                             Some('u') => {
                                 if scan_chars!(input, 'l', 'l') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulNullKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulNullKeyword))
                                     } else {
                                         None
                                     }
@@ -11136,7 +11053,7 @@ impl Lexer for Language {
                         Some('o') => match input.next() {
                             Some('f') => {
                                 if !self.version_is_at_least_0_7_1 {
-                                    Some((KeywordScan::Reserved, TokenKind::YulOfKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulOfKeyword))
                                 } else {
                                     None
                                 }
@@ -11146,7 +11063,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulOverrideKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulOverrideKeyword))
                                     } else {
                                         None
                                     }
@@ -11167,8 +11084,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulPartialKeyword,
                                             ))
                                         } else {
@@ -11181,8 +11097,7 @@ impl Lexer for Language {
                                 Some('y') => {
                                     if scan_chars!(input, 'a', 'b', 'l', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulPayableKeyword,
                                             ))
                                         } else {
@@ -11202,10 +11117,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'g', 'm', 'a') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulPragmaKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulPragmaKeyword))
                                         } else {
                                             None
                                         }
@@ -11216,8 +11128,7 @@ impl Lexer for Language {
                                 Some('i') => {
                                     if scan_chars!(input, 'v', 'a', 't', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulPrivateKeyword,
                                             ))
                                         } else {
@@ -11232,8 +11143,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulPromiseKeyword,
                                             ))
                                         } else {
@@ -11253,10 +11163,7 @@ impl Lexer for Language {
                                 Some('b') => {
                                     if scan_chars!(input, 'l', 'i', 'c') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulPublicKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulPublicKeyword))
                                         } else {
                                             None
                                         }
@@ -11267,7 +11174,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((KeywordScan::Reserved, TokenKind::YulPureKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::YulPureKeyword))
                                         } else {
                                             None
                                         }
@@ -11295,8 +11202,7 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_6_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulReceiveKeyword,
                                                 ))
                                             } else {
@@ -11311,8 +11217,7 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_5_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulReferenceKeyword,
                                                 ))
                                             } else {
@@ -11327,8 +11232,7 @@ impl Lexer for Language {
                                             input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
                                         ) {
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulRelocatableKeyword,
                                                 ))
                                             } else {
@@ -11343,8 +11247,7 @@ impl Lexer for Language {
                                             match input.next() {
                                                 Some('s') => {
                                                     if !self.version_is_at_least_0_7_1 {
-                                                        Some((
-                                                            KeywordScan::Reserved,
+                                                        Some(KeywordScan::Reserved(
                                                             TokenKind::YulReturnsKeyword,
                                                         ))
                                                     } else {
@@ -11353,13 +11256,11 @@ impl Lexer for Language {
                                                 }
                                                 Some(_) => {
                                                     input.undo();
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulReturnKeyword,
                                                     ))
                                                 }
-                                                None => Some((
-                                                    KeywordScan::Reserved,
+                                                None => Some(KeywordScan::Reserved(
                                                     TokenKind::YulReturnKeyword,
                                                 )),
                                             }
@@ -11369,10 +11270,7 @@ impl Lexer for Language {
                                     }
                                     Some('v') => {
                                         if scan_chars!(input, 'e', 'r', 't') {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulRevertKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulRevertKeyword))
                                         } else {
                                             None
                                         }
@@ -11394,10 +11292,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulSealedKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulSealedKeyword))
                                         } else {
                                             None
                                         }
@@ -11408,8 +11303,7 @@ impl Lexer for Language {
                                 Some('c') => {
                                     if scan_chars!(input, 'o', 'n', 'd', 's') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulSecondsKeyword,
                                             ))
                                         } else {
@@ -11430,7 +11324,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulSizeOfKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulSizeOfKeyword))
                                     } else {
                                         None
                                     }
@@ -11442,10 +11336,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulStaticKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulStaticKeyword))
                                         } else {
                                             None
                                         }
@@ -11456,8 +11347,7 @@ impl Lexer for Language {
                                 Some('o') => {
                                     if scan_chars!(input, 'r', 'a', 'g', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulStorageKeyword,
                                             ))
                                         } else {
@@ -11471,8 +11361,7 @@ impl Lexer for Language {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'g') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulStringKeyword,
                                                 ))
                                             } else {
@@ -11485,8 +11374,7 @@ impl Lexer for Language {
                                     Some('u') => {
                                         if scan_chars!(input, 'c', 't') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulStructKeyword,
                                                 ))
                                             } else {
@@ -11513,7 +11401,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((KeywordScan::Reserved, TokenKind::YulSupportsKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulSupportsKeyword))
                                     } else {
                                         None
                                     }
@@ -11523,7 +11411,7 @@ impl Lexer for Language {
                             }
                             Some('w') => {
                                 if scan_chars!(input, 'i', 't', 'c', 'h') {
-                                    Some((KeywordScan::Reserved, TokenKind::YulSwitchKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulSwitchKeyword))
                                 } else {
                                     None
                                 }
@@ -11531,7 +11419,7 @@ impl Lexer for Language {
                             Some('z') => {
                                 if scan_chars!(input, 'a', 'b', 'o') {
                                     if !self.version_is_at_least_0_7_0 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulSzaboKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulSzaboKeyword))
                                     } else {
                                         None
                                     }
@@ -11549,7 +11437,7 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'r', 'o', 'w') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulThrowKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulThrowKeyword))
                                     } else {
                                         None
                                     }
@@ -11560,14 +11448,14 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
-                                        Some((KeywordScan::Reserved, TokenKind::YulTrueKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulTrueKeyword))
                                     } else {
                                         None
                                     }
                                 }
                                 Some('y') => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulTryKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulTryKeyword))
                                     } else {
                                         None
                                     }
@@ -11586,8 +11474,7 @@ impl Lexer for Language {
                                                 if self.version_is_at_least_0_5_0
                                                     && !self.version_is_at_least_0_7_1
                                                 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulTypeDefKeyword,
                                                     ))
                                                 } else {
@@ -11600,8 +11487,7 @@ impl Lexer for Language {
                                         Some('o') => {
                                             if scan_chars!(input, 'f') {
                                                 if !self.version_is_at_least_0_7_1 {
-                                                    Some((
-                                                        KeywordScan::Reserved,
+                                                    Some(KeywordScan::Reserved(
                                                         TokenKind::YulTypeOfKeyword,
                                                     ))
                                                 } else {
@@ -11614,8 +11500,7 @@ impl Lexer for Language {
                                         Some(_) => {
                                             input.undo();
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulTypeKeyword,
                                                 ))
                                             } else {
@@ -11624,8 +11509,7 @@ impl Lexer for Language {
                                         }
                                         None => {
                                             if !self.version_is_at_least_0_7_1 {
-                                                Some((
-                                                    KeywordScan::Reserved,
+                                                Some(KeywordScan::Reserved(
                                                     TokenKind::YulTypeKeyword,
                                                 ))
                                             } else {
@@ -11649,10 +11533,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        Some((
-                                            KeywordScan::Reserved,
-                                            TokenKind::YulUncheckedKeyword,
-                                        ))
+                                        Some(KeywordScan::Reserved(TokenKind::YulUncheckedKeyword))
                                     } else {
                                         None
                                     }
@@ -11663,7 +11544,7 @@ impl Lexer for Language {
                             Some('s') => {
                                 if scan_chars!(input, 'i', 'n', 'g') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulUsingKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulUsingKeyword))
                                     } else {
                                         None
                                     }
@@ -11681,7 +11562,7 @@ impl Lexer for Language {
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
                                     if !self.version_is_at_least_0_6_5 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulVarKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulVarKeyword))
                                     } else {
                                         None
                                     }
@@ -11693,7 +11574,7 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'w') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((KeywordScan::Reserved, TokenKind::YulViewKeyword))
+                                            Some(KeywordScan::Reserved(TokenKind::YulViewKeyword))
                                         } else {
                                             None
                                         }
@@ -11706,8 +11587,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_6_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            Some((
-                                                KeywordScan::Reserved,
+                                            Some(KeywordScan::Reserved(
                                                 TokenKind::YulVirtualKeyword,
                                             ))
                                         } else {
@@ -11734,10 +11614,7 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'k', 's') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            Some((
-                                                KeywordScan::Reserved,
-                                                TokenKind::YulWeeksKeyword,
-                                            ))
+                                            Some(KeywordScan::Reserved(TokenKind::YulWeeksKeyword))
                                         } else {
                                             None
                                         }
@@ -11747,7 +11624,7 @@ impl Lexer for Language {
                                 }
                                 Some('i') => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulWeiKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulWeiKeyword))
                                     } else {
                                         None
                                     }
@@ -11761,7 +11638,7 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'i', 'l', 'e') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        Some((KeywordScan::Reserved, TokenKind::YulWhileKeyword))
+                                        Some(KeywordScan::Reserved(TokenKind::YulWhileKeyword))
                                     } else {
                                         None
                                     }
@@ -11778,7 +11655,7 @@ impl Lexer for Language {
                         Some('y') => {
                             if scan_chars!(input, 'e', 'a', 'r', 's') {
                                 if !self.version_is_at_least_0_7_1 {
-                                    Some((KeywordScan::Reserved, TokenKind::YulYearsKeyword))
+                                    Some(KeywordScan::Reserved(TokenKind::YulYearsKeyword))
                                 } else {
                                     None
                                 }
@@ -11795,8 +11672,8 @@ impl Lexer for Language {
                         match scan {
                             _ if input.position() < furthest_position => { /* Prefix, do nothing */
                             }
-                            KeywordScan::Reserved => longest_tokens = vec![kind],
-                            KeywordScan::Present => longest_tokens.push(kind),
+                            KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                            KeywordScan::Present(token) => longest_tokens.push(token),
                             KeywordScan::Absent => unreachable!(),
                         }
                     }

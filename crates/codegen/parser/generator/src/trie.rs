@@ -150,40 +150,40 @@ impl Payload for KeywordScannerAtomic {
 
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
-            ("true", _) => quote!(Some((KeywordScan::Reserved, TokenKind::#kind))),
+            ("true", _) => quote!(Some(KeywordScan::Reserved(TokenKind::#kind))),
             ("false", _) => quote! {
                 if #enabled_cond {
-                    Some((KeywordScan::Present, TokenKind::#kind))
+                    Some(KeywordScan::Present(TokenKind::#kind))
                 } else {
                     None
                 }
             },
             (_, "false") => quote! {
                 if #reserved_cond {
-                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                    Some(KeywordScan::Reserved(TokenKind::#kind))
                 } else {
                     None
                 }
             },
             (_, "true") => quote! {
                 if #reserved_cond {
-                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                    Some(KeywordScan::Reserved(TokenKind::#kind))
                 } else {
-                    Some((KeywordScan::Present, TokenKind::#kind))
+                    Some(KeywordScan::Present(TokenKind::#kind))
                 }
             },
             (reserved, enabled) if reserved == enabled => quote! {
                 if #reserved_cond {
-                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                    Some(KeywordScan::Reserved(TokenKind::#kind))
                 } else {
                     None
                 }
             },
             _ => quote! {
                 if #reserved_cond {
-                    Some((KeywordScan::Reserved, TokenKind::#kind))
+                    Some(KeywordScan::Reserved(TokenKind::#kind))
                 } else if #enabled_cond {
-                    Some((KeywordScan::Present, TokenKind::#kind))
+                    Some(KeywordScan::Present(TokenKind::#kind))
                 } else {
                     None
                 }

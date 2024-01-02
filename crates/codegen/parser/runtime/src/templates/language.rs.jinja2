@@ -161,8 +161,8 @@ impl Lexer for Language {
                     let value = self.$function(input, &$ident);
                     match value {
                         _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                        KeywordScan::Reserved => longest_tokens = vec![TokenKind::$kind],
-                        KeywordScan::Present => longest_tokens.push(TokenKind::$kind),
+                        KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                        KeywordScan::Present(token) => longest_tokens.push(token),
                         KeywordScan::Absent => {},
                     }
                     input.set_position(save);
@@ -201,11 +201,11 @@ impl Lexer for Language {
                     ].contains(tok))
                     {
                         // Try fast path for atomic keywords
-                        if let Some((scan, kind)) = {{ context.keyword_trie_scanner }} {
+                        if let Some(scan) = {{ context.keyword_trie_scanner }} {
                             match scan {
                                 _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                                KeywordScan::Reserved => longest_tokens = vec![kind],
-                                KeywordScan::Present => longest_tokens.push(kind),
+                                KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                                KeywordScan::Present(token) => longest_tokens.push(token),
                                 KeywordScan::Absent => unreachable!(),
                             }
                         }

@@ -9,9 +9,9 @@ pub enum KeywordScan {
     /// The keyword is not present.
     Absent,
     /// The keyword is present, but is not reserved.
-    Present,
+    Present(TokenKind),
     /// The keyword is present and is reserved.
-    Reserved,
+    Reserved(TokenKind),
 }
 
 pub trait Lexer {

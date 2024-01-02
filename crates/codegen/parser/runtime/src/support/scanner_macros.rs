@@ -73,7 +73,7 @@ macro_rules! scan_keyword_choice {
             let save = $stream.position();
             $(
                 {
-                    if let result @ (KeywordScan::Present | KeywordScan::Reserved) = ($scanner) {
+                    if let result @ (KeywordScan::Present(..) | KeywordScan::Reserved(..)) = ($scanner) {
                         if $ident.len() == $stream.position().utf8 - save.utf8 {
                             break result;
                         }
