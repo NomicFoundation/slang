@@ -9945,25 +9945,28 @@ impl Lexer for Language {
                         value => value,
                     };
 
-                    input.set_position(save);
-
-                    // TODO: Don't allocate a string here
-                    let ident_value = input.content(save.utf8..furthest_position.utf8);
-
+                    // Perf: only scan for a compound keyword if we didn't already find one
                     let mut kw_scan = kw_scan;
-                    for keyword_compound_scanner in [
-                        Self::bytes_keyword,
-                        Self::fixed_keyword,
-                        Self::int_keyword,
-                        Self::ufixed_keyword,
-                        Self::uint_keyword,
-                    ] {
-                        match keyword_compound_scanner(self, input, &ident_value) {
-                            _ if input.position() < furthest_position => { /* Strict prefix */ }
-                            KeywordScan::Absent => {}
-                            value => kw_scan = value,
-                        }
+                    if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
+
+                        // TODO: Don't allocate a string here
+                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                        for keyword_compound_scanner in [
+                            Self::bytes_keyword,
+                            Self::fixed_keyword,
+                            Self::int_keyword,
+                            Self::ufixed_keyword,
+                            Self::uint_keyword,
+                        ] {
+                            match keyword_compound_scanner(self, input, &ident_value) {
+                                _ if input.position() < furthest_position => { /* Strict prefix */ }
+                                KeywordScan::Absent => {}
+                                value => kw_scan = value,
+                            }
+                            input.set_position(save);
+                        }
                     }
 
                     input.set_position(furthest_position);
@@ -11600,25 +11603,28 @@ impl Lexer for Language {
                         value => value,
                     };
 
-                    input.set_position(save);
-
-                    // TODO: Don't allocate a string here
-                    let ident_value = input.content(save.utf8..furthest_position.utf8);
-
+                    // Perf: only scan for a compound keyword if we didn't already find one
                     let mut kw_scan = kw_scan;
-                    for keyword_compound_scanner in [
-                        Self::yul_bytes_keyword,
-                        Self::yul_fixed_keyword,
-                        Self::yul_int_keyword,
-                        Self::yul_ufixed_keyword,
-                        Self::yul_uint_keyword,
-                    ] {
-                        match keyword_compound_scanner(self, input, &ident_value) {
-                            _ if input.position() < furthest_position => { /* Strict prefix */ }
-                            KeywordScan::Absent => {}
-                            value => kw_scan = value,
-                        }
+                    if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
+
+                        // TODO: Don't allocate a string here
+                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                        for keyword_compound_scanner in [
+                            Self::yul_bytes_keyword,
+                            Self::yul_fixed_keyword,
+                            Self::yul_int_keyword,
+                            Self::yul_ufixed_keyword,
+                            Self::yul_uint_keyword,
+                        ] {
+                            match keyword_compound_scanner(self, input, &ident_value) {
+                                _ if input.position() < furthest_position => { /* Strict prefix */ }
+                                KeywordScan::Absent => {}
+                                value => kw_scan = value,
+                            }
+                            input.set_position(save);
+                        }
                     }
 
                     input.set_position(furthest_position);

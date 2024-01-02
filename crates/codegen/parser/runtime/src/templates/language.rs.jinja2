@@ -195,23 +195,26 @@ impl Lexer for Language {
                         };
 
                         {% if context.keyword_compound_scanners | length > 0 %}
-                        input.set_position(save);
-
-                        // TODO: Don't allocate a string here
-                        let ident_value = input.content(save.utf8..furthest_position.utf8);
-
+                        // Perf: only scan for a compound keyword if we didn't already find one
                         let mut kw_scan = kw_scan;
-                        for keyword_compound_scanner in [
-                        {%- for keyword_name, _ in context.keyword_compound_scanners %}
-                            Self::{{ keyword_name | snake_case }},
-                        {%- endfor %}
-                        ] {
-                            match keyword_compound_scanner(self, input, &ident_value) {
-                                _ if input.position() < furthest_position => {/* Strict prefix */},
-                                KeywordScan::Absent => {},
-                                value => kw_scan = value,
-                            }
+                        if kw_scan == KeywordScan::Absent {
                             input.set_position(save);
+
+                            // TODO: Don't allocate a string here
+                            let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                            for keyword_compound_scanner in [
+                            {%- for keyword_name, _ in context.keyword_compound_scanners %}
+                                Self::{{ keyword_name | snake_case }},
+                            {%- endfor %}
+                            ] {
+                                match keyword_compound_scanner(self, input, &ident_value) {
+                                    _ if input.position() < furthest_position => {/* Strict prefix */},
+                                    KeywordScan::Absent => {},
+                                    value => kw_scan = value,
+                                }
+                                input.set_position(save);
+                            }
                         }
                         {% endif %}
 
