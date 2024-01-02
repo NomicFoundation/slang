@@ -154,18 +154,6 @@ impl Lexer for Language {
                 )*
             };
         }
-        macro_rules! promote_keywords {
-            (out $kw_scan:ident; test $ident:ident with: $( { $kind:ident = $function:ident } )*) => {
-                $(
-                    match self.$function(input, &$ident) {
-                        _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                        KeywordScan::Absent => {},
-                        value => $kw_scan = value,
-                    }
-                    input.set_position(save);
-                )*
-            };
-        }
 
         match LexCtx::value() {
             {%- for context_name, context in code.scanner_contexts %}
@@ -191,13 +179,13 @@ impl Lexer for Language {
                     }
 
                     // We have an identifier; we need to check if it's a keyword
-                    if longest_token.is_some_and(|tok|
+                    if let Some(identifier) = longest_token.filter(|tok|
                         [
                             {% for name in context.identifier_scanner_names %}
                                 TokenKind::{{ name }},
                             {% endfor %}
                         ]
-                        .contains(&tok)
+                        .contains(tok)
                     ) {
                         let kw_scan = {{ context.keyword_trie_scanner }};
                         let kw_scan = match kw_scan {
@@ -213,15 +201,22 @@ impl Lexer for Language {
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                         let mut kw_scan = kw_scan;
-                        promote_keywords! { out kw_scan; test ident_value with:
+                        for keyword_compound_scanner in [
                         {%- for keyword_name, _ in context.keyword_compound_scanners %}
-                            { {{ keyword_name }} = {{ keyword_name | snake_case }} }
+                            Self::{{ keyword_name | snake_case }},
                         {%- endfor %}
+                        ] {
+                            match keyword_compound_scanner(self, input, &ident_value) {
+                                _ if input.position() < furthest_position => {/* Strict prefix */},
+                                KeywordScan::Absent => {},
+                                value => kw_scan = value,
+                            }
+                            input.set_position(save);
                         }
                         {% endif %}
 
                         input.set_position(furthest_position);
-                        return Some(ScannedToken::IdentifierOrKeyword { identifier: longest_token.unwrap(), kw: kw_scan });
+                        return Some(ScannedToken::IdentifierOrKeyword { identifier, kw: kw_scan });
                     }
                 },
             {%- endfor %}

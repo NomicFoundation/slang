@@ -8583,18 +8583,6 @@ impl Lexer for Language {
                 )*
             };
         }
-        macro_rules! promote_keywords {
-            (out $kw_scan:ident; test $ident:ident with: $( { $kind:ident = $function:ident } )*) => {
-                $(
-                    match self.$function(input, &$ident) {
-                        _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                        KeywordScan::Absent => {},
-                        value => $kw_scan = value,
-                    }
-                    input.set_position(save);
-                )*
-            };
-        }
 
         match LexCtx::value() {
             LexicalContext::Default => {
@@ -8767,7 +8755,9 @@ impl Lexer for Language {
                 }
 
                 // We have an identifier; we need to check if it's a keyword
-                if longest_token.is_some_and(|tok| [TokenKind::Identifier].contains(&tok)) {
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
@@ -9961,17 +9951,24 @@ impl Lexer for Language {
                     let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                     let mut kw_scan = kw_scan;
-                    promote_keywords! { out kw_scan; test ident_value with:
-                        { BytesKeyword = bytes_keyword }
-                        { FixedKeyword = fixed_keyword }
-                        { IntKeyword = int_keyword }
-                        { UfixedKeyword = ufixed_keyword }
-                        { UintKeyword = uint_keyword }
+                    for keyword_compound_scanner in [
+                        Self::bytes_keyword,
+                        Self::fixed_keyword,
+                        Self::int_keyword,
+                        Self::ufixed_keyword,
+                        Self::uint_keyword,
+                    ] {
+                        match keyword_compound_scanner(self, input, &ident_value) {
+                            _ if input.position() < furthest_position => { /* Strict prefix */ }
+                            KeywordScan::Absent => {}
+                            value => kw_scan = value,
+                        }
+                        input.set_position(save);
                     }
 
                     input.set_position(furthest_position);
                     return Some(ScannedToken::IdentifierOrKeyword {
-                        identifier: longest_token.unwrap(),
+                        identifier,
                         kw: kw_scan,
                     });
                 }
@@ -10028,7 +10025,9 @@ impl Lexer for Language {
                 }
 
                 // We have an identifier; we need to check if it's a keyword
-                if longest_token.is_some_and(|tok| [TokenKind::Identifier].contains(&tok)) {
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                {
                     let kw_scan = match input.next() {
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
@@ -10074,7 +10073,7 @@ impl Lexer for Language {
 
                     input.set_position(furthest_position);
                     return Some(ScannedToken::IdentifierOrKeyword {
-                        identifier: longest_token.unwrap(),
+                        identifier,
                         kw: kw_scan,
                     });
                 }
@@ -10124,7 +10123,9 @@ impl Lexer for Language {
                 }
 
                 // We have an identifier; we need to check if it's a keyword
-                if longest_token.is_some_and(|tok| [TokenKind::YulIdentifier].contains(&tok)) {
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::YulIdentifier].contains(tok))
+                {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
@@ -11605,17 +11606,24 @@ impl Lexer for Language {
                     let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                     let mut kw_scan = kw_scan;
-                    promote_keywords! { out kw_scan; test ident_value with:
-                        { YulBytesKeyword = yul_bytes_keyword }
-                        { YulFixedKeyword = yul_fixed_keyword }
-                        { YulIntKeyword = yul_int_keyword }
-                        { YulUfixedKeyword = yul_ufixed_keyword }
-                        { YulUintKeyword = yul_uint_keyword }
+                    for keyword_compound_scanner in [
+                        Self::yul_bytes_keyword,
+                        Self::yul_fixed_keyword,
+                        Self::yul_int_keyword,
+                        Self::yul_ufixed_keyword,
+                        Self::yul_uint_keyword,
+                    ] {
+                        match keyword_compound_scanner(self, input, &ident_value) {
+                            _ if input.position() < furthest_position => { /* Strict prefix */ }
+                            KeywordScan::Absent => {}
+                            value => kw_scan = value,
+                        }
+                        input.set_position(save);
                     }
 
                     input.set_position(furthest_position);
                     return Some(ScannedToken::IdentifierOrKeyword {
-                        identifier: longest_token.unwrap(),
+                        identifier,
                         kw: kw_scan,
                     });
                 }
