@@ -14,7 +14,7 @@ use napi_derive::napi;
 use crate::cst;
 pub use crate::kinds::LexicalContext;
 use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
-use crate::lexer::{KeywordScan, Lexer};
+use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
@@ -97,7 +97,7 @@ impl Language {
         fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ code }} }
     {% endfor %}
 
-    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Vec<TokenKind> {
+    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<ScannedToken> {
         let mut input = ParserContext::new(input);
         match lexical_context {
             {%- for context_name, context in code.scanner_contexts -%}
@@ -137,11 +137,10 @@ impl Lexer for Language {
         }
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Vec<TokenKind> {
+    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<ScannedToken> {
         let save = input.position();
         let mut furthest_position = input.position();
-        // TODO: Replace by a SmallVec<[_; 2]> or similar
-        let mut longest_tokens = vec![];
+        let mut longest_token = None;
 
         macro_rules! longest_match {
             ($( { $kind:ident = $function:ident } )*) => {
@@ -149,21 +148,19 @@ impl Lexer for Language {
                     if self.$function(input) && input.position() > furthest_position {
                         furthest_position = input.position();
 
-                        longest_tokens = vec![TokenKind::$kind];
+                        longest_token = Some(TokenKind::$kind);
                     }
                     input.set_position(save);
                 )*
             };
         }
         macro_rules! promote_keywords {
-            (test $ident:ident with: $( { $kind:ident = $function:ident } )*) => {
+            (out $kw_scan:ident; test $ident:ident with: $( { $kind:ident = $function:ident } )*) => {
                 $(
-                    let value = self.$function(input, &$ident);
-                    match value {
+                    match self.$function(input, &$ident) {
                         _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                        KeywordScan::Reserved(token) => longest_tokens = vec![token],
-                        KeywordScan::Present(token) => longest_tokens.push(token),
                         KeywordScan::Absent => {},
+                        value => $kw_scan = value,
                     }
                     input.set_position(save);
                 )*
@@ -175,7 +172,7 @@ impl Lexer for Language {
                 LexicalContext::{{ context_name }} => {
                     if let Some(kind) = {{ context.literal_scanner }} {
                         furthest_position = input.position();
-                        longest_tokens = vec![kind];
+                        longest_token = Some(kind);
                     }
                     input.set_position(save);
 
@@ -193,49 +190,54 @@ impl Lexer for Language {
                         {%- endfor %}
                     }
 
-                    // Attempt keyword promotion if possible
-                    if longest_tokens.iter().any(|tok| [
-                        {% for ident_scanner in context.identifier_scanners %}
-                                TokenKind::{{ ident_scanner }},
-                        {% endfor %}
-                    ].contains(tok))
-                    {
-                        // Try fast path for atomic keywords
-                        let scan = {{ context.keyword_trie_scanner }};
-                        match scan {
-                            _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                            KeywordScan::Reserved(token) => longest_tokens = vec![token],
-                            KeywordScan::Present(token) => longest_tokens.push(token),
-                            KeywordScan::Absent => {},
-                        }
+                    // We have an identifier; we need to check if it's a keyword
+                    if longest_token.is_some_and(|tok|
+                        [
+                            {% for name in context.identifier_scanners %}
+                                TokenKind::{{ name }},
+                            {% endfor %}
+                        ]
+                        .contains(&tok)
+                    ) {
+                        let kw_scan = {{ context.keyword_trie_scanner }};
+                        let kw_scan = match kw_scan {
+                            // Strict prefix; we need to match the whole identifier to promote
+                            _ if input.position() < furthest_position => KeywordScan::Absent,
+                            value => value,
+                        };
 
-                        {%- if context.keyword_compound_scanners | length > 0 %}
+                        {% if context.keyword_compound_scanners | length > 0 %}
                         input.set_position(save);
 
+                        // TODO: Don't allocate a string here
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
-                        promote_keywords! { test ident_value with:
+                        let mut kw_scan = kw_scan;
+                        promote_keywords! { out kw_scan; test ident_value with:
                         {%- for keyword_name, _ in context.keyword_compound_scanners %}
                             { {{ keyword_name }} = {{ keyword_name | snake_case }} }
                         {%- endfor %}
                         }
                         {% endif %}
+
+                        input.set_position(furthest_position);
+                        return Some(ScannedToken::IdentifierOrKeyword { identifier: longest_token.unwrap(), kw: kw_scan });
                     }
                 },
             {%- endfor %}
         }
 
-        match longest_tokens.as_slice() {
-            [_, ..] => {
+        match longest_token {
+            Some(token) => {
                 input.set_position(furthest_position);
-                longest_tokens
+                Some(ScannedToken::Single(token))
             },
             // Skip a character if possible and if we didn't recognize a token
-            [] if input.peek().is_some() => {
+            None if input.peek().is_some() => {
                 let _ = input.next();
-                vec![TokenKind::SKIPPED]
+                Some(ScannedToken::Single(TokenKind::SKIPPED))
             },
-            [] => vec![],
+            None => None,
         }
     }
 }
@@ -265,11 +267,6 @@ impl Language {
     #[napi(js_name = "supportedVersions", catch_unwind)]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
-    }
-
-    #[napi(js_name = "scan", ts_return_type = "kinds.TokenKind | null", catch_unwind)]
-    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Vec<TokenKind> {
-        self.scan(lexical_context, input.as_str())
     }
 
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]

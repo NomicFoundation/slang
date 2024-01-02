@@ -519,7 +519,6 @@ export namespace language {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;
-    scan(lexicalContext: LexicalContext, input: string): kinds.TokenKind | null;
     parse(kind: kinds.RuleKind, input: string): parse_output.ParseOutput;
   }
 }
