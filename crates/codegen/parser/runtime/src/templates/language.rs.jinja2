@@ -201,13 +201,12 @@ impl Lexer for Language {
                     ].contains(tok))
                     {
                         // Try fast path for atomic keywords
-                        if let Some(scan) = {{ context.keyword_trie_scanner }} {
-                            match scan {
-                                _ if input.position() < furthest_position => {/* Prefix, do nothing */},
-                                KeywordScan::Reserved(token) => longest_tokens = vec![token],
-                                KeywordScan::Present(token) => longest_tokens.push(token),
-                                KeywordScan::Absent => unreachable!(),
-                            }
+                        let scan = {{ context.keyword_trie_scanner }};
+                        match scan {
+                            _ if input.position() < furthest_position => {/* Prefix, do nothing */},
+                            KeywordScan::Reserved(token) => longest_tokens = vec![token],
+                            KeywordScan::Present(token) => longest_tokens.push(token),
+                            KeywordScan::Absent => {},
                         }
 
                         {%- if context.keyword_compound_scanners | length > 0 %}

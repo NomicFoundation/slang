@@ -150,48 +150,48 @@ impl Payload for KeywordScannerAtomic {
 
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
-            ("true", _) => quote!(Some(KeywordScan::Reserved(TokenKind::#kind))),
+            ("true", _) => quote!(KeywordScan::Reserved(TokenKind::#kind)),
             ("false", _) => quote! {
                 if #enabled_cond {
-                    Some(KeywordScan::Present(TokenKind::#kind))
+                    KeywordScan::Present(TokenKind::#kind)
                 } else {
-                    None
+                    KeywordScan::Absent
                 }
             },
             (_, "false") => quote! {
                 if #reserved_cond {
-                    Some(KeywordScan::Reserved(TokenKind::#kind))
+                    KeywordScan::Reserved(TokenKind::#kind)
                 } else {
-                    None
+                    KeywordScan::Absent
                 }
             },
             (_, "true") => quote! {
                 if #reserved_cond {
-                    Some(KeywordScan::Reserved(TokenKind::#kind))
+                    KeywordScan::Reserved(TokenKind::#kind)
                 } else {
-                    Some(KeywordScan::Present(TokenKind::#kind))
+                    KeywordScan::Present(TokenKind::#kind)
                 }
             },
             (reserved, enabled) if reserved == enabled => quote! {
                 if #reserved_cond {
-                    Some(KeywordScan::Reserved(TokenKind::#kind))
+                    KeywordScan::Reserved(TokenKind::#kind)
                 } else {
-                    None
+                    KeywordScan::Absent
                 }
             },
             _ => quote! {
                 if #reserved_cond {
-                    Some(KeywordScan::Reserved(TokenKind::#kind))
+                    KeywordScan::Reserved(TokenKind::#kind)
                 } else if #enabled_cond {
-                    Some(KeywordScan::Present(TokenKind::#kind))
+                    KeywordScan::Present(TokenKind::#kind)
                 } else {
-                    None
+                    KeywordScan::Absent
                 }
             },
         }
     }
 
     fn default_case() -> TokenStream {
-        quote! { None }
+        quote! { KeywordScan::Absent }
     }
 }
