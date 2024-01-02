@@ -28,7 +28,7 @@ test("create and use sequence types", () => {
 
   const contract = new ContractDefinition(cst);
   expectRule(contract.cst, RuleKind.ContractDefinition);
-  expect(contract.abstractKeyword).toBeNull();
+  expect(contract.abstractKeyword).toBeUndefined();
   expectToken(contract.name, TokenKind.Identifier, "Foo");
   expect(contract.members!.items).toHaveLength(2);
 });
@@ -99,9 +99,8 @@ test("create and use separated types", () => {
   const identifiers = path.items.map((identifier) => identifier.text);
   expect(identifiers).toStrictEqual(["Foo", "Bar", "Baz"]);
 
-  path.separators.forEach((separator) => {
-    expectToken(separator, TokenKind.Period, ".");
-  });
+  const dots = path.separators.map((separator) => separator.text);
+  expect(dots).toStrictEqual([".", "."]);
 });
 
 test("throws an exception on initializing the wrong type", () => {
