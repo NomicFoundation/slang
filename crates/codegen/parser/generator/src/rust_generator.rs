@@ -51,7 +51,7 @@ struct ScannerContext {
     keyword_trie_scanner: String,
     #[serde(skip)]
     keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
-    identifier_scanner_names: BTreeSet<&'static str>,
+    promotable_identifier_scanners: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -195,7 +195,7 @@ impl GrammarVisitor for RustGenerator {
 
             context.literal_scanner = literal_trie.to_scanner_code().to_string();
 
-            context.identifier_scanner_names = context
+            context.promotable_identifier_scanners = context
                 .keyword_scanner_defs
                 .values()
                 .map(|def| def.identifier_scanner())

@@ -166,14 +166,14 @@ impl Lexer for Language {
 
                     longest_match! {
                         {%- for name in context.compound_scanner_names %}
-                            {%- if name not in context.identifier_scanner_names %}
+                            {%- if name not in context.promotable_identifier_scanners %}
                         { {{name }} = {{ name | snake_case }} }
                             {%- endif -%}
                         {%- endfor %}
                     }
                     // Make sure promotable identifiers are last so they don't grab other things
                     longest_match! {
-                        {%- for name in context.identifier_scanner_names %}
+                        {%- for name in context.promotable_identifier_scanners %}
                         { {{ name }} = {{ name | snake_case }} }
                         {%- endfor %}
                     }
@@ -181,7 +181,7 @@ impl Lexer for Language {
                     // We have an identifier; we need to check if it's a keyword
                     if let Some(identifier) = longest_token.filter(|tok|
                         [
-                            {% for name in context.identifier_scanner_names %}
+                            {% for name in context.promotable_identifier_scanners %}
                                 TokenKind::{{ name }},
                             {% endfor %}
                         ]
