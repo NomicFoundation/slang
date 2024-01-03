@@ -45,18 +45,17 @@ impl RuleKind {
 }
 
 /// The lexical context of the scanner.
-#[derive(strum_macros::FromRepr)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+#[allow(clippy::upper_case_acronyms)] // An explicit placeholder replaced by the template engine
+pub(crate) enum LexicalContext {
     XXX,
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
-pub trait IsLexicalContext {
+pub(crate) trait IsLexicalContext {
     /// Returns a run-time [`LexicalContext`] value.
     fn value() -> LexicalContext;
 }
 
 #[allow(non_snake_case)]
-pub mod LexicalContextType {}
+pub(crate) mod LexicalContextType {}
