@@ -246,13 +246,8 @@ impl Lexer for Language {
 #[napi(namespace = "language")]
 impl Language {
 
-    #[napi(constructor)]
+    #[napi(constructor, catch_unwind)]
     pub fn new_napi(version: String) -> std::result::Result<Self, napi::Error> {
-        // IMPORTANT:
-        // Make sure this does NOT panic.
-        // '#[napi(catch_unwind)]' is not supported on constructors yet.
-        // More Info: https://github.com/napi-rs/napi-rs/issues/1852
-
         let version = Version::parse(&version).map_err(|_| Error::InvalidSemanticVersion(version))?;
         Self::new(version).map_err(|e| e.into())
     }

@@ -21,7 +21,7 @@ use crate::scanner_definition::ScannerDefinitionExtensions;
 use crate::trie::Trie;
 
 #[derive(Default, Serialize)]
-pub struct CodeGenerator {
+pub struct RustGenerator {
     referenced_versions: BTreeSet<Version>,
 
     rule_kinds: BTreeSet<&'static str>,
@@ -56,8 +56,8 @@ struct ScannerContext {
     delimiters: BTreeMap<&'static str, &'static str>,
 }
 
-impl CodeGenerator {
-    pub fn write_backend(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
+impl RustGenerator {
+    pub fn generate(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
         let mut code = Self::default();
         grammar.accept_visitor(&mut code);
         let code = &code;
@@ -81,7 +81,7 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub code: &'a CodeGenerator,
+                pub code: &'a RustGenerator,
             }
             codegen.render(
                 Template { code },
@@ -93,7 +93,7 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub code: &'a CodeGenerator,
+                pub code: &'a RustGenerator,
                 pub language_name: String,
                 pub versions: BTreeSet<Version>,
             }
@@ -150,27 +150,6 @@ impl CodeGenerator {
         Ok(())
     }
 
-    pub fn write_frontend(ast_model: &AstModel, output_dir: &Path) -> Result<()> {
-        let runtime_dir =
-            CargoWorkspace::locate_source_crate("codegen_parser_runtime")?.join("src");
-
-        let mut codegen = Codegen::read_write(&runtime_dir)?;
-
-        {
-            #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub ast_model: &'a AstModel,
-            }
-            codegen.render(
-                Template { ast_model },
-                runtime_dir.join("napi/templates/ast_types.ts.jinja2"),
-                output_dir.join("src/ast/generated/ast_types.ts"),
-            )?;
-        }
-
-        Ok(())
-    }
-
     fn set_current_context(&mut self, name: &'static str) {
         self.current_context_name = name;
         self.scanner_contexts.entry(name).or_default();
@@ -183,7 +162,7 @@ impl CodeGenerator {
     }
 }
 
-impl GrammarVisitor for CodeGenerator {
+impl GrammarVisitor for RustGenerator {
     fn grammar_leave(&mut self, _grammar: &Grammar) {
         // Expose the scanner functions that...
         self.scanner_functions = self

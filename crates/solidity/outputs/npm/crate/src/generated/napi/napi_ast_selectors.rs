@@ -2925,7 +2925,7 @@ impl Selector {
         Ok(None)
     }
 
-    fn finalize(&mut self) -> Result<()> {
+    fn finalize(mut self) -> Result<()> {
         if self.try_select(|_| true)?.is_some() {
             return Error::UnexpectedTrailing(self.index - 1).into();
         }
@@ -2938,15 +2938,15 @@ type Result<T> = std::result::Result<T, napi::Error>;
 
 #[derive(Debug, thiserror::Error)]
 enum Error {
-    // Should not theoritically happen, since we're only called from our own generated AST types.
+    // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected parent node with RuleKind '{0}'.")]
     UnexpectedParent(RuleKind),
 
-    // Should not theoritically happen, since we're only called from our own generated AST types.
+    // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]
     UnexpectedTrailing(usize),
 
-    // Should not theoritically happen, unless AST error recovery was changed.
+    // Should not theoretically happen, unless AST error recovery was changed.
     #[error("Missing child node at index '{0}'.")]
     MissingChild(usize),
 

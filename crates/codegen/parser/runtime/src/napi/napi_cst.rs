@@ -8,7 +8,7 @@ use crate::napi::napi_cursor::Cursor;
 use crate::napi::napi_text_index::TextIndex;
 use crate::napi::{RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind};
 
-#[napi(object, namespace = "cst")]
+#[napi(namespace = "cst")]
 pub enum NodeType {
     Rule,
     Token,

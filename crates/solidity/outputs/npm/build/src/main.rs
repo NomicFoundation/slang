@@ -1,7 +1,7 @@
 use anyhow::Result;
 use cargo_emit::rerun_if_changed;
 use codegen_grammar::Grammar;
-use codegen_parser_generator::{AstModel, CodeGenerator};
+use codegen_parser_generator::{AstModel, RustGenerator, TypeScriptGenerator};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
@@ -21,13 +21,13 @@ fn main() -> Result<()> {
         let grammar = Grammar::from_dsl_v2(&language);
         let ast_model = AstModel::create(&language);
 
-        CodeGenerator::write_backend(
+        RustGenerator::generate(
             &grammar,
             &ast_model,
             &CargoWorkspace::locate_source_crate("solidity_npm_crate")?.join("src/generated"),
         )?;
 
-        CodeGenerator::write_frontend(
+        TypeScriptGenerator::generate(
             &ast_model,
             &CargoWorkspace::locate_source_crate("solidity_npm_package")?,
         )?;
