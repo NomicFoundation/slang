@@ -10,17 +10,17 @@ use crate::napi::napi_cursor::Cursor;
 use crate::napi::napi_text_index::TextIndex;
 use crate::napi::{RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind};
 
-#[napi(object, namespace = "cst")]
+#[napi(namespace = "cst")]
 pub enum NodeType {
     Rule,
     Token,
 }
 
 #[napi(namespace = "cst")]
-pub struct RuleNode(Rc<RustRuleNode>);
+pub struct RuleNode(pub(crate) Rc<RustRuleNode>);
 
 #[napi(namespace = "cst")]
-pub struct TokenNode(Rc<RustTokenNode>);
+pub struct TokenNode(pub(crate) Rc<RustTokenNode>);
 
 #[napi(namespace = "cst")]
 impl RuleNode {

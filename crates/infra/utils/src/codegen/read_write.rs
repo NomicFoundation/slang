@@ -2,11 +2,11 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
 use cargo_emit::rerun_if_changed;
-use inflector::Inflector;
 use serde::Serialize;
-use tera::{Tera, Value};
+use tera::Tera;
 
 use crate::cargo::CargoWorkspace;
+use crate::codegen::common::tera::create_tera_instance;
 use crate::codegen::write_only::CodegenWriteOnly;
 use crate::paths::PathExtensions;
 
@@ -26,27 +26,7 @@ impl CodegenReadWrite {
 
         let writer = CodegenWriteOnly::new()?;
 
-        let tera = {
-            let templates_glob = input_dir.join("**/*.jinja2");
-            let mut tera = Tera::new(templates_glob.unwrap_str())?;
-
-            tera.register_filter("snake_case", |value: &Value, _params: &_| {
-                value
-                    .as_str()
-                    .ok_or_else(|| tera::Error::msg("Expected a string"))
-                    .map(|s| Value::String(s.to_snake_case()))
-            });
-            tera.register_filter("pascal_case", |value: &Value, _params: &_| {
-                value
-                    .as_str()
-                    .ok_or_else(|| tera::Error::msg("Expected a string"))
-                    .map(|s| Value::String(s.to_pascal_case()))
-            });
-
-            tera.autoescape_on(vec![]); // disable autoescaping
-
-            tera
-        };
+        let tera = create_tera_instance(&input_dir.join("**/*.jinja2"))?;
 
         Ok(Self {
             writer,

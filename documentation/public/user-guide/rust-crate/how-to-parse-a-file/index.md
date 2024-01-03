@@ -50,7 +50,7 @@ Because the resulting structure is well-defined and recursive, we can use the po
 
 In this example, we'll use the command-line interface (CLI) to parse a Solidity file and then reconstruct it using the Token `text` fields.
 
-Since the the parse tree is simply a structured view of the underlying source code and our parser is complete (contains trivia), we can simply concatenate the text values of the token to reconstruct the source code.
+Since the parse tree is simply a structured view of the underlying source code and our parser is complete (contains trivia), we can simply concatenate the text values of the token to reconstruct the source code.
 
 We'll start with a bare-bones file:
 

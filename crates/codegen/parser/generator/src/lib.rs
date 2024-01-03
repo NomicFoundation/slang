@@ -1,5 +1,11 @@
-pub mod code_generator;
-pub mod parser_definition;
-pub mod precedence_parser_definition;
-pub mod scanner_definition;
-pub mod trie;
+mod ast_model;
+mod parser_definition;
+mod precedence_parser_definition;
+mod rust_generator;
+mod scanner_definition;
+mod trie;
+mod typescript_generator;
+
+pub use ast_model::AstModel;
+pub use rust_generator::RustGenerator;
+pub use typescript_generator::TypeScriptGenerator;

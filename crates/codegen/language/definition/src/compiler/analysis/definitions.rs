@@ -41,7 +41,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
 
 fn check_enum_items(analysis: &mut Analysis) {
     for item in analysis.language.clone().items() {
-        let SpannedItem::Enum { item } = item.as_ref() else {
+        let SpannedItem::Enum { item } = item else {
             continue;
         };
 
@@ -64,7 +64,7 @@ fn check_precedence_items(analysis: &mut Analysis) {
     let mut all_expressions = HashSet::new();
 
     for item in analysis.language.clone().items() {
-        let SpannedItem::Precedence { item } = item.as_ref() else {
+        let SpannedItem::Precedence { item } = item else {
             continue;
         };
 

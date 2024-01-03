@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 use crate::model::{Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct RepeatedItem {
     pub name: Identifier,
-    pub repeated: Identifier,
+    pub reference: Identifier,
 
     pub enabled: Option<VersionSpecifier>,
 }

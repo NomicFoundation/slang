@@ -92,13 +92,6 @@ impl Node {
         }
     }
 
-    pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
-        match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
-        }
-    }
-
     pub fn into_rule(self) -> Option<Rc<RuleNode>> {
         match self {
             Self::Rule(rule) => Some(rule),
@@ -106,11 +99,31 @@ impl Node {
         }
     }
 
-    pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
+    pub fn is_rule(&self) -> bool {
+        self.as_rule().is_some()
+    }
+
+    pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
         match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            Self::Rule(rule) => Some(rule),
+            Self::Token(..) => None,
         }
+    }
+
+    pub fn is_rule_with_kind(&self, kind: RuleKind) -> bool {
+        self.as_rule_with_kind(kind).is_some()
+    }
+
+    pub fn as_rule_with_kind(&self, kind: RuleKind) -> Option<&Rc<RuleNode>> {
+        self.as_rule().filter(|rule| rule.kind == kind)
+    }
+
+    pub fn is_rule_with_kinds(&self, kinds: &[RuleKind]) -> bool {
+        self.as_rule_with_kinds(kinds).is_some()
+    }
+
+    pub fn as_rule_with_kinds(&self, kinds: &[RuleKind]) -> Option<&Rc<RuleNode>> {
+        self.as_rule().filter(|rule| kinds.contains(&rule.kind))
     }
 
     pub fn into_token(self) -> Option<Rc<TokenNode>> {
@@ -120,12 +133,31 @@ impl Node {
         }
     }
 
-    pub fn as_token_with_kind(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
-        self.as_token().filter(|token| kinds.contains(&token.kind))
+    pub fn is_token(&self) -> bool {
+        self.as_token().is_some()
     }
 
-    pub fn as_rule_with_kind(&self, kinds: &[RuleKind]) -> Option<&Rc<RuleNode>> {
-        self.as_rule().filter(|rule| kinds.contains(&rule.kind))
+    pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
+        match self {
+            Self::Token(token) => Some(token),
+            Self::Rule(..) => None,
+        }
+    }
+
+    pub fn is_token_with_kind(&self, kind: TokenKind) -> bool {
+        self.as_token_with_kind(kind).is_some()
+    }
+
+    pub fn as_token_with_kind(&self, kind: TokenKind) -> Option<&Rc<TokenNode>> {
+        self.as_token().filter(|token| token.kind == kind)
+    }
+
+    pub fn is_token_with_kinds(&self, kinds: &[TokenKind]) -> bool {
+        self.as_token_with_kinds(kinds).is_some()
+    }
+
+    pub fn as_token_with_kinds(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
+        self.as_token().filter(|token| kinds.contains(&token.kind))
     }
 }
 

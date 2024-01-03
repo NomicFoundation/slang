@@ -14,13 +14,14 @@ use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
+use crate::ast_model::AstModel;
 use crate::parser_definition::ParserDefinitionExtensions;
 use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
 use crate::scanner_definition::ScannerDefinitionExtensions;
 use crate::trie::Trie;
 
 #[derive(Default, Serialize)]
-pub struct CodeGenerator {
+pub struct RustGenerator {
     referenced_versions: BTreeSet<Version>,
 
     rule_kinds: BTreeSet<&'static str>,
@@ -53,8 +54,8 @@ struct ScannerContext {
     delimiters: BTreeMap<&'static str, &'static str>,
 }
 
-impl CodeGenerator {
-    pub fn write_source(output_dir: &Path, grammar: &Grammar) -> Result<()> {
+impl RustGenerator {
+    pub fn generate(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
         let mut code = Self::default();
         grammar.accept_visitor(&mut code);
         let code = &code;
@@ -66,7 +67,19 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub code: &'a CodeGenerator,
+                pub ast_model: &'a AstModel,
+            }
+            codegen.render(
+                Template { ast_model },
+                runtime_dir.join("napi/templates/ast_selectors.rs.jinja2"),
+                output_dir.join("napi/napi_ast_selectors.rs"),
+            )?;
+        }
+
+        {
+            #[derive(Serialize)]
+            pub struct Template<'a> {
+                pub code: &'a RustGenerator,
             }
             codegen.render(
                 Template { code },
@@ -78,7 +91,7 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub code: &'a CodeGenerator,
+                pub code: &'a RustGenerator,
                 pub language_name: String,
                 pub versions: BTreeSet<Version>,
             }
@@ -150,7 +163,7 @@ impl CodeGenerator {
     }
 }
 
-impl GrammarVisitor for CodeGenerator {
+impl GrammarVisitor for RustGenerator {
     fn grammar_leave(&mut self, _grammar: &Grammar) {
         self.scanner_functions = self
             .all_scanners

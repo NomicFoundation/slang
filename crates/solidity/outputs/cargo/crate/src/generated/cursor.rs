@@ -366,32 +366,42 @@ impl Cursor {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_token(&mut self) -> bool {
-        self.go_to_next_matching(|node| matches!(node, Node::Token(_)))
+        self.go_to_next_matching(|node| node.is_token())
+    }
+
+    /// Attempts to go to the next token with the given kind, according to the DFS pre-order traversal.
+    ///
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_token_with_kind(&mut self, kind: TokenKind) -> bool {
+        self.go_to_next_matching(|node| node.is_token_with_kind(kind))
     }
 
     /// Attempts to go to the next token with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_token_with_kinds(&mut self, kinds: &[TokenKind]) -> bool {
-        self.go_to_next_matching(
-            |node| matches!(node, Node::Token(token) if kinds.contains(&token.kind)),
-        )
+        self.go_to_next_matching(|node| node.is_token_with_kinds(kinds))
     }
 
     /// Attempts to go to the next rule, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_rule(&mut self) -> bool {
-        self.go_to_next_matching(|node| matches!(node, Node::Rule(_)))
+        self.go_to_next_matching(|node| node.is_rule())
+    }
+
+    /// Attempts to go to the next rule with the given kind, according to the DFS pre-order traversal.
+    ///
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_rule_with_kind(&mut self, kind: RuleKind) -> bool {
+        self.go_to_next_matching(|node| node.is_rule_with_kind(kind))
     }
 
     /// Attempts to go to the next rule with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_rule_with_kinds(&mut self, kinds: &[RuleKind]) -> bool {
-        self.go_to_next_matching(
-            |node| matches!(node, Node::Rule(rule) if kinds.contains(&rule.kind)),
-        )
+        self.go_to_next_matching(|node| node.is_rule_with_kinds(kinds))
     }
 
     fn go_to_next_matching(&mut self, pred: impl Fn(&Node) -> bool) -> bool {

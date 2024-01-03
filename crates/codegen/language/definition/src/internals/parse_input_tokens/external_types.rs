@@ -24,6 +24,12 @@ impl<T: ParseInputTokens> ParseInputTokens for Box<T> {
 
         Ok(value.into())
     }
+
+    fn parse_named_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
+        let value = T::parse_named_value(input, errors)?;
+
+        Ok(value.into())
+    }
 }
 
 impl ParseInputTokens for char {
@@ -68,6 +74,13 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
             Ok(Some(T::parse_value(input, errors)?))
         }
     }
+    fn parse_named_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
+        if input.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(T::parse_named_value(input, errors)?))
+        }
+    }
 
     fn parse_field(
         name: &str,
@@ -84,6 +97,12 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
 impl<T: ParseInputTokens> ParseInputTokens for Rc<T> {
     fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         let value = T::parse_value(input, errors)?;
+
+        Ok(value.into())
+    }
+
+    fn parse_named_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
+        let value = T::parse_named_value(input, errors)?;
 
         Ok(value.into())
     }

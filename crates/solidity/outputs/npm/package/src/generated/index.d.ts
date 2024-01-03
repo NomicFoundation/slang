@@ -655,6 +655,12 @@ export namespace language {
     parse(kind: kinds.RuleKind, input: string): parse_output.ParseOutput;
   }
 }
+export namespace ast_internal {
+  export function selectSequence(node: cst.RuleNode): Array<cst.Node | null>;
+  export function selectChoice(node: cst.RuleNode): cst.Node;
+  export function selectRepeated(node: cst.RuleNode): Array<cst.Node>;
+  export function selectSeparated(node: cst.RuleNode): [Array<cst.Node>, Array<cst.Node>];
+}
 export namespace cst {
   export enum NodeType {
     Rule = 0,
@@ -697,8 +703,10 @@ export namespace cursor {
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
     goToNextToken(): boolean;
+    goToNextTokenWithKind(kind: kinds.TokenKind): boolean;
     goToNextTokenWithKinds(kinds: Array<kinds.TokenKind>): boolean;
     goToNextRule(): boolean;
+    goToNextRuleWithKind(kind: kinds.RuleKind): boolean;
     goToNextRuleWithKinds(kinds: Array<kinds.RuleKind>): boolean;
   }
 }

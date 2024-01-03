@@ -1,6 +1,9 @@
 {
   "editor.formatOnSave": true,
   "editor.rulers": [120],
+  "files.associations": {
+    "*.ts.jinja2": "jinja-js" // until this is merged: https://github.com/samuelcolvin/jinjahtml-vscode/pull/148
+  },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.readonlyInclude": {

@@ -1,0 +1,185 @@
+import * as assert from "node:assert";
+import { ast_internal } from "../../generated";
+import { RuleNode, TokenNode } from "../../cst";
+import { RuleKind, TokenKind } from "../../kinds";
+
+/*
+ * Sequences:
+ */
+
+{% for sequence in ast_model.sequences %}
+  export class {{ sequence.name }} {
+    private readonly fetch = once(() => {
+      const [
+        {%- for field in sequence.fields %}
+          ${{ field.name | camel_case }},
+        {%- endfor %}
+      ] = ast_internal.selectSequence(this.cst);
+
+      return {
+        {%- for field in sequence.fields %}
+          {{ field.name | camel_case }}:
+          {%- if field.is_optional -%}
+            ${{ field.name | camel_case }} === null ? undefined :
+          {%- endif -%}
+          {%- if field.is_terminal -%}
+            ${{ field.name | camel_case }} as TokenNode,
+          {%- else -%}
+            new {{ field.reference }}(${{ field.name | camel_case }} as RuleNode),
+          {%- endif -%}
+        {% endfor -%}
+      };
+    });
+
+    public constructor(public readonly cst: RuleNode) {
+      assertKind(this.cst.kind, RuleKind.{{ sequence.name }});
+    }
+
+    {% for field in sequence.fields %}
+      public get {{ field.name | camel_case }}() :
+        {%- if field.is_terminal -%}
+          TokenNode
+        {%- else -%}
+          {{ field.reference }}
+        {%- endif -%}
+        {%- if field.is_optional -%}
+          | undefined
+        {%- endif -%}
+      {
+        return this.fetch().{{ field.name | camel_case }};
+      }
+    {% endfor %}
+  }
+{% endfor %}
+
+/*
+ * Choices:
+ */
+
+{% for choice in ast_model.choices %}
+  export class {{ choice.name }} {
+    {%- set variant_types = choice.non_terminals -%}
+    {%- if choice.terminals | length > 0 -%}
+      {%- set variant_types = variant_types | concat(with = "TokenNode") -%}
+    {%- endif -%}
+    {%- set variant_types = variant_types | join(sep = " | ") -%}
+
+    private readonly fetch: () => {{ variant_types }} = once(() => {
+      const variant = ast_internal.selectChoice(this.cst);
+
+      switch (variant.kind) {
+        {%- for non_terminal in choice.non_terminals %}
+          case RuleKind.{{ non_terminal }}:
+            return new {{ non_terminal }}(variant as RuleNode);
+        {%- endfor %}
+
+        {% if choice.terminals | length > 0 %}
+          {%- for terminal in choice.terminals %}
+            case TokenKind.{{ terminal }}:
+          {%- endfor %}
+            return variant as TokenNode;
+        {%- endif %}
+
+        default:
+          assert.fail(`Unexpected variant: ${variant.kind}`);
+      }
+    });
+
+    public constructor(public readonly cst: RuleNode) {
+      assertKind(this.cst.kind, RuleKind.{{ choice.name }});
+    }
+
+    public get variant(): {{ variant_types }} {
+      return this.fetch();
+    }
+  }
+{% endfor %}
+
+/*
+ * Repeated:
+ */
+
+{% for repeated in ast_model.repeated %}
+  export class {{ repeated.name }} {
+    private readonly fetch = once(() => {
+      const items = ast_internal.selectRepeated(this.cst);
+
+      {%- if repeated.is_terminal -%}
+        return items as TokenNode[];
+      {%- else -%}
+        return items.map((item) => new {{ repeated.reference }}(item as RuleNode));
+      {%- endif -%}
+    });
+      
+    public constructor(public readonly cst: RuleNode) {
+      assertKind(this.cst.kind, RuleKind.{{ repeated.name }});
+    }
+
+    public get items():
+      {%- if repeated.is_terminal -%}
+        readonly TokenNode[]
+      {%- else -%}
+        readonly {{ repeated.reference }}[]
+      {%- endif -%}
+    {
+      return this.fetch();
+    }
+  }
+{% endfor %}
+
+/*
+ * Separated:
+ */
+
+{% for separated in ast_model.separated %}
+  export class {{ separated.name }} {
+    private readonly fetch = once(() => {
+      const [items, separators] = ast_internal.selectSeparated(this.cst);
+
+      return {
+        {%- if separated.is_terminal -%}
+          items: items as TokenNode[],
+        {%- else -%}
+          items: items.map((item) => new {{ separated.reference }}(item as RuleNode)),
+        {%- endif -%}
+        separators: separators as TokenNode[],
+      };
+    });
+
+    public constructor(public readonly cst: RuleNode) {
+      assertKind(this.cst.kind, RuleKind.{{ separated.name }});
+    }
+
+    public get items():
+      {%- if separated.is_terminal -%}
+        readonly TokenNode[]
+      {%- else -%}
+        readonly {{ separated.reference }}[]
+      {%- endif -%}
+    {
+      return this.fetch().items;
+    }
+
+    public get separators(): readonly TokenNode[] {
+      return this.fetch().separators;
+    }
+  }
+{% endfor %}
+
+/*
+ * Helpers:
+ */
+
+function once<T>(factory: () => T): () => T {
+  let value: T | undefined;
+  return () => {
+    if (value === undefined) {
+      value = factory();
+    }
+    return value;
+  };
+}
+
+function assertKind(actual: RuleKind, expected: RuleKind): void {
+  assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
+}

@@ -69,7 +69,7 @@ fn using_iter() -> Result<()> {
             .unwrap()
             .children
             .iter()
-            .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))
+            .find_map(|node| node.as_token_with_kind(TokenKind::Identifier))
         {
             contract_names.push(token_node.text.clone());
         }
@@ -87,11 +87,11 @@ fn using_iter_combinators() -> Result<()> {
     let contract_names: Vec<_> = parse_output
         .create_tree_cursor()
         .filter_map(|node| {
-            let node = node.as_rule_with_kind(&[RuleKind::ContractDefinition])?;
+            let node = node.as_rule_with_kind(RuleKind::ContractDefinition)?;
             let contract_name = node
                 .children
                 .iter()
-                .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))?;
+                .find_map(|node| node.as_token_with_kind(TokenKind::Identifier))?;
 
             Some(contract_name.text.clone())
         })
@@ -110,7 +110,7 @@ fn using_iter_with_node_names() -> Result<()> {
         .create_tree_cursor()
         .with_names()
         .filter(|node| node.name == Some(FieldName::Name))
-        .filter_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]).cloned())
+        .filter_map(|node| node.as_token_with_kind(TokenKind::Identifier).cloned())
         .map(|node| node.text.clone())
         .collect();
 

@@ -3,6 +3,7 @@
 
 use std::cell::OnceCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::ops::Deref;
 use std::rc::Rc;
 
 use codegen_grammar::{
@@ -29,7 +30,7 @@ impl GrammarConstructorDslV2 for Grammar {
             .map(|(_, topic, item)| {
                 (
                     item.name().clone(),
-                    (topic.lexical_context.clone(), Rc::clone(item)),
+                    (topic.lexical_context.clone(), item.clone()),
                 )
             })
             .collect();
@@ -40,8 +41,8 @@ impl GrammarConstructorDslV2 for Grammar {
             Identifier::from("SourceUnit"),
             (
                 None,
-                Rc::new(model::Item::Struct {
-                    item: model::StructItem {
+                model::Item::Struct {
+                    item: Rc::new(model::StructItem {
                         name: Identifier::from("SourceUnit"),
                         enabled: None,
                         error_recovery: None,
@@ -62,8 +63,8 @@ impl GrammarConstructorDslV2 for Grammar {
                                 },
                             ),
                         ]),
-                    },
-                }),
+                    }),
+                },
             ),
         );
 
@@ -103,7 +104,7 @@ impl GrammarConstructorDslV2 for Grammar {
         let mut keywords_per_ctxt = HashMap::new();
         for (ident, (lex_ctx, item)) in &items {
             let lex_ctx = lex_ctx.clone().unwrap_or(Identifier::from("Default"));
-            if let Item::Keyword { .. } = item.as_ref() {
+            if let Item::Keyword { .. } = item {
                 keywords_per_ctxt
                     .entry(lex_ctx)
                     .or_insert_with(Vec::new)
@@ -289,7 +290,7 @@ fn enabled_to_range(spec: model::VersionSpecifier) -> Vec<VersionQualityRange> {
 }
 
 struct ResolveCtx<'a> {
-    items: &'a HashMap<Identifier, (Option<Identifier>, Rc<Item>)>,
+    items: &'a HashMap<Identifier, (Option<Identifier>, Item)>,
     resolved: &'a mut HashMap<Identifier, GrammarElement>,
 }
 
@@ -308,7 +309,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
 
     // The non-terminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
-    let inserted_thunk = match (elem.as_ref(), ctx.resolved.contains_key(ident)) {
+    let inserted_thunk = match (elem, ctx.resolved.contains_key(ident)) {
         (
             Item::Struct { .. }
             | Item::Enum { .. }
@@ -351,9 +352,9 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         // Any recursive resolution for this non-terminal will already use the thunk.
         // Once we're finished, we initialize the cell with the resolved definition.
         (Some(thunk), _) => {
-            match elem.as_ref() {
+            match elem {
                 Item::Struct { item } => {
-                    let item = item.clone();
+                    let item = item.deref().clone();
                     thunk
                         .as_regular_def()
                         .set(resolve_sequence_like(
@@ -367,25 +368,25 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                 Item::Enum { item } => {
                     thunk
                         .as_regular_def()
-                        .set(resolve_choice(item.clone(), ctx))
+                        .set(resolve_choice(item.deref().clone(), ctx))
                         .unwrap();
                 }
                 Item::Repeated { item } => {
                     thunk
                         .as_regular_def()
-                        .set(resolve_repeated(item.clone(), ctx))
+                        .set(resolve_repeated(item.deref().clone(), ctx))
                         .unwrap();
                 }
                 Item::Separated { item } => {
                     thunk
                         .as_regular_def()
-                        .set(resolve_separated(item.clone(), ctx))
+                        .set(resolve_separated(item.deref().clone(), ctx))
                         .unwrap();
                 }
                 Item::Precedence { item } => {
                     thunk
                         .as_precedence_def()
-                        .set(resolve_precedence(item.clone(), lex_ctx, ctx))
+                        .set(resolve_precedence(item.deref().clone(), lex_ctx, ctx))
                         .unwrap();
                 }
                 _ => unreachable!("Only non-terminals can be resolved here"),
@@ -395,22 +396,22 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         }
         // First time resolving a terminal named `ident`
         (None, None) => {
-            let named_scanner = match elem.as_ref() {
+            let named_scanner = match elem {
                 Item::Trivia { item } => NamedScanner {
                     name: ident.to_string().leak(),
                     def: resolve_scanner(item.scanner.clone(), ctx),
                 },
                 Item::Fragment { item } => NamedScanner {
                     name: ident.to_string().leak(),
-                    def: resolve_fragment(item.clone(), ctx),
+                    def: resolve_fragment(item.deref().clone(), ctx),
                 },
                 Item::Token { item } => NamedScanner {
                     name: ident.to_string().leak(),
-                    def: resolve_token(item.clone(), ctx),
+                    def: resolve_token(item.deref().clone(), ctx),
                 },
                 Item::Keyword { item } => NamedScanner {
                     name: ident.to_string().leak(),
-                    def: resolve_keyword(item.clone()),
+                    def: resolve_keyword(item.deref().clone()),
                 },
                 _ => unreachable!("Only terminals can be resolved here"),
             };
@@ -577,12 +578,14 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
                 .map(|scanner| resolve_trivia(scanner, ctx))
                 .collect(),
         }),
-        model::TriviaParser::Trivia { trivia } => match resolve_grammar_element(&trivia, ctx) {
-            GrammarElement::ScannerDefinition(parser) => {
-                ParserDefinitionNode::ScannerDefinition(parser)
+        model::TriviaParser::Trivia { reference } => {
+            match resolve_grammar_element(&reference, ctx) {
+                GrammarElement::ScannerDefinition(parser) => {
+                    ParserDefinitionNode::ScannerDefinition(parser)
+                }
+                _ => panic!("Expected {reference} to be a ScannerDefinition"),
             }
-            _ => panic!("Expected {trivia} to be a ScannerDefinition"),
-        },
+        }
     }
 }
 
@@ -624,8 +627,10 @@ fn resolve_sequence_like(
 
     // Transform inline [.., open, body, close, ..] sequence into single DelimitedBy(open, body, close) node
     if let Some(delimiters) = delimiters {
-        let open_idx = fields.iter().position(|(nam, _)| nam == &delimiters.open);
-        let close_idx = fields.iter().position(|(nam, _)| nam == &delimiters.close);
+        let open_idx = fields.iter().position(|(name, _)| name == &delimiters.open);
+        let close_idx = fields
+            .iter()
+            .position(|(name, _)| name == &delimiters.close);
         let (open_idx, close_idx) = (open_idx.unwrap(), close_idx.unwrap());
 
         let delimited_body = ParserDefinitionNode::Sequence(
@@ -712,23 +717,23 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
-    let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
+    let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
     ParserDefinitionNode::OneOrMore(Named {
         name: String::from("item"),
-        node: body,
+        node: reference,
     })
     .versioned(item.enabled)
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
-    let body = resolve_grammar_element(&item.separated, ctx).into_parser_def_node();
+    let reference = resolve_grammar_element(&item.reference, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
     ParserDefinitionNode::SeparatedBy(
         Named {
             name: String::from("item"),
-            node: Box::new(body),
+            node: Box::new(reference),
         },
         Named {
             name: String::from("separator"),
@@ -778,7 +783,7 @@ fn resolve_precedence(
     let mut operators = vec![];
     let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
-        let name = expr.name;
+        let name = &expr.name;
         // TODO: Don't leak
         let leaked_name = name.to_string().leak() as &_;
 
@@ -838,7 +843,7 @@ fn resolve_precedence(
             }))
             .unwrap();
         assert!(
-            !ctx.resolved.contains_key(&name),
+            !ctx.resolved.contains_key(name),
             "Encountered a duplicate Precedence Expression named {name} when resolving"
         );
         ctx.resolved.insert(

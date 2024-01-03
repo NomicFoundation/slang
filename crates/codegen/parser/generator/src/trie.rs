@@ -45,10 +45,6 @@ impl Trie {
         (path, node)
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.subtries.is_empty() && self.payload.is_none()
-    }
-
     pub fn to_scanner_code(&self) -> TokenStream {
         let (path, trie) = self.next_interesting_node(None);
 

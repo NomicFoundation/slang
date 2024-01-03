@@ -47,7 +47,7 @@ pub struct NonTerminalNode {
 
 ## AST
 
-We intend to also produce a strongly typed tree (structs and enums). Having strong types provide safety/correctness
+We intend to also produce a strongly typed tree (structs and enums). Having strong types provides safety/correctness
 guarantees for users. It also allows us to generate visitor and rewriter APIs automatically.
 
 Each AST node should provide an API to get the underlying CST node, where users can iterate over the actual terminals as
@@ -73,8 +73,8 @@ but we will also be able to produce much better errors like:
 
 ### Token Items
 
-Tokens consist of one ore more `TokenDefinition`. Each definition is separate/unique, but produces the same `TerminalKind`.
-This is useful for tokens like `DecimalLiteral` and `HexLiteral` who can have multiple forms, but each form is is enabled
+Tokens consist of one or more `TokenDefinition`. Each definition is separate/unique, but produces the same `TerminalKind`.
+This is useful for tokens like `DecimalLiteral` and `HexLiteral` who can have multiple forms, but each form is enabled
 or disabled in certain versions of the language.
 
 All definitions have a unique `Scanner`, and they can be combined in the same trie/FSM to produce a single token at each
@@ -83,13 +83,13 @@ with the current language version, adding an error if they don't match, but cont
 
 ### Keyword Items
 
-Keywords also contribute a `TerminalKind`, and consist of one ore more `KeywordDefinition`. But they have additional semantics:
+Keywords also contribute a `TerminalKind`, and consist of one or more `KeywordDefinition`. But they have additional semantics:
 
 First, instead of defining a regular `Scanner`, it defines a `KeywordValue` that produces a finite set of possibilities.
 Most only produce one value (like `abstract` or `contract`), but some can produce multiple, like `bytesN` or `fixedMxN`,
 that can have different values for `M` and `N`. This is important for us to build hash sets and quickly check for membership.
 
-Second, because keywords can also overlap with identifiers, each keyword has a `identifier` property that refers to which
+Second, because keywords can also overlap with identifiers, each keyword has an `identifier` property that refers to which
 identifier token they can match. Instead of being part of same trie/FSM as tokens, whenever we want to scan a keyword,
 we try to scan its identifier instead. Afterwards, we check if its contents match one of the values of the keyword.
 
