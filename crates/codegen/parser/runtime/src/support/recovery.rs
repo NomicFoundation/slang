@@ -9,7 +9,7 @@ use crate::text_index::{TextRange, TextRangeExtensions as _};
 
 /// An explicit parameter for the [`ParserResult::recover_until_with_nested_delims`] method.
 #[derive(Clone, Copy)]
-pub enum RecoverFromNoMatch {
+pub(crate) enum RecoverFromNoMatch {
     Yes,
     No,
 }
