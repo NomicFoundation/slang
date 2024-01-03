@@ -16,38 +16,17 @@ let cursor = parse_tree.create_tree_cursor();
 
 ## Traversing the CST procedurally
 
-Once you have a cursor, you can use it to traverse the CST in the DFS order. The cursor provides several methods for this purpose:
+Once you have a cursor, you can use it to traverse the CST in the DFS order. The cursor provides several `go_to_*`/`goTo*` navigation functions
+for this purpose; each returning `true` if the cursor was successfully moved, and `false` otherwise.
 
-### Navigating the tree
+There are three main ways to do it:
 
-The basic navigation associated functions are:
+-   according to the DFS order, i.e. next/previous nodes,
+-   according to the relationship between the current node and the next node, e.g. siblings/children/parent,
+-   according to the type of the next node, e.g. next token/rule.
 
--   `reset()`: This method resets the cursor to the root of the CST.
--   `is_completed()`: This method returns `true` if the cursor is finished, and `false` otherwise.
--   `go_to_next()`: This method attempts to move the cursor to the next node.
--   `go_to_previous()`: This method attempts to move the cursor to the previous node.
-
-To navigate to a node with a specific relationship to the current node, you can use the following methods:
-
--   `go_to_parent()`: This method attempts to move the cursor to the parent of the current node.
--   `go_to_next_sibling()`: This method attempts to move the cursor to the next sibling of the current node.
--   `go_to_previous_sibling()`: This method attempts to move the cursor to the previous sibling of the current node.
--   `go_to_next_non_descendent()`: This method attempts to move the cursor to the next node that is not a descendent of the current node (i.e. sibling, falling back to the parent if none left).
--   `go_to_first_child()`: This method attempts to move the cursor to the first child of the current node.
--   `go_to_nth_child(n: usize)`: This method attempts to move the cursor to the nth child of the current node.
--   `go_to_last_child()`: This method attempts to move the cursor to the last child of the current node.
-
-These methods return `false` if the cursor is finished or there's no node with expected relationship to go to.
-
-### Navigating to specific rules/tokens
-
--   `go_to_next_token()`: This method attempts to move the cursor to the next token node.
--   `go_to_next_token_with_kind(kind: TokenKind)`: This method attempts to move the cursor to the next token of the given kind.
--   `go_to_next_rule(rule: RuleKind)`: This method attempts to move the cursor to the next node of the given rule kind.
--   `go_to_next_token_of_kind(kind: TokenKind)`: This method attempts to move the cursor to the next token of the given kind.
--   `go_to_next_matching(predicate: impl Fn(&Node) -> bool)`: This method attempts to move the cursor to the next node that matches the given predicate.
-
-These methods return `false` if the cursor is finished or there's no token/rule to go to.
+As such, the cursor is stateful and keeps track of the path it has taken through the CST.
+It starts at the root it was created at and is completed when it reaches its root when navigating forward.
 
 ### Example
 
