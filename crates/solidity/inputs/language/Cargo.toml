@@ -22,3 +22,4 @@ codegen_language_macros = { workspace = true }
 codegen_schema = { workspace = true }
 indexmap = { workspace = true }
 semver = { workspace = true }
+strum_macros = { workspace = true }
