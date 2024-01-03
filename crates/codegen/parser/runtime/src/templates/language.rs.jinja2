@@ -91,16 +91,6 @@ impl Language {
         fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ function.1 }} }
     {% endfor %}
 
-    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
-        let mut input = ParserContext::new(input);
-        match lexical_context {
-            {%- for lexical_context in code.scanner_contexts -%}
-                LexicalContext::{{ lexical_context.name }} =>
-                    Lexer::next_token::<LexicalContextType::{{ lexical_context.name }}>(self, &mut input),
-            {%- endfor -%}
-        }
-    }
-
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
             {%- for function in code.parser_functions -%}
@@ -212,11 +202,6 @@ impl Language {
     #[napi(js_name = "supportedVersions", catch_unwind)]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
-    }
-
-    #[napi(js_name = "scan", ts_return_type = "kinds.TokenKind | null", catch_unwind)]
-    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
-        self.scan(lexical_context, input.as_str())
     }
 
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]

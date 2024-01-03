@@ -1,6 +1,10 @@
 use semver::Version;
-use slang_solidity::kinds::TokenKind::*;
-use slang_solidity::language::{Language, LexicalContext};
+
+use crate::kinds::LexicalContextType;
+use crate::kinds::TokenKind::*;
+use crate::language::Language;
+use crate::lexer::Lexer;
+use crate::support::ParserContext;
 
 #[test]
 fn test_next_token() {
@@ -26,6 +30,11 @@ fn test_next_token() {
         ("0ZZ", SKIPPED),
         ("0xabZZ", SKIPPED),
     ] {
-        assert_eq!(language.scan(LexicalContext::Default, s), Some(*k));
+        let mut input = ParserContext::new(s);
+
+        assert_eq!(
+            language.next_token::<LexicalContextType::Default>(&mut input),
+            Some(*k)
+        );
     }
 }
