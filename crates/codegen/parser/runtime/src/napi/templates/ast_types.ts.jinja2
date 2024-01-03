@@ -3,15 +3,9 @@ import { ast_internal } from "../../generated";
 import { RuleNode, TokenNode } from "../../cst";
 import { RuleKind, TokenKind } from "../../kinds";
 
-function once<T>(factory: () => T): () => T {
-  let value: T | null = null;
-  return () => {
-    if (value === null) {
-      value = factory();
-    }
-    return value;
-  };
-}
+/*
+ * Sequences:
+ */
 
 {% for sequence in ast_model.sequences %}
   export class {{ sequence.name }} {
@@ -26,17 +20,12 @@ function once<T>(factory: () => T): () => T {
         {%- for field in sequence.fields %}
           {{ field.name | camel_case }}:
           {%- if field.is_optional -%}
-            {%- if field.is_terminal -%}
-              ${{ field.name | camel_case }} as TokenNode | null,
-            {%- else -%}
-              ${{ field.name | camel_case }} ? new {{ field.reference }}(${{ field.name | camel_case }} as RuleNode) : null,
-            {%- endif -%}
+            ${{ field.name | camel_case }} === null ? undefined :
+          {%- endif -%}
+          {%- if field.is_terminal -%}
+            ${{ field.name | camel_case }} as TokenNode,
           {%- else -%}
-            {%- if field.is_terminal -%}
-              ${{ field.name | camel_case }} as TokenNode,
-            {%- else -%}
-              new {{ field.reference }}(${{ field.name | camel_case }} as RuleNode),
-            {%- endif -%}
+            new {{ field.reference }}(${{ field.name | camel_case }} as RuleNode),
           {%- endif -%}
         {% endfor -%}
       };
@@ -54,7 +43,7 @@ function once<T>(factory: () => T): () => T {
           {{ field.reference }}
         {%- endif -%}
         {%- if field.is_optional -%}
-          | null
+          | undefined
         {%- endif -%}
       {
         return this.fetch().{{ field.name | camel_case }};
@@ -63,32 +52,36 @@ function once<T>(factory: () => T): () => T {
   }
 {% endfor %}
 
+/*
+ * Choices:
+ */
+
 {% for choice in ast_model.choices %}
   export class {{ choice.name }} {
-    {%- set variant_type = choice.non_terminals -%}
+    {%- set variant_types = choice.non_terminals -%}
     {%- if choice.terminals | length > 0 -%}
-      {%- set variant_type = variant_type | concat(with = "TokenNode") -%}
+      {%- set variant_types = variant_types | concat(with = "TokenNode") -%}
     {%- endif -%}
-    {%- set variant_type = variant_type | join(sep = " | ") -%}
+    {%- set variant_types = variant_types | join(sep = " | ") -%}
 
-    private readonly fetch: () => {{ variant_type }} = once(() => {
-      const $variant = ast_internal.selectChoice(this.cst);
+    private readonly fetch: () => {{ variant_types }} = once(() => {
+      const variant = ast_internal.selectChoice(this.cst);
 
-      switch ($variant.kind) {
+      switch (variant.kind) {
         {%- for non_terminal in choice.non_terminals %}
           case RuleKind.{{ non_terminal }}:
-            return new {{ non_terminal }}($variant as RuleNode);
+            return new {{ non_terminal }}(variant as RuleNode);
         {%- endfor %}
 
         {% if choice.terminals | length > 0 %}
           {%- for terminal in choice.terminals %}
             case TokenKind.{{ terminal }}:
           {%- endfor %}
-            return $variant as TokenNode;
+            return variant as TokenNode;
         {%- endif %}
 
         default:
-          assert.fail(`Unexpected variant: ${$variant.kind}`);
+          assert.fail(`Unexpected variant: ${variant.kind}`);
       }
     });
 
@@ -96,11 +89,15 @@ function once<T>(factory: () => T): () => T {
       assertKind(this.cst.kind, RuleKind.{{ choice.name }});
     }
 
-    public get variant(): {{ variant_type }} {
+    public get variant(): {{ variant_types }} {
       return this.fetch();
     }
   }
 {% endfor %}
+
+/*
+ * Repeated:
+ */
 
 {% for repeated in ast_model.repeated %}
   export class {{ repeated.name }} {
@@ -120,15 +117,19 @@ function once<T>(factory: () => T): () => T {
 
     public get items():
       {%- if repeated.is_terminal -%}
-        TokenNode[]
+        readonly TokenNode[]
       {%- else -%}
-        {{ repeated.reference }}[]
+        readonly {{ repeated.reference }}[]
       {%- endif -%}
     {
       return this.fetch();
     }
   }
 {% endfor %}
+
+/*
+ * Separated:
+ */
 
 {% for separated in ast_model.separated %}
   export class {{ separated.name }} {
@@ -151,19 +152,33 @@ function once<T>(factory: () => T): () => T {
 
     public get items():
       {%- if separated.is_terminal -%}
-        TokenNode[]
+        readonly TokenNode[]
       {%- else -%}
-        {{ separated.reference }}[]
+        readonly {{ separated.reference }}[]
       {%- endif -%}
     {
       return this.fetch().items;
     }
 
-    public get separators(): TokenNode[] {
+    public get separators(): readonly TokenNode[] {
       return this.fetch().separators;
     }
   }
 {% endfor %}
+
+/*
+ * Helpers:
+ */
+
+function once<T>(factory: () => T): () => T {
+  let value: T | undefined;
+  return () => {
+    if (value === undefined) {
+      value = factory();
+    }
+    return value;
+  };
+}
 
 function assertKind(actual: RuleKind, expected: RuleKind): void {
   assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
