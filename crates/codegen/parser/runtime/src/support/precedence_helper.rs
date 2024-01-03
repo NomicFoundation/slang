@@ -1,5 +1,5 @@
 use crate::cst::{self, NamedNode};
-use crate::kinds::RuleKind;
+use crate::kinds::{FieldName, RuleKind};
 use crate::support::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
 use crate::support::parser_result::{ParserResult, PrattOperatorMatch};
 
@@ -152,13 +152,17 @@ impl PrecedenceHelper {
                                    right: Option<PrattElement>| {
                 assert!(left.is_some() || right.is_some());
 
-                let left_name = right.as_ref().map_or("operand", |_| "left_operand");
-                let right_name = left.as_ref().map_or("operand", |_| "right_operand");
+                let left_name = right
+                    .as_ref()
+                    .map_or(FieldName::Operand, |_| FieldName::LeftOperand);
+                let right_name = left
+                    .as_ref()
+                    .map_or(FieldName::Operand, |_| FieldName::RightOperand);
 
                 let left_nodes = match left {
                     Some(Expression { nodes }) => {
                         vec![NamedNode {
-                            name: left_name.to_owned(),
+                            name: Some(left_name),
                             node: cst::Node::rule(child_kind, nodes),
                         }]
                     }
@@ -169,7 +173,7 @@ impl PrecedenceHelper {
                 let right_nodes = match right {
                     Some(Expression { nodes }) => {
                         vec![NamedNode {
-                            name: right_name.to_owned(),
+                            name: Some(right_name),
                             node: cst::Node::rule(child_kind, nodes),
                         }]
                     }
@@ -181,7 +185,7 @@ impl PrecedenceHelper {
 
                 Expression {
                     nodes: vec![NamedNode {
-                        name: "variant".into(),
+                        name: Some(FieldName::Variant),
                         node: cst::Node::rule(kind, children),
                     }],
                 }

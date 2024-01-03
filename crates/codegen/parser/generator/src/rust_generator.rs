@@ -27,6 +27,7 @@ pub struct RustGenerator {
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
     trivia_kinds: BTreeSet<&'static str>,
+    field_names: BTreeSet<String>,
 
     top_level_scanner_names: BTreeSet<&'static str>,
     scanner_functions: Vec<(&'static str, String)>, // (name of scanner, code)
@@ -215,6 +216,17 @@ impl GrammarVisitor for RustGenerator {
             .into_values()
             .collect();
 
+        // Make sure empty strings are not there
+        self.field_names.remove("");
+        // These are built-in and already pre-defined
+        // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
+        self.field_names.remove("item");
+        self.field_names.remove("variant");
+        self.field_names.remove("separator");
+        self.field_names.remove("operand");
+        self.field_names.remove("left_operand");
+        self.field_names.remove("right_operand");
+
         // Just being anal about tidying up :)
         self.all_scanners.clear();
         self.current_context_name = "";
@@ -304,8 +316,29 @@ impl GrammarVisitor for RustGenerator {
                     .scanner_definitions
                     .insert(scanner.name());
             }
+
+            // Collect field names
+            ParserDefinitionNode::Choice(choice) => {
+                self.field_names.insert(choice.name.clone());
+            }
+            ParserDefinitionNode::Sequence(sequence) => {
+                for node in sequence {
+                    self.field_names.insert(node.name.clone());
+                }
+            }
+            ParserDefinitionNode::SeparatedBy(item, separator) => {
+                self.field_names.insert(item.name.clone());
+                self.field_names.insert(separator.name.clone());
+            }
+            ParserDefinitionNode::TerminatedBy(_, terminator) => {
+                self.field_names.insert(terminator.name.clone());
+            }
+
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {
+                self.field_names.insert(open.name.clone());
+                self.field_names.insert(close.name.clone());
+
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),

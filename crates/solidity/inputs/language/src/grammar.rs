@@ -547,37 +547,28 @@ fn resolve_keyword_value(value: model::KeywordValue) -> ScannerDefinitionNode {
 }
 
 fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
-    // Don't name the nodes for trivia
-    const EMPTY_NAME: String = String::new();
-
     match parser {
         model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
         }
-        model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(Named {
-            name: EMPTY_NAME,
-            node: Box::new(resolve_trivia(*parser, ctx)),
-        }),
-        model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(Named {
-            name: EMPTY_NAME,
-            node: Box::new(resolve_trivia(*parser, ctx)),
-        }),
+        model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(
+            Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+        ),
+        model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(
+            Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+        ),
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| Named {
-                    name: EMPTY_NAME,
-                    node: resolve_trivia(scanner, ctx),
-                })
+                .map(|scanner| Named::anonymous(resolve_trivia(scanner, ctx)))
                 .collect(),
         ),
-        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(Named {
-            name: EMPTY_NAME,
-            node: parsers
+        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(Named::anonymous(
+            parsers
                 .into_iter()
                 .map(|scanner| resolve_trivia(scanner, ctx))
                 .collect(),
-        }),
+        )),
         model::TriviaParser::Trivia { reference } => {
             match resolve_grammar_element(&reference, ctx) {
                 GrammarElement::ScannerDefinition(parser) => {
@@ -636,10 +627,7 @@ fn resolve_sequence_like(
         let delimited_body = ParserDefinitionNode::Sequence(
             fields
                 .drain((open_idx + 1)..close_idx)
-                .map(|(name, field)| Named {
-                    name: name.to_string(),
-                    node: field,
-                })
+                .map(|(name, field)| Named::with_ident_name(name, field))
                 .collect(),
         );
 
@@ -647,10 +635,7 @@ fn resolve_sequence_like(
         let delimited = {
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
-                .map(|(name, field)| Named {
-                    name: name.to_string(),
-                    node: Box::new(field),
-                });
+                .map(|(name, field)| Named::with_ident_name(name, Box::new(field)));
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
@@ -672,10 +657,7 @@ fn resolve_sequence_like(
             let (name, def) = fields.pop().unwrap();
             assert_eq!(name, terminator);
 
-            Some(Named {
-                name: name.to_string(),
-                node: Box::new(def),
-            })
+            Some(Named::with_ident_name(name, Box::new(def)))
         }
         None => None,
     };
@@ -683,10 +665,7 @@ fn resolve_sequence_like(
     let body = ParserDefinitionNode::Sequence(
         fields
             .into_iter()
-            .map(|(name, def)| Named {
-                name: name.to_string(),
-                node: def,
-            })
+            .map(|(name, def)| Named::with_ident_name(name, def))
             .collect(),
     );
 
@@ -709,21 +688,18 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         })
         .collect();
 
-    ParserDefinitionNode::Choice(Named {
-        name: String::from("variant"),
-        node: variants,
-    })
+    ParserDefinitionNode::Choice(Named::with_builtin_name(
+        BuiltinFieldName::Variant,
+        variants,
+    ))
     .versioned(item.enabled)
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
-    ParserDefinitionNode::OneOrMore(Named {
-        name: String::from("item"),
-        node: reference,
-    })
-    .versioned(item.enabled)
+    ParserDefinitionNode::OneOrMore(Named::with_builtin_name(BuiltinFieldName::Item, reference))
+        .versioned(item.enabled)
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
@@ -731,14 +707,8 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
     ParserDefinitionNode::SeparatedBy(
-        Named {
-            name: String::from("item"),
-            node: Box::new(reference),
-        },
-        Named {
-            name: String::from("separator"),
-            node: Box::new(separator),
-        },
+        Named::with_builtin_name(BuiltinFieldName::Item, Box::new(reference)),
+        Named::with_builtin_name(BuiltinFieldName::Separator, Box::new(separator)),
     )
     .versioned(item.enabled)
 }
@@ -760,10 +730,10 @@ fn resolve_precedence(
     let primary_expression = Box::new(match primaries.len() {
         0 => panic!("Precedence operator has no primary expressions"),
         1 => primaries.into_iter().next().unwrap(),
-        _ => ParserDefinitionNode::Choice(Named {
-            name: String::from("variant"),
-            node: primaries,
-        }),
+        _ => ParserDefinitionNode::Choice(Named::with_builtin_name(
+            BuiltinFieldName::Variant,
+            primaries,
+        )),
     });
 
     #[allow(clippy::items_after_statements)] // simple and specific to this site
@@ -817,16 +787,12 @@ fn resolve_precedence(
             let def = match &defs[..] {
                 // HACK: Despite it being a single definition, we still need to wrap a versioned
                 // node around the choice for it to emit the version checks for the node.
-                [ParserDefinitionNode::Versioned(..)] => ParserDefinitionNode::Choice(Named {
-                    name: String::new(),
-                    node: defs,
-                }),
+                [ParserDefinitionNode::Versioned(..)] => {
+                    ParserDefinitionNode::Choice(Named::anonymous(defs))
+                }
                 [_] => defs.into_iter().next().unwrap(),
                 // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
-                _ => ParserDefinitionNode::Choice(Named {
-                    name: String::new(),
-                    node: defs,
-                }),
+                _ => ParserDefinitionNode::Choice(Named::anonymous(defs)),
             };
 
             all_operators.push(def.clone());
@@ -837,10 +803,9 @@ fn resolve_precedence(
         // as reachable and ensure we emit a token kind for each
         thunk
             .def
-            .set(ParserDefinitionNode::Choice(Named {
-                name: String::new(),
-                node: all_operators,
-            }))
+            .set(ParserDefinitionNode::Choice(Named::anonymous(
+                all_operators,
+            )))
             .unwrap();
         assert!(
             !ctx.resolved.contains_key(name),
@@ -903,6 +868,45 @@ impl VersionWrapped for ScannerDefinitionNode {
             Self::Versioned(Box::new(self), enabled_to_range(enabled))
         } else {
             self
+        }
+    }
+}
+
+trait NamedExt<T> {
+    fn anonymous(node: T) -> Self;
+    fn with_ident_name(name: Identifier, node: T) -> Self;
+    fn with_builtin_name(name: BuiltinFieldName, node: T) -> Self;
+}
+
+// Subset of _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_; we can't depend directly on
+// the pre-expansion codegen_parser_runtime crate due to NAPI build issues.
+#[derive(strum_macros::AsRefStr)]
+#[strum(serialize_all = "snake_case")]
+enum BuiltinFieldName {
+    Item,
+    Variant,
+    Separator,
+}
+
+impl<T> NamedExt<T> for Named<T> {
+    fn anonymous(node: T) -> Self {
+        Self {
+            name: String::new(),
+            node,
+        }
+    }
+
+    fn with_ident_name(name: Identifier, node: T) -> Self {
+        Self {
+            name: name.to_string(),
+            node,
+        }
+    }
+
+    fn with_builtin_name(name: BuiltinFieldName, node: T) -> Self {
+        Self {
+            name: name.as_ref().to_owned(),
+            node,
         }
     }
 }

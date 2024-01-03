@@ -3,22 +3,19 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use crate::cursor::Cursor;
-use crate::kinds::{RuleKind, TokenKind};
+use crate::kinds::{FieldName, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NamedNode {
-    pub name: String,
+    pub name: Option<FieldName>,
     pub node: Node,
 }
 
 impl NamedNode {
     /// Creates an anonymous (nameless) node.
     pub fn anonymous(node: Node) -> Self {
-        Self {
-            name: String::new(),
-            node,
-        }
+        Self { name: None, node }
     }
 }
 
