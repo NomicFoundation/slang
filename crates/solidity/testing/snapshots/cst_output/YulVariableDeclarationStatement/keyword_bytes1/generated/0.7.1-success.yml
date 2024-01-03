@@ -1,13 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ let bytes1                                                                       │ 0..10
+  1  │ // Unreserved in Yul specifically since 0.7.1:                                   │ 0..46
+  2  │ let bytes1                                                                       │ 47..57
 
 Errors: []
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..11 "let bytes1\n"
-      - (let_keyword) YulLetKeyword: "let" # 0..3
-      - (names) YulIdentifierPaths: # 3..11 " bytes1\n"
-          - (item) YulIdentifierPath: # 3..11 " bytes1\n"
-              - (item) YulIdentifier: "bytes1" # 4..10
+  - YulVariableDeclarationStatement: # 0..58 "// Unreserved in Yul specifically since 0.7.1:\nlet..."
+      - LeadingTrivia: # 0..47 "// Unreserved in Yul specifically since 0.7.1:\n"
+          - SingleLineComment: "// Unreserved in Yul specifically since 0.7.1:" # 0..46
+      - (let_keyword) YulLetKeyword: "let" # 47..50
+      - (names) YulIdentifierPaths: # 50..58 " bytes1\n"
+          - (item) YulIdentifierPath: # 50..58 " bytes1\n"
+              - (item) YulIdentifier: "bytes1" # 51..57

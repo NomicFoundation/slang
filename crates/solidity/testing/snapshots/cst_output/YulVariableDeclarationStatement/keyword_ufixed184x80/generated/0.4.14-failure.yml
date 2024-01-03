@@ -1,19 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ let ufixed184x80                                                                 │ 0..16
+  1  │ // This form is reserved only since 0.4.14 until 0.7.1 in Yul:                   │ 0..62
+  2  │ let ufixed184x80                                                                 │ 63..79
 
 Errors: # 1 total
   - >
     Error: Expected YulIdentifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed184x80/input.sol:1:4]
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed184x80/input.sol:2:4]
        │
-     1 │ let ufixed184x80
+     2 │ let ufixed184x80
        │    ───────┬──────  
        │           ╰──────── Error occurred here.
     ───╯
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..17 "let ufixed184x80\n"
-      - (let_keyword) YulLetKeyword: "let" # 0..3
-      - SKIPPED: " ufixed184x80\n" # 3..17
+  - YulVariableDeclarationStatement: # 0..80 "// This form is reserved only since 0.4.14 until 0..."
+      - LeadingTrivia: # 0..63 "// This form is reserved only since 0.4.14 until 0..."
+          - SingleLineComment: "// This form is reserved only since 0.4.14 until 0..." # 0..62
+      - (let_keyword) YulLetKeyword: "let" # 63..66
+      - SKIPPED: " ufixed184x80\n" # 66..80

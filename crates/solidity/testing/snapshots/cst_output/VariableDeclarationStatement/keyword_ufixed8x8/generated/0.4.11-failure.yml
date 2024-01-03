@@ -1,23 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ uint ufixed8x8;                                                                  │ 0..15
+  1  │ // This form is always reserved:                                                 │ 0..32
+  2  │ uint ufixed8x8;                                                                  │ 33..48
 
 Errors: # 1 total
   - >
     Error: Expected Identifier or MemoryKeyword or StorageKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x8/input.sol:1:6]
+       ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x8/input.sol:2:6]
        │
-     1 │ uint ufixed8x8;
+     2 │ uint ufixed8x8;
        │      ────┬────  
        │          ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - VariableDeclarationStatement: # 0..16 "uint ufixed8x8;\n"
-      - (variable_type) VariableDeclarationType: # 0..4 "uint"
-          - (variant) TypeName: # 0..4 "uint"
-              - (variant) ElementaryType: # 0..4 "uint"
-                  - (variant) UintKeyword: "uint" # 0..4
-      - SKIPPED: "ufixed8x8" # 5..14
-      - (semicolon) Semicolon: ";" # 14..15
+  - VariableDeclarationStatement: # 0..49 "// This form is always reserved:\nuint ufixed8x8;\n"
+      - (variable_type) VariableDeclarationType: # 0..37 "// This form is always reserved:\nuint"
+          - (variant) TypeName: # 0..37 "// This form is always reserved:\nuint"
+              - (variant) ElementaryType: # 0..37 "// This form is always reserved:\nuint"
+                  - LeadingTrivia: # 0..33 "// This form is always reserved:\n"
+                      - SingleLineComment: "// This form is always reserved:" # 0..32
+                  - (variant) UintKeyword: "uint" # 33..37
+      - SKIPPED: "ufixed8x8" # 38..47
+      - (semicolon) Semicolon: ";" # 47..48

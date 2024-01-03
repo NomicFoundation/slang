@@ -1,13 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ let ufixed8x8                                                                    │ 0..13
+  1  │ // This form is always reserved until 0.7.1 in Yul:                              │ 0..51
+  2  │ let ufixed8x8                                                                    │ 52..65
 
 Errors: []
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..14 "let ufixed8x8\n"
-      - (let_keyword) YulLetKeyword: "let" # 0..3
-      - (names) YulIdentifierPaths: # 3..14 " ufixed8x8\n"
-          - (item) YulIdentifierPath: # 3..14 " ufixed8x8\n"
-              - (item) YulIdentifier: "ufixed8x8" # 4..13
+  - YulVariableDeclarationStatement: # 0..66 "// This form is always reserved until 0.7.1 in Yul..."
+      - LeadingTrivia: # 0..52 "// This form is always reserved until 0.7.1 in Yul..."
+          - SingleLineComment: "// This form is always reserved until 0.7.1 in Yul..." # 0..51
+      - (let_keyword) YulLetKeyword: "let" # 52..55
+      - (names) YulIdentifierPaths: # 55..66 " ufixed8x8\n"
+          - (item) YulIdentifierPath: # 55..66 " ufixed8x8\n"
+              - (item) YulIdentifier: "ufixed8x8" # 56..65
