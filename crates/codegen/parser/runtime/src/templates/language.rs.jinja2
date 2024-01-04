@@ -12,8 +12,9 @@ use semver::Version;
 use napi_derive::napi;
 
 use crate::cst;
-pub use crate::kinds::LexicalContext;
-use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::kinds::{
+    FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+};
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
@@ -96,16 +97,6 @@ impl Language {
         #[inline]
         fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ code }} }
     {% endfor %}
-
-    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<ScannedToken> {
-        let mut input = ParserContext::new(input);
-        match lexical_context {
-            {%- for context_name, context in code.scanner_contexts -%}
-                LexicalContext::{{ context_name }} =>
-                    Lexer::next_token::<LexicalContextType::{{ context_name }}>(self, &mut input),
-            {%- endfor -%}
-        }
-    }
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {

@@ -252,6 +252,155 @@ impl RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(serialize_all = "snake_case")]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum FieldName {
+    // Built-in fields
+    Item,
+    Variant,
+    Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
+    // Generated
+    AbicoderKeyword,
+    AbstractKeyword,
+    AddressKeyword,
+    Alias,
+    AnonymousKeyword,
+    Arguments,
+    AsKeyword,
+    AssemblyKeyword,
+    Asterisk,
+    Attributes,
+    Block,
+    Body,
+    BreakKeyword,
+    CaseKeyword,
+    Cases,
+    CatchClauses,
+    CatchKeyword,
+    Clause,
+    CloseBrace,
+    CloseBracket,
+    CloseParen,
+    Colon,
+    ColonEqual,
+    Condition,
+    ConstantKeyword,
+    ConstructorKeyword,
+    ContinueKeyword,
+    ContractKeyword,
+    DefaultKeyword,
+    DeleteKeyword,
+    DoKeyword,
+    Elements,
+    ElseBranch,
+    ElseKeyword,
+    EmitKeyword,
+    End,
+    EnumKeyword,
+    EofTrivia,
+    Equal,
+    EqualGreaterThan,
+    Error,
+    ErrorKeyword,
+    Event,
+    EventKeyword,
+    ExperimentalKeyword,
+    Expression,
+    Expressions,
+    FallbackKeyword,
+    FalseExpression,
+    Feature,
+    Flags,
+    ForKeyword,
+    FromKeyword,
+    FunctionKeyword,
+    GlobalKeyword,
+    Identifier,
+    IfKeyword,
+    ImportKeyword,
+    Index,
+    IndexedKeyword,
+    Inheritence,
+    Initialization,
+    InterfaceKeyword,
+    IsKeyword,
+    Items,
+    Iterator,
+    KeyType,
+    Label,
+    LeaveKeyword,
+    LetKeyword,
+    LibraryKeyword,
+    Literal,
+    MappingKeyword,
+    Member,
+    Members,
+    MinusGreaterThan,
+    ModifierKeyword,
+    Name,
+    Names,
+    NewKeyword,
+    OpenBrace,
+    OpenBracket,
+    OpenParen,
+    Operator,
+    Options,
+    Overridden,
+    OverrideKeyword,
+    Parameters,
+    Path,
+    Paths,
+    PayableKeyword,
+    Period,
+    Pragma,
+    PragmaKeyword,
+    QuestionMark,
+    ReceiveKeyword,
+    ReturnKeyword,
+    Returns,
+    ReturnsKeyword,
+    RevertKeyword,
+    Semicolon,
+    SolidityKeyword,
+    Start,
+    Statements,
+    StorageLocation,
+    StructKeyword,
+    SwitchKeyword,
+    Symbols,
+    Target,
+    ThrowKeyword,
+    TrueExpression,
+    TryKeyword,
+    TypeKeyword,
+    TypeName,
+    Types,
+    UncheckedKeyword,
+    Unit,
+    UsingKeyword,
+    Value,
+    ValueType,
+    VariableType,
+    Variables,
+    Version,
+    WhileKeyword,
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
@@ -541,24 +690,22 @@ pub enum TokenKind {
     YulYearsKeyword,
 }
 
-#[derive(strum_macros::FromRepr)]
 /// The lexical context of the scanner.
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
     Default,
     Pragma,
     Yul,
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
-pub trait IsLexicalContext {
+pub(crate) trait IsLexicalContext {
     /// Returns a run-time [`LexicalContext`] value.
     fn value() -> LexicalContext;
 }
 
 #[allow(non_snake_case)]
-pub mod LexicalContextType {
+pub(crate) mod LexicalContextType {
     use super::{IsLexicalContext, LexicalContext};
     pub struct Default {}
     impl IsLexicalContext for Default {

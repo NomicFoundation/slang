@@ -1,5 +1,5 @@
 use crate::cst::{self, NamedNode};
-use crate::kinds::{IsLexicalContext, TokenKind};
+use crate::kinds::{FieldName, IsLexicalContext, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::support::parser_result::{ParserResult, SkippedUntil};
@@ -10,12 +10,12 @@ use crate::text_index::TextRangeExtensions;
 pub struct SeparatedHelper;
 
 impl SeparatedHelper {
-    pub fn run<L: Lexer, LexCtx: IsLexicalContext>(
+    pub(crate) fn run<L: Lexer, LexCtx: IsLexicalContext>(
         input: &mut ParserContext<'_>,
         lexer: &L,
         body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
-        separator_field_name: &str,
+        separator_field_name: FieldName,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {

@@ -1,7 +1,7 @@
 use std::ops::ControlFlow;
 
 use crate::cst::{self, NamedNode};
-use crate::kinds::TokenKind;
+use crate::kinds::{FieldName, TokenKind};
 use crate::support::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
@@ -193,7 +193,7 @@ impl SequenceHelper {
     /// Shorthand for `self.elem(value.with_name(name))`.
     pub fn elem_named(
         &mut self,
-        name: impl Into<String>,
+        name: FieldName,
         value: ParserResult,
     ) -> ControlFlow<ParserResult, &mut Self> {
         self.elem(value.with_name(name))

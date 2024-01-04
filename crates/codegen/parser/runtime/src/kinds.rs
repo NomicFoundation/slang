@@ -16,7 +16,7 @@ use napi_derive::napi;
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    XXX,
+    // Expanded by the template engine
 }
 
 #[derive(
@@ -35,7 +35,7 @@ pub enum TokenKind {
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
-    XXX,
+    // Expanded by the template engine
 }
 
 impl RuleKind {
@@ -44,19 +44,43 @@ impl RuleKind {
     }
 }
 
-/// The lexical context of the scanner.
-#[derive(strum_macros::FromRepr)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
+pub enum FieldName {
+    // Built-in fields
+    // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
+    Item,
+    Variant,
+    Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
+    // Generated
     XXX,
 }
 
+/// The lexical context of the scanner.
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
+    // Expanded by the template engine
+}
+
 /// Marker trait for type-level [`LexicalContext`] variants.
-pub trait IsLexicalContext {
+pub(crate) trait IsLexicalContext {
     /// Returns a run-time [`LexicalContext`] value.
     fn value() -> LexicalContext;
 }
 
 #[allow(non_snake_case)]
-pub mod LexicalContextType {}
+pub(crate) mod LexicalContextType {}

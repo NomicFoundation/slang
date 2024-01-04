@@ -5,7 +5,7 @@
 use std::rc::Rc;
 
 use crate::cst::{NamedNode, Node, RuleNode};
-use crate::kinds::{RuleKind, TokenKind};
+use crate::kinds::{FieldName, RuleKind, TokenKind};
 use crate::text_index::{TextIndex, TextRange};
 
 /// A [`PathNode`] that points to a [`RuleNode`].
@@ -136,14 +136,12 @@ impl Cursor {
         self.current.node.clone()
     }
 
-    pub fn node_name(&self) -> String {
-        if let Some(parent) = self.path.last() {
-            parent.rule_node.children[self.current.child_number]
-                .name
-                .clone()
-        } else {
-            String::new()
-        }
+    pub fn node_name(&self) -> Option<FieldName> {
+        self.path.last().and_then(|parent| {
+            let this = &parent.rule_node.children[self.current.child_number];
+
+            this.name
+        })
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.

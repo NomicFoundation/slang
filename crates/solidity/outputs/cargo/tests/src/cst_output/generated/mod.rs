@@ -46,6 +46,8 @@ mod ImportDirective;
 #[allow(non_snake_case)]
 mod InterfaceDefinition;
 #[allow(non_snake_case)]
+mod LeadingTrivia;
+#[allow(non_snake_case)]
 mod MappingType;
 #[allow(non_snake_case)]
 mod NewExpression;
