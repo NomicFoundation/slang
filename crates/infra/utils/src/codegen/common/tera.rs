@@ -19,6 +19,7 @@ pub fn create_tera_instance(templates_glob: &Path) -> Result<Tera> {
 
     instance.register_filter("camel_case", camel_case);
     instance.register_filter("snake_case", snake_case);
+    instance.register_filter("pascal_case", pascal_case);
 
     instance.register_function("panic", panic);
 
@@ -46,6 +47,17 @@ fn snake_case(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Valu
             .as_str()
             .expect("Expected a string value")
             .to_snake_case(),
+    ))
+}
+
+fn pascal_case(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
+    assert_eq!(args.len(), 0, "Expected no arguments");
+
+    Ok(Value::String(
+        value
+            .as_str()
+            .expect("Expected a string value")
+            .to_pascal_case(),
     ))
 }
 

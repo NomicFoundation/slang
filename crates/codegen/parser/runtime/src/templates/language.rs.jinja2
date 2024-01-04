@@ -12,7 +12,9 @@ use semver::Version;
 use napi_derive::napi;
 
 use crate::cst;
-use crate::kinds::{IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::kinds::{
+    FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+};
 use crate::lexer::Lexer;
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;

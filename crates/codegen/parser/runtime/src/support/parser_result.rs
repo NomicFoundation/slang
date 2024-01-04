@@ -1,7 +1,7 @@
 use std::ops::ControlFlow;
 
 use crate::cst::{self, NamedNode};
-use crate::kinds::{RuleKind, TokenKind};
+use crate::kinds::{FieldName, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -86,12 +86,12 @@ impl ParserResult {
     }
 
     #[must_use]
-    pub fn with_name(mut self, name: impl Into<String>) -> ParserResult {
+    pub fn with_name(mut self, name: FieldName) -> ParserResult {
         if let Some(NamedNode {
             name: prev_name, ..
         }) = self.significant_node_mut()
         {
-            *prev_name = name.into();
+            *prev_name = Some(name);
         }
 
         self

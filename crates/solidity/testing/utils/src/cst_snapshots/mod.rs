@@ -171,11 +171,7 @@ fn write_node<W: Write>(
         }
     };
 
-    let field_name = if name.is_empty() {
-        String::new()
-    } else {
-        format!("({name}) ")
-    };
+    let field_name = name.map(|name| format!("({name}) ")).unwrap_or_default();
 
     let name = match node {
         cst::Node::Rule(rule) => format!("{field_name}{}", rule.kind.as_ref()),

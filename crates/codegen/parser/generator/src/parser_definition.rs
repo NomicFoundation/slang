@@ -52,8 +52,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = if name.is_empty() {
                     parser
                 } else {
+                    let name = format_ident!("{}", name.to_pascal_case());
+
                     quote! {
-                        #parser.with_name(#name)
+                        #parser.with_name(FieldName::#name)
                     }
                 };
 
@@ -68,8 +70,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = if name.is_empty() {
                     parser
                 } else {
+                    let name = format_ident!("{}", name.to_pascal_case());
+
                     quote! {
-                        #parser.with_name(#name)
+                        #parser.with_name(FieldName::#name)
                     }
                 };
 
@@ -85,8 +89,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     if name.is_empty() {
                         parser
                     } else {
+                        let name = format_ident!("{}", name.to_pascal_case());
+
                         quote! {
-                            #parser.with_name(#name)
+                            #parser.with_name(FieldName::#name)
                         }
                     }
                 }
@@ -110,8 +116,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 if name.is_empty() {
                     parser
                 } else {
+                    let name = format_ident!("{}", name.to_pascal_case());
+
                     quote! {
-                        #parser.with_name(#name)
+                        #parser.with_name(FieldName::#name)
                     }
                 }
             }
@@ -168,8 +176,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::DelimitedBy(open, body, close) => {
-                let open_field_name = &open.name;
-                let close_field_name = &close.name;
+                let open_field_name = format_ident!("{}", open.name.to_pascal_case());
+                let close_field_name = format_ident!("{}", close.name.to_pascal_case());
                 let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
@@ -197,16 +205,22 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         let mut delim_guard = input.open_delim(TokenKind::#close_delim);
                         let input = delim_guard.ctx();
 
-                        seq.elem_named(#open_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
+                        seq.elem_named(
+                            FieldName::#open_field_name,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim)
+                        )?;
                         #body_parser
-                        seq.elem_named(#close_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
+                        seq.elem_named(
+                            FieldName::#close_field_name,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim)
+                        )?;
                         seq.finish()
                     })
                 }
             }
 
             Self::SeparatedBy(body, separator) => {
-                let separator_field_name = &separator.name;
+                let separator_field_name = format_ident!("{}", separator.name.to_pascal_case());
                 let separator = match separator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
@@ -214,21 +228,21 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as separators"),
                 };
 
-                let body_field_name = &body.name;
+                let body_field_name = format_ident!("{}", body.name.to_pascal_case());
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
                     SeparatedHelper::run::<_, #lex_ctx>(
                         input,
                         self,
-                        |input| #parser.with_name(#body_field_name),
+                        |input| #parser.with_name(FieldName::#body_field_name),
                         TokenKind::#separator,
-                        #separator_field_name,
+                        FieldName::#separator_field_name,
                     )
                 }
             }
             Self::TerminatedBy(body, terminator) => {
-                let terminator_field_name = &terminator.name;
+                let terminator_field_name = format_ident!("{}", terminator.name.to_pascal_case());
 
                 let terminator = match terminator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
@@ -256,7 +270,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     SequenceHelper::run(|mut seq| {
                         #body_parser
                         seq.elem_named(
-                            #terminator_field_name,
+                            FieldName::#terminator_field_name,
                             self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator)
                         )?;
                         seq.finish()
@@ -326,7 +340,9 @@ pub fn make_sequence_versioned(
             let code = if name.is_empty() {
                 quote! { seq.elem(#parser)?; }
             } else {
-                quote! { seq.elem_named(#name, #parser)?; }
+                let field_name = format_ident!("{}", name.to_pascal_case());
+
+                quote! { seq.elem_named(FieldName::#field_name, #parser)?; }
             };
 
             versions.wrap_code(code, None)
