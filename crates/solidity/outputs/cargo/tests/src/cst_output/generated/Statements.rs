@@ -10,6 +10,11 @@ fn compound_tokens() -> Result<()> {
 }
 
 #[test]
+fn contextual_keywords() -> Result<()> {
+    run("Statements", "contextual_keywords")
+}
+
+#[test]
 fn invalid_termination() -> Result<()> {
     run("Statements", "invalid_termination")
 }
