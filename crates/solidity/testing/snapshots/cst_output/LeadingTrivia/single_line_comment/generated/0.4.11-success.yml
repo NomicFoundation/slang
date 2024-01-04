@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // single line                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - LeadingTrivia: # 0..15 "// single line\n"
+      - SingleLineComment: "// single line" # 0..14
+      - EndOfLine: "\n" # 14..15

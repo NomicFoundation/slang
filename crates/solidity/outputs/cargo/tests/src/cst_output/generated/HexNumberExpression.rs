@@ -10,6 +10,11 @@ fn hex_consecutive_underscores() -> Result<()> {
 }
 
 #[test]
+fn hex_invalid_alpha_digit() -> Result<()> {
+    run("HexNumberExpression", "hex_invalid_alpha_digit")
+}
+
+#[test]
 fn hex_leading_underscore() -> Result<()> {
     run("HexNumberExpression", "hex_leading_underscore")
 }

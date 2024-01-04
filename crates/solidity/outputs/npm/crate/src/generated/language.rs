@@ -14,8 +14,9 @@ use napi_derive::napi;
 use semver::Version;
 
 use crate::cst;
-pub use crate::kinds::LexicalContext;
-use crate::kinds::{FieldName, IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::kinds::{
+    FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+};
 use crate::lexer::Lexer;
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
@@ -8196,19 +8197,6 @@ impl Language {
         }
     }
 
-    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
-        let mut input = ParserContext::new(input);
-        match lexical_context {
-            LexicalContext::Default => {
-                Lexer::next_token::<LexicalContextType::Default>(self, &mut input)
-            }
-            LexicalContext::Pragma => {
-                Lexer::next_token::<LexicalContextType::Pragma>(self, &mut input)
-            }
-            LexicalContext::Yul => Lexer::next_token::<LexicalContextType::Yul>(self, &mut input),
-        }
-    }
-
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
             RuleKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
@@ -10736,15 +10724,6 @@ impl Language {
             .iter()
             .map(|v| v.to_string())
             .collect();
-    }
-
-    #[napi(
-        js_name = "scan",
-        ts_return_type = "kinds.TokenKind | null",
-        catch_unwind
-    )]
-    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
-        self.scan(lexical_context, input.as_str())
     }
 
     #[napi(

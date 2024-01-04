@@ -11,7 +11,7 @@ use crate::text_index::{TextRange, TextRangeExtensions as _};
 
 /// An explicit parameter for the [`ParserResult::recover_until_with_nested_delims`] method.
 #[derive(Clone, Copy)]
-pub enum RecoverFromNoMatch {
+pub(crate) enum RecoverFromNoMatch {
     Yes,
     No,
 }
@@ -43,7 +43,7 @@ impl ParserResult {
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
     #[must_use]
-    pub fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
+    pub(crate) fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
         input: &mut ParserContext<'_>,
         lexer: &L,
@@ -119,7 +119,7 @@ impl ParserResult {
 /// Does not consume the `expected` token.
 ///
 /// Returns the found token and the range of skipped tokens on success.
-pub fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
+pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     input: &mut ParserContext<'_>,
     lexer: &L,
     until: TokenKind,

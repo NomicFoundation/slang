@@ -690,24 +690,22 @@ pub enum TokenKind {
     YulYearsKeyword,
 }
 
-#[derive(strum_macros::FromRepr)]
 /// The lexical context of the scanner.
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
     Default,
     Pragma,
     Yul,
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
-pub trait IsLexicalContext {
+pub(crate) trait IsLexicalContext {
     /// Returns a run-time [`LexicalContext`] value.
     fn value() -> LexicalContext;
 }
 
 #[allow(non_snake_case)]
-pub mod LexicalContextType {
+pub(crate) mod LexicalContextType {
     use super::{IsLexicalContext, LexicalContext};
     pub struct Default {}
     impl IsLexicalContext for Default {

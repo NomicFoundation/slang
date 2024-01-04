@@ -16,7 +16,7 @@ use napi_derive::napi;
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    XXX,
+    // Expanded by the template engine
 }
 
 #[derive(
@@ -35,7 +35,7 @@ pub enum TokenKind {
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
-    XXX,
+    // Expanded by the template engine
 }
 
 impl RuleKind {
@@ -71,18 +71,16 @@ pub enum FieldName {
 }
 
 /// The lexical context of the scanner.
-#[derive(strum_macros::FromRepr)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
-    XXX,
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
+    // Expanded by the template engine
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
-pub trait IsLexicalContext {
+pub(crate) trait IsLexicalContext {
     /// Returns a run-time [`LexicalContext`] value.
     fn value() -> LexicalContext;
 }
 
 #[allow(non_snake_case)]
-pub mod LexicalContextType {}
+pub(crate) mod LexicalContextType {}
