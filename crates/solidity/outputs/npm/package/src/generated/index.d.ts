@@ -509,12 +509,6 @@ export namespace kinds {
   }
 }
 export namespace language {
-  /** The lexical context of the scanner. */
-  export enum LexicalContext {
-    Default = "Default",
-    Pragma = "Pragma",
-    Yul = "Yul",
-  }
   export class Language {
     constructor(version: string);
     get version(): string;
