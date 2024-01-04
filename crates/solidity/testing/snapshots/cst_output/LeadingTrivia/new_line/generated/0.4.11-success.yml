@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │                                                                                  │ 0..0
+
+Errors: []
+
+Tree:
+  - LeadingTrivia: # 0..1 "\n"
+      - EndOfLine: "\n" # 0..1

@@ -6,7 +6,7 @@ use infra_utils::codegen::Codegen;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
-use solidity_testing_utils::cst_snapshots::CstSnapshots;
+use solidity_testing_utils::cst_snapshots::{CstSnapshots, WithWhitespace};
 use strum_macros::Display;
 
 use crate::cst_output::generated::VERSION_BREAKS;
@@ -34,10 +34,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_output = None;
 
     for version in VERSION_BREAKS {
-        let rule_kind = RuleKind::from_str(parser_name)
+        let tested_rule_kind = RuleKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
-        let output = Language::new(version.clone())?.parse(rule_kind, &source);
+        let output = Language::new(version.clone())?.parse(tested_rule_kind, &source);
 
         let output = match last_output {
             // Skip this version if it produces the same output.
@@ -60,7 +60,13 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = CstSnapshots::render(&source, &errors, cursor)?;
+        let render_whitespace = if tested_rule_kind.is_trivia() {
+            WithWhitespace::Yes
+        } else {
+            WithWhitespace::No
+        };
+
+        let snapshot = CstSnapshots::render(&source, &errors, cursor, render_whitespace)?;
 
         let snapshot_path = test_dir
             .join("generated")

@@ -9,10 +9,22 @@ use slang_solidity::text_index::{TextRange, TextRangeExtensions};
 
 use crate::node_extensions::NodeExtensions;
 
+/// Whether to include the whitespace in the snapshot test CST output.
+#[derive(Clone, Copy)]
+pub enum WithWhitespace {
+    Yes,
+    No,
+}
+
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithNames) -> Result<String> {
+    pub fn render(
+        source: &str,
+        errors: &Vec<String>,
+        cursor: CursorWithNames,
+        with_whitespace: WithWhitespace,
+    ) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -21,7 +33,7 @@ impl CstSnapshots {
         write_errors(&mut w, errors)?;
         writeln!(&mut w)?;
 
-        write_tree(&mut w, cursor, source)?;
+        write_tree(&mut w, cursor, source, with_whitespace)?;
 
         Ok(w)
     }
@@ -85,7 +97,14 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) -> Result<()> {
+fn write_tree<W: Write>(
+    w: &mut W,
+    mut cursor: CursorWithNames,
+    source: &str,
+    with_whitespace: WithWhitespace,
+) -> Result<()> {
+    let with_whitespace = matches!(with_whitespace, WithWhitespace::Yes);
+
     write!(w, "Tree:")?;
     writeln!(w)?;
 
@@ -98,6 +117,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) ->
                 name: _,
                 node: cst::Node::Rule(rule),
             }) if rule.is_trivia()
+                && !with_whitespace
                 && rule.children.iter().all(|named| {
                     named
                         .node
@@ -110,7 +130,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) ->
             Some(cst::NamedNode {
                 name: _,
                 node: cst::Node::Token(token),
-            }) if is_whitespace(token.kind) => continue,
+            }) if !with_whitespace && is_whitespace(token.kind) => continue,
             next => break next.map(|item| (item, depth, range)),
         }
     });

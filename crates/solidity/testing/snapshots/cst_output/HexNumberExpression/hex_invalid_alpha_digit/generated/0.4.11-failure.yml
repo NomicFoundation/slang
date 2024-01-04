@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0xabzz                                                                           │ 0..6
+
+Errors: # 1 total
+  - >
+    Error: Expected HexLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_invalid_alpha_digit/input.sol:1:1]
+       │
+     1 │ 0xabzz
+       │ ───┬───  
+       │    ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED: "0xabzz\n" # 0..7
