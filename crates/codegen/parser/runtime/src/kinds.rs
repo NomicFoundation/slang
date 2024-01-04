@@ -16,7 +16,7 @@ use napi_derive::napi;
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    XXX,
+    // Expanded by the template engine
 }
 
 #[derive(
@@ -35,7 +35,7 @@ pub enum TokenKind {
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
-    XXX,
+    // Expanded by the template engine
 }
 
 impl RuleKind {
@@ -46,9 +46,8 @@ impl RuleKind {
 
 /// The lexical context of the scanner.
 #[derive(strum_macros::FromRepr, Clone, Copy)]
-#[allow(clippy::upper_case_acronyms)] // An explicit placeholder replaced by the template engine
 pub(crate) enum LexicalContext {
-    XXX,
+    // Expanded by the template engine
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
