@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ ufixed                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - Expression: # 0..7 "ufixed\n"
+      - (variant) ElementaryType: # 0..7 "ufixed\n"
+          - (variant) UfixedKeyword: "ufixed" # 0..6

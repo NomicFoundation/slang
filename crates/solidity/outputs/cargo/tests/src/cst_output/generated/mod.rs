@@ -91,6 +91,8 @@ mod YulBlock;
 mod YulExpression;
 #[allow(non_snake_case)]
 mod YulLeaveStatement;
+#[allow(non_snake_case)]
+mod YulVariableDeclarationStatement;
 
 pub const VERSION_BREAKS: [Version; 22] = [
     Version::new(0, 4, 11),

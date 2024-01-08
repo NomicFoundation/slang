@@ -10,6 +10,16 @@ fn abstract_contract() -> Result<()> {
 }
 
 #[test]
+fn constructor_contextual() -> Result<()> {
+    run("ContractDefinition", "constructor_contextual")
+}
+
+#[test]
+fn emit_contextual() -> Result<()> {
+    run("ContractDefinition", "emit_contextual")
+}
+
+#[test]
 fn empty_contract() -> Result<()> {
     run("ContractDefinition", "empty_contract")
 }

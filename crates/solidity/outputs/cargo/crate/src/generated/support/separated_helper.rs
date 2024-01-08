@@ -26,7 +26,7 @@ impl SeparatedHelper {
                     accum.extend(r#match.nodes);
 
                     match lexer.peek_token_with_trivia::<LexCtx>(input) {
-                        Some(token) if token == separator => {
+                        Some(scanned) if scanned.accepted_as(separator) => {
                             match lexer
                                 .parse_token_with_trivia::<LexCtx>(input, separator)
                                 .with_name(separator_field_name)

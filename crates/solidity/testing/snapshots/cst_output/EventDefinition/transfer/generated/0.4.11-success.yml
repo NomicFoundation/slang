@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event Transfer(address indexed from, address indexed to, uint256 value);         │ 0..72
+
+Errors: []
+
+Tree:
+  - EventDefinition: # 0..73 "event Transfer(address indexed from, address index..."
+      - (event_keyword) EventKeyword: "event" # 0..5
+      - (name) Identifier: "Transfer" # 6..14
+      - (parameters) EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
+          - (open_paren) OpenParen: "(" # 14..15
+          - (parameters) EventParameters: # 15..70 "address indexed from, address indexed to, uint256 ..."
+              - (item) EventParameter: # 15..35 "address indexed from"
+                  - (type_name) TypeName: # 15..22 "address"
+                      - (variant) ElementaryType: # 15..22 "address"
+                          - (variant) AddressType: # 15..22 "address"
+                              - (address_keyword) AddressKeyword: "address" # 15..22
+                  - (indexed_keyword) IndexedKeyword: "indexed" # 23..30
+                  - (name) Identifier: "from" # 31..35
+              - (separator) Comma: "," # 35..36
+              - (item) EventParameter: # 36..55 " address indexed to"
+                  - (type_name) TypeName: # 36..44 " address"
+                      - (variant) ElementaryType: # 36..44 " address"
+                          - (variant) AddressType: # 36..44 " address"
+                              - (address_keyword) AddressKeyword: "address" # 37..44
+                  - (indexed_keyword) IndexedKeyword: "indexed" # 45..52
+                  - (name) Identifier: "to" # 53..55
+              - (separator) Comma: "," # 55..56
+              - (item) EventParameter: # 56..70 " uint256 value"
+                  - (type_name) TypeName: # 56..64 " uint256"
+                      - (variant) ElementaryType: # 56..64 " uint256"
+                          - (variant) UintKeyword: "uint256" # 57..64
+                  - (name) Identifier: "value" # 65..70
+          - (close_paren) CloseParen: ")" # 70..71
+      - (semicolon) Semicolon: ";" # 71..72

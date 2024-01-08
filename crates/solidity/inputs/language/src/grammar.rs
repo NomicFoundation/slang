@@ -7,13 +7,13 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use codegen_grammar::{
-    Grammar, GrammarElement, Named, ParserDefinition, ParserDefinitionNode,
+    Grammar, GrammarElement, KeywordScannerDefinition, KeywordScannerDefinitionNode,
+    KeywordScannerDefinitionVersionedNode, Named, ParserDefinition, ParserDefinitionNode,
     PrecedenceOperatorModel, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
     ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
     VersionQualityRange,
 };
-use codegen_language_definition::model;
-use codegen_language_definition::model::{FieldsErrorRecovery, Identifier, Item};
+use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
 use indexmap::IndexMap;
 
 /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
@@ -176,6 +176,27 @@ impl ScannerDefinition for NamedScanner {
 }
 
 #[derive(Debug)]
+struct NamedKeywordScanner {
+    name: &'static str,
+    identifier_scanner_name: &'static str,
+    defs: Vec<KeywordScannerDefinitionVersionedNode>,
+}
+
+impl KeywordScannerDefinition for NamedKeywordScanner {
+    fn name(&self) -> &'static str {
+        self.name
+    }
+
+    fn definitions(&self) -> &[codegen_grammar::KeywordScannerDefinitionVersionedNode] {
+        &self.defs
+    }
+
+    fn identifier_scanner(&self) -> &'static str {
+        self.identifier_scanner_name
+    }
+}
+
+#[derive(Debug)]
 struct NamedTriviaParser {
     name: &'static str,
     def: ParserDefinitionNode,
@@ -262,7 +283,11 @@ impl ParserThunk {
     }
 }
 
-fn enabled_to_range(spec: model::VersionSpecifier) -> Vec<VersionQualityRange> {
+fn enabled_to_range(spec: impl Into<Option<model::VersionSpecifier>>) -> Vec<VersionQualityRange> {
+    let Some(spec) = spec.into() else {
+        return vec![];
+    };
+
     match spec {
         model::VersionSpecifier::Never => vec![VersionQualityRange {
             from: semver::Version::new(0, 0, 0),
@@ -409,10 +434,32 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                     name: ident.to_string().leak(),
                     def: resolve_token(item.deref().clone(), ctx),
                 },
-                Item::Keyword { item } => NamedScanner {
-                    name: ident.to_string().leak(),
-                    def: resolve_keyword(item.deref().clone()),
-                },
+                Item::Keyword { item } => {
+                    let defs: Vec<_> = item
+                        .definitions
+                        .iter()
+                        .cloned()
+                        .map(|def| {
+                            let value = resolve_keyword_value(def.value);
+                            KeywordScannerDefinitionVersionedNode {
+                                value,
+                                enabled: enabled_to_range(def.enabled),
+                                reserved: enabled_to_range(def.reserved),
+                            }
+                        })
+                        .collect();
+
+                    let kw_scanner = NamedKeywordScanner {
+                        name: ident.to_string().leak(),
+                        identifier_scanner_name: item.identifier.to_string().leak(),
+                        defs,
+                    };
+
+                    // Keywords are special scanners and are handled separately
+                    let resolved = GrammarElement::KeywordScannerDefinition(Rc::new(kw_scanner));
+                    ctx.resolved.insert(ident.clone(), resolved.clone());
+                    return resolved;
+                }
                 _ => unreachable!("Only terminals can be resolved here"),
             };
 
@@ -490,59 +537,18 @@ fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDe
     }
 }
 
-fn resolve_keyword(keyword: model::KeywordItem) -> ScannerDefinitionNode {
-    // TODO(#568): Handle reserved keywords using the given "Identifier" parser
-    let _ = keyword.identifier;
-
-    let defs: Vec<_> = keyword
-        .definitions
-        .into_iter()
-        .map(|def| {
-            let value = resolve_keyword_value(def.value);
-            // If missing, the default is "Always"
-            match (def.enabled, def.reserved) {
-                // Contextual keywords (never reserved)
-                // TODO(#568): Properly support contextual keywords.
-                // Currently, to minimize the diff and ease the transition to the DSL v2, we treat them as normal keywords.
-                // Moreover, since the DSL v1 only treats "enablement" as being reserved, we try to preserve that for now.
-                (enabled, Some(model::VersionSpecifier::Never)) => value.versioned(enabled),
-                // TODO(#568): If a contextual keyword was enabled at some point and then reserved, for now we treat it
-                // as a reserved keyword starting from when it was being used, to preserve the DSL v1 behaviour.
-                (
-                    Some(model::VersionSpecifier::From { from: enabled }),
-                    Some(model::VersionSpecifier::From { from: reserved }),
-                ) if enabled < reserved => ScannerDefinitionNode::Versioned(
-                    Box::new(value),
-                    enabled_to_range(model::VersionSpecifier::From { from: enabled }),
-                ),
-                (_, Some(reserved)) => {
-                    ScannerDefinitionNode::Versioned(Box::new(value), enabled_to_range(reserved))
-                }
-                // The keyword is always reserved
-                (_, None) => value,
-            }
-        })
-        .collect();
-
-    match defs.len() {
-        0 => panic!("Keyword {} has no definitions", keyword.name),
-        1 => defs.into_iter().next().unwrap(),
-        _ => ScannerDefinitionNode::Choice(defs),
-    }
-}
-
-fn resolve_keyword_value(value: model::KeywordValue) -> ScannerDefinitionNode {
+fn resolve_keyword_value(value: model::KeywordValue) -> KeywordScannerDefinitionNode {
     match value {
-        model::KeywordValue::Sequence { values } => {
-            ScannerDefinitionNode::Sequence(values.into_iter().map(resolve_keyword_value).collect())
-        }
-        model::KeywordValue::Choice { values } => {
-            ScannerDefinitionNode::Choice(values.into_iter().map(resolve_keyword_value).collect())
-        }
+        model::KeywordValue::Sequence { values } => KeywordScannerDefinitionNode::Sequence(
+            values.into_iter().map(resolve_keyword_value).collect(),
+        ),
+        model::KeywordValue::Choice { values } => KeywordScannerDefinitionNode::Choice(
+            values.into_iter().map(resolve_keyword_value).collect(),
+        ),
         model::KeywordValue::Optional { value } => {
-            ScannerDefinitionNode::Optional(Box::new(resolve_keyword_value(*value)))
+            KeywordScannerDefinitionNode::Optional(Box::new(resolve_keyword_value(*value)))
         }
-        model::KeywordValue::Atom { atom } => ScannerDefinitionNode::Literal(atom),
+        model::KeywordValue::Atom { atom } => KeywordScannerDefinitionNode::Atom(atom),
     }
 }
 
@@ -836,6 +842,9 @@ impl IntoParserDefNode for GrammarElement {
             }
             GrammarElement::ScannerDefinition(parser) => {
                 ParserDefinitionNode::ScannerDefinition(parser)
+            }
+            GrammarElement::KeywordScannerDefinition(scanner) => {
+                ParserDefinitionNode::KeywordScannerDefinition(scanner)
             }
             GrammarElement::TriviaParserDefinition(parser) => {
                 ParserDefinitionNode::TriviaParserDefinition(parser)
