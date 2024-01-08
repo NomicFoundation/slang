@@ -682,6 +682,7 @@ export namespace cursor {
     spawn(): Cursor;
     get isCompleted(): boolean;
     node(): cst.Node;
+    get nodeName(): kinds.FieldName;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
     get depth(): number;
