@@ -276,7 +276,7 @@ In addition to the `Iterator` implementation, the `Cursor` type also provides pr
 Given the following simple file:
 
 ```{ .solidity}
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 We will list the top-level contracts and their names. To do that, we need to visit `ContractDefinition` rule nodes and then their `Identifier` children:

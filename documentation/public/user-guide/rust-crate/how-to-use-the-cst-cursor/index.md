@@ -7,11 +7,8 @@ This guide will walk you through the basics of using a CST cursor in your projec
 
 First, you need to create an instance of the `Cursor` struct. This is done as follows:
 
-```rust
-let language = Language::new(Version::new(0, 8, 0))?;
-let parse_tree = language.parse(RuleKind::SourceUnit, &source_code_str);
-// ...
-let cursor = parse_tree.create_tree_cursor();
+```{ .rust }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.rs:create-cursor"
 ```
 
 ## Traversing the CST procedurally
@@ -28,12 +25,10 @@ There are three main ways to do it:
 As such, the cursor is stateful and keeps track of the path it has taken through the CST.
 It starts at the root it was created at and is completed when it reaches its root when navigating forward.
 
-### Example
-
 The below example uses a cursor to collect the names of all contracts in a source file, and returns them as a `Vec<String>`:
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+--8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -49,10 +44,8 @@ The iterator yields `Node` structs, which represent the CST nodes.
 It's important to note that `Iterator::next` first visits the current node, yields it, and then moves the cursor to the next node.
 As such, accessor associated functions called on the `Cursor` that reference the "current" will point to the one that is not yet yielded by the iterator. This might be an important, when mixing the two styles.
 
-### Example
-
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+--8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -64,10 +57,8 @@ As such, accessor associated functions called on the `Cursor` that reference the
 Sometimes, it's useful to only visit a sub-tree of the CST. In order to do that, we can use the `Cursor::spawn` function,
 which creates a new cursor that starts at the given node, not copying the previous path history.
 
-### Example
-
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+--8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -76,14 +67,16 @@ which creates a new cursor that starts at the given node, not copying the previo
 
 ## Accessing the current node
 
-The `Cursor` struct provides several methods that allow you to access the currently visited node:
+The `Cursor` struct provides several methods that allow you to access the currently visited node, its position in the source code
+and its ancestors.
 
--   `node()`: This method returns the currently visited node.
--   `node_name()`: This method returns the name of the currently visited node.
--   `text_offset()`: This method returns the text offset that corresponds to the beginning of the currently pointed to node.
--   `text_range()`: This method returns the text range that corresponds to the currently pointed to node.
--   `depth()`: This method returns the depth of the current node in the CST, i.e. the number of ancestors.
--   `ancestors()`: This method returns an iterator over the current node's ancestors, starting from the cursor root node.
+```solidity title="input.sol"
+--8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/node_accessors.sol"
+```
+
+```{ .rust }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.rs:example-node-accessors"
+```
 
 ## Using a Cursor with Names
 
@@ -95,10 +88,8 @@ let cursor_with_names = cursor.with_names();
 
 You can then use the `CursorWithNames` in the same way as a regular `Cursor`.
 
-### Example
-
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+--8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
