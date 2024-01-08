@@ -1,2 +1,3 @@
 -   [Index](./index.md)
+-   [How to use the CST Cursor](./how-to-use-the-cst-cursor/)
 -   [How to parse a Solidity file](./how-to-parse-a-file/)
