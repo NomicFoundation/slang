@@ -28,7 +28,7 @@ It starts at the root it was created at and is completed when it reaches its roo
 The below example uses a cursor to collect the names of all contracts in a source file, and returns them as a `Vec<String>`:
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -45,7 +45,7 @@ It's important to note that `Iterator::next` first visits the current node, yiel
 As such, accessor associated functions called on the `Cursor` that reference the "current" will point to the one that is not yet yielded by the iterator. This might be an important, when mixing the two styles.
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -58,7 +58,7 @@ Sometimes, it's useful to only visit a sub-tree of the CST. In order to do that,
 which creates a new cursor that starts at the given node, not copying the previous path history.
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
@@ -71,7 +71,7 @@ The `Cursor` struct provides several methods that allow you to access the curren
 and its ancestors.
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/node_accessors.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/node_accessors.sol"
 ```
 
 ```{ .rust }
@@ -89,7 +89,7 @@ let cursor_with_names = cursor.with_names();
 You can then use the `CursorWithNames` in the same way as a regular `Cursor`.
 
 ```solidity title="input.sol"
---8<-- "/home/xanewok/repos/slang/crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api/base.sol"
 ```
 
 ```{ .rust }
