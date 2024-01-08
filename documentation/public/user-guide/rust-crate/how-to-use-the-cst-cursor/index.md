@@ -80,7 +80,7 @@ and its ancestors.
 
 ## Using a Cursor with Names
 
-In addition to the basic ` Cursor`, there's also a `CursorWithNames` struct that keeps track of the names of the nodes it visits. You can create a `CursorWithNames` from a `Cursor` as follows:
+In addition to the basic `Cursor`, there's also a `CursorWithNames` struct that keeps track of the names of the nodes it visits. You can create a `CursorWithNames` from a `Cursor` as follows:
 
 ```rust
 let cursor_with_names = cursor.with_names();
