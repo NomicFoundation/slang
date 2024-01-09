@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │  /* some                                                                         │ 0..8
+  2  │ comment*/                                                                        │ 9..18
+
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or SingleLineComment.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TrailingTrivia/multi_line_spanning_multiple_lines/input.sol:1:2]
+       │
+     1 │ ╭─▶  /* some
+     2 │ ├─▶ comment*/
+       │ │               
+       │ ╰─────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - TrailingTrivia: # 0..19 " /* some\ncomment*/\n"
+      - Whitespace: " " # 0..1
+      - SKIPPED: "/* some\ncomment*/\n" # 1..19
