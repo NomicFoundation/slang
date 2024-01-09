@@ -25,7 +25,7 @@ impl GrammarConstructorDslV2 for Grammar {
     #[allow(clippy::too_many_lines)] // TODO: Remove me once the hack below is removed
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
-        let mut items: HashMap<_, _> = lang
+        let items: HashMap<_, _> = lang
             .items_with_section()
             .map(|(_, topic, item)| {
                 (
@@ -34,39 +34,6 @@ impl GrammarConstructorDslV2 for Grammar {
                 )
             })
             .collect();
-
-        // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
-        // of SourceUnit being followed by `EndOfFileTrivia`.
-        items.insert(
-            Identifier::from("SourceUnit"),
-            (
-                None,
-                model::Item::Struct {
-                    item: Rc::new(model::StructItem {
-                        name: Identifier::from("SourceUnit"),
-                        enabled: None,
-                        error_recovery: None,
-                        fields: IndexMap::from_iter([
-                            (
-                                Identifier::from("members"),
-                                model::Field::Optional {
-                                    reference: Identifier::from("SourceUnitMembers"),
-
-                                    enabled: None,
-                                },
-                            ),
-                            (
-                                Identifier::from("eof_trivia"),
-                                model::Field::Optional {
-                                    reference: Identifier::from("EndOfFileTrivia"),
-                                    enabled: None,
-                                },
-                            ),
-                        ]),
-                    }),
-                },
-            ),
-        );
 
         let mut resolved = HashMap::new();
         let mut ctx = ResolveCtx {

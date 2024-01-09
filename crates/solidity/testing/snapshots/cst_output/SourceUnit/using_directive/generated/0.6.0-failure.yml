@@ -27,7 +27,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
         │
       4 │ ╭─▶ using EnvelopeUtils for Envelope global;

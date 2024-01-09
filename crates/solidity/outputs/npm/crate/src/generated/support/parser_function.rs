@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use crate::cst::{self, NamedNode};
 use crate::kinds::TokenKind;
+use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::parse_output::ParseOutput;
 use crate::support::context::ParserContext;
@@ -19,11 +20,38 @@ where
 
 impl<L, F> ParserFunction<L> for F
 where
+    L: Lexer,
     F: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
     fn parse(&self, language: &L, input: &str) -> ParseOutput {
         let mut stream = ParserContext::new(input);
-        let result = self(language, &mut stream);
+        let mut result = self(language, &mut stream);
+
+        // For a succesful/recovered parse, collect any remaining trivia as part of the parse result
+        if let ParserResult::Match(r#match) = &mut result {
+            let [topmost] = r#match.nodes.as_mut_slice() else {
+                unreachable!(
+                    "Match at the top level of a parse does not have exactly one Rule node"
+                )
+            };
+
+            let eof_trivia = match Lexer::leading_trivia(language, &mut stream) {
+                ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
+                    Some(eof_trivia.nodes)
+                }
+                _ => None,
+            };
+
+            match (&mut topmost.node, eof_trivia) {
+                (cst::Node::Rule(rule), Some(eof_trivia)) => {
+                    let mut new_children = rule.children.clone();
+                    new_children.extend(eof_trivia);
+
+                    topmost.node = cst::Node::rule(rule.kind, new_children);
+                }
+                _ => {} // _ => unreachable!("Match at the top level of a parse is not a Rule node"),
+            }
+        }
 
         let is_incomplete = matches!(result, ParserResult::IncompleteMatch(_));
         let is_recovering = matches!(result, ParserResult::SkippedUntil(_));
@@ -69,7 +97,6 @@ where
 
                 let start = stream.position();
 
-                let errors = stream.into_errors();
                 // Mark the rest of the unconsumed stream as skipped and report an error
                 // NOTE: IncompleteMatch internally consumes the stream when picked via choice,
                 // so needs a separate check here.
@@ -83,7 +110,8 @@ where
                         cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
                     let mut new_children = topmost_rule.children.clone();
                     new_children.push(NamedNode::anonymous(skipped_node));
-                    let mut errors = errors;
+
+                    let mut errors = stream.into_errors();
                     errors.push(ParseError::new_covering_range(
                         start..input.into(),
                         expected_tokens,
@@ -95,6 +123,8 @@ where
                     }
                 } else {
                     let parse_tree = cst::Node::Rule(topmost_rule);
+                    let errors = stream.into_errors();
+
                     // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
                     debug_assert_eq!(
                         errors.is_empty(),

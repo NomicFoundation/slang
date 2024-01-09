@@ -301,7 +301,6 @@ pub enum FieldName {
     EmitKeyword,
     End,
     EnumKeyword,
-    EofTrivia,
     Equal,
     EqualGreaterThan,
     Error,

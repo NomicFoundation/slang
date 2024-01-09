@@ -4204,18 +4204,9 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Members,
-                OptionalHelper::transform(self.source_unit_members(input)),
-            )?;
-            seq.elem_named(
-                FieldName::EofTrivia,
-                OptionalHelper::transform(self.end_of_file_trivia(input)),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::SourceUnit)
+        OptionalHelper::transform(self.source_unit_members(input))
+            .with_name(FieldName::Members)
+            .with_kind(RuleKind::SourceUnit)
     }
 
     #[allow(unused_assignments, unused_parens)]

@@ -265,7 +265,6 @@ export namespace kinds {
     EmitKeyword = "EmitKeyword",
     End = "End",
     EnumKeyword = "EnumKeyword",
-    EofTrivia = "EofTrivia",
     Equal = "Equal",
     EqualGreaterThan = "EqualGreaterThan",
     Error = "Error",
