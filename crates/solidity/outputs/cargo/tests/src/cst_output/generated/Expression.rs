@@ -228,6 +228,11 @@ fn keyword_typedef() -> Result<()> {
 }
 
 #[test]
+fn keyword_ufixed() -> Result<()> {
+    run("Expression", "keyword_ufixed")
+}
+
+#[test]
 fn keyword_unchecked() -> Result<()> {
     run("Expression", "keyword_unchecked")
 }

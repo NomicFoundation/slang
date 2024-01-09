@@ -1,12 +1,11 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::mem;
 use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
+    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
+    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
@@ -15,6 +14,7 @@ use semver::Version;
 use serde::Serialize;
 
 use crate::ast_model::AstModel;
+use crate::keyword_scanner_definition::KeywordScannerDefinitionExtensions;
 use crate::parser_definition::ParserDefinitionExtensions;
 use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
 use crate::scanner_definition::ScannerDefinitionExtensions;
@@ -29,27 +29,30 @@ pub struct RustGenerator {
     trivia_kinds: BTreeSet<&'static str>,
     field_names: BTreeSet<String>,
 
-    top_level_scanner_names: BTreeSet<&'static str>,
-    scanner_functions: Vec<(&'static str, String)>, // (name of scanner, code)
-    scanner_contexts: Vec<ScannerContext>,
+    scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
+    scanner_contexts: BTreeMap<&'static str, ScannerContext>,
+    keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
-    parser_functions: Vec<(&'static str, String)>, // (name of parser, code)
+    parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
     #[serde(skip)]
-    scanner_contexts_map: BTreeMap<&'static str, ScannerContext>,
+    top_level_scanner_names: BTreeSet<&'static str>,
     #[serde(skip)]
     all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
     #[serde(skip)]
     current_context_name: &'static str,
 }
 
-#[derive(Serialize)]
+#[derive(Default, Serialize)]
 struct ScannerContext {
-    name: &'static str,
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
-    alpha_literal_scanner: String,
-    non_alpha_literal_scanner: String,
+    literal_scanner: String,
+    keyword_compound_scanners: BTreeMap<&'static str, String>,
+    keyword_trie_scanner: String,
+    #[serde(skip)]
+    keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
+    promotable_identifier_scanners: BTreeSet<&'static str>,
     compound_scanner_names: Vec<&'static str>,
     delimiters: BTreeMap<&'static str, &'static str>,
 }
@@ -150,70 +153,80 @@ impl RustGenerator {
 
     fn set_current_context(&mut self, name: &'static str) {
         self.current_context_name = name;
-        self.scanner_contexts_map
-            .entry(name)
-            .or_insert_with(|| ScannerContext {
-                name,
-                scanner_definitions: BTreeSet::default(),
-                alpha_literal_scanner: String::new(),
-                non_alpha_literal_scanner: String::new(),
-                compound_scanner_names: vec![],
-                delimiters: BTreeMap::default(),
-            });
+        self.scanner_contexts.entry(name).or_default();
+    }
+
+    fn current_context(&mut self) -> &mut ScannerContext {
+        self.scanner_contexts
+            .get_mut(&self.current_context_name)
+            .expect("context must be set with `set_current_context`")
     }
 }
 
 impl GrammarVisitor for RustGenerator {
     fn grammar_leave(&mut self, _grammar: &Grammar) {
+        // Expose the scanner functions that...
         self.scanner_functions = self
             .all_scanners
             .iter()
             .filter(|(name, scanner)| {
-                !self.top_level_scanner_names.contains(*name) || scanner.literals().is_empty()
+                // are compound (do not consist of only literals)
+                scanner.literals().is_empty() ||
+                // but make sure to also include a scanner that is referenced by other scanners, even if not compound
+                !self.top_level_scanner_names.contains(*name)
             })
             .map(|(name, scanner)| (*name, scanner.to_scanner_code().to_string()))
             .collect();
 
-        self.parser_functions.sort_by(|a, b| a.0.cmp(b.0));
-        self.scanner_functions.sort_by(|a, b| a.0.cmp(b.0));
+        for context in self.scanner_contexts.values_mut() {
+            let mut literal_trie = Trie::new();
 
-        for context in self.scanner_contexts_map.values_mut() {
-            let mut alpha_literal_trie = Trie::new();
-            let mut non_alpha_literal_trie = Trie::new();
-            let mut have_identifier_scanner = false;
             for scanner_name in &context.scanner_definitions {
                 let scanner = &self.all_scanners[*scanner_name];
+
                 let literals = scanner.literals();
                 if literals.is_empty() {
-                    // Dr Hackity McHackerson
-                    // Identifier at the end so it doesn't grab other things.
-                    // Not a problem when we switch to a DFA.
-                    if scanner_name == &"Identifier" {
-                        have_identifier_scanner = true;
-                    } else {
-                        context.compound_scanner_names.push(scanner_name);
-                    }
+                    context.compound_scanner_names.push(scanner_name);
                 } else {
                     for literal in literals {
-                        // This is good enough until we switch to a DFA
-                        if literal.chars().next().unwrap().is_alphabetic() {
-                            alpha_literal_trie.insert(literal.as_str(), scanner.clone());
-                        } else {
-                            non_alpha_literal_trie.insert(literal.as_str(), scanner.clone());
-                        }
+                        literal_trie.insert(&literal, scanner.clone());
                     }
                 }
             }
-            context.alpha_literal_scanner = alpha_literal_trie.to_scanner_code().to_string();
-            context.non_alpha_literal_scanner =
-                non_alpha_literal_trie.to_scanner_code().to_string();
-            if have_identifier_scanner {
-                context.compound_scanner_names.push("Identifier");
+
+            context.literal_scanner = literal_trie.to_scanner_code().to_string();
+
+            context.promotable_identifier_scanners = context
+                .keyword_scanner_defs
+                .values()
+                .map(|def| def.identifier_scanner())
+                .collect();
+
+            let mut keyword_trie = Trie::new();
+            for (name, def) in &context.keyword_scanner_defs {
+                match KeywordScannerAtomic::try_from_def(def) {
+                    Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
+                    None => {
+                        context
+                            .keyword_compound_scanners
+                            .insert(name, def.to_scanner_code().to_string());
+                    }
+                }
             }
+
+            context.keyword_trie_scanner = keyword_trie.to_scanner_code().to_string();
         }
 
-        self.scanner_contexts = mem::take(&mut self.scanner_contexts_map)
-            .into_values()
+        // Collect all of the keyword scanners into a single list to be defined at top-level
+        self.keyword_compound_scanners = self
+            .scanner_contexts
+            .values()
+            .flat_map(|context| {
+                context
+                    .keyword_compound_scanners
+                    .iter()
+                    .map(|(name, code)| (*name, code.clone()))
+            })
             .collect();
 
         // Make sure empty strings are not there
@@ -236,11 +249,25 @@ impl GrammarVisitor for RustGenerator {
         self.all_scanners.insert(scanner.name(), scanner.clone());
     }
 
+    fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
+        for def in scanner.definitions() {
+            let versions = def.enabled.iter().chain(def.reserved.iter());
+
+            self.referenced_versions.extend(
+                versions
+                    .map(|vqr| &vqr.from)
+                    // "Removed from 0.0.0" is an alias for "never"; it's never directly checked
+                    .filter(|v| *v != &Version::new(0, 0, 0))
+                    .cloned(),
+            );
+        }
+    }
+
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
         self.rule_kinds.insert(parser.name());
         self.trivia_kinds.insert(parser.name());
-        self.parser_functions.push((
+        self.parser_functions.insert(
             parser.name(),
             {
                 let code = parser.to_parser_code();
@@ -248,7 +275,7 @@ impl GrammarVisitor for RustGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ));
+        );
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
@@ -257,14 +284,14 @@ impl GrammarVisitor for RustGenerator {
         if !parser.is_inline() {
             self.rule_kinds.insert(parser.name());
             let code = parser.to_parser_code();
-            self.parser_functions.push((
+            self.parser_functions.insert(
                 parser.name(),
                 {
                     let rule_kind = format_ident!("{}", parser.name());
                     quote! { #code.with_kind(RuleKind::#rule_kind) }
                 }
                 .to_string(),
-            ));
+            );
         }
     }
 
@@ -278,10 +305,10 @@ impl GrammarVisitor for RustGenerator {
         // While it's not common to parse a precedence expression as a standalone rule,
         // we generate a function for completeness.
         for (name, code) in parser.to_precedence_expression_parser_code() {
-            self.parser_functions.push((name, code.to_string()));
+            self.parser_functions.insert(name, code.to_string());
         }
 
-        self.parser_functions.push((
+        self.parser_functions.insert(
             parser.name(),
             {
                 let code = parser.to_parser_code();
@@ -289,7 +316,7 @@ impl GrammarVisitor for RustGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ));
+        );
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
@@ -310,11 +337,17 @@ impl GrammarVisitor for RustGenerator {
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
                 self.token_kinds.insert(scanner.name());
-                self.scanner_contexts_map
-                    .get_mut(&self.current_context_name)
-                    .unwrap()
+
+                self.current_context()
                     .scanner_definitions
                     .insert(scanner.name());
+            }
+            ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
+                self.token_kinds.insert(scanner.name());
+
+                self.current_context()
+                    .keyword_scanner_defs
+                    .insert(scanner.name(), scanner.clone());
             }
 
             // Collect field names
@@ -347,11 +380,7 @@ impl GrammarVisitor for RustGenerator {
                     _ => panic!("DelimitedBy must be delimited by scanners"),
                 };
 
-                let delimiters = &mut self
-                    .scanner_contexts_map
-                    .get_mut(&self.current_context_name)
-                    .unwrap()
-                    .delimiters;
+                let delimiters = &mut self.current_context().delimiters;
 
                 assert!(
                     delimiters.get(close).is_none(),

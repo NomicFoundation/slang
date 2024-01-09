@@ -1,7 +1,7 @@
 use crate::{
-    Grammar, ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionNode,
-    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
+    Grammar, KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
+    PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
+    ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 
 pub trait GrammarVisitor {
@@ -9,6 +9,7 @@ pub trait GrammarVisitor {
     fn grammar_leave(&mut self, _grammar: &Grammar) {}
 
     fn scanner_definition_enter(&mut self, _scanner: &ScannerDefinitionRef) {}
+    fn keyword_scanner_definition_enter(&mut self, _scanner: &KeywordScannerDefinitionRef) {}
     fn trivia_parser_definition_enter(&mut self, _trivia_parser: &TriviaParserDefinitionRef) {}
     fn parser_definition_enter(&mut self, _parser: &ParserDefinitionRef) {}
     fn precedence_parser_definition_enter(&mut self, _parser: &PrecedenceParserDefinitionRef) {}

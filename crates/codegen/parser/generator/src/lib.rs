@@ -1,4 +1,5 @@
 mod ast_model;
+mod keyword_scanner_definition;
 mod parser_definition;
 mod precedence_parser_definition;
 mod rust_generator;

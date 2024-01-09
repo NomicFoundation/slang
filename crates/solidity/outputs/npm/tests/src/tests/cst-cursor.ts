@@ -1,7 +1,8 @@
 import { Language } from "@nomicfoundation/slang/language";
-import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
+import { FieldName, RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
 import { Cursor } from "@nomicfoundation/slang/cursor";
 import { expectRule, expectToken } from "../utils/cst-helpers";
+import { NodeType } from "@nomicfoundation/slang/cst";
 
 test("use cursor", () => {
   const source = "int256 constant z = 1 + 2;";
@@ -105,4 +106,27 @@ test("use cursor", () => {
 
   expectToken(cursor.node(), TokenKind.Semicolon, ";");
   expect(cursor.goToNext()).toBe(false);
+});
+
+test("access the node using its name", () => {
+  const source = "contract Foo {} contract Bar {} contract Baz {}";
+  const language = new Language("0.8.0");
+  const parseTree = language.parse(RuleKind.SourceUnit, source);
+
+  const cursor = parseTree.createTreeCursor();
+  let names: string[] = [];
+
+  while (cursor.goToNextRuleWithKind(RuleKind.ContractDefinition)) {
+    const innerCursor = cursor.spawn();
+    while (innerCursor.goToNext()) {
+      const node = innerCursor.node();
+      const nodeName = innerCursor.nodeName;
+
+      if (node.type == NodeType.Token && nodeName == FieldName.Name) {
+        names.push(node.text);
+      }
+    }
+  }
+
+  expect(names).toEqual(["Foo", "Bar", "Baz"]);
 });

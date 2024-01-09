@@ -86,8 +86,8 @@ pub enum TokenKind {
 /// The lexical context of the scanner.
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
-    {%- for context in code.scanner_contexts %}
-        {{ context.name }},
+    {%- for context_name, _context in code.scanner_contexts %}
+        {{ context_name }},
     {%- endfor %}
 }
 
@@ -101,11 +101,11 @@ pub(crate) trait IsLexicalContext {
 pub(crate) mod LexicalContextType {
     use super::{IsLexicalContext, LexicalContext};
 
-    {%- for context in code.scanner_contexts %}
-        pub struct {{ context.name }} {}
-        impl IsLexicalContext for {{ context.name }} {
+    {%- for context_name, _ in code.scanner_contexts %}
+        pub struct {{ context_name }} {}
+        impl IsLexicalContext for {{ context_name }} {
             fn value() -> LexicalContext {
-                LexicalContext::{{ context.name }}
+                LexicalContext::{{ context_name }}
             }
         }
     {%- endfor %}

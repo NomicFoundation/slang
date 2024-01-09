@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Unreserved in Yul specifically since 0.7.1:                                   │ 0..46
+  2  │ let bytes                                                                        │ 47..56
+
+Errors: # 1 total
+  - >
+    Error: Expected YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_bytes/input.sol:2:4]
+       │
+     2 │ let bytes
+       │    ───┬───  
+       │       ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - YulVariableDeclarationStatement: # 0..57 "// Unreserved in Yul specifically since 0.7.1:\nlet..."
+      - LeadingTrivia: # 0..47 "// Unreserved in Yul specifically since 0.7.1:\n"
+          - SingleLineComment: "// Unreserved in Yul specifically since 0.7.1:" # 0..46
+      - (let_keyword) YulLetKeyword: "let" # 47..50
+      - SKIPPED: " bytes\n" # 50..57

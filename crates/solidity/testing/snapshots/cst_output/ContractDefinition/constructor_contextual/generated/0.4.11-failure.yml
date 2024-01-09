@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Constructors introduced in 0.4.22 but `constructor` was usable as identifier until 0.5.0 │ 0..91
+  2  │                                                                                             │ 92..92
+  3  │ contract Contract {                                                                         │ 93..112
+  4  │ 	constructor() {}                                                                           │ 113..130
+  5  │     function func() public {                                                                │ 131..159
+  6  │ 		uint256 constructor;                                                                      │ 160..182
+  7  │     }                                                                                       │ 183..188
+  8  │ }                                                                                           │ 189..190
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/constructor_contextual/input.sol:4:13]
+       │
+     4 │ ╭─▶     constructor() {}
+       ┆ ┆   
+     7 │ ├─▶     }
+       │ │           
+       │ ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition: # 0..191 "// Constructors introduced in 0.4.22 but `construc..."
+      - LeadingTrivia: # 0..93 "// Constructors introduced in 0.4.22 but `construc..."
+          - SingleLineComment: "// Constructors introduced in 0.4.22 but `construc..." # 0..91
+      - (contract_keyword) ContractKeyword: "contract" # 93..101
+      - (name) Identifier: "Contract" # 102..110
+      - (open_brace) OpenBrace: "{" # 111..112
+      - (members) ContractMembers: # 113..125 "\tconstructor"
+          - (item) ContractMember: # 113..125 "\tconstructor"
+              - (variant) StateVariableDefinition: # 113..125 "\tconstructor"
+                  - (type_name) TypeName: # 113..125 "\tconstructor"
+                      - (variant) IdentifierPath: # 113..125 "\tconstructor"
+                          - (item) Identifier: "constructor" # 114..125
+      - SKIPPED: "() {}\n    function func() public {\n\t\tuint256 const..." # 125..189
+      - (close_brace) CloseBrace: "}" # 189..190

@@ -17,7 +17,7 @@ use crate::cst;
 use crate::kinds::{
     FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
 };
-use crate::lexer::Lexer;
+use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
@@ -6341,51 +6341,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7'),
-                    scan_chars!(input, '6'),
-                    scan_chars!(input, '5'),
-                    scan_chars!(input, '4'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '3', '1'),
-                    scan_chars!(input, '3', '0'),
-                    scan_chars!(input, '3'),
-                    scan_chars!(input, '2', '9'),
-                    scan_chars!(input, '2', '8'),
-                    scan_chars!(input, '2', '7'),
-                    scan_chars!(input, '2', '6'),
-                    scan_chars!(input, '2', '5'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3'),
-                    scan_chars!(input, '2', '2'),
-                    scan_chars!(input, '2', '1'),
-                    scan_chars!(input, '2', '0'),
-                    scan_chars!(input, '2'),
-                    scan_chars!(input, '1', '9'),
-                    scan_chars!(input, '1', '8'),
-                    scan_chars!(input, '1', '7'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5'),
-                    scan_chars!(input, '1', '4'),
-                    scan_chars!(input, '1', '3'),
-                    scan_chars!(input, '1', '2'),
-                    scan_chars!(input, '1', '1'),
-                    scan_chars!(input, '1', '0'),
-                    scan_chars!(input, '1')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -6531,289 +6486,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-            scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
-                )
-            ),
-            scan_sequence!(
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                )
-            ),
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn hex_byte_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'x'),
@@ -6924,51 +6596,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'i', 'n', 't'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn multiline_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '/'),
@@ -7050,334 +6677,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-            scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                ),
-                scan_chars!(input, 'x'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '1', '6')
-                )
-            ),
-            scan_sequence!(
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '2', '4', '8', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '8'),
-                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                    scan_chars!(input, '2', '3', '2', 'x', '8'),
-                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                    scan_chars!(input, '2', '2', '4', 'x', '8'),
-                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                    scan_chars!(input, '2', '1', '6', 'x', '8'),
-                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '8', 'x', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                )
-            ),
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 {
-                scan_sequence!(
-                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
-            }
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'u', 'i', 'n', 't'),
-            scan_optional!(
-                input,
-                scan_choice!(
-                    input,
-                    scan_chars!(input, '9', '6'),
-                    scan_chars!(input, '8', '8'),
-                    scan_chars!(input, '8', '0'),
-                    scan_chars!(input, '8'),
-                    scan_chars!(input, '7', '2'),
-                    scan_chars!(input, '6', '4'),
-                    scan_chars!(input, '5', '6'),
-                    scan_chars!(input, '4', '8'),
-                    scan_chars!(input, '4', '0'),
-                    scan_chars!(input, '3', '2'),
-                    scan_chars!(input, '2', '5', '6'),
-                    scan_chars!(input, '2', '4', '8'),
-                    scan_chars!(input, '2', '4', '0'),
-                    scan_chars!(input, '2', '4'),
-                    scan_chars!(input, '2', '3', '2'),
-                    scan_chars!(input, '2', '2', '4'),
-                    scan_chars!(input, '2', '1', '6'),
-                    scan_chars!(input, '2', '0', '8'),
-                    scan_chars!(input, '2', '0', '0'),
-                    scan_chars!(input, '1', '9', '2'),
-                    scan_chars!(input, '1', '8', '4'),
-                    scan_chars!(input, '1', '7', '6'),
-                    scan_chars!(input, '1', '6', '8'),
-                    scan_chars!(input, '1', '6', '0'),
-                    scan_chars!(input, '1', '6'),
-                    scan_chars!(input, '1', '5', '2'),
-                    scan_chars!(input, '1', '4', '4'),
-                    scan_chars!(input, '1', '3', '6'),
-                    scan_chars!(input, '1', '2', '8'),
-                    scan_chars!(input, '1', '2', '0'),
-                    scan_chars!(input, '1', '1', '2'),
-                    scan_chars!(input, '1', '0', '4')
-                )
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn unicode_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u'),
@@ -7428,9 +6727,45 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
+    fn yul_decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_choice!(
+                input,
+                scan_chars!(input, '0'),
+                scan_sequence!(
+                    scan_char_range!(input, '1'..='9'),
+                    scan_zero_or_more!(input, scan_char_range!(input, '0'..='9'))
+                )
+            ),
+            self.identifier_start(input)
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_hex_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_not_followed_by!(
+            input,
             scan_sequence!(
+                scan_chars!(input, '0', 'x'),
+                scan_one_or_more!(input, self.hex_character(input))
+            ),
+            self.identifier_start(input)
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_identifier(&self, input: &mut ParserContext<'_>) -> bool {
+        self.raw_identifier(input)
+    }
+
+    // Keyword scanners
+    #[inline]
+    fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if scan_sequence!(
                 scan_chars!(input, 'b', 'y', 't', 'e', 's'),
                 scan_optional!(
                     input,
@@ -7470,344 +6805,324 @@ impl Language {
                         scan_chars!(input, '1')
                     )
                 )
-            )
-        } else {
-            false
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_choice!(
-                input,
-                scan_chars!(input, '0'),
-                scan_sequence!(
-                    scan_char_range!(input, '1'..='9'),
-                    scan_zero_or_more!(input, scan_char_range!(input, '0'..='9'))
-                )
-            ),
-            self.identifier_start(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            if !self.version_is_at_least_0_7_1 {
-                scan_chars!(input, 'f', 'i', 'x', 'e', 'd')
+            ) {
+                KeywordScan::Reserved(TokenKind::BytesKeyword)
             } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '4', '8', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
-                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
-                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
-                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
-                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
-                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
-                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
-                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
-                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
-                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
-                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
-                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
-                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
-                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
-                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
-                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
-                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
-                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
-                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
-                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
-                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
-                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
-                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
-                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
-                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
-                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
-                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
-                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
-                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
-                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
-                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
-                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
-                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
-                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
-                    )
-                )
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
-                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
-                    ),
-                    scan_chars!(input, 'x'),
-                    scan_choice!(
-                        input,
-                        scan_chars!(input, '9'),
-                        scan_chars!(input, '7', '9'),
-                        scan_chars!(input, '7', '8'),
-                        scan_chars!(input, '7', '7'),
-                        scan_chars!(input, '7', '6'),
-                        scan_chars!(input, '7', '5'),
-                        scan_chars!(input, '7', '4'),
-                        scan_chars!(input, '7', '3'),
-                        scan_chars!(input, '7', '1'),
-                        scan_chars!(input, '7', '0'),
-                        scan_chars!(input, '7'),
-                        scan_chars!(input, '6', '9'),
-                        scan_chars!(input, '6', '8'),
-                        scan_chars!(input, '6', '7'),
-                        scan_chars!(input, '6', '6'),
-                        scan_chars!(input, '6', '5'),
-                        scan_chars!(input, '6', '3'),
-                        scan_chars!(input, '6', '2'),
-                        scan_chars!(input, '6', '1'),
-                        scan_chars!(input, '6', '0'),
-                        scan_chars!(input, '6'),
-                        scan_chars!(input, '5', '9'),
-                        scan_chars!(input, '5', '8'),
-                        scan_chars!(input, '5', '7'),
-                        scan_chars!(input, '5', '5'),
-                        scan_chars!(input, '5', '4'),
-                        scan_chars!(input, '5', '3'),
-                        scan_chars!(input, '5', '2'),
-                        scan_chars!(input, '5', '1'),
-                        scan_chars!(input, '5', '0'),
-                        scan_chars!(input, '5'),
-                        scan_chars!(input, '4', '9'),
-                        scan_chars!(input, '4', '7'),
-                        scan_chars!(input, '4', '6'),
-                        scan_chars!(input, '4', '5'),
-                        scan_chars!(input, '4', '4'),
-                        scan_chars!(input, '4', '3'),
-                        scan_chars!(input, '4', '2'),
-                        scan_chars!(input, '4', '1'),
-                        scan_chars!(input, '4'),
-                        scan_chars!(input, '3', '9'),
-                        scan_chars!(input, '3', '8'),
-                        scan_chars!(input, '3', '7'),
-                        scan_chars!(input, '3', '6'),
-                        scan_chars!(input, '3', '5'),
-                        scan_chars!(input, '3', '4'),
-                        scan_chars!(input, '3', '3'),
-                        scan_chars!(input, '3', '1'),
-                        scan_chars!(input, '3', '0'),
-                        scan_chars!(input, '3'),
-                        scan_chars!(input, '2', '9'),
-                        scan_chars!(input, '2', '8'),
-                        scan_chars!(input, '2', '7'),
-                        scan_chars!(input, '2', '6'),
-                        scan_chars!(input, '2', '5'),
-                        scan_chars!(input, '2', '3'),
-                        scan_chars!(input, '2', '2'),
-                        scan_chars!(input, '2', '1'),
-                        scan_chars!(input, '2', '0'),
-                        scan_chars!(input, '2'),
-                        scan_chars!(input, '1', '9'),
-                        scan_chars!(input, '1', '8'),
-                        scan_chars!(input, '1', '7'),
-                        scan_chars!(input, '1', '5'),
-                        scan_chars!(input, '1', '4'),
-                        scan_chars!(input, '1', '3'),
-                        scan_chars!(input, '1', '2'),
-                        scan_chars!(input, '1', '1'),
-                        scan_chars!(input, '1', '0'),
-                        scan_chars!(input, '1'),
-                        scan_chars!(input, '0')
-                    )
-                )
-            } else {
-                false
+                KeywordScan::Absent
             }
         )
     }
 
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_hex_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_not_followed_by!(
+    #[inline]
+    fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
             input,
-            scan_sequence!(
-                scan_chars!(input, '0', 'x'),
-                scan_one_or_more!(input, self.hex_character(input))
-            ),
-            self.identifier_start(input)
+            ident,
+            if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved(TokenKind::FixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved(TokenKind::FixedKeyword)
+                } else {
+                    KeywordScan::Present(TokenKind::FixedKeyword)
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved(TokenKind::FixedKeyword)
+                } else {
+                    KeywordScan::Present(TokenKind::FixedKeyword)
+                }
+            } else {
+                KeywordScan::Absent
+            }
         )
     }
 
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier(&self, input: &mut ParserContext<'_>) -> bool {
-        self.raw_identifier(input)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
-            scan_sequence!(
+    #[inline]
+    fn int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if scan_sequence!(
                 scan_chars!(input, 'i', 'n', 't'),
                 scan_optional!(
                     input,
@@ -7847,23 +7162,799 @@ impl Language {
                         scan_chars!(input, '1', '0', '4')
                     )
                 )
-            )
-        } else {
-            false
-        }
+            ) {
+                KeywordScan::Reserved(TokenKind::IntKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
     }
 
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
+    #[inline]
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
             input,
-            if !self.version_is_at_least_0_7_1 {
-                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd')
+            ident,
+            if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
             } else {
-                false
+                KeywordScan::Absent
             },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ) {
+                KeywordScan::Reserved(TokenKind::UfixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                    scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                    scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                    scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                    scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                )
+            ) {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                } else {
+                    KeywordScan::Present(TokenKind::UfixedKeyword)
+                }
+            } else {
+                KeywordScan::Absent
+            },
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '7', '9'),
+                    scan_chars!(input, '7', '8'),
+                    scan_chars!(input, '7', '7'),
+                    scan_chars!(input, '7', '6'),
+                    scan_chars!(input, '7', '5'),
+                    scan_chars!(input, '7', '4'),
+                    scan_chars!(input, '7', '3'),
+                    scan_chars!(input, '7', '1'),
+                    scan_chars!(input, '7', '0'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6', '9'),
+                    scan_chars!(input, '6', '8'),
+                    scan_chars!(input, '6', '7'),
+                    scan_chars!(input, '6', '6'),
+                    scan_chars!(input, '6', '5'),
+                    scan_chars!(input, '6', '3'),
+                    scan_chars!(input, '6', '2'),
+                    scan_chars!(input, '6', '1'),
+                    scan_chars!(input, '6', '0'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5', '9'),
+                    scan_chars!(input, '5', '8'),
+                    scan_chars!(input, '5', '7'),
+                    scan_chars!(input, '5', '5'),
+                    scan_chars!(input, '5', '4'),
+                    scan_chars!(input, '5', '3'),
+                    scan_chars!(input, '5', '2'),
+                    scan_chars!(input, '5', '1'),
+                    scan_chars!(input, '5', '0'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4', '9'),
+                    scan_chars!(input, '4', '7'),
+                    scan_chars!(input, '4', '6'),
+                    scan_chars!(input, '4', '5'),
+                    scan_chars!(input, '4', '4'),
+                    scan_chars!(input, '4', '3'),
+                    scan_chars!(input, '4', '2'),
+                    scan_chars!(input, '4', '1'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '9'),
+                    scan_chars!(input, '3', '8'),
+                    scan_chars!(input, '3', '7'),
+                    scan_chars!(input, '3', '6'),
+                    scan_chars!(input, '3', '5'),
+                    scan_chars!(input, '3', '4'),
+                    scan_chars!(input, '3', '3'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1'),
+                    scan_chars!(input, '0')
+                )
+            ) {
+                if self.version_is_at_least_0_4_14 {
+                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                } else {
+                    KeywordScan::Present(TokenKind::UfixedKeyword)
+                }
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if scan_sequence!(
+                scan_chars!(input, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            ) {
+                KeywordScan::Reserved(TokenKind::UintKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7'),
+                            scan_chars!(input, '6'),
+                            scan_chars!(input, '5'),
+                            scan_chars!(input, '4'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '3', '1'),
+                            scan_chars!(input, '3', '0'),
+                            scan_chars!(input, '3'),
+                            scan_chars!(input, '2', '9'),
+                            scan_chars!(input, '2', '8'),
+                            scan_chars!(input, '2', '7'),
+                            scan_chars!(input, '2', '6'),
+                            scan_chars!(input, '2', '5'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3'),
+                            scan_chars!(input, '2', '2'),
+                            scan_chars!(input, '2', '1'),
+                            scan_chars!(input, '2', '0'),
+                            scan_chars!(input, '2'),
+                            scan_chars!(input, '1', '9'),
+                            scan_chars!(input, '1', '8'),
+                            scan_chars!(input, '1', '7'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5'),
+                            scan_chars!(input, '1', '4'),
+                            scan_chars!(input, '1', '3'),
+                            scan_chars!(input, '1', '2'),
+                            scan_chars!(input, '1', '1'),
+                            scan_chars!(input, '1', '0'),
+                            scan_chars!(input, '1')
+                        )
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulBytesKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'i', 'n', 't'),
+                    scan_optional!(
+                        input,
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
+                    )
+                )
+            {
+                KeywordScan::Reserved(TokenKind::YulIntKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
+    }
+
+    #[inline]
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+            } else {
+                KeywordScan::Absent
+            },
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
@@ -7905,11 +7996,13 @@ impl Language {
                         scan_chars!(input, '1', '6')
                     )
                 )
+            {
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
-                false
+                KeywordScan::Absent
             },
-            if !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
@@ -7960,11 +8053,14 @@ impl Language {
                         scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                     )
                 )
+            {
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
-                false
+                KeywordScan::Absent
             },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
+                && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
@@ -8025,11 +8121,14 @@ impl Language {
                         scan_chars!(input, '1', '8', '4', 'x', '8', '0')
                     )
                 )
+            {
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
-                false
+                KeywordScan::Absent
             },
-            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
-                scan_sequence!(
+            if self.version_is_at_least_0_4_14
+                && !self.version_is_at_least_0_7_1
+                && scan_sequence!(
                     scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
                     scan_choice!(
                         input,
@@ -8142,59 +8241,67 @@ impl Language {
                         scan_chars!(input, '0')
                     )
                 )
+            {
+                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
             } else {
-                false
+                KeywordScan::Absent
             }
         )
     }
 
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_7_1 {
-            scan_sequence!(
-                scan_chars!(input, 'u', 'i', 'n', 't'),
-                scan_optional!(
-                    input,
-                    scan_choice!(
+    #[inline]
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+        scan_keyword_choice!(
+            input,
+            ident,
+            if !self.version_is_at_least_0_7_1
+                && scan_sequence!(
+                    scan_chars!(input, 'u', 'i', 'n', 't'),
+                    scan_optional!(
                         input,
-                        scan_chars!(input, '9', '6'),
-                        scan_chars!(input, '8', '8'),
-                        scan_chars!(input, '8', '0'),
-                        scan_chars!(input, '8'),
-                        scan_chars!(input, '7', '2'),
-                        scan_chars!(input, '6', '4'),
-                        scan_chars!(input, '5', '6'),
-                        scan_chars!(input, '4', '8'),
-                        scan_chars!(input, '4', '0'),
-                        scan_chars!(input, '3', '2'),
-                        scan_chars!(input, '2', '5', '6'),
-                        scan_chars!(input, '2', '4', '8'),
-                        scan_chars!(input, '2', '4', '0'),
-                        scan_chars!(input, '2', '4'),
-                        scan_chars!(input, '2', '3', '2'),
-                        scan_chars!(input, '2', '2', '4'),
-                        scan_chars!(input, '2', '1', '6'),
-                        scan_chars!(input, '2', '0', '8'),
-                        scan_chars!(input, '2', '0', '0'),
-                        scan_chars!(input, '1', '9', '2'),
-                        scan_chars!(input, '1', '8', '4'),
-                        scan_chars!(input, '1', '7', '6'),
-                        scan_chars!(input, '1', '6', '8'),
-                        scan_chars!(input, '1', '6', '0'),
-                        scan_chars!(input, '1', '6'),
-                        scan_chars!(input, '1', '5', '2'),
-                        scan_chars!(input, '1', '4', '4'),
-                        scan_chars!(input, '1', '3', '6'),
-                        scan_chars!(input, '1', '2', '8'),
-                        scan_chars!(input, '1', '2', '0'),
-                        scan_chars!(input, '1', '1', '2'),
-                        scan_chars!(input, '1', '0', '4')
+                        scan_choice!(
+                            input,
+                            scan_chars!(input, '9', '6'),
+                            scan_chars!(input, '8', '8'),
+                            scan_chars!(input, '8', '0'),
+                            scan_chars!(input, '8'),
+                            scan_chars!(input, '7', '2'),
+                            scan_chars!(input, '6', '4'),
+                            scan_chars!(input, '5', '6'),
+                            scan_chars!(input, '4', '8'),
+                            scan_chars!(input, '4', '0'),
+                            scan_chars!(input, '3', '2'),
+                            scan_chars!(input, '2', '5', '6'),
+                            scan_chars!(input, '2', '4', '8'),
+                            scan_chars!(input, '2', '4', '0'),
+                            scan_chars!(input, '2', '4'),
+                            scan_chars!(input, '2', '3', '2'),
+                            scan_chars!(input, '2', '2', '4'),
+                            scan_chars!(input, '2', '1', '6'),
+                            scan_chars!(input, '2', '0', '8'),
+                            scan_chars!(input, '2', '0', '0'),
+                            scan_chars!(input, '1', '9', '2'),
+                            scan_chars!(input, '1', '8', '4'),
+                            scan_chars!(input, '1', '7', '6'),
+                            scan_chars!(input, '1', '6', '8'),
+                            scan_chars!(input, '1', '6', '0'),
+                            scan_chars!(input, '1', '6'),
+                            scan_chars!(input, '1', '5', '2'),
+                            scan_chars!(input, '1', '4', '4'),
+                            scan_chars!(input, '1', '3', '6'),
+                            scan_chars!(input, '1', '2', '8'),
+                            scan_chars!(input, '1', '2', '0'),
+                            scan_chars!(input, '1', '1', '2'),
+                            scan_chars!(input, '1', '0', '4')
+                        )
                     )
                 )
-            )
-        } else {
-            false
-        }
+            {
+                KeywordScan::Reserved(TokenKind::YulUintKeyword)
+            } else {
+                KeywordScan::Absent
+            }
+        )
     }
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
@@ -8514,773 +8621,26 @@ impl Lexer for Language {
     fn next_token<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-    ) -> Option<TokenKind> {
+    ) -> Option<ScannedToken> {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;
 
+        macro_rules! longest_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    if self.$function(input) && input.position() > furthest_position {
+                        furthest_position = input.position();
+
+                        longest_token = Some(TokenKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+
         match LexCtx::value() {
             LexicalContext::Default => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
-                if let Some(kind) = match input.next() {
-                    Some('a') => match input.next() {
-                        Some('b') => scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
-                            .then_some(TokenKind::AbstractKeyword),
-                        Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
-                            .then_some(TokenKind::AddressKeyword),
-                        Some('f') => {
-                            scan_chars!(input, 't', 'e', 'r').then_some(TokenKind::AfterKeyword)
-                        }
-                        Some('l') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'i', 'a', 's').then_some(TokenKind::AliasKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's')
-                            .then_some(TokenKind::AnonymousKeyword),
-                        Some('p') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'p', 'l', 'y').then_some(TokenKind::ApplyKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => match input.next() {
-                            Some('s') => scan_chars!(input, 'e', 'm', 'b', 'l', 'y')
-                                .then_some(TokenKind::AssemblyKeyword),
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::AsKeyword)
-                            }
-                            None => Some(TokenKind::AsKeyword),
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 't', 'o').then_some(TokenKind::AutoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('b') => match input.next() {
-                        Some('o') => scan_chars!(input, 'o', 'l').then_some(TokenKind::BoolKeyword),
-                        Some('r') => {
-                            scan_chars!(input, 'e', 'a', 'k').then_some(TokenKind::BreakKeyword)
-                        }
-                        Some('y') => scan_chars!(input, 't', 'e').then_some(TokenKind::ByteKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('c') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('l') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'l', 'd', 'a', 't', 'a')
-                                        .then_some(TokenKind::CallDataKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('s') => scan_chars!(input, 'e').then_some(TokenKind::CaseKeyword),
-                            Some('t') => {
-                                scan_chars!(input, 'c', 'h').then_some(TokenKind::CatchKeyword)
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => match input.next() {
-                            Some('n') => match input.next() {
-                                Some('s') => {
-                                    if scan_chars!(input, 't') {
-                                        match input.next() {
-                                            Some('a') => scan_chars!(input, 'n', 't')
-                                                .then_some(TokenKind::ConstantKeyword),
-                                            Some('r') => {
-                                                if self.version_is_at_least_0_4_22 {
-                                                    scan_chars!(input, 'u', 'c', 't', 'o', 'r')
-                                                        .then_some(TokenKind::ConstructorKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                None
-                                            }
-                                            None => None,
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'u', 'e')
-                                        .then_some(TokenKind::ContinueKeyword),
-                                    Some('r') => scan_chars!(input, 'a', 'c', 't')
-                                        .then_some(TokenKind::ContractKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('p') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'y', 'o', 'f')
-                                        .then_some(TokenKind::CopyOfKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('d') => match input.next() {
-                        Some('a') => scan_chars!(input, 'y', 's').then_some(TokenKind::DaysKeyword),
-                        Some('e') => match input.next() {
-                            Some('f') => match input.next() {
-                                Some('a') => scan_chars!(input, 'u', 'l', 't')
-                                    .then_some(TokenKind::DefaultKeyword),
-                                Some('i') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'n', 'e')
-                                            .then_some(TokenKind::DefineKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('l') => scan_chars!(input, 'e', 't', 'e')
-                                .then_some(TokenKind::DeleteKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => Some(TokenKind::DoKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('e') => match input.next() {
-                        Some('l') => scan_chars!(input, 's', 'e').then_some(TokenKind::ElseKeyword),
-                        Some('m') => {
-                            if self.version_is_at_least_0_4_21 {
-                                scan_chars!(input, 'i', 't').then_some(TokenKind::EmitKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => scan_chars!(input, 'u', 'm').then_some(TokenKind::EnumKeyword),
-                        Some('r') => {
-                            if self.version_is_at_least_0_8_4 {
-                                scan_chars!(input, 'r', 'o', 'r').then_some(TokenKind::ErrorKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            scan_chars!(input, 'h', 'e', 'r').then_some(TokenKind::EtherKeyword)
-                        }
-                        Some('v') => {
-                            scan_chars!(input, 'e', 'n', 't').then_some(TokenKind::EventKeyword)
-                        }
-                        Some('x') => scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
-                            .then_some(TokenKind::ExternalKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            if scan_chars!(input, 'l') {
-                                match input.next() {
-                                    Some('l') => {
-                                        if self.version_is_at_least_0_6_0 {
-                                            scan_chars!(input, 'b', 'a', 'c', 'k')
-                                                .then_some(TokenKind::FallbackKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('s') => {
-                                        scan_chars!(input, 'e').then_some(TokenKind::FalseKeyword)
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if scan_chars!(input, 'n') {
-                                match input.next() {
-                                    Some('a') => {
-                                        scan_chars!(input, 'l').then_some(TokenKind::FinalKeyword)
-                                    }
-                                    Some('n') => {
-                                        if !self.version_is_at_least_0_7_0 {
-                                            scan_chars!(input, 'e', 'y')
-                                                .then_some(TokenKind::FinneyKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::ForKeyword),
-                        Some('r') => scan_chars!(input, 'o', 'm').then_some(TokenKind::FromKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::FunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('g') => match input.next() {
-                        Some('l') => {
-                            if self.version_is_at_least_0_8_13 {
-                                scan_chars!(input, 'o', 'b', 'a', 'l')
-                                    .then_some(TokenKind::GlobalKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => {
-                            if self.version_is_at_least_0_6_11 {
-                                scan_chars!(input, 'e', 'i').then_some(TokenKind::GweiKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('h') => match input.next() {
-                        Some('e') => scan_chars!(input, 'x').then_some(TokenKind::HexKeyword),
-                        Some('o') => {
-                            scan_chars!(input, 'u', 'r', 's').then_some(TokenKind::HoursKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('i') => match input.next() {
-                        Some('f') => Some(TokenKind::IfKeyword),
-                        Some('m') => match input.next() {
-                            Some('m') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::ImmutableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => match input.next() {
-                                Some('l') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's')
-                                            .then_some(TokenKind::ImplementsKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('o') => {
-                                    scan_chars!(input, 'r', 't').then_some(TokenKind::ImportKeyword)
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('n') => match input.next() {
-                            Some('d') => scan_chars!(input, 'e', 'x', 'e', 'd')
-                                .then_some(TokenKind::IndexedKeyword),
-                            Some('l') => scan_chars!(input, 'i', 'n', 'e')
-                                .then_some(TokenKind::InlineKeyword),
-                            Some('t') => {
-                                if scan_chars!(input, 'e', 'r') {
-                                    match input.next() {
-                                        Some('f') => scan_chars!(input, 'a', 'c', 'e')
-                                            .then_some(TokenKind::InterfaceKeyword),
-                                        Some('n') => scan_chars!(input, 'a', 'l')
-                                            .then_some(TokenKind::InternalKeyword),
-                                        Some(_) => {
-                                            input.undo();
-                                            None
-                                        }
-                                        None => None,
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::InKeyword)
-                            }
-                            None => Some(TokenKind::InKeyword),
-                        },
-                        Some('s') => Some(TokenKind::IsKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('l') => match input.next() {
-                        Some('e') => scan_chars!(input, 't').then_some(TokenKind::LetKeyword),
-                        Some('i') => scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
-                            .then_some(TokenKind::LibraryKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('m') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('c') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'r', 'o').then_some(TokenKind::MacroKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => scan_chars!(input, 'p', 'i', 'n', 'g')
-                                .then_some(TokenKind::MappingKeyword),
-                            Some('t') => {
-                                scan_chars!(input, 'c', 'h').then_some(TokenKind::MatchKeyword)
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('e') => scan_chars!(input, 'm', 'o', 'r', 'y')
-                            .then_some(TokenKind::MemoryKeyword),
-                        Some('i') => scan_chars!(input, 'n', 'u', 't', 'e', 's')
-                            .then_some(TokenKind::MinutesKeyword),
-                        Some('o') => scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r')
-                            .then_some(TokenKind::ModifierKeyword),
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 't', 'a', 'b', 'l', 'e')
-                                    .then_some(TokenKind::MutableKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('n') => match input.next() {
-                        Some('e') => scan_chars!(input, 'w').then_some(TokenKind::NewKeyword),
-                        Some('u') => scan_chars!(input, 'l', 'l').then_some(TokenKind::NullKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('o') => match input.next() {
-                        Some('f') => Some(TokenKind::OfKeyword),
-                        Some('v') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
-                                    .then_some(TokenKind::OverrideKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('p') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('r') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 't', 'i', 'a', 'l')
-                                        .then_some(TokenKind::PartialKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('y') => scan_chars!(input, 'a', 'b', 'l', 'e')
-                                .then_some(TokenKind::PayableKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('r') => match input.next() {
-                            Some('a') => scan_chars!(input, 'g', 'm', 'a')
-                                .then_some(TokenKind::PragmaKeyword),
-                            Some('i') => scan_chars!(input, 'v', 'a', 't', 'e')
-                                .then_some(TokenKind::PrivateKeyword),
-                            Some('o') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'm', 'i', 's', 'e')
-                                        .then_some(TokenKind::PromiseKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => match input.next() {
-                            Some('b') => scan_chars!(input, 'l', 'i', 'c')
-                                .then_some(TokenKind::PublicKeyword),
-                            Some('r') => scan_chars!(input, 'e').then_some(TokenKind::PureKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('r') => {
-                        if scan_chars!(input, 'e') {
-                            match input.next() {
-                                Some('c') => {
-                                    if self.version_is_at_least_0_6_0 {
-                                        scan_chars!(input, 'e', 'i', 'v', 'e')
-                                            .then_some(TokenKind::ReceiveKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('f') => {
-                                    if self.version_is_at_least_0_5_0 {
-                                        scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')
-                                            .then_some(TokenKind::ReferenceKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('l') => {
-                                    scan_chars!(input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::RelocatableKeyword)
-                                }
-                                Some('t') => {
-                                    if scan_chars!(input, 'u', 'r', 'n') {
-                                        match input.next() {
-                                            Some('s') => Some(TokenKind::ReturnsKeyword),
-                                            Some(_) => {
-                                                input.undo();
-                                                Some(TokenKind::ReturnKeyword)
-                                            }
-                                            None => Some(TokenKind::ReturnKeyword),
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('v') => {
-                                    if self.version_is_at_least_0_8_4 {
-                                        scan_chars!(input, 'e', 'r', 't')
-                                            .then_some(TokenKind::RevertKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        } else {
-                            None
-                        }
-                    }
-                    Some('s') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(input, 'l', 'e', 'd')
-                                        .then_some(TokenKind::SealedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('c') => scan_chars!(input, 'o', 'n', 'd', 's')
-                                .then_some(TokenKind::SecondsKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'z', 'e', 'o', 'f')
-                                    .then_some(TokenKind::SizeOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            match input.next() {
-                                Some('a') => scan_chars!(input, 't', 'i', 'c')
-                                    .then_some(TokenKind::StaticKeyword),
-                                Some('o') => scan_chars!(input, 'r', 'a', 'g', 'e')
-                                    .then_some(TokenKind::StorageKeyword),
-                                Some('r') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'g')
-                                        .then_some(TokenKind::StringKeyword),
-                                    Some('u') => scan_chars!(input, 'c', 't')
-                                        .then_some(TokenKind::StructKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        }
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's')
-                                    .then_some(TokenKind::SupportsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => scan_chars!(input, 'i', 't', 'c', 'h')
-                            .then_some(TokenKind::SwitchKeyword),
-                        Some('z') => {
-                            if !self.version_is_at_least_0_7_0 {
-                                scan_chars!(input, 'a', 'b', 'o').then_some(TokenKind::SzaboKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('t') => match input.next() {
-                        Some('h') => {
-                            scan_chars!(input, 'r', 'o', 'w').then_some(TokenKind::ThrowKeyword)
-                        }
-                        Some('r') => match input.next() {
-                            Some('u') => scan_chars!(input, 'e').then_some(TokenKind::TrueKeyword),
-                            Some('y') => Some(TokenKind::TryKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('y') => {
-                            if scan_chars!(input, 'p', 'e') {
-                                match input.next() {
-                                    Some('d') => {
-                                        if self.version_is_at_least_0_5_0 {
-                                            scan_chars!(input, 'e', 'f')
-                                                .then_some(TokenKind::TypeDefKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('o') => {
-                                        scan_chars!(input, 'f').then_some(TokenKind::TypeOfKeyword)
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        Some(TokenKind::TypeKeyword)
-                                    }
-                                    None => Some(TokenKind::TypeKeyword),
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('u') => match input.next() {
-                        Some('n') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-                                    .then_some(TokenKind::UncheckedKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('s') => {
-                            scan_chars!(input, 'i', 'n', 'g').then_some(TokenKind::UsingKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('v') => match input.next() {
-                        Some('a') => scan_chars!(input, 'r').then_some(TokenKind::VarKeyword),
-                        Some('i') => match input.next() {
-                            Some('e') => scan_chars!(input, 'w').then_some(TokenKind::ViewKeyword),
-                            Some('r') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    scan_chars!(input, 't', 'u', 'a', 'l')
-                                        .then_some(TokenKind::VirtualKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('w') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('e') => {
-                                scan_chars!(input, 'k', 's').then_some(TokenKind::WeeksKeyword)
-                            }
-                            Some('i') => Some(TokenKind::WeiKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('h') => {
-                            scan_chars!(input, 'i', 'l', 'e').then_some(TokenKind::WhileKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('y') => {
-                        scan_chars!(input, 'e', 'a', 'r', 's').then_some(TokenKind::YearsKeyword)
-                    }
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
-
                 if let Some(kind) = match input.next() {
                     Some('!') => match input.next() {
                         Some('=') => Some(TokenKind::BangEqual),
@@ -9434,61 +8794,1244 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                        { AsciiStringLiteral = ascii_string_literal }
-                        { BytesKeyword = bytes_keyword }
-                        { DecimalLiteral = decimal_literal }
-                        { EndOfLine = end_of_line }
-                        { FixedKeyword = fixed_keyword }
-                        { HexLiteral = hex_literal }
-                        { HexStringLiteral = hex_string_literal }
-                        { IntKeyword = int_keyword }
-                        { MultilineComment = multiline_comment }
-                        { SingleLineComment = single_line_comment }
-                        { UfixedKeyword = ufixed_keyword }
-                        { UintKeyword = uint_keyword }
-                        { UnicodeStringLiteral = unicode_string_literal }
-                        { Whitespace = whitespace }
-                        { Identifier = identifier }
+                    { AsciiStringLiteral = ascii_string_literal }
+                    { DecimalLiteral = decimal_literal }
+                    { EndOfLine = end_of_line }
+                    { HexLiteral = hex_literal }
+                    { HexStringLiteral = hex_string_literal }
+                    { MultilineComment = multiline_comment }
+                    { SingleLineComment = single_line_comment }
+                    { UnicodeStringLiteral = unicode_string_literal }
+                    { Whitespace = whitespace }
+                }
+                // Make sure promotable identifiers are last so they don't grab other things
+                longest_match! {
+                    { Identifier = identifier }
+                }
+
+                // We have an identifier; we need to check if it's a keyword
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                {
+                    let kw_scan = match input.next() {
+                        Some('a') => match input.next() {
+                            Some('b') => {
+                                if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
+                                    KeywordScan::Reserved(TokenKind::AbstractKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('d') => {
+                                if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
+                                    KeywordScan::Reserved(TokenKind::AddressKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('f') => {
+                                if scan_chars!(input, 't', 'e', 'r') {
+                                    KeywordScan::Reserved(TokenKind::AfterKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('l') => {
+                                if scan_chars!(input, 'i', 'a', 's') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::AliasKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                                    KeywordScan::Reserved(TokenKind::AnonymousKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('p') => {
+                                if scan_chars!(input, 'p', 'l', 'y') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::ApplyKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('s') => match input.next() {
+                                Some('s') => {
+                                    if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
+                                        KeywordScan::Reserved(TokenKind::AssemblyKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Reserved(TokenKind::AsKeyword)
+                                }
+                                None => KeywordScan::Reserved(TokenKind::AsKeyword),
+                            },
+                            Some('u') => {
+                                if scan_chars!(input, 't', 'o') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::AutoKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('b') => match input.next() {
+                            Some('o') => {
+                                if scan_chars!(input, 'o', 'l') {
+                                    KeywordScan::Reserved(TokenKind::BoolKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => {
+                                if scan_chars!(input, 'e', 'a', 'k') {
+                                    KeywordScan::Reserved(TokenKind::BreakKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('y') => {
+                                if scan_chars!(input, 't', 'e') {
+                                    KeywordScan::Reserved(TokenKind::ByteKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('c') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('l') => {
+                                    if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::CallDataKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('s') => {
+                                    if scan_chars!(input, 'e') {
+                                        KeywordScan::Reserved(TokenKind::CaseKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'c', 'h') {
+                                        KeywordScan::Reserved(TokenKind::CatchKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('o') => match input.next() {
+                                Some('n') => match input.next() {
+                                    Some('s') => {
+                                        if scan_chars!(input, 't') {
+                                            match input.next() {
+                                                Some('a') => {
+                                                    if scan_chars!(input, 'n', 't') {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::ConstantKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                }
+                                                Some('r') => {
+                                                    if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
+                                                        if self.version_is_at_least_0_5_0 {
+                                                            KeywordScan::Reserved(
+                                                                TokenKind::ConstructorKeyword,
+                                                            )
+                                                        } else if self.version_is_at_least_0_4_22 {
+                                                            KeywordScan::Present(
+                                                                TokenKind::ConstructorKeyword,
+                                                            )
+                                                        } else {
+                                                            KeywordScan::Absent
+                                                        }
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                }
+                                                Some(_) => {
+                                                    input.undo();
+                                                    KeywordScan::Absent
+                                                }
+                                                None => KeywordScan::Absent,
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('t') => match input.next() {
+                                        Some('i') => {
+                                            if scan_chars!(input, 'n', 'u', 'e') {
+                                                KeywordScan::Reserved(TokenKind::ContinueKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('r') => {
+                                            if scan_chars!(input, 'a', 'c', 't') {
+                                                KeywordScan::Reserved(TokenKind::ContractKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    },
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some('p') => {
+                                    if scan_chars!(input, 'y', 'o', 'f') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::CopyOfKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('d') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'y', 's') {
+                                    KeywordScan::Reserved(TokenKind::DaysKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('e') => match input.next() {
+                                Some('f') => match input.next() {
+                                    Some('a') => {
+                                        if scan_chars!(input, 'u', 'l', 't') {
+                                            KeywordScan::Reserved(TokenKind::DefaultKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('i') => {
+                                        if scan_chars!(input, 'n', 'e') {
+                                            if self.version_is_at_least_0_5_0 {
+                                                KeywordScan::Reserved(TokenKind::DefineKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some('l') => {
+                                    if scan_chars!(input, 'e', 't', 'e') {
+                                        KeywordScan::Reserved(TokenKind::DeleteKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('o') => KeywordScan::Reserved(TokenKind::DoKeyword),
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('e') => match input.next() {
+                            Some('l') => {
+                                if scan_chars!(input, 's', 'e') {
+                                    KeywordScan::Reserved(TokenKind::ElseKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('m') => {
+                                if scan_chars!(input, 'i', 't') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::EmitKeyword)
+                                    } else if self.version_is_at_least_0_4_21 {
+                                        KeywordScan::Present(TokenKind::EmitKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(input, 'u', 'm') {
+                                    KeywordScan::Reserved(TokenKind::EnumKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => {
+                                if scan_chars!(input, 'r', 'o', 'r') {
+                                    if self.version_is_at_least_0_8_4 {
+                                        KeywordScan::Present(TokenKind::ErrorKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('t') => {
+                                if scan_chars!(input, 'h', 'e', 'r') {
+                                    KeywordScan::Reserved(TokenKind::EtherKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('v') => {
+                                if scan_chars!(input, 'e', 'n', 't') {
+                                    KeywordScan::Reserved(TokenKind::EventKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('x') => {
+                                if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
+                                    KeywordScan::Reserved(TokenKind::ExternalKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('f') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'l') {
+                                    match input.next() {
+                                        Some('l') => {
+                                            if scan_chars!(input, 'b', 'a', 'c', 'k') {
+                                                if self.version_is_at_least_0_6_0 {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::FallbackKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Present(TokenKind::FallbackKeyword)
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('s') => {
+                                            if scan_chars!(input, 'e') {
+                                                KeywordScan::Reserved(TokenKind::FalseKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'n') {
+                                    match input.next() {
+                                        Some('a') => {
+                                            if scan_chars!(input, 'l') {
+                                                KeywordScan::Reserved(TokenKind::FinalKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('n') => {
+                                            if scan_chars!(input, 'e', 'y') {
+                                                if !self.version_is_at_least_0_7_0 {
+                                                    KeywordScan::Reserved(TokenKind::FinneyKeyword)
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'r') {
+                                    KeywordScan::Reserved(TokenKind::ForKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => {
+                                if scan_chars!(input, 'o', 'm') {
+                                    if true {
+                                        KeywordScan::Present(TokenKind::FromKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
+                                    KeywordScan::Reserved(TokenKind::FunctionKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('g') => match input.next() {
+                            Some('l') => {
+                                if scan_chars!(input, 'o', 'b', 'a', 'l') {
+                                    if self.version_is_at_least_0_8_13 {
+                                        KeywordScan::Present(TokenKind::GlobalKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('w') => {
+                                if scan_chars!(input, 'e', 'i') {
+                                    if self.version_is_at_least_0_7_0 {
+                                        KeywordScan::Reserved(TokenKind::GweiKeyword)
+                                    } else if self.version_is_at_least_0_6_11 {
+                                        KeywordScan::Present(TokenKind::GweiKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('h') => match input.next() {
+                            Some('e') => {
+                                if scan_chars!(input, 'x') {
+                                    KeywordScan::Reserved(TokenKind::HexKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'u', 'r', 's') {
+                                    KeywordScan::Reserved(TokenKind::HoursKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('i') => match input.next() {
+                            Some('f') => KeywordScan::Reserved(TokenKind::IfKeyword),
+                            Some('m') => match input.next() {
+                                Some('m') => {
+                                    if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::ImmutableKeyword)
+                                        } else if self.version_is_at_least_0_6_5 {
+                                            KeywordScan::Present(TokenKind::ImmutableKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('p') => match input.next() {
+                                    Some('l') => {
+                                        if scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's') {
+                                            if self.version_is_at_least_0_5_0 {
+                                                KeywordScan::Reserved(TokenKind::ImplementsKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('o') => {
+                                        if scan_chars!(input, 'r', 't') {
+                                            KeywordScan::Reserved(TokenKind::ImportKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('n') => match input.next() {
+                                Some('d') => {
+                                    if scan_chars!(input, 'e', 'x', 'e', 'd') {
+                                        KeywordScan::Reserved(TokenKind::IndexedKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('l') => {
+                                    if scan_chars!(input, 'i', 'n', 'e') {
+                                        KeywordScan::Reserved(TokenKind::InlineKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'e', 'r') {
+                                        match input.next() {
+                                            Some('f') => {
+                                                if scan_chars!(input, 'a', 'c', 'e') {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::InterfaceKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some('n') => {
+                                                if scan_chars!(input, 'a', 'l') {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::InternalKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
+                                                KeywordScan::Absent
+                                            }
+                                            None => KeywordScan::Absent,
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Reserved(TokenKind::InKeyword)
+                                }
+                                None => KeywordScan::Reserved(TokenKind::InKeyword),
+                            },
+                            Some('s') => KeywordScan::Reserved(TokenKind::IsKeyword),
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('l') => match input.next() {
+                            Some('e') => {
+                                if scan_chars!(input, 't') {
+                                    KeywordScan::Reserved(TokenKind::LetKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
+                                    KeywordScan::Reserved(TokenKind::LibraryKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('m') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('c') => {
+                                    if scan_chars!(input, 'r', 'o') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::MacroKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('p') => {
+                                    if scan_chars!(input, 'p', 'i', 'n', 'g') {
+                                        KeywordScan::Reserved(TokenKind::MappingKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'c', 'h') {
+                                        KeywordScan::Reserved(TokenKind::MatchKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('e') => {
+                                if scan_chars!(input, 'm', 'o', 'r', 'y') {
+                                    KeywordScan::Reserved(TokenKind::MemoryKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
+                                    KeywordScan::Reserved(TokenKind::MinutesKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
+                                    KeywordScan::Reserved(TokenKind::ModifierKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 't', 'a', 'b', 'l', 'e') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::MutableKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('n') => match input.next() {
+                            Some('e') => {
+                                if scan_chars!(input, 'w') {
+                                    KeywordScan::Reserved(TokenKind::NewKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 'l', 'l') {
+                                    KeywordScan::Reserved(TokenKind::NullKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('o') => match input.next() {
+                            Some('f') => KeywordScan::Reserved(TokenKind::OfKeyword),
+                            Some('v') => {
+                                if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::OverrideKeyword)
+                                    } else {
+                                        KeywordScan::Present(TokenKind::OverrideKeyword)
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('p') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('r') => {
+                                    if scan_chars!(input, 't', 'i', 'a', 'l') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::PartialKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('y') => {
+                                    if scan_chars!(input, 'a', 'b', 'l', 'e') {
+                                        KeywordScan::Reserved(TokenKind::PayableKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('r') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'g', 'm', 'a') {
+                                        KeywordScan::Reserved(TokenKind::PragmaKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('i') => {
+                                    if scan_chars!(input, 'v', 'a', 't', 'e') {
+                                        KeywordScan::Reserved(TokenKind::PrivateKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('o') => {
+                                    if scan_chars!(input, 'm', 'i', 's', 'e') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::PromiseKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('u') => match input.next() {
+                                Some('b') => {
+                                    if scan_chars!(input, 'l', 'i', 'c') {
+                                        KeywordScan::Reserved(TokenKind::PublicKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 'e') {
+                                        KeywordScan::Reserved(TokenKind::PureKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('r') => {
+                            if scan_chars!(input, 'e') {
+                                match input.next() {
+                                    Some('c') => {
+                                        if scan_chars!(input, 'e', 'i', 'v', 'e') {
+                                            if self.version_is_at_least_0_6_0 {
+                                                KeywordScan::Reserved(TokenKind::ReceiveKeyword)
+                                            } else {
+                                                KeywordScan::Present(TokenKind::ReceiveKeyword)
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('f') => {
+                                        if scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e') {
+                                            if self.version_is_at_least_0_5_0 {
+                                                KeywordScan::Reserved(TokenKind::ReferenceKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('l') => {
+                                        if scan_chars!(
+                                            input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
+                                        ) {
+                                            KeywordScan::Reserved(TokenKind::RelocatableKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('t') => {
+                                        if scan_chars!(input, 'u', 'r', 'n') {
+                                            match input.next() {
+                                                Some('s') => {
+                                                    KeywordScan::Reserved(TokenKind::ReturnsKeyword)
+                                                }
+                                                Some(_) => {
+                                                    input.undo();
+                                                    KeywordScan::Reserved(TokenKind::ReturnKeyword)
+                                                }
+                                                None => {
+                                                    KeywordScan::Reserved(TokenKind::ReturnKeyword)
+                                                }
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('v') => {
+                                        if scan_chars!(input, 'e', 'r', 't') {
+                                            if self.version_is_at_least_0_8_4 {
+                                                KeywordScan::Present(TokenKind::RevertKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('s') => match input.next() {
+                            Some('e') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'l', 'e', 'd') {
+                                        if self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Reserved(TokenKind::SealedKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('c') => {
+                                    if scan_chars!(input, 'o', 'n', 'd', 's') {
+                                        KeywordScan::Reserved(TokenKind::SecondsKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('i') => {
+                                if scan_chars!(input, 'z', 'e', 'o', 'f') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::SizeOfKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('t') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 't', 'i', 'c') {
+                                        KeywordScan::Reserved(TokenKind::StaticKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('o') => {
+                                    if scan_chars!(input, 'r', 'a', 'g', 'e') {
+                                        KeywordScan::Reserved(TokenKind::StorageKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => match input.next() {
+                                    Some('i') => {
+                                        if scan_chars!(input, 'n', 'g') {
+                                            KeywordScan::Reserved(TokenKind::StringKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('u') => {
+                                        if scan_chars!(input, 'c', 't') {
+                                            KeywordScan::Reserved(TokenKind::StructKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('u') => {
+                                if scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::SupportsKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('w') => {
+                                if scan_chars!(input, 'i', 't', 'c', 'h') {
+                                    KeywordScan::Reserved(TokenKind::SwitchKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('z') => {
+                                if scan_chars!(input, 'a', 'b', 'o') {
+                                    if !self.version_is_at_least_0_7_0 {
+                                        KeywordScan::Reserved(TokenKind::SzaboKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('t') => match input.next() {
+                            Some('h') => {
+                                if scan_chars!(input, 'r', 'o', 'w') {
+                                    KeywordScan::Reserved(TokenKind::ThrowKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => match input.next() {
+                                Some('u') => {
+                                    if scan_chars!(input, 'e') {
+                                        KeywordScan::Reserved(TokenKind::TrueKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('y') => KeywordScan::Reserved(TokenKind::TryKeyword),
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('y') => {
+                                if scan_chars!(input, 'p', 'e') {
+                                    match input.next() {
+                                        Some('d') => {
+                                            if scan_chars!(input, 'e', 'f') {
+                                                if self.version_is_at_least_0_5_0 {
+                                                    KeywordScan::Reserved(TokenKind::TypeDefKeyword)
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('o') => {
+                                            if scan_chars!(input, 'f') {
+                                                KeywordScan::Reserved(TokenKind::TypeOfKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Reserved(TokenKind::TypeKeyword)
+                                        }
+                                        None => KeywordScan::Reserved(TokenKind::TypeKeyword),
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('u') => match input.next() {
+                            Some('n') => {
+                                if scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                                    if self.version_is_at_least_0_5_0 {
+                                        KeywordScan::Reserved(TokenKind::UncheckedKeyword)
+                                    } else if self.version_is_at_least_0_8_0 {
+                                        KeywordScan::Present(TokenKind::UncheckedKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('s') => {
+                                if scan_chars!(input, 'i', 'n', 'g') {
+                                    KeywordScan::Reserved(TokenKind::UsingKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('v') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'r') {
+                                    KeywordScan::Reserved(TokenKind::VarKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => match input.next() {
+                                Some('e') => {
+                                    if scan_chars!(input, 'w') {
+                                        KeywordScan::Reserved(TokenKind::ViewKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 't', 'u', 'a', 'l') {
+                                        if self.version_is_at_least_0_6_0 {
+                                            KeywordScan::Reserved(TokenKind::VirtualKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('w') => match input.next() {
+                            Some('e') => match input.next() {
+                                Some('e') => {
+                                    if scan_chars!(input, 'k', 's') {
+                                        KeywordScan::Reserved(TokenKind::WeeksKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('i') => KeywordScan::Reserved(TokenKind::WeiKeyword),
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('h') => {
+                                if scan_chars!(input, 'i', 'l', 'e') {
+                                    KeywordScan::Reserved(TokenKind::WhileKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('y') => {
+                            if scan_chars!(input, 'e', 'a', 'r', 's') {
+                                KeywordScan::Reserved(TokenKind::YearsKeyword)
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            KeywordScan::Absent
+                        }
+                        None => KeywordScan::Absent,
+                    };
+                    let kw_scan = match kw_scan {
+                        // Strict prefix; we need to match the whole identifier to promote
+                        _ if input.position() < furthest_position => KeywordScan::Absent,
+                        value => value,
+                    };
+
+                    // Perf: only scan for a compound keyword if we didn't already find one
+                    let mut kw_scan = kw_scan;
+                    if kw_scan == KeywordScan::Absent {
+                        input.set_position(save);
+
+                        // TODO: Don't allocate a string here
+                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                        for keyword_compound_scanner in [
+                            Self::bytes_keyword,
+                            Self::fixed_keyword,
+                            Self::int_keyword,
+                            Self::ufixed_keyword,
+                            Self::uint_keyword,
+                        ] {
+                            match keyword_compound_scanner(self, input, &ident_value) {
+                                _ if input.position() < furthest_position => { /* Strict prefix */ }
+                                KeywordScan::Absent => {}
+                                value => kw_scan = value,
+                            }
+                            input.set_position(save);
+                        }
+                    }
+
+                    input.set_position(furthest_position);
+                    return Some(ScannedToken::IdentifierOrKeyword {
+                        identifier,
+                        kw: kw_scan,
+                    });
                 }
             }
             LexicalContext::Pragma => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
-
-                if let Some(kind) = match input.next() {
-                    Some('a') => scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r')
-                        .then_some(TokenKind::AbicoderKeyword),
-                    Some('e') => {
-                        scan_chars!(input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
-                            .then_some(TokenKind::ExperimentalKeyword)
-                    }
-                    Some('p') => scan_chars!(input, 'r', 'a', 'g', 'm', 'a')
-                        .then_some(TokenKind::PragmaKeyword),
-                    Some('s') => scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y')
-                        .then_some(TokenKind::SolidityKeyword),
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
-
                 if let Some(kind) = match input.next() {
                     Some('-') => Some(TokenKind::Minus),
                     Some('.') => Some(TokenKind::Period),
@@ -9511,7 +10054,13 @@ impl Lexer for Language {
                         None => Some(TokenKind::GreaterThan),
                     },
                     Some('^') => Some(TokenKind::Caret),
-                    Some('|') => scan_chars!(input, '|').then_some(TokenKind::BarBar),
+                    Some('|') => {
+                        if scan_chars!(input, '|') {
+                            Some(TokenKind::BarBar)
+                        } else {
+                            None
+                        }
+                    }
                     Some('~') => Some(TokenKind::Tilde),
                     Some(_) => {
                         input.undo();
@@ -9525,1138 +10074,88 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                        { AsciiStringLiteral = ascii_string_literal }
-                        { VersionPragmaValue = version_pragma_value }
-                        { Identifier = identifier }
+                    { AsciiStringLiteral = ascii_string_literal }
+                    { VersionPragmaValue = version_pragma_value }
                 }
-            }
-            LexicalContext::Yul => {
-                macro_rules! longest_match {
-                        ($( { $kind:ident = $function:ident } )*) => {
-                            $(
-                                if self.$function(input) && input.position() > furthest_position {
-                                    furthest_position = input.position();
-                                    longest_token = Some(TokenKind::$kind);
-                                }
-                                input.set_position(save);
-                            )*
-                        };
-                    }
+                // Make sure promotable identifiers are last so they don't grab other things
+                longest_match! {
+                    { Identifier = identifier }
+                }
 
-                if let Some(kind) = match input.next() {
-                    Some('a') => match input.next() {
-                        Some('b') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
-                                    .then_some(TokenKind::YulAbstractKeyword)
+                // We have an identifier; we need to check if it's a keyword
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                {
+                    let kw_scan = match input.next() {
+                        Some('a') => {
+                            if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
+                                KeywordScan::Reserved(TokenKind::AbicoderKeyword)
                             } else {
-                                None
+                                KeywordScan::Absent
                             }
                         }
-                        Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
-                            .then_some(TokenKind::YulAddressKeyword),
-                        Some('f') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'e', 'r')
-                                    .then_some(TokenKind::YulAfterKeyword)
+                        Some('e') => {
+                            if scan_chars!(
+                                input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
+                            ) {
+                                KeywordScan::Reserved(TokenKind::ExperimentalKeyword)
                             } else {
-                                None
-                            }
-                        }
-                        Some('l') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'a', 's')
-                                    .then_some(TokenKind::YulAliasKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's')
-                                    .then_some(TokenKind::YulAnonymousKeyword)
-                            } else {
-                                None
+                                KeywordScan::Absent
                             }
                         }
                         Some('p') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'p', 'l', 'y')
-                                    .then_some(TokenKind::YulApplyKeyword)
+                            if scan_chars!(input, 'r', 'a', 'g', 'm', 'a') {
+                                KeywordScan::Reserved(TokenKind::PragmaKeyword)
                             } else {
-                                None
-                            }
-                        }
-                        Some('s') => match input.next() {
-                            Some('s') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 'm', 'b', 'l', 'y')
-                                        .then_some(TokenKind::YulAssemblyKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulAsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            None => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulAsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'o').then_some(TokenKind::YulAutoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('b') => match input.next() {
-                        Some('o') => {
-                            if !self.version_is_at_least_0_5_10 {
-                                scan_chars!(input, 'o', 'l').then_some(TokenKind::YulBoolKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('r') => {
-                            scan_chars!(input, 'e', 'a', 'k').then_some(TokenKind::YulBreakKeyword)
-                        }
-                        Some('y') => {
-                            scan_chars!(input, 't', 'e').then_some(TokenKind::YulByteKeyword)
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('c') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('l') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'l', 'd', 'a', 't', 'a')
-                                        .then_some(TokenKind::YulCallDataKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('s') => {
-                                scan_chars!(input, 'e').then_some(TokenKind::YulCaseKeyword)
-                            }
-                            Some('t') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'c', 'h')
-                                        .then_some(TokenKind::YulCatchKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => match input.next() {
-                            Some('n') => match input.next() {
-                                Some('s') => {
-                                    if scan_chars!(input, 't') {
-                                        match input.next() {
-                                            Some('a') => {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    scan_chars!(input, 'n', 't')
-                                                        .then_some(TokenKind::YulConstantKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some('r') => {
-                                                if self.version_is_at_least_0_5_0
-                                                    && !self.version_is_at_least_0_7_1
-                                                {
-                                                    scan_chars!(input, 'u', 'c', 't', 'o', 'r')
-                                                        .then_some(TokenKind::YulConstructorKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                None
-                                            }
-                                            None => None,
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => match input.next() {
-                                    Some('i') => scan_chars!(input, 'n', 'u', 'e')
-                                        .then_some(TokenKind::YulContinueKeyword),
-                                    Some('r') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'a', 'c', 't')
-                                                .then_some(TokenKind::YulContractKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                },
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('p') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'y', 'o', 'f')
-                                        .then_some(TokenKind::YulCopyOfKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('d') => match input.next() {
-                        Some('a') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'y', 's').then_some(TokenKind::YulDaysKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('e') => match input.next() {
-                            Some('f') => match input.next() {
-                                Some('a') => scan_chars!(input, 'u', 'l', 't')
-                                    .then_some(TokenKind::YulDefaultKeyword),
-                                Some('i') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'n', 'e')
-                                            .then_some(TokenKind::YulDefineKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some('l') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 't', 'e')
-                                        .then_some(TokenKind::YulDeleteKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulDoKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('e') => match input.next() {
-                        Some('l') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 's', 'e').then_some(TokenKind::YulElseKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('m') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 't').then_some(TokenKind::YulEmitKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('n') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'u', 'm').then_some(TokenKind::YulEnumKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'h', 'e', 'r')
-                                    .then_some(TokenKind::YulEtherKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('v') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'e', 'n', 't')
-                                    .then_some(TokenKind::YulEventKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('x') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
-                                    .then_some(TokenKind::YulExternalKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            if scan_chars!(input, 'l') {
-                                match input.next() {
-                                    Some('l') => {
-                                        if self.version_is_at_least_0_6_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            scan_chars!(input, 'b', 'a', 'c', 'k')
-                                                .then_some(TokenKind::YulFallbackKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('s') => scan_chars!(input, 'e')
-                                        .then_some(TokenKind::YulFalseKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if scan_chars!(input, 'n') {
-                                match input.next() {
-                                    Some('a') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'l')
-                                                .then_some(TokenKind::YulFinalKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('n') => {
-                                        if !self.version_is_at_least_0_7_0 {
-                                            scan_chars!(input, 'e', 'y')
-                                                .then_some(TokenKind::YulFinneyKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::YulForKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::YulFunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('g') => {
-                        if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
-                            scan_chars!(input, 'w', 'e', 'i').then_some(TokenKind::YulGweiKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('h') => match input.next() {
-                        Some('e') => scan_chars!(input, 'x').then_some(TokenKind::YulHexKeyword),
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'u', 'r', 's')
-                                    .then_some(TokenKind::YulHoursKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('i') => match input.next() {
-                        Some('f') => Some(TokenKind::YulIfKeyword),
-                        Some('m') => match input.next() {
-                            Some('m') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::YulImmutableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => match input.next() {
-                                Some('l') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's')
-                                            .then_some(TokenKind::YulImplementsKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('o') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'r', 't')
-                                            .then_some(TokenKind::YulImportKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('n') => match input.next() {
-                            Some('d') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e', 'x', 'e', 'd')
-                                        .then_some(TokenKind::YulIndexedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('l') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'i', 'n', 'e')
-                                        .then_some(TokenKind::YulInlineKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => {
-                                if scan_chars!(input, 'e', 'r') {
-                                    match input.next() {
-                                        Some('f') => {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                scan_chars!(input, 'a', 'c', 'e')
-                                                    .then_some(TokenKind::YulInterfaceKeyword)
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some('n') => {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                scan_chars!(input, 'a', 'l')
-                                                    .then_some(TokenKind::YulInternalKeyword)
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            None
-                                        }
-                                        None => None,
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                if !self.version_is_at_least_0_6_8 {
-                                    Some(TokenKind::YulInKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            None => {
-                                if !self.version_is_at_least_0_6_8 {
-                                    Some(TokenKind::YulInKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                        },
-                        Some('s') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulIsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('l') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    scan_chars!(input, 'v', 'e')
-                                        .then_some(TokenKind::YulLeaveKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => Some(TokenKind::YulLetKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
-                                    .then_some(TokenKind::YulLibraryKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('m') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('c') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'r', 'o')
-                                        .then_some(TokenKind::YulMacroKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('p') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'p', 'i', 'n', 'g')
-                                        .then_some(TokenKind::YulMappingKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'c', 'h')
-                                        .then_some(TokenKind::YulMatchKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('e') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'm', 'o', 'r', 'y')
-                                    .then_some(TokenKind::YulMemoryKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'n', 'u', 't', 'e', 's')
-                                    .then_some(TokenKind::YulMinutesKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r')
-                                    .then_some(TokenKind::YulModifierKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 't', 'a', 'b', 'l', 'e')
-                                    .then_some(TokenKind::YulMutableKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('n') => match input.next() {
-                        Some('e') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'w').then_some(TokenKind::YulNewKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('u') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'l', 'l').then_some(TokenKind::YulNullKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('o') => match input.next() {
-                        Some('f') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                Some(TokenKind::YulOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('v') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
-                                    .then_some(TokenKind::YulOverrideKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('p') => match input.next() {
-                        Some('a') => match input.next() {
-                            Some('r') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 't', 'i', 'a', 'l')
-                                        .then_some(TokenKind::YulPartialKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('y') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'a', 'b', 'l', 'e')
-                                        .then_some(TokenKind::YulPayableKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('r') => match input.next() {
-                            Some('a') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'g', 'm', 'a')
-                                        .then_some(TokenKind::YulPragmaKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('i') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'v', 'a', 't', 'e')
-                                        .then_some(TokenKind::YulPrivateKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('o') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'm', 'i', 's', 'e')
-                                        .then_some(TokenKind::YulPromiseKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => match input.next() {
-                            Some('b') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'l', 'i', 'c')
-                                        .then_some(TokenKind::YulPublicKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'e').then_some(TokenKind::YulPureKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('r') => {
-                        if scan_chars!(input, 'e') {
-                            match input.next() {
-                                Some('c') => {
-                                    if self.version_is_at_least_0_6_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'i', 'v', 'e')
-                                            .then_some(TokenKind::YulReceiveKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('f') => {
-                                    if self.version_is_at_least_0_5_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')
-                                            .then_some(TokenKind::YulReferenceKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('l') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                                            .then_some(TokenKind::YulRelocatableKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('t') => {
-                                    if scan_chars!(input, 'u', 'r', 'n') {
-                                        match input.next() {
-                                            Some('s') => {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    Some(TokenKind::YulReturnsKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                Some(TokenKind::YulReturnKeyword)
-                                            }
-                                            None => Some(TokenKind::YulReturnKeyword),
-                                        }
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('v') => scan_chars!(input, 'e', 'r', 't')
-                                    .then_some(TokenKind::YulRevertKeyword),
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        } else {
-                            None
-                        }
-                    }
-                    Some('s') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 'l', 'e', 'd')
-                                        .then_some(TokenKind::YulSealedKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('c') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'o', 'n', 'd', 's')
-                                        .then_some(TokenKind::YulSecondsKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('i') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'z', 'e', 'o', 'f')
-                                    .then_some(TokenKind::YulSizeOfKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => match input.next() {
-                            Some('a') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 't', 'i', 'c')
-                                        .then_some(TokenKind::YulStaticKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('o') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'r', 'a', 'g', 'e')
-                                        .then_some(TokenKind::YulStorageKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => match input.next() {
-                                Some('i') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'n', 'g')
-                                            .then_some(TokenKind::YulStringKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('u') => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        scan_chars!(input, 'c', 't')
-                                            .then_some(TokenKind::YulStructKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('u') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's')
-                                    .then_some(TokenKind::YulSupportsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('w') => scan_chars!(input, 'i', 't', 'c', 'h')
-                            .then_some(TokenKind::YulSwitchKeyword),
-                        Some('z') => {
-                            if !self.version_is_at_least_0_7_0 {
-                                scan_chars!(input, 'a', 'b', 'o')
-                                    .then_some(TokenKind::YulSzaboKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('t') => match input.next() {
-                        Some('h') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'r', 'o', 'w')
-                                    .then_some(TokenKind::YulThrowKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('r') => match input.next() {
-                            Some('u') => {
-                                scan_chars!(input, 'e').then_some(TokenKind::YulTrueKeyword)
-                            }
-                            Some('y') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulTryKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('y') => {
-                            if scan_chars!(input, 'p', 'e') {
-                                match input.next() {
-                                    Some('d') => {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            scan_chars!(input, 'e', 'f')
-                                                .then_some(TokenKind::YulTypeDefKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some('o') => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            scan_chars!(input, 'f')
-                                                .then_some(TokenKind::YulTypeOfKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        if !self.version_is_at_least_0_7_1 {
-                                            Some(TokenKind::YulTypeKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    None => {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            Some(TokenKind::YulTypeKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('u') => match input.next() {
-                        Some('n') => {
-                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-                                    .then_some(TokenKind::YulUncheckedKeyword)
-                            } else {
-                                None
+                                KeywordScan::Absent
                             }
                         }
                         Some('s') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'n', 'g')
-                                    .then_some(TokenKind::YulUsingKeyword)
+                            if scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y') {
+                                KeywordScan::Reserved(TokenKind::SolidityKeyword)
                             } else {
-                                None
+                                KeywordScan::Absent
                             }
                         }
                         Some(_) => {
                             input.undo();
-                            None
+                            KeywordScan::Absent
                         }
-                        None => None,
-                    },
-                    Some('v') => match input.next() {
-                        Some('a') => {
-                            if !self.version_is_at_least_0_6_5 {
-                                scan_chars!(input, 'r').then_some(TokenKind::YulVarKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('i') => match input.next() {
-                            Some('e') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'w').then_some(TokenKind::YulViewKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('r') => {
-                                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
-                                {
-                                    scan_chars!(input, 't', 'u', 'a', 'l')
-                                        .then_some(TokenKind::YulVirtualKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('w') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('e') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    scan_chars!(input, 'k', 's')
-                                        .then_some(TokenKind::YulWeeksKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('i') => {
-                                if !self.version_is_at_least_0_7_1 {
-                                    Some(TokenKind::YulWeiKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some('h') => {
-                            if !self.version_is_at_least_0_7_1 {
-                                scan_chars!(input, 'i', 'l', 'e')
-                                    .then_some(TokenKind::YulWhileKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('y') => {
-                        if !self.version_is_at_least_0_7_1 {
-                            scan_chars!(input, 'e', 'a', 'r', 's')
-                                .then_some(TokenKind::YulYearsKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some(_) => {
-                        input.undo();
-                        None
-                    }
-                    None => None,
-                } {
-                    // Make sure that this is not the start of an identifier
-                    if !self.identifier_part(input) {
-                        furthest_position = input.position();
-                        longest_token = Some(kind);
-                    }
-                }
-                input.set_position(save);
+                        None => KeywordScan::Absent,
+                    };
+                    let kw_scan = match kw_scan {
+                        // Strict prefix; we need to match the whole identifier to promote
+                        _ if input.position() < furthest_position => KeywordScan::Absent,
+                        value => value,
+                    };
 
+                    input.set_position(furthest_position);
+                    return Some(ScannedToken::IdentifierOrKeyword {
+                        identifier,
+                        kw: kw_scan,
+                    });
+                }
+            }
+            LexicalContext::Yul => {
                 if let Some(kind) = match input.next() {
                     Some('(') => Some(TokenKind::OpenParen),
                     Some(')') => Some(TokenKind::CloseParen),
                     Some(',') => Some(TokenKind::Comma),
-                    Some('-') => scan_chars!(input, '>').then_some(TokenKind::MinusGreaterThan),
+                    Some('-') => {
+                        if scan_chars!(input, '>') {
+                            Some(TokenKind::MinusGreaterThan)
+                        } else {
+                            None
+                        }
+                    }
                     Some('.') => Some(TokenKind::Period),
-                    Some(':') => scan_chars!(input, '=').then_some(TokenKind::ColonEqual),
+                    Some(':') => {
+                        if scan_chars!(input, '=') {
+                            Some(TokenKind::ColonEqual)
+                        } else {
+                            None
+                        }
+                    }
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some(_) => {
@@ -10671,31 +10170,1537 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                        { AsciiStringLiteral = ascii_string_literal }
-                        { HexStringLiteral = hex_string_literal }
-                        { YulBytesKeyword = yul_bytes_keyword }
-                        { YulDecimalLiteral = yul_decimal_literal }
-                        { YulFixedKeyword = yul_fixed_keyword }
-                        { YulHexLiteral = yul_hex_literal }
-                        { YulIdentifier = yul_identifier }
-                        { YulIntKeyword = yul_int_keyword }
-                        { YulUfixedKeyword = yul_ufixed_keyword }
-                        { YulUintKeyword = yul_uint_keyword }
+                    { AsciiStringLiteral = ascii_string_literal }
+                    { HexStringLiteral = hex_string_literal }
+                    { YulDecimalLiteral = yul_decimal_literal }
+                    { YulHexLiteral = yul_hex_literal }
+                }
+                // Make sure promotable identifiers are last so they don't grab other things
+                longest_match! {
+                    { YulIdentifier = yul_identifier }
+                }
+
+                // We have an identifier; we need to check if it's a keyword
+                if let Some(identifier) =
+                    longest_token.filter(|tok| [TokenKind::YulIdentifier].contains(tok))
+                {
+                    let kw_scan = match input.next() {
+                        Some('a') => match input.next() {
+                            Some('b') => {
+                                if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulAbstractKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('d') => {
+                                if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
+                                    KeywordScan::Reserved(TokenKind::YulAddressKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('f') => {
+                                if scan_chars!(input, 't', 'e', 'r') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulAfterKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('l') => {
+                                if scan_chars!(input, 'i', 'a', 's') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulAliasKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulAnonymousKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('p') => {
+                                if scan_chars!(input, 'p', 'l', 'y') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulApplyKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('s') => match input.next() {
+                                Some('s') => {
+                                    if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulAssemblyKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulAsKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                None => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulAsKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                            },
+                            Some('u') => {
+                                if scan_chars!(input, 't', 'o') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulAutoKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('b') => match input.next() {
+                            Some('o') => {
+                                if scan_chars!(input, 'o', 'l') {
+                                    if !self.version_is_at_least_0_5_10 {
+                                        KeywordScan::Reserved(TokenKind::YulBoolKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => {
+                                if scan_chars!(input, 'e', 'a', 'k') {
+                                    KeywordScan::Reserved(TokenKind::YulBreakKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('y') => {
+                                if scan_chars!(input, 't', 'e') {
+                                    KeywordScan::Reserved(TokenKind::YulByteKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('c') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('l') => {
+                                    if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulCallDataKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('s') => {
+                                    if scan_chars!(input, 'e') {
+                                        KeywordScan::Reserved(TokenKind::YulCaseKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'c', 'h') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulCatchKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('o') => match input.next() {
+                                Some('n') => match input.next() {
+                                    Some('s') => {
+                                        if scan_chars!(input, 't') {
+                                            match input.next() {
+                                                Some('a') => {
+                                                    if scan_chars!(input, 'n', 't') {
+                                                        if !self.version_is_at_least_0_7_1 {
+                                                            KeywordScan::Reserved(
+                                                                TokenKind::YulConstantKeyword,
+                                                            )
+                                                        } else {
+                                                            KeywordScan::Absent
+                                                        }
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                }
+                                                Some('r') => {
+                                                    if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
+                                                        if self.version_is_at_least_0_5_0
+                                                            && !self.version_is_at_least_0_7_1
+                                                        {
+                                                            KeywordScan::Reserved(
+                                                                TokenKind::YulConstructorKeyword,
+                                                            )
+                                                        } else {
+                                                            KeywordScan::Absent
+                                                        }
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                }
+                                                Some(_) => {
+                                                    input.undo();
+                                                    KeywordScan::Absent
+                                                }
+                                                None => KeywordScan::Absent,
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('t') => match input.next() {
+                                        Some('i') => {
+                                            if scan_chars!(input, 'n', 'u', 'e') {
+                                                KeywordScan::Reserved(TokenKind::YulContinueKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('r') => {
+                                            if scan_chars!(input, 'a', 'c', 't') {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulContractKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    },
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some('p') => {
+                                    if scan_chars!(input, 'y', 'o', 'f') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulCopyOfKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('d') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'y', 's') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulDaysKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('e') => match input.next() {
+                                Some('f') => match input.next() {
+                                    Some('a') => {
+                                        if scan_chars!(input, 'u', 'l', 't') {
+                                            KeywordScan::Reserved(TokenKind::YulDefaultKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('i') => {
+                                        if scan_chars!(input, 'n', 'e') {
+                                            if self.version_is_at_least_0_5_0
+                                                && !self.version_is_at_least_0_7_1
+                                            {
+                                                KeywordScan::Reserved(TokenKind::YulDefineKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some('l') => {
+                                    if scan_chars!(input, 'e', 't', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulDeleteKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('o') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    KeywordScan::Reserved(TokenKind::YulDoKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('e') => match input.next() {
+                            Some('l') => {
+                                if scan_chars!(input, 's', 'e') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulElseKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('m') => {
+                                if scan_chars!(input, 'i', 't') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulEmitKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(input, 'u', 'm') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulEnumKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('t') => {
+                                if scan_chars!(input, 'h', 'e', 'r') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulEtherKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('v') => {
+                                if scan_chars!(input, 'e', 'n', 't') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulEventKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('x') => {
+                                if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulExternalKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('f') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'l') {
+                                    match input.next() {
+                                        Some('l') => {
+                                            if scan_chars!(input, 'b', 'a', 'c', 'k') {
+                                                if self.version_is_at_least_0_6_0
+                                                    && !self.version_is_at_least_0_7_1
+                                                {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulFallbackKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('s') => {
+                                            if scan_chars!(input, 'e') {
+                                                KeywordScan::Reserved(TokenKind::YulFalseKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'n') {
+                                    match input.next() {
+                                        Some('a') => {
+                                            if scan_chars!(input, 'l') {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulFinalKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('n') => {
+                                            if scan_chars!(input, 'e', 'y') {
+                                                if !self.version_is_at_least_0_7_0 {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulFinneyKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'r') {
+                                    KeywordScan::Reserved(TokenKind::YulForKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
+                                    KeywordScan::Reserved(TokenKind::YulFunctionKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('g') => {
+                            if scan_chars!(input, 'w', 'e', 'i') {
+                                if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    KeywordScan::Reserved(TokenKind::YulGweiKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('h') => match input.next() {
+                            Some('e') => {
+                                if scan_chars!(input, 'x') {
+                                    KeywordScan::Reserved(TokenKind::YulHexKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'u', 'r', 's') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulHoursKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('i') => match input.next() {
+                            Some('f') => KeywordScan::Reserved(TokenKind::YulIfKeyword),
+                            Some('m') => match input.next() {
+                                Some('m') => {
+                                    if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulImmutableKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('p') => match input.next() {
+                                    Some('l') => {
+                                        if scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's') {
+                                            if self.version_is_at_least_0_5_0
+                                                && !self.version_is_at_least_0_7_1
+                                            {
+                                                KeywordScan::Reserved(
+                                                    TokenKind::YulImplementsKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('o') => {
+                                        if scan_chars!(input, 'r', 't') {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(TokenKind::YulImportKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('n') => match input.next() {
+                                Some('d') => {
+                                    if scan_chars!(input, 'e', 'x', 'e', 'd') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulIndexedKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('l') => {
+                                    if scan_chars!(input, 'i', 'n', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulInlineKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'e', 'r') {
+                                        match input.next() {
+                                            Some('f') => {
+                                                if scan_chars!(input, 'a', 'c', 'e') {
+                                                    if !self.version_is_at_least_0_7_1 {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::YulInterfaceKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some('n') => {
+                                                if scan_chars!(input, 'a', 'l') {
+                                                    if !self.version_is_at_least_0_7_1 {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::YulInternalKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
+                                                KeywordScan::Absent
+                                            }
+                                            None => KeywordScan::Absent,
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    if !self.version_is_at_least_0_6_8 {
+                                        KeywordScan::Reserved(TokenKind::YulInKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                None => {
+                                    if !self.version_is_at_least_0_6_8 {
+                                        KeywordScan::Reserved(TokenKind::YulInKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                            },
+                            Some('s') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    KeywordScan::Reserved(TokenKind::YulIsKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('l') => match input.next() {
+                            Some('e') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'v', 'e') {
+                                        if self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulLeaveKeyword)
+                                        } else if self.version_is_at_least_0_6_0 {
+                                            KeywordScan::Present(TokenKind::YulLeaveKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => KeywordScan::Reserved(TokenKind::YulLetKeyword),
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('i') => {
+                                if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulLibraryKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('m') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('c') => {
+                                    if scan_chars!(input, 'r', 'o') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulMacroKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('p') => {
+                                    if scan_chars!(input, 'p', 'i', 'n', 'g') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulMappingKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'c', 'h') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulMatchKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('e') => {
+                                if scan_chars!(input, 'm', 'o', 'r', 'y') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulMemoryKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulMinutesKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulModifierKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 't', 'a', 'b', 'l', 'e') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulMutableKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('n') => match input.next() {
+                            Some('e') => {
+                                if scan_chars!(input, 'w') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulNewKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('u') => {
+                                if scan_chars!(input, 'l', 'l') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulNullKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('o') => match input.next() {
+                            Some('f') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    KeywordScan::Reserved(TokenKind::YulOfKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('v') => {
+                                if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulOverrideKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('p') => match input.next() {
+                            Some('a') => match input.next() {
+                                Some('r') => {
+                                    if scan_chars!(input, 't', 'i', 'a', 'l') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulPartialKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('y') => {
+                                    if scan_chars!(input, 'a', 'b', 'l', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulPayableKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('r') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'g', 'm', 'a') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulPragmaKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('i') => {
+                                    if scan_chars!(input, 'v', 'a', 't', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulPrivateKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('o') => {
+                                    if scan_chars!(input, 'm', 'i', 's', 'e') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulPromiseKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('u') => match input.next() {
+                                Some('b') => {
+                                    if scan_chars!(input, 'l', 'i', 'c') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulPublicKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulPureKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('r') => {
+                            if scan_chars!(input, 'e') {
+                                match input.next() {
+                                    Some('c') => {
+                                        if scan_chars!(input, 'e', 'i', 'v', 'e') {
+                                            if self.version_is_at_least_0_6_0
+                                                && !self.version_is_at_least_0_7_1
+                                            {
+                                                KeywordScan::Reserved(TokenKind::YulReceiveKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('f') => {
+                                        if scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e') {
+                                            if self.version_is_at_least_0_5_0
+                                                && !self.version_is_at_least_0_7_1
+                                            {
+                                                KeywordScan::Reserved(
+                                                    TokenKind::YulReferenceKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('l') => {
+                                        if scan_chars!(
+                                            input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
+                                        ) {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(
+                                                    TokenKind::YulRelocatableKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('t') => {
+                                        if scan_chars!(input, 'u', 'r', 'n') {
+                                            match input.next() {
+                                                Some('s') => {
+                                                    if !self.version_is_at_least_0_7_1 {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::YulReturnsKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                }
+                                                Some(_) => {
+                                                    input.undo();
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulReturnKeyword,
+                                                    )
+                                                }
+                                                None => KeywordScan::Reserved(
+                                                    TokenKind::YulReturnKeyword,
+                                                ),
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('v') => {
+                                        if scan_chars!(input, 'e', 'r', 't') {
+                                            KeywordScan::Reserved(TokenKind::YulRevertKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('s') => match input.next() {
+                            Some('e') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'l', 'e', 'd') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulSealedKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('c') => {
+                                    if scan_chars!(input, 'o', 'n', 'd', 's') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulSecondsKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('i') => {
+                                if scan_chars!(input, 'z', 'e', 'o', 'f') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulSizeOfKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('t') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 't', 'i', 'c') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulStaticKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('o') => {
+                                    if scan_chars!(input, 'r', 'a', 'g', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulStorageKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => match input.next() {
+                                    Some('i') => {
+                                        if scan_chars!(input, 'n', 'g') {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(TokenKind::YulStringKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some('u') => {
+                                        if scan_chars!(input, 'c', 't') {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(TokenKind::YulStructKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Absent
+                                    }
+                                    None => KeywordScan::Absent,
+                                },
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('u') => {
+                                if scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulSupportsKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('w') => {
+                                if scan_chars!(input, 'i', 't', 'c', 'h') {
+                                    KeywordScan::Reserved(TokenKind::YulSwitchKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('z') => {
+                                if scan_chars!(input, 'a', 'b', 'o') {
+                                    if !self.version_is_at_least_0_7_0 {
+                                        KeywordScan::Reserved(TokenKind::YulSzaboKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('t') => match input.next() {
+                            Some('h') => {
+                                if scan_chars!(input, 'r', 'o', 'w') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulThrowKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('r') => match input.next() {
+                                Some('u') => {
+                                    if scan_chars!(input, 'e') {
+                                        KeywordScan::Reserved(TokenKind::YulTrueKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('y') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulTryKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('y') => {
+                                if scan_chars!(input, 'p', 'e') {
+                                    match input.next() {
+                                        Some('d') => {
+                                            if scan_chars!(input, 'e', 'f') {
+                                                if self.version_is_at_least_0_5_0
+                                                    && !self.version_is_at_least_0_7_1
+                                                {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulTypeDefKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('o') => {
+                                            if scan_chars!(input, 'f') {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    KeywordScan::Reserved(
+                                                        TokenKind::YulTypeOfKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(TokenKind::YulTypeKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        None => {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(TokenKind::YulTypeKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('u') => match input.next() {
+                            Some('n') => {
+                                if scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TokenKind::YulUncheckedKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('s') => {
+                                if scan_chars!(input, 'i', 'n', 'g') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulUsingKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('v') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'r') {
+                                    if !self.version_is_at_least_0_6_5 {
+                                        KeywordScan::Reserved(TokenKind::YulVarKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('i') => match input.next() {
+                                Some('e') => {
+                                    if scan_chars!(input, 'w') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulViewKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 't', 'u', 'a', 'l') {
+                                        if self.version_is_at_least_0_6_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TokenKind::YulVirtualKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('w') => match input.next() {
+                            Some('e') => match input.next() {
+                                Some('e') => {
+                                    if scan_chars!(input, 'k', 's') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TokenKind::YulWeeksKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('i') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulWeiKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
+                            Some('h') => {
+                                if scan_chars!(input, 'i', 'l', 'e') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TokenKind::YulWhileKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
+                        Some('y') => {
+                            if scan_chars!(input, 'e', 'a', 'r', 's') {
+                                if !self.version_is_at_least_0_7_1 {
+                                    KeywordScan::Reserved(TokenKind::YulYearsKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            KeywordScan::Absent
+                        }
+                        None => KeywordScan::Absent,
+                    };
+                    let kw_scan = match kw_scan {
+                        // Strict prefix; we need to match the whole identifier to promote
+                        _ if input.position() < furthest_position => KeywordScan::Absent,
+                        value => value,
+                    };
+
+                    // Perf: only scan for a compound keyword if we didn't already find one
+                    let mut kw_scan = kw_scan;
+                    if kw_scan == KeywordScan::Absent {
+                        input.set_position(save);
+
+                        // TODO: Don't allocate a string here
+                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                        for keyword_compound_scanner in [
+                            Self::yul_bytes_keyword,
+                            Self::yul_fixed_keyword,
+                            Self::yul_int_keyword,
+                            Self::yul_ufixed_keyword,
+                            Self::yul_uint_keyword,
+                        ] {
+                            match keyword_compound_scanner(self, input, &ident_value) {
+                                _ if input.position() < furthest_position => { /* Strict prefix */ }
+                                KeywordScan::Absent => {}
+                                value => kw_scan = value,
+                            }
+                            input.set_position(save);
+                        }
+                    }
+
+                    input.set_position(furthest_position);
+                    return Some(ScannedToken::IdentifierOrKeyword {
+                        identifier,
+                        kw: kw_scan,
+                    });
                 }
             }
         }
 
         match longest_token {
-            Some(..) => {
+            Some(token) => {
                 input.set_position(furthest_position);
-                longest_token
+                Some(ScannedToken::Single(token))
             }
             // Skip a character if possible and if we didn't recognize a token
             None if input.peek().is_some() => {
                 let _ = input.next();
-                Some(TokenKind::SKIPPED)
+                Some(ScannedToken::Single(TokenKind::SKIPPED))
             }
-            // EOF
             None => None,
         }
     }

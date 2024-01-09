@@ -1,6 +1,6 @@
 use crate::cst;
 use crate::kinds::{IsLexicalContext, TokenKind};
-use crate::lexer::Lexer;
+use crate::lexer::{Lexer, ScannedToken};
 use crate::parse_error::ParseError;
 use crate::support::context::ParserContext;
 use crate::support::parser_result::SkippedUntil;
@@ -63,7 +63,10 @@ impl ParserResult {
                 ParseResultKind::Incomplete,
             ),
             ParserResult::Match(result)
-                if lexer.peek_token_with_trivia::<LexCtx>(input) != Some(expected) =>
+                if lexer
+                    .peek_token_with_trivia::<LexCtx>(input)
+                    .map(ScannedToken::unambiguous)
+                    != Some(expected) =>
             {
                 (result.nodes, result.expected_tokens, ParseResultKind::Match)
             }
@@ -129,7 +132,10 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     let mut local_delims = vec![];
     loop {
         let save = input.position();
-        match lexer.next_token::<LexCtx>(input) {
+        match lexer
+            .next_token::<LexCtx>(input)
+            .map(ScannedToken::unambiguous)
+        {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
             // we can unwind on a token that's expected by us or by our ancestor.
             Some(token)

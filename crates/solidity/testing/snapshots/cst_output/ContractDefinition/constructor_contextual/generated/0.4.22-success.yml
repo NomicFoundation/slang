@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Constructors introduced in 0.4.22 but `constructor` was usable as identifier until 0.5.0 │ 0..91
+  2  │                                                                                             │ 92..92
+  3  │ contract Contract {                                                                         │ 93..112
+  4  │ 	constructor() {}                                                                           │ 113..130
+  5  │     function func() public {                                                                │ 131..159
+  6  │ 		uint256 constructor;                                                                      │ 160..182
+  7  │     }                                                                                       │ 183..188
+  8  │ }                                                                                           │ 189..190
+
+Errors: []
+
+Tree:
+  - ContractDefinition: # 0..191 "// Constructors introduced in 0.4.22 but `construc..."
+      - LeadingTrivia: # 0..93 "// Constructors introduced in 0.4.22 but `construc..."
+          - SingleLineComment: "// Constructors introduced in 0.4.22 but `construc..." # 0..91
+      - (contract_keyword) ContractKeyword: "contract" # 93..101
+      - (name) Identifier: "Contract" # 102..110
+      - (open_brace) OpenBrace: "{" # 111..112
+      - (members) ContractMembers: # 113..189 "\tconstructor() {}\n    function func() public {\n\t\tu..."
+          - (item) ContractMember: # 113..131 "\tconstructor() {}\n"
+              - (variant) ConstructorDefinition: # 113..131 "\tconstructor() {}\n"
+                  - (constructor_keyword) ConstructorKeyword: "constructor" # 114..125
+                  - (parameters) ParametersDeclaration: # 125..127 "()"
+                      - (open_paren) OpenParen: "(" # 125..126
+                      - (close_paren) CloseParen: ")" # 126..127
+                  - (body) Block: # 127..131 " {}\n"
+                      - (open_brace) OpenBrace: "{" # 128..129
+                      - (close_brace) CloseBrace: "}" # 129..130
+          - (item) ContractMember: # 131..189 "    function func() public {\n\t\tuint256 constructor..."
+              - (variant) FunctionDefinition: # 131..189 "    function func() public {\n\t\tuint256 constructor..."
+                  - (function_keyword) FunctionKeyword: "function" # 135..143
+                  - (name) FunctionName: # 143..148 " func"
+                      - (variant) Identifier: "func" # 144..148
+                  - (parameters) ParametersDeclaration: # 148..150 "()"
+                      - (open_paren) OpenParen: "(" # 148..149
+                      - (close_paren) CloseParen: ")" # 149..150
+                  - (attributes) FunctionAttributes: # 150..157 " public"
+                      - (item) FunctionAttribute: # 150..157 " public"
+                          - (variant) PublicKeyword: "public" # 151..157
+                  - (body) FunctionBody: # 157..189 " {\n\t\tuint256 constructor;\n    }\n"
+                      - (variant) Block: # 157..189 " {\n\t\tuint256 constructor;\n    }\n"
+                          - (open_brace) OpenBrace: "{" # 158..159
+                          - (statements) Statements: # 160..183 "\t\tuint256 constructor;\n"
+                              - (item) Statement: # 160..183 "\t\tuint256 constructor;\n"
+                                  - (variant) VariableDeclarationStatement: # 160..183 "\t\tuint256 constructor;\n"
+                                      - (variable_type) VariableDeclarationType: # 160..169 "\t\tuint256"
+                                          - (variant) TypeName: # 160..169 "\t\tuint256"
+                                              - (variant) ElementaryType: # 160..169 "\t\tuint256"
+                                                  - (variant) UintKeyword: "uint256" # 162..169
+                                      - (name) Identifier: "constructor" # 170..181
+                                      - (semicolon) Semicolon: ";" # 181..182
+                          - (close_brace) CloseBrace: "}" # 187..188
+      - (close_brace) CloseBrace: "}" # 189..190
