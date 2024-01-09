@@ -29,7 +29,7 @@ impl NodeExtensions for RuleNode {
     fn is_trivia(&self) -> bool {
         matches!(
             self.kind,
-            RuleKind::LeadingTrivia | RuleKind::TrailingTrivia | RuleKind::EndOfFileTrivia
+            RuleKind::LeadingTrivia | RuleKind::TrailingTrivia
         )
     }
 

@@ -1221,30 +1221,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn end_of_file_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace);
-                choice.consider(input, result)?;
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultilineComment);
-                choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                );
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-        })
-        .with_kind(RuleKind::EndOfFileTrivia)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn enum_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_named(
@@ -8336,7 +8312,6 @@ impl Language {
             RuleKind::ElementaryType => Self::elementary_type.parse(self, input),
             RuleKind::ElseBranch => Self::else_branch.parse(self, input),
             RuleKind::EmitStatement => Self::emit_statement.parse(self, input),
-            RuleKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             RuleKind::EnumDefinition => Self::enum_definition.parse(self, input),
             RuleKind::EnumMembers => Self::enum_members.parse(self, input),
             RuleKind::EqualityExpression => Self::equality_expression.parse(self, input),

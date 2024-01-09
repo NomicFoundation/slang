@@ -47,7 +47,6 @@ export namespace kinds {
     ElementaryType = "ElementaryType",
     ElseBranch = "ElseBranch",
     EmitStatement = "EmitStatement",
-    EndOfFileTrivia = "EndOfFileTrivia",
     EnumDefinition = "EnumDefinition",
     EnumMembers = "EnumMembers",
     EqualityExpression = "EqualityExpression",

@@ -42,14 +42,11 @@ where
                 _ => None,
             };
 
-            match (&mut topmost.node, eof_trivia) {
-                (cst::Node::Rule(rule), Some(eof_trivia)) => {
-                    let mut new_children = rule.children.clone();
-                    new_children.extend(eof_trivia);
+            if let (cst::Node::Rule(rule), Some(eof_trivia)) = (&mut topmost.node, eof_trivia) {
+                let mut new_children = rule.children.clone();
+                new_children.extend(eof_trivia);
 
-                    topmost.node = cst::Node::rule(rule.kind, new_children);
-                }
-                _ => {} // _ => unreachable!("Match at the top level of a parse is not a Rule node"),
+                topmost.node = cst::Node::rule(rule.kind, new_children);
             }
         }
 
