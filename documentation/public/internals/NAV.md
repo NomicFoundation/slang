@@ -1,4 +1,3 @@
--   [Internals](./index.md)
--   [Repository Structure](./repository-structure/index.md)
--   [Development](./development/index.md)
+-   [Repository Structure](./repository-structure.md)
+-   [Development](./development.md)
 -   [Design Docs](./design-docs/)

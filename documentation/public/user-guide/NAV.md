@@ -1,4 +1,3 @@
--   [User Guide](./index.md)
 -   [Introduction](./introduction.md)
 -   [Concepts](./concepts.md)
 -   [Rust Crate](./rust-crate/)

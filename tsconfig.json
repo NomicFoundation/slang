@@ -24,6 +24,9 @@
     "incremental": true,
     "tsBuildInfoFile": "target/tsc/.tsbuildinfo",
 
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,
+
     /* Emit */
     "noEmit": true,
 

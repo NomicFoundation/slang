@@ -100,6 +100,7 @@ theme:
     - "content.code.copy"
     - "content.tabs.link"
     - "navigation.expand"
+    - "navigation.footer"
     - "navigation.indexes"
     - "navigation.sections"
     - "navigation.tabs"
