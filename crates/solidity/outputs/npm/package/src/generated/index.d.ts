@@ -665,6 +665,7 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
+    unparse(): string;
   }
   export class TokenNode {
     get type(): NodeType.Token;
