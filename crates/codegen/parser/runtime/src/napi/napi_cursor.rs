@@ -9,7 +9,7 @@ use napi_cst::ToJS;
 use napi_derive::napi;
 use napi_text_index::{TextIndex, TextRange};
 
-use crate::napi::{napi_cst, napi_text_index, RuleKind, RustCursor, TokenKind};
+use crate::napi::{napi_cst, napi_text_index, FieldName, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);
@@ -55,6 +55,11 @@ impl Cursor {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
+    }
+
+    #[napi(getter, ts_return_type = "kinds.FieldName", catch_unwind)]
+    pub fn node_name(&self) -> Option<FieldName> {
+        self.0.node_name()
     }
 
     #[napi(getter, ts_return_type = "text_index.TextIndex", catch_unwind)]

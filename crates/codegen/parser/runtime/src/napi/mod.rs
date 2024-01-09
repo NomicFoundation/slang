@@ -17,3 +17,4 @@ type RustTokenNode = crate::cst::TokenNode;
 
 type RuleKind = crate::kinds::RuleKind;
 type TokenKind = crate::kinds::TokenKind;
+type FieldName = crate::kinds::FieldName;
