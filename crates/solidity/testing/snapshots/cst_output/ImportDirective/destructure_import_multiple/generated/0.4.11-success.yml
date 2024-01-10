@@ -6,27 +6,37 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective: # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
-      - (import_keyword) ImportKeyword: "import" # 0..6
-      - (clause) ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-          - (variant) ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-              - (open_brace) OpenBrace: "{" # 7..8
-              - (symbols) ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
-                  - (item) ImportDeconstructionSymbol: # 8..17 " A1 as A2"
-                      - (name) Identifier: "A1" # 9..11
-                      - (alias) ImportAlias: # 11..17 " as A2"
-                          - (as_keyword) AsKeyword: "as" # 12..14
-                          - (identifier) Identifier: "A2" # 15..17
-                  - (separator) Comma: "," # 17..18
-                  - (item) ImportDeconstructionSymbol: # 18..21 " B1"
-                      - (name) Identifier: "B1" # 19..21
-                  - (separator) Comma: "," # 21..22
-                  - (item) ImportDeconstructionSymbol: # 22..31 " C1 as C2"
-                      - (name) Identifier: "C1" # 23..25
-                      - (alias) ImportAlias: # 25..31 " as C2"
-                          - (as_keyword) AsKeyword: "as" # 26..28
-                          - (identifier) Identifier: "C2" # 29..31
-              - (close_brace) CloseBrace: "}" # 32..33
-              - (from_keyword) FromKeyword: "from" # 34..38
-              - (path) AsciiStringLiteral: '"foo"' # 39..44
-      - (semicolon) Semicolon: ";" # 44..45
+  - (ImportDirective): # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
+      - (import_keyword꞉ ImportKeyword): "import" # 0..6
+      - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+          - (LeadingTrivia) ► (Whitespace): " " # 6..7
+          - (open_brace꞉ OpenBrace): "{" # 7..8
+          - (symbols꞉ ImportDeconstructionSymbols): # 8..31 " A1 as A2, B1, C1 as C2"
+              - (item꞉ ImportDeconstructionSymbol): # 8..17 " A1 as A2"
+                  - (LeadingTrivia) ► (Whitespace): " " # 8..9
+                  - (name꞉ Identifier): "A1" # 9..11
+                  - (alias꞉ ImportAlias): # 11..17 " as A2"
+                      - (LeadingTrivia) ► (Whitespace): " " # 11..12
+                      - (as_keyword꞉ AsKeyword): "as" # 12..14
+                      - (LeadingTrivia) ► (Whitespace): " " # 14..15
+                      - (identifier꞉ Identifier): "A2" # 15..17
+              - (separator꞉ Comma): "," # 17..18
+              - (item꞉ ImportDeconstructionSymbol): # 18..21 " B1"
+                  - (LeadingTrivia) ► (Whitespace): " " # 18..19
+                  - (name꞉ Identifier): "B1" # 19..21
+              - (separator꞉ Comma): "," # 21..22
+              - (item꞉ ImportDeconstructionSymbol): # 22..31 " C1 as C2"
+                  - (LeadingTrivia) ► (Whitespace): " " # 22..23
+                  - (name꞉ Identifier): "C1" # 23..25
+                  - (alias꞉ ImportAlias): # 25..31 " as C2"
+                      - (LeadingTrivia) ► (Whitespace): " " # 25..26
+                      - (as_keyword꞉ AsKeyword): "as" # 26..28
+                      - (LeadingTrivia) ► (Whitespace): " " # 28..29
+                      - (identifier꞉ Identifier): "C2" # 29..31
+          - (LeadingTrivia) ► (Whitespace): " " # 31..32
+          - (close_brace꞉ CloseBrace): "}" # 32..33
+          - (LeadingTrivia) ► (Whitespace): " " # 33..34
+          - (from_keyword꞉ FromKeyword): "from" # 34..38
+          - (LeadingTrivia) ► (Whitespace): " " # 38..39
+          - (path꞉ AsciiStringLiteral): '"foo"' # 39..44
+      - (semicolon꞉ Semicolon): ";" # 44..45

@@ -6,18 +6,23 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective: # 0..29 'import { x as y } from "foo";'
-      - (import_keyword) ImportKeyword: "import" # 0..6
-      - (clause) ImportClause: # 6..28 ' { x as y } from "foo"'
-          - (variant) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
-              - (open_brace) OpenBrace: "{" # 7..8
-              - (symbols) ImportDeconstructionSymbols: # 8..15 " x as y"
-                  - (item) ImportDeconstructionSymbol: # 8..15 " x as y"
-                      - (name) Identifier: "x" # 9..10
-                      - (alias) ImportAlias: # 10..15 " as y"
-                          - (as_keyword) AsKeyword: "as" # 11..13
-                          - (identifier) Identifier: "y" # 14..15
-              - (close_brace) CloseBrace: "}" # 16..17
-              - (from_keyword) FromKeyword: "from" # 18..22
-              - (path) AsciiStringLiteral: '"foo"' # 23..28
-      - (semicolon) Semicolon: ";" # 28..29
+  - (ImportDirective): # 0..29 'import { x as y } from "foo";'
+      - (import_keyword꞉ ImportKeyword): "import" # 0..6
+      - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # 6..28 ' { x as y } from "foo"'
+          - (LeadingTrivia) ► (Whitespace): " " # 6..7
+          - (open_brace꞉ OpenBrace): "{" # 7..8
+          - (symbols꞉ ImportDeconstructionSymbols) ► (item꞉ ImportDeconstructionSymbol): # 8..15 " x as y"
+              - (LeadingTrivia) ► (Whitespace): " " # 8..9
+              - (name꞉ Identifier): "x" # 9..10
+              - (alias꞉ ImportAlias): # 10..15 " as y"
+                  - (LeadingTrivia) ► (Whitespace): " " # 10..11
+                  - (as_keyword꞉ AsKeyword): "as" # 11..13
+                  - (LeadingTrivia) ► (Whitespace): " " # 13..14
+                  - (identifier꞉ Identifier): "y" # 14..15
+          - (LeadingTrivia) ► (Whitespace): " " # 15..16
+          - (close_brace꞉ CloseBrace): "}" # 16..17
+          - (LeadingTrivia) ► (Whitespace): " " # 17..18
+          - (from_keyword꞉ FromKeyword): "from" # 18..22
+          - (LeadingTrivia) ► (Whitespace): " " # 22..23
+          - (path꞉ AsciiStringLiteral): '"foo"' # 23..28
+      - (semicolon꞉ Semicolon): ";" # 28..29

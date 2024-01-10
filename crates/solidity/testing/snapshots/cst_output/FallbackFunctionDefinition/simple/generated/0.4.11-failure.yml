@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "fallback () {}" # 0..14
+  - (SKIPPED): "fallback () {}" # 0..14

@@ -24,38 +24,41 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
-      - (item) Statement: # 0..17 "\nthrow invalid ;\n"
-          - (variant) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
-              - (throw_keyword) ThrowKeyword: "throw" # 1..6
-              - SKIPPED: "invalid " # 7..15
-              - (semicolon) Semicolon: ";" # 15..16
-      - (item) Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
-          - (variant) Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
-              - (open_brace) OpenBrace: "{" # 17..18
-              - (statements) Statements: # 18..40 " 1 * 2; 3 * b invalid;"
-                  - (item) Statement: # 18..25 " 1 * 2;"
-                      - (variant) ExpressionStatement: # 18..25 " 1 * 2;"
-                          - (expression) Expression: # 18..24 " 1 * 2"
-                              - (variant) MultiplicativeExpression: # 18..24 " 1 * 2"
-                                  - (left_operand) Expression: # 18..20 " 1"
-                                      - (variant) DecimalNumberExpression: # 18..20 " 1"
-                                          - (literal) DecimalLiteral: "1" # 19..20
-                                  - (operator) Asterisk: "*" # 21..22
-                                  - (right_operand) Expression: # 22..24 " 2"
-                                      - (variant) DecimalNumberExpression: # 22..24 " 2"
-                                          - (literal) DecimalLiteral: "2" # 23..24
-                          - (semicolon) Semicolon: ";" # 24..25
-                  - (item) Statement: # 25..40 " 3 * b invalid;"
-                      - (variant) ExpressionStatement: # 25..40 " 3 * b invalid;"
-                          - (expression) Expression: # 25..31 " 3 * b"
-                              - (variant) MultiplicativeExpression: # 25..31 " 3 * b"
-                                  - (left_operand) Expression: # 25..27 " 3"
-                                      - (variant) DecimalNumberExpression: # 25..27 " 3"
-                                          - (literal) DecimalLiteral: "3" # 26..27
-                                  - (operator) Asterisk: "*" # 28..29
-                                  - (right_operand) Expression: # 29..31 " b"
-                                      - (variant) Identifier: "b" # 30..31
-                          - SKIPPED: "invalid" # 32..39
-                          - (semicolon) Semicolon: ";" # 39..40
-              - (close_brace) CloseBrace: "}" # 41..42
+  - (Statements): # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
+      - (item꞉ Statement) ► (variant꞉ ThrowStatement): # 0..17 "\nthrow invalid ;\n"
+          - (LeadingTrivia) ► (EndOfLine): "\n" # 0..1
+          - (throw_keyword꞉ ThrowKeyword): "throw" # 1..6
+          - (LeadingTrivia) ► (Whitespace): " " # 6..7
+          - (SKIPPED): "invalid " # 7..15
+          - (semicolon꞉ Semicolon): ";" # 15..16
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 16..17
+      - (item꞉ Statement) ► (variant꞉ Block): # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
+          - (open_brace꞉ OpenBrace): "{" # 17..18
+          - (statements꞉ Statements): # 18..40 " 1 * 2; 3 * b invalid;"
+              - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 18..25 " 1 * 2;"
+                  - (expression꞉ Expression) ► (variant꞉ MultiplicativeExpression): # 18..24 " 1 * 2"
+                      - (left_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 18..20 " 1"
+                          - (LeadingTrivia) ► (Whitespace): " " # 18..19
+                          - (literal꞉ DecimalLiteral): "1" # 19..20
+                      - (LeadingTrivia) ► (Whitespace): " " # 20..21
+                      - (operator꞉ Asterisk): "*" # 21..22
+                      - (right_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 22..24 " 2"
+                          - (LeadingTrivia) ► (Whitespace): " " # 22..23
+                          - (literal꞉ DecimalLiteral): "2" # 23..24
+                  - (semicolon꞉ Semicolon): ";" # 24..25
+              - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 25..40 " 3 * b invalid;"
+                  - (expression꞉ Expression) ► (variant꞉ MultiplicativeExpression): # 25..31 " 3 * b"
+                      - (left_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 25..27 " 3"
+                          - (LeadingTrivia) ► (Whitespace): " " # 25..26
+                          - (literal꞉ DecimalLiteral): "3" # 26..27
+                      - (LeadingTrivia) ► (Whitespace): " " # 27..28
+                      - (operator꞉ Asterisk): "*" # 28..29
+                      - (right_operand꞉ Expression): # 29..31 " b"
+                          - (LeadingTrivia) ► (Whitespace): " " # 29..30
+                          - (variant꞉ Identifier): "b" # 30..31
+                  - (LeadingTrivia) ► (Whitespace): " " # 31..32
+                  - (SKIPPED): "invalid" # 32..39
+                  - (semicolon꞉ Semicolon): ";" # 39..40
+          - (LeadingTrivia) ► (Whitespace): " " # 40..41
+          - (close_brace꞉ CloseBrace): "}" # 41..42
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 42..43

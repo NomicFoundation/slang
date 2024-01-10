@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "try a.b() {} catch {}" # 0..21
+  - (SKIPPED): "try a.b() {} catch {}" # 0..21

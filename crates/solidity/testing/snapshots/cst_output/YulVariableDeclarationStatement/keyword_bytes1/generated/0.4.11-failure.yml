@@ -15,8 +15,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..58 "// Unreserved in Yul specifically since 0.7.1:\nlet..."
-      - LeadingTrivia: # 0..47 "// Unreserved in Yul specifically since 0.7.1:\n"
-          - SingleLineComment: "// Unreserved in Yul specifically since 0.7.1:" # 0..46
-      - (let_keyword) YulLetKeyword: "let" # 47..50
-      - SKIPPED: " bytes1\n" # 50..58
+  - (YulVariableDeclarationStatement): # 0..58 "// Unreserved in Yul specifically since 0.7.1:\nlet..."
+      - (LeadingTrivia): # 0..47 "// Unreserved in Yul specifically since 0.7.1:\n"
+          - (SingleLineComment): "// Unreserved in Yul specifically since 0.7.1:" # 0..46
+          - (EndOfLine): "\n" # 46..47
+      - (let_keyword꞉ YulLetKeyword): "let" # 47..50
+      - (SKIPPED): " bytes1\n" # 50..58

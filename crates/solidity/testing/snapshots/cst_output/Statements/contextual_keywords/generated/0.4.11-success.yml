@@ -9,36 +9,28 @@ Source: >
 Errors: []
 
 Tree:
-  - Statements: # 0..61 "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..."
-      - (item) Statement: # 0..15 "uint256 error;\n"
-          - (variant) VariableDeclarationStatement: # 0..15 "uint256 error;\n"
-              - (variable_type) VariableDeclarationType: # 0..7 "uint256"
-                  - (variant) TypeName: # 0..7 "uint256"
-                      - (variant) ElementaryType: # 0..7 "uint256"
-                          - (variant) UintKeyword: "uint256" # 0..7
-              - (name) Identifier: "error" # 8..13
-              - (semicolon) Semicolon: ";" # 13..14
-      - (item) Statement: # 15..29 "uint256 from;\n"
-          - (variant) VariableDeclarationStatement: # 15..29 "uint256 from;\n"
-              - (variable_type) VariableDeclarationType: # 15..22 "uint256"
-                  - (variant) TypeName: # 15..22 "uint256"
-                      - (variant) ElementaryType: # 15..22 "uint256"
-                          - (variant) UintKeyword: "uint256" # 15..22
-              - (name) Identifier: "from" # 23..27
-              - (semicolon) Semicolon: ";" # 27..28
-      - (item) Statement: # 29..45 "uint256 revert;\n"
-          - (variant) VariableDeclarationStatement: # 29..45 "uint256 revert;\n"
-              - (variable_type) VariableDeclarationType: # 29..36 "uint256"
-                  - (variant) TypeName: # 29..36 "uint256"
-                      - (variant) ElementaryType: # 29..36 "uint256"
-                          - (variant) UintKeyword: "uint256" # 29..36
-              - (name) Identifier: "revert" # 37..43
-              - (semicolon) Semicolon: ";" # 43..44
-      - (item) Statement: # 45..61 "uint256 global;\n"
-          - (variant) VariableDeclarationStatement: # 45..61 "uint256 global;\n"
-              - (variable_type) VariableDeclarationType: # 45..52 "uint256"
-                  - (variant) TypeName: # 45..52 "uint256"
-                      - (variant) ElementaryType: # 45..52 "uint256"
-                          - (variant) UintKeyword: "uint256" # 45..52
-              - (name) Identifier: "global" # 53..59
-              - (semicolon) Semicolon: ";" # 59..60
+  - (Statements): # 0..61 "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..."
+      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 0..15 "uint256 error;\n"
+          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # 0..7
+          - (LeadingTrivia) ► (Whitespace): " " # 7..8
+          - (name꞉ Identifier): "error" # 8..13
+          - (semicolon꞉ Semicolon): ";" # 13..14
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 14..15
+      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 15..29 "uint256 from;\n"
+          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # 15..22
+          - (LeadingTrivia) ► (Whitespace): " " # 22..23
+          - (name꞉ Identifier): "from" # 23..27
+          - (semicolon꞉ Semicolon): ";" # 27..28
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 28..29
+      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 29..45 "uint256 revert;\n"
+          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # 29..36
+          - (LeadingTrivia) ► (Whitespace): " " # 36..37
+          - (name꞉ Identifier): "revert" # 37..43
+          - (semicolon꞉ Semicolon): ";" # 43..44
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 44..45
+      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 45..61 "uint256 global;\n"
+          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # 45..52
+          - (LeadingTrivia) ► (Whitespace): " " # 52..53
+          - (name꞉ Identifier): "global" # 53..59
+          - (semicolon꞉ Semicolon): ";" # 59..60
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 60..61

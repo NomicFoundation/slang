@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..4 "uint"
-      - (variant) ElementaryType: # 0..4 "uint"
-          - (variant) UintKeyword: "uint" # 0..4
+  - (TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # 0..4

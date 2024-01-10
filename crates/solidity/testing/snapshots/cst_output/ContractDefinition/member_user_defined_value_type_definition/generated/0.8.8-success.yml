@@ -8,17 +8,23 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..38 "  type Foo is bool;\n"
-          - (item) ContractMember: # 18..38 "  type Foo is bool;\n"
-              - (variant) UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
-                  - (type_keyword) TypeKeyword: "type" # 20..24
-                  - (name) Identifier: "Foo" # 25..28
-                  - (is_keyword) IsKeyword: "is" # 29..31
-                  - (value_type) ElementaryType: # 31..36 " bool"
-                      - (variant) BoolKeyword: "bool" # 32..36
-                  - (semicolon) Semicolon: ";" # 36..37
-      - (close_brace) CloseBrace: "}" # 38..39
+  - (ContractDefinition): # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
+      - (LeadingTrivia) ► (Whitespace): " " # 8..9
+      - (name꞉ Identifier): "Sample" # 9..15
+      - (LeadingTrivia) ► (Whitespace): " " # 15..16
+      - (open_brace꞉ OpenBrace): "{" # 16..17
+      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
+      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ UserDefinedValueTypeDefinition): # 18..38 "  type Foo is bool;\n"
+          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
+          - (type_keyword꞉ TypeKeyword): "type" # 20..24
+          - (LeadingTrivia) ► (Whitespace): " " # 24..25
+          - (name꞉ Identifier): "Foo" # 25..28
+          - (LeadingTrivia) ► (Whitespace): " " # 28..29
+          - (is_keyword꞉ IsKeyword): "is" # 29..31
+          - (value_type꞉ ElementaryType): # 31..36 " bool"
+              - (LeadingTrivia) ► (Whitespace): " " # 31..32
+              - (variant꞉ BoolKeyword): "bool" # 32..36
+          - (semicolon꞉ Semicolon): ";" # 36..37
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 37..38
+      - (close_brace꞉ CloseBrace): "}" # 38..39

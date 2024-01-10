@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "0xabzz\n" # 0..7
+  - (SKIPPED): "0xabzz\n" # 0..7

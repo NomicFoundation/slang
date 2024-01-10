@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..6 "int320"
-      - (variant) IdentifierPath: # 0..6 "int320"
-          - (item) Identifier: "int320" # 0..6
+  - (TypeName) ► (variant꞉ IdentifierPath) ► (item꞉ Identifier): "int320" # 0..6

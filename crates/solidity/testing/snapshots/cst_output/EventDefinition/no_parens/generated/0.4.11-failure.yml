@@ -14,8 +14,10 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - EventDefinition: # 0..15 "event MyEvent;\n"
-      - (event_keyword) EventKeyword: "event" # 0..5
-      - (name) Identifier: "MyEvent" # 6..13
-      - SKIPPED: "" # 13..13
-      - (semicolon) Semicolon: ";" # 13..14
+  - (EventDefinition): # 0..15 "event MyEvent;\n"
+      - (event_keyword꞉ EventKeyword): "event" # 0..5
+      - (LeadingTrivia) ► (Whitespace): " " # 5..6
+      - (name꞉ Identifier): "MyEvent" # 6..13
+      - (SKIPPED): "" # 13..13
+      - (semicolon꞉ Semicolon): ";" # 13..14
+      - (TrailingTrivia) ► (EndOfLine): "\n" # 14..15

@@ -6,6 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - HexStringLiterals: # 0..15 'hex"ab" hex''cd'''
-      - (item) HexStringLiteral: 'hex"ab"' # 0..7
-      - (item) HexStringLiteral: "hex'cd'" # 8..15
+  - (HexStringLiterals): # 0..15 'hex"ab" hex''cd'''
+      - (item꞉ HexStringLiteral): 'hex"ab"' # 0..7
+      - (LeadingTrivia) ► (Whitespace): " " # 7..8
+      - (item꞉ HexStringLiteral): "hex'cd'" # 8..15

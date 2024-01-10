@@ -21,43 +21,55 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..191 "// Constructors introduced in 0.4.22 but `construc..."
-      - LeadingTrivia: # 0..93 "// Constructors introduced in 0.4.22 but `construc..."
-          - SingleLineComment: "// Constructors introduced in 0.4.22 but `construc..." # 0..91
-      - (contract_keyword) ContractKeyword: "contract" # 93..101
-      - (name) Identifier: "Contract" # 102..110
-      - (open_brace) OpenBrace: "{" # 111..112
-      - (members) ContractMembers: # 113..189 "\tconstructor() {}\n    function func() public {\n\t\tu..."
-          - (item) ContractMember: # 113..131 "\tconstructor() {}\n"
-              - (variant) ConstructorDefinition: # 113..131 "\tconstructor() {}\n"
-                  - (constructor_keyword) ConstructorKeyword: "constructor" # 114..125
-                  - (parameters) ParametersDeclaration: # 125..127 "()"
-                      - (open_paren) OpenParen: "(" # 125..126
-                      - (close_paren) CloseParen: ")" # 126..127
-                  - (body) Block: # 127..131 " {}\n"
-                      - (open_brace) OpenBrace: "{" # 128..129
-                      - (close_brace) CloseBrace: "}" # 129..130
-          - (item) ContractMember: # 131..189 "    function func() public {\n\t\tuint256 constructor..."
-              - (variant) FunctionDefinition: # 131..189 "    function func() public {\n\t\tuint256 constructor..."
-                  - (function_keyword) FunctionKeyword: "function" # 135..143
-                  - (name) FunctionName: # 143..148 " func"
-                      - (variant) Identifier: "func" # 144..148
-                  - (parameters) ParametersDeclaration: # 148..150 "()"
-                      - (open_paren) OpenParen: "(" # 148..149
-                      - (close_paren) CloseParen: ")" # 149..150
-                  - (attributes) FunctionAttributes: # 150..157 " public"
-                      - (item) FunctionAttribute: # 150..157 " public"
-                          - (variant) PublicKeyword: "public" # 151..157
-                  - (body) FunctionBody: # 157..189 " {\n\t\tuint256 constructor;\n    }\n"
-                      - (variant) Block: # 157..189 " {\n\t\tuint256 constructor;\n    }\n"
-                          - (open_brace) OpenBrace: "{" # 158..159
-                          - (statements) Statements: # 160..183 "\t\tuint256 constructor;\n"
-                              - (item) Statement: # 160..183 "\t\tuint256 constructor;\n"
-                                  - (variant) ExpressionStatement: # 160..183 "\t\tuint256 constructor;\n"
-                                      - (expression) Expression: # 160..169 "\t\tuint256"
-                                          - (variant) ElementaryType: # 160..169 "\t\tuint256"
-                                              - (variant) UintKeyword: "uint256" # 162..169
-                                      - SKIPPED: "constructor" # 170..181
-                                      - (semicolon) Semicolon: ";" # 181..182
-                          - (close_brace) CloseBrace: "}" # 187..188
-      - (close_brace) CloseBrace: "}" # 189..190
+  - (ContractDefinition): # 0..191 "// Constructors introduced in 0.4.22 but `construc..."
+      - (LeadingTrivia): # 0..93 "// Constructors introduced in 0.4.22 but `construc..."
+          - (SingleLineComment): "// Constructors introduced in 0.4.22 but `construc..." # 0..91
+          - (EndOfLine): "\n" # 91..92
+          - (EndOfLine): "\n" # 92..93
+      - (contract_keyword꞉ ContractKeyword): "contract" # 93..101
+      - (LeadingTrivia) ► (Whitespace): " " # 101..102
+      - (name꞉ Identifier): "Contract" # 102..110
+      - (LeadingTrivia) ► (Whitespace): " " # 110..111
+      - (open_brace꞉ OpenBrace): "{" # 111..112
+      - (TrailingTrivia) ► (EndOfLine): "\n" # 112..113
+      - (members꞉ ContractMembers): # 113..189 "\tconstructor() {}\n    function func() public {\n\t\tu..."
+          - (item꞉ ContractMember) ► (variant꞉ ConstructorDefinition): # 113..131 "\tconstructor() {}\n"
+              - (LeadingTrivia) ► (Whitespace): "\t" # 113..114
+              - (constructor_keyword꞉ ConstructorKeyword): "constructor" # 114..125
+              - (parameters꞉ ParametersDeclaration): # 125..127 "()"
+                  - (open_paren꞉ OpenParen): "(" # 125..126
+                  - (close_paren꞉ CloseParen): ")" # 126..127
+              - (body꞉ Block): # 127..131 " {}\n"
+                  - (LeadingTrivia) ► (Whitespace): " " # 127..128
+                  - (open_brace꞉ OpenBrace): "{" # 128..129
+                  - (close_brace꞉ CloseBrace): "}" # 129..130
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # 130..131
+          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 131..189 "    function func() public {\n\t\tuint256 constructor..."
+              - (LeadingTrivia) ► (Whitespace): "    " # 131..135
+              - (function_keyword꞉ FunctionKeyword): "function" # 135..143
+              - (name꞉ FunctionName): # 143..148 " func"
+                  - (LeadingTrivia) ► (Whitespace): " " # 143..144
+                  - (variant꞉ Identifier): "func" # 144..148
+              - (parameters꞉ ParametersDeclaration): # 148..150 "()"
+                  - (open_paren꞉ OpenParen): "(" # 148..149
+                  - (close_paren꞉ CloseParen): ")" # 149..150
+              - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute): # 150..157 " public"
+                  - (LeadingTrivia) ► (Whitespace): " " # 150..151
+                  - (variant꞉ PublicKeyword): "public" # 151..157
+              - (body꞉ FunctionBody) ► (variant꞉ Block): # 157..189 " {\n\t\tuint256 constructor;\n    }\n"
+                  - (LeadingTrivia) ► (Whitespace): " " # 157..158
+                  - (open_brace꞉ OpenBrace): "{" # 158..159
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # 159..160
+                  - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 160..183 "\t\tuint256 constructor;\n"
+                      - (expression꞉ Expression) ► (variant꞉ ElementaryType): # 160..169 "\t\tuint256"
+                          - (LeadingTrivia) ► (Whitespace): "\t\t" # 160..162
+                          - (variant꞉ UintKeyword): "uint256" # 162..169
+                      - (LeadingTrivia) ► (Whitespace): " " # 169..170
+                      - (SKIPPED): "constructor" # 170..181
+                      - (semicolon꞉ Semicolon): ";" # 181..182
+                      - (TrailingTrivia) ► (EndOfLine): "\n" # 182..183
+                  - (LeadingTrivia) ► (Whitespace): "    " # 183..187
+                  - (close_brace꞉ CloseBrace): "}" # 187..188
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # 188..189
+      - (close_brace꞉ CloseBrace): "}" # 189..190
+      - (TrailingTrivia) ► (EndOfLine): "\n" # 190..191

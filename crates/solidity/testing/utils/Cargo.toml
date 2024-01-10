@@ -7,5 +7,6 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+Inflector = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true }

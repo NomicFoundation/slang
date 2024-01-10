@@ -7,12 +7,13 @@ Source: >
 Errors: []
 
 Tree:
-  - VariableDeclarationStatement: # 0..60 "// This form is only reserved since 0.4.14:\nuint u..."
-      - (variable_type) VariableDeclarationType: # 0..48 "// This form is only reserved since 0.4.14:\nuint"
-          - (variant) TypeName: # 0..48 "// This form is only reserved since 0.4.14:\nuint"
-              - (variant) ElementaryType: # 0..48 "// This form is only reserved since 0.4.14:\nuint"
-                  - LeadingTrivia: # 0..44 "// This form is only reserved since 0.4.14:\n"
-                      - SingleLineComment: "// This form is only reserved since 0.4.14:" # 0..43
-                  - (variant) UintKeyword: "uint" # 44..48
-      - (name) Identifier: "ufixed8x0" # 49..58
-      - (semicolon) Semicolon: ";" # 58..59
+  - (VariableDeclarationStatement): # 0..60 "// This form is only reserved since 0.4.14:\nuint u..."
+      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # 0..48 "// This form is only reserved since 0.4.14:\nuint"
+          - (LeadingTrivia): # 0..44 "// This form is only reserved since 0.4.14:\n"
+              - (SingleLineComment): "// This form is only reserved since 0.4.14:" # 0..43
+              - (EndOfLine): "\n" # 43..44
+          - (variant꞉ UintKeyword): "uint" # 44..48
+      - (LeadingTrivia) ► (Whitespace): " " # 48..49
+      - (name꞉ Identifier): "ufixed8x0" # 49..58
+      - (semicolon꞉ Semicolon): ";" # 58..59
+      - (TrailingTrivia) ► (EndOfLine): "\n" # 59..60

@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..11 "constructor"
-      - (variant) Identifier: "constructor" # 0..11
+  - (Expression) ► (variant꞉ Identifier): "constructor" # 0..11

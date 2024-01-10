@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..5 "macro"
-      - (variant) Identifier: "macro" # 0..5
+  - (Expression) ► (variant꞉ Identifier): "macro" # 0..5

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "virtual" # 0..7
+  - (SKIPPED): "virtual" # 0..7

@@ -6,17 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - SourceUnit: # 0..18 "function foo() { }"
-      - (members) SourceUnitMembers: # 0..18 "function foo() { }"
-          - (item) SourceUnitMember: # 0..18 "function foo() { }"
-              - (variant) FunctionDefinition: # 0..18 "function foo() { }"
-                  - (function_keyword) FunctionKeyword: "function" # 0..8
-                  - (name) FunctionName: # 8..12 " foo"
-                      - (variant) Identifier: "foo" # 9..12
-                  - (parameters) ParametersDeclaration: # 12..14 "()"
-                      - (open_paren) OpenParen: "(" # 12..13
-                      - (close_paren) CloseParen: ")" # 13..14
-                  - (body) FunctionBody: # 14..18 " { }"
-                      - (variant) Block: # 14..18 " { }"
-                          - (open_brace) OpenBrace: "{" # 15..16
-                          - (close_brace) CloseBrace: "}" # 17..18
+  - (SourceUnit) ► (members꞉ SourceUnitMembers) ► (item꞉ SourceUnitMember) ► (variant꞉ FunctionDefinition): # 0..18 "function foo() { }"
+      - (function_keyword꞉ FunctionKeyword): "function" # 0..8
+      - (name꞉ FunctionName): # 8..12 " foo"
+          - (LeadingTrivia) ► (Whitespace): " " # 8..9
+          - (variant꞉ Identifier): "foo" # 9..12
+      - (parameters꞉ ParametersDeclaration): # 12..14 "()"
+          - (open_paren꞉ OpenParen): "(" # 12..13
+          - (close_paren꞉ CloseParen): ")" # 13..14
+      - (body꞉ FunctionBody) ► (variant꞉ Block): # 14..18 " { }"
+          - (LeadingTrivia) ► (Whitespace): " " # 14..15
+          - (open_brace꞉ OpenBrace): "{" # 15..16
+          - (LeadingTrivia) ► (Whitespace): " " # 16..17
+          - (close_brace꞉ CloseBrace): "}" # 17..18

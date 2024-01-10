@@ -6,7 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..25 'unicode"This Emoji: 😃"'
-      - (variant) StringExpression: # 0..25 'unicode"This Emoji: 😃"'
-          - (variant) UnicodeStringLiterals: # 0..25 'unicode"This Emoji: 😃"'
-              - (item) UnicodeStringLiteral: 'unicode"This Emoji: 😃"' # 0..25
+  - (Expression) ► (variant꞉ StringExpression) ► (variant꞉ UnicodeStringLiterals) ► (item꞉ UnicodeStringLiteral): 'unicode"This Emoji: 😃"' # 0..25

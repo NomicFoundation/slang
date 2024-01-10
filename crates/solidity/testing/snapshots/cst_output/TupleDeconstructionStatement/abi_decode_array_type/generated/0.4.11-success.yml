@@ -6,65 +6,53 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement: # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
-      - (open_paren) OpenParen: "(" # 0..1
-      - (elements) TupleDeconstructionElements: # 1..28 "uint32 a, uint32[] memory b"
-          - (item) TupleDeconstructionElement: # 1..9 "uint32 a"
-              - (member) TupleMember: # 1..9 "uint32 a"
-                  - (variant) TypedTupleMember: # 1..9 "uint32 a"
-                      - (type_name) TypeName: # 1..7 "uint32"
-                          - (variant) ElementaryType: # 1..7 "uint32"
-                              - (variant) UintKeyword: "uint32" # 1..7
-                      - (name) Identifier: "a" # 8..9
-          - (separator) Comma: "," # 9..10
-          - (item) TupleDeconstructionElement: # 10..28 " uint32[] memory b"
-              - (member) TupleMember: # 10..28 " uint32[] memory b"
-                  - (variant) TypedTupleMember: # 10..28 " uint32[] memory b"
-                      - (type_name) TypeName: # 10..19 " uint32[]"
-                          - (variant) ArrayTypeName: # 10..19 " uint32[]"
-                              - (operand) TypeName: # 10..17 " uint32"
-                                  - (variant) ElementaryType: # 10..17 " uint32"
-                                      - (variant) UintKeyword: "uint32" # 11..17
-                              - (open_bracket) OpenBracket: "[" # 17..18
-                              - (close_bracket) CloseBracket: "]" # 18..19
-                      - (storage_location) StorageLocation: # 19..26 " memory"
-                          - (variant) MemoryKeyword: "memory" # 20..26
-                      - (name) Identifier: "b" # 27..28
-      - (close_paren) CloseParen: ")" # 28..29
-      - (equal) Equal: "=" # 30..31
-      - (expression) Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
-          - (variant) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
-              - (operand) Expression: # 31..42 " abi.decode"
-                  - (variant) MemberAccessExpression: # 31..42 " abi.decode"
-                      - (operand) Expression: # 31..35 " abi"
-                          - (variant) Identifier: "abi" # 32..35
-                      - (period) Period: "." # 35..36
-                      - (member) MemberAccess: # 36..42 "decode"
-                          - (variant) Identifier: "decode" # 36..42
-              - (arguments) ArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
-                  - (variant) PositionalArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
-                      - (open_paren) OpenParen: "(" # 42..43
-                      - (arguments) PositionalArguments: # 43..67 "data, (uint32, uint32[])"
-                          - (item) Expression: # 43..47 "data"
-                              - (variant) Identifier: "data" # 43..47
-                          - (separator) Comma: "," # 47..48
-                          - (item) Expression: # 48..67 " (uint32, uint32[])"
-                              - (variant) TupleExpression: # 48..67 " (uint32, uint32[])"
-                                  - (open_paren) OpenParen: "(" # 49..50
-                                  - (items) TupleValues: # 50..66 "uint32, uint32[]"
-                                      - (item) TupleValue: # 50..56 "uint32"
-                                          - (expression) Expression: # 50..56 "uint32"
-                                              - (variant) ElementaryType: # 50..56 "uint32"
-                                                  - (variant) UintKeyword: "uint32" # 50..56
-                                      - (separator) Comma: "," # 56..57
-                                      - (item) TupleValue: # 57..66 " uint32[]"
-                                          - (expression) Expression: # 57..66 " uint32[]"
-                                              - (variant) IndexAccessExpression: # 57..66 " uint32[]"
-                                                  - (operand) Expression: # 57..64 " uint32"
-                                                      - (variant) ElementaryType: # 57..64 " uint32"
-                                                          - (variant) UintKeyword: "uint32" # 58..64
-                                                  - (open_bracket) OpenBracket: "[" # 64..65
-                                                  - (close_bracket) CloseBracket: "]" # 65..66
-                                  - (close_paren) CloseParen: ")" # 66..67
-                      - (close_paren) CloseParen: ")" # 67..68
-      - (semicolon) Semicolon: ";" # 68..69
+  - (TupleDeconstructionStatement): # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
+      - (open_paren꞉ OpenParen): "(" # 0..1
+      - (elements꞉ TupleDeconstructionElements): # 1..28 "uint32 a, uint32[] memory b"
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # 1..9 "uint32 a"
+              - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint32" # 1..7
+              - (LeadingTrivia) ► (Whitespace): " " # 7..8
+              - (name꞉ Identifier): "a" # 8..9
+          - (separator꞉ Comma): "," # 9..10
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # 10..28 " uint32[] memory b"
+              - (type_name꞉ TypeName) ► (variant꞉ ArrayTypeName): # 10..19 " uint32[]"
+                  - (operand꞉ TypeName) ► (variant꞉ ElementaryType): # 10..17 " uint32"
+                      - (LeadingTrivia) ► (Whitespace): " " # 10..11
+                      - (variant꞉ UintKeyword): "uint32" # 11..17
+                  - (open_bracket꞉ OpenBracket): "[" # 17..18
+                  - (close_bracket꞉ CloseBracket): "]" # 18..19
+              - (storage_location꞉ StorageLocation): # 19..26 " memory"
+                  - (LeadingTrivia) ► (Whitespace): " " # 19..20
+                  - (variant꞉ MemoryKeyword): "memory" # 20..26
+              - (LeadingTrivia) ► (Whitespace): " " # 26..27
+              - (name꞉ Identifier): "b" # 27..28
+      - (close_paren꞉ CloseParen): ")" # 28..29
+      - (LeadingTrivia) ► (Whitespace): " " # 29..30
+      - (equal꞉ Equal): "=" # 30..31
+      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # 31..68 " abi.decode(data, (uint32, uint32[]))"
+          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 31..42 " abi.decode"
+              - (operand꞉ Expression): # 31..35 " abi"
+                  - (LeadingTrivia) ► (Whitespace): " " # 31..32
+                  - (variant꞉ Identifier): "abi" # 32..35
+              - (period꞉ Period): "." # 35..36
+              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "decode" # 36..42
+          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 42..68 "(data, (uint32, uint32[]))"
+              - (open_paren꞉ OpenParen): "(" # 42..43
+              - (arguments꞉ PositionalArguments): # 43..67 "data, (uint32, uint32[])"
+                  - (item꞉ Expression) ► (variant꞉ Identifier): "data" # 43..47
+                  - (separator꞉ Comma): "," # 47..48
+                  - (item꞉ Expression) ► (variant꞉ TupleExpression): # 48..67 " (uint32, uint32[])"
+                      - (LeadingTrivia) ► (Whitespace): " " # 48..49
+                      - (open_paren꞉ OpenParen): "(" # 49..50
+                      - (items꞉ TupleValues): # 50..66 "uint32, uint32[]"
+                          - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint32" # 50..56
+                          - (separator꞉ Comma): "," # 56..57
+                          - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ IndexAccessExpression): # 57..66 " uint32[]"
+                              - (operand꞉ Expression) ► (variant꞉ ElementaryType): # 57..64 " uint32"
+                                  - (LeadingTrivia) ► (Whitespace): " " # 57..58
+                                  - (variant꞉ UintKeyword): "uint32" # 58..64
+                              - (open_bracket꞉ OpenBracket): "[" # 64..65
+                              - (close_bracket꞉ CloseBracket): "]" # 65..66
+                      - (close_paren꞉ CloseParen): ")" # 66..67
+              - (close_paren꞉ CloseParen): ")" # 67..68
+      - (semicolon꞉ Semicolon): ";" # 68..69

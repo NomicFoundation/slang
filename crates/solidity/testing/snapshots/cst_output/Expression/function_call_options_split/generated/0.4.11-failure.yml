@@ -14,11 +14,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - Expression: # 0..25 'a.b{value: 0}{gas: 1}("")'
-      - (variant) MemberAccessExpression: # 0..3 "a.b"
-          - (operand) Expression: # 0..1 "a"
-              - (variant) Identifier: "a" # 0..1
-          - (period) Period: "." # 1..2
-          - (member) MemberAccess: # 2..3 "b"
-              - (variant) Identifier: "b" # 2..3
-      - SKIPPED: '{value: 0}{gas: 1}("")' # 3..25
+  - (Expression): # 0..25 'a.b{value: 0}{gas: 1}("")'
+      - (variant꞉ MemberAccessExpression): # 0..3 "a.b"
+          - (operand꞉ Expression) ► (variant꞉ Identifier): "a" # 0..1
+          - (period꞉ Period): "." # 1..2
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "b" # 2..3
+      - (SKIPPED): '{value: 0}{gas: 1}("")' # 3..25

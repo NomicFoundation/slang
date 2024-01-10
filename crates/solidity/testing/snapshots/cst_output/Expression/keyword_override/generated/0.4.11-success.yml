@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..8 "override"
-      - (variant) Identifier: "override" # 0..8
+  - (Expression) ► (variant꞉ Identifier): "override" # 0..8

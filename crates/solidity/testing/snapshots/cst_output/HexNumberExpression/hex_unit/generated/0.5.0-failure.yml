@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - HexNumberExpression: # 0..7 "0x1 wei"
-      - (literal) HexLiteral: "0x1" # 0..3
-      - SKIPPED: " wei" # 3..7
+  - (HexNumberExpression): # 0..7 "0x1 wei"
+      - (literal꞉ HexLiteral): "0x1" # 0..3
+      - (SKIPPED): " wei" # 3..7

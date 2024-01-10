@@ -13,20 +13,29 @@ Source: >
 Errors: []
 
 Tree:
-  - SourceUnit: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-      - (members) SourceUnitMembers: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-          - (item) SourceUnitMember: # 0..18 "contract First {}\n"
-              - (variant) ContractDefinition: # 0..18 "contract First {}\n"
-                  - (contract_keyword) ContractKeyword: "contract" # 0..8
-                  - (name) Identifier: "First" # 9..14
-                  - (open_brace) OpenBrace: "{" # 15..16
-                  - (close_brace) CloseBrace: "}" # 16..17
-          - (item) SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
-              - (variant) ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
-                  - LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
-                      - SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73
-                      - SingleLineComment: "// be included in the trivia of the second contrac..." # 74..126
-                  - (contract_keyword) ContractKeyword: "contract" # 129..137
-                  - (name) Identifier: "Second" # 138..144
-                  - (open_brace) OpenBrace: "{" # 145..146
-                  - (close_brace) CloseBrace: "}" # 146..147
+  - (SourceUnit) ► (members꞉ SourceUnitMembers): # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # 0..18 "contract First {}\n"
+          - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
+          - (LeadingTrivia) ► (Whitespace): " " # 8..9
+          - (name꞉ Identifier): "First" # 9..14
+          - (LeadingTrivia) ► (Whitespace): " " # 14..15
+          - (open_brace꞉ OpenBrace): "{" # 15..16
+          - (close_brace꞉ CloseBrace): "}" # 16..17
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # 18..148 "\n\n// Newlines both before and after this comment s..."
+          - (LeadingTrivia): # 18..129 "\n\n// Newlines both before and after this comment s..."
+              - (EndOfLine): "\n" # 18..19
+              - (EndOfLine): "\n" # 19..20
+              - (SingleLineComment): "// Newlines both before and after this comment sho..." # 20..73
+              - (EndOfLine): "\n" # 73..74
+              - (SingleLineComment): "// be included in the trivia of the second contrac..." # 74..126
+              - (EndOfLine): "\n" # 126..127
+              - (EndOfLine): "\n" # 127..128
+              - (EndOfLine): "\n" # 128..129
+          - (contract_keyword꞉ ContractKeyword): "contract" # 129..137
+          - (LeadingTrivia) ► (Whitespace): " " # 137..138
+          - (name꞉ Identifier): "Second" # 138..144
+          - (LeadingTrivia) ► (Whitespace): " " # 144..145
+          - (open_brace꞉ OpenBrace): "{" # 145..146
+          - (close_brace꞉ CloseBrace): "}" # 146..147
+          - (TrailingTrivia) ► (EndOfLine): "\n" # 147..148

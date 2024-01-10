@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "abstract contract Sample {}\n" # 0..28
+  - (SKIPPED): "abstract contract Sample {}\n" # 0..28

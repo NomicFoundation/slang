@@ -6,8 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..4 "+foo"
-      - (variant) PrefixExpression: # 0..4 "+foo"
-          - (operator) Plus: "+" # 0..1
-          - (operand) Expression: # 1..4 "foo"
-              - (variant) Identifier: "foo" # 1..4
+  - (Expression) ► (variant꞉ PrefixExpression): # 0..4 "+foo"
+      - (operator꞉ Plus): "+" # 0..1
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # 1..4

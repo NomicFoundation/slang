@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..8 "bytes320"
-      - (variant) IdentifierPath: # 0..8 "bytes320"
-          - (item) Identifier: "bytes320" # 0..8
+  - (TypeName) ► (variant꞉ IdentifierPath) ► (item꞉ Identifier): "bytes320" # 0..8

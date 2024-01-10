@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "macro" # 0..5
+  - (SKIPPED): "macro" # 0..5

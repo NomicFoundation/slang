@@ -4,6 +4,9 @@
   "files.associations": {
     "*.ts.jinja2": "jinja-js" // until this is merged: https://github.com/samuelcolvin/jinjahtml-vscode/pull/148
   },
+  "editor.unicodeHighlight.allowedCharacters": {
+    "꞉": true // used in CST snapshot tests
+  },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.readonlyInclude": {
