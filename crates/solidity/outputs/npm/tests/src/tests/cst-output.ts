@@ -64,3 +64,13 @@ test("calculate unicode characters text length", () => {
     utf8: 24,
   });
 });
+
+test("can unparse rule nodes", () => {
+  const source = `contract Foo {}`;
+  const language = new Language("0.8.1");
+
+  const parseTree = language.parse(RuleKind.SourceUnit, source).tree();
+  expectRule(parseTree, RuleKind.SourceUnit);
+
+  expect(parseTree.unparse()).toEqual(source);
+});
