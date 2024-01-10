@@ -8,37 +8,38 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..70 "contract Sample {\n  event Log(uint256 indexed a, u..."
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ EventDefinition): # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
-          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-          - (event_keyword꞉ EventKeyword): "event" # 20..25
-          - (LeadingTrivia) ► (Whitespace): " " # 25..26
-          - (name꞉ Identifier): "Log" # 26..29
-          - (parameters꞉ EventParametersDeclaration): # 29..67 "(uint256 indexed a, uint256 indexed b)"
-              - (open_paren꞉ OpenParen): "(" # 29..30
-              - (parameters꞉ EventParameters): # 30..66 "uint256 indexed a, uint256 indexed b"
-                  - (item꞉ EventParameter): # 30..47 "uint256 indexed a"
-                      - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # 30..37
-                      - (LeadingTrivia) ► (Whitespace): " " # 37..38
-                      - (indexed_keyword꞉ IndexedKeyword): "indexed" # 38..45
-                      - (LeadingTrivia) ► (Whitespace): " " # 45..46
-                      - (name꞉ Identifier): "a" # 46..47
-                  - (separator꞉ Comma): "," # 47..48
-                  - (item꞉ EventParameter): # 48..66 " uint256 indexed b"
-                      - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # 48..56 " uint256"
-                          - (LeadingTrivia) ► (Whitespace): " " # 48..49
-                          - (variant꞉ UintKeyword): "uint256" # 49..56
-                      - (LeadingTrivia) ► (Whitespace): " " # 56..57
-                      - (indexed_keyword꞉ IndexedKeyword): "indexed" # 57..64
-                      - (LeadingTrivia) ► (Whitespace): " " # 64..65
-                      - (name꞉ Identifier): "b" # 65..66
-              - (close_paren꞉ CloseParen): ")" # 66..67
-          - (semicolon꞉ Semicolon): ";" # 67..68
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 68..69
-      - (close_brace꞉ CloseBrace): "}" # 69..70
+  - (ContractDefinition): # "contract Sample {\n  event Log(uint256 indexed a, u..." (0..70)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  event Log(uint256 indexed a, uint256 indexed b);..." (18..69)
+          - (item꞉ ContractMember) ──→ (variant꞉ EventDefinition): # "  event Log(uint256 indexed a, uint256 indexed b);..." (18..69)
+              - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+              - (event_keyword꞉ EventKeyword): "event" # (20..25)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (25..26)
+              - (name꞉ Identifier): "Log" # (26..29)
+              - (parameters꞉ EventParametersDeclaration): # "(uint256 indexed a, uint256 indexed b)" (29..67)
+                  - (open_paren꞉ OpenParen): "(" # (29..30)
+                  - (parameters꞉ EventParameters): # "uint256 indexed a, uint256 indexed b" (30..66)
+                      - (item꞉ EventParameter): # "uint256 indexed a" (30..47)
+                          - (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ UintKeyword): "uint256" # (30..37)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (37..38)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (38..45)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (45..46)
+                          - (name꞉ Identifier): "a" # (46..47)
+                      - (separator꞉ Comma): "," # (47..48)
+                      - (item꞉ EventParameter): # " uint256 indexed b" (48..66)
+                          - (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType): # " uint256" (48..56)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (48..49)
+                              - (variant꞉ UintKeyword): "uint256" # (49..56)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (56..57)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (57..64)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (64..65)
+                          - (name꞉ Identifier): "b" # (65..66)
+                  - (close_paren꞉ CloseParen): ")" # (66..67)
+              - (semicolon꞉ Semicolon): ";" # (67..68)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (68..69)
+      - (close_brace꞉ CloseBrace): "}" # (69..70)

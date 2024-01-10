@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - (MappingType): # 0..30 "mapping(string => bytes32 Bar)"
-      - (mapping_keyword꞉ MappingKeyword): "mapping" # 0..7
-      - (open_paren꞉ OpenParen): "(" # 7..8
-      - (key_type꞉ MappingKey) ► (key_type꞉ MappingKeyType) ► (variant꞉ ElementaryType) ► (variant꞉ StringKeyword): "string" # 8..14
-      - (LeadingTrivia) ► (Whitespace): " " # 14..15
-      - (equal_greater_than꞉ EqualGreaterThan): "=>" # 15..17
-      - (value_type꞉ MappingValue): # 17..29 " bytes32 Bar"
-          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # 17..25 " bytes32"
-              - (LeadingTrivia) ► (Whitespace): " " # 17..18
-              - (variant꞉ BytesKeyword): "bytes32" # 18..25
-          - (LeadingTrivia) ► (Whitespace): " " # 25..26
-          - (name꞉ Identifier): "Bar" # 26..29
-      - (close_paren꞉ CloseParen): ")" # 29..30
+  - (MappingType): # "mapping(string => bytes32 Bar)" (0..30)
+      - (mapping_keyword꞉ MappingKeyword): "mapping" # (0..7)
+      - (open_paren꞉ OpenParen): "(" # (7..8)
+      - (key_type꞉ MappingKey) ──→ (key_type꞉ MappingKeyType) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ StringKeyword): "string" # (8..14)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (14..15)
+      - (equal_greater_than꞉ EqualGreaterThan): "=>" # (15..17)
+      - (value_type꞉ MappingValue): # " bytes32 Bar" (17..29)
+          - (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType): # " bytes32" (17..25)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (17..18)
+              - (variant꞉ BytesKeyword): "bytes32" # (18..25)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (25..26)
+          - (name꞉ Identifier): "Bar" # (26..29)
+      - (close_paren꞉ CloseParen): ")" # (29..30)

@@ -6,21 +6,21 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # 0..47 "(memory with_location, without_location) = rhs;"
-      - (open_paren꞉ OpenParen): "(" # 0..1
-      - (elements꞉ TupleDeconstructionElements): # 1..39 "memory with_location, without_location"
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # 1..21 "memory with_location"
-              - (storage_location꞉ StorageLocation) ► (variant꞉ MemoryKeyword): "memory" # 1..7
-              - (LeadingTrivia) ► (Whitespace): " " # 7..8
-              - (name꞉ Identifier): "with_location" # 8..21
-          - (separator꞉ Comma): "," # 21..22
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # 22..39 " without_location"
-              - (LeadingTrivia) ► (Whitespace): " " # 22..23
-              - (name꞉ Identifier): "without_location" # 23..39
-      - (close_paren꞉ CloseParen): ")" # 39..40
-      - (LeadingTrivia) ► (Whitespace): " " # 40..41
-      - (equal꞉ Equal): "=" # 41..42
-      - (expression꞉ Expression): # 42..46 " rhs"
-          - (LeadingTrivia) ► (Whitespace): " " # 42..43
-          - (variant꞉ Identifier): "rhs" # 43..46
-      - (semicolon꞉ Semicolon): ";" # 46..47
+  - (TupleDeconstructionStatement): # "(memory with_location, without_location) = rhs;" (0..47)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (elements꞉ TupleDeconstructionElements): # "memory with_location, without_location" (1..39)
+          - (item꞉ TupleDeconstructionElement) ──→ (member꞉ TupleMember) ──→ (variant꞉ UntypedTupleMember): # "memory with_location" (1..21)
+              - (storage_location꞉ StorageLocation) ──→ (variant꞉ MemoryKeyword): "memory" # (1..7)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (7..8)
+              - (name꞉ Identifier): "with_location" # (8..21)
+          - (separator꞉ Comma): "," # (21..22)
+          - (item꞉ TupleDeconstructionElement) ──→ (member꞉ TupleMember) ──→ (variant꞉ UntypedTupleMember): # " without_location" (22..39)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (22..23)
+              - (name꞉ Identifier): "without_location" # (23..39)
+      - (close_paren꞉ CloseParen): ")" # (39..40)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (40..41)
+      - (equal꞉ Equal): "=" # (41..42)
+      - (expression꞉ Expression): # " rhs" (42..46)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (42..43)
+          - (variant꞉ Identifier): "rhs" # (43..46)
+      - (semicolon꞉ Semicolon): ";" # (46..47)

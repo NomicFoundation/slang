@@ -9,27 +9,29 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ ConstructorDefinition): # 18..47 "  constructor() public {\n  }\n"
-          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-          - (constructor_keyword꞉ ConstructorKeyword): "constructor" # 20..31
-          - (parameters꞉ ParametersDeclaration): # 31..33 "()"
-              - (open_paren꞉ OpenParen): "(" # 31..32
-              - (close_paren꞉ CloseParen): ")" # 32..33
-          - (attributes꞉ ConstructorAttributes) ► (item꞉ ConstructorAttribute): # 33..40 " public"
-              - (LeadingTrivia) ► (Whitespace): " " # 33..34
-              - (variant꞉ PublicKeyword): "public" # 34..40
-          - (body꞉ Block): # 40..47 " {\n  }\n"
-              - (LeadingTrivia) ► (Whitespace): " " # 40..41
-              - (open_brace꞉ OpenBrace): "{" # 41..42
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 42..43
-              - (LeadingTrivia) ► (Whitespace): "  " # 43..45
-              - (close_brace꞉ CloseBrace): "}" # 45..46
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 46..47
-      - (close_brace꞉ CloseBrace): "}" # 47..48
+  - (ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (0..48)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  constructor() public {\n  }\n" (18..47)
+          - (item꞉ ContractMember) ──→ (variant꞉ ConstructorDefinition): # "  constructor() public {\n  }\n" (18..47)
+              - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+              - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (20..31)
+              - (parameters꞉ ParametersDeclaration): # "()" (31..33)
+                  - (open_paren꞉ OpenParen): "(" # (31..32)
+                  - (close_paren꞉ CloseParen): ")" # (32..33)
+              - (attributes꞉ ConstructorAttributes): # " public" (33..40)
+                  - (item꞉ ConstructorAttribute): # " public" (33..40)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (33..34)
+                      - (variant꞉ PublicKeyword): "public" # (34..40)
+              - (body꞉ Block): # " {\n  }\n" (40..47)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (40..41)
+                  - (open_brace꞉ OpenBrace): "{" # (41..42)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (42..43)
+                  - (LeadingTrivia) ──→ (Whitespace): "  " # (43..45)
+                  - (close_brace꞉ CloseBrace): "}" # (45..46)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (46..47)
+      - (close_brace꞉ CloseBrace): "}" # (47..48)

@@ -15,19 +15,19 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ImportDirective): # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
-      - (LeadingTrivia): # 0..31 "// Empty imports are not valid\n"
-          - (SingleLineComment): "// Empty imports are not valid" # 0..30
-          - (EndOfLine): "\n" # 30..31
-      - (import_keyword꞉ ImportKeyword): "import" # 31..37
-      - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # 37..51 ' {} from "foo"'
-          - (LeadingTrivia) ► (Whitespace): " " # 37..38
-          - (open_brace꞉ OpenBrace): "{" # 38..39
-          - (SKIPPED): "" # 39..39
-          - (close_brace꞉ CloseBrace): "}" # 39..40
-          - (LeadingTrivia) ► (Whitespace): " " # 40..41
-          - (from_keyword꞉ FromKeyword): "from" # 41..45
-          - (LeadingTrivia) ► (Whitespace): " " # 45..46
-          - (path꞉ AsciiStringLiteral): '"foo"' # 46..51
-      - (semicolon꞉ Semicolon): ";" # 51..52
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 52..53
+  - (ImportDirective): # '// Empty imports are not valid\nimport {} from "foo...' (0..53)
+      - (LeadingTrivia): # "// Empty imports are not valid\n" (0..31)
+          - (SingleLineComment): "// Empty imports are not valid" # (0..30)
+          - (EndOfLine): "\n" # (30..31)
+      - (import_keyword꞉ ImportKeyword): "import" # (31..37)
+      - (clause꞉ ImportClause) ──→ (variant꞉ ImportDeconstruction): # ' {} from "foo"' (37..51)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (37..38)
+          - (open_brace꞉ OpenBrace): "{" # (38..39)
+          - (SKIPPED): "" # (39..39)
+          - (close_brace꞉ CloseBrace): "}" # (39..40)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (40..41)
+          - (from_keyword꞉ FromKeyword): "from" # (41..45)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (45..46)
+          - (path꞉ AsciiStringLiteral): '"foo"' # (46..51)
+      - (semicolon꞉ Semicolon): ";" # (51..52)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (52..53)

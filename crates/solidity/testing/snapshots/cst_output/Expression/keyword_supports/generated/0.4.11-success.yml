@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "supports" # 0..8
+  - (Expression) ──→ (variant꞉ Identifier): "supports" # (0..8)

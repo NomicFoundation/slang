@@ -16,20 +16,21 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # 0..37 "contract Sample {\n  error Error1();\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # 18..36 "  error Error1();\n"
-          - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # 18..25 "  error"
-              - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-              - (item꞉ Identifier): "error" # 20..25
-          - (LeadingTrivia) ► (Whitespace): " " # 25..26
-          - (name꞉ Identifier): "Error1" # 26..32
-          - (SKIPPED): "()" # 32..34
-          - (semicolon꞉ Semicolon): ";" # 34..35
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 35..36
-      - (close_brace꞉ CloseBrace): "}" # 36..37
+  - (ContractDefinition): # "contract Sample {\n  error Error1();\n}" (0..37)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  error Error1();\n" (18..36)
+          - (item꞉ ContractMember) ──→ (variant꞉ StateVariableDefinition): # "  error Error1();\n" (18..36)
+              - (type_name꞉ TypeName) ──→ (variant꞉ IdentifierPath): # "  error" (18..25)
+                  - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+                  - (item꞉ Identifier): "error" # (20..25)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (25..26)
+              - (name꞉ Identifier): "Error1" # (26..32)
+              - (SKIPPED): "()" # (32..34)
+              - (semicolon꞉ Semicolon): ";" # (34..35)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (35..36)
+      - (close_brace꞉ CloseBrace): "}" # (36..37)

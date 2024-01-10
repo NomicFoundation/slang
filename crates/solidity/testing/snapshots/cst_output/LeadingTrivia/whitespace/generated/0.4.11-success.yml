@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (LeadingTrivia) ► (Whitespace): "   " # 0..3
+  - (LeadingTrivia) ──→ (Whitespace): "   " # (0..3)

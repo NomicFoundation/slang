@@ -14,6 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractMembers): # 0..24 "constructor() public {}\n"
-      - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition) ► (type_name꞉ TypeName) ► (variant꞉ IdentifierPath) ► (item꞉ Identifier): "constructor" # 0..11
-      - (SKIPPED): "() public {}\n" # 11..24
+  - (ContractMembers): # "constructor() public {}\n" (0..24)
+      - (item꞉ ContractMember) ──→ (variant꞉ StateVariableDefinition) ──→ (type_name꞉ TypeName) ──→ (variant꞉ IdentifierPath): # "constructor" (0..11)
+          - (item꞉ Identifier): "constructor" # (0..11)
+      - (SKIPPED): "() public {}\n" # (11..24)

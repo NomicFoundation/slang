@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (LeadingTrivia): # 0..15 "// single line\n"
-      - (SingleLineComment): "// single line" # 0..14
-      - (EndOfLine): "\n" # 14..15
+  - (LeadingTrivia): # "// single line\n" (0..15)
+      - (SingleLineComment): "// single line" # (0..14)
+      - (EndOfLine): "\n" # (14..15)

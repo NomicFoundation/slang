@@ -113,253 +113,258 @@ Errors: # 12 total
     ────╯
 
 Tree:
-  - (ContractMembers): # 0..560 "function all() override(some.ident unexpected toke..."
-      - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 0..309 "function all() override(some.ident unexpected toke..."
-          - (function_keyword꞉ FunctionKeyword): "function" # 0..8
-          - (name꞉ FunctionName): # 8..12 " all"
-              - (LeadingTrivia) ► (Whitespace): " " # 8..9
-              - (variant꞉ Identifier): "all" # 9..12
-          - (parameters꞉ ParametersDeclaration): # 12..14 "()"
-              - (open_paren꞉ OpenParen): "(" # 12..13
-              - (close_paren꞉ CloseParen): ")" # 13..14
-          - (attributes꞉ FunctionAttributes): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
-              - (item꞉ FunctionAttribute) ► (variant꞉ OverrideSpecifier): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
-                  - (LeadingTrivia) ► (Whitespace): " " # 14..15
-                  - (override_keyword꞉ OverrideKeyword): "override" # 15..23
-                  - (overridden꞉ OverridePathsDeclaration): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
-                      - (open_paren꞉ OpenParen): "(" # 23..24
-                      - (paths꞉ OverridePaths) ► (item꞉ IdentifierPath): # 24..34 "some.ident"
-                          - (item꞉ Identifier): "some" # 24..28
-                          - (separator꞉ Period): "." # 28..29
-                          - (item꞉ Identifier): "ident" # 29..34
-                      - (LeadingTrivia) ► (Whitespace): " " # 34..35
-                      - (SKIPPED): "unexpected tokens, ISomeInterface, Other" # 35..75
-                      - (close_paren꞉ CloseParen): ")" # 75..76
-              - (item꞉ FunctionAttribute): # 76..83 " public"
-                  - (LeadingTrivia) ► (Whitespace): " " # 76..77
-                  - (variant꞉ PublicKeyword): "public" # 77..83
-          - (body꞉ FunctionBody) ► (variant꞉ Block): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
-              - (LeadingTrivia) ► (Whitespace): " " # 83..84
-              - (open_brace꞉ OpenBrace): "{" # 84..85
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 85..86
-              - (statements꞉ Statements): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 86..103 "  msg.sender.call"
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 86..98 "  msg.sender"
-                                  - (operand꞉ Expression): # 86..91 "  msg"
-                                      - (LeadingTrivia) ► (Whitespace): "  " # 86..88
-                                      - (variant꞉ Identifier): "msg" # 88..91
-                                  - (period꞉ Period): "." # 91..92
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # 92..98
-                              - (period꞉ Period): "." # 98..99
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # 99..103
-                          - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroup): # 103..119 "{do: 1, arg: 1 }"
-                              - (open_brace꞉ OpenBrace): "{" # 103..104
-                              - (SKIPPED): "do: 1, arg: 1 " # 104..118
-                              - (close_brace꞉ CloseBrace): "}" # 118..119
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 119..121 "()"
-                              - (open_paren꞉ OpenParen): "(" # 119..120
-                              - (close_paren꞉ CloseParen): ")" # 120..121
-                      - (semicolon꞉ Semicolon): ";" # 121..122
-                      - (TrailingTrivia) ► (EndOfLine): "\n" # 122..123
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 123..140 "  msg.sender.call"
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 123..135 "  msg.sender"
-                                  - (operand꞉ Expression): # 123..128 "  msg"
-                                      - (LeadingTrivia) ► (Whitespace): "  " # 123..125
-                                      - (variant꞉ Identifier): "msg" # 125..128
-                                  - (period꞉ Period): "." # 128..129
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # 129..135
-                              - (period꞉ Period): "." # 135..136
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # 136..140
-                          - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroup): # 140..163 "{, empty: 1, parse: 2 }"
-                              - (open_brace꞉ OpenBrace): "{" # 140..141
-                              - (SKIPPED): ", empty: 1, parse: 2 " # 141..162
-                              - (close_brace꞉ CloseBrace): "}" # 162..163
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 163..165 "()"
-                              - (open_paren꞉ OpenParen): "(" # 163..164
-                              - (close_paren꞉ CloseParen): ")" # 164..165
-                      - (semicolon꞉ Semicolon): ";" # 165..166
-                      - (TrailingTrivia) ► (EndOfLine): "\n" # 166..167
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 167..184 "  msg.sender.call"
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 167..179 "  msg.sender"
-                                  - (operand꞉ Expression): # 167..172 "  msg"
-                                      - (LeadingTrivia) ► (Whitespace): "  " # 167..169
-                                      - (variant꞉ Identifier): "msg" # 169..172
-                                  - (period꞉ Period): "." # 172..173
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # 173..179
-                              - (period꞉ Period): "." # 179..180
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # 180..184
-                          - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroup): # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
-                              - (open_brace꞉ OpenBrace): "{" # 184..185
-                              - (arguments꞉ NamedArguments): # 185..222 "arg: 1, missing_expr: , no_semicolon,"
-                                  - (item꞉ NamedArgument): # 185..191 "arg: 1"
-                                      - (name꞉ Identifier): "arg" # 185..188
-                                      - (colon꞉ Colon): ":" # 188..189
-                                      - (value꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 189..191 " 1"
-                                          - (LeadingTrivia) ► (Whitespace): " " # 189..190
-                                          - (literal꞉ DecimalLiteral): "1" # 190..191
-                                  - (separator꞉ Comma): "," # 191..192
-                                  - (item꞉ NamedArgument): # 192..206 " missing_expr:"
-                                      - (LeadingTrivia) ► (Whitespace): " " # 192..193
-                                      - (name꞉ Identifier): "missing_expr" # 193..205
-                                      - (colon꞉ Colon): ":" # 205..206
-                                  - (SKIPPED): " " # 206..207
-                                  - (Comma): "," # 207..208
-                                  - (item꞉ NamedArgument): # 208..221 " no_semicolon"
-                                      - (LeadingTrivia) ► (Whitespace): " " # 208..209
-                                      - (name꞉ Identifier): "no_semicolon" # 209..221
-                                  - (SKIPPED): "" # 221..221
-                                  - (Comma): "," # 221..222
-                              - (LeadingTrivia) ► (Whitespace): " " # 222..223
-                              - (SKIPPED): ", " # 223..225
-                              - (close_brace꞉ CloseBrace): "}" # 225..226
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 226..228 "()"
-                              - (open_paren꞉ OpenParen): "(" # 226..227
-                              - (close_paren꞉ CloseParen): ")" # 227..228
-                      - (semicolon꞉ Semicolon): ";" # 228..229
-                      - (TrailingTrivia) ► (EndOfLine): "\n" # 229..230
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 230..247 "  msg.sender.call"
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 230..242 "  msg.sender"
-                                  - (operand꞉ Expression): # 230..235 "  msg"
-                                      - (LeadingTrivia) ► (Whitespace): "  " # 230..232
-                                      - (variant꞉ Identifier): "msg" # 232..235
-                                  - (period꞉ Period): "." # 235..236
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # 236..242
-                              - (period꞉ Period): "." # 242..243
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # 243..247
-                          - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroup): # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
-                              - (open_brace꞉ OpenBrace): "{" # 247..248
-                              - (arguments꞉ NamedArguments) ► (item꞉ NamedArgument): # 248..254 "arg: 1"
-                                  - (name꞉ Identifier): "arg" # 248..251
-                                  - (colon꞉ Colon): ":" # 251..252
-                                  - (value꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 252..254 " 1"
-                                      - (LeadingTrivia) ► (Whitespace): " " # 252..253
-                                      - (literal꞉ DecimalLiteral): "1" # 253..254
-                              - (LeadingTrivia) ► (Whitespace): " " # 254..255
-                              - (SKIPPED): "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
-                              - (close_brace꞉ CloseBrace): "}" # 301..302
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 302..304 "()"
-                              - (open_paren꞉ OpenParen): "(" # 302..303
-                              - (close_paren꞉ CloseParen): ")" # 303..304
-                      - (semicolon꞉ Semicolon): ";" # 304..305
-                      - (TrailingTrivia) ► (EndOfLine): "\n" # 305..306
-              - (LeadingTrivia) ► (EndOfLine): "\n" # 306..307
-              - (close_brace꞉ CloseBrace): "}" # 307..308
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 308..309
-      - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
-          - (LeadingTrivia) ► (EndOfLine): "\n" # 309..310
-          - (function_keyword꞉ FunctionKeyword): "function" # 310..318
-          - (name꞉ FunctionName): # 318..324 " empty"
-              - (LeadingTrivia) ► (Whitespace): " " # 318..319
-              - (variant꞉ Identifier): "empty" # 319..324
-          - (parameters꞉ ParametersDeclaration): # 324..326 "()"
-              - (open_paren꞉ OpenParen): "(" # 324..325
-              - (close_paren꞉ CloseParen): ")" # 325..326
-          - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute) ► (variant꞉ OverrideSpecifier): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-              - (LeadingTrivia) ► (Whitespace): " " # 326..327
-              - (override_keyword꞉ OverrideKeyword): "override" # 327..335
-              - (overridden꞉ OverridePathsDeclaration): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
-                  - (open_paren꞉ OpenParen): "(" # 335..336
-                  - (paths꞉ OverridePaths): # 336..347 "some.ident,"
-                      - (item꞉ IdentifierPath): # 336..346 "some.ident"
-                          - (item꞉ Identifier): "some" # 336..340
-                          - (separator꞉ Period): "." # 340..341
-                          - (item꞉ Identifier): "ident" # 341..346
-                      - (separator꞉ Comma): "," # 346..347
-                  - (LeadingTrivia): # 347..359 " /* empty */"
-                      - (Whitespace): " " # 347..348
-                      - (MultilineComment): "/* empty */" # 348..359
-                  - (SKIPPED): ", other.arg.here, and.here" # 359..385
-                  - (close_paren꞉ CloseParen): ")" # 385..386
-          - (body꞉ FunctionBody): # 386..388 ";\n"
-              - (variant꞉ Semicolon): ";" # 386..387
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 387..388
-      - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 388..489 "\nfunction nested_lists() override(some.ident, next..."
-          - (LeadingTrivia) ► (EndOfLine): "\n" # 388..389
-          - (function_keyword꞉ FunctionKeyword): "function" # 389..397
-          - (name꞉ FunctionName): # 397..410 " nested_lists"
-              - (LeadingTrivia) ► (Whitespace): " " # 397..398
-              - (variant꞉ Identifier): "nested_lists" # 398..410
-          - (parameters꞉ ParametersDeclaration): # 410..412 "()"
-              - (open_paren꞉ OpenParen): "(" # 410..411
-              - (close_paren꞉ CloseParen): ")" # 411..412
-          - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute) ► (variant꞉ OverrideSpecifier): # 412..487 " override(some.ident, next.do.that, other.while, n..."
-              - (LeadingTrivia) ► (Whitespace): " " # 412..413
-              - (override_keyword꞉ OverrideKeyword): "override" # 413..421
-              - (overridden꞉ OverridePathsDeclaration): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
-                  - (open_paren꞉ OpenParen): "(" # 421..422
-                  - (paths꞉ OverridePaths): # 422..470 "some.ident, next.do.that, other.while, next.one,"
-                      - (item꞉ IdentifierPath): # 422..432 "some.ident"
-                          - (item꞉ Identifier): "some" # 422..426
-                          - (separator꞉ Period): "." # 426..427
-                          - (item꞉ Identifier): "ident" # 427..432
-                      - (separator꞉ Comma): "," # 432..433
-                      - (item꞉ IdentifierPath): # 433..439 " next."
-                          - (LeadingTrivia) ► (Whitespace): " " # 433..434
-                          - (item꞉ Identifier): "next" # 434..438
-                          - (separator꞉ Period): "." # 438..439
-                      - (SKIPPED): "do.that" # 439..446
-                      - (Comma): "," # 446..447
-                      - (item꞉ IdentifierPath): # 447..454 " other."
-                          - (LeadingTrivia) ► (Whitespace): " " # 447..448
-                          - (item꞉ Identifier): "other" # 448..453
-                          - (separator꞉ Period): "." # 453..454
-                      - (SKIPPED): "while" # 454..459
-                      - (Comma): "," # 459..460
-                      - (item꞉ IdentifierPath): # 460..469 " next.one"
-                          - (LeadingTrivia) ► (Whitespace): " " # 460..461
-                          - (item꞉ Identifier): "next" # 461..465
-                          - (separator꞉ Period): "." # 465..466
-                          - (item꞉ Identifier): "one" # 466..469
-                      - (separator꞉ Comma): "," # 469..470
-                  - (LeadingTrivia) ► (Whitespace): " " # 470..471
-                  - (SKIPPED): "final, ultimate" # 471..486
-                  - (close_paren꞉ CloseParen): ")" # 486..487
-          - (body꞉ FunctionBody): # 487..489 ";\n"
-              - (variant꞉ Semicolon): ";" # 487..488
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 488..489
-      - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 489..560 "function nested_lists() override(some., next.arg, ..."
-          - (function_keyword꞉ FunctionKeyword): "function" # 489..497
-          - (name꞉ FunctionName): # 497..510 " nested_lists"
-              - (LeadingTrivia) ► (Whitespace): " " # 497..498
-              - (variant꞉ Identifier): "nested_lists" # 498..510
-          - (parameters꞉ ParametersDeclaration): # 510..512 "()"
-              - (open_paren꞉ OpenParen): "(" # 510..511
-              - (close_paren꞉ CloseParen): ")" # 511..512
-          - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute) ► (variant꞉ OverrideSpecifier): # 512..558 " override(some., next.arg, next.one, ultimate)"
-              - (LeadingTrivia) ► (Whitespace): " " # 512..513
-              - (override_keyword꞉ OverrideKeyword): "override" # 513..521
-              - (overridden꞉ OverridePathsDeclaration): # 521..558 "(some., next.arg, next.one, ultimate)"
-                  - (open_paren꞉ OpenParen): "(" # 521..522
-                  - (paths꞉ OverridePaths): # 522..557 "some., next.arg, next.one, ultimate"
-                      - (item꞉ IdentifierPath): # 522..527 "some."
-                          - (item꞉ Identifier): "some" # 522..526
-                          - (separator꞉ Period): "." # 526..527
-                      - (SKIPPED): "" # 527..527
-                      - (Comma): "," # 527..528
-                      - (item꞉ IdentifierPath): # 528..537 " next.arg"
-                          - (LeadingTrivia) ► (Whitespace): " " # 528..529
-                          - (item꞉ Identifier): "next" # 529..533
-                          - (separator꞉ Period): "." # 533..534
-                          - (item꞉ Identifier): "arg" # 534..537
-                      - (separator꞉ Comma): "," # 537..538
-                      - (item꞉ IdentifierPath): # 538..547 " next.one"
-                          - (LeadingTrivia) ► (Whitespace): " " # 538..539
-                          - (item꞉ Identifier): "next" # 539..543
-                          - (separator꞉ Period): "." # 543..544
-                          - (item꞉ Identifier): "one" # 544..547
-                      - (separator꞉ Comma): "," # 547..548
-                      - (item꞉ IdentifierPath): # 548..557 " ultimate"
-                          - (LeadingTrivia) ► (Whitespace): " " # 548..549
-                          - (item꞉ Identifier): "ultimate" # 549..557
-                  - (close_paren꞉ CloseParen): ")" # 557..558
-          - (body꞉ FunctionBody): # 558..560 ";\n"
-              - (variant꞉ Semicolon): ";" # 558..559
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 559..560
+  - (ContractMembers): # "function all() override(some.ident unexpected toke..." (0..560)
+      - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "function all() override(some.ident unexpected toke..." (0..309)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (name꞉ FunctionName): # " all" (8..12)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+              - (variant꞉ Identifier): "all" # (9..12)
+          - (parameters꞉ ParametersDeclaration): # "()" (12..14)
+              - (open_paren꞉ OpenParen): "(" # (12..13)
+              - (close_paren꞉ CloseParen): ")" # (13..14)
+          - (attributes꞉ FunctionAttributes): # " override(some.ident unexpected tokens, ISomeInter..." (14..83)
+              - (item꞉ FunctionAttribute) ──→ (variant꞉ OverrideSpecifier): # " override(some.ident unexpected tokens, ISomeInter..." (14..76)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (14..15)
+                  - (override_keyword꞉ OverrideKeyword): "override" # (15..23)
+                  - (overridden꞉ OverridePathsDeclaration): # "(some.ident unexpected tokens, ISomeInterface, Oth..." (23..76)
+                      - (open_paren꞉ OpenParen): "(" # (23..24)
+                      - (paths꞉ OverridePaths): # "some.ident" (24..34)
+                          - (item꞉ IdentifierPath): # "some.ident" (24..34)
+                              - (item꞉ Identifier): "some" # (24..28)
+                              - (separator꞉ Period): "." # (28..29)
+                              - (item꞉ Identifier): "ident" # (29..34)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (34..35)
+                      - (SKIPPED): "unexpected tokens, ISomeInterface, Other" # (35..75)
+                      - (close_paren꞉ CloseParen): ")" # (75..76)
+              - (item꞉ FunctionAttribute): # " public" (76..83)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (76..77)
+                  - (variant꞉ PublicKeyword): "public" # (77..83)
+          - (body꞉ FunctionBody) ──→ (variant꞉ Block): # " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..." (83..309)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (83..84)
+              - (open_brace꞉ OpenBrace): "{" # (84..85)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (85..86)
+              - (statements꞉ Statements): # "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...." (86..306)
+                  - (item꞉ Statement) ──→ (variant꞉ ExpressionStatement): # "  msg.sender.call{do: 1, arg: 1 }();\n" (86..123)
+                      - (expression꞉ Expression) ──→ (variant꞉ FunctionCallExpression): # "  msg.sender.call{do: 1, arg: 1 }()" (86..121)
+                          - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender.call" (86..103)
+                              - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender" (86..98)
+                                  - (operand꞉ Expression): # "  msg" (86..91)
+                                      - (LeadingTrivia) ──→ (Whitespace): "  " # (86..88)
+                                      - (variant꞉ Identifier): "msg" # (88..91)
+                                  - (period꞉ Period): "." # (91..92)
+                                  - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "sender" # (92..98)
+                              - (period꞉ Period): "." # (98..99)
+                              - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "call" # (99..103)
+                          - (options꞉ FunctionCallOptions) ──→ (variant꞉ NamedArgumentGroup): # "{do: 1, arg: 1 }" (103..119)
+                              - (open_brace꞉ OpenBrace): "{" # (103..104)
+                              - (SKIPPED): "do: 1, arg: 1 " # (104..118)
+                              - (close_brace꞉ CloseBrace): "}" # (118..119)
+                          - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "()" (119..121)
+                              - (open_paren꞉ OpenParen): "(" # (119..120)
+                              - (close_paren꞉ CloseParen): ")" # (120..121)
+                      - (semicolon꞉ Semicolon): ";" # (121..122)
+                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (122..123)
+                  - (item꞉ Statement) ──→ (variant꞉ ExpressionStatement): # "  msg.sender.call{, empty: 1, parse: 2 }();\n" (123..167)
+                      - (expression꞉ Expression) ──→ (variant꞉ FunctionCallExpression): # "  msg.sender.call{, empty: 1, parse: 2 }()" (123..165)
+                          - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender.call" (123..140)
+                              - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender" (123..135)
+                                  - (operand꞉ Expression): # "  msg" (123..128)
+                                      - (LeadingTrivia) ──→ (Whitespace): "  " # (123..125)
+                                      - (variant꞉ Identifier): "msg" # (125..128)
+                                  - (period꞉ Period): "." # (128..129)
+                                  - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "sender" # (129..135)
+                              - (period꞉ Period): "." # (135..136)
+                              - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "call" # (136..140)
+                          - (options꞉ FunctionCallOptions) ──→ (variant꞉ NamedArgumentGroup): # "{, empty: 1, parse: 2 }" (140..163)
+                              - (open_brace꞉ OpenBrace): "{" # (140..141)
+                              - (SKIPPED): ", empty: 1, parse: 2 " # (141..162)
+                              - (close_brace꞉ CloseBrace): "}" # (162..163)
+                          - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "()" (163..165)
+                              - (open_paren꞉ OpenParen): "(" # (163..164)
+                              - (close_paren꞉ CloseParen): ")" # (164..165)
+                      - (semicolon꞉ Semicolon): ";" # (165..166)
+                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (166..167)
+                  - (item꞉ Statement) ──→ (variant꞉ ExpressionStatement): # "  msg.sender.call{arg: 1, missing_expr: , no_semic..." (167..230)
+                      - (expression꞉ Expression) ──→ (variant꞉ FunctionCallExpression): # "  msg.sender.call{arg: 1, missing_expr: , no_semic..." (167..228)
+                          - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender.call" (167..184)
+                              - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender" (167..179)
+                                  - (operand꞉ Expression): # "  msg" (167..172)
+                                      - (LeadingTrivia) ──→ (Whitespace): "  " # (167..169)
+                                      - (variant꞉ Identifier): "msg" # (169..172)
+                                  - (period꞉ Period): "." # (172..173)
+                                  - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "sender" # (173..179)
+                              - (period꞉ Period): "." # (179..180)
+                              - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "call" # (180..184)
+                          - (options꞉ FunctionCallOptions) ──→ (variant꞉ NamedArgumentGroup): # "{arg: 1, missing_expr: , no_semicolon, , }" (184..226)
+                              - (open_brace꞉ OpenBrace): "{" # (184..185)
+                              - (arguments꞉ NamedArguments): # "arg: 1, missing_expr: , no_semicolon," (185..222)
+                                  - (item꞉ NamedArgument): # "arg: 1" (185..191)
+                                      - (name꞉ Identifier): "arg" # (185..188)
+                                      - (colon꞉ Colon): ":" # (188..189)
+                                      - (value꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 1" (189..191)
+                                          - (LeadingTrivia) ──→ (Whitespace): " " # (189..190)
+                                          - (literal꞉ DecimalLiteral): "1" # (190..191)
+                                  - (separator꞉ Comma): "," # (191..192)
+                                  - (item꞉ NamedArgument): # " missing_expr:" (192..206)
+                                      - (LeadingTrivia) ──→ (Whitespace): " " # (192..193)
+                                      - (name꞉ Identifier): "missing_expr" # (193..205)
+                                      - (colon꞉ Colon): ":" # (205..206)
+                                  - (SKIPPED): " " # (206..207)
+                                  - (Comma): "," # (207..208)
+                                  - (item꞉ NamedArgument): # " no_semicolon" (208..221)
+                                      - (LeadingTrivia) ──→ (Whitespace): " " # (208..209)
+                                      - (name꞉ Identifier): "no_semicolon" # (209..221)
+                                  - (SKIPPED): "" # (221..221)
+                                  - (Comma): "," # (221..222)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (222..223)
+                              - (SKIPPED): ", " # (223..225)
+                              - (close_brace꞉ CloseBrace): "}" # (225..226)
+                          - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "()" (226..228)
+                              - (open_paren꞉ OpenParen): "(" # (226..227)
+                              - (close_paren꞉ CloseParen): ")" # (227..228)
+                      - (semicolon꞉ Semicolon): ";" # (228..229)
+                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (229..230)
+                  - (item꞉ Statement) ──→ (variant꞉ ExpressionStatement): # "  msg.sender.call{arg: 1 unexpected tokens, not: 2..." (230..306)
+                      - (expression꞉ Expression) ──→ (variant꞉ FunctionCallExpression): # "  msg.sender.call{arg: 1 unexpected tokens, not: 2..." (230..304)
+                          - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender.call" (230..247)
+                              - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "  msg.sender" (230..242)
+                                  - (operand꞉ Expression): # "  msg" (230..235)
+                                      - (LeadingTrivia) ──→ (Whitespace): "  " # (230..232)
+                                      - (variant꞉ Identifier): "msg" # (232..235)
+                                  - (period꞉ Period): "." # (235..236)
+                                  - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "sender" # (236..242)
+                              - (period꞉ Period): "." # (242..243)
+                              - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "call" # (243..247)
+                          - (options꞉ FunctionCallOptions) ──→ (variant꞉ NamedArgumentGroup): # "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." (247..302)
+                              - (open_brace꞉ OpenBrace): "{" # (247..248)
+                              - (arguments꞉ NamedArguments): # "arg: 1" (248..254)
+                                  - (item꞉ NamedArgument): # "arg: 1" (248..254)
+                                      - (name꞉ Identifier): "arg" # (248..251)
+                                      - (colon꞉ Colon): ":" # (251..252)
+                                      - (value꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 1" (252..254)
+                                          - (LeadingTrivia) ──→ (Whitespace): " " # (252..253)
+                                          - (literal꞉ DecimalLiteral): "1" # (253..254)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (254..255)
+                              - (SKIPPED): "unexpected tokens, not: 2, recovered, yet: 3, " # (255..301)
+                              - (close_brace꞉ CloseBrace): "}" # (301..302)
+                          - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "()" (302..304)
+                              - (open_paren꞉ OpenParen): "(" # (302..303)
+                              - (close_paren꞉ CloseParen): ")" # (303..304)
+                      - (semicolon꞉ Semicolon): ";" # (304..305)
+                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (305..306)
+              - (LeadingTrivia) ──→ (EndOfLine): "\n" # (306..307)
+              - (close_brace꞉ CloseBrace): "}" # (307..308)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (308..309)
+      - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "\nfunction empty() override(some.ident, /* empty */..." (309..388)
+          - (LeadingTrivia) ──→ (EndOfLine): "\n" # (309..310)
+          - (function_keyword꞉ FunctionKeyword): "function" # (310..318)
+          - (name꞉ FunctionName): # " empty" (318..324)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (318..319)
+              - (variant꞉ Identifier): "empty" # (319..324)
+          - (parameters꞉ ParametersDeclaration): # "()" (324..326)
+              - (open_paren꞉ OpenParen): "(" # (324..325)
+              - (close_paren꞉ CloseParen): ")" # (325..326)
+          - (attributes꞉ FunctionAttributes): # " override(some.ident, /* empty */, other.arg.here,..." (326..386)
+              - (item꞉ FunctionAttribute) ──→ (variant꞉ OverrideSpecifier): # " override(some.ident, /* empty */, other.arg.here,..." (326..386)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (326..327)
+                  - (override_keyword꞉ OverrideKeyword): "override" # (327..335)
+                  - (overridden꞉ OverridePathsDeclaration): # "(some.ident, /* empty */, other.arg.here, and.here..." (335..386)
+                      - (open_paren꞉ OpenParen): "(" # (335..336)
+                      - (paths꞉ OverridePaths): # "some.ident," (336..347)
+                          - (item꞉ IdentifierPath): # "some.ident" (336..346)
+                              - (item꞉ Identifier): "some" # (336..340)
+                              - (separator꞉ Period): "." # (340..341)
+                              - (item꞉ Identifier): "ident" # (341..346)
+                          - (separator꞉ Comma): "," # (346..347)
+                      - (LeadingTrivia): # " /* empty */" (347..359)
+                          - (Whitespace): " " # (347..348)
+                          - (MultilineComment): "/* empty */" # (348..359)
+                      - (SKIPPED): ", other.arg.here, and.here" # (359..385)
+                      - (close_paren꞉ CloseParen): ")" # (385..386)
+          - (body꞉ FunctionBody): # ";\n" (386..388)
+              - (variant꞉ Semicolon): ";" # (386..387)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (387..388)
+      - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "\nfunction nested_lists() override(some.ident, next..." (388..489)
+          - (LeadingTrivia) ──→ (EndOfLine): "\n" # (388..389)
+          - (function_keyword꞉ FunctionKeyword): "function" # (389..397)
+          - (name꞉ FunctionName): # " nested_lists" (397..410)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (397..398)
+              - (variant꞉ Identifier): "nested_lists" # (398..410)
+          - (parameters꞉ ParametersDeclaration): # "()" (410..412)
+              - (open_paren꞉ OpenParen): "(" # (410..411)
+              - (close_paren꞉ CloseParen): ")" # (411..412)
+          - (attributes꞉ FunctionAttributes): # " override(some.ident, next.do.that, other.while, n..." (412..487)
+              - (item꞉ FunctionAttribute) ──→ (variant꞉ OverrideSpecifier): # " override(some.ident, next.do.that, other.while, n..." (412..487)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (412..413)
+                  - (override_keyword꞉ OverrideKeyword): "override" # (413..421)
+                  - (overridden꞉ OverridePathsDeclaration): # "(some.ident, next.do.that, other.while, next.one, ..." (421..487)
+                      - (open_paren꞉ OpenParen): "(" # (421..422)
+                      - (paths꞉ OverridePaths): # "some.ident, next.do.that, other.while, next.one," (422..470)
+                          - (item꞉ IdentifierPath): # "some.ident" (422..432)
+                              - (item꞉ Identifier): "some" # (422..426)
+                              - (separator꞉ Period): "." # (426..427)
+                              - (item꞉ Identifier): "ident" # (427..432)
+                          - (separator꞉ Comma): "," # (432..433)
+                          - (item꞉ IdentifierPath): # " next." (433..439)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (433..434)
+                              - (item꞉ Identifier): "next" # (434..438)
+                              - (separator꞉ Period): "." # (438..439)
+                          - (SKIPPED): "do.that" # (439..446)
+                          - (Comma): "," # (446..447)
+                          - (item꞉ IdentifierPath): # " other." (447..454)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (447..448)
+                              - (item꞉ Identifier): "other" # (448..453)
+                              - (separator꞉ Period): "." # (453..454)
+                          - (SKIPPED): "while" # (454..459)
+                          - (Comma): "," # (459..460)
+                          - (item꞉ IdentifierPath): # " next.one" (460..469)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (460..461)
+                              - (item꞉ Identifier): "next" # (461..465)
+                              - (separator꞉ Period): "." # (465..466)
+                              - (item꞉ Identifier): "one" # (466..469)
+                          - (separator꞉ Comma): "," # (469..470)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (470..471)
+                      - (SKIPPED): "final, ultimate" # (471..486)
+                      - (close_paren꞉ CloseParen): ")" # (486..487)
+          - (body꞉ FunctionBody): # ";\n" (487..489)
+              - (variant꞉ Semicolon): ";" # (487..488)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (488..489)
+      - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "function nested_lists() override(some., next.arg, ..." (489..560)
+          - (function_keyword꞉ FunctionKeyword): "function" # (489..497)
+          - (name꞉ FunctionName): # " nested_lists" (497..510)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (497..498)
+              - (variant꞉ Identifier): "nested_lists" # (498..510)
+          - (parameters꞉ ParametersDeclaration): # "()" (510..512)
+              - (open_paren꞉ OpenParen): "(" # (510..511)
+              - (close_paren꞉ CloseParen): ")" # (511..512)
+          - (attributes꞉ FunctionAttributes): # " override(some., next.arg, next.one, ultimate)" (512..558)
+              - (item꞉ FunctionAttribute) ──→ (variant꞉ OverrideSpecifier): # " override(some., next.arg, next.one, ultimate)" (512..558)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (512..513)
+                  - (override_keyword꞉ OverrideKeyword): "override" # (513..521)
+                  - (overridden꞉ OverridePathsDeclaration): # "(some., next.arg, next.one, ultimate)" (521..558)
+                      - (open_paren꞉ OpenParen): "(" # (521..522)
+                      - (paths꞉ OverridePaths): # "some., next.arg, next.one, ultimate" (522..557)
+                          - (item꞉ IdentifierPath): # "some." (522..527)
+                              - (item꞉ Identifier): "some" # (522..526)
+                              - (separator꞉ Period): "." # (526..527)
+                          - (SKIPPED): "" # (527..527)
+                          - (Comma): "," # (527..528)
+                          - (item꞉ IdentifierPath): # " next.arg" (528..537)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (528..529)
+                              - (item꞉ Identifier): "next" # (529..533)
+                              - (separator꞉ Period): "." # (533..534)
+                              - (item꞉ Identifier): "arg" # (534..537)
+                          - (separator꞉ Comma): "," # (537..538)
+                          - (item꞉ IdentifierPath): # " next.one" (538..547)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (538..539)
+                              - (item꞉ Identifier): "next" # (539..543)
+                              - (separator꞉ Period): "." # (543..544)
+                              - (item꞉ Identifier): "one" # (544..547)
+                          - (separator꞉ Comma): "," # (547..548)
+                          - (item꞉ IdentifierPath): # " ultimate" (548..557)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (548..549)
+                              - (item꞉ Identifier): "ultimate" # (549..557)
+                      - (close_paren꞉ CloseParen): ")" # (557..558)
+          - (body꞉ FunctionBody): # ";\n" (558..560)
+              - (variant꞉ Semicolon): ";" # (558..559)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (559..560)

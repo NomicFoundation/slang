@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ IndexAccessExpression): # 0..10 "arr[index]"
-      - (operand꞉ Expression) ► (variant꞉ Identifier): "arr" # 0..3
-      - (open_bracket꞉ OpenBracket): "[" # 3..4
-      - (start꞉ Expression) ► (variant꞉ Identifier): "index" # 4..9
-      - (close_bracket꞉ CloseBracket): "]" # 9..10
+  - (Expression) ──→ (variant꞉ IndexAccessExpression): # "arr[index]" (0..10)
+      - (operand꞉ Expression) ──→ (variant꞉ Identifier): "arr" # (0..3)
+      - (open_bracket꞉ OpenBracket): "[" # (3..4)
+      - (start꞉ Expression) ──→ (variant꞉ Identifier): "index" # (4..9)
+      - (close_bracket꞉ CloseBracket): "]" # (9..10)

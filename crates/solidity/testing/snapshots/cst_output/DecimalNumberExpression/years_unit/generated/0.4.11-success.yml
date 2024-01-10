@@ -6,9 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression): # 0..9 "10 years\n"
-      - (literal꞉ DecimalLiteral): "10" # 0..2
-      - (unit꞉ NumberUnit): # 2..9 " years\n"
-          - (LeadingTrivia) ► (Whitespace): " " # 2..3
-          - (variant꞉ YearsKeyword): "years" # 3..8
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 8..9
+  - (DecimalNumberExpression): # "10 years\n" (0..9)
+      - (literal꞉ DecimalLiteral): "10" # (0..2)
+      - (unit꞉ NumberUnit): # " years\n" (2..9)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (2..3)
+          - (variant꞉ YearsKeyword): "years" # (3..8)
+          - (TrailingTrivia) ──→ (EndOfLine): "\n" # (8..9)

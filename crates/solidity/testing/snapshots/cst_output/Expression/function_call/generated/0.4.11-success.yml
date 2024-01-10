@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ FunctionCallExpression): # 0..7 "x(1, 2)"
-      - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # 0..1
-      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 1..7 "(1, 2)"
-          - (open_paren꞉ OpenParen): "(" # 1..2
-          - (arguments꞉ PositionalArguments): # 2..6 "1, 2"
-              - (item꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # 2..3
-              - (separator꞉ Comma): "," # 3..4
-              - (item꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 4..6 " 2"
-                  - (LeadingTrivia) ► (Whitespace): " " # 4..5
-                  - (literal꞉ DecimalLiteral): "2" # 5..6
-          - (close_paren꞉ CloseParen): ")" # 6..7
+  - (Expression) ──→ (variant꞉ FunctionCallExpression): # "x(1, 2)" (0..7)
+      - (operand꞉ Expression) ──→ (variant꞉ Identifier): "x" # (0..1)
+      - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "(1, 2)" (1..7)
+          - (open_paren꞉ OpenParen): "(" # (1..2)
+          - (arguments꞉ PositionalArguments): # "1, 2" (2..6)
+              - (item꞉ Expression) ──→ (variant꞉ DecimalNumberExpression) ──→ (literal꞉ DecimalLiteral): "1" # (2..3)
+              - (separator꞉ Comma): "," # (3..4)
+              - (item꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 2" (4..6)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (4..5)
+                  - (literal꞉ DecimalLiteral): "2" # (5..6)
+          - (close_paren꞉ CloseParen): ")" # (6..7)

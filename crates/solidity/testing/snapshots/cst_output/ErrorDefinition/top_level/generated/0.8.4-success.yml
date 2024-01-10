@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - (ErrorDefinition): # 0..16 "error MyError();"
-      - (error_keyword꞉ ErrorKeyword): "error" # 0..5
-      - (LeadingTrivia) ► (Whitespace): " " # 5..6
-      - (name꞉ Identifier): "MyError" # 6..13
-      - (members꞉ ErrorParametersDeclaration): # 13..15 "()"
-          - (open_paren꞉ OpenParen): "(" # 13..14
-          - (close_paren꞉ CloseParen): ")" # 14..15
-      - (semicolon꞉ Semicolon): ";" # 15..16
+  - (ErrorDefinition): # "error MyError();" (0..16)
+      - (error_keyword꞉ ErrorKeyword): "error" # (0..5)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (5..6)
+      - (name꞉ Identifier): "MyError" # (6..13)
+      - (members꞉ ErrorParametersDeclaration): # "()" (13..15)
+          - (open_paren꞉ OpenParen): "(" # (13..14)
+          - (close_paren꞉ CloseParen): ")" # (14..15)
+      - (semicolon꞉ Semicolon): ";" # (15..16)

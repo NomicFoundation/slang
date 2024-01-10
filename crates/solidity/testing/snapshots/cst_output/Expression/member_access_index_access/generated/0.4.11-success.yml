@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ IndexAccessExpression): # 0..10 "x.y[index]"
-      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # 0..3 "x.y"
-          - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # 0..1
-          - (period꞉ Period): "." # 1..2
-          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "y" # 2..3
-      - (open_bracket꞉ OpenBracket): "[" # 3..4
-      - (start꞉ Expression) ► (variant꞉ Identifier): "index" # 4..9
-      - (close_bracket꞉ CloseBracket): "]" # 9..10
+  - (Expression) ──→ (variant꞉ IndexAccessExpression): # "x.y[index]" (0..10)
+      - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "x.y" (0..3)
+          - (operand꞉ Expression) ──→ (variant꞉ Identifier): "x" # (0..1)
+          - (period꞉ Period): "." # (1..2)
+          - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "y" # (2..3)
+      - (open_bracket꞉ OpenBracket): "[" # (3..4)
+      - (start꞉ Expression) ──→ (variant꞉ Identifier): "index" # (4..9)
+      - (close_bracket꞉ CloseBracket): "]" # (9..10)

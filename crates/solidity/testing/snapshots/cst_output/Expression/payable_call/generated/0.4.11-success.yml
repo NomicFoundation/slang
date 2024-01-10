@@ -6,9 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ FunctionCallExpression): # 0..14 "payable(value)"
-      - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ PayableKeyword): "payable" # 0..7
-      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # 7..14 "(value)"
-          - (open_paren꞉ OpenParen): "(" # 7..8
-          - (arguments꞉ PositionalArguments) ► (item꞉ Expression) ► (variant꞉ Identifier): "value" # 8..13
-          - (close_paren꞉ CloseParen): ")" # 13..14
+  - (Expression) ──→ (variant꞉ FunctionCallExpression): # "payable(value)" (0..14)
+      - (operand꞉ Expression) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ PayableKeyword): "payable" # (0..7)
+      - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "(value)" (7..14)
+          - (open_paren꞉ OpenParen): "(" # (7..8)
+          - (arguments꞉ PositionalArguments): # "value" (8..13)
+              - (item꞉ Expression) ──→ (variant꞉ Identifier): "value" # (8..13)
+          - (close_paren꞉ CloseParen): ")" # (13..14)

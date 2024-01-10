@@ -42,94 +42,99 @@ Errors: # 3 total
     ────╯
 
 Tree:
-  - (ContractDefinition): # 0..212 "contract Contract {\n\tfunction _transfer(address wh..."
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Contract" # 9..17
-      - (LeadingTrivia) ► (Whitespace): " " # 17..18
-      - (open_brace꞉ OpenBrace): "{" # 18..19
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 19..20
-      - (members꞉ ContractMembers): # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
-          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
-              - (LeadingTrivia) ► (Whitespace): "\t" # 20..21
-              - (function_keyword꞉ FunctionKeyword): "function" # 21..29
-              - (name꞉ FunctionName): # 29..39 " _transfer"
-                  - (LeadingTrivia) ► (Whitespace): " " # 29..30
-                  - (variant꞉ Identifier): "_transfer" # 30..39
-              - (parameters꞉ ParametersDeclaration): # 39..54 "(address while)"
-                  - (open_paren꞉ OpenParen): "(" # 39..40
-                  - (parameters꞉ Parameters) ► (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # 40..47
-                  - (LeadingTrivia) ► (Whitespace): " " # 47..48
-                  - (SKIPPED): "while" # 48..53
-                  - (close_paren꞉ CloseParen): ")" # 53..54
-              - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute): # 54..62 " private"
-                  - (LeadingTrivia) ► (Whitespace): " " # 54..55
-                  - (variant꞉ PrivateKeyword): "private" # 55..62
-              - (body꞉ FunctionBody) ► (variant꞉ Block): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
-                  - (LeadingTrivia) ► (Whitespace): " " # 62..63
-                  - (open_brace꞉ OpenBrace): "{" # 63..64
-                  - (TrailingTrivia) ► (EndOfLine): "\n" # 64..65
-                  - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ IfStatement): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                      - (LeadingTrivia) ► (Whitespace): "\t\t" # 65..67
-                      - (if_keyword꞉ IfKeyword): "if" # 67..69
-                      - (open_paren꞉ OpenParen): "(" # 69..70
-                      - (SKIPPED): "while == pair && !_isExcludedFromFee[to]" # 70..110
-                      - (close_paren꞉ CloseParen): ")" # 110..111
-                      - (body꞉ Statement) ► (variant꞉ Block): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                          - (open_brace꞉ OpenBrace): "{" # 111..112
-                          - (TrailingTrivia) ► (EndOfLine): "\n" # 112..113
-                          - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 113..131 "\t\t\tuint256 a = 1;\n"
-                              - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # 113..123 "\t\t\tuint256"
-                                  - (LeadingTrivia) ► (Whitespace): "\t\t\t" # 113..116
-                                  - (variant꞉ UintKeyword): "uint256" # 116..123
-                              - (LeadingTrivia) ► (Whitespace): " " # 123..124
-                              - (name꞉ Identifier): "a" # 124..125
-                              - (value꞉ VariableDeclarationValue): # 125..129 " = 1"
-                                  - (LeadingTrivia) ► (Whitespace): " " # 125..126
-                                  - (equal꞉ Equal): "=" # 126..127
-                                  - (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 127..129 " 1"
-                                      - (LeadingTrivia) ► (Whitespace): " " # 127..128
-                                      - (literal꞉ DecimalLiteral): "1" # 128..129
-                              - (semicolon꞉ Semicolon): ";" # 129..130
-                              - (TrailingTrivia) ► (EndOfLine): "\n" # 130..131
-                          - (LeadingTrivia) ► (Whitespace): "\t\t" # 131..133
-                          - (close_brace꞉ CloseBrace): "}" # 133..134
-                          - (TrailingTrivia) ► (EndOfLine): "\n" # 134..135
-                  - (LeadingTrivia) ► (Whitespace): "\t" # 135..136
-                  - (close_brace꞉ CloseBrace): "}" # 136..137
-                  - (TrailingTrivia) ► (EndOfLine): "\n" # 137..138
-          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
-              - (LeadingTrivia): # 138..140 "\n\t"
-                  - (EndOfLine): "\n" # 138..139
-                  - (Whitespace): "\t" # 139..140
-              - (function_keyword꞉ FunctionKeyword): "function" # 140..148
-              - (name꞉ FunctionName): # 148..152 " abc"
-                  - (LeadingTrivia) ► (Whitespace): " " # 148..149
-                  - (variant꞉ Identifier): "abc" # 149..152
-              - (parameters꞉ ParametersDeclaration): # 152..154 "()"
-                  - (open_paren꞉ OpenParen): "(" # 152..153
-                  - (close_paren꞉ CloseParen): ")" # 153..154
-              - (body꞉ FunctionBody) ► (variant꞉ Block): # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
-                  - (LeadingTrivia) ► (Whitespace): " " # 154..155
-                  - (open_brace꞉ OpenBrace): "{" # 155..156
-                  - (TrailingTrivia) ► (EndOfLine): "\n" # 156..157
-                  - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 157..174 "\t\tuint256 x = 0;\n"
-                      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # 157..166 "\t\tuint256"
-                          - (LeadingTrivia) ► (Whitespace): "\t\t" # 157..159
-                          - (variant꞉ UintKeyword): "uint256" # 159..166
-                      - (LeadingTrivia) ► (Whitespace): " " # 166..167
-                      - (name꞉ Identifier): "x" # 167..168
-                      - (value꞉ VariableDeclarationValue): # 168..172 " = 0"
-                          - (LeadingTrivia) ► (Whitespace): " " # 168..169
-                          - (equal꞉ Equal): "=" # 169..170
-                          - (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 170..172 " 0"
-                              - (LeadingTrivia) ► (Whitespace): " " # 170..171
-                              - (literal꞉ DecimalLiteral): "0" # 171..172
-                      - (semicolon꞉ Semicolon): ";" # 172..173
-                      - (TrailingTrivia) ► (EndOfLine): "\n" # 173..174
-                  - (LeadingTrivia) ► (Whitespace): "\t\t" # 174..176
-                  - (SKIPPED): "unchecked { invalid sequence }\n\t" # 176..208
-                  - (close_brace꞉ CloseBrace): "}" # 208..209
-                  - (TrailingTrivia) ► (EndOfLine): "\n" # 209..210
-      - (close_brace꞉ CloseBrace): "}" # 210..211
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 211..212
+  - (ContractDefinition): # "contract Contract {\n\tfunction _transfer(address wh..." (0..212)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Contract" # (9..17)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (17..18)
+      - (open_brace꞉ OpenBrace): "{" # (18..19)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (19..20)
+      - (members꞉ ContractMembers): # "\tfunction _transfer(address while) private {\n\t\tif(..." (20..210)
+          - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "\tfunction _transfer(address while) private {\n\t\tif(..." (20..138)
+              - (LeadingTrivia) ──→ (Whitespace): "\t" # (20..21)
+              - (function_keyword꞉ FunctionKeyword): "function" # (21..29)
+              - (name꞉ FunctionName): # " _transfer" (29..39)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (29..30)
+                  - (variant꞉ Identifier): "_transfer" # (30..39)
+              - (parameters꞉ ParametersDeclaration): # "(address while)" (39..54)
+                  - (open_paren꞉ OpenParen): "(" # (39..40)
+                  - (parameters꞉ Parameters): # "address" (40..47)
+                      - (item꞉ Parameter) ──→ (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ AddressType) ──→ (address_keyword꞉ AddressKeyword): "address" # (40..47)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (47..48)
+                  - (SKIPPED): "while" # (48..53)
+                  - (close_paren꞉ CloseParen): ")" # (53..54)
+              - (attributes꞉ FunctionAttributes): # " private" (54..62)
+                  - (item꞉ FunctionAttribute): # " private" (54..62)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (54..55)
+                      - (variant꞉ PrivateKeyword): "private" # (55..62)
+              - (body꞉ FunctionBody) ──→ (variant꞉ Block): # " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..." (62..138)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (62..63)
+                  - (open_brace꞉ OpenBrace): "{" # (63..64)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (64..65)
+                  - (statements꞉ Statements): # "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..." (65..135)
+                      - (item꞉ Statement) ──→ (variant꞉ IfStatement): # "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..." (65..135)
+                          - (LeadingTrivia) ──→ (Whitespace): "\t\t" # (65..67)
+                          - (if_keyword꞉ IfKeyword): "if" # (67..69)
+                          - (open_paren꞉ OpenParen): "(" # (69..70)
+                          - (SKIPPED): "while == pair && !_isExcludedFromFee[to]" # (70..110)
+                          - (close_paren꞉ CloseParen): ")" # (110..111)
+                          - (body꞉ Statement) ──→ (variant꞉ Block): # "{\n\t\t\tuint256 a = 1;\n\t\t}\n" (111..135)
+                              - (open_brace꞉ OpenBrace): "{" # (111..112)
+                              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (112..113)
+                              - (statements꞉ Statements): # "\t\t\tuint256 a = 1;\n" (113..131)
+                                  - (item꞉ Statement) ──→ (variant꞉ VariableDeclarationStatement): # "\t\t\tuint256 a = 1;\n" (113..131)
+                                      - (variable_type꞉ VariableDeclarationType) ──→ (variant꞉ TypeName) ──→ (variant꞉ ElementaryType): # "\t\t\tuint256" (113..123)
+                                          - (LeadingTrivia) ──→ (Whitespace): "\t\t\t" # (113..116)
+                                          - (variant꞉ UintKeyword): "uint256" # (116..123)
+                                      - (LeadingTrivia) ──→ (Whitespace): " " # (123..124)
+                                      - (name꞉ Identifier): "a" # (124..125)
+                                      - (value꞉ VariableDeclarationValue): # " = 1" (125..129)
+                                          - (LeadingTrivia) ──→ (Whitespace): " " # (125..126)
+                                          - (equal꞉ Equal): "=" # (126..127)
+                                          - (expression꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 1" (127..129)
+                                              - (LeadingTrivia) ──→ (Whitespace): " " # (127..128)
+                                              - (literal꞉ DecimalLiteral): "1" # (128..129)
+                                      - (semicolon꞉ Semicolon): ";" # (129..130)
+                                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (130..131)
+                              - (LeadingTrivia) ──→ (Whitespace): "\t\t" # (131..133)
+                              - (close_brace꞉ CloseBrace): "}" # (133..134)
+                              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (134..135)
+                  - (LeadingTrivia) ──→ (Whitespace): "\t" # (135..136)
+                  - (close_brace꞉ CloseBrace): "}" # (136..137)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (137..138)
+          - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..." (138..210)
+              - (LeadingTrivia): # "\n\t" (138..140)
+                  - (EndOfLine): "\n" # (138..139)
+                  - (Whitespace): "\t" # (139..140)
+              - (function_keyword꞉ FunctionKeyword): "function" # (140..148)
+              - (name꞉ FunctionName): # " abc" (148..152)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (148..149)
+                  - (variant꞉ Identifier): "abc" # (149..152)
+              - (parameters꞉ ParametersDeclaration): # "()" (152..154)
+                  - (open_paren꞉ OpenParen): "(" # (152..153)
+                  - (close_paren꞉ CloseParen): ")" # (153..154)
+              - (body꞉ FunctionBody) ──→ (variant꞉ Block): # " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..." (154..210)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (154..155)
+                  - (open_brace꞉ OpenBrace): "{" # (155..156)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (156..157)
+                  - (statements꞉ Statements): # "\t\tuint256 x = 0;\n" (157..174)
+                      - (item꞉ Statement) ──→ (variant꞉ VariableDeclarationStatement): # "\t\tuint256 x = 0;\n" (157..174)
+                          - (variable_type꞉ VariableDeclarationType) ──→ (variant꞉ TypeName) ──→ (variant꞉ ElementaryType): # "\t\tuint256" (157..166)
+                              - (LeadingTrivia) ──→ (Whitespace): "\t\t" # (157..159)
+                              - (variant꞉ UintKeyword): "uint256" # (159..166)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (166..167)
+                          - (name꞉ Identifier): "x" # (167..168)
+                          - (value꞉ VariableDeclarationValue): # " = 0" (168..172)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (168..169)
+                              - (equal꞉ Equal): "=" # (169..170)
+                              - (expression꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 0" (170..172)
+                                  - (LeadingTrivia) ──→ (Whitespace): " " # (170..171)
+                                  - (literal꞉ DecimalLiteral): "0" # (171..172)
+                          - (semicolon꞉ Semicolon): ";" # (172..173)
+                          - (TrailingTrivia) ──→ (EndOfLine): "\n" # (173..174)
+                  - (LeadingTrivia) ──→ (Whitespace): "\t\t" # (174..176)
+                  - (SKIPPED): "unchecked { invalid sequence }\n\t" # (176..208)
+                  - (close_brace꞉ CloseBrace): "}" # (208..209)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (209..210)
+      - (close_brace꞉ CloseBrace): "}" # (210..211)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (211..212)

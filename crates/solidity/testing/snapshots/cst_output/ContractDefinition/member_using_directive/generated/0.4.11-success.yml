@@ -8,24 +8,25 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..36 "contract Sample {\n  using x for *;\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ UsingDirective): # 18..35 "  using x for *;\n"
-          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-          - (using_keyword꞉ UsingKeyword): "using" # 20..25
-          - (clause꞉ UsingClause) ► (variant꞉ IdentifierPath): # 25..27 " x"
-              - (LeadingTrivia) ► (Whitespace): " " # 25..26
-              - (item꞉ Identifier): "x" # 26..27
-          - (LeadingTrivia) ► (Whitespace): " " # 27..28
-          - (for_keyword꞉ ForKeyword): "for" # 28..31
-          - (target꞉ UsingTarget): # 31..33 " *"
-              - (LeadingTrivia) ► (Whitespace): " " # 31..32
-              - (variant꞉ Asterisk): "*" # 32..33
-          - (semicolon꞉ Semicolon): ";" # 33..34
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 34..35
-      - (close_brace꞉ CloseBrace): "}" # 35..36
+  - (ContractDefinition): # "contract Sample {\n  using x for *;\n}" (0..36)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  using x for *;\n" (18..35)
+          - (item꞉ ContractMember) ──→ (variant꞉ UsingDirective): # "  using x for *;\n" (18..35)
+              - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+              - (using_keyword꞉ UsingKeyword): "using" # (20..25)
+              - (clause꞉ UsingClause) ──→ (variant꞉ IdentifierPath): # " x" (25..27)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (25..26)
+                  - (item꞉ Identifier): "x" # (26..27)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (27..28)
+              - (for_keyword꞉ ForKeyword): "for" # (28..31)
+              - (target꞉ UsingTarget): # " *" (31..33)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (31..32)
+                  - (variant꞉ Asterisk): "*" # (32..33)
+              - (semicolon꞉ Semicolon): ";" # (33..34)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (34..35)
+      - (close_brace꞉ CloseBrace): "}" # (35..36)

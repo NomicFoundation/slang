@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "foo.bar" # 0..7
+  - (SKIPPED): "foo.bar" # (0..7)

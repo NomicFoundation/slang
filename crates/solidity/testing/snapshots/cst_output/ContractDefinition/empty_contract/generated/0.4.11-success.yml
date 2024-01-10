@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..19 "contract Sample {}\n"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (close_brace꞉ CloseBrace): "}" # 17..18
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 18..19
+  - (ContractDefinition): # "contract Sample {}\n" (0..19)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (close_brace꞉ CloseBrace): "}" # (17..18)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (18..19)

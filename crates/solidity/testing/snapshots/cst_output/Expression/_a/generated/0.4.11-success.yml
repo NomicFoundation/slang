@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "_a" # 0..2
+  - (Expression) ──→ (variant꞉ Identifier): "_a" # (0..2)

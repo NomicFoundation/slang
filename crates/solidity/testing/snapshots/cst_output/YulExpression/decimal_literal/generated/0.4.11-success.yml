@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulDecimalLiteral): "123" # 0..3
+  - (YulExpression) ──→ (variant꞉ YulLiteral) ──→ (variant꞉ YulDecimalLiteral): "123" # (0..3)

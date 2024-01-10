@@ -6,16 +6,18 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ ConstructorDefinition): # 0..24 "constructor() public {}\n"
-      - (constructor_keyword꞉ ConstructorKeyword): "constructor" # 0..11
-      - (parameters꞉ ParametersDeclaration): # 11..13 "()"
-          - (open_paren꞉ OpenParen): "(" # 11..12
-          - (close_paren꞉ CloseParen): ")" # 12..13
-      - (attributes꞉ ConstructorAttributes) ► (item꞉ ConstructorAttribute): # 13..20 " public"
-          - (LeadingTrivia) ► (Whitespace): " " # 13..14
-          - (variant꞉ PublicKeyword): "public" # 14..20
-      - (body꞉ Block): # 20..24 " {}\n"
-          - (LeadingTrivia) ► (Whitespace): " " # 20..21
-          - (open_brace꞉ OpenBrace): "{" # 21..22
-          - (close_brace꞉ CloseBrace): "}" # 22..23
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 23..24
+  - (ContractMembers): # "constructor() public {}\n" (0..24)
+      - (item꞉ ContractMember) ──→ (variant꞉ ConstructorDefinition): # "constructor() public {}\n" (0..24)
+          - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (0..11)
+          - (parameters꞉ ParametersDeclaration): # "()" (11..13)
+              - (open_paren꞉ OpenParen): "(" # (11..12)
+              - (close_paren꞉ CloseParen): ")" # (12..13)
+          - (attributes꞉ ConstructorAttributes): # " public" (13..20)
+              - (item꞉ ConstructorAttribute): # " public" (13..20)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (13..14)
+                  - (variant꞉ PublicKeyword): "public" # (14..20)
+          - (body꞉ Block): # " {}\n" (20..24)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (20..21)
+              - (open_brace꞉ OpenBrace): "{" # (21..22)
+              - (close_brace꞉ CloseBrace): "}" # (22..23)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (23..24)

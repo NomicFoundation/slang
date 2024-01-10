@@ -6,18 +6,18 @@ Source: >
 Errors: []
 
 Tree:
-  - (ImportDirective): # 0..27 'import * as foo from "bar";'
-      - (import_keyword꞉ ImportKeyword): "import" # 0..6
-      - (clause꞉ ImportClause) ► (variant꞉ NamedImport): # 6..26 ' * as foo from "bar"'
-          - (LeadingTrivia) ► (Whitespace): " " # 6..7
-          - (asterisk꞉ Asterisk): "*" # 7..8
-          - (alias꞉ ImportAlias): # 8..15 " as foo"
-              - (LeadingTrivia) ► (Whitespace): " " # 8..9
-              - (as_keyword꞉ AsKeyword): "as" # 9..11
-              - (LeadingTrivia) ► (Whitespace): " " # 11..12
-              - (identifier꞉ Identifier): "foo" # 12..15
-          - (LeadingTrivia) ► (Whitespace): " " # 15..16
-          - (from_keyword꞉ FromKeyword): "from" # 16..20
-          - (LeadingTrivia) ► (Whitespace): " " # 20..21
-          - (path꞉ AsciiStringLiteral): '"bar"' # 21..26
-      - (semicolon꞉ Semicolon): ";" # 26..27
+  - (ImportDirective): # 'import * as foo from "bar";' (0..27)
+      - (import_keyword꞉ ImportKeyword): "import" # (0..6)
+      - (clause꞉ ImportClause) ──→ (variant꞉ NamedImport): # ' * as foo from "bar"' (6..26)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (6..7)
+          - (asterisk꞉ Asterisk): "*" # (7..8)
+          - (alias꞉ ImportAlias): # " as foo" (8..15)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+              - (as_keyword꞉ AsKeyword): "as" # (9..11)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (11..12)
+              - (identifier꞉ Identifier): "foo" # (12..15)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+          - (from_keyword꞉ FromKeyword): "from" # (16..20)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (20..21)
+          - (path꞉ AsciiStringLiteral): '"bar"' # (21..26)
+      - (semicolon꞉ Semicolon): ";" # (26..27)

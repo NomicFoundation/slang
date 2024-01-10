@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - (PragmaDirective): # 0..36 'pragma experimental "ABIEncoderV2";\n'
-      - (pragma_keyword꞉ PragmaKeyword): "pragma" # 0..6
-      - (pragma꞉ Pragma) ► (variant꞉ ExperimentalPragma): # 6..34 ' experimental "ABIEncoderV2"'
-          - (LeadingTrivia) ► (Whitespace): " " # 6..7
-          - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # 7..19
-          - (feature꞉ ExperimentalFeature): # 19..34 ' "ABIEncoderV2"'
-              - (LeadingTrivia) ► (Whitespace): " " # 19..20
-              - (variant꞉ AsciiStringLiteral): '"ABIEncoderV2"' # 20..34
-      - (semicolon꞉ Semicolon): ";" # 34..35
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 35..36
+  - (PragmaDirective): # 'pragma experimental "ABIEncoderV2";\n' (0..36)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ──→ (variant꞉ ExperimentalPragma): # ' experimental "ABIEncoderV2"' (6..34)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (6..7)
+          - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
+          - (feature꞉ ExperimentalFeature): # ' "ABIEncoderV2"' (19..34)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (19..20)
+              - (variant꞉ AsciiStringLiteral): '"ABIEncoderV2"' # (20..34)
+      - (semicolon꞉ Semicolon): ";" # (34..35)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (35..36)

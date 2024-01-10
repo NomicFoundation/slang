@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ PrefixExpression): # 0..5 "--foo"
-      - (operator꞉ MinusMinus): "--" # 0..2
-      - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # 2..5
+  - (Expression) ──→ (variant꞉ PrefixExpression): # "--foo" (0..5)
+      - (operator꞉ MinusMinus): "--" # (0..2)
+      - (operand꞉ Expression) ──→ (variant꞉ Identifier): "foo" # (2..5)

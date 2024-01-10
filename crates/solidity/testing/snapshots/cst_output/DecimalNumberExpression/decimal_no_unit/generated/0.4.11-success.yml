@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "123456789" # 0..9
+  - (DecimalNumberExpression) ──→ (literal꞉ DecimalLiteral): "123456789" # (0..9)

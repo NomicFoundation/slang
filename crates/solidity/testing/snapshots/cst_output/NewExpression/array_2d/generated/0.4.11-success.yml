@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - (NewExpression): # 0..11 "new Foo[][]"
-      - (new_keyword꞉ NewKeyword): "new" # 0..3
-      - (type_name꞉ TypeName) ► (variant꞉ ArrayTypeName): # 3..11 " Foo[][]"
-          - (operand꞉ TypeName) ► (variant꞉ ArrayTypeName): # 3..9 " Foo[]"
-              - (operand꞉ TypeName) ► (variant꞉ IdentifierPath): # 3..7 " Foo"
-                  - (LeadingTrivia) ► (Whitespace): " " # 3..4
-                  - (item꞉ Identifier): "Foo" # 4..7
-              - (open_bracket꞉ OpenBracket): "[" # 7..8
-              - (close_bracket꞉ CloseBracket): "]" # 8..9
-          - (open_bracket꞉ OpenBracket): "[" # 9..10
-          - (close_bracket꞉ CloseBracket): "]" # 10..11
+  - (NewExpression): # "new Foo[][]" (0..11)
+      - (new_keyword꞉ NewKeyword): "new" # (0..3)
+      - (type_name꞉ TypeName) ──→ (variant꞉ ArrayTypeName): # " Foo[][]" (3..11)
+          - (operand꞉ TypeName) ──→ (variant꞉ ArrayTypeName): # " Foo[]" (3..9)
+              - (operand꞉ TypeName) ──→ (variant꞉ IdentifierPath): # " Foo" (3..7)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (3..4)
+                  - (item꞉ Identifier): "Foo" # (4..7)
+              - (open_bracket꞉ OpenBracket): "[" # (7..8)
+              - (close_bracket꞉ CloseBracket): "]" # (8..9)
+          - (open_bracket꞉ OpenBracket): "[" # (9..10)
+          - (close_bracket꞉ CloseBracket): "]" # (10..11)

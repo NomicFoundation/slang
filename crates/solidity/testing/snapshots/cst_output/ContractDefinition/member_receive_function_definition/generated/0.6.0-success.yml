@@ -9,24 +9,25 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ ReceiveFunctionDefinition): # 18..36 "  receive() {\n  }\n"
-          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-          - (receive_keyword꞉ ReceiveKeyword): "receive" # 20..27
-          - (parameters꞉ ParametersDeclaration): # 27..29 "()"
-              - (open_paren꞉ OpenParen): "(" # 27..28
-              - (close_paren꞉ CloseParen): ")" # 28..29
-          - (body꞉ FunctionBody) ► (variant꞉ Block): # 29..36 " {\n  }\n"
-              - (LeadingTrivia) ► (Whitespace): " " # 29..30
-              - (open_brace꞉ OpenBrace): "{" # 30..31
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 31..32
-              - (LeadingTrivia) ► (Whitespace): "  " # 32..34
-              - (close_brace꞉ CloseBrace): "}" # 34..35
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 35..36
-      - (close_brace꞉ CloseBrace): "}" # 36..37
+  - (ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (0..37)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  receive() {\n  }\n" (18..36)
+          - (item꞉ ContractMember) ──→ (variant꞉ ReceiveFunctionDefinition): # "  receive() {\n  }\n" (18..36)
+              - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+              - (receive_keyword꞉ ReceiveKeyword): "receive" # (20..27)
+              - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                  - (open_paren꞉ OpenParen): "(" # (27..28)
+                  - (close_paren꞉ CloseParen): ")" # (28..29)
+              - (body꞉ FunctionBody) ──→ (variant꞉ Block): # " {\n  }\n" (29..36)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (29..30)
+                  - (open_brace꞉ OpenBrace): "{" # (30..31)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (31..32)
+                  - (LeadingTrivia) ──→ (Whitespace): "  " # (32..34)
+                  - (close_brace꞉ CloseBrace): "}" # (34..35)
+                  - (TrailingTrivia) ──→ (EndOfLine): "\n" # (35..36)
+      - (close_brace꞉ CloseBrace): "}" # (36..37)

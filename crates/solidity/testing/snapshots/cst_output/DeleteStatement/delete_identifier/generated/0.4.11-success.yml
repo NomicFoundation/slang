@@ -6,9 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - (DeleteStatement): # 0..11 "delete foo;"
-      - (delete_keyword꞉ DeleteKeyword): "delete" # 0..6
-      - (expression꞉ Expression): # 6..10 " foo"
-          - (LeadingTrivia) ► (Whitespace): " " # 6..7
-          - (variant꞉ Identifier): "foo" # 7..10
-      - (semicolon꞉ Semicolon): ";" # 10..11
+  - (DeleteStatement): # "delete foo;" (0..11)
+      - (delete_keyword꞉ DeleteKeyword): "delete" # (0..6)
+      - (expression꞉ Expression): # " foo" (6..10)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (6..7)
+          - (variant꞉ Identifier): "foo" # (7..10)
+      - (semicolon꞉ Semicolon): ";" # (10..11)

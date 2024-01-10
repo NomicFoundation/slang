@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "emit" # 0..4
+  - (Expression) ──→ (variant꞉ Identifier): "emit" # (0..4)

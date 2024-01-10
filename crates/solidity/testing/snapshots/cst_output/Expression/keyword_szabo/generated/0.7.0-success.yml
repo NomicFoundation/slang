@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "szabo" # 0..5
+  - (Expression) ──→ (variant꞉ Identifier): "szabo" # (0..5)

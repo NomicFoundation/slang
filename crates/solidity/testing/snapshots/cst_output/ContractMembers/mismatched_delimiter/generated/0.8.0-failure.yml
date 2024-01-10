@@ -27,46 +27,51 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # 0..74 "function someFunc() public {\n    {\n        uint256..."
-      - (function_keyword꞉ FunctionKeyword): "function" # 0..8
-      - (name꞉ FunctionName): # 8..17 " someFunc"
-          - (LeadingTrivia) ► (Whitespace): " " # 8..9
-          - (variant꞉ Identifier): "someFunc" # 9..17
-      - (parameters꞉ ParametersDeclaration): # 17..19 "()"
-          - (open_paren꞉ OpenParen): "(" # 17..18
-          - (close_paren꞉ CloseParen): ")" # 18..19
-      - (attributes꞉ FunctionAttributes) ► (item꞉ FunctionAttribute): # 19..26 " public"
-          - (LeadingTrivia) ► (Whitespace): " " # 19..20
-          - (variant꞉ PublicKeyword): "public" # 20..26
-      - (body꞉ FunctionBody) ► (variant꞉ Block): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
-          - (LeadingTrivia) ► (Whitespace): " " # 26..27
-          - (open_brace꞉ OpenBrace): "{" # 27..28
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 28..29
-          - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ Block): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-              - (LeadingTrivia) ► (Whitespace): "    " # 29..33
-              - (open_brace꞉ OpenBrace): "{" # 33..34
-              - (TrailingTrivia) ► (EndOfLine): "\n" # 34..35
-              - (statements꞉ Statements) ► (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # 35..63 "        uint256 arg = (1 + 2"
-                  - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # 35..50 "        uint256"
-                      - (LeadingTrivia) ► (Whitespace): "        " # 35..43
-                      - (variant꞉ UintKeyword): "uint256" # 43..50
-                  - (LeadingTrivia) ► (Whitespace): " " # 50..51
-                  - (name꞉ Identifier): "arg" # 51..54
-                  - (value꞉ VariableDeclarationValue): # 54..63 " = (1 + 2"
-                      - (LeadingTrivia) ► (Whitespace): " " # 54..55
-                      - (equal꞉ Equal): "=" # 55..56
-                      - (expression꞉ Expression) ► (variant꞉ TupleExpression): # 56..63 " (1 + 2"
-                          - (LeadingTrivia) ► (Whitespace): " " # 56..57
-                          - (open_paren꞉ OpenParen): "(" # 57..58
-                          - (items꞉ TupleValues) ► (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ AdditiveExpression): # 58..63 "1 + 2"
-                              - (left_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # 58..59
-                              - (LeadingTrivia) ► (Whitespace): " " # 59..60
-                              - (operator꞉ Plus): "+" # 60..61
-                              - (right_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # 61..63 " 2"
-                                  - (LeadingTrivia) ► (Whitespace): " " # 61..62
-                                  - (literal꞉ DecimalLiteral): "2" # 62..63
-              - (SKIPPED): ";\n    " # 63..69
-              - (close_brace꞉ CloseBrace): "}" # 69..70
-          - (SKIPPED): ")\n" # 70..72
-          - (close_brace꞉ CloseBrace): "}" # 72..73
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 73..74
+  - (ContractMembers): # "function someFunc() public {\n    {\n        uint256..." (0..74)
+      - (item꞉ ContractMember) ──→ (variant꞉ FunctionDefinition): # "function someFunc() public {\n    {\n        uint256..." (0..74)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (name꞉ FunctionName): # " someFunc" (8..17)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+              - (variant꞉ Identifier): "someFunc" # (9..17)
+          - (parameters꞉ ParametersDeclaration): # "()" (17..19)
+              - (open_paren꞉ OpenParen): "(" # (17..18)
+              - (close_paren꞉ CloseParen): ")" # (18..19)
+          - (attributes꞉ FunctionAttributes): # " public" (19..26)
+              - (item꞉ FunctionAttribute): # " public" (19..26)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (19..20)
+                  - (variant꞉ PublicKeyword): "public" # (20..26)
+          - (body꞉ FunctionBody) ──→ (variant꞉ Block): # " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n" (26..74)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (26..27)
+              - (open_brace꞉ OpenBrace): "{" # (27..28)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (28..29)
+              - (statements꞉ Statements): # "    {\n        uint256 arg = (1 + 2;\n    }" (29..70)
+                  - (item꞉ Statement) ──→ (variant꞉ Block): # "    {\n        uint256 arg = (1 + 2;\n    }" (29..70)
+                      - (LeadingTrivia) ──→ (Whitespace): "    " # (29..33)
+                      - (open_brace꞉ OpenBrace): "{" # (33..34)
+                      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (34..35)
+                      - (statements꞉ Statements): # "        uint256 arg = (1 + 2" (35..63)
+                          - (item꞉ Statement) ──→ (variant꞉ VariableDeclarationStatement): # "        uint256 arg = (1 + 2" (35..63)
+                              - (variable_type꞉ VariableDeclarationType) ──→ (variant꞉ TypeName) ──→ (variant꞉ ElementaryType): # "        uint256" (35..50)
+                                  - (LeadingTrivia) ──→ (Whitespace): "        " # (35..43)
+                                  - (variant꞉ UintKeyword): "uint256" # (43..50)
+                              - (LeadingTrivia) ──→ (Whitespace): " " # (50..51)
+                              - (name꞉ Identifier): "arg" # (51..54)
+                              - (value꞉ VariableDeclarationValue): # " = (1 + 2" (54..63)
+                                  - (LeadingTrivia) ──→ (Whitespace): " " # (54..55)
+                                  - (equal꞉ Equal): "=" # (55..56)
+                                  - (expression꞉ Expression) ──→ (variant꞉ TupleExpression): # " (1 + 2" (56..63)
+                                      - (LeadingTrivia) ──→ (Whitespace): " " # (56..57)
+                                      - (open_paren꞉ OpenParen): "(" # (57..58)
+                                      - (items꞉ TupleValues): # "1 + 2" (58..63)
+                                          - (item꞉ TupleValue) ──→ (expression꞉ Expression) ──→ (variant꞉ AdditiveExpression): # "1 + 2" (58..63)
+                                              - (left_operand꞉ Expression) ──→ (variant꞉ DecimalNumberExpression) ──→ (literal꞉ DecimalLiteral): "1" # (58..59)
+                                              - (LeadingTrivia) ──→ (Whitespace): " " # (59..60)
+                                              - (operator꞉ Plus): "+" # (60..61)
+                                              - (right_operand꞉ Expression) ──→ (variant꞉ DecimalNumberExpression): # " 2" (61..63)
+                                                  - (LeadingTrivia) ──→ (Whitespace): " " # (61..62)
+                                                  - (literal꞉ DecimalLiteral): "2" # (62..63)
+                      - (SKIPPED): ";\n    " # (63..69)
+                      - (close_brace꞉ CloseBrace): "}" # (69..70)
+              - (SKIPPED): ")\n" # (70..72)
+              - (close_brace꞉ CloseBrace): "}" # (72..73)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (73..74)

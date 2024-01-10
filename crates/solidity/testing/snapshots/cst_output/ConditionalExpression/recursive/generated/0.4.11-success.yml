@@ -6,86 +6,86 @@ Source: >
 Errors: []
 
 Tree:
-  - (ConditionalExpression): # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
-      - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # 0..3
-      - (LeadingTrivia) ► (Whitespace): " " # 3..4
-      - (question_mark꞉ QuestionMark): "?" # 4..5
-      - (true_expression꞉ Expression) ► (variant꞉ ConditionalExpression): # 5..40 " a == b ? a + b * c : a + b * c + d"
-          - (operand꞉ Expression) ► (variant꞉ EqualityExpression): # 5..12 " a == b"
-              - (left_operand꞉ Expression): # 5..7 " a"
-                  - (LeadingTrivia) ► (Whitespace): " " # 5..6
-                  - (variant꞉ Identifier): "a" # 6..7
-              - (LeadingTrivia) ► (Whitespace): " " # 7..8
-              - (operator꞉ EqualEqual): "==" # 8..10
-              - (right_operand꞉ Expression): # 10..12 " b"
-                  - (LeadingTrivia) ► (Whitespace): " " # 10..11
-                  - (variant꞉ Identifier): "b" # 11..12
-          - (LeadingTrivia) ► (Whitespace): " " # 12..13
-          - (question_mark꞉ QuestionMark): "?" # 13..14
-          - (true_expression꞉ Expression) ► (variant꞉ AdditiveExpression): # 14..24 " a + b * c"
-              - (left_operand꞉ Expression): # 14..16 " a"
-                  - (LeadingTrivia) ► (Whitespace): " " # 14..15
-                  - (variant꞉ Identifier): "a" # 15..16
-              - (LeadingTrivia) ► (Whitespace): " " # 16..17
-              - (operator꞉ Plus): "+" # 17..18
-              - (right_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # 18..24 " b * c"
-                  - (left_operand꞉ Expression): # 18..20 " b"
-                      - (LeadingTrivia) ► (Whitespace): " " # 18..19
-                      - (variant꞉ Identifier): "b" # 19..20
-                  - (LeadingTrivia) ► (Whitespace): " " # 20..21
-                  - (operator꞉ Asterisk): "*" # 21..22
-                  - (right_operand꞉ Expression): # 22..24 " c"
-                      - (LeadingTrivia) ► (Whitespace): " " # 22..23
-                      - (variant꞉ Identifier): "c" # 23..24
-          - (LeadingTrivia) ► (Whitespace): " " # 24..25
-          - (colon꞉ Colon): ":" # 25..26
-          - (false_expression꞉ Expression) ► (variant꞉ AdditiveExpression): # 26..40 " a + b * c + d"
-              - (left_operand꞉ Expression) ► (variant꞉ AdditiveExpression): # 26..36 " a + b * c"
-                  - (left_operand꞉ Expression): # 26..28 " a"
-                      - (LeadingTrivia) ► (Whitespace): " " # 26..27
-                      - (variant꞉ Identifier): "a" # 27..28
-                  - (LeadingTrivia) ► (Whitespace): " " # 28..29
-                  - (operator꞉ Plus): "+" # 29..30
-                  - (right_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # 30..36 " b * c"
-                      - (left_operand꞉ Expression): # 30..32 " b"
-                          - (LeadingTrivia) ► (Whitespace): " " # 30..31
-                          - (variant꞉ Identifier): "b" # 31..32
-                      - (LeadingTrivia) ► (Whitespace): " " # 32..33
-                      - (operator꞉ Asterisk): "*" # 33..34
-                      - (right_operand꞉ Expression): # 34..36 " c"
-                          - (LeadingTrivia) ► (Whitespace): " " # 34..35
-                          - (variant꞉ Identifier): "c" # 35..36
-              - (LeadingTrivia) ► (Whitespace): " " # 36..37
-              - (operator꞉ Plus): "+" # 37..38
-              - (right_operand꞉ Expression): # 38..40 " d"
-                  - (LeadingTrivia) ► (Whitespace): " " # 38..39
-                  - (variant꞉ Identifier): "d" # 39..40
-      - (LeadingTrivia) ► (Whitespace): " " # 40..41
-      - (colon꞉ Colon): ":" # 41..42
-      - (false_expression꞉ Expression) ► (variant꞉ ConditionalExpression): # 42..63 " !bar ? e + f : g + h"
-          - (operand꞉ Expression) ► (variant꞉ PrefixExpression): # 42..47 " !bar"
-              - (LeadingTrivia) ► (Whitespace): " " # 42..43
-              - (operator꞉ Bang): "!" # 43..44
-              - (operand꞉ Expression) ► (variant꞉ Identifier): "bar" # 44..47
-          - (LeadingTrivia) ► (Whitespace): " " # 47..48
-          - (question_mark꞉ QuestionMark): "?" # 48..49
-          - (true_expression꞉ Expression) ► (variant꞉ AdditiveExpression): # 49..55 " e + f"
-              - (left_operand꞉ Expression): # 49..51 " e"
-                  - (LeadingTrivia) ► (Whitespace): " " # 49..50
-                  - (variant꞉ Identifier): "e" # 50..51
-              - (LeadingTrivia) ► (Whitespace): " " # 51..52
-              - (operator꞉ Plus): "+" # 52..53
-              - (right_operand꞉ Expression): # 53..55 " f"
-                  - (LeadingTrivia) ► (Whitespace): " " # 53..54
-                  - (variant꞉ Identifier): "f" # 54..55
-          - (LeadingTrivia) ► (Whitespace): " " # 55..56
-          - (colon꞉ Colon): ":" # 56..57
-          - (false_expression꞉ Expression) ► (variant꞉ AdditiveExpression): # 57..63 " g + h"
-              - (left_operand꞉ Expression): # 57..59 " g"
-                  - (LeadingTrivia) ► (Whitespace): " " # 57..58
-                  - (variant꞉ Identifier): "g" # 58..59
-              - (LeadingTrivia) ► (Whitespace): " " # 59..60
-              - (operator꞉ Plus): "+" # 60..61
-              - (right_operand꞉ Expression): # 61..63 " h"
-                  - (LeadingTrivia) ► (Whitespace): " " # 61..62
-                  - (variant꞉ Identifier): "h" # 62..63
+  - (ConditionalExpression): # "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..." (0..63)
+      - (operand꞉ Expression) ──→ (variant꞉ Identifier): "foo" # (0..3)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (3..4)
+      - (question_mark꞉ QuestionMark): "?" # (4..5)
+      - (true_expression꞉ Expression) ──→ (variant꞉ ConditionalExpression): # " a == b ? a + b * c : a + b * c + d" (5..40)
+          - (operand꞉ Expression) ──→ (variant꞉ EqualityExpression): # " a == b" (5..12)
+              - (left_operand꞉ Expression): # " a" (5..7)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (5..6)
+                  - (variant꞉ Identifier): "a" # (6..7)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (7..8)
+              - (operator꞉ EqualEqual): "==" # (8..10)
+              - (right_operand꞉ Expression): # " b" (10..12)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (10..11)
+                  - (variant꞉ Identifier): "b" # (11..12)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (12..13)
+          - (question_mark꞉ QuestionMark): "?" # (13..14)
+          - (true_expression꞉ Expression) ──→ (variant꞉ AdditiveExpression): # " a + b * c" (14..24)
+              - (left_operand꞉ Expression): # " a" (14..16)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (14..15)
+                  - (variant꞉ Identifier): "a" # (15..16)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (16..17)
+              - (operator꞉ Plus): "+" # (17..18)
+              - (right_operand꞉ Expression) ──→ (variant꞉ MultiplicativeExpression): # " b * c" (18..24)
+                  - (left_operand꞉ Expression): # " b" (18..20)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (18..19)
+                      - (variant꞉ Identifier): "b" # (19..20)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (20..21)
+                  - (operator꞉ Asterisk): "*" # (21..22)
+                  - (right_operand꞉ Expression): # " c" (22..24)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (22..23)
+                      - (variant꞉ Identifier): "c" # (23..24)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (24..25)
+          - (colon꞉ Colon): ":" # (25..26)
+          - (false_expression꞉ Expression) ──→ (variant꞉ AdditiveExpression): # " a + b * c + d" (26..40)
+              - (left_operand꞉ Expression) ──→ (variant꞉ AdditiveExpression): # " a + b * c" (26..36)
+                  - (left_operand꞉ Expression): # " a" (26..28)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (26..27)
+                      - (variant꞉ Identifier): "a" # (27..28)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (28..29)
+                  - (operator꞉ Plus): "+" # (29..30)
+                  - (right_operand꞉ Expression) ──→ (variant꞉ MultiplicativeExpression): # " b * c" (30..36)
+                      - (left_operand꞉ Expression): # " b" (30..32)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (30..31)
+                          - (variant꞉ Identifier): "b" # (31..32)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (32..33)
+                      - (operator꞉ Asterisk): "*" # (33..34)
+                      - (right_operand꞉ Expression): # " c" (34..36)
+                          - (LeadingTrivia) ──→ (Whitespace): " " # (34..35)
+                          - (variant꞉ Identifier): "c" # (35..36)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (36..37)
+              - (operator꞉ Plus): "+" # (37..38)
+              - (right_operand꞉ Expression): # " d" (38..40)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (38..39)
+                  - (variant꞉ Identifier): "d" # (39..40)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (40..41)
+      - (colon꞉ Colon): ":" # (41..42)
+      - (false_expression꞉ Expression) ──→ (variant꞉ ConditionalExpression): # " !bar ? e + f : g + h" (42..63)
+          - (operand꞉ Expression) ──→ (variant꞉ PrefixExpression): # " !bar" (42..47)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (42..43)
+              - (operator꞉ Bang): "!" # (43..44)
+              - (operand꞉ Expression) ──→ (variant꞉ Identifier): "bar" # (44..47)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (47..48)
+          - (question_mark꞉ QuestionMark): "?" # (48..49)
+          - (true_expression꞉ Expression) ──→ (variant꞉ AdditiveExpression): # " e + f" (49..55)
+              - (left_operand꞉ Expression): # " e" (49..51)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (49..50)
+                  - (variant꞉ Identifier): "e" # (50..51)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (51..52)
+              - (operator꞉ Plus): "+" # (52..53)
+              - (right_operand꞉ Expression): # " f" (53..55)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (53..54)
+                  - (variant꞉ Identifier): "f" # (54..55)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (55..56)
+          - (colon꞉ Colon): ":" # (56..57)
+          - (false_expression꞉ Expression) ──→ (variant꞉ AdditiveExpression): # " g + h" (57..63)
+              - (left_operand꞉ Expression): # " g" (57..59)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (57..58)
+                  - (variant꞉ Identifier): "g" # (58..59)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (59..60)
+              - (operator꞉ Plus): "+" # (60..61)
+              - (right_operand꞉ Expression): # " h" (61..63)
+                  - (LeadingTrivia) ──→ (Whitespace): " " # (61..62)
+                  - (variant꞉ Identifier): "h" # (62..63)

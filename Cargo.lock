@@ -2169,8 +2169,11 @@ version = "0.12.0"
 dependencies = [
  "Inflector",
  "anyhow",
+ "codegen_language_definition",
+ "once_cell",
  "semver",
  "slang_solidity",
+ "solidity_language",
 ]
 
 [[package]]

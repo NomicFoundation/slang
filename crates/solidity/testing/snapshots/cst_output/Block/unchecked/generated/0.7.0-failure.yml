@@ -14,8 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Block): # 0..24 "{ unchecked { x = 1; } }"
-      - (open_brace꞉ OpenBrace): "{" # 0..1
-      - (LeadingTrivia) ► (Whitespace): " " # 1..2
-      - (SKIPPED): "unchecked { x = 1; } " # 2..23
-      - (close_brace꞉ CloseBrace): "}" # 23..24
+  - (Block): # "{ unchecked { x = 1; } }" (0..24)
+      - (open_brace꞉ OpenBrace): "{" # (0..1)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (1..2)
+      - (SKIPPED): "unchecked { x = 1; } " # (2..23)
+      - (close_brace꞉ CloseBrace): "}" # (23..24)

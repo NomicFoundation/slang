@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - (PragmaDirective): # 0..24 "pragma experimental foo;"
-      - (pragma_keyword꞉ PragmaKeyword): "pragma" # 0..6
-      - (pragma꞉ Pragma) ► (variant꞉ ExperimentalPragma): # 6..23 " experimental foo"
-          - (LeadingTrivia) ► (Whitespace): " " # 6..7
-          - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # 7..19
-          - (feature꞉ ExperimentalFeature): # 19..23 " foo"
-              - (LeadingTrivia) ► (Whitespace): " " # 19..20
-              - (variant꞉ Identifier): "foo" # 20..23
-      - (semicolon꞉ Semicolon): ";" # 23..24
+  - (PragmaDirective): # "pragma experimental foo;" (0..24)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ──→ (variant꞉ ExperimentalPragma): # " experimental foo" (6..23)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (6..7)
+          - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
+          - (feature꞉ ExperimentalFeature): # " foo" (19..23)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (19..20)
+              - (variant꞉ Identifier): "foo" # (20..23)
+      - (semicolon꞉ Semicolon): ";" # (23..24)

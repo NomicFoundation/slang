@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - (MappingType): # 0..26 "mapping(string => bytes32)"
-      - (mapping_keyword꞉ MappingKeyword): "mapping" # 0..7
-      - (open_paren꞉ OpenParen): "(" # 7..8
-      - (key_type꞉ MappingKey) ► (key_type꞉ MappingKeyType) ► (variant꞉ ElementaryType) ► (variant꞉ StringKeyword): "string" # 8..14
-      - (LeadingTrivia) ► (Whitespace): " " # 14..15
-      - (equal_greater_than꞉ EqualGreaterThan): "=>" # 15..17
-      - (value_type꞉ MappingValue) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # 17..25 " bytes32"
-          - (LeadingTrivia) ► (Whitespace): " " # 17..18
-          - (variant꞉ BytesKeyword): "bytes32" # 18..25
-      - (close_paren꞉ CloseParen): ")" # 25..26
+  - (MappingType): # "mapping(string => bytes32)" (0..26)
+      - (mapping_keyword꞉ MappingKeyword): "mapping" # (0..7)
+      - (open_paren꞉ OpenParen): "(" # (7..8)
+      - (key_type꞉ MappingKey) ──→ (key_type꞉ MappingKeyType) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ StringKeyword): "string" # (8..14)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (14..15)
+      - (equal_greater_than꞉ EqualGreaterThan): "=>" # (15..17)
+      - (value_type꞉ MappingValue) ──→ (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType): # " bytes32" (17..25)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (17..18)
+          - (variant꞉ BytesKeyword): "bytes32" # (18..25)
+      - (close_paren꞉ CloseParen): ")" # (25..26)

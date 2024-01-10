@@ -1,11 +1,17 @@
 use std::cmp::max;
+use std::collections::HashSet;
 use std::fmt::Write;
+use std::ops::Range;
 
 use anyhow::Result;
+use codegen_language_definition::model::Item;
 use inflector::Inflector;
+use once_cell::sync::Lazy;
 use slang_solidity::cst::Node;
 use slang_solidity::cursor::CursorWithNames;
+use slang_solidity::kinds::RuleKind;
 use slang_solidity::text_index::TextRangeExtensions;
+use solidity_language::SolidityDefinition;
 
 pub struct CstSnapshots;
 
@@ -25,7 +31,7 @@ impl CstSnapshots {
     }
 }
 
-fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
+fn write_source(w: &mut String, source: &str) -> Result<()> {
     if source.is_empty() {
         writeln!(w, "Source: \"\"")?;
         return Ok(());
@@ -65,7 +71,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     Ok(())
 }
 
-fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
+fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     if errors.is_empty() {
         writeln!(w, "Errors: []")?;
         return Ok(());
@@ -83,7 +89,7 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) -> Result<()> {
+fn write_tree(w: &mut String, mut cursor: CursorWithNames, source: &str) -> Result<()> {
     writeln!(w, "Tree:")?;
     write_node(w, &mut cursor, source, 0)?;
 
@@ -91,8 +97,8 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) ->
     Ok(())
 }
 
-fn write_node<W: Write>(
-    w: &mut W,
+fn write_node(
+    w: &mut String,
     cursor: &mut CursorWithNames,
     source: &str,
     depth: usize,
@@ -101,33 +107,25 @@ fn write_node<W: Write>(
     write!(w, "{indentation}  - ")?;
 
     loop {
-        let key = render_key(cursor);
-        write!(w, "{key}")?;
+        write!(w, "{key}", key = render_key(cursor))?;
 
-        // combine parents with a single child on the same line:
-        if cursor.node().children().len() == 1 {
+        // If it is a parent wih a single child, inline them on the same line:
+        if matches!(cursor.node(), Node::Rule(rule) if rule.children.len() == 1 && !NON_INLINABLE.contains(&rule.kind))
+        {
             let parent_range = cursor.text_range();
             assert!(cursor.go_to_next());
 
             let child_range = cursor.text_range();
             assert_eq!(parent_range, child_range);
 
-            write!(w, " ► ")?;
+            write!(w, " ──→ ")?;
             continue;
         }
 
         break;
     }
 
-    let value = render_value(cursor, source)?;
-    if value.is_empty() {
-        write!(w, ":")?;
-    } else {
-        write!(w, ": {value}")?;
-    }
-
-    let comment = render_comment(cursor, source)?;
-    writeln!(w, " # {comment}")?;
+    writeln!(w, ": {value}", value = render_value(cursor, source))?;
 
     for _ in cursor.node().children() {
         assert!(cursor.go_to_next());
@@ -150,34 +148,18 @@ fn render_key(cursor: &mut CursorWithNames) -> String {
     }
 }
 
-fn render_value(cursor: &mut CursorWithNames, source: &str) -> Result<String> {
-    let value = match cursor.node() {
-        Node::Rule(rule) if rule.children.is_empty() => "[]".to_string(),
-        Node::Rule(_) => String::new(),
-        Node::Token(_) => render_source_preview(cursor, source)?,
-    };
-
-    Ok(value)
-}
-
-fn render_comment(cursor: &mut CursorWithNames, source: &str) -> Result<String> {
-    let range = cursor.text_range();
-    let range_string = format!("{range:?}", range = range.utf8());
-
-    let comment = match cursor.node() {
-        Node::Token(_) => range_string,
-        Node::Rule(_) if range.is_empty() => range_string,
-        Node::Rule(_) => {
-            let source_preview = render_source_preview(cursor, source)?;
-            format!("{range_string} {source_preview}")
-        }
-    };
-
-    Ok(comment)
-}
-
-fn render_source_preview(cursor: &mut CursorWithNames, source: &str) -> Result<String> {
+fn render_value(cursor: &mut CursorWithNames, source: &str) -> String {
     let range = cursor.text_range().utf8();
+    let preview = render_preview(source, &range);
+
+    match cursor.node() {
+        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({range:?})"),
+        Node::Rule(_) => format!("# {preview} ({range:?})"),
+        Node::Token(_) => format!("{preview} # ({range:?})"),
+    }
+}
+
+fn render_preview(source: &str, range: &Range<usize>) -> String {
     let length = range.len();
 
     // Trim long values:
@@ -189,7 +171,7 @@ fn render_source_preview(cursor: &mut CursorWithNames, source: &str) -> Result<S
         .collect();
 
     // Add terminator if trimmed:
-    let mut contents = String::from_utf8(contents)?;
+    let mut contents = String::from_utf8(contents).unwrap();
     if length > max_length {
         contents.push_str("...");
     }
@@ -201,13 +183,34 @@ fn render_source_preview(cursor: &mut CursorWithNames, source: &str) -> Result<S
         .replace('\n', "\\n");
 
     // Surround by quotes for use in yaml:
-    let contents = if contents.contains('"') {
+    if contents.contains('"') {
         let contents = contents.replace('\'', "''");
         format!("'{contents}'")
     } else {
         let contents = contents.replace('"', "\\\"");
         format!("\"{contents}\"")
-    };
-
-    Ok(contents)
+    }
 }
+
+static NON_INLINABLE: Lazy<HashSet<RuleKind>> = Lazy::new(|| {
+    let mut kinds = HashSet::new();
+
+    for item in SolidityDefinition::create().items() {
+        match item {
+            Item::Repeated { .. } | Item::Separated { .. } => {
+                kinds.insert(item.name().parse().unwrap());
+            }
+            Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
+                // These non-terminals can be inlined.
+            }
+            Item::Trivia { .. }
+            | Item::Keyword { .. }
+            | Item::Token { .. }
+            | Item::Fragment { .. } => {
+                // These are terminals.
+            }
+        }
+    }
+
+    kinds
+});

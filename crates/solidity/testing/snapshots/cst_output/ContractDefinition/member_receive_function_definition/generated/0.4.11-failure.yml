@@ -18,15 +18,16 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition) ► (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # 18..27 "  receive"
-          - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-          - (item꞉ Identifier): "receive" # 20..27
-      - (SKIPPED): "() {\n  }\n" # 27..36
-      - (close_brace꞉ CloseBrace): "}" # 36..37
+  - (ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (0..37)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  receive" (18..27)
+          - (item꞉ ContractMember) ──→ (variant꞉ StateVariableDefinition) ──→ (type_name꞉ TypeName) ──→ (variant꞉ IdentifierPath): # "  receive" (18..27)
+              - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+              - (item꞉ Identifier): "receive" # (20..27)
+      - (SKIPPED): "() {\n  }\n" # (27..36)
+      - (close_brace꞉ CloseBrace): "}" # (36..37)

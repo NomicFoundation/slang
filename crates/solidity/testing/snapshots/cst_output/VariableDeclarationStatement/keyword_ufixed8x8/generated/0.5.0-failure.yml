@@ -15,13 +15,13 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (VariableDeclarationStatement): # 0..49 "// This form is always reserved:\nuint ufixed8x8;\n"
-      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # 0..37 "// This form is always reserved:\nuint"
-          - (LeadingTrivia): # 0..33 "// This form is always reserved:\n"
-              - (SingleLineComment): "// This form is always reserved:" # 0..32
-              - (EndOfLine): "\n" # 32..33
-          - (variant꞉ UintKeyword): "uint" # 33..37
-      - (LeadingTrivia) ► (Whitespace): " " # 37..38
-      - (SKIPPED): "ufixed8x8" # 38..47
-      - (semicolon꞉ Semicolon): ";" # 47..48
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 48..49
+  - (VariableDeclarationStatement): # "// This form is always reserved:\nuint ufixed8x8;\n" (0..49)
+      - (variable_type꞉ VariableDeclarationType) ──→ (variant꞉ TypeName) ──→ (variant꞉ ElementaryType): # "// This form is always reserved:\nuint" (0..37)
+          - (LeadingTrivia): # "// This form is always reserved:\n" (0..33)
+              - (SingleLineComment): "// This form is always reserved:" # (0..32)
+              - (EndOfLine): "\n" # (32..33)
+          - (variant꞉ UintKeyword): "uint" # (33..37)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (37..38)
+      - (SKIPPED): "ufixed8x8" # (38..47)
+      - (semicolon꞉ Semicolon): ";" # (47..48)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (48..49)

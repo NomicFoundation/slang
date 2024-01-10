@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "implements" # 0..10
+  - (Expression) ──→ (variant꞉ Identifier): "implements" # (0..10)

@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression): # 0..7 "10 days"
-      - (literal꞉ DecimalLiteral): "10" # 0..2
-      - (unit꞉ NumberUnit): # 2..7 " days"
-          - (LeadingTrivia) ► (Whitespace): " " # 2..3
-          - (variant꞉ DaysKeyword): "days" # 3..7
+  - (DecimalNumberExpression): # "10 days" (0..7)
+      - (literal꞉ DecimalLiteral): "10" # (0..2)
+      - (unit꞉ NumberUnit): # " days" (2..7)
+          - (LeadingTrivia) ──→ (Whitespace): " " # (2..3)
+          - (variant꞉ DaysKeyword): "days" # (3..7)

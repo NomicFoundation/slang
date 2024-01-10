@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..28 "abstract contract Sample {}\n"
-      - (abstract_keyword꞉ AbstractKeyword): "abstract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (contract_keyword꞉ ContractKeyword): "contract" # 9..17
-      - (LeadingTrivia) ► (Whitespace): " " # 17..18
-      - (name꞉ Identifier): "Sample" # 18..24
-      - (LeadingTrivia) ► (Whitespace): " " # 24..25
-      - (open_brace꞉ OpenBrace): "{" # 25..26
-      - (close_brace꞉ CloseBrace): "}" # 26..27
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 27..28
+  - (ContractDefinition): # "abstract contract Sample {}\n" (0..28)
+      - (abstract_keyword꞉ AbstractKeyword): "abstract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (9..17)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (17..18)
+      - (name꞉ Identifier): "Sample" # (18..24)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (24..25)
+      - (open_brace꞉ OpenBrace): "{" # (25..26)
+      - (close_brace꞉ CloseBrace): "}" # (26..27)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (27..28)

@@ -7,12 +7,13 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableDeclarationStatement): # 0..80 "// This form is reserved only since 0.4.14 until 0..."
-      - (LeadingTrivia): # 0..63 "// This form is reserved only since 0.4.14 until 0..."
-          - (SingleLineComment): "// This form is reserved only since 0.4.14 until 0..." # 0..62
-          - (EndOfLine): "\n" # 62..63
-      - (let_keyword꞉ YulLetKeyword): "let" # 63..66
-      - (names꞉ YulIdentifierPaths) ► (item꞉ YulIdentifierPath): # 66..80 " ufixed184x80\n"
-          - (LeadingTrivia) ► (Whitespace): " " # 66..67
-          - (item꞉ YulIdentifier): "ufixed184x80" # 67..79
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 79..80
+  - (YulVariableDeclarationStatement): # "// This form is reserved only since 0.4.14 until 0..." (0..80)
+      - (LeadingTrivia): # "// This form is reserved only since 0.4.14 until 0..." (0..63)
+          - (SingleLineComment): "// This form is reserved only since 0.4.14 until 0..." # (0..62)
+          - (EndOfLine): "\n" # (62..63)
+      - (let_keyword꞉ YulLetKeyword): "let" # (63..66)
+      - (names꞉ YulIdentifierPaths): # " ufixed184x80\n" (66..80)
+          - (item꞉ YulIdentifierPath): # " ufixed184x80\n" (66..80)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (66..67)
+              - (item꞉ YulIdentifier): "ufixed184x80" # (67..79)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (79..80)

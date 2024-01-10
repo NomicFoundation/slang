@@ -6,20 +6,20 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleExpression): # 0..30 "(first, second, third, fourth)"
-      - (open_paren꞉ OpenParen): "(" # 0..1
-      - (items꞉ TupleValues): # 1..29 "first, second, third, fourth"
-          - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ Identifier): "first" # 1..6
-          - (separator꞉ Comma): "," # 6..7
-          - (item꞉ TupleValue) ► (expression꞉ Expression): # 7..14 " second"
-              - (LeadingTrivia) ► (Whitespace): " " # 7..8
-              - (variant꞉ Identifier): "second" # 8..14
-          - (separator꞉ Comma): "," # 14..15
-          - (item꞉ TupleValue) ► (expression꞉ Expression): # 15..21 " third"
-              - (LeadingTrivia) ► (Whitespace): " " # 15..16
-              - (variant꞉ Identifier): "third" # 16..21
-          - (separator꞉ Comma): "," # 21..22
-          - (item꞉ TupleValue) ► (expression꞉ Expression): # 22..29 " fourth"
-              - (LeadingTrivia) ► (Whitespace): " " # 22..23
-              - (variant꞉ Identifier): "fourth" # 23..29
-      - (close_paren꞉ CloseParen): ")" # 29..30
+  - (TupleExpression): # "(first, second, third, fourth)" (0..30)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (items꞉ TupleValues): # "first, second, third, fourth" (1..29)
+          - (item꞉ TupleValue) ──→ (expression꞉ Expression) ──→ (variant꞉ Identifier): "first" # (1..6)
+          - (separator꞉ Comma): "," # (6..7)
+          - (item꞉ TupleValue) ──→ (expression꞉ Expression): # " second" (7..14)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (7..8)
+              - (variant꞉ Identifier): "second" # (8..14)
+          - (separator꞉ Comma): "," # (14..15)
+          - (item꞉ TupleValue) ──→ (expression꞉ Expression): # " third" (15..21)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+              - (variant꞉ Identifier): "third" # (16..21)
+          - (separator꞉ Comma): "," # (21..22)
+          - (item꞉ TupleValue) ──→ (expression꞉ Expression): # " fourth" (22..29)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (22..23)
+              - (variant꞉ Identifier): "fourth" # (23..29)
+      - (close_paren꞉ CloseParen): ")" # (29..30)

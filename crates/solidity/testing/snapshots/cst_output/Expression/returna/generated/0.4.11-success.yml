@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "returna" # 0..7
+  - (Expression) ──→ (variant꞉ Identifier): "returna" # (0..7)

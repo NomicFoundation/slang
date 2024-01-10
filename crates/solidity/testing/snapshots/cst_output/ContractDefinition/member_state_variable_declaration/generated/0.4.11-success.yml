@@ -8,22 +8,24 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # 0..36 "contract Sample {\n  uint public a;\n}"
-      - (contract_keyword꞉ ContractKeyword): "contract" # 0..8
-      - (LeadingTrivia) ► (Whitespace): " " # 8..9
-      - (name꞉ Identifier): "Sample" # 9..15
-      - (LeadingTrivia) ► (Whitespace): " " # 15..16
-      - (open_brace꞉ OpenBrace): "{" # 16..17
-      - (TrailingTrivia) ► (EndOfLine): "\n" # 17..18
-      - (members꞉ ContractMembers) ► (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # 18..35 "  uint public a;\n"
-          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # 18..24 "  uint"
-              - (LeadingTrivia) ► (Whitespace): "  " # 18..20
-              - (variant꞉ UintKeyword): "uint" # 20..24
-          - (attributes꞉ StateVariableAttributes) ► (item꞉ StateVariableAttribute): # 24..31 " public"
-              - (LeadingTrivia) ► (Whitespace): " " # 24..25
-              - (variant꞉ PublicKeyword): "public" # 25..31
-          - (LeadingTrivia) ► (Whitespace): " " # 31..32
-          - (name꞉ Identifier): "a" # 32..33
-          - (semicolon꞉ Semicolon): ";" # 33..34
-          - (TrailingTrivia) ► (EndOfLine): "\n" # 34..35
-      - (close_brace꞉ CloseBrace): "}" # 35..36
+  - (ContractDefinition): # "contract Sample {\n  uint public a;\n}" (0..36)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ──→ (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  uint public a;\n" (18..35)
+          - (item꞉ ContractMember) ──→ (variant꞉ StateVariableDefinition): # "  uint public a;\n" (18..35)
+              - (type_name꞉ TypeName) ──→ (variant꞉ ElementaryType): # "  uint" (18..24)
+                  - (LeadingTrivia) ──→ (Whitespace): "  " # (18..20)
+                  - (variant꞉ UintKeyword): "uint" # (20..24)
+              - (attributes꞉ StateVariableAttributes): # " public" (24..31)
+                  - (item꞉ StateVariableAttribute): # " public" (24..31)
+                      - (LeadingTrivia) ──→ (Whitespace): " " # (24..25)
+                      - (variant꞉ PublicKeyword): "public" # (25..31)
+              - (LeadingTrivia) ──→ (Whitespace): " " # (31..32)
+              - (name꞉ Identifier): "a" # (32..33)
+              - (semicolon꞉ Semicolon): ";" # (33..34)
+              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (34..35)
+      - (close_brace꞉ CloseBrace): "}" # (35..36)

@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "copyof" # 0..6
+  - (Expression) ──→ (variant꞉ Identifier): "copyof" # (0..6)

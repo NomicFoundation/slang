@@ -6,4 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (AsciiStringLiterals) ► (item꞉ AsciiStringLiteral): '"foo"' # 0..5
+  - (AsciiStringLiterals): # '"foo"' (0..5)
+      - (item꞉ AsciiStringLiteral): '"foo"' # (0..5)

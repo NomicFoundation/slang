@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "var z = 0;" # 0..10
+  - (SKIPPED): "var z = 0;" # (0..10)
