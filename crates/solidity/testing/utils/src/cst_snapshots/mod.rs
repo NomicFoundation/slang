@@ -1,30 +1,22 @@
 use std::cmp::max;
+use std::collections::HashSet;
 use std::fmt::Write;
+use std::ops::Range;
 
 use anyhow::Result;
-use slang_solidity::cst;
+use codegen_language_definition::model::Item;
+use inflector::Inflector;
+use once_cell::sync::Lazy;
+use slang_solidity::cst::Node;
 use slang_solidity::cursor::CursorWithNames;
-use slang_solidity::kinds::TokenKind;
-use slang_solidity::text_index::{TextRange, TextRangeExtensions};
-
-use crate::node_extensions::NodeExtensions;
-
-/// Whether to include the whitespace in the snapshot test CST output.
-#[derive(Clone, Copy)]
-pub enum WithWhitespace {
-    Yes,
-    No,
-}
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::text_index::TextRangeExtensions;
+use solidity_language::SolidityDefinition;
 
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(
-        source: &str,
-        errors: &Vec<String>,
-        cursor: CursorWithNames,
-        with_whitespace: WithWhitespace,
-    ) -> Result<String> {
+    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithNames) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -33,13 +25,13 @@ impl CstSnapshots {
         write_errors(&mut w, errors)?;
         writeln!(&mut w)?;
 
-        write_tree(&mut w, cursor, source, with_whitespace)?;
+        write_tree(&mut w, cursor, source)?;
 
         Ok(w)
     }
 }
 
-fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
+fn write_source(w: &mut String, source: &str) -> Result<()> {
     if source.is_empty() {
         writeln!(w, "Source: \"\"")?;
         return Ok(());
@@ -79,7 +71,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     Ok(())
 }
 
-fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
+fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     if errors.is_empty() {
         writeln!(w, "Errors: []")?;
         return Ok(());
@@ -97,109 +89,89 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree<W: Write>(
-    w: &mut W,
-    mut cursor: CursorWithNames,
+fn write_tree(w: &mut String, mut cursor: CursorWithNames, source: &str) -> Result<()> {
+    writeln!(w, "Tree:")?;
+    write_node(w, &mut cursor, source, 0)?;
+
+    assert!(!cursor.go_to_next());
+    Ok(())
+}
+
+fn write_node(
+    w: &mut String,
+    cursor: &mut CursorWithNames,
     source: &str,
-    with_whitespace: WithWhitespace,
+    depth: usize,
 ) -> Result<()> {
-    let with_whitespace = matches!(with_whitespace, WithWhitespace::Yes);
+    let indentation = " ".repeat(4 * depth);
+    write!(w, "{indentation}  - ")?;
 
-    write!(w, "Tree:")?;
-    writeln!(w)?;
+    loop {
+        write!(w, "{key}", key = render_key(cursor))?;
 
-    let significant_nodes_with_range = std::iter::from_fn(|| loop {
-        let (depth, range) = (cursor.depth(), cursor.text_range());
+        // If it is a parent wih a single child, inline them on the same line:
+        if matches!(cursor.node(), Node::Rule(rule) if rule.children.len() == 1 && !NON_INLINABLE.contains(&rule.kind))
+        {
+            let parent_range = cursor.text_range();
+            assert!(cursor.go_to_next());
 
-        // Skip whitespace and trivia rules containing only those tokens
-        match cursor.next() {
-            Some(cst::NamedNode {
-                name: _,
-                node: cst::Node::Rule(rule),
-            }) if rule.is_trivia()
-                && !with_whitespace
-                && rule.children.iter().all(|named| {
-                    named
-                        .node
-                        .as_token()
-                        .map_or(false, |t| is_whitespace(t.kind))
-                }) =>
-            {
-                continue
-            }
-            Some(cst::NamedNode {
-                name: _,
-                node: cst::Node::Token(token),
-            }) if !with_whitespace && is_whitespace(token.kind) => continue,
-            next => break next.map(|item| (item, depth, range)),
+            let child_range = cursor.text_range();
+            assert_eq!(parent_range, child_range);
+
+            write!(w, " ► ")?;
+            continue;
         }
-    });
 
-    for (node, depth, range) in significant_nodes_with_range {
-        write_node(w, &node, &range, source, depth)?;
+        break;
+    }
+
+    writeln!(w, ": {value}", value = render_value(cursor, source))?;
+
+    for _ in cursor.node().children() {
+        assert!(cursor.go_to_next());
+        write_node(w, cursor, source, depth + 1)?;
     }
 
     Ok(())
 }
 
-fn write_node<W: Write>(
-    w: &mut W,
-    cst::NamedNode { name, node }: &cst::NamedNode,
-    range: &TextRange,
-    source: &str,
-    indentation: usize,
-) -> Result<()> {
-    let range_string = format!("{range:?}", range = range.utf8());
+fn render_key(cursor: &mut CursorWithNames) -> String {
+    let kind = match cursor.node() {
+        Node::Rule(rule) => rule.kind.to_string(),
+        Node::Token(token) => token.kind.to_string(),
+    };
 
-    let (node_value, node_comment) = if range.is_empty() {
-        let preview = match node {
-            cst::Node::Rule(_) if !node.children().is_empty() => "",
-            cst::Node::Rule(_) => " []",
-            cst::Node::Token(_) => " \"\"",
-        };
-
-        (preview.to_owned(), range_string)
+    if let Some(name) = cursor.node_name() {
+        format!("({name}꞉ {kind})", name = name.as_ref().to_snake_case())
     } else {
-        let preview = render_source_preview(source, range)?;
-
-        if node.children().is_empty() {
-            // "foo" # 1..2
-            (format!(" {preview}"), range_string)
-        } else {
-            // # 1..2 "foo"
-            (String::new(), format!("{range_string} {preview}"))
-        }
-    };
-
-    let field_name = name.map(|name| format!("({name}) ")).unwrap_or_default();
-
-    let name = match node {
-        cst::Node::Rule(rule) => format!("{field_name}{}", rule.kind.as_ref()),
-        cst::Node::Token(token) => format!("{field_name}{}", token.kind.as_ref()),
-    };
-
-    writeln!(
-        w,
-        "{indentation}  - {name}:{node_value} # {node_comment}",
-        indentation = " ".repeat(4 * indentation),
-    )?;
-
-    Ok(())
+        format!("({kind})")
+    }
 }
 
-pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> {
-    let max_length = 50;
-    let length = range.end.utf8 - range.start.utf8;
+fn render_value(cursor: &mut CursorWithNames, source: &str) -> String {
+    let range = cursor.text_range().utf8();
+    let preview = render_preview(source, &range);
+
+    match cursor.node() {
+        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({range:?})"),
+        Node::Rule(_) => format!("# {preview} ({range:?})"),
+        Node::Token(_) => format!("{preview} # ({range:?})"),
+    }
+}
+
+fn render_preview(source: &str, range: &Range<usize>) -> String {
+    let length = range.len();
 
     // Trim long values:
+    let max_length = 50;
     let contents = source
         .bytes()
-        .skip(range.start.utf8)
+        .skip(range.start)
         .take(length.clamp(0, max_length))
         .collect();
 
     // Add terminator if trimmed:
-    let mut contents = String::from_utf8(contents)?;
+    let mut contents = String::from_utf8(contents).unwrap();
     if length > max_length {
         contents.push_str("...");
     }
@@ -211,19 +183,36 @@ pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> 
         .replace('\n', "\\n");
 
     // Surround by quotes for use in yaml:
-    let contents = {
-        if contents.contains('"') {
-            let contents = contents.replace('\'', "''");
-            format!("'{contents}'")
-        } else {
-            let contents = contents.replace('"', "\\\"");
-            format!("\"{contents}\"")
+    if contents.contains('"') {
+        let contents = contents.replace('\'', "''");
+        format!("'{contents}'")
+    } else {
+        let contents = contents.replace('"', "\\\"");
+        format!("\"{contents}\"")
+    }
+}
+
+static NON_INLINABLE: Lazy<HashSet<RuleKind>> = Lazy::new(|| {
+    let mut kinds = HashSet::new();
+
+    for item in SolidityDefinition::create().items() {
+        match item {
+            Item::Repeated { .. } | Item::Separated { .. } => {
+                // Do not inline these parents, even if they have a single child.
+                kinds.insert(item.name().parse().unwrap());
+            }
+            Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
+                // These non-terminals can be inlined if they have a single child.
+                // Note: same goes for 'PrecedenceExpression' items under each 'Precedence' item.
+            }
+            Item::Trivia { .. }
+            | Item::Keyword { .. }
+            | Item::Token { .. }
+            | Item::Fragment { .. } => {
+                // These are terminals (no children).
+            }
         }
-    };
+    }
 
-    Ok(contents)
-}
-
-fn is_whitespace(kind: TokenKind) -> bool {
-    matches!(kind, TokenKind::Whitespace | TokenKind::EndOfLine)
-}
+    kinds
+});

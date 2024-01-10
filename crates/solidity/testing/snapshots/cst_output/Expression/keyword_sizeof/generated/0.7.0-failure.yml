@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "sizeof" # 0..6
+  - (SKIPPED): "sizeof" # (0..6)

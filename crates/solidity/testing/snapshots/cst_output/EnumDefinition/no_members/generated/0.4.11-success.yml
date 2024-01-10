@@ -6,8 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - EnumDefinition: # 0..12 "enum Foo { }"
-      - (enum_keyword) EnumKeyword: "enum" # 0..4
-      - (name) Identifier: "Foo" # 5..8
-      - (open_brace) OpenBrace: "{" # 9..10
-      - (close_brace) CloseBrace: "}" # 11..12
+  - (EnumDefinition): # "enum Foo { }" (0..12)
+      - (enum_keyword꞉ EnumKeyword): "enum" # (0..4)
+      - (LeadingTrivia) ► (Whitespace): " " # (4..5)
+      - (name꞉ Identifier): "Foo" # (5..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+      - (open_brace꞉ OpenBrace): "{" # (9..10)
+      - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+      - (close_brace꞉ CloseBrace): "}" # (11..12)

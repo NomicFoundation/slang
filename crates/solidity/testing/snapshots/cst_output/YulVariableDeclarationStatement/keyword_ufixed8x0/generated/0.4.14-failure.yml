@@ -15,8 +15,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..77 "// This form is reserved only since 0.4.14 until 0..."
-      - LeadingTrivia: # 0..63 "// This form is reserved only since 0.4.14 until 0..."
-          - SingleLineComment: "// This form is reserved only since 0.4.14 until 0..." # 0..62
-      - (let_keyword) YulLetKeyword: "let" # 63..66
-      - SKIPPED: " ufixed8x0\n" # 66..77
+  - (YulVariableDeclarationStatement): # "// This form is reserved only since 0.4.14 until 0..." (0..77)
+      - (LeadingTrivia): # "// This form is reserved only since 0.4.14 until 0..." (0..63)
+          - (SingleLineComment): "// This form is reserved only since 0.4.14 until 0..." # (0..62)
+          - (EndOfLine): "\n" # (62..63)
+      - (let_keyword꞉ YulLetKeyword): "let" # (63..66)
+      - (SKIPPED): " ufixed8x0\n" # (66..77)

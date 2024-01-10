@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..5 "bytes"
-      - (variant) ElementaryType: # 0..5 "bytes"
-          - (variant) BytesKeyword: "bytes" # 0..5
+  - (TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BytesKeyword): "bytes" # (0..5)

@@ -6,17 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..22 "address payable(value)"
-      - (variant) FunctionCallExpression: # 0..22 "address payable(value)"
-          - (operand) Expression: # 0..15 "address payable"
-              - (variant) ElementaryType: # 0..15 "address payable"
-                  - (variant) AddressType: # 0..15 "address payable"
-                      - (address_keyword) AddressKeyword: "address" # 0..7
-                      - (payable_keyword) PayableKeyword: "payable" # 8..15
-          - (arguments) ArgumentsDeclaration: # 15..22 "(value)"
-              - (variant) PositionalArgumentsDeclaration: # 15..22 "(value)"
-                  - (open_paren) OpenParen: "(" # 15..16
-                  - (arguments) PositionalArguments: # 16..21 "value"
-                      - (item) Expression: # 16..21 "value"
-                          - (variant) Identifier: "value" # 16..21
-                  - (close_paren) CloseParen: ")" # 21..22
+  - (Expression) ► (variant꞉ FunctionCallExpression): # "address payable(value)" (0..22)
+      - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "address payable" (0..15)
+          - (address_keyword꞉ AddressKeyword): "address" # (0..7)
+          - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+          - (payable_keyword꞉ PayableKeyword): "payable" # (8..15)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(value)" (15..22)
+          - (open_paren꞉ OpenParen): "(" # (15..16)
+          - (arguments꞉ PositionalArguments): # "value" (16..21)
+              - (item꞉ Expression) ► (variant꞉ Identifier): "value" # (16..21)
+          - (close_paren꞉ CloseParen): ")" # (21..22)

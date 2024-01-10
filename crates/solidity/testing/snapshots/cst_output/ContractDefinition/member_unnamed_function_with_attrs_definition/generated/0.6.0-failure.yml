@@ -16,23 +16,29 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..53 "contract Sample {\n  function() external payable {}..."
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..48 "  function() external payable "
-          - (item) ContractMember: # 18..48 "  function() external payable "
-              - (variant) StateVariableDefinition: # 18..48 "  function() external payable "
-                  - (type_name) TypeName: # 18..47 "  function() external payable"
-                      - (variant) FunctionType: # 18..47 "  function() external payable"
-                          - (function_keyword) FunctionKeyword: "function" # 20..28
-                          - (parameters) ParametersDeclaration: # 28..30 "()"
-                              - (open_paren) OpenParen: "(" # 28..29
-                              - (close_paren) CloseParen: ")" # 29..30
-                          - (attributes) FunctionTypeAttributes: # 30..47 " external payable"
-                              - (item) FunctionTypeAttribute: # 30..39 " external"
-                                  - (variant) ExternalKeyword: "external" # 31..39
-                              - (item) FunctionTypeAttribute: # 39..47 " payable"
-                                  - (variant) PayableKeyword: "payable" # 40..47
-      - SKIPPED: "{}\n" # 48..51
-      - (close_brace) CloseBrace: "}" # 51..52
+  - (ContractDefinition): # "contract Sample {\n  function() external payable {}..." (0..53)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ► (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  function() external payable " (18..48)
+          - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  function() external payable " (18..48)
+              - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "  function() external payable" (18..47)
+                  - (LeadingTrivia) ► (Whitespace): "  " # (18..20)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (20..28)
+                  - (parameters꞉ ParametersDeclaration): # "()" (28..30)
+                      - (open_paren꞉ OpenParen): "(" # (28..29)
+                      - (close_paren꞉ CloseParen): ")" # (29..30)
+                  - (attributes꞉ FunctionTypeAttributes): # " external payable" (30..47)
+                      - (item꞉ FunctionTypeAttribute): # " external" (30..39)
+                          - (LeadingTrivia) ► (Whitespace): " " # (30..31)
+                          - (variant꞉ ExternalKeyword): "external" # (31..39)
+                      - (item꞉ FunctionTypeAttribute): # " payable" (39..47)
+                          - (LeadingTrivia) ► (Whitespace): " " # (39..40)
+                          - (variant꞉ PayableKeyword): "payable" # (40..47)
+              - (LeadingTrivia) ► (Whitespace): " " # (47..48)
+      - (SKIPPED): "{}\n" # (48..51)
+      - (close_brace꞉ CloseBrace): "}" # (51..52)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (52..53)

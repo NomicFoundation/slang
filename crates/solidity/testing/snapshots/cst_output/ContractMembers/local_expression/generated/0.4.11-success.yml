@@ -8,42 +8,45 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractMembers: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-      - (item) ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-          - (variant) FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-              - (function_keyword) FunctionKeyword: "function" # 0..8
-              - (name) FunctionName: # 8..13 " func"
-                  - (variant) Identifier: "func" # 9..13
-              - (parameters) ParametersDeclaration: # 13..15 "()"
-                  - (open_paren) OpenParen: "(" # 13..14
-                  - (close_paren) CloseParen: ")" # 14..15
-              - (body) FunctionBody: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                  - (variant) Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                      - (open_brace) OpenBrace: "{" # 16..17
-                      - (statements) Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                          - (item) Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                              - (variant) VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                                  - (variable_type) VariableDeclarationType: # 18..24 "  uint"
-                                      - (variant) TypeName: # 18..24 "  uint"
-                                          - (variant) ElementaryType: # 18..24 "  uint"
-                                              - (variant) UintKeyword: "uint" # 20..24
-                                  - (name) Identifier: "a" # 25..26
-                                  - (value) VariableDeclarationValue: # 26..38 " = 1 + 2 * 3"
-                                      - (equal) Equal: "=" # 27..28
-                                      - (expression) Expression: # 28..38 " 1 + 2 * 3"
-                                          - (variant) AdditiveExpression: # 28..38 " 1 + 2 * 3"
-                                              - (left_operand) Expression: # 28..30 " 1"
-                                                  - (variant) DecimalNumberExpression: # 28..30 " 1"
-                                                      - (literal) DecimalLiteral: "1" # 29..30
-                                              - (operator) Plus: "+" # 31..32
-                                              - (right_operand) Expression: # 32..38 " 2 * 3"
-                                                  - (variant) MultiplicativeExpression: # 32..38 " 2 * 3"
-                                                      - (left_operand) Expression: # 32..34 " 2"
-                                                          - (variant) DecimalNumberExpression: # 32..34 " 2"
-                                                              - (literal) DecimalLiteral: "2" # 33..34
-                                                      - (operator) Asterisk: "*" # 35..36
-                                                      - (right_operand) Expression: # 36..38 " 3"
-                                                          - (variant) DecimalNumberExpression: # 36..38 " 3"
-                                                              - (literal) DecimalLiteral: "3" # 37..38
-                                  - (semicolon) Semicolon: ";" # 38..39
-                      - (close_brace) CloseBrace: "}" # 40..41
+  - (ContractMembers): # "function func() {\n  uint a = 1 + 2 * 3;\n}\n" (0..42)
+      - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "function func() {\n  uint a = 1 + 2 * 3;\n}\n" (0..42)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (name꞉ FunctionName): # " func" (8..13)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (variant꞉ Identifier): "func" # (9..13)
+          - (parameters꞉ ParametersDeclaration): # "()" (13..15)
+              - (open_paren꞉ OpenParen): "(" # (13..14)
+              - (close_paren꞉ CloseParen): ")" # (14..15)
+          - (body꞉ FunctionBody) ► (variant꞉ Block): # " {\n  uint a = 1 + 2 * 3;\n}\n" (15..42)
+              - (LeadingTrivia) ► (Whitespace): " " # (15..16)
+              - (open_brace꞉ OpenBrace): "{" # (16..17)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (17..18)
+              - (statements꞉ Statements): # "  uint a = 1 + 2 * 3;\n" (18..40)
+                  - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "  uint a = 1 + 2 * 3;\n" (18..40)
+                      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "  uint" (18..24)
+                          - (LeadingTrivia) ► (Whitespace): "  " # (18..20)
+                          - (variant꞉ UintKeyword): "uint" # (20..24)
+                      - (LeadingTrivia) ► (Whitespace): " " # (24..25)
+                      - (name꞉ Identifier): "a" # (25..26)
+                      - (value꞉ VariableDeclarationValue): # " = 1 + 2 * 3" (26..38)
+                          - (LeadingTrivia) ► (Whitespace): " " # (26..27)
+                          - (equal꞉ Equal): "=" # (27..28)
+                          - (expression꞉ Expression) ► (variant꞉ AdditiveExpression): # " 1 + 2 * 3" (28..38)
+                              - (left_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 1" (28..30)
+                                  - (LeadingTrivia) ► (Whitespace): " " # (28..29)
+                                  - (literal꞉ DecimalLiteral): "1" # (29..30)
+                              - (LeadingTrivia) ► (Whitespace): " " # (30..31)
+                              - (operator꞉ Plus): "+" # (31..32)
+                              - (right_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # " 2 * 3" (32..38)
+                                  - (left_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 2" (32..34)
+                                      - (LeadingTrivia) ► (Whitespace): " " # (32..33)
+                                      - (literal꞉ DecimalLiteral): "2" # (33..34)
+                                  - (LeadingTrivia) ► (Whitespace): " " # (34..35)
+                                  - (operator꞉ Asterisk): "*" # (35..36)
+                                  - (right_operand꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 3" (36..38)
+                                      - (LeadingTrivia) ► (Whitespace): " " # (36..37)
+                                      - (literal꞉ DecimalLiteral): "3" # (37..38)
+                      - (semicolon꞉ Semicolon): ";" # (38..39)
+                      - (TrailingTrivia) ► (EndOfLine): "\n" # (39..40)
+              - (close_brace꞉ CloseBrace): "}" # (40..41)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (41..42)

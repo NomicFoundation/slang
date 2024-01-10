@@ -6,20 +6,22 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..13 "a * b + c * d"
-      - (variant) AdditiveExpression: # 0..13 "a * b + c * d"
-          - (left_operand) Expression: # 0..5 "a * b"
-              - (variant) MultiplicativeExpression: # 0..5 "a * b"
-                  - (left_operand) Expression: # 0..1 "a"
-                      - (variant) Identifier: "a" # 0..1
-                  - (operator) Asterisk: "*" # 2..3
-                  - (right_operand) Expression: # 3..5 " b"
-                      - (variant) Identifier: "b" # 4..5
-          - (operator) Plus: "+" # 6..7
-          - (right_operand) Expression: # 7..13 " c * d"
-              - (variant) MultiplicativeExpression: # 7..13 " c * d"
-                  - (left_operand) Expression: # 7..9 " c"
-                      - (variant) Identifier: "c" # 8..9
-                  - (operator) Asterisk: "*" # 10..11
-                  - (right_operand) Expression: # 11..13 " d"
-                      - (variant) Identifier: "d" # 12..13
+  - (Expression) ► (variant꞉ AdditiveExpression): # "a * b + c * d" (0..13)
+      - (left_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # "a * b" (0..5)
+          - (left_operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
+          - (LeadingTrivia) ► (Whitespace): " " # (1..2)
+          - (operator꞉ Asterisk): "*" # (2..3)
+          - (right_operand꞉ Expression): # " b" (3..5)
+              - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "b" # (4..5)
+      - (LeadingTrivia) ► (Whitespace): " " # (5..6)
+      - (operator꞉ Plus): "+" # (6..7)
+      - (right_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # " c * d" (7..13)
+          - (left_operand꞉ Expression): # " c" (7..9)
+              - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+              - (variant꞉ Identifier): "c" # (8..9)
+          - (LeadingTrivia) ► (Whitespace): " " # (9..10)
+          - (operator꞉ Asterisk): "*" # (10..11)
+          - (right_operand꞉ Expression): # " d" (11..13)
+              - (LeadingTrivia) ► (Whitespace): " " # (11..12)
+              - (variant꞉ Identifier): "d" # (12..13)

@@ -6,10 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDeconstructionSymbol: # 0..8 "foo as /"
-      - (name) IdentifierPath: # 0..3 "foo"
-          - (item) Identifier: "foo" # 0..3
-      - (alias) UsingAlias: # 3..8 " as /"
-          - (as_keyword) AsKeyword: "as" # 4..6
-          - (operator) UsingOperator: # 6..8 " /"
-              - (variant) Slash: "/" # 7..8
+  - (UsingDeconstructionSymbol): # "foo as /" (0..8)
+      - (name꞉ IdentifierPath): # "foo" (0..3)
+          - (item꞉ Identifier): "foo" # (0..3)
+      - (alias꞉ UsingAlias): # " as /" (3..8)
+          - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+          - (as_keyword꞉ AsKeyword): "as" # (4..6)
+          - (operator꞉ UsingOperator): # " /" (6..8)
+              - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+              - (variant꞉ Slash): "/" # (7..8)

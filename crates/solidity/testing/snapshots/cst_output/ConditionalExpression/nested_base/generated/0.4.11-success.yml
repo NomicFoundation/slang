@@ -6,23 +6,25 @@ Source: >
 Errors: []
 
 Tree:
-  - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
-      - (operand) Expression: # 0..12 "(foo == bar)"
-          - (variant) TupleExpression: # 0..12 "(foo == bar)"
-              - (open_paren) OpenParen: "(" # 0..1
-              - (items) TupleValues: # 1..11 "foo == bar"
-                  - (item) TupleValue: # 1..11 "foo == bar"
-                      - (expression) Expression: # 1..11 "foo == bar"
-                          - (variant) EqualityExpression: # 1..11 "foo == bar"
-                              - (left_operand) Expression: # 1..4 "foo"
-                                  - (variant) Identifier: "foo" # 1..4
-                              - (operator) EqualEqual: "==" # 5..7
-                              - (right_operand) Expression: # 7..11 " bar"
-                                  - (variant) Identifier: "bar" # 8..11
-              - (close_paren) CloseParen: ")" # 11..12
-      - (question_mark) QuestionMark: "?" # 13..14
-      - (true_expression) Expression: # 14..19 " true"
-          - (variant) TrueKeyword: "true" # 15..19
-      - (colon) Colon: ":" # 20..21
-      - (false_expression) Expression: # 21..27 " false"
-          - (variant) FalseKeyword: "false" # 22..27
+  - (ConditionalExpression): # "(foo == bar) ? true : false" (0..27)
+      - (operand꞉ Expression) ► (variant꞉ TupleExpression): # "(foo == bar)" (0..12)
+          - (open_paren꞉ OpenParen): "(" # (0..1)
+          - (items꞉ TupleValues): # "foo == bar" (1..11)
+              - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ EqualityExpression): # "foo == bar" (1..11)
+                  - (left_operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (1..4)
+                  - (LeadingTrivia) ► (Whitespace): " " # (4..5)
+                  - (operator꞉ EqualEqual): "==" # (5..7)
+                  - (right_operand꞉ Expression): # " bar" (7..11)
+                      - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+                      - (variant꞉ Identifier): "bar" # (8..11)
+          - (close_paren꞉ CloseParen): ")" # (11..12)
+      - (LeadingTrivia) ► (Whitespace): " " # (12..13)
+      - (question_mark꞉ QuestionMark): "?" # (13..14)
+      - (true_expression꞉ Expression): # " true" (14..19)
+          - (LeadingTrivia) ► (Whitespace): " " # (14..15)
+          - (variant꞉ TrueKeyword): "true" # (15..19)
+      - (LeadingTrivia) ► (Whitespace): " " # (19..20)
+      - (colon꞉ Colon): ":" # (20..21)
+      - (false_expression꞉ Expression): # " false" (21..27)
+          - (LeadingTrivia) ► (Whitespace): " " # (21..22)
+          - (variant꞉ FalseKeyword): "false" # (22..27)

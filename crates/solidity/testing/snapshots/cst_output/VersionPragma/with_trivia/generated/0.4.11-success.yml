@@ -6,21 +6,29 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma: # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
-      - (solidity_keyword) SolidityKeyword: "solidity" # 0..8
-      - (expressions) VersionPragmaExpressions: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-          - (item) VersionPragmaExpression: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-              - VersionPragmaSpecifier: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-                  - LeadingTrivia: # 8..24 " /* comments */ "
-                      - MultilineComment: "/* comments */" # 9..23
-                  - (item) VersionPragmaValue: "0" # 24..25
-                  - LeadingTrivia: # 25..36 " /* are */ "
-                      - MultilineComment: "/* are */" # 26..35
-                  - (separator) Period: "." # 36..37
-                  - LeadingTrivia: # 37..52 " /* allowed */ "
-                      - MultilineComment: "/* allowed */" # 38..51
-                  - (item) VersionPragmaValue: "0" # 52..53
-                  - (separator) Period: "." # 54..55
-                  - LeadingTrivia: # 55..67 " /* here */ "
-                      - MultilineComment: "/* here */" # 56..66
-                  - (item) VersionPragmaValue: "0" # 67..68
+  - (VersionPragma): # "solidity /* comments */ 0 /* are */ . /* allowed *..." (0..68)
+      - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
+      - (expressions꞉ VersionPragmaExpressions): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
+          - (item꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
+              - (LeadingTrivia): # " /* comments */ " (8..24)
+                  - (Whitespace): " " # (8..9)
+                  - (MultilineComment): "/* comments */" # (9..23)
+                  - (Whitespace): " " # (23..24)
+              - (item꞉ VersionPragmaValue): "0" # (24..25)
+              - (LeadingTrivia): # " /* are */ " (25..36)
+                  - (Whitespace): " " # (25..26)
+                  - (MultilineComment): "/* are */" # (26..35)
+                  - (Whitespace): " " # (35..36)
+              - (separator꞉ Period): "." # (36..37)
+              - (LeadingTrivia): # " /* allowed */ " (37..52)
+                  - (Whitespace): " " # (37..38)
+                  - (MultilineComment): "/* allowed */" # (38..51)
+                  - (Whitespace): " " # (51..52)
+              - (item꞉ VersionPragmaValue): "0" # (52..53)
+              - (LeadingTrivia) ► (Whitespace): " " # (53..54)
+              - (separator꞉ Period): "." # (54..55)
+              - (LeadingTrivia): # " /* here */ " (55..67)
+                  - (Whitespace): " " # (55..56)
+                  - (MultilineComment): "/* here */" # (56..66)
+                  - (Whitespace): " " # (66..67)
+              - (item꞉ VersionPragmaValue): "0" # (67..68)

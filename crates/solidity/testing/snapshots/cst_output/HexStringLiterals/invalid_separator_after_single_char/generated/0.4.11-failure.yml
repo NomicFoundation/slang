@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: 'hex"1_2"' # 0..8
+  - (SKIPPED): 'hex"1_2"' # (0..8)

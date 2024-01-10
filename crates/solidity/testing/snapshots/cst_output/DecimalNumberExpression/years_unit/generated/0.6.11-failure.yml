@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - DecimalNumberExpression: # 0..9 "10 years\n"
-      - (literal) DecimalLiteral: "10" # 0..2
-      - SKIPPED: " years\n" # 2..9
+  - (DecimalNumberExpression): # "10 years\n" (0..9)
+      - (literal꞉ DecimalLiteral): "10" # (0..2)
+      - (SKIPPED): " years\n" # (2..9)

@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..6 "sizeof"
-      - (variant) Identifier: "sizeof" # 0..6
+  - (Expression) ► (variant꞉ Identifier): "sizeof" # (0..6)

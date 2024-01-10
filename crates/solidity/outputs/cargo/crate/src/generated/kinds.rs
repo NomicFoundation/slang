@@ -6,6 +6,7 @@ use napi_derive::napi;
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,
@@ -244,6 +245,7 @@ impl RuleKind {
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,
@@ -393,6 +395,7 @@ pub enum FieldName {
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,

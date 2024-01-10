@@ -4,6 +4,7 @@ use napi_derive::napi;
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,
@@ -22,6 +23,7 @@ pub enum TokenKind {
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,
@@ -47,6 +49,7 @@ impl RuleKind {
 #[derive(
     Debug,
     Eq,
+    Hash,
     Ord,
     PartialEq,
     PartialOrd,

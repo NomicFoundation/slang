@@ -6,14 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - ExponentiationExpression: # 0..12 "x ** y ** z\n"
-      - (left_operand) Expression: # 0..6 "x ** y"
-          - (variant) ExponentiationExpression: # 0..6 "x ** y"
-              - (left_operand) Expression: # 0..1 "x"
-                  - (variant) Identifier: "x" # 0..1
-              - (operator) AsteriskAsterisk: "**" # 2..4
-              - (right_operand) Expression: # 4..6 " y"
-                  - (variant) Identifier: "y" # 5..6
-      - (operator) AsteriskAsterisk: "**" # 7..9
-      - (right_operand) Expression: # 9..12 " z\n"
-          - (variant) Identifier: "z" # 10..11
+  - (ExponentiationExpression): # "x ** y ** z\n" (0..12)
+      - (left_operand꞉ Expression) ► (variant꞉ ExponentiationExpression): # "x ** y" (0..6)
+          - (left_operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
+          - (LeadingTrivia) ► (Whitespace): " " # (1..2)
+          - (operator꞉ AsteriskAsterisk): "**" # (2..4)
+          - (right_operand꞉ Expression): # " y" (4..6)
+              - (LeadingTrivia) ► (Whitespace): " " # (4..5)
+              - (variant꞉ Identifier): "y" # (5..6)
+      - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+      - (operator꞉ AsteriskAsterisk): "**" # (7..9)
+      - (right_operand꞉ Expression): # " z\n" (9..12)
+          - (LeadingTrivia) ► (Whitespace): " " # (9..10)
+          - (variant꞉ Identifier): "z" # (10..11)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (11..12)

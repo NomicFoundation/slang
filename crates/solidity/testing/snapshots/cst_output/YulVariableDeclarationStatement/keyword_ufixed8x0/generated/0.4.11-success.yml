@@ -7,10 +7,13 @@ Source: >
 Errors: []
 
 Tree:
-  - YulVariableDeclarationStatement: # 0..77 "// This form is reserved only since 0.4.14 until 0..."
-      - LeadingTrivia: # 0..63 "// This form is reserved only since 0.4.14 until 0..."
-          - SingleLineComment: "// This form is reserved only since 0.4.14 until 0..." # 0..62
-      - (let_keyword) YulLetKeyword: "let" # 63..66
-      - (names) YulIdentifierPaths: # 66..77 " ufixed8x0\n"
-          - (item) YulIdentifierPath: # 66..77 " ufixed8x0\n"
-              - (item) YulIdentifier: "ufixed8x0" # 67..76
+  - (YulVariableDeclarationStatement): # "// This form is reserved only since 0.4.14 until 0..." (0..77)
+      - (LeadingTrivia): # "// This form is reserved only since 0.4.14 until 0..." (0..63)
+          - (SingleLineComment): "// This form is reserved only since 0.4.14 until 0..." # (0..62)
+          - (EndOfLine): "\n" # (62..63)
+      - (let_keyword꞉ YulLetKeyword): "let" # (63..66)
+      - (names꞉ YulIdentifierPaths): # " ufixed8x0\n" (66..77)
+          - (item꞉ YulIdentifierPath): # " ufixed8x0\n" (66..77)
+              - (LeadingTrivia) ► (Whitespace): " " # (66..67)
+              - (item꞉ YulIdentifier): "ufixed8x0" # (67..76)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (76..77)

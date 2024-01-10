@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - NewExpression: # 0..15 "new Foo.Bar.Baz"
-      - (new_keyword) NewKeyword: "new" # 0..3
-      - (type_name) TypeName: # 3..15 " Foo.Bar.Baz"
-          - (variant) IdentifierPath: # 3..15 " Foo.Bar.Baz"
-              - (item) Identifier: "Foo" # 4..7
-              - (separator) Period: "." # 7..8
-              - (item) Identifier: "Bar" # 8..11
-              - (separator) Period: "." # 11..12
-              - (item) Identifier: "Baz" # 12..15
+  - (NewExpression): # "new Foo.Bar.Baz" (0..15)
+      - (new_keyword꞉ NewKeyword): "new" # (0..3)
+      - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo.Bar.Baz" (3..15)
+          - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+          - (item꞉ Identifier): "Foo" # (4..7)
+          - (separator꞉ Period): "." # (7..8)
+          - (item꞉ Identifier): "Bar" # (8..11)
+          - (separator꞉ Period): "." # (11..12)
+          - (item꞉ Identifier): "Baz" # (12..15)

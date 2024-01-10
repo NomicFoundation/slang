@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - HexStringLiterals: # 0..28 'hex"12_34_56_78_90_ab_cd_ef"'
-      - (item) HexStringLiteral: 'hex"12_34_56_78_90_ab_cd_ef"' # 0..28
+  - (HexStringLiterals): # 'hex"12_34_56_78_90_ab_cd_ef"' (0..28)
+      - (item꞉ HexStringLiteral): 'hex"12_34_56_78_90_ab_cd_ef"' # (0..28)

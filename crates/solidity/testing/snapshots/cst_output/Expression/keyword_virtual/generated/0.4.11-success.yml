@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..7 "virtual"
-      - (variant) Identifier: "virtual" # 0..7
+  - (Expression) ► (variant꞉ Identifier): "virtual" # (0..7)
