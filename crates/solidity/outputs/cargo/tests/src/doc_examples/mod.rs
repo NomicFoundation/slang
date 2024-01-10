@@ -1,2 +1,2 @@
-mod cursor_api;
-mod simple_contract;
+mod using_the_cursor;
+mod using_the_parser;
