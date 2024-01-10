@@ -1,17 +1,15 @@
 # Using the Cursor
 
-This guide will walk you through the basics of using a CST cursor in your project.
+This guide will walk you through the basics of using a [CST cursor](../concepts.md#cst-cursors) in your project.
 Let's start with this source file, that contains three contracts:
 
-```solidity
+```solidity title="input.sol"
 --8<-- "documentation/public/user-guide/inputs/using-the-cursor.sol"
 ```
 
 ```{ .rust }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:imports"
-```
 
-```{ .rust }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:parse-input"
 ```
 

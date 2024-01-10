@@ -3,9 +3,25 @@
 At its core, Slang is a collection of APIs that are meant to analyze the source code, starting with the source code itself and ending with a rich structure that can be reasoned about.
 This is a departure from the classic approach of "black-box" compilers, which are handed the input and only their output can be observed.
 
+## Language Versions
+
+To use Slang, you start by initializing a `Language` object with a specific version of the language.
+The earliest Solidity version we support is `0.4.11`, and we plan on supporting all future versions as they are released.
+
+From a `Language` object, you can analyze any source text according to the rules of that specific version.
+Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
+You can use the `Language::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
+
+The `Language::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
+Each `parse()` operation accepts the input source code, and a `RuleKind` variant.
+This allows callers to parse entire source files (`RuleKind::SourceUnit`), individual contracts (`RuleKind::ContractDefinition`),
+methods (`RuleKind::FunctionDefinition`), or any other syntax nodes.
+
+The resulting `ParseOutput` object will contain syntax errors (if any), and the syntax tree corresponding to the input source code.
+
 ## Concrete Syntax Tree (CST)
 
-At the time of writing, Slang is capable of parsing the source code into a Concrete Syntax Tree (CST; also sometimes called "full-fidelity"),
+Slang is capable of parsing the source code into a Concrete Syntax Tree (CST; also sometimes called "full-fidelity"),
 which is a tree structure of the program that also includes things like punctuation or whitespace.
 
 This is done by using the (standard) approach of lexical analysis followed by syntax analysis.
@@ -17,18 +33,7 @@ The tree nodes are represented by the `Node` structure, which can be one of two 
 -   `RuleNode` (aka _non-terminals_) represent sub-trees, containing a a vector of other `Node` children.
 -   `TokenNode` (aka _terminals_) are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
 
-## Parser API
-
-A parser API is created by using a language version to create a `Language` object.
-You can then use it to parse different inputs belonging to that version.
-
-Each `parse()` operation accepts the input source code, and a `RuleKind` variant.
-This allows callers to parse entire source files (`RuleKind::SourceUnit`), individual contracts (`RuleKind::ContractDefinition`),
-methods (`RuleKind::FunctionDefinition`), or any other syntax nodes.
-
-The resulting `ParseOutput` object will contain syntax errors (if any), and the parse tree (CST) corresponding to the input source code.
-
-## Cursor API
+## CST Cursors
 
 For many code analysis tasks, it is useful to traverse the parse tree and visit each node.
 The `Cursor` object allows callers to traverse the parse tree in an efficient pre-order manner.

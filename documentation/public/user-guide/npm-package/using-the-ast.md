@@ -2,7 +2,7 @@
 
 Let's try to analyze the following Solidity source file, containing a simple function:
 
-```solidity
+```solidity title="input.sol"
 --8<-- "documentation/public/user-guide/inputs/using-the-ast.sol"
 ```
 
@@ -12,9 +12,7 @@ the AST type of the same name to analyze it:
 
 ```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.ts:imports"
-```
 
-```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.ts:parse-input"
 ```
 
