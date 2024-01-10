@@ -14,6 +14,6 @@ Tree:
       - (let_keyword꞉ YulLetKeyword): "let" # (63..66)
       - (names꞉ YulIdentifierPaths): # " ufixed8x0\n" (66..77)
           - (item꞉ YulIdentifierPath): # " ufixed8x0\n" (66..77)
-              - (LeadingTrivia) ──→ (Whitespace): " " # (66..67)
+              - (LeadingTrivia) ► (Whitespace): " " # (66..67)
               - (item꞉ YulIdentifier): "ufixed8x0" # (67..76)
-              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (76..77)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (76..77)

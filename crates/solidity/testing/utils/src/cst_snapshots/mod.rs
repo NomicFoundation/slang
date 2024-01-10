@@ -118,7 +118,7 @@ fn write_node(
             let child_range = cursor.text_range();
             assert_eq!(parent_range, child_range);
 
-            write!(w, " ──→ ")?;
+            write!(w, " ► ")?;
             continue;
         }
 
@@ -198,16 +198,18 @@ static NON_INLINABLE: Lazy<HashSet<RuleKind>> = Lazy::new(|| {
     for item in SolidityDefinition::create().items() {
         match item {
             Item::Repeated { .. } | Item::Separated { .. } => {
+                // Do not inline these parents, even if they have a single child.
                 kinds.insert(item.name().parse().unwrap());
             }
             Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
-                // These non-terminals can be inlined.
+                // These non-terminals can be inlined if they have a single child.
+                // Note: same goes for 'PrecedenceExpression' items under each 'Precedence' item.
             }
             Item::Trivia { .. }
             | Item::Keyword { .. }
             | Item::Token { .. }
             | Item::Fragment { .. } => {
-                // These are terminals.
+                // These are terminals (no children).
             }
         }
     }

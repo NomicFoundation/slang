@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ──→ (variant꞉ Identifier): "areturn" # (0..7)
+  - (Expression) ► (variant꞉ Identifier): "areturn" # (0..7)

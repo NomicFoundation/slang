@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ──→ (variant꞉ Identifier): "auto" # (0..4)
+  - (Expression) ► (variant꞉ Identifier): "auto" # (0..4)

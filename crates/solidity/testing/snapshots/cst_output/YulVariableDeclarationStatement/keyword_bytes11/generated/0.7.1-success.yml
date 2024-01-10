@@ -14,6 +14,6 @@ Tree:
       - (let_keyword꞉ YulLetKeyword): "let" # (47..50)
       - (names꞉ YulIdentifierPaths): # " bytes11\n" (50..59)
           - (item꞉ YulIdentifierPath): # " bytes11\n" (50..59)
-              - (LeadingTrivia) ──→ (Whitespace): " " # (50..51)
+              - (LeadingTrivia) ► (Whitespace): " " # (50..51)
               - (item꞉ YulIdentifier): "bytes11" # (51..58)
-              - (TrailingTrivia) ──→ (EndOfLine): "\n" # (58..59)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (58..59)

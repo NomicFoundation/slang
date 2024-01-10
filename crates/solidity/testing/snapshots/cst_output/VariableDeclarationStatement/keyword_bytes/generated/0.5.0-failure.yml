@@ -15,8 +15,8 @@ Errors: # 1 total
 
 Tree:
   - (VariableDeclarationStatement): # "uint bytes;\n" (0..12)
-      - (variable_type꞉ VariableDeclarationType) ──→ (variant꞉ TypeName) ──→ (variant꞉ ElementaryType) ──→ (variant꞉ UintKeyword): "uint" # (0..4)
-      - (LeadingTrivia) ──→ (Whitespace): " " # (4..5)
+      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
+      - (LeadingTrivia) ► (Whitespace): " " # (4..5)
       - (SKIPPED): "bytes" # (5..10)
       - (semicolon꞉ Semicolon): ";" # (10..11)
-      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (11..12)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (11..12)

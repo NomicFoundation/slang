@@ -9,5 +9,5 @@ Tree:
   - (DecimalNumberExpression): # "10 days" (0..7)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (unit꞉ NumberUnit): # " days" (2..7)
-          - (LeadingTrivia) ──→ (Whitespace): " " # (2..3)
+          - (LeadingTrivia) ► (Whitespace): " " # (2..3)
           - (variant꞉ DaysKeyword): "days" # (3..7)

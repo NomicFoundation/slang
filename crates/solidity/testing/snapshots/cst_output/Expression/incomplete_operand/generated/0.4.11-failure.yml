@@ -15,12 +15,12 @@ Errors: # 1 total
 
 Tree:
   - (Expression): # "2 * new\n" (0..8)
-      - (variant꞉ DecimalNumberExpression) ──→ (literal꞉ DecimalLiteral): "2" # (0..1)
+      - (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "2" # (0..1)
       - (MultiplicativeExpression): # " *" (1..3)
-          - (LeadingTrivia) ──→ (Whitespace): " " # (1..2)
+          - (LeadingTrivia) ► (Whitespace): " " # (1..2)
           - (operator꞉ Asterisk): "*" # (2..3)
       - (variant꞉ NewExpression): # " new\n" (3..8)
-          - (LeadingTrivia) ──→ (Whitespace): " " # (3..4)
+          - (LeadingTrivia) ► (Whitespace): " " # (3..4)
           - (new_keyword꞉ NewKeyword): "new" # (4..7)
-          - (TrailingTrivia) ──→ (EndOfLine): "\n" # (7..8)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (7..8)
       - (SKIPPED): "" # (8..8)

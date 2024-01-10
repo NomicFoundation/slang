@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (LeadingTrivia) ──→ (EndOfLine): "\n" # (0..1)
+  - (LeadingTrivia) ► (EndOfLine): "\n" # (0..1)

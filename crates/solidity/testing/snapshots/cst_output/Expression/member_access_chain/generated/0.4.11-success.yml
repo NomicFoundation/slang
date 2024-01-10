@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ──→ (variant꞉ MemberAccessExpression): # "x.y.z" (0..5)
-      - (operand꞉ Expression) ──→ (variant꞉ MemberAccessExpression): # "x.y" (0..3)
-          - (operand꞉ Expression) ──→ (variant꞉ Identifier): "x" # (0..1)
+  - (Expression) ► (variant꞉ MemberAccessExpression): # "x.y.z" (0..5)
+      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.y" (0..3)
+          - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
           - (period꞉ Period): "." # (1..2)
-          - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "y" # (2..3)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "y" # (2..3)
       - (period꞉ Period): "." # (3..4)
-      - (member꞉ MemberAccess) ──→ (variant꞉ Identifier): "z" # (4..5)
+      - (member꞉ MemberAccess) ► (variant꞉ Identifier): "z" # (4..5)

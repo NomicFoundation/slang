@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ──→ (variant꞉ ElementaryType): # "ufixed\n" (0..7)
+  - (Expression) ► (variant꞉ ElementaryType): # "ufixed\n" (0..7)
       - (variant꞉ UfixedKeyword): "ufixed" # (0..6)
-      - (TrailingTrivia) ──→ (EndOfLine): "\n" # (6..7)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (6..7)

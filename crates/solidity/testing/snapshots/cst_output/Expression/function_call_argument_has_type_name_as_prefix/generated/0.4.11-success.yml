@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ──→ (variant꞉ FunctionCallExpression): # "x(interested)" (0..13)
-      - (operand꞉ Expression) ──→ (variant꞉ Identifier): "x" # (0..1)
-      - (arguments꞉ ArgumentsDeclaration) ──→ (variant꞉ PositionalArgumentsDeclaration): # "(interested)" (1..13)
+  - (Expression) ► (variant꞉ FunctionCallExpression): # "x(interested)" (0..13)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(interested)" (1..13)
           - (open_paren꞉ OpenParen): "(" # (1..2)
           - (arguments꞉ PositionalArguments): # "interested" (2..12)
-              - (item꞉ Expression) ──→ (variant꞉ Identifier): "interested" # (2..12)
+              - (item꞉ Expression) ► (variant꞉ Identifier): "interested" # (2..12)
           - (close_paren꞉ CloseParen): ")" # (12..13)

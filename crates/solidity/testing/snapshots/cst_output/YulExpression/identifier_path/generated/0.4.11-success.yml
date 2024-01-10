@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulExpression) ──→ (variant꞉ YulIdentifierPath): # "foo.bar" (0..7)
+  - (YulExpression) ► (variant꞉ YulIdentifierPath): # "foo.bar" (0..7)
       - (item꞉ YulIdentifier): "foo" # (0..3)
       - (separator꞉ Period): "." # (3..4)
       - (item꞉ YulIdentifier): "bar" # (4..7)

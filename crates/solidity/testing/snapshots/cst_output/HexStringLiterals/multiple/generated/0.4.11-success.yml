@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - (HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
       - (item꞉ HexStringLiteral): 'hex"ab"' # (0..7)
-      - (LeadingTrivia) ──→ (Whitespace): " " # (7..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (7..8)
       - (item꞉ HexStringLiteral): "hex'cd'" # (8..15)
