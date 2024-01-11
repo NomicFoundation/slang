@@ -38,14 +38,14 @@ impl Builder {
         builder.entries
     }
 
-    fn add_entry(&mut self, name: &Identifier, is_terminal: &Terminal, is_inlined: &Inlined) {
+    fn add_entry(&mut self, name: &Identifier, is_terminal: Terminal, is_inlined: Inlined) {
         let mut ebnf_id = name.to_string();
 
-        if matches!(is_terminal, &Terminal::Yes) {
+        if matches!(is_terminal, Terminal::Yes) {
             ebnf_id = ebnf_id.to_screaming_snake_case();
         }
 
-        if matches!(is_inlined, &Inlined::Yes) {
+        if matches!(is_inlined, Inlined::Yes) {
             ebnf_id = format!("«{ebnf_id}»");
         }
 
@@ -88,7 +88,7 @@ impl Builder {
             fields,
         } = struct_item;
 
-        self.add_entry(name, &Terminal::No, &Inlined::No);
+        self.add_entry(name, Terminal::No, Inlined::No);
 
         self.add_definition(
             name,
@@ -105,7 +105,7 @@ impl Builder {
             variants,
         } = enum_item;
 
-        self.add_entry(name, &Terminal::No, &Inlined::No);
+        self.add_entry(name, Terminal::No, Inlined::No);
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
@@ -129,7 +129,7 @@ impl Builder {
             enabled,
         } = repeated_item;
 
-        self.add_entry(name, &Terminal::No, &Inlined::No);
+        self.add_entry(name, Terminal::No, Inlined::No);
 
         let expression = Expression::new_one_or_more(Self::build_ref(reference).into());
 
@@ -149,7 +149,7 @@ impl Builder {
             enabled,
         } = separated_item;
 
-        self.add_entry(name, &Terminal::No, &Inlined::No);
+        self.add_entry(name, Terminal::No, Inlined::No);
 
         let expression = Expression::new_sequence(vec![
             Self::build_ref(reference),
@@ -178,7 +178,7 @@ impl Builder {
             primary_expressions,
         } = precedence_item;
 
-        self.add_entry(base_name, &Terminal::No, &Inlined::No);
+        self.add_entry(base_name, Terminal::No, Inlined::No);
 
         let mut values = vec![];
 
@@ -187,7 +187,7 @@ impl Builder {
 
             values.push(Value::new(Self::build_ref(name), None));
 
-            self.add_entry(name, &Terminal::No, &Inlined::No);
+            self.add_entry(name, Terminal::No, Inlined::No);
 
             for operator in operators {
                 self.add_precedence_operator(base_name, name, operator);
@@ -273,7 +273,7 @@ impl Builder {
     fn add_trivia_item(&mut self, trivia_item: &TriviaItem) {
         let TriviaItem { name, scanner } = trivia_item;
 
-        self.add_entry(name, &Terminal::Yes, &Inlined::No);
+        self.add_entry(name, Terminal::Yes, Inlined::No);
 
         self.add_definition(
             name,
@@ -290,7 +290,7 @@ impl Builder {
             definitions,
         } = keyword_item;
 
-        self.add_entry(name, &Terminal::Yes, &Inlined::No);
+        self.add_entry(name, Terminal::Yes, Inlined::No);
 
         for KeywordDefinition {
             enabled,
@@ -315,7 +315,7 @@ impl Builder {
     fn add_token_item(&mut self, token_item: &TokenItem) {
         let TokenItem { name, definitions } = token_item;
 
-        self.add_entry(name, &Terminal::Yes, &Inlined::No);
+        self.add_entry(name, Terminal::Yes, Inlined::No);
 
         for TokenDefinition { enabled, scanner } in definitions {
             self.add_definition(
@@ -334,7 +334,7 @@ impl Builder {
             scanner,
         } = fragment_item;
 
-        self.add_entry(name, &Terminal::Yes, &Inlined::Yes);
+        self.add_entry(name, Terminal::Yes, Inlined::Yes);
 
         self.add_definition(
             name,
@@ -434,11 +434,13 @@ impl Builder {
     }
 }
 
+#[derive(Clone, Copy)]
 enum Terminal {
     Yes,
     No,
 }
 
+#[derive(Clone, Copy)]
 enum Inlined {
     Yes,
     No,

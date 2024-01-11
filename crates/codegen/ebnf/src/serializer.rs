@@ -1,24 +1,29 @@
+use std::fmt::Display;
 use std::mem::discriminant;
 
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 use crate::{EbnfModel, EbnfWriter};
 
-pub struct Serializer<'t, W: EbnfWriter> {
-    model: &'t EbnfModel,
-    writer: &'t mut W,
+pub struct Serializer<'s, W: EbnfWriter> {
+    model: &'s EbnfModel,
+    writer: &'s mut W,
 }
 
-impl<'t, W: EbnfWriter> Serializer<'t, W> {
-    pub fn serialize<'m: 't>(model: &'m EbnfModel, name: &str, writer: &'m mut W) {
+impl<'s, W: EbnfWriter> Serializer<'s, W> {
+    pub fn serialize<'m: 's>(
+        model: &'m EbnfModel,
+        name: &str,
+        writer: &'m mut W,
+    ) -> std::fmt::Result {
         let entry = model
             .entries
             .get(name)
             .unwrap_or_else(|| panic!("Entry not defined: '{name}'."));
 
-        Self { model, writer }.serialize_entry(entry);
+        Self { model, writer }.serialize_entry(entry)
     }
 
-    fn serialize_entry(&mut self, entry: &Entry) {
+    fn serialize_entry(&mut self, entry: &Entry) -> std::fmt::Result {
         let Entry {
             name,
             ebnf_id: _,
@@ -28,8 +33,8 @@ impl<'t, W: EbnfWriter> Serializer<'t, W> {
         for (index, definition) in definitions.iter().enumerate() {
             if index > 0 {
                 // Insert a blank line between definitions:
-                self.writer.start_line();
-                self.writer.end_line();
+                self.writer.start_line()?;
+                self.writer.end_line()?;
             }
 
             let Definition {
@@ -39,16 +44,23 @@ impl<'t, W: EbnfWriter> Serializer<'t, W> {
             } = definition;
 
             for comment in leading_comments {
-                self.writer.start_line();
-                self.serialize_comment(comment);
-                self.writer.end_line();
+                self.writer.start_line()?;
+                self.serialize_comment(comment)?;
+                self.writer.end_line()?;
             }
 
-            self.serialize_definition(name, values, kind);
+            self.serialize_definition(name, values, kind)?;
         }
+
+        Ok(())
     }
 
-    fn serialize_definition(&mut self, name: &str, values: &Vec<Value>, kind: &DefinitionKind) {
+    fn serialize_definition(
+        &mut self,
+        name: &str,
+        values: &Vec<Value>,
+        kind: &DefinitionKind,
+    ) -> std::fmt::Result {
         let separator = match kind {
             DefinitionKind::Sequence => ' ',
             DefinitionKind::Choice => '|',
@@ -60,114 +72,124 @@ impl<'t, W: EbnfWriter> Serializer<'t, W> {
                 trailing_comment,
             } = value;
 
-            self.writer.start_line();
+            self.writer.start_line()?;
 
             if index == 0 {
-                self.serialize_identifier(name);
-                self.serialize_punctuation(" = ");
+                self.serialize_identifier(name)?;
+                self.serialize_punctuation(" = ")?;
             } else {
-                self.serialize_punctuation(&format!(
+                self.serialize_punctuation(format!(
                     "{padding} {separator} ",
                     padding = " ".repeat(name.len()),
-                ));
+                ))?;
             }
 
-            self.serialize_expr(expression);
+            self.serialize_expr(expression)?;
 
             if index + 1 == values.len() {
-                self.serialize_punctuation(";");
+                self.serialize_punctuation(";")?;
             }
 
             if let Some(comment) = trailing_comment {
-                self.serialize_punctuation(" ");
-                self.serialize_comment(comment);
+                self.serialize_punctuation(" ")?;
+                self.serialize_comment(comment)?;
             }
 
-            self.writer.end_line();
+            self.writer.end_line()?;
         }
+
+        Ok(())
     }
 
-    fn serialize_expr(&mut self, parent: &Expression) {
+    fn serialize_expr(&mut self, parent: &Expression) -> std::fmt::Result {
         match parent {
             Expression::Sequence { expressions } => {
-                self.serialize_child_expr(parent, &expressions[0]);
+                self.serialize_child_expr(parent, &expressions[0])?;
 
                 for expression in expressions.iter().skip(1) {
-                    self.serialize_punctuation(" ");
-                    self.serialize_child_expr(parent, expression);
+                    self.serialize_punctuation(" ")?;
+                    self.serialize_child_expr(parent, expression)?;
                 }
             }
             Expression::Choice { expressions } => {
-                self.serialize_child_expr(parent, &expressions[0]);
+                self.serialize_child_expr(parent, &expressions[0])?;
 
                 for expression in expressions.iter().skip(1) {
-                    self.serialize_punctuation(" | ");
-                    self.serialize_child_expr(parent, expression);
+                    self.serialize_punctuation(" | ")?;
+                    self.serialize_child_expr(parent, expression)?;
                 }
             }
             Expression::Optional { expression } => {
-                self.serialize_child_expr(parent, expression);
-                self.serialize_punctuation("?");
+                self.serialize_child_expr(parent, expression)?;
+                self.serialize_punctuation("?")?;
             }
             Expression::ZeroOrMore { expression } => {
-                self.serialize_child_expr(parent, expression);
-                self.serialize_punctuation("*");
+                self.serialize_child_expr(parent, expression)?;
+                self.serialize_punctuation("*")?;
             }
             Expression::OneOrMore { expression } => {
-                self.serialize_child_expr(parent, expression);
-                self.serialize_punctuation("+");
+                self.serialize_child_expr(parent, expression)?;
+                self.serialize_punctuation("+")?;
             }
             Expression::Not { expression } => {
-                self.serialize_punctuation("!");
-                self.serialize_child_expr(parent, expression);
+                self.serialize_punctuation("!")?;
+                self.serialize_child_expr(parent, expression)?;
             }
             Expression::Range {
                 inclusive_start,
                 inclusive_end,
             } => {
-                self.serialize_child_expr(parent, inclusive_start);
-                self.serialize_punctuation("…");
-                self.serialize_child_expr(parent, inclusive_end);
+                self.serialize_child_expr(parent, inclusive_start)?;
+                self.serialize_punctuation("…")?;
+                self.serialize_child_expr(parent, inclusive_end)?;
             }
             Expression::Atom { atom } => {
-                self.serialize_string_literal(atom);
+                self.serialize_string_literal(atom)?;
             }
             Expression::Reference { reference } => {
-                self.serialize_identifier(reference);
+                self.serialize_identifier(reference)?;
             }
         };
+
+        Ok(())
     }
 
-    fn serialize_child_expr(&mut self, parent: &Expression, child: &Expression) {
+    fn serialize_child_expr(
+        &mut self,
+        parent: &Expression,
+        child: &Expression,
+    ) -> std::fmt::Result {
         if discriminant(parent) != discriminant(child) && child.precedence() <= parent.precedence()
         {
-            self.serialize_punctuation("(");
-            self.serialize_expr(child);
-            self.serialize_punctuation(")");
+            self.serialize_punctuation("(")?;
+            self.serialize_expr(child)?;
+            self.serialize_punctuation(")")?;
         } else {
-            self.serialize_expr(child);
+            self.serialize_expr(child)?;
         }
+
+        Ok(())
     }
 
-    fn serialize_comment(&mut self, value: &String) {
-        self.writer.write_comment(format!("(* {value} *)"));
+    fn serialize_comment(&mut self, value: impl Display) -> std::fmt::Result {
+        self.writer.write_comment(format!("(* {value} *)"))
     }
 
-    fn serialize_identifier(&mut self, name: &str) {
+    fn serialize_identifier(&mut self, name: &str) -> std::fmt::Result {
         let entry = self
             .model
             .entries
             .get(name)
             .unwrap_or_else(|| panic!("Entry not defined: '{name}'."));
 
-        self.writer.write_identifier(&entry.ebnf_id, name);
+        self.writer.write_identifier(&entry.ebnf_id, &entry.name)
     }
 
-    fn serialize_punctuation(&mut self, value: &str) {
-        self.writer.write_punctuation(value);
+    fn serialize_punctuation(&mut self, value: impl Display) -> std::fmt::Result {
+        self.writer.write_punctuation(value)
     }
 
-    fn serialize_string_literal(&mut self, value: &str) {
+    fn serialize_string_literal(&mut self, value: &str) -> std::fmt::Result {
         let delimiter = if value.contains('"') && !value.contains('\'') {
             '\''
         } else {
@@ -192,6 +214,6 @@ impl<'t, W: EbnfWriter> Serializer<'t, W> {
             .collect();
 
         self.writer
-            .write_string_literal(format!("{delimiter}{formatted}{delimiter}"));
+            .write_string_literal(format!("{delimiter}{formatted}{delimiter}"))
     }
 }

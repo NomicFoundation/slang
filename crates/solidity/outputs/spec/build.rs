@@ -1,7 +1,8 @@
+use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_ebnf::{EbnfModel, EbnfWriter};
+use codegen_ebnf::{EbnfModel, PlainEbnfWriter};
 use codegen_language_definition::model::Language;
 use codegen_spec::SpecGeneratorExtensions;
 use infra_utils::cargo::CargoWorkspace;
@@ -27,62 +28,33 @@ fn generate_language_ebnf(
     language: &Language,
     output_dir: &Path,
 ) -> Result<()> {
-    let mut writer = SimpleEbnfWriter {
-        buffer: String::new(),
-    };
     let ebnf_model = EbnfModel::build(language);
 
-    for (section_index, section) in language.sections.iter().enumerate() {
-        writer.write_comment(format!(
-            "(*\n * {section_index}. {section_title}:\n *)\n\n",
-            section_index = section_index + 1,
-            section_title = section.title,
-        ));
+    let mut buffer = String::new();
 
-        for (topic_index, topic) in section.topics.iter().enumerate() {
-            writer.write_comment(format!(
-                "(* {section_index}.{topic_index}. {topic_title}: *)\n\n",
-                section_index = section_index + 1,
-                topic_index = topic_index + 1,
-                topic_title = topic.title,
-            ));
+    for (section_i, section) in language.sections.iter().enumerate() {
+        let section_i = section_i + 1;
+        let section_title = &section.title;
+
+        writeln!(buffer, "(*")?;
+        writeln!(buffer, " * {section_i}. {section_title}:")?;
+        writeln!(buffer, " *)")?;
+        writeln!(buffer)?;
+
+        for (topic_i, topic) in section.topics.iter().enumerate() {
+            let topic_i = topic_i + 1;
+            let topic_title = &topic.title;
+
+            writeln!(buffer, "(* {section_i}.{topic_i}. {topic_title}: *)")?;
+            writeln!(buffer)?;
 
             for item in &topic.items {
-                ebnf_model.serialize(item.name(), &mut writer);
-                writer.buffer.push('\n');
+                let mut writer = PlainEbnfWriter::default();
+                ebnf_model.serialize(item.name(), &mut writer)?;
+                writeln!(buffer, "{writer}")?;
             }
         }
     }
 
-    codegen.write_file(output_dir.join("solidity.ebnf"), writer.buffer)
-}
-
-struct SimpleEbnfWriter {
-    buffer: String,
-}
-
-impl EbnfWriter for SimpleEbnfWriter {
-    fn start_line(&mut self) {
-        // No-op
-    }
-
-    fn end_line(&mut self) {
-        self.buffer.push('\n');
-    }
-
-    fn write_comment(&mut self, value: String) {
-        self.buffer.push_str(&value);
-    }
-
-    fn write_identifier(&mut self, value: &str, _name: &str) {
-        self.buffer.push_str(value);
-    }
-
-    fn write_punctuation(&mut self, value: &str) {
-        self.buffer.push_str(value);
-    }
-
-    fn write_string_literal(&mut self, value: String) {
-        self.buffer.push_str(&value);
-    }
+    codegen.write_file(output_dir.join("solidity.ebnf"), buffer)
 }
