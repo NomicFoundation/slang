@@ -8273,288 +8273,330 @@ impl Language {
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
-            RuleKind::AdditiveExpression => Self::additive_expression.parse(self, input),
-            RuleKind::AddressType => Self::address_type.parse(self, input),
-            RuleKind::AndExpression => Self::and_expression.parse(self, input),
-            RuleKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
-            RuleKind::ArrayExpression => Self::array_expression.parse(self, input),
-            RuleKind::ArrayTypeName => Self::array_type_name.parse(self, input),
-            RuleKind::ArrayValues => Self::array_values.parse(self, input),
-            RuleKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
-            RuleKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
+            RuleKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input, true),
+            RuleKind::AdditiveExpression => Self::additive_expression.parse(self, input, true),
+            RuleKind::AddressType => Self::address_type.parse(self, input, true),
+            RuleKind::AndExpression => Self::and_expression.parse(self, input, true),
+            RuleKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input, true),
+            RuleKind::ArrayExpression => Self::array_expression.parse(self, input, true),
+            RuleKind::ArrayTypeName => Self::array_type_name.parse(self, input, true),
+            RuleKind::ArrayValues => Self::array_values.parse(self, input, true),
+            RuleKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input, true),
+            RuleKind::AssemblyFlags => Self::assembly_flags.parse(self, input, true),
             RuleKind::AssemblyFlagsDeclaration => {
-                Self::assembly_flags_declaration.parse(self, input)
+                Self::assembly_flags_declaration.parse(self, input, true)
             }
-            RuleKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
-            RuleKind::AssignmentExpression => Self::assignment_expression.parse(self, input),
-            RuleKind::BitwiseAndExpression => Self::bitwise_and_expression.parse(self, input),
-            RuleKind::BitwiseOrExpression => Self::bitwise_or_expression.parse(self, input),
-            RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input),
-            RuleKind::Block => Self::block.parse(self, input),
-            RuleKind::BreakStatement => Self::break_statement.parse(self, input),
-            RuleKind::CatchClause => Self::catch_clause.parse(self, input),
-            RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
-            RuleKind::CatchClauses => Self::catch_clauses.parse(self, input),
-            RuleKind::ComparisonExpression => Self::comparison_expression.parse(self, input),
-            RuleKind::ConditionalExpression => Self::conditional_expression.parse(self, input),
-            RuleKind::ConstantDefinition => Self::constant_definition.parse(self, input),
-            RuleKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input),
-            RuleKind::ConstructorAttributes => Self::constructor_attributes.parse(self, input),
-            RuleKind::ConstructorDefinition => Self::constructor_definition.parse(self, input),
-            RuleKind::ContinueStatement => Self::continue_statement.parse(self, input),
-            RuleKind::ContractDefinition => Self::contract_definition.parse(self, input),
-            RuleKind::ContractMember => Self::contract_member.parse(self, input),
-            RuleKind::ContractMembers => Self::contract_members.parse(self, input),
-            RuleKind::DecimalNumberExpression => Self::decimal_number_expression.parse(self, input),
-            RuleKind::DeleteStatement => Self::delete_statement.parse(self, input),
-            RuleKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
-            RuleKind::ElementaryType => Self::elementary_type.parse(self, input),
-            RuleKind::ElseBranch => Self::else_branch.parse(self, input),
-            RuleKind::EmitStatement => Self::emit_statement.parse(self, input),
-            RuleKind::EnumDefinition => Self::enum_definition.parse(self, input),
-            RuleKind::EnumMembers => Self::enum_members.parse(self, input),
-            RuleKind::EqualityExpression => Self::equality_expression.parse(self, input),
-            RuleKind::ErrorDefinition => Self::error_definition.parse(self, input),
-            RuleKind::ErrorParameter => Self::error_parameter.parse(self, input),
-            RuleKind::ErrorParameters => Self::error_parameters.parse(self, input),
+            RuleKind::AssemblyStatement => Self::assembly_statement.parse(self, input, true),
+            RuleKind::AssignmentExpression => Self::assignment_expression.parse(self, input, true),
+            RuleKind::BitwiseAndExpression => Self::bitwise_and_expression.parse(self, input, true),
+            RuleKind::BitwiseOrExpression => Self::bitwise_or_expression.parse(self, input, true),
+            RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input, true),
+            RuleKind::Block => Self::block.parse(self, input, true),
+            RuleKind::BreakStatement => Self::break_statement.parse(self, input, true),
+            RuleKind::CatchClause => Self::catch_clause.parse(self, input, true),
+            RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input, true),
+            RuleKind::CatchClauses => Self::catch_clauses.parse(self, input, true),
+            RuleKind::ComparisonExpression => Self::comparison_expression.parse(self, input, true),
+            RuleKind::ConditionalExpression => {
+                Self::conditional_expression.parse(self, input, true)
+            }
+            RuleKind::ConstantDefinition => Self::constant_definition.parse(self, input, true),
+            RuleKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input, true),
+            RuleKind::ConstructorAttributes => {
+                Self::constructor_attributes.parse(self, input, true)
+            }
+            RuleKind::ConstructorDefinition => {
+                Self::constructor_definition.parse(self, input, true)
+            }
+            RuleKind::ContinueStatement => Self::continue_statement.parse(self, input, true),
+            RuleKind::ContractDefinition => Self::contract_definition.parse(self, input, true),
+            RuleKind::ContractMember => Self::contract_member.parse(self, input, true),
+            RuleKind::ContractMembers => Self::contract_members.parse(self, input, true),
+            RuleKind::DecimalNumberExpression => {
+                Self::decimal_number_expression.parse(self, input, true)
+            }
+            RuleKind::DeleteStatement => Self::delete_statement.parse(self, input, true),
+            RuleKind::DoWhileStatement => Self::do_while_statement.parse(self, input, true),
+            RuleKind::ElementaryType => Self::elementary_type.parse(self, input, true),
+            RuleKind::ElseBranch => Self::else_branch.parse(self, input, true),
+            RuleKind::EmitStatement => Self::emit_statement.parse(self, input, true),
+            RuleKind::EnumDefinition => Self::enum_definition.parse(self, input, true),
+            RuleKind::EnumMembers => Self::enum_members.parse(self, input, true),
+            RuleKind::EqualityExpression => Self::equality_expression.parse(self, input, true),
+            RuleKind::ErrorDefinition => Self::error_definition.parse(self, input, true),
+            RuleKind::ErrorParameter => Self::error_parameter.parse(self, input, true),
+            RuleKind::ErrorParameters => Self::error_parameters.parse(self, input, true),
             RuleKind::ErrorParametersDeclaration => {
-                Self::error_parameters_declaration.parse(self, input)
+                Self::error_parameters_declaration.parse(self, input, true)
             }
-            RuleKind::EventDefinition => Self::event_definition.parse(self, input),
-            RuleKind::EventParameter => Self::event_parameter.parse(self, input),
-            RuleKind::EventParameters => Self::event_parameters.parse(self, input),
+            RuleKind::EventDefinition => Self::event_definition.parse(self, input, true),
+            RuleKind::EventParameter => Self::event_parameter.parse(self, input, true),
+            RuleKind::EventParameters => Self::event_parameters.parse(self, input, true),
             RuleKind::EventParametersDeclaration => {
-                Self::event_parameters_declaration.parse(self, input)
+                Self::event_parameters_declaration.parse(self, input, true)
             }
-            RuleKind::ExperimentalFeature => Self::experimental_feature.parse(self, input),
-            RuleKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
+            RuleKind::ExperimentalFeature => Self::experimental_feature.parse(self, input, true),
+            RuleKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input, true),
             RuleKind::ExponentiationExpression => {
-                Self::exponentiation_expression.parse(self, input)
+                Self::exponentiation_expression.parse(self, input, true)
             }
-            RuleKind::Expression => Self::expression.parse(self, input),
-            RuleKind::ExpressionStatement => Self::expression_statement.parse(self, input),
+            RuleKind::Expression => Self::expression.parse(self, input, true),
+            RuleKind::ExpressionStatement => Self::expression_statement.parse(self, input, true),
             RuleKind::FallbackFunctionAttribute => {
-                Self::fallback_function_attribute.parse(self, input)
+                Self::fallback_function_attribute.parse(self, input, true)
             }
             RuleKind::FallbackFunctionAttributes => {
-                Self::fallback_function_attributes.parse(self, input)
+                Self::fallback_function_attributes.parse(self, input, true)
             }
             RuleKind::FallbackFunctionDefinition => {
-                Self::fallback_function_definition.parse(self, input)
+                Self::fallback_function_definition.parse(self, input, true)
             }
-            RuleKind::ForStatement => Self::for_statement.parse(self, input),
-            RuleKind::ForStatementCondition => Self::for_statement_condition.parse(self, input),
+            RuleKind::ForStatement => Self::for_statement.parse(self, input, true),
+            RuleKind::ForStatementCondition => {
+                Self::for_statement_condition.parse(self, input, true)
+            }
             RuleKind::ForStatementInitialization => {
-                Self::for_statement_initialization.parse(self, input)
+                Self::for_statement_initialization.parse(self, input, true)
             }
-            RuleKind::FunctionAttribute => Self::function_attribute.parse(self, input),
-            RuleKind::FunctionAttributes => Self::function_attributes.parse(self, input),
-            RuleKind::FunctionBody => Self::function_body.parse(self, input),
-            RuleKind::FunctionCallExpression => Self::function_call_expression.parse(self, input),
-            RuleKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
-            RuleKind::FunctionDefinition => Self::function_definition.parse(self, input),
-            RuleKind::FunctionName => Self::function_name.parse(self, input),
-            RuleKind::FunctionType => Self::function_type.parse(self, input),
-            RuleKind::FunctionTypeAttribute => Self::function_type_attribute.parse(self, input),
-            RuleKind::FunctionTypeAttributes => Self::function_type_attributes.parse(self, input),
-            RuleKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
-            RuleKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
-            RuleKind::IdentifierPath => Self::identifier_path.parse(self, input),
-            RuleKind::IfStatement => Self::if_statement.parse(self, input),
-            RuleKind::ImportAlias => Self::import_alias.parse(self, input),
-            RuleKind::ImportClause => Self::import_clause.parse(self, input),
-            RuleKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input),
+            RuleKind::FunctionAttribute => Self::function_attribute.parse(self, input, true),
+            RuleKind::FunctionAttributes => Self::function_attributes.parse(self, input, true),
+            RuleKind::FunctionBody => Self::function_body.parse(self, input, true),
+            RuleKind::FunctionCallExpression => {
+                Self::function_call_expression.parse(self, input, true)
+            }
+            RuleKind::FunctionCallOptions => Self::function_call_options.parse(self, input, true),
+            RuleKind::FunctionDefinition => Self::function_definition.parse(self, input, true),
+            RuleKind::FunctionName => Self::function_name.parse(self, input, true),
+            RuleKind::FunctionType => Self::function_type.parse(self, input, true),
+            RuleKind::FunctionTypeAttribute => {
+                Self::function_type_attribute.parse(self, input, true)
+            }
+            RuleKind::FunctionTypeAttributes => {
+                Self::function_type_attributes.parse(self, input, true)
+            }
+            RuleKind::HexNumberExpression => Self::hex_number_expression.parse(self, input, true),
+            RuleKind::HexStringLiterals => Self::hex_string_literals.parse(self, input, true),
+            RuleKind::IdentifierPath => Self::identifier_path.parse(self, input, true),
+            RuleKind::IfStatement => Self::if_statement.parse(self, input, true),
+            RuleKind::ImportAlias => Self::import_alias.parse(self, input, true),
+            RuleKind::ImportClause => Self::import_clause.parse(self, input, true),
+            RuleKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input, true),
             RuleKind::ImportDeconstructionSymbol => {
-                Self::import_deconstruction_symbol.parse(self, input)
+                Self::import_deconstruction_symbol.parse(self, input, true)
             }
             RuleKind::ImportDeconstructionSymbols => {
-                Self::import_deconstruction_symbols.parse(self, input)
+                Self::import_deconstruction_symbols.parse(self, input, true)
             }
-            RuleKind::ImportDirective => Self::import_directive.parse(self, input),
-            RuleKind::IndexAccessEnd => Self::index_access_end.parse(self, input),
-            RuleKind::IndexAccessExpression => Self::index_access_expression.parse(self, input),
-            RuleKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
-            RuleKind::InheritanceType => Self::inheritance_type.parse(self, input),
-            RuleKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
-            RuleKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
-            RuleKind::InterfaceMembers => Self::interface_members.parse(self, input),
-            RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input),
-            RuleKind::LibraryDefinition => Self::library_definition.parse(self, input),
-            RuleKind::LibraryMembers => Self::library_members.parse(self, input),
-            RuleKind::MappingKey => Self::mapping_key.parse(self, input),
-            RuleKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
-            RuleKind::MappingType => Self::mapping_type.parse(self, input),
-            RuleKind::MappingValue => Self::mapping_value.parse(self, input),
-            RuleKind::MemberAccess => Self::member_access.parse(self, input),
-            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
-            RuleKind::ModifierAttribute => Self::modifier_attribute.parse(self, input),
-            RuleKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
-            RuleKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
-            RuleKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
+            RuleKind::ImportDirective => Self::import_directive.parse(self, input, true),
+            RuleKind::IndexAccessEnd => Self::index_access_end.parse(self, input, true),
+            RuleKind::IndexAccessExpression => {
+                Self::index_access_expression.parse(self, input, true)
+            }
+            RuleKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input, true),
+            RuleKind::InheritanceType => Self::inheritance_type.parse(self, input, true),
+            RuleKind::InheritanceTypes => Self::inheritance_types.parse(self, input, true),
+            RuleKind::InterfaceDefinition => Self::interface_definition.parse(self, input, true),
+            RuleKind::InterfaceMembers => Self::interface_members.parse(self, input, true),
+            RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
+            RuleKind::LibraryDefinition => Self::library_definition.parse(self, input, true),
+            RuleKind::LibraryMembers => Self::library_members.parse(self, input, true),
+            RuleKind::MappingKey => Self::mapping_key.parse(self, input, true),
+            RuleKind::MappingKeyType => Self::mapping_key_type.parse(self, input, true),
+            RuleKind::MappingType => Self::mapping_type.parse(self, input, true),
+            RuleKind::MappingValue => Self::mapping_value.parse(self, input, true),
+            RuleKind::MemberAccess => Self::member_access.parse(self, input, true),
+            RuleKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input, true)
+            }
+            RuleKind::ModifierAttribute => Self::modifier_attribute.parse(self, input, true),
+            RuleKind::ModifierAttributes => Self::modifier_attributes.parse(self, input, true),
+            RuleKind::ModifierDefinition => Self::modifier_definition.parse(self, input, true),
+            RuleKind::ModifierInvocation => Self::modifier_invocation.parse(self, input, true),
             RuleKind::MultiplicativeExpression => {
-                Self::multiplicative_expression.parse(self, input)
+                Self::multiplicative_expression.parse(self, input, true)
             }
-            RuleKind::NamedArgument => Self::named_argument.parse(self, input),
-            RuleKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input),
-            RuleKind::NamedArgumentGroups => Self::named_argument_groups.parse(self, input),
-            RuleKind::NamedArguments => Self::named_arguments.parse(self, input),
+            RuleKind::NamedArgument => Self::named_argument.parse(self, input, true),
+            RuleKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input, true),
+            RuleKind::NamedArgumentGroups => Self::named_argument_groups.parse(self, input, true),
+            RuleKind::NamedArguments => Self::named_arguments.parse(self, input, true),
             RuleKind::NamedArgumentsDeclaration => {
-                Self::named_arguments_declaration.parse(self, input)
+                Self::named_arguments_declaration.parse(self, input, true)
             }
-            RuleKind::NamedImport => Self::named_import.parse(self, input),
-            RuleKind::NewExpression => Self::new_expression.parse(self, input),
-            RuleKind::NumberUnit => Self::number_unit.parse(self, input),
-            RuleKind::OrExpression => Self::or_expression.parse(self, input),
-            RuleKind::OverridePaths => Self::override_paths.parse(self, input),
+            RuleKind::NamedImport => Self::named_import.parse(self, input, true),
+            RuleKind::NewExpression => Self::new_expression.parse(self, input, true),
+            RuleKind::NumberUnit => Self::number_unit.parse(self, input, true),
+            RuleKind::OrExpression => Self::or_expression.parse(self, input, true),
+            RuleKind::OverridePaths => Self::override_paths.parse(self, input, true),
             RuleKind::OverridePathsDeclaration => {
-                Self::override_paths_declaration.parse(self, input)
+                Self::override_paths_declaration.parse(self, input, true)
             }
-            RuleKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
-            RuleKind::Parameter => Self::parameter.parse(self, input),
-            RuleKind::Parameters => Self::parameters.parse(self, input),
-            RuleKind::ParametersDeclaration => Self::parameters_declaration.parse(self, input),
-            RuleKind::PathImport => Self::path_import.parse(self, input),
-            RuleKind::PositionalArguments => Self::positional_arguments.parse(self, input),
+            RuleKind::OverrideSpecifier => Self::override_specifier.parse(self, input, true),
+            RuleKind::Parameter => Self::parameter.parse(self, input, true),
+            RuleKind::Parameters => Self::parameters.parse(self, input, true),
+            RuleKind::ParametersDeclaration => {
+                Self::parameters_declaration.parse(self, input, true)
+            }
+            RuleKind::PathImport => Self::path_import.parse(self, input, true),
+            RuleKind::PositionalArguments => Self::positional_arguments.parse(self, input, true),
             RuleKind::PositionalArgumentsDeclaration => {
-                Self::positional_arguments_declaration.parse(self, input)
+                Self::positional_arguments_declaration.parse(self, input, true)
             }
-            RuleKind::PostfixExpression => Self::postfix_expression.parse(self, input),
-            RuleKind::Pragma => Self::pragma.parse(self, input),
-            RuleKind::PragmaDirective => Self::pragma_directive.parse(self, input),
-            RuleKind::PrefixExpression => Self::prefix_expression.parse(self, input),
+            RuleKind::PostfixExpression => Self::postfix_expression.parse(self, input, true),
+            RuleKind::Pragma => Self::pragma.parse(self, input, true),
+            RuleKind::PragmaDirective => Self::pragma_directive.parse(self, input, true),
+            RuleKind::PrefixExpression => Self::prefix_expression.parse(self, input, true),
             RuleKind::ReceiveFunctionAttribute => {
-                Self::receive_function_attribute.parse(self, input)
+                Self::receive_function_attribute.parse(self, input, true)
             }
             RuleKind::ReceiveFunctionAttributes => {
-                Self::receive_function_attributes.parse(self, input)
+                Self::receive_function_attributes.parse(self, input, true)
             }
             RuleKind::ReceiveFunctionDefinition => {
-                Self::receive_function_definition.parse(self, input)
+                Self::receive_function_definition.parse(self, input, true)
             }
-            RuleKind::ReturnStatement => Self::return_statement.parse(self, input),
-            RuleKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
-            RuleKind::RevertStatement => Self::revert_statement.parse(self, input),
-            RuleKind::ShiftExpression => Self::shift_expression.parse(self, input),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            RuleKind::StateVariableAttribute => Self::state_variable_attribute.parse(self, input),
-            RuleKind::StateVariableAttributes => Self::state_variable_attributes.parse(self, input),
-            RuleKind::StateVariableDefinition => Self::state_variable_definition.parse(self, input),
+            RuleKind::ReturnStatement => Self::return_statement.parse(self, input, true),
+            RuleKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input, true),
+            RuleKind::RevertStatement => Self::revert_statement.parse(self, input, true),
+            RuleKind::ShiftExpression => Self::shift_expression.parse(self, input, true),
+            RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
+            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
+            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input, true),
+            RuleKind::StateVariableAttribute => {
+                Self::state_variable_attribute.parse(self, input, true)
+            }
+            RuleKind::StateVariableAttributes => {
+                Self::state_variable_attributes.parse(self, input, true)
+            }
+            RuleKind::StateVariableDefinition => {
+                Self::state_variable_definition.parse(self, input, true)
+            }
             RuleKind::StateVariableDefinitionValue => {
-                Self::state_variable_definition_value.parse(self, input)
+                Self::state_variable_definition_value.parse(self, input, true)
             }
-            RuleKind::Statement => Self::statement.parse(self, input),
-            RuleKind::Statements => Self::statements.parse(self, input),
-            RuleKind::StorageLocation => Self::storage_location.parse(self, input),
-            RuleKind::StringExpression => Self::string_expression.parse(self, input),
-            RuleKind::StructDefinition => Self::struct_definition.parse(self, input),
-            RuleKind::StructMember => Self::struct_member.parse(self, input),
-            RuleKind::StructMembers => Self::struct_members.parse(self, input),
-            RuleKind::ThrowStatement => Self::throw_statement.parse(self, input),
-            RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input),
-            RuleKind::TryStatement => Self::try_statement.parse(self, input),
+            RuleKind::Statement => Self::statement.parse(self, input, true),
+            RuleKind::Statements => Self::statements.parse(self, input, true),
+            RuleKind::StorageLocation => Self::storage_location.parse(self, input, true),
+            RuleKind::StringExpression => Self::string_expression.parse(self, input, true),
+            RuleKind::StructDefinition => Self::struct_definition.parse(self, input, true),
+            RuleKind::StructMember => Self::struct_member.parse(self, input, true),
+            RuleKind::StructMembers => Self::struct_members.parse(self, input, true),
+            RuleKind::ThrowStatement => Self::throw_statement.parse(self, input, true),
+            RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input, false),
+            RuleKind::TryStatement => Self::try_statement.parse(self, input, true),
             RuleKind::TupleDeconstructionElement => {
-                Self::tuple_deconstruction_element.parse(self, input)
+                Self::tuple_deconstruction_element.parse(self, input, true)
             }
             RuleKind::TupleDeconstructionElements => {
-                Self::tuple_deconstruction_elements.parse(self, input)
+                Self::tuple_deconstruction_elements.parse(self, input, true)
             }
             RuleKind::TupleDeconstructionStatement => {
-                Self::tuple_deconstruction_statement.parse(self, input)
+                Self::tuple_deconstruction_statement.parse(self, input, true)
             }
-            RuleKind::TupleExpression => Self::tuple_expression.parse(self, input),
-            RuleKind::TupleMember => Self::tuple_member.parse(self, input),
-            RuleKind::TupleValue => Self::tuple_value.parse(self, input),
-            RuleKind::TupleValues => Self::tuple_values.parse(self, input),
-            RuleKind::TypeExpression => Self::type_expression.parse(self, input),
-            RuleKind::TypeName => Self::type_name.parse(self, input),
-            RuleKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input),
-            RuleKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
-            RuleKind::UnicodeStringLiterals => Self::unicode_string_literals.parse(self, input),
+            RuleKind::TupleExpression => Self::tuple_expression.parse(self, input, true),
+            RuleKind::TupleMember => Self::tuple_member.parse(self, input, true),
+            RuleKind::TupleValue => Self::tuple_value.parse(self, input, true),
+            RuleKind::TupleValues => Self::tuple_values.parse(self, input, true),
+            RuleKind::TypeExpression => Self::type_expression.parse(self, input, true),
+            RuleKind::TypeName => Self::type_name.parse(self, input, true),
+            RuleKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input, true),
+            RuleKind::UncheckedBlock => Self::unchecked_block.parse(self, input, true),
+            RuleKind::UnicodeStringLiterals => {
+                Self::unicode_string_literals.parse(self, input, true)
+            }
             RuleKind::UnnamedFunctionAttribute => {
-                Self::unnamed_function_attribute.parse(self, input)
+                Self::unnamed_function_attribute.parse(self, input, true)
             }
             RuleKind::UnnamedFunctionAttributes => {
-                Self::unnamed_function_attributes.parse(self, input)
+                Self::unnamed_function_attributes.parse(self, input, true)
             }
             RuleKind::UnnamedFunctionDefinition => {
-                Self::unnamed_function_definition.parse(self, input)
+                Self::unnamed_function_definition.parse(self, input, true)
             }
-            RuleKind::UntypedTupleMember => Self::untyped_tuple_member.parse(self, input),
+            RuleKind::UntypedTupleMember => Self::untyped_tuple_member.parse(self, input, true),
             RuleKind::UserDefinedValueTypeDefinition => {
-                Self::user_defined_value_type_definition.parse(self, input)
+                Self::user_defined_value_type_definition.parse(self, input, true)
             }
-            RuleKind::UsingAlias => Self::using_alias.parse(self, input),
-            RuleKind::UsingClause => Self::using_clause.parse(self, input),
-            RuleKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input),
+            RuleKind::UsingAlias => Self::using_alias.parse(self, input, true),
+            RuleKind::UsingClause => Self::using_clause.parse(self, input, true),
+            RuleKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input, true),
             RuleKind::UsingDeconstructionSymbol => {
-                Self::using_deconstruction_symbol.parse(self, input)
+                Self::using_deconstruction_symbol.parse(self, input, true)
             }
             RuleKind::UsingDeconstructionSymbols => {
-                Self::using_deconstruction_symbols.parse(self, input)
+                Self::using_deconstruction_symbols.parse(self, input, true)
             }
-            RuleKind::UsingDirective => Self::using_directive.parse(self, input),
-            RuleKind::UsingOperator => Self::using_operator.parse(self, input),
-            RuleKind::UsingTarget => Self::using_target.parse(self, input),
+            RuleKind::UsingDirective => Self::using_directive.parse(self, input, true),
+            RuleKind::UsingOperator => Self::using_operator.parse(self, input, true),
+            RuleKind::UsingTarget => Self::using_target.parse(self, input, true),
             RuleKind::VariableDeclarationStatement => {
-                Self::variable_declaration_statement.parse(self, input)
+                Self::variable_declaration_statement.parse(self, input, true)
             }
-            RuleKind::VariableDeclarationType => Self::variable_declaration_type.parse(self, input),
+            RuleKind::VariableDeclarationType => {
+                Self::variable_declaration_type.parse(self, input, true)
+            }
             RuleKind::VariableDeclarationValue => {
-                Self::variable_declaration_value.parse(self, input)
+                Self::variable_declaration_value.parse(self, input, true)
             }
-            RuleKind::VersionPragma => Self::version_pragma.parse(self, input),
-            RuleKind::VersionPragmaExpression => Self::version_pragma_expression.parse(self, input),
+            RuleKind::VersionPragma => Self::version_pragma.parse(self, input, true),
+            RuleKind::VersionPragmaExpression => {
+                Self::version_pragma_expression.parse(self, input, true)
+            }
             RuleKind::VersionPragmaExpressions => {
-                Self::version_pragma_expressions.parse(self, input)
+                Self::version_pragma_expressions.parse(self, input, true)
             }
             RuleKind::VersionPragmaOrExpression => {
-                Self::version_pragma_or_expression.parse(self, input)
+                Self::version_pragma_or_expression.parse(self, input, true)
             }
             RuleKind::VersionPragmaPrefixExpression => {
-                Self::version_pragma_prefix_expression.parse(self, input)
+                Self::version_pragma_prefix_expression.parse(self, input, true)
             }
             RuleKind::VersionPragmaRangeExpression => {
-                Self::version_pragma_range_expression.parse(self, input)
+                Self::version_pragma_range_expression.parse(self, input, true)
             }
-            RuleKind::VersionPragmaSpecifier => Self::version_pragma_specifier.parse(self, input),
-            RuleKind::WhileStatement => Self::while_statement.parse(self, input),
-            RuleKind::YulArguments => Self::yul_arguments.parse(self, input),
-            RuleKind::YulAssignmentStatement => Self::yul_assignment_statement.parse(self, input),
-            RuleKind::YulBlock => Self::yul_block.parse(self, input),
-            RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
-            RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input),
-            RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
-            RuleKind::YulExpression => Self::yul_expression.parse(self, input),
-            RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input),
+            RuleKind::VersionPragmaSpecifier => {
+                Self::version_pragma_specifier.parse(self, input, true)
+            }
+            RuleKind::WhileStatement => Self::while_statement.parse(self, input, true),
+            RuleKind::YulArguments => Self::yul_arguments.parse(self, input, true),
+            RuleKind::YulAssignmentStatement => {
+                Self::yul_assignment_statement.parse(self, input, true)
+            }
+            RuleKind::YulBlock => Self::yul_block.parse(self, input, true),
+            RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input, true),
+            RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input, true),
+            RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input, true),
+            RuleKind::YulExpression => Self::yul_expression.parse(self, input, true),
+            RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input, true),
             RuleKind::YulFunctionCallExpression => {
-                Self::yul_function_call_expression.parse(self, input)
+                Self::yul_function_call_expression.parse(self, input, true)
             }
-            RuleKind::YulFunctionDefinition => Self::yul_function_definition.parse(self, input),
-            RuleKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input),
-            RuleKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input),
-            RuleKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
-            RuleKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
-            RuleKind::YulLiteral => Self::yul_literal.parse(self, input),
-            RuleKind::YulParameters => Self::yul_parameters.parse(self, input),
+            RuleKind::YulFunctionDefinition => {
+                Self::yul_function_definition.parse(self, input, true)
+            }
+            RuleKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input, true),
+            RuleKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input, true),
+            RuleKind::YulIfStatement => Self::yul_if_statement.parse(self, input, true),
+            RuleKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input, true),
+            RuleKind::YulLiteral => Self::yul_literal.parse(self, input, true),
+            RuleKind::YulParameters => Self::yul_parameters.parse(self, input, true),
             RuleKind::YulParametersDeclaration => {
-                Self::yul_parameters_declaration.parse(self, input)
+                Self::yul_parameters_declaration.parse(self, input, true)
             }
-            RuleKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
-            RuleKind::YulReturnsDeclaration => Self::yul_returns_declaration.parse(self, input),
-            RuleKind::YulStatement => Self::yul_statement.parse(self, input),
-            RuleKind::YulStatements => Self::yul_statements.parse(self, input),
-            RuleKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
-            RuleKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
-            RuleKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
-            RuleKind::YulValueCase => Self::yul_value_case.parse(self, input),
+            RuleKind::YulReturnVariables => Self::yul_return_variables.parse(self, input, true),
+            RuleKind::YulReturnsDeclaration => {
+                Self::yul_returns_declaration.parse(self, input, true)
+            }
+            RuleKind::YulStatement => Self::yul_statement.parse(self, input, true),
+            RuleKind::YulStatements => Self::yul_statements.parse(self, input, true),
+            RuleKind::YulSwitchCase => Self::yul_switch_case.parse(self, input, true),
+            RuleKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input, true),
+            RuleKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input, true),
+            RuleKind::YulValueCase => Self::yul_value_case.parse(self, input, true),
             RuleKind::YulVariableDeclarationStatement => {
-                Self::yul_variable_declaration_statement.parse(self, input)
+                Self::yul_variable_declaration_statement.parse(self, input, true)
             }
             RuleKind::YulVariableDeclarationValue => {
-                Self::yul_variable_declaration_value.parse(self, input)
+                Self::yul_variable_declaration_value.parse(self, input, true)
             }
         }
     }

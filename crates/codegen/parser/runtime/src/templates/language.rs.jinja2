@@ -101,7 +101,12 @@ impl Language {
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
             {%- for parser_name, _code in code.parser_functions -%}
-                RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
+            {# TODO(#737): Remove the special case once we stop generating RuleKind for trivia #}
+            {%- if parser_name is ending_with("Trivia") -%}
+                RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, false),
+            {%- else -%}
+                RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, true),
+            {%- endif -%}
             {%- endfor -%}
         }
     }

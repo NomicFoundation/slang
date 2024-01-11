@@ -15,7 +15,7 @@ pub trait ParserFunction<L>
 where
     Self: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
-    fn parse(&self, language: &L, input: &str) -> ParseOutput;
+    fn parse(&self, language: &L, input: &str, collect_trivia: bool) -> ParseOutput;
 }
 
 impl<L, F> ParserFunction<L> for F
@@ -23,30 +23,33 @@ where
     L: Lexer,
     F: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
-    fn parse(&self, language: &L, input: &str) -> ParseOutput {
+    fn parse(&self, language: &L, input: &str, collect_trivia: bool) -> ParseOutput {
         let mut stream = ParserContext::new(input);
         let mut result = self(language, &mut stream);
 
         // For a succesful/recovered parse, collect any remaining trivia as part of the parse result
-        if let ParserResult::Match(r#match) = &mut result {
-            let [topmost] = r#match.nodes.as_mut_slice() else {
-                unreachable!(
-                    "Match at the top level of a parse does not have exactly one Rule node"
-                )
-            };
+        // TODO(#737): Remove this once we unconditionally collect trivia
+        if collect_trivia {
+            if let ParserResult::Match(r#match) = &mut result {
+                let [topmost] = r#match.nodes.as_mut_slice() else {
+                    unreachable!(
+                        "Match at the top level of a parse does not have exactly one Rule node"
+                    )
+                };
 
-            let eof_trivia = match Lexer::leading_trivia(language, &mut stream) {
-                ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
-                    Some(eof_trivia.nodes)
+                let eof_trivia = match Lexer::leading_trivia(language, &mut stream) {
+                    ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
+                        Some(eof_trivia.nodes)
+                    }
+                    _ => None,
+                };
+
+                if let (cst::Node::Rule(rule), Some(eof_trivia)) = (&mut topmost.node, eof_trivia) {
+                    let mut new_children = rule.children.clone();
+                    new_children.extend(eof_trivia);
+
+                    topmost.node = cst::Node::rule(rule.kind, new_children);
                 }
-                _ => None,
-            };
-
-            if let (cst::Node::Rule(rule), Some(eof_trivia)) = (&mut topmost.node, eof_trivia) {
-                let mut new_children = rule.children.clone();
-                new_children.extend(eof_trivia);
-
-                topmost.node = cst::Node::rule(rule.kind, new_children);
             }
         }
 
