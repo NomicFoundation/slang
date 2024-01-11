@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..7 "bytes32"
-      - (variant) ElementaryType: # 0..7 "bytes32"
-          - (variant) BytesKeyword: "bytes32" # 0..7
+  - (TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BytesKeyword): "bytes32" # (0..7)

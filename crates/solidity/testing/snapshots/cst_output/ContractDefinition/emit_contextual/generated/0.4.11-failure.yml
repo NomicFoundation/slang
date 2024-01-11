@@ -22,54 +22,68 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..243 "// Emitting events introduced syntactically in 0.4..."
-      - LeadingTrivia: # 0..103 "// Emitting events introduced syntactically in 0.4..."
-          - SingleLineComment: "// Emitting events introduced syntactically in 0.4..." # 0..101
-      - (contract_keyword) ContractKeyword: "contract" # 103..111
-      - (name) Identifier: "ClientReceipt" # 112..125
-      - (open_brace) OpenBrace: "{" # 126..127
-      - (members) ContractMembers: # 128..241 "    event Deposit();\n    function deposit() public..."
-          - (item) ContractMember: # 128..149 "    event Deposit();\n"
-              - (variant) EventDefinition: # 128..149 "    event Deposit();\n"
-                  - (event_keyword) EventKeyword: "event" # 132..137
-                  - (name) Identifier: "Deposit" # 138..145
-                  - (parameters) EventParametersDeclaration: # 145..147 "()"
-                      - (open_paren) OpenParen: "(" # 145..146
-                      - (close_paren) CloseParen: ")" # 146..147
-                  - (semicolon) Semicolon: ";" # 147..148
-          - (item) ContractMember: # 149..241 "    function deposit() public payable {\n        ui..."
-              - (variant) FunctionDefinition: # 149..241 "    function deposit() public payable {\n        ui..."
-                  - (function_keyword) FunctionKeyword: "function" # 153..161
-                  - (name) FunctionName: # 161..169 " deposit"
-                      - (variant) Identifier: "deposit" # 162..169
-                  - (parameters) ParametersDeclaration: # 169..171 "()"
-                      - (open_paren) OpenParen: "(" # 169..170
-                      - (close_paren) CloseParen: ")" # 170..171
-                  - (attributes) FunctionAttributes: # 171..186 " public payable"
-                      - (item) FunctionAttribute: # 171..178 " public"
-                          - (variant) PublicKeyword: "public" # 172..178
-                      - (item) FunctionAttribute: # 178..186 " payable"
-                          - (variant) PayableKeyword: "payable" # 179..186
-                  - (body) FunctionBody: # 186..241 " {\n        uint256 emit;\n        emit Deposit();\n ..."
-                      - (variant) Block: # 186..241 " {\n        uint256 emit;\n        emit Deposit();\n ..."
-                          - (open_brace) OpenBrace: "{" # 187..188
-                          - (statements) Statements: # 189..235 "        uint256 emit;\n        emit Deposit();\n"
-                              - (item) Statement: # 189..211 "        uint256 emit;\n"
-                                  - (variant) VariableDeclarationStatement: # 189..211 "        uint256 emit;\n"
-                                      - (variable_type) VariableDeclarationType: # 189..204 "        uint256"
-                                          - (variant) TypeName: # 189..204 "        uint256"
-                                              - (variant) ElementaryType: # 189..204 "        uint256"
-                                                  - (variant) UintKeyword: "uint256" # 197..204
-                                      - (name) Identifier: "emit" # 205..209
-                                      - (semicolon) Semicolon: ";" # 209..210
-                              - (item) Statement: # 211..235 "        emit Deposit();\n"
-                                  - (variant) VariableDeclarationStatement: # 211..235 "        emit Deposit();\n"
-                                      - (variable_type) VariableDeclarationType: # 211..223 "        emit"
-                                          - (variant) TypeName: # 211..223 "        emit"
-                                              - (variant) IdentifierPath: # 211..223 "        emit"
-                                                  - (item) Identifier: "emit" # 219..223
-                                      - (name) Identifier: "Deposit" # 224..231
-                                      - SKIPPED: "()" # 231..233
-                                      - (semicolon) Semicolon: ";" # 233..234
-                          - (close_brace) CloseBrace: "}" # 239..240
-      - (close_brace) CloseBrace: "}" # 241..242
+  - (ContractDefinition): # "// Emitting events introduced syntactically in 0.4..." (0..243)
+      - (LeadingTrivia): # "// Emitting events introduced syntactically in 0.4..." (0..103)
+          - (SingleLineComment): "// Emitting events introduced syntactically in 0.4..." # (0..101)
+          - (EndOfLine): "\n" # (101..102)
+          - (EndOfLine): "\n" # (102..103)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (103..111)
+      - (LeadingTrivia) ► (Whitespace): " " # (111..112)
+      - (name꞉ Identifier): "ClientReceipt" # (112..125)
+      - (LeadingTrivia) ► (Whitespace): " " # (125..126)
+      - (open_brace꞉ OpenBrace): "{" # (126..127)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (127..128)
+      - (members꞉ ContractMembers): # "    event Deposit();\n    function deposit() public..." (128..241)
+          - (item꞉ ContractMember) ► (variant꞉ EventDefinition): # "    event Deposit();\n" (128..149)
+              - (LeadingTrivia) ► (Whitespace): "    " # (128..132)
+              - (event_keyword꞉ EventKeyword): "event" # (132..137)
+              - (LeadingTrivia) ► (Whitespace): " " # (137..138)
+              - (name꞉ Identifier): "Deposit" # (138..145)
+              - (parameters꞉ EventParametersDeclaration): # "()" (145..147)
+                  - (open_paren꞉ OpenParen): "(" # (145..146)
+                  - (close_paren꞉ CloseParen): ")" # (146..147)
+              - (semicolon꞉ Semicolon): ";" # (147..148)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (148..149)
+          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "    function deposit() public payable {\n        ui..." (149..241)
+              - (LeadingTrivia) ► (Whitespace): "    " # (149..153)
+              - (function_keyword꞉ FunctionKeyword): "function" # (153..161)
+              - (name꞉ FunctionName): # " deposit" (161..169)
+                  - (LeadingTrivia) ► (Whitespace): " " # (161..162)
+                  - (variant꞉ Identifier): "deposit" # (162..169)
+              - (parameters꞉ ParametersDeclaration): # "()" (169..171)
+                  - (open_paren꞉ OpenParen): "(" # (169..170)
+                  - (close_paren꞉ CloseParen): ")" # (170..171)
+              - (attributes꞉ FunctionAttributes): # " public payable" (171..186)
+                  - (item꞉ FunctionAttribute): # " public" (171..178)
+                      - (LeadingTrivia) ► (Whitespace): " " # (171..172)
+                      - (variant꞉ PublicKeyword): "public" # (172..178)
+                  - (item꞉ FunctionAttribute): # " payable" (178..186)
+                      - (LeadingTrivia) ► (Whitespace): " " # (178..179)
+                      - (variant꞉ PayableKeyword): "payable" # (179..186)
+              - (body꞉ FunctionBody) ► (variant꞉ Block): # " {\n        uint256 emit;\n        emit Deposit();\n ..." (186..241)
+                  - (LeadingTrivia) ► (Whitespace): " " # (186..187)
+                  - (open_brace꞉ OpenBrace): "{" # (187..188)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (188..189)
+                  - (statements꞉ Statements): # "        uint256 emit;\n        emit Deposit();\n" (189..235)
+                      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "        uint256 emit;\n" (189..211)
+                          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "        uint256" (189..204)
+                              - (LeadingTrivia) ► (Whitespace): "        " # (189..197)
+                              - (variant꞉ UintKeyword): "uint256" # (197..204)
+                          - (LeadingTrivia) ► (Whitespace): " " # (204..205)
+                          - (name꞉ Identifier): "emit" # (205..209)
+                          - (semicolon꞉ Semicolon): ";" # (209..210)
+                          - (TrailingTrivia) ► (EndOfLine): "\n" # (210..211)
+                      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "        emit Deposit();\n" (211..235)
+                          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # "        emit" (211..223)
+                              - (LeadingTrivia) ► (Whitespace): "        " # (211..219)
+                              - (item꞉ Identifier): "emit" # (219..223)
+                          - (LeadingTrivia) ► (Whitespace): " " # (223..224)
+                          - (name꞉ Identifier): "Deposit" # (224..231)
+                          - (SKIPPED): "()" # (231..233)
+                          - (semicolon꞉ Semicolon): ";" # (233..234)
+                          - (TrailingTrivia) ► (EndOfLine): "\n" # (234..235)
+                  - (LeadingTrivia) ► (Whitespace): "    " # (235..239)
+                  - (close_brace꞉ CloseBrace): "}" # (239..240)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (240..241)
+      - (close_brace꞉ CloseBrace): "}" # (241..242)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (242..243)

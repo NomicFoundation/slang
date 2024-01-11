@@ -1,3 +1,4 @@
--   [Index](./index.md)
--   [How to use the CST Cursor](./how-to-use-the-cst-cursor/)
--   [How to parse a Solidity file](./how-to-parse-a-file/)
+-   [Installation](./installation.md)
+-   [Using the CLI](./using-the-cli.md)
+-   [Using the Parser](./using-the-parser.md)
+-   [Using the Cursor](./using-the-cursor.md)

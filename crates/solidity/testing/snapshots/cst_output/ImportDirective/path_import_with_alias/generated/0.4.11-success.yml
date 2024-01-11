@@ -6,12 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective: # 0..20 'import "foo" as bar;'
-      - (import_keyword) ImportKeyword: "import" # 0..6
-      - (clause) ImportClause: # 6..19 ' "foo" as bar'
-          - (variant) PathImport: # 6..19 ' "foo" as bar'
-              - (path) AsciiStringLiteral: '"foo"' # 7..12
-              - (alias) ImportAlias: # 12..19 " as bar"
-                  - (as_keyword) AsKeyword: "as" # 13..15
-                  - (identifier) Identifier: "bar" # 16..19
-      - (semicolon) Semicolon: ";" # 19..20
+  - (ImportDirective): # 'import "foo" as bar;' (0..20)
+      - (import_keyword꞉ ImportKeyword): "import" # (0..6)
+      - (clause꞉ ImportClause) ► (variant꞉ PathImport): # ' "foo" as bar' (6..19)
+          - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+          - (path꞉ AsciiStringLiteral): '"foo"' # (7..12)
+          - (alias꞉ ImportAlias): # " as bar" (12..19)
+              - (LeadingTrivia) ► (Whitespace): " " # (12..13)
+              - (as_keyword꞉ AsKeyword): "as" # (13..15)
+              - (LeadingTrivia) ► (Whitespace): " " # (15..16)
+              - (identifier꞉ Identifier): "bar" # (16..19)
+      - (semicolon꞉ Semicolon): ";" # (19..20)

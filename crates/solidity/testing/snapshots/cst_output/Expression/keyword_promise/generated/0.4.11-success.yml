@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..7 "promise"
-      - (variant) Identifier: "promise" # 0..7
+  - (Expression) ► (variant꞉ Identifier): "promise" # (0..7)

@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - TrailingTrivia: # 0..36 " /* TODO: we should support this */\n"
-      - Whitespace: " " # 0..1
-      - SKIPPED: "/* TODO: we should support this */\n" # 1..36
+  - (TrailingTrivia): # " /* TODO: we should support this */\n" (0..36)
+      - (Whitespace): " " # (0..1)
+      - (SKIPPED): "/* TODO: we should support this */\n" # (1..36)

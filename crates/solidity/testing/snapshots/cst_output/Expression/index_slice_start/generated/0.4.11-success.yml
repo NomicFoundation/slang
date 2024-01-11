@@ -6,13 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..11 "arr[start:]"
-      - (variant) IndexAccessExpression: # 0..11 "arr[start:]"
-          - (operand) Expression: # 0..3 "arr"
-              - (variant) Identifier: "arr" # 0..3
-          - (open_bracket) OpenBracket: "[" # 3..4
-          - (start) Expression: # 4..9 "start"
-              - (variant) Identifier: "start" # 4..9
-          - (end) IndexAccessEnd: # 9..10 ":"
-              - (colon) Colon: ":" # 9..10
-          - (close_bracket) CloseBracket: "]" # 10..11
+  - (Expression) ► (variant꞉ IndexAccessExpression): # "arr[start:]" (0..11)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "arr" # (0..3)
+      - (open_bracket꞉ OpenBracket): "[" # (3..4)
+      - (start꞉ Expression) ► (variant꞉ Identifier): "start" # (4..9)
+      - (end꞉ IndexAccessEnd) ► (colon꞉ Colon): ":" # (9..10)
+      - (close_bracket꞉ CloseBracket): "]" # (10..11)

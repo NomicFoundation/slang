@@ -6,24 +6,27 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDirective: # 0..32 "using {div as /} for Int global;"
-      - (using_keyword) UsingKeyword: "using" # 0..5
-      - (clause) UsingClause: # 5..16 " {div as /}"
-          - (variant) UsingDeconstruction: # 5..16 " {div as /}"
-              - (open_brace) OpenBrace: "{" # 6..7
-              - (symbols) UsingDeconstructionSymbols: # 7..15 "div as /"
-                  - (item) UsingDeconstructionSymbol: # 7..15 "div as /"
-                      - (name) IdentifierPath: # 7..10 "div"
-                          - (item) Identifier: "div" # 7..10
-                      - (alias) UsingAlias: # 10..15 " as /"
-                          - (as_keyword) AsKeyword: "as" # 11..13
-                          - (operator) UsingOperator: # 13..15 " /"
-                              - (variant) Slash: "/" # 14..15
-              - (close_brace) CloseBrace: "}" # 15..16
-      - (for_keyword) ForKeyword: "for" # 17..20
-      - (target) UsingTarget: # 20..24 " Int"
-          - (variant) TypeName: # 20..24 " Int"
-              - (variant) IdentifierPath: # 20..24 " Int"
-                  - (item) Identifier: "Int" # 21..24
-      - (global_keyword) GlobalKeyword: "global" # 25..31
-      - (semicolon) Semicolon: ";" # 31..32
+  - (UsingDirective): # "using {div as /} for Int global;" (0..32)
+      - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+      - (clause꞉ UsingClause) ► (variant꞉ UsingDeconstruction): # " {div as /}" (5..16)
+          - (LeadingTrivia) ► (Whitespace): " " # (5..6)
+          - (open_brace꞉ OpenBrace): "{" # (6..7)
+          - (symbols꞉ UsingDeconstructionSymbols): # "div as /" (7..15)
+              - (item꞉ UsingDeconstructionSymbol): # "div as /" (7..15)
+                  - (name꞉ IdentifierPath): # "div" (7..10)
+                      - (item꞉ Identifier): "div" # (7..10)
+                  - (alias꞉ UsingAlias): # " as /" (10..15)
+                      - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+                      - (as_keyword꞉ AsKeyword): "as" # (11..13)
+                      - (operator꞉ UsingOperator): # " /" (13..15)
+                          - (LeadingTrivia) ► (Whitespace): " " # (13..14)
+                          - (variant꞉ Slash): "/" # (14..15)
+          - (close_brace꞉ CloseBrace): "}" # (15..16)
+      - (LeadingTrivia) ► (Whitespace): " " # (16..17)
+      - (for_keyword꞉ ForKeyword): "for" # (17..20)
+      - (target꞉ UsingTarget) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " Int" (20..24)
+          - (LeadingTrivia) ► (Whitespace): " " # (20..21)
+          - (item꞉ Identifier): "Int" # (21..24)
+      - (LeadingTrivia) ► (Whitespace): " " # (24..25)
+      - (global_keyword꞉ GlobalKeyword): "global" # (25..31)
+      - (semicolon꞉ Semicolon): ";" # (31..32)

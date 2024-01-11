@@ -14,5 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SourceUnit: # 0..25 "event E1(uint256 value);\n"
-      - SKIPPED: "event E1(uint256 value);\n" # 0..25
+  - (SourceUnit) ► (SKIPPED): "event E1(uint256 value);\n" # (0..25)

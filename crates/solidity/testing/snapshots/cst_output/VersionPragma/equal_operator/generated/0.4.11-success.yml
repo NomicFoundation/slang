@@ -6,16 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma: # 0..15 "solidity =0.8.0"
-      - (solidity_keyword) SolidityKeyword: "solidity" # 0..8
-      - (expressions) VersionPragmaExpressions: # 8..15 " =0.8.0"
-          - (item) VersionPragmaExpression: # 8..15 " =0.8.0"
-              - (variant) VersionPragmaPrefixExpression: # 8..15 " =0.8.0"
-                  - (operator) Equal: "=" # 9..10
-                  - (operand) VersionPragmaExpression: # 10..15 "0.8.0"
-                      - VersionPragmaSpecifier: # 10..15 "0.8.0"
-                          - (item) VersionPragmaValue: "0" # 10..11
-                          - (separator) Period: "." # 11..12
-                          - (item) VersionPragmaValue: "8" # 12..13
-                          - (separator) Period: "." # 13..14
-                          - (item) VersionPragmaValue: "0" # 14..15
+  - (VersionPragma): # "solidity =0.8.0" (0..15)
+      - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
+      - (expressions꞉ VersionPragmaExpressions): # " =0.8.0" (8..15)
+          - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaPrefixExpression): # " =0.8.0" (8..15)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (operator꞉ Equal): "=" # (9..10)
+              - (operand꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # "0.8.0" (10..15)
+                  - (item꞉ VersionPragmaValue): "0" # (10..11)
+                  - (separator꞉ Period): "." # (11..12)
+                  - (item꞉ VersionPragmaValue): "8" # (12..13)
+                  - (separator꞉ Period): "." # (13..14)
+                  - (item꞉ VersionPragmaValue): "0" # (14..15)

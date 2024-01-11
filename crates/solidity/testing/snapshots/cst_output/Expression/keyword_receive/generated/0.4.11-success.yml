@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..7 "receive"
-      - (variant) Identifier: "receive" # 0..7
+  - (Expression) ► (variant꞉ Identifier): "receive" # (0..7)

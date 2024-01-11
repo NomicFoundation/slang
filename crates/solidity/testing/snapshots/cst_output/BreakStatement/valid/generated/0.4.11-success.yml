@@ -6,6 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - BreakStatement: # 0..8 "break ;\n"
-      - (break_keyword) BreakKeyword: "break" # 0..5
-      - (semicolon) Semicolon: ";" # 6..7
+  - (BreakStatement): # "break ;\n" (0..8)
+      - (break_keyword꞉ BreakKeyword): "break" # (0..5)
+      - (LeadingTrivia) ► (Whitespace): " " # (5..6)
+      - (semicolon꞉ Semicolon): ";" # (6..7)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (7..8)

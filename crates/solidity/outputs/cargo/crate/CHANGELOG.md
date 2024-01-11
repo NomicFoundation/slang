@@ -1,5 +1,23 @@
 # changelog
 
+## 0.13.0
+
+### Minor Changes
+
+-   [#710](https://github.com/NomicFoundation/slang/pull/710) [`2025b6cb`](https://github.com/NomicFoundation/slang/commit/2025b6cb23dc320b413b482ed1fe8455229b7d84) Thanks [@Xanewok](https://github.com/Xanewok)! - CST children nodes are now named
+
+-   [#723](https://github.com/NomicFoundation/slang/pull/723) [`b3dc6bcd`](https://github.com/NomicFoundation/slang/commit/b3dc6bcdc1834d266a87d483927894617bf8e817) Thanks [@Xanewok](https://github.com/Xanewok)! - Properly parse unreserved keywords in an identifier position, i.e. `from`, `emit`, `global` etc.
+
+-   [#728](https://github.com/NomicFoundation/slang/pull/728) [`662a672c`](https://github.com/NomicFoundation/slang/commit/662a672cd661b9f1bf4c18587acf68111fd1f2e8) Thanks [@Xanewok](https://github.com/Xanewok)! - Remove Language#scan API; use the parser API instead
+
+-   [#719](https://github.com/NomicFoundation/slang/pull/719) [`1ad6bb37`](https://github.com/NomicFoundation/slang/commit/1ad6bb37337aa28d9344380c5c9eb1945e908271) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - introduce strong types for all Solidity non terminals in the TypeScript API.
+
+### Patch Changes
+
+-   [#719](https://github.com/NomicFoundation/slang/pull/719) [`1ad6bb37`](https://github.com/NomicFoundation/slang/commit/1ad6bb37337aa28d9344380c5c9eb1945e908271) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - unify Rust/TypeScript node helpers: `*_with_kind()`, `*_with_kinds()`, `*_is_kind()`), ...
+
+-   [#731](https://github.com/NomicFoundation/slang/pull/731) [`3deaea2e`](https://github.com/NomicFoundation/slang/commit/3deaea2eb82ce33dbccc54d1a79b9cf5657385ac) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `RuleNode.unparse()` to the TypeScript API
+
 ## 0.12.0
 
 ### Minor Changes

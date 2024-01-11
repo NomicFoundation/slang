@@ -16,12 +16,15 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SourceUnit: # 0..39 "contract X {}\n\n/* unterminated comment\n"
-      - (members) SourceUnitMembers: # 0..14 "contract X {}\n"
-          - (item) SourceUnitMember: # 0..14 "contract X {}\n"
-              - (variant) ContractDefinition: # 0..14 "contract X {}\n"
-                  - (contract_keyword) ContractKeyword: "contract" # 0..8
-                  - (name) Identifier: "X" # 9..10
-                  - (open_brace) OpenBrace: "{" # 11..12
-                  - (close_brace) CloseBrace: "}" # 12..13
-      - SKIPPED: "/* unterminated comment\n" # 15..39
+  - (SourceUnit): # "contract X {}\n\n/* unterminated comment\n" (0..39)
+      - (members꞉ SourceUnitMembers): # "contract X {}\n" (0..14)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X {}\n" (0..14)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (name꞉ Identifier): "X" # (9..10)
+              - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (close_brace꞉ CloseBrace): "}" # (12..13)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (13..14)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (14..15)
+      - (SKIPPED): "/* unterminated comment\n" # (15..39)

@@ -7,11 +7,11 @@ Source: >
 Errors: []
 
 Tree:
-  - TrailingTrivia: # 0..21 " // first\n // second\n"
-      - Whitespace: " " # 0..1
-      - SingleLineComment: "// first" # 1..9
-      - EndOfLine: "\n" # 9..10
-      - LeadingTrivia: # 10..21 " // second\n"
-          - Whitespace: " " # 10..11
-          - SingleLineComment: "// second" # 11..20
-          - EndOfLine: "\n" # 20..21
+  - (TrailingTrivia): # " // first\n // second\n" (0..21)
+      - (Whitespace): " " # (0..1)
+      - (SingleLineComment): "// first" # (1..9)
+      - (EndOfLine): "\n" # (9..10)
+      - (LeadingTrivia): # " // second\n" (10..21)
+          - (Whitespace): " " # (10..11)
+          - (SingleLineComment): "// second" # (11..20)
+          - (EndOfLine): "\n" # (20..21)

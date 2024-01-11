@@ -40,28 +40,30 @@ Errors: # 1 total
     ────╯
 
 Tree:
-  - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - (members) SourceUnitMembers: # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
-          - (item) SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
-              - (variant) PragmaDirective: # 0..23 "pragma solidity 0.0.0;\n"
-                  - (pragma_keyword) PragmaKeyword: "pragma" # 0..6
-                  - (pragma) Pragma: # 6..21 " solidity 0.0.0"
-                      - (variant) VersionPragma: # 6..21 " solidity 0.0.0"
-                          - (solidity_keyword) SolidityKeyword: "solidity" # 7..15
-                          - (expressions) VersionPragmaExpressions: # 15..21 " 0.0.0"
-                              - (item) VersionPragmaExpression: # 15..21 " 0.0.0"
-                                  - VersionPragmaSpecifier: # 15..21 " 0.0.0"
-                                      - (item) VersionPragmaValue: "0" # 16..17
-                                      - (separator) Period: "." # 17..18
-                                      - (item) VersionPragmaValue: "0" # 18..19
-                                      - (separator) Period: "." # 19..20
-                                      - (item) VersionPragmaValue: "0" # 20..21
-                  - (semicolon) Semicolon: ";" # 21..22
-          - (item) SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
-              - (variant) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
-                  - (import_keyword) ImportKeyword: "import" # 24..30
-                  - (clause) ImportClause: # 30..40 ' "foo.sol"'
-                      - (variant) PathImport: # 30..40 ' "foo.sol"'
-                          - (path) AsciiStringLiteral: '"foo.sol"' # 31..40
-                  - (semicolon) Semicolon: ";" # 40..41
-      - SKIPPED: "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243
+  - (SourceUnit): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...' (0..243)
+      - (members꞉ SourceUnitMembers): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n' (0..42)
+          - (item꞉ SourceUnitMember) ► (variant꞉ PragmaDirective): # "pragma solidity 0.0.0;\n" (0..23)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity 0.0.0" (6..21)
+                  - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (expressions꞉ VersionPragmaExpressions): # " 0.0.0" (15..21)
+                      - (item꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # " 0.0.0" (15..21)
+                          - (LeadingTrivia) ► (Whitespace): " " # (15..16)
+                          - (item꞉ VersionPragmaValue): "0" # (16..17)
+                          - (separator꞉ Period): "." # (17..18)
+                          - (item꞉ VersionPragmaValue): "0" # (18..19)
+                          - (separator꞉ Period): "." # (19..20)
+                          - (item꞉ VersionPragmaValue): "0" # (20..21)
+              - (semicolon꞉ Semicolon): ";" # (21..22)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (22..23)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ImportDirective): # '\nimport "foo.sol";\n' (23..42)
+              - (LeadingTrivia) ► (EndOfLine): "\n" # (23..24)
+              - (import_keyword꞉ ImportKeyword): "import" # (24..30)
+              - (clause꞉ ImportClause) ► (variant꞉ PathImport): # ' "foo.sol"' (30..40)
+                  - (LeadingTrivia) ► (Whitespace): " " # (30..31)
+                  - (path꞉ AsciiStringLiteral): '"foo.sol"' # (31..40)
+              - (semicolon꞉ Semicolon): ";" # (40..41)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (41..42)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (42..43)
+      - (SKIPPED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)

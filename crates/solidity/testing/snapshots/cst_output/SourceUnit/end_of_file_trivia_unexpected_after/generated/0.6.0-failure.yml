@@ -18,14 +18,21 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SourceUnit: # 0..64 "contract X { }\n    \n/* new lines after this */\n\nun..."
-      - (members) SourceUnitMembers: # 0..15 "contract X { }\n"
-          - (item) SourceUnitMember: # 0..15 "contract X { }\n"
-              - (variant) ContractDefinition: # 0..15 "contract X { }\n"
-                  - (contract_keyword) ContractKeyword: "contract" # 0..8
-                  - (name) Identifier: "X" # 9..10
-                  - (open_brace) OpenBrace: "{" # 11..12
-                  - (close_brace) CloseBrace: "}" # 13..14
-      - LeadingTrivia: # 15..48 "    \n/* new lines after this */\n\n"
-          - MultilineComment: "/* new lines after this */" # 20..46
-      - SKIPPED: "unexpectedchars\n" # 48..64
+  - (SourceUnit): # "contract X { }\n    \n/* new lines after this */\n\nun..." (0..64)
+      - (members꞉ SourceUnitMembers): # "contract X { }\n" (0..15)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X { }\n" (0..15)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (name꞉ Identifier): "X" # (9..10)
+              - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (LeadingTrivia) ► (Whitespace): " " # (12..13)
+              - (close_brace꞉ CloseBrace): "}" # (13..14)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (14..15)
+      - (LeadingTrivia): # "    \n/* new lines after this */\n\n" (15..48)
+          - (Whitespace): "    " # (15..19)
+          - (EndOfLine): "\n" # (19..20)
+          - (MultilineComment): "/* new lines after this */" # (20..46)
+          - (EndOfLine): "\n" # (46..47)
+          - (EndOfLine): "\n" # (47..48)
+      - (SKIPPED): "unexpectedchars\n" # (48..64)

@@ -6,6 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..5 "int32"
-      - (variant) ElementaryType: # 0..5 "int32"
-          - (variant) IntKeyword: "int32" # 0..5
+  - (TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int32" # (0..5)

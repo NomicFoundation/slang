@@ -18,15 +18,16 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..31 "  constructor"
-          - (item) ContractMember: # 18..31 "  constructor"
-              - (variant) StateVariableDefinition: # 18..31 "  constructor"
-                  - (type_name) TypeName: # 18..31 "  constructor"
-                      - (variant) IdentifierPath: # 18..31 "  constructor"
-                          - (item) Identifier: "constructor" # 20..31
-      - SKIPPED: "() public {\n  }\n" # 31..47
-      - (close_brace) CloseBrace: "}" # 47..48
+  - (ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (0..48)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Sample" # (9..15)
+      - (LeadingTrivia) ► (Whitespace): " " # (15..16)
+      - (open_brace꞉ OpenBrace): "{" # (16..17)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): # "  constructor" (18..31)
+          - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition) ► (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  constructor" (18..31)
+              - (LeadingTrivia) ► (Whitespace): "  " # (18..20)
+              - (item꞉ Identifier): "constructor" # (20..31)
+      - (SKIPPED): "() public {\n  }\n" # (31..47)
+      - (close_brace꞉ CloseBrace): "}" # (47..48)

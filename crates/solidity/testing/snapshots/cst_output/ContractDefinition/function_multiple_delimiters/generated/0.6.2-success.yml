@@ -14,145 +14,143 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..352 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..."
-      - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
-          - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
-      - (contract_keyword) ContractKeyword: "contract" # 32..40
-      - (name) Identifier: "ABC" # 41..44
-      - (open_brace) OpenBrace: "{" # 45..46
-      - (members) ContractMembers: # 47..350 "  function sendValue(address payable recipient, ui..."
-          - (item) ContractMember: # 47..350 "  function sendValue(address payable recipient, ui..."
-              - (variant) FunctionDefinition: # 47..350 "  function sendValue(address payable recipient, ui..."
-                  - (function_keyword) FunctionKeyword: "function" # 49..57
-                  - (name) FunctionName: # 57..67 " sendValue"
-                      - (variant) Identifier: "sendValue" # 58..67
-                  - (parameters) ParametersDeclaration: # 67..110 "(address payable recipient, uint256 amount)"
-                      - (open_paren) OpenParen: "(" # 67..68
-                      - (parameters) Parameters: # 68..109 "address payable recipient, uint256 amount"
-                          - (item) Parameter: # 68..93 "address payable recipient"
-                              - (type_name) TypeName: # 68..83 "address payable"
-                                  - (variant) ElementaryType: # 68..83 "address payable"
-                                      - (variant) AddressType: # 68..83 "address payable"
-                                          - (address_keyword) AddressKeyword: "address" # 68..75
-                                          - (payable_keyword) PayableKeyword: "payable" # 76..83
-                              - (name) Identifier: "recipient" # 84..93
-                          - (separator) Comma: "," # 93..94
-                          - (item) Parameter: # 94..109 " uint256 amount"
-                              - (type_name) TypeName: # 94..102 " uint256"
-                                  - (variant) ElementaryType: # 94..102 " uint256"
-                                      - (variant) UintKeyword: "uint256" # 95..102
-                              - (name) Identifier: "amount" # 103..109
-                      - (close_paren) CloseParen: ")" # 109..110
-                  - (attributes) FunctionAttributes: # 110..119 " internal"
-                      - (item) FunctionAttribute: # 110..119 " internal"
-                          - (variant) InternalKeyword: "internal" # 111..119
-                  - (body) FunctionBody: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
-                      - (variant) Block: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
-                          - (open_brace) OpenBrace: "{" # 120..121
-                          - (statements) Statements: # 122..346 '    require(address(this).balance >= amount, "Addr...'
-                              - (item) Statement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
-                                  - (variant) ExpressionStatement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
-                                      - (expression) Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
-                                          - (variant) FunctionCallExpression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
-                                              - (operand) Expression: # 122..133 "    require"
-                                                  - (variant) Identifier: "require" # 126..133
-                                              - (arguments) ArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
-                                                  - (variant) PositionalArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
-                                                      - (open_paren) OpenParen: "(" # 133..134
-                                                      - (arguments) PositionalArguments: # 134..198 'address(this).balance >= amount, "Address: insuffi...'
-                                                          - (item) Expression: # 134..165 "address(this).balance >= amount"
-                                                              - (variant) ComparisonExpression: # 134..165 "address(this).balance >= amount"
-                                                                  - (left_operand) Expression: # 134..155 "address(this).balance"
-                                                                      - (variant) MemberAccessExpression: # 134..155 "address(this).balance"
-                                                                          - (operand) Expression: # 134..147 "address(this)"
-                                                                              - (variant) FunctionCallExpression: # 134..147 "address(this)"
-                                                                                  - (operand) Expression: # 134..141 "address"
-                                                                                      - (variant) ElementaryType: # 134..141 "address"
-                                                                                          - (variant) AddressType: # 134..141 "address"
-                                                                                              - (address_keyword) AddressKeyword: "address" # 134..141
-                                                                                  - (arguments) ArgumentsDeclaration: # 141..147 "(this)"
-                                                                                      - (variant) PositionalArgumentsDeclaration: # 141..147 "(this)"
-                                                                                          - (open_paren) OpenParen: "(" # 141..142
-                                                                                          - (arguments) PositionalArguments: # 142..146 "this"
-                                                                                              - (item) Expression: # 142..146 "this"
-                                                                                                  - (variant) Identifier: "this" # 142..146
-                                                                                          - (close_paren) CloseParen: ")" # 146..147
-                                                                          - (period) Period: "." # 147..148
-                                                                          - (member) MemberAccess: # 148..155 "balance"
-                                                                              - (variant) Identifier: "balance" # 148..155
-                                                                  - (operator) GreaterThanEqual: ">=" # 156..158
-                                                                  - (right_operand) Expression: # 158..165 " amount"
-                                                                      - (variant) Identifier: "amount" # 159..165
-                                                          - (separator) Comma: "," # 165..166
-                                                          - (item) Expression: # 166..198 ' "Address: insufficient balance"'
-                                                              - (variant) StringExpression: # 166..198 ' "Address: insufficient balance"'
-                                                                  - (variant) AsciiStringLiterals: # 166..198 ' "Address: insufficient balance"'
-                                                                      - (item) AsciiStringLiteral: '"Address: insufficient balance"' # 167..198
-                                                      - (close_paren) CloseParen: ")" # 198..199
-                                      - (semicolon) Semicolon: ";" # 199..200
-                              - (item) Statement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
-                                  - (variant) TupleDeconstructionStatement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
-                                      - (open_paren) OpenParen: "(" # 206..207
-                                      - (elements) TupleDeconstructionElements: # 207..220 "bool success,"
-                                          - (item) TupleDeconstructionElement: # 207..219 "bool success"
-                                              - (member) TupleMember: # 207..219 "bool success"
-                                                  - (variant) TypedTupleMember: # 207..219 "bool success"
-                                                      - (type_name) TypeName: # 207..211 "bool"
-                                                          - (variant) ElementaryType: # 207..211 "bool"
-                                                              - (variant) BoolKeyword: "bool" # 207..211
-                                                      - (name) Identifier: "success" # 212..219
-                                          - (separator) Comma: "," # 219..220
-                                          - (item) TupleDeconstructionElement: [] # 220..220
-                                      - (close_paren) CloseParen: ")" # 221..222
-                                      - (equal) Equal: "=" # 223..224
-                                      - (expression) Expression: # 224..260 ' recipient.call{ value: amount }("")'
-                                          - (variant) FunctionCallExpression: # 224..260 ' recipient.call{ value: amount }("")'
-                                              - (operand) Expression: # 224..239 " recipient.call"
-                                                  - (variant) MemberAccessExpression: # 224..239 " recipient.call"
-                                                      - (operand) Expression: # 224..234 " recipient"
-                                                          - (variant) Identifier: "recipient" # 225..234
-                                                      - (period) Period: "." # 234..235
-                                                      - (member) MemberAccess: # 235..239 "call"
-                                                          - (variant) Identifier: "call" # 235..239
-                                              - (options) FunctionCallOptions: # 239..256 "{ value: amount }"
-                                                  - (variant) NamedArgumentGroups: # 239..256 "{ value: amount }"
-                                                      - (item) NamedArgumentGroup: # 239..256 "{ value: amount }"
-                                                          - (open_brace) OpenBrace: "{" # 239..240
-                                                          - (arguments) NamedArguments: # 240..254 " value: amount"
-                                                              - (item) NamedArgument: # 240..254 " value: amount"
-                                                                  - (name) Identifier: "value" # 241..246
-                                                                  - (colon) Colon: ":" # 246..247
-                                                                  - (value) Expression: # 247..254 " amount"
-                                                                      - (variant) Identifier: "amount" # 248..254
-                                                          - (close_brace) CloseBrace: "}" # 255..256
-                                              - (arguments) ArgumentsDeclaration: # 256..260 '("")'
-                                                  - (variant) PositionalArgumentsDeclaration: # 256..260 '("")'
-                                                      - (open_paren) OpenParen: "(" # 256..257
-                                                      - (arguments) PositionalArguments: # 257..259 '""'
-                                                          - (item) Expression: # 257..259 '""'
-                                                              - (variant) StringExpression: # 257..259 '""'
-                                                                  - (variant) AsciiStringLiterals: # 257..259 '""'
-                                                                      - (item) AsciiStringLiteral: '""' # 257..259
-                                                      - (close_paren) CloseParen: ")" # 259..260
-                                      - (semicolon) Semicolon: ";" # 260..261
-                              - (item) Statement: # 262..346 '    require(success, "Address: unable to send valu...'
-                                  - (variant) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'
-                                      - (expression) Expression: # 262..344 '    require(success, "Address: unable to send valu...'
-                                          - (variant) FunctionCallExpression: # 262..344 '    require(success, "Address: unable to send valu...'
-                                              - (operand) Expression: # 262..273 "    require"
-                                                  - (variant) Identifier: "require" # 266..273
-                                              - (arguments) ArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
-                                                  - (variant) PositionalArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
-                                                      - (open_paren) OpenParen: "(" # 273..274
-                                                      - (arguments) PositionalArguments: # 274..343 'success, "Address: unable to send value, recipient...'
-                                                          - (item) Expression: # 274..281 "success"
-                                                              - (variant) Identifier: "success" # 274..281
-                                                          - (separator) Comma: "," # 281..282
-                                                          - (item) Expression: # 282..343 ' "Address: unable to send value, recipient may hav...'
-                                                              - (variant) StringExpression: # 282..343 ' "Address: unable to send value, recipient may hav...'
-                                                                  - (variant) AsciiStringLiterals: # 282..343 ' "Address: unable to send value, recipient may hav...'
-                                                                      - (item) AsciiStringLiteral: '"Address: unable to send value, recipient may have...' # 283..343
-                                                      - (close_paren) CloseParen: ")" # 343..344
-                                      - (semicolon) Semicolon: ";" # 344..345
-                          - (close_brace) CloseBrace: "}" # 348..349
-      - (close_brace) CloseBrace: "}" # 350..351
+  - (ContractDefinition): # "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..." (0..352)
+      - (LeadingTrivia): # "// SPDX-License-Identifier: MIT\n" (0..32)
+          - (SingleLineComment): "// SPDX-License-Identifier: MIT" # (0..31)
+          - (EndOfLine): "\n" # (31..32)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (32..40)
+      - (LeadingTrivia) ► (Whitespace): " " # (40..41)
+      - (name꞉ Identifier): "ABC" # (41..44)
+      - (LeadingTrivia) ► (Whitespace): " " # (44..45)
+      - (open_brace꞉ OpenBrace): "{" # (45..46)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (46..47)
+      - (members꞉ ContractMembers): # "  function sendValue(address payable recipient, ui..." (47..350)
+          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "  function sendValue(address payable recipient, ui..." (47..350)
+              - (LeadingTrivia) ► (Whitespace): "  " # (47..49)
+              - (function_keyword꞉ FunctionKeyword): "function" # (49..57)
+              - (name꞉ FunctionName): # " sendValue" (57..67)
+                  - (LeadingTrivia) ► (Whitespace): " " # (57..58)
+                  - (variant꞉ Identifier): "sendValue" # (58..67)
+              - (parameters꞉ ParametersDeclaration): # "(address payable recipient, uint256 amount)" (67..110)
+                  - (open_paren꞉ OpenParen): "(" # (67..68)
+                  - (parameters꞉ Parameters): # "address payable recipient, uint256 amount" (68..109)
+                      - (item꞉ Parameter): # "address payable recipient" (68..93)
+                          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "address payable" (68..83)
+                              - (address_keyword꞉ AddressKeyword): "address" # (68..75)
+                              - (LeadingTrivia) ► (Whitespace): " " # (75..76)
+                              - (payable_keyword꞉ PayableKeyword): "payable" # (76..83)
+                          - (LeadingTrivia) ► (Whitespace): " " # (83..84)
+                          - (name꞉ Identifier): "recipient" # (84..93)
+                      - (separator꞉ Comma): "," # (93..94)
+                      - (item꞉ Parameter): # " uint256 amount" (94..109)
+                          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # " uint256" (94..102)
+                              - (LeadingTrivia) ► (Whitespace): " " # (94..95)
+                              - (variant꞉ UintKeyword): "uint256" # (95..102)
+                          - (LeadingTrivia) ► (Whitespace): " " # (102..103)
+                          - (name꞉ Identifier): "amount" # (103..109)
+                  - (close_paren꞉ CloseParen): ")" # (109..110)
+              - (attributes꞉ FunctionAttributes): # " internal" (110..119)
+                  - (item꞉ FunctionAttribute): # " internal" (110..119)
+                      - (LeadingTrivia) ► (Whitespace): " " # (110..111)
+                      - (variant꞉ InternalKeyword): "internal" # (111..119)
+              - (body꞉ FunctionBody) ► (variant꞉ Block): # ' {\n    require(address(this).balance >= amount, "A...' (119..350)
+                  - (LeadingTrivia) ► (Whitespace): " " # (119..120)
+                  - (open_brace꞉ OpenBrace): "{" # (120..121)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (121..122)
+                  - (statements꞉ Statements): # '    require(address(this).balance >= amount, "Addr...' (122..346)
+                      - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    require(address(this).balance >= amount, "Addr...' (122..201)
+                          - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # '    require(address(this).balance >= amount, "Addr...' (122..199)
+                              - (operand꞉ Expression): # "    require" (122..133)
+                                  - (LeadingTrivia) ► (Whitespace): "    " # (122..126)
+                                  - (variant꞉ Identifier): "require" # (126..133)
+                              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # '(address(this).balance >= amount, "Address: insuff...' (133..199)
+                                  - (open_paren꞉ OpenParen): "(" # (133..134)
+                                  - (arguments꞉ PositionalArguments): # 'address(this).balance >= amount, "Address: insuffi...' (134..198)
+                                      - (item꞉ Expression) ► (variant꞉ ComparisonExpression): # "address(this).balance >= amount" (134..165)
+                                          - (left_operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "address(this).balance" (134..155)
+                                              - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # "address(this)" (134..147)
+                                                  - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (134..141)
+                                                  - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(this)" (141..147)
+                                                      - (open_paren꞉ OpenParen): "(" # (141..142)
+                                                      - (arguments꞉ PositionalArguments): # "this" (142..146)
+                                                          - (item꞉ Expression) ► (variant꞉ Identifier): "this" # (142..146)
+                                                      - (close_paren꞉ CloseParen): ")" # (146..147)
+                                              - (period꞉ Period): "." # (147..148)
+                                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "balance" # (148..155)
+                                          - (LeadingTrivia) ► (Whitespace): " " # (155..156)
+                                          - (operator꞉ GreaterThanEqual): ">=" # (156..158)
+                                          - (right_operand꞉ Expression): # " amount" (158..165)
+                                              - (LeadingTrivia) ► (Whitespace): " " # (158..159)
+                                              - (variant꞉ Identifier): "amount" # (159..165)
+                                      - (separator꞉ Comma): "," # (165..166)
+                                      - (item꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ AsciiStringLiterals): # ' "Address: insufficient balance"' (166..198)
+                                          - (LeadingTrivia) ► (Whitespace): " " # (166..167)
+                                          - (item꞉ AsciiStringLiteral): '"Address: insufficient balance"' # (167..198)
+                                  - (close_paren꞉ CloseParen): ")" # (198..199)
+                          - (semicolon꞉ Semicolon): ";" # (199..200)
+                          - (TrailingTrivia) ► (EndOfLine): "\n" # (200..201)
+                      - (item꞉ Statement) ► (variant꞉ TupleDeconstructionStatement): # "\n    (bool success, ) = recipient.call{ value: amo..." (201..262)
+                          - (LeadingTrivia): # "\n    " (201..206)
+                              - (EndOfLine): "\n" # (201..202)
+                              - (Whitespace): "    " # (202..206)
+                          - (open_paren꞉ OpenParen): "(" # (206..207)
+                          - (elements꞉ TupleDeconstructionElements): # "bool success," (207..220)
+                              - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # "bool success" (207..219)
+                                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BoolKeyword): "bool" # (207..211)
+                                  - (LeadingTrivia) ► (Whitespace): " " # (211..212)
+                                  - (name꞉ Identifier): "success" # (212..219)
+                              - (separator꞉ Comma): "," # (219..220)
+                              - (item꞉ TupleDeconstructionElement): [] # (220..220)
+                          - (LeadingTrivia) ► (Whitespace): " " # (220..221)
+                          - (close_paren꞉ CloseParen): ")" # (221..222)
+                          - (LeadingTrivia) ► (Whitespace): " " # (222..223)
+                          - (equal꞉ Equal): "=" # (223..224)
+                          - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # ' recipient.call{ value: amount }("")' (224..260)
+                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # " recipient.call" (224..239)
+                                  - (operand꞉ Expression): # " recipient" (224..234)
+                                      - (LeadingTrivia) ► (Whitespace): " " # (224..225)
+                                      - (variant꞉ Identifier): "recipient" # (225..234)
+                                  - (period꞉ Period): "." # (234..235)
+                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (235..239)
+                              - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroups): # "{ value: amount }" (239..256)
+                                  - (item꞉ NamedArgumentGroup): # "{ value: amount }" (239..256)
+                                      - (open_brace꞉ OpenBrace): "{" # (239..240)
+                                      - (arguments꞉ NamedArguments): # " value: amount" (240..254)
+                                          - (item꞉ NamedArgument): # " value: amount" (240..254)
+                                              - (LeadingTrivia) ► (Whitespace): " " # (240..241)
+                                              - (name꞉ Identifier): "value" # (241..246)
+                                              - (colon꞉ Colon): ":" # (246..247)
+                                              - (value꞉ Expression): # " amount" (247..254)
+                                                  - (LeadingTrivia) ► (Whitespace): " " # (247..248)
+                                                  - (variant꞉ Identifier): "amount" # (248..254)
+                                      - (LeadingTrivia) ► (Whitespace): " " # (254..255)
+                                      - (close_brace꞉ CloseBrace): "}" # (255..256)
+                              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # '("")' (256..260)
+                                  - (open_paren꞉ OpenParen): "(" # (256..257)
+                                  - (arguments꞉ PositionalArguments): # '""' (257..259)
+                                      - (item꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ AsciiStringLiterals): # '""' (257..259)
+                                          - (item꞉ AsciiStringLiteral): '""' # (257..259)
+                                  - (close_paren꞉ CloseParen): ")" # (259..260)
+                          - (semicolon꞉ Semicolon): ";" # (260..261)
+                          - (TrailingTrivia) ► (EndOfLine): "\n" # (261..262)
+                      - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    require(success, "Address: unable to send valu...' (262..346)
+                          - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # '    require(success, "Address: unable to send valu...' (262..344)
+                              - (operand꞉ Expression): # "    require" (262..273)
+                                  - (LeadingTrivia) ► (Whitespace): "    " # (262..266)
+                                  - (variant꞉ Identifier): "require" # (266..273)
+                              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # '(success, "Address: unable to send value, recipien...' (273..344)
+                                  - (open_paren꞉ OpenParen): "(" # (273..274)
+                                  - (arguments꞉ PositionalArguments): # 'success, "Address: unable to send value, recipient...' (274..343)
+                                      - (item꞉ Expression) ► (variant꞉ Identifier): "success" # (274..281)
+                                      - (separator꞉ Comma): "," # (281..282)
+                                      - (item꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ AsciiStringLiterals): # ' "Address: unable to send value, recipient may hav...' (282..343)
+                                          - (LeadingTrivia) ► (Whitespace): " " # (282..283)
+                                          - (item꞉ AsciiStringLiteral): '"Address: unable to send value, recipient may have...' # (283..343)
+                                  - (close_paren꞉ CloseParen): ")" # (343..344)
+                          - (semicolon꞉ Semicolon): ";" # (344..345)
+                          - (TrailingTrivia) ► (EndOfLine): "\n" # (345..346)
+                  - (LeadingTrivia) ► (Whitespace): "  " # (346..348)
+                  - (close_brace꞉ CloseBrace): "}" # (348..349)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (349..350)
+      - (close_brace꞉ CloseBrace): "}" # (350..351)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (351..352)

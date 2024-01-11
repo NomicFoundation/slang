@@ -65,6 +65,11 @@ impl RuleNode {
             .cursor_with_offset((&text_offset).into())
             .into()
     }
+
+    #[napi(catch_unwind)]
+    pub fn unparse(&self) -> String {
+        self.0.clone().unparse()
+    }
 }
 
 #[napi(namespace = "cst")]

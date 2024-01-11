@@ -14,7 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - UsingDeconstructionSymbol: # 0..8 "foo as /"
-      - (name) IdentifierPath: # 0..3 "foo"
-          - (item) Identifier: "foo" # 0..3
-      - SKIPPED: "as /" # 4..8
+  - (UsingDeconstructionSymbol): # "foo as /" (0..8)
+      - (name꞉ IdentifierPath): # "foo" (0..3)
+          - (item꞉ Identifier): "foo" # (0..3)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (SKIPPED): "as /" # (4..8)

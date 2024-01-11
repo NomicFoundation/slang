@@ -16,16 +16,20 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..27 "contract Test {\n  field;\n}\n"
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Test" # 9..13
-      - (open_brace) OpenBrace: "{" # 14..15
-      - (members) ContractMembers: # 16..25 "  field;\n"
-          - (item) ContractMember: # 16..25 "  field;\n"
-              - (variant) StateVariableDefinition: # 16..25 "  field;\n"
-                  - (type_name) TypeName: # 16..23 "  field"
-                      - (variant) IdentifierPath: # 16..23 "  field"
-                          - (item) Identifier: "field" # 18..23
-                  - SKIPPED: "" # 23..23
-                  - (semicolon) Semicolon: ";" # 23..24
-      - (close_brace) CloseBrace: "}" # 25..26
+  - (ContractDefinition): # "contract Test {\n  field;\n}\n" (0..27)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Test" # (9..13)
+      - (LeadingTrivia) ► (Whitespace): " " # (13..14)
+      - (open_brace꞉ OpenBrace): "{" # (14..15)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (15..16)
+      - (members꞉ ContractMembers): # "  field;\n" (16..25)
+          - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  field;\n" (16..25)
+              - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  field" (16..23)
+                  - (LeadingTrivia) ► (Whitespace): "  " # (16..18)
+                  - (item꞉ Identifier): "field" # (18..23)
+              - (SKIPPED): "" # (23..23)
+              - (semicolon꞉ Semicolon): ";" # (23..24)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (24..25)
+      - (close_brace꞉ CloseBrace): "}" # (25..26)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (26..27)

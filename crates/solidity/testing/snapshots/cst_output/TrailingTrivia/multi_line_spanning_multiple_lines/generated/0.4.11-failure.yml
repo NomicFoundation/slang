@@ -16,6 +16,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - TrailingTrivia: # 0..19 " /* some\ncomment*/\n"
-      - Whitespace: " " # 0..1
-      - SKIPPED: "/* some\ncomment*/\n" # 1..19
+  - (TrailingTrivia): # " /* some\ncomment*/\n" (0..19)
+      - (Whitespace): " " # (0..1)
+      - (SKIPPED): "/* some\ncomment*/\n" # (1..19)

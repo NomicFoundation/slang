@@ -6,5 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..6 "finney"
-      - (variant) Identifier: "finney" # 0..6
+  - (Expression) ► (variant꞉ Identifier): "finney" # (0..6)

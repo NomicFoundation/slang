@@ -14,9 +14,10 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - UsingDeconstructionSymbol: # 0..12 "foo.bar as /"
-      - (name) IdentifierPath: # 0..7 "foo.bar"
-          - (item) Identifier: "foo" # 0..3
-          - (separator) Period: "." # 3..4
-          - (item) Identifier: "bar" # 4..7
-      - SKIPPED: "as /" # 8..12
+  - (UsingDeconstructionSymbol): # "foo.bar as /" (0..12)
+      - (name꞉ IdentifierPath): # "foo.bar" (0..7)
+          - (item꞉ Identifier): "foo" # (0..3)
+          - (separator꞉ Period): "." # (3..4)
+          - (item꞉ Identifier): "bar" # (4..7)
+      - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+      - (SKIPPED): "as /" # (8..12)

@@ -6,18 +6,19 @@ Source: >
 Errors: []
 
 Tree:
-  - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
-      - (mapping_keyword) MappingKeyword: "mapping" # 0..7
-      - (open_paren) OpenParen: "(" # 7..8
-      - (key_type) MappingKey: # 8..18 "string Foo"
-          - (key_type) MappingKeyType: # 8..14 "string"
-              - (variant) ElementaryType: # 8..14 "string"
-                  - (variant) StringKeyword: "string" # 8..14
-          - (name) Identifier: "Foo" # 15..18
-      - (equal_greater_than) EqualGreaterThan: "=>" # 19..21
-      - (value_type) MappingValue: # 21..33 " bytes32 Bar"
-          - (type_name) TypeName: # 21..29 " bytes32"
-              - (variant) ElementaryType: # 21..29 " bytes32"
-                  - (variant) BytesKeyword: "bytes32" # 22..29
-          - (name) Identifier: "Bar" # 30..33
-      - (close_paren) CloseParen: ")" # 33..34
+  - (MappingType): # "mapping(string Foo => bytes32 Bar)" (0..34)
+      - (mapping_keyword꞉ MappingKeyword): "mapping" # (0..7)
+      - (open_paren꞉ OpenParen): "(" # (7..8)
+      - (key_type꞉ MappingKey): # "string Foo" (8..18)
+          - (key_type꞉ MappingKeyType) ► (variant꞉ ElementaryType) ► (variant꞉ StringKeyword): "string" # (8..14)
+          - (LeadingTrivia) ► (Whitespace): " " # (14..15)
+          - (name꞉ Identifier): "Foo" # (15..18)
+      - (LeadingTrivia) ► (Whitespace): " " # (18..19)
+      - (equal_greater_than꞉ EqualGreaterThan): "=>" # (19..21)
+      - (value_type꞉ MappingValue): # " bytes32 Bar" (21..33)
+          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # " bytes32" (21..29)
+              - (LeadingTrivia) ► (Whitespace): " " # (21..22)
+              - (variant꞉ BytesKeyword): "bytes32" # (22..29)
+          - (LeadingTrivia) ► (Whitespace): " " # (29..30)
+          - (name꞉ Identifier): "Bar" # (30..33)
+      - (close_paren꞉ CloseParen): ")" # (33..34)

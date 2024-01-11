@@ -6,12 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - ConditionalExpression: # 0..18 "foo ? true : false"
-      - (operand) Expression: # 0..3 "foo"
-          - (variant) Identifier: "foo" # 0..3
-      - (question_mark) QuestionMark: "?" # 4..5
-      - (true_expression) Expression: # 5..10 " true"
-          - (variant) TrueKeyword: "true" # 6..10
-      - (colon) Colon: ":" # 11..12
-      - (false_expression) Expression: # 12..18 " false"
-          - (variant) FalseKeyword: "false" # 13..18
+  - (ConditionalExpression): # "foo ? true : false" (0..18)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (question_mark꞉ QuestionMark): "?" # (4..5)
+      - (true_expression꞉ Expression): # " true" (5..10)
+          - (LeadingTrivia) ► (Whitespace): " " # (5..6)
+          - (variant꞉ TrueKeyword): "true" # (6..10)
+      - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+      - (colon꞉ Colon): ":" # (11..12)
+      - (false_expression꞉ Expression): # " false" (12..18)
+          - (LeadingTrivia) ► (Whitespace): " " # (12..13)
+          - (variant꞉ FalseKeyword): "false" # (13..18)
