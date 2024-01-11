@@ -1,3 +1,5 @@
+use std::io::IsTerminal;
+
 use anyhow::{Ok, Result};
 use clap::ValueEnum;
 use owo_colors::colors::{BrightBlue, BrightGreen, BrightRed};
@@ -59,6 +61,10 @@ impl Terminal {
     fn banner<C: Color>(title: impl Into<String>) {
         const DEFAULT_WIDTH: usize = 100;
         const BANNER_GLYPHS: usize = 6; // "╾┤  ├╼"
+
+        if !std::io::stdout().is_terminal() {
+            return;
+        }
 
         let title = title.into();
 
