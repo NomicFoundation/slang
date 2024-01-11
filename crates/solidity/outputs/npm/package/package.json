@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/slang",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.",
   "homepage": "https://nomicfoundation.github.io/slang/",
   "license": "MIT",
@@ -32,15 +32,15 @@
     "@napi-rs/cli": "2.16.1"
   },
   "optionalDependencies": {
-    "@nomicfoundation/slang-darwin-arm64": "0.12.0",
-    "@nomicfoundation/slang-win32-arm64-msvc": "0.12.0",
-    "@nomicfoundation/slang-linux-arm64-gnu": "0.12.0",
-    "@nomicfoundation/slang-linux-arm64-musl": "0.12.0",
-    "@nomicfoundation/slang-win32-ia32-msvc": "0.12.0",
-    "@nomicfoundation/slang-darwin-x64": "0.12.0",
-    "@nomicfoundation/slang-win32-x64-msvc": "0.12.0",
-    "@nomicfoundation/slang-linux-x64-gnu": "0.12.0",
-    "@nomicfoundation/slang-linux-x64-musl": "0.12.0"
+    "@nomicfoundation/slang-darwin-arm64": "0.13.0",
+    "@nomicfoundation/slang-win32-arm64-msvc": "0.13.0",
+    "@nomicfoundation/slang-linux-arm64-gnu": "0.13.0",
+    "@nomicfoundation/slang-linux-arm64-musl": "0.13.0",
+    "@nomicfoundation/slang-win32-ia32-msvc": "0.13.0",
+    "@nomicfoundation/slang-darwin-x64": "0.13.0",
+    "@nomicfoundation/slang-win32-x64-msvc": "0.13.0",
+    "@nomicfoundation/slang-linux-x64-gnu": "0.13.0",
+    "@nomicfoundation/slang-linux-x64-musl": "0.13.0"
   },
   "napi": {
     "triples": {
