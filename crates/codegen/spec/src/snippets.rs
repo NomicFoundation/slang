@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use codegen_ebnf::EbnfSerializer;
+use codegen_ebnf::legacy::EbnfSerializer;
 use codegen_schema::types::{
     LanguageDefinitionRef, LanguageSection, LanguageTopic, ProductionDefinition, ProductionRef,
     VersionMap,

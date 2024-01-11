@@ -7,7 +7,7 @@
 //!
 //! and the auxiliary snippet files included by the grammar mkdocs pages.
 //!
-//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the pages in a given [`Codegen`] context.
+//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the specification pages for a given language.
 mod grammar;
 mod markdown;
 mod navigation;
@@ -18,7 +18,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_schema::types::LanguageDefinitionRef;
-use infra_utils::codegen::Codegen;
+use infra_utils::codegen::CodegenWriteOnly;
 
 use crate::grammar::{generate_grammar_dir, generate_supported_versions_page};
 use crate::navigation::NavigationEntry;
@@ -28,15 +28,13 @@ use crate::snippets::Snippets;
 /// Extension trait for [`LanguageDefinitionRef`] that generates the specification files.
 pub trait SpecGeneratorExtensions {
     /// Generates the specification files in `output_dir`.
-    fn generate_spec(&self, output_dir: &Path) -> Result<()>;
+    fn generate_spec(&self, codegen: &mut CodegenWriteOnly, output_dir: &Path) -> Result<()>;
 }
 
 impl SpecGeneratorExtensions for LanguageDefinitionRef {
-    fn generate_spec(&self, output_dir: &Path) -> Result<()> {
-        let mut codegen = Codegen::write_only()?;
-
+    fn generate_spec(&self, codegen: &mut CodegenWriteOnly, output_dir: &Path) -> Result<()> {
         let snippets = Snippets::new(self, output_dir);
-        snippets.write_files(&mut codegen)?;
+        snippets.write_files(codegen)?;
 
         let root_entry = NavigationEntry::Directory {
             title: format!("{title} Specification", title = self.title),
@@ -48,6 +46,6 @@ impl SpecGeneratorExtensions for LanguageDefinitionRef {
             ],
         };
 
-        root_entry.write_files(&mut codegen, output_dir)
+        root_entry.write_files(codegen, output_dir)
     }
 }

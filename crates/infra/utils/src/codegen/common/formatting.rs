@@ -25,6 +25,7 @@ fn generate_header(file_path: &Path) -> String {
         "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path) {
+        "ebnf" => format!("(* {warning_line} *)"),
         "json" => String::new(),
         "html" | "md" => format!("<!-- {warning_line} -->"),
         "js" | "rs" | "ts" => format!("// {warning_line}"),
@@ -51,7 +52,7 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
             // We already generate formatted content for these, so no need to run expensive formatting.
             Ok(contents.to_owned())
         }
-        "zsh-completions" => {
+        "ebnf" | "zsh-completions" => {
             // No formatters available for these (yet).
             Ok(contents.to_owned())
         }
