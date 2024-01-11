@@ -154,8 +154,13 @@ impl<'t, W: EbnfWriter> Serializer<'t, W> {
     }
 
     fn serialize_identifier(&mut self, name: &str) {
-        let value = &self.model.entries[name].ebnf_id;
-        self.writer.write_identifier(value, name);
+        let entry = self
+            .model
+            .entries
+            .get(name)
+            .unwrap_or_else(|| panic!("Entry not defined: '{name}'."));
+
+        self.writer.write_identifier(&entry.ebnf_id, name);
     }
 
     fn serialize_punctuation(&mut self, value: &str) {

@@ -23,15 +23,15 @@ impl Builder {
 
         for item in language.items() {
             match item {
-                Item::Struct { item } => builder.build_struct_item(item),
-                Item::Enum { item } => builder.build_enum_item(item),
-                Item::Repeated { item } => builder.build_repeated_item(item),
-                Item::Separated { item } => builder.build_separated_item(item),
-                Item::Precedence { item } => builder.build_precedence_item(item),
-                Item::Trivia { item } => builder.build_trivia_item(item),
-                Item::Keyword { item } => builder.build_keyword_item(item),
-                Item::Token { item } => builder.build_token_item(item),
-                Item::Fragment { item } => builder.build_fragment_item(item),
+                Item::Struct { item } => builder.add_struct_item(item),
+                Item::Enum { item } => builder.add_enum_item(item),
+                Item::Repeated { item } => builder.add_repeated_item(item),
+                Item::Separated { item } => builder.add_separated_item(item),
+                Item::Precedence { item } => builder.add_precedence_item(item),
+                Item::Trivia { item } => builder.add_trivia_item(item),
+                Item::Keyword { item } => builder.add_keyword_item(item),
+                Item::Token { item } => builder.add_token_item(item),
+                Item::Fragment { item } => builder.add_fragment_item(item),
             };
         }
 
@@ -80,7 +80,7 @@ impl Builder {
             .push(definition);
     }
 
-    fn build_struct_item(&mut self, struct_item: &StructItem) {
+    fn add_struct_item(&mut self, struct_item: &StructItem) {
         let StructItem {
             name,
             enabled,
@@ -92,13 +92,13 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             Self::build_fields(fields),
             DefinitionKind::Sequence,
         );
     }
 
-    fn build_enum_item(&mut self, enum_item: &EnumItem) {
+    fn add_enum_item(&mut self, enum_item: &EnumItem) {
         let EnumItem {
             name,
             enabled,
@@ -108,18 +108,18 @@ impl Builder {
         self.add_entry(name, false, false);
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
-            Value::new(Self::build_ref(reference), Self::build_enabled(enabled))
+            Value::new(Self::build_ref(reference), Self::build_enabled_comment(enabled))
         });
 
         self.add_definition(
             name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             variants,
             DefinitionKind::Choice,
         );
     }
 
-    fn build_repeated_item(&mut self, repeated_item: &RepeatedItem) {
+    fn add_repeated_item(&mut self, repeated_item: &RepeatedItem) {
         let RepeatedItem {
             name,
             reference,
@@ -132,13 +132,13 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             Some(Value::new(expression, None)),
             DefinitionKind::Sequence,
         );
     }
 
-    fn build_separated_item(&mut self, separated_item: &SeparatedItem) {
+    fn add_separated_item(&mut self, separated_item: &SeparatedItem) {
         let SeparatedItem {
             name,
             reference,
@@ -161,13 +161,13 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             Some(Value::new(expression, None)),
             DefinitionKind::Sequence,
         );
     }
 
-    fn build_precedence_item(&mut self, precedence_item: &PrecedenceItem) {
+    fn add_precedence_item(&mut self, precedence_item: &PrecedenceItem) {
         let PrecedenceItem {
             name: base_name,
             enabled,
@@ -187,7 +187,7 @@ impl Builder {
             self.add_entry(name, false, false);
 
             for operator in operators {
-                self.build_precedence_operator(base_name, name, operator);
+                self.add_precedence_operator(base_name, name, operator);
             }
         }
 
@@ -196,19 +196,19 @@ impl Builder {
 
             values.push(Value::new(
                 Self::build_ref(reference),
-                Self::build_enabled(enabled),
+                Self::build_enabled_comment(enabled),
             ));
         }
 
         self.add_definition(
             base_name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             values,
             DefinitionKind::Choice,
         );
     }
 
-    fn build_precedence_operator(
+    fn add_precedence_operator(
         &mut self,
         base_name: &Identifier,
         name: &Identifier,
@@ -249,7 +249,7 @@ impl Builder {
             }
         };
 
-        leading_comments.extend(Self::build_enabled(enabled));
+        leading_comments.extend(Self::build_enabled_comment(enabled));
 
         self.add_definition(name, leading_comments, values, DefinitionKind::Sequence);
     }
@@ -261,13 +261,13 @@ impl Builder {
                 Field::Required { reference } => Value::new(Self::build_ref(reference), None),
                 Field::Optional { reference, enabled } => Value::new(
                     Expression::new_optional(Self::build_ref(reference).into()),
-                    Self::build_enabled(enabled),
+                    Self::build_enabled_comment(enabled),
                 ),
             })
             .collect()
     }
 
-    fn build_trivia_item(&mut self, trivia_item: &TriviaItem) {
+    fn add_trivia_item(&mut self, trivia_item: &TriviaItem) {
         let TriviaItem { name, scanner } = trivia_item;
 
         self.add_entry(name, true, false);
@@ -280,7 +280,7 @@ impl Builder {
         );
     }
 
-    fn build_keyword_item(&mut self, keyword_item: &KeywordItem) {
+    fn add_keyword_item(&mut self, keyword_item: &KeywordItem) {
         let KeywordItem {
             name,
             identifier: _,
@@ -297,8 +297,8 @@ impl Builder {
         {
             let mut leading_comments = vec![];
 
-            leading_comments.extend(Self::build_enabled(enabled));
-            leading_comments.extend(Self::build_reserved(reserved));
+            leading_comments.extend(Self::build_enabled_comment(enabled));
+            leading_comments.extend(Self::build_reserved_comment(reserved));
 
             self.add_definition(
                 name,
@@ -309,7 +309,7 @@ impl Builder {
         }
     }
 
-    fn build_token_item(&mut self, token_item: &TokenItem) {
+    fn add_token_item(&mut self, token_item: &TokenItem) {
         let TokenItem { name, definitions } = token_item;
 
         self.add_entry(name, true, false);
@@ -317,14 +317,14 @@ impl Builder {
         for TokenDefinition { enabled, scanner } in definitions {
             self.add_definition(
                 name,
-                Self::build_enabled(enabled),
+                Self::build_enabled_comment(enabled),
                 Some(Value::new(Self::build_scanner(scanner), None)),
                 DefinitionKind::Sequence,
             );
         }
     }
 
-    fn build_fragment_item(&mut self, fragment_item: &FragmentItem) {
+    fn add_fragment_item(&mut self, fragment_item: &FragmentItem) {
         let FragmentItem {
             name,
             enabled,
@@ -335,7 +335,7 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled(enabled),
+            Self::build_enabled_comment(enabled),
             Some(Value::new(Self::build_scanner(scanner), None)),
             DefinitionKind::Sequence,
         );
@@ -356,7 +356,7 @@ impl Builder {
         }
     }
 
-    fn build_reserved(reserved: &Option<VersionSpecifier>) -> Option<String> {
+    fn build_reserved_comment(reserved: &Option<VersionSpecifier>) -> Option<String> {
         match reserved {
             None => None,
             Some(VersionSpecifier::Never) => Some("Never reserved".to_string()),
@@ -368,7 +368,7 @@ impl Builder {
         }
     }
 
-    fn build_enabled(enabled: &Option<VersionSpecifier>) -> Option<String> {
+    fn build_enabled_comment(enabled: &Option<VersionSpecifier>) -> Option<String> {
         match enabled {
             None => None,
             Some(VersionSpecifier::Never) => None,
