@@ -1,5 +1,6 @@
 mod check;
 mod ci;
+mod completions;
 mod lint;
 mod publish;
 mod run;
@@ -12,6 +13,7 @@ use clap::{Parser, Subcommand};
 
 use crate::commands::check::CheckController;
 use crate::commands::ci::CiController;
+use crate::commands::completions::CompletionController;
 use crate::commands::lint::LintController;
 use crate::commands::publish::PublishController;
 use crate::commands::run::RunController;
@@ -52,6 +54,8 @@ enum AppCommand {
     Watch(WatchController),
     /// Publish different artifacts from this repository.
     Publish(PublishController),
+    /// Generate shell completions for this CLI.
+    Completions(CompletionController),
 }
 
 impl CLI {
@@ -65,6 +69,7 @@ impl CLI {
             AppCommand::Run(command) => command.execute(),
             AppCommand::Watch(command) => command.execute(),
             AppCommand::Publish(command) => command.execute(),
+            AppCommand::Completions(command) => command.execute(),
         }
     }
 }

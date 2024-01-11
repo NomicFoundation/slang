@@ -103,6 +103,13 @@ github-release\:"Publish a new release in the GitHub repository"
 lock-files\:"Publish updated lock files to a PR for review"))' \
 && ret=0
 ;;
+(completions)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+':shell -- The shell to generate the completions for:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" \
 ":: :_infra__help_commands" \
@@ -147,6 +154,10 @@ _arguments "${_arguments_options[@]}" \
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
+(completions)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" \
 && ret=0
@@ -171,6 +182,7 @@ _infra_commands() {
 'run:Run specific local binaries within this repository, forwarding any additional arguments along' \
 'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
+'completions:Generate shell completions for this CLI' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'infra commands' commands "$@"
@@ -195,6 +207,16 @@ _infra__help__ci_commands() {
     local commands; commands=()
     _describe -t commands 'infra help ci commands' commands "$@"
 }
+(( $+functions[_infra__completions_commands] )) ||
+_infra__completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'infra completions commands' commands "$@"
+}
+(( $+functions[_infra__help__completions_commands] )) ||
+_infra__help__completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'infra help completions commands' commands "$@"
+}
 (( $+functions[_infra__help_commands] )) ||
 _infra__help_commands() {
     local commands; commands=(
@@ -206,6 +228,7 @@ _infra__help_commands() {
 'run:Run specific local binaries within this repository, forwarding any additional arguments along' \
 'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
+'completions:Generate shell completions for this CLI' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'infra help commands' commands "$@"
