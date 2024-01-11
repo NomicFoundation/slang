@@ -1,6 +1,6 @@
 use codegen_schema::types::{ScannerDefinition, ScannerRef};
 
-use crate::nodes::EbnfNode;
+use crate::legacy::nodes::EbnfNode;
 
 impl EbnfNode {
     pub fn from_scanner(scanner: &ScannerRef) -> Self {

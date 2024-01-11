@@ -381,7 +381,9 @@ name = "codegen_ebnf"
 version = "0.13.0"
 dependencies = [
  "Inflector",
+ "codegen_language_definition",
  "codegen_schema",
+ "derive-new",
  "indexmap 1.9.3",
  "semver",
 ]
@@ -628,6 +630,17 @@ name = "deranged"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7684a49fb1af197853ef7b2ee694bc1f5b4179556f1e5710e1760c5db6f5e929"
+
+[[package]]
+name = "derive-new"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d150dea618e920167e5973d70ae6ece4385b7164e0d799fe7c122dd0a5d912ad"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.29",
+]
 
 [[package]]
 name = "deunicode"
@@ -2120,6 +2133,8 @@ name = "solidity_spec"
 version = "0.13.0"
 dependencies = [
  "anyhow",
+ "codegen_ebnf",
+ "codegen_language_definition",
  "codegen_schema",
  "codegen_spec",
  "infra_utils",

@@ -1,6 +1,6 @@
 use codegen_schema::types::{ParserDefinition, ParserRef};
 
-use crate::nodes::EbnfNode;
+use crate::legacy::nodes::EbnfNode;
 
 impl EbnfNode {
     pub fn from_parser(parser: &ParserRef) -> Self {

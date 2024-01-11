@@ -73,6 +73,7 @@ cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
 clap = { version = "4.1.13", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.3.2" }
+derive-new = { version = "0.6.0" }
 ignore = { version = "0.4.20" }
 indexmap = { version = "1.9.2", features = ["serde"] }
 indicatif = { version = "0.17.3" }

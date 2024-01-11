@@ -5,7 +5,7 @@ use indexmap::IndexMap;
 use inflector::Inflector;
 use semver::Version;
 
-use crate::nodes::EbnfNode;
+use crate::legacy::nodes::EbnfNode;
 
 const MAX_LINE_WIDTH: usize = 80;
 
