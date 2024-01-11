@@ -15,6 +15,6 @@ fn multi_line_without_newline() -> Result<()> {
 }
 
 #[test]
-fn only_single_comment() -> Result<()> {
-    run("TrailingTrivia", "only_single_comment")
+fn only_until_newline() -> Result<()> {
+    run("TrailingTrivia", "only_until_newline")
 }
