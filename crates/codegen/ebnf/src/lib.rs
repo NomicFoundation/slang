@@ -35,7 +35,7 @@ impl EbnfModel {
 /// There can be many consumers that want to serialize EBNF, but they fall into two categories:
 ///
 /// - The general use case: serializing to a plain string, for doc comments, or plain `.ebnf` files.
-/// - More specialized use cases: like syntax highlighting in the human readable spec, that uses '<span>' and '<a>' HTML tags.
+/// - More specialized use cases: like syntax highlighting in the human readable spec, that uses 'span' and 'a' HTML tags.
 ///
 /// For the general use case, we introduce the reusable [`PlainEbnfWriter`] implementation below.
 pub trait EbnfWriter {

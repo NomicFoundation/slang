@@ -48,6 +48,12 @@ fn generate_language_ebnf(
             writeln!(buffer, "(* {section_i}.{topic_i}. {topic_title}: *)")?;
             writeln!(buffer)?;
 
+            if topic.items.is_empty() {
+                writeln!(buffer, "(* No items *)")?;
+                writeln!(buffer)?;
+                continue;
+            }
+
             for item in &topic.items {
                 let mut writer = PlainEbnfWriter::default();
                 ebnf_model.serialize(item.name(), &mut writer)?;
