@@ -33,14 +33,14 @@ fn generate_language_ebnf(
     let ebnf_model = EbnfModel::build(language);
 
     for (section_index, section) in language.sections.iter().enumerate() {
-        writer.buffer.push_str(&format!(
+        writer.write_comment(format!(
             "(*\n * {section_index}. {section_title}:\n *)\n\n",
             section_index = section_index + 1,
             section_title = section.title,
         ));
 
         for (topic_index, topic) in section.topics.iter().enumerate() {
-            writer.buffer.push_str(&format!(
+            writer.write_comment(format!(
                 "(* {section_index}.{topic_index}. {topic_title}: *)\n\n",
                 section_index = section_index + 1,
                 topic_index = topic_index + 1,
