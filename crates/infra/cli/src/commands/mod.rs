@@ -20,6 +20,7 @@ use crate::commands::test::TestController;
 use crate::commands::watch::WatchController;
 
 #[derive(Debug, Parser)]
+#[command(bin_name = "infra")]
 pub struct CLI {
     #[command(subcommand)]
     command: AppCommand,
