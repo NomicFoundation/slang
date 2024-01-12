@@ -1,7 +1,13 @@
+use std::iter::once;
+use std::path::Path;
+
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
+use infra_utils::git::TemporaryChangeset;
 use infra_utils::github::GitHub;
+use infra_utils::paths::PathExtensions;
+use itertools::Itertools;
 
 const USER_FACING_CRATE: &str = "slang_solidity";
 
@@ -17,6 +23,61 @@ pub fn publish_cargo() -> Result<()> {
         return Ok(());
     }
 
+    let crate_dir = &CargoWorkspace::locate_source_crate(USER_FACING_CRATE)?;
+
+    let mut changeset = TemporaryChangeset::new(
+        "infra/cargo-publish",
+        "prepare Cargo packages for publishing",
+    )?;
+
+    {
+        let cargo_toml = crate_dir.join("Cargo.toml");
+        strip_publish_markers(&cargo_toml)?;
+        changeset.expect_change(&cargo_toml);
+    }
+
+    {
+        let build_rs = crate_dir.join("build.rs");
+        std::fs::remove_file(&build_rs)?;
+        changeset.expect_change(&build_rs);
+    }
+
+    {
+        update_cargo_lock()?;
+        changeset.expect_change(Path::repo_path("Cargo.lock"));
+    }
+
+    changeset.commit_changes()?;
+
+    run_cargo_publish()?;
+
+    changeset.revert_changes()?;
+
+    Ok(())
+}
+
+fn strip_publish_markers(cargo_toml: &Path) -> Result<()> {
+    let contents = std::fs::read_to_string(cargo_toml)?;
+
+    let contents = contents
+        .lines()
+        .filter(|line| !line.contains("__REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__"))
+        .chain(once(""))
+        .join("\n");
+
+    std::fs::write(cargo_toml, contents)?;
+
+    Ok(())
+}
+
+fn update_cargo_lock() -> Result<()> {
+    Command::new("cargo")
+        .arg("check")
+        .property("--package", USER_FACING_CRATE)
+        .run()
+}
+
+fn run_cargo_publish() -> Result<()> {
     let mut command = Command::new("cargo")
         .arg("publish")
         .property("--package", USER_FACING_CRATE)

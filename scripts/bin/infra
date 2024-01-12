@@ -3,17 +3,12 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
-cli_crate_dir="${REPO_ROOT:?}/crates/infra/cli"
-
 (
-  # Run 'cargo build' in that crate's directory, to use its own 'target' dir.
-  # This prevents locking when building other workspace crates.
-  cd "${cli_crate_dir}"
+  # We cannot use 'cargo run' to run 'infra_cli', because 'cargo run' sets a bunch of
+  # 'CARGO_*' environment variables, and they get propagated to child `cargo` commands
+  # that 'infra_cli' spawns. We have to build and run the binary directly to make sure
+  # it has a clean environment:
+
   cargo build --bin "infra_cli"
-)
-
-(
-  # Run the CLI through the binary directly instead of 'cargo run'.
-  # This way, 'CARGO_*' environment variables set for `infra_cli` don't propagate to child `cargo` commands:
-  "${cli_crate_dir}/target/debug/infra_cli" "$@"
+  "${REPO_ROOT:?}/target/debug/infra_cli" "$@"
 )
