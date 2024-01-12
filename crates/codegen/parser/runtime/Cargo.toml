@@ -5,6 +5,12 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
+[lib]
+crate-type = ["lib", "cdylib"]
+
+[build-dependencies]
+napi-build = { workspace = true, optional = true }
+
 [dependencies]
 ariadne = { workspace = true }
 napi = { workspace = true, optional = true }
@@ -14,5 +20,5 @@ strum = { workspace = true }
 strum_macros = { workspace = true }
 
 [features]
-slang_napi_interfaces = ["dep:napi", "dep:napi-derive"]
 default = ["slang_napi_interfaces"]
+slang_napi_interfaces = ["dep:napi", "dep:napi-build", "dep:napi-derive"]

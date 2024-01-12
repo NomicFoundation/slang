@@ -351,9 +351,9 @@ dependencies = [
 
 [[package]]
 name = "clap_complete"
-version = "4.3.2"
+version = "4.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fc443334c81a804575546c5a8a79b4913b50e28d69232903604cada1de817ce"
+checksum = "97aeaa95557bd02f23fbb662f981670c3d20c5a26e69f7354b28f57092437fcd"
 dependencies = [
  "clap",
 ]
@@ -465,6 +465,7 @@ version = "0.13.0"
 dependencies = [
  "ariadne",
  "napi",
+ "napi-build",
  "napi-derive",
  "serde",
  "strum",
@@ -2017,9 +2018,13 @@ dependencies = [
  "anyhow",
  "ariadne",
  "clap",
+ "codegen_grammar",
+ "codegen_parser_generator",
+ "infra_utils",
  "semver",
  "serde",
  "serde_json",
+ "solidity_language",
  "strum",
  "strum_macros",
  "thiserror",
@@ -2055,18 +2060,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_cargo_build"
-version = "0.13.0"
-dependencies = [
- "anyhow",
- "cargo-emit",
- "codegen_grammar",
- "codegen_parser_generator",
- "infra_utils",
- "solidity_language",
-]
-
-[[package]]
 name = "solidity_cargo_tests"
 version = "0.13.0"
 dependencies = [
@@ -2098,18 +2091,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_npm_build"
-version = "0.13.0"
-dependencies = [
- "anyhow",
- "cargo-emit",
- "codegen_grammar",
- "codegen_parser_generator",
- "infra_utils",
- "solidity_language",
-]
-
-[[package]]
 name = "solidity_npm_crate"
 version = "0.13.0"
 dependencies = [
@@ -2119,6 +2100,7 @@ dependencies = [
  "napi-derive",
  "semver",
  "serde",
+ "slang_solidity",
  "strum",
  "strum_macros",
  "thiserror",
@@ -2127,6 +2109,12 @@ dependencies = [
 [[package]]
 name = "solidity_npm_package"
 version = "0.13.0"
+dependencies = [
+ "anyhow",
+ "codegen_parser_generator",
+ "infra_utils",
+ "solidity_language",
+]
 
 [[package]]
 name = "solidity_spec"

@@ -44,10 +44,7 @@ impl NapiCli {
             // Add platform triple to the binary file name. Example: "index.linux-x64-gnu.node"
             .flag("--platform")
             // Generate string enums, for serialization and debugging:
-            .flag("--no-const-enum")
-            // Codegen does not need to run during 'napi build' (when cross-compiling).
-            // We already run this expensive step during 'cargo check' validation.
-            .env("SLANG_SKIP_CODEGEN_DURING_NAPI_BUILD", "true");
+            .flag("--no-const-enum");
 
         match target {
             BuildTarget::Debug => {

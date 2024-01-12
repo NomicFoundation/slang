@@ -1,22 +1,20 @@
-use std::env::var;
-use std::process::Command;
+//! This build script is only used for local development.
+//! It is removed when publishing to crates.io.
 
-fn main() {
-    // Codegen does not need to run in production (when users install the crate).
-    // We only run that step during local development and in CI.
-    if var("IS_RUNNING_IN_NOMIC_FOUNDATION_SLANG_REPO").is_ok() {
-        execute_codegen_for_local_development();
-    }
-}
+use anyhow::Result;
+use codegen_grammar::Grammar;
+use codegen_parser_generator::{AstModel, RustGenerator};
+use infra_utils::cargo::CargoWorkspace;
+use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
 
-fn execute_codegen_for_local_development() {
-    let success = Command::new("infra")
-        .args(["run", "solidity_cargo_build"])
-        .spawn()
-        .expect("Expected Cargo to spawn successfully.")
-        .wait()
-        .expect("Cargo failed to start.")
-        .success();
+fn main() -> Result<()> {
+    let language = SolidityDefinition::create();
+    let grammar = Grammar::from_dsl_v2(&language);
+    let ast_model = AstModel::create(&language);
 
-    assert!(success, "Failed to run codegen.");
+    RustGenerator::generate(
+        &grammar,
+        &ast_model,
+        &CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/generated"),
+    )
 }
