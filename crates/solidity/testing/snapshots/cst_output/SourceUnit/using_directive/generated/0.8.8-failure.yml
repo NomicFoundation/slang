@@ -1,0 +1,64 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                    │ 0..31
+  2  │ pragma solidity ^0.8.0;                                                            │ 32..55
+  3  │                                                                                    │ 56..56
+  4  │ using EnvelopeUtils for Envelope global;                                           │ 57..97
+  5  │ using TransactionUtils for Transaction global;                                     │ 98..144
+  6  │                                                                                    │ 145..145
+  7  │ /**                                                                                │ 146..149
+  8  │  * @notice Object with the necessary information to define a unique envelope       │ 150..226
+  9  │  * @param nonce sequential (unique) numeric indicator of the Envelope creation     │ 227..305
+  10 │  * @param origin address that originated the bridging of a message                 │ 306..372
+  11 │  * @param destination address where the message needs to be sent                   │ 373..437
+  12 │  * @param originChainId id of the chain where the message originated               │ 438..506
+  13 │  * @param destinationChainId id of the chain where the message needs to be bridged │ 507..589
+  14 │  * @param message bytes that needs to be bridged                                   │ 590..638
+  15 │  */                                                                                │ 639..642
+  16 │ struct Envelope {                                                                  │ 643..660
+  17 │   uint256 nonce;                                                                   │ 661..677
+  18 │   address origin;                                                                  │ 678..695
+  19 │   address destination;                                                             │ 696..718
+  20 │   uint256 originChainId;                                                           │ 719..743
+  21 │   uint256 destinationChainId;                                                      │ 744..773
+  22 │   bytes message;                                                                   │ 774..790
+  23 │ }                                                                                  │ 791..792
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
+        │
+      4 │ ╭─▶ using EnvelopeUtils for Envelope global;
+        ┆ ┆   
+     23 │ ├─▶ }
+        │ │       
+        │ ╰─────── Error occurred here.
+    ────╯
+
+Tree:
+  - (SourceUnit): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..793)
+      - (members꞉ SourceUnitMembers): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..56)
+          - (item꞉ SourceUnitMember) ► (variant꞉ PragmaDirective): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..56)
+              - (LeadingTrivia): # "// SPDX-License-Identifier: MIT\n" (0..32)
+                  - (SingleLineComment): "// SPDX-License-Identifier: MIT" # (0..31)
+                  - (EndOfLine): "\n" # (31..32)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (32..38)
+              - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity ^0.8.0" (38..54)
+                  - (LeadingTrivia) ► (Whitespace): " " # (38..39)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (39..47)
+                  - (expressions꞉ VersionPragmaExpressions): # " ^0.8.0" (47..54)
+                      - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaPrefixExpression): # " ^0.8.0" (47..54)
+                          - (LeadingTrivia) ► (Whitespace): " " # (47..48)
+                          - (operator꞉ Caret): "^" # (48..49)
+                          - (operand꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # "0.8.0" (49..54)
+                              - (item꞉ VersionPragmaValue): "0" # (49..50)
+                              - (separator꞉ Period): "." # (50..51)
+                              - (item꞉ VersionPragmaValue): "8" # (51..52)
+                              - (separator꞉ Period): "." # (52..53)
+                              - (item꞉ VersionPragmaValue): "0" # (53..54)
+              - (semicolon꞉ Semicolon): ";" # (54..55)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (55..56)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (56..57)
+      - (SKIPPED): "using EnvelopeUtils for Envelope global;\nusing Tra..." # (57..793)

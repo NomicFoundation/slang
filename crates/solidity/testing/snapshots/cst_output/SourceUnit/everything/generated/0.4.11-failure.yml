@@ -29,7 +29,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+    Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:5:1]
         │
       5 │ ╭─▶ using A for B;
@@ -65,5 +65,5 @@ Tree:
                   - (path꞉ AsciiStringLiteral): '"foo.sol"' # (31..40)
               - (semicolon꞉ Semicolon): ";" # (40..41)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (41..42)
-      - (EndOfFileTrivia) ► (EndOfLine): "\n" # (42..43)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (42..43)
       - (SKIPPED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)

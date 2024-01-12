@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function foo() { }                                                               │ 0..18
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function/input.sol:1:1]
+       │
+     1 │ function foo() { }
+       │ ─────────┬────────  
+       │          ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SourceUnit) ► (SKIPPED): "function foo() { }" # (0..18)

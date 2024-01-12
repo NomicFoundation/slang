@@ -6,15 +6,16 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Period.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol:1:4]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol:1:5]
        │
      1 │ foo as /
-       │    ──┬──  
-       │      ╰──── Error occurred here.
+       │     ──┬─  
+       │       ╰─── Error occurred here.
     ───╯
 
 Tree:
   - (UsingDeconstructionSymbol): # "foo as /" (0..8)
       - (name꞉ IdentifierPath): # "foo" (0..3)
           - (item꞉ Identifier): "foo" # (0..3)
-      - (SKIPPED): " as /" # (3..8)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (SKIPPED): "as /" # (4..8)

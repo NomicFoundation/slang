@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │  /* TODO: we should support this */                                              │ 0..35
+
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or SingleLineComment.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TrailingTrivia/multi_line_without_newline/input.sol:1:2]
+       │
+     1 │  /* TODO: we should support this */
+       │  ─────────────────┬─────────────────  
+       │                   ╰─────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (TrailingTrivia): # " /* TODO: we should support this */\n" (0..36)
+      - (Whitespace): " " # (0..1)
+      - (SKIPPED): "/* TODO: we should support this */\n" # (1..36)

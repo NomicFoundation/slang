@@ -20,6 +20,16 @@ fn end_of_file_trivia() -> Result<()> {
 }
 
 #[test]
+fn end_of_file_trivia_incomplete() -> Result<()> {
+    run("SourceUnit", "end_of_file_trivia_incomplete")
+}
+
+#[test]
+fn end_of_file_trivia_unexpected_after() -> Result<()> {
+    run("SourceUnit", "end_of_file_trivia_unexpected_after")
+}
+
+#[test]
 fn everything() -> Result<()> {
     run("SourceUnit", "everything")
 }

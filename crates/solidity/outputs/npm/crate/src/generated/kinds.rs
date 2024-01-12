@@ -55,7 +55,6 @@ pub enum RuleKind {
     ElementaryType,
     ElseBranch,
     EmitStatement,
-    EndOfFileTrivia,
     EnumDefinition,
     EnumMembers,
     EqualityExpression,
@@ -234,7 +233,6 @@ impl RuleKind {
     pub fn is_trivia(&self) -> bool {
         #[allow(clippy::match_like_matches_macro)]
         match self {
-            Self::EndOfFileTrivia => true,
             Self::LeadingTrivia => true,
             Self::TrailingTrivia => true,
             _ => false,
@@ -303,7 +301,6 @@ pub enum FieldName {
     EmitKeyword,
     End,
     EnumKeyword,
-    EofTrivia,
     Equal,
     EqualGreaterThan,
     Error,

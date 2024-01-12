@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │  // first                                                                        │ 0..9
+  2  │  // second                                                                       │ 10..20
+
+Errors: # 1 total
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TrailingTrivia/only_until_newline/input.sol:2:1]
+       │
+     2 │  // second
+       │ ─────┬─────  
+       │      ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (TrailingTrivia): # " // first\n // second\n" (0..21)
+      - (Whitespace): " " # (0..1)
+      - (SingleLineComment): "// first" # (1..9)
+      - (EndOfLine): "\n" # (9..10)
+      - (SKIPPED): " // second\n" # (10..21)
