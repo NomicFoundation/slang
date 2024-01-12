@@ -13,7 +13,7 @@ pub struct CompletionController {
 impl CompletionController {
     #[allow(clippy::unnecessary_wraps)] // for consistency with other commands
     pub fn execute(&self) -> Result<()> {
-        let mut command = crate::commands::CLI::command();
+        let mut command = crate::commands::Cli::command();
         command.build(); // Required to generate completions
 
         self.shell.generate(&command, &mut std::io::stdout());

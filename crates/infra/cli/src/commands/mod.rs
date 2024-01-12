@@ -23,7 +23,7 @@ use crate::commands::watch::WatchController;
 
 #[derive(Debug, Parser)]
 #[command(bin_name = "infra")]
-pub struct CLI {
+pub struct Cli {
     #[command(subcommand)]
     command: AppCommand,
 }
@@ -58,7 +58,7 @@ enum AppCommand {
     Completions(CompletionController),
 }
 
-impl CLI {
+impl Cli {
     pub fn execute(&self) -> Result<()> {
         match &self.command {
             AppCommand::Setup(command) => command.execute(),

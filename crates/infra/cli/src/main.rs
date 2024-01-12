@@ -4,7 +4,7 @@ mod utils;
 
 use clap::Parser;
 
-use crate::commands::CLI;
+use crate::commands::Cli;
 use crate::utils::Terminal;
 
 fn main() {
@@ -19,12 +19,12 @@ fn main() {
         Terminal::failure();
     }));
 
-    CLI::parse().execute().unwrap();
+    Cli::parse().execute().unwrap();
     Terminal::success();
 }
 
 #[test]
 fn verify_clap_cli() {
     // Catches problems earlier in the development cycle:
-    <CLI as clap::CommandFactory>::command().debug_assert();
+    <Cli as clap::CommandFactory>::command().debug_assert();
 }
