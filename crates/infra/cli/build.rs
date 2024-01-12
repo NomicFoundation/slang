@@ -10,22 +10,28 @@ use infra_utils::codegen::Codegen;
 include!("src/lib.rs");
 
 fn main() -> Result<()> {
-    generate_completions(Shell::Zsh)
+    generate_completions(&[Shell::Zsh, Shell::Bash])
 }
 
 /// Generate auto-completions for the shell.
-fn generate_completions(shell: Shell) -> Result<()> {
-    let mut buffer = vec![];
+fn generate_completions(shells: &[Shell]) -> Result<()> {
+    let mut codegen = Codegen::write_only()?;
 
     let mut command = CLI::command();
     command.build();
 
-    shell.generate(&command, &mut buffer);
+    for shell in shells {
+        let mut buffer = vec![];
 
-    let crate_dir = CargoWorkspace::locate_source_crate("infra_cli")?;
+        shell.generate(&command, &mut buffer);
 
-    Codegen::write_only()?.write_file(
-        crate_dir.join(format!("generated/infra.{shell}-completions")),
-        String::from_utf8(buffer)?,
-    )
+        let crate_dir = CargoWorkspace::locate_source_crate("infra_cli")?;
+
+        codegen.write_file(
+            crate_dir.join(format!("generated/infra.{shell}-completions")),
+            String::from_utf8(buffer)?,
+        )?;
+    }
+
+    Ok(())
 }

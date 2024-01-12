@@ -29,7 +29,7 @@ fn generate_header(file_path: &Path) -> String {
         "json" => String::new(),
         "html" | "md" => format!("<!-- {warning_line} -->"),
         "js" | "rs" | "ts" => format!("// {warning_line}"),
-        "yml" | "zsh-completions" => format!("# {warning_line}"),
+        "yml" | "zsh-completions" | "bash-completions" => format!("# {warning_line}"),
         ext => panic!("Unsupported extension to generate a header for: {ext}"),
     };
 }
@@ -52,7 +52,7 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
             // We already generate formatted content for these, so no need to run expensive formatting.
             Ok(contents.to_owned())
         }
-        "ebnf" | "zsh-completions" => {
+        "ebnf" | "zsh-completions" | "bash-completions" => {
             // No formatters available for these (yet).
             Ok(contents.to_owned())
         }
