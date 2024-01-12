@@ -5,12 +5,27 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
 cli_crate_dir="${REPO_ROOT:?}/crates/infra/cli"
 
+last_mtime=$(stat -c %Y "${cli_crate_dir}/target/debug/infra_cli" 2> /dev/null || echo 0)
 (
   # Run 'cargo build' in that crate's directory, to use its own 'target' dir.
   # This prevents locking when building other workspace crates.
   cd "${cli_crate_dir}"
   cargo build --bin "infra_cli"
 )
+current_mtime=$(stat -c %Y "${cli_crate_dir}/target/debug/infra_cli")
+
+# If we're in a devcontainer, ensure we install/update Zsh completions:
+if [[ -n "${SLANG_IN_DEVCONTAINER-}" && -f "${HOME}/.zshrc" ]]; then
+  completion_file="${HOME}/.zsh/completions/_infra"
+
+  if [[ (! -f "${completion_file}") || "${last_mtime}" != "${current_mtime}" ]]; then
+    echo "Installing Zsh completions for the CLI." >&2
+    echo "Please reload the shell to load the completions." >&2
+    mkdir -p ~/.zsh/completions || true
+    "${cli_crate_dir}/target/debug/infra_cli" completions zsh > "${completion_file}"
+    chmod +x "${completion_file}"
+  fi
+fi
 
 (
   # Run the CLI through the binary directly instead of 'cargo run'.

@@ -1,7 +1,11 @@
-#![allow(unused_crate_dependencies)] // dependencies are almost exclusively used by the lib target
+mod commands;
+mod toolchains;
+mod utils;
 
 use clap::Parser;
-use infra_cli::{Terminal, CLI};
+
+use crate::commands::CLI;
+use crate::utils::Terminal;
 
 fn main() {
     let std_hook = std::panic::take_hook();
@@ -17,4 +21,10 @@ fn main() {
 
     CLI::parse().execute().unwrap();
     Terminal::success();
+}
+
+#[test]
+fn verify_clap_cli() {
+    // Catches problems earlier in the development cycle:
+    <CLI as clap::CommandFactory>::command().debug_assert();
 }

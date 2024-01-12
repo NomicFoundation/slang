@@ -5,6 +5,13 @@ repo_root="/workspaces/slang"
 # Hermit
 eval "$("${repo_root}/bin/hermit" shell-hooks --print --zsh)"
 
+fpath+=("$HOME/.zsh/completions")
+if [[ ! -d "${HOME}/.zsh/completions" ]]; then
+  mkdir -p "${HOME}/.zsh/completions"
+fi
+if [[ ! -f "${HOME}/.zsh/completions/_infra" ]]; then
+  echo "Make sure to reload the shell after \`infra setup\` completes for \`infra\` shell completion." >&2
+fi
+
 # ZSH Completions
 autoload -Uz compinit && compinit
-source "${repo_root}/crates/infra/cli/generated/infra.zsh-completions"
