@@ -5,12 +5,16 @@ repo_root="/workspaces/slang"
 # Hermit
 eval "$("${repo_root}/bin/hermit" shell-hooks --print --zsh)"
 
-fpath+=("$HOME/.zsh/completions")
-if [[ ! -d "${HOME}/.zsh/completions" ]]; then
-  mkdir -p "${HOME}/.zsh/completions"
-fi
-if [[ ! -f "${HOME}/.zsh/completions/_infra" ]]; then
+if [[ ! -f "${repo_root}/target/shell-completions/_infra" ]]; then
   echo "Make sure to reload the shell after \`infra setup\` completes for \`infra\` shell completion." >&2
+else
+  # Make sure to rebuild the completion cache if `infra` completions are not included yet,
+  # otherwise completions may not work properly.
+  if [[ -f "$HOME/.zcompdump" ]] && ! grep -q "_infra" "$HOME/.zcompdump"; then
+    rm "$HOME/.zcompdump" 2> /dev/null
+  fi
+
+  source ${repo_root}/target/shell-completions/_infra
 fi
 
 # ZSH Completions
