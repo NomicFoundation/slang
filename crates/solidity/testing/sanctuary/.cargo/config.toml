@@ -1,4 +1,0 @@
-[build]
-# This crate builds and runs in release mode.
-# Let's use a separate target-dir "$THIS_CRATE/target" to avoid invalidating the workspace-level cache.
-target-dir = "./target"

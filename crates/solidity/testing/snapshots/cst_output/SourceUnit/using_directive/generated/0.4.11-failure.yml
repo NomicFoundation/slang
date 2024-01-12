@@ -27,7 +27,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+    Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
         │
       4 │ ╭─▶ using EnvelopeUtils for Envelope global;
@@ -60,5 +60,5 @@ Tree:
                               - (item꞉ VersionPragmaValue): "0" # (53..54)
               - (semicolon꞉ Semicolon): ";" # (54..55)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (55..56)
-      - (EndOfFileTrivia) ► (EndOfLine): "\n" # (56..57)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (56..57)
       - (SKIPPED): "using EnvelopeUtils for Envelope global;\nusing Tra..." # (57..793)

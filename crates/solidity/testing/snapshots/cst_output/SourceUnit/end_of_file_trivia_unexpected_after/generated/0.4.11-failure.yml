@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract X { }                                                                   │ 0..14
+  2  │                                                                                  │ 15..19
+  3  │ /* new lines after this */                                                       │ 20..46
+  4  │                                                                                  │ 47..47
+  5  │ unexpectedchars                                                                  │ 48..63
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:5:1]
+       │
+     5 │ unexpectedchars
+       │ ────────┬───────  
+       │         ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SourceUnit): # "contract X { }\n    \n/* new lines after this */\n\nun..." (0..64)
+      - (members꞉ SourceUnitMembers): # "contract X { }\n" (0..15)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X { }\n" (0..15)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (name꞉ Identifier): "X" # (9..10)
+              - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (LeadingTrivia) ► (Whitespace): " " # (12..13)
+              - (close_brace꞉ CloseBrace): "}" # (13..14)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (14..15)
+      - (LeadingTrivia): # "    \n/* new lines after this */\n\n" (15..48)
+          - (Whitespace): "    " # (15..19)
+          - (EndOfLine): "\n" # (19..20)
+          - (MultilineComment): "/* new lines after this */" # (20..46)
+          - (EndOfLine): "\n" # (46..47)
+          - (EndOfLine): "\n" # (47..48)
+      - (SKIPPED): "unexpectedchars\n" # (48..64)

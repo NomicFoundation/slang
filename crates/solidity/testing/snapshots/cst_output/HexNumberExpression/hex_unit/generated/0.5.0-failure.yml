@@ -6,14 +6,15 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected end of file.
-       ╭─[crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_unit/input.sol:1:4]
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_unit/input.sol:1:5]
        │
      1 │ 0x1 wei
-       │    ──┬─  
+       │     ─┬─  
        │      ╰─── Error occurred here.
     ───╯
 
 Tree:
   - (HexNumberExpression): # "0x1 wei" (0..7)
       - (literal꞉ HexLiteral): "0x1" # (0..3)
-      - (SKIPPED): " wei" # (3..7)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (SKIPPED): "wei" # (4..7)

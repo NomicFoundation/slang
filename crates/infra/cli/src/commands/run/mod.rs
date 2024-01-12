@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 
 use crate::utils::{ClapExtensions, Terminal};
@@ -15,11 +14,6 @@ pub struct RunController {
 
 #[derive(Clone, Debug, PartialEq, ValueEnum)]
 enum RunCommand {
-    /*
-     *
-     * User-facing:
-     *
-     */
     /// Runs the public 'slang_solidity' crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
@@ -29,18 +23,6 @@ enum RunCommand {
     /// Runs compatability tests between our language definition and 'solc' actual output.
     #[clap(name = "solidity_testing_solc")]
     SolidityTestingSolc,
-
-    /*
-     *
-     * Hidden (for automation only):
-     *
-     */
-    /// Runs codegen for the Rust parser crate.
-    #[clap(name = "solidity_cargo_build", hide = true)]
-    SolidityCargoBuild,
-    /// Runs codegen for the NAPI-exposed parser crate.
-    #[clap(name = "solidity_npm_build", hide = true)]
-    SolidityNpmBuild,
 }
 
 impl RunCommand {
@@ -51,10 +33,7 @@ impl RunCommand {
                 // It is worth spending the extra time to recompiling its dependencies.
                 true
             }
-            Self::SlangSolidity
-            | Self::SolidityCargoBuild
-            | Self::SolidityNpmBuild
-            | Self::SolidityTestingSolc => {
+            Self::SlangSolidity | Self::SolidityTestingSolc => {
                 // These run during local development. Just build in debug mode.
                 false
             }
@@ -65,7 +44,6 @@ impl RunCommand {
 impl RunController {
     pub fn execute(&self) -> Result<()> {
         let crate_name = self.command.clap_name();
-        let crate_dir = CargoWorkspace::locate_source_crate(&crate_name)?;
 
         Terminal::step(format!("run {crate_name}"));
 
@@ -79,8 +57,6 @@ impl RunController {
             .property("--bin", &crate_name)
             .arg("--")
             .args(&self.args)
-            // Execute in the crate dir, to make use of a local './target' dir if it exists:
-            .current_dir(crate_dir)
             .run()
     }
 }

@@ -29,7 +29,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UsingKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:25:1]
         │
      25 │ event E1(uint256 value);
@@ -184,5 +184,5 @@ Tree:
                   - (variant꞉ BoolKeyword): "bool" # (211..215)
               - (semicolon꞉ Semicolon): ";" # (215..216)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (216..217)
-      - (EndOfFileTrivia) ► (EndOfLine): "\n" # (217..218)
+      - (LeadingTrivia) ► (EndOfLine): "\n" # (217..218)
       - (SKIPPED): "event E1(uint256 value);\n" # (218..243)

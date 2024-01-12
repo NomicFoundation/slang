@@ -4,3 +4,9 @@ version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
 publish = false
+
+[build-dependencies]
+anyhow = { workspace = true }
+codegen_parser_generator = { workspace = true }
+infra_utils = { workspace = true }
+solidity_language = { workspace = true }

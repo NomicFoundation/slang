@@ -2897,11 +2897,7 @@ impl Selector {
                 RustNamedNode {
                     name: _,
                     node: RustNode::Rule(rule),
-                } if matches!(
-                    rule.kind,
-                    RuleKind::LeadingTrivia | RuleKind::TrailingTrivia | RuleKind::EndOfFileTrivia
-                ) =>
-                {
+                } if rule.kind.is_trivia() => {
                     // skip trivia, since it's not part of the AST
                     self.index += 1;
                     continue;

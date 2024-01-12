@@ -22,7 +22,7 @@ Tree:
               - (LeadingTrivia) ► (Whitespace): " " # (12..13)
               - (close_brace꞉ CloseBrace): "}" # (13..14)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (14..15)
-      - (EndOfFileTrivia): # "    \n// spaces before this\n\n/* new lines after thi..." (15..71)
+      - (LeadingTrivia): # "    \n// spaces before this\n\n/* new lines after thi..." (15..71)
           - (Whitespace): "    " # (15..19)
           - (EndOfLine): "\n" # (19..20)
           - (SingleLineComment): "// spaces before this" # (20..41)

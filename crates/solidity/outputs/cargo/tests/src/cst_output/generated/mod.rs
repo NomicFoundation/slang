@@ -66,6 +66,8 @@ mod StructDefinition;
 #[allow(non_snake_case)]
 mod ThrowStatement;
 #[allow(non_snake_case)]
+mod TrailingTrivia;
+#[allow(non_snake_case)]
 mod TryStatement;
 #[allow(non_snake_case)]
 mod TupleDeconstructionStatement;

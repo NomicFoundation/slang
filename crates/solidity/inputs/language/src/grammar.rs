@@ -22,10 +22,9 @@ pub trait GrammarConstructorDslV2 {
 }
 
 impl GrammarConstructorDslV2 for Grammar {
-    #[allow(clippy::too_many_lines)] // TODO: Remove me once the hack below is removed
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
-        let mut items: HashMap<_, _> = lang
+        let items: HashMap<_, _> = lang
             .items_with_section()
             .map(|(_, topic, item)| {
                 (
@@ -34,39 +33,6 @@ impl GrammarConstructorDslV2 for Grammar {
                 )
             })
             .collect();
-
-        // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
-        // of SourceUnit being followed by `EndOfFileTrivia`.
-        items.insert(
-            Identifier::from("SourceUnit"),
-            (
-                None,
-                model::Item::Struct {
-                    item: Rc::new(model::StructItem {
-                        name: Identifier::from("SourceUnit"),
-                        enabled: None,
-                        error_recovery: None,
-                        fields: IndexMap::from_iter([
-                            (
-                                Identifier::from("members"),
-                                model::Field::Optional {
-                                    reference: Identifier::from("SourceUnitMembers"),
-
-                                    enabled: None,
-                                },
-                            ),
-                            (
-                                Identifier::from("eof_trivia"),
-                                model::Field::Optional {
-                                    reference: Identifier::from("EndOfFileTrivia"),
-                                    enabled: None,
-                                },
-                            ),
-                        ]),
-                    }),
-                },
-            ),
-        );
 
         let mut resolved = HashMap::new();
         let mut ctx = ResolveCtx {
@@ -83,16 +49,6 @@ impl GrammarConstructorDslV2 for Grammar {
             name: "TrailingTrivia",
             def: resolve_trivia(lang.trailing_trivia.clone(), &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
-
-        let eof_trivia = Rc::new(NamedTriviaParser {
-            name: "EndOfFileTrivia",
-            def: resolve_trivia(lang.leading_trivia.clone(), &mut ctx),
-        }) as Rc<dyn TriviaParserDefinition>;
-
-        ctx.resolved.insert(
-            Identifier::from("EndOfFileTrivia"),
-            eof_trivia.clone().into(),
-        );
 
         for (_lex_ctx, item) in items.values() {
             resolve_grammar_element(item.name(), &mut ctx);
@@ -151,7 +107,7 @@ impl GrammarConstructorDslV2 for Grammar {
             trailing_trivia_parser: trailing_trivia.clone(),
             elements: resolved_items
                 .chain(
-                    [leading_trivia, trailing_trivia, eof_trivia]
+                    [leading_trivia, trailing_trivia]
                         .into_iter()
                         .map(|elem| (elem.name(), elem.into())),
                 )
@@ -321,10 +277,6 @@ struct ResolveCtx<'a> {
 
 #[allow(clippy::too_many_lines)] // FIXME: Simplify me when we simplify the v2-to-v1 interface
 fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
-    if ident.as_str() == "EndOfFileTrivia" {
-        return ctx.resolved.get(ident).unwrap().clone();
-    }
-
     let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
 
     // FIXME: Don't leak
