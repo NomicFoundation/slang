@@ -3,12 +3,24 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
-(
-  # We cannot use 'cargo run' to run 'infra_cli', because 'cargo run' sets a bunch of
-  # 'CARGO_*' environment variables, and they get propagated to child `cargo` commands
-  # that 'infra_cli' spawns. We have to build and run the binary directly to make sure
-  # it has a clean environment:
+#
+# Rust Analyzer runs 'cargo check' frequently (on every file save) on the whole workspace. This locks
+# '$REPO_ROOT/target' directory, and prevents building/running any other 'infra' commands until it is
+# done. To avoid this during local development, let's use a separate target directory for this binary.
+#
+# Additionally, we cannot use 'cargo run --bin infra_cli' directly, because 'cargo run' sets a bunch
+# of 'CARGO_*' environment variables, and they get propagated to any child `cargo` commands that are
+# spawned by 'infra_cli'. We have to build and run the binary directly to ensure it has a clean env.
+# Otherwise, they leak into things like cross-platform NAPI builds, and cause build failures.
+#
 
-  cargo build --bin "infra_cli"
-  "${REPO_ROOT:?}/target/debug/infra_cli" "$@"
+(
+  crate_dir="${REPO_ROOT:?}/crates/infra/cli"
+
+  cargo build \
+    --bin "infra_cli" \
+    --manifest-path "${crate_dir}/Cargo.toml" \
+    --target-dir "${crate_dir}/target"
+
+  "${crate_dir}/target/debug/infra_cli" "$@"
 )
