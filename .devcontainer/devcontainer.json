@@ -1,9 +1,6 @@
 {
   "name": "slang-devcontainer",
   "runArgs": [],
-  "containerEnv": {
-    "SLANG_IN_DEVCONTAINER": "true"
-  },
   "build": {
     "dockerfile": "Dockerfile"
   },
