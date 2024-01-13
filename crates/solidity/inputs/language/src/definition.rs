@@ -4077,7 +4077,109 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = YulEvmBuiltin,
-                            variants = [EnumVariant(reference = YulByteKeyword)]
+                            variants = [
+                                EnumVariant(reference = YulAddKeyword),
+                                EnumVariant(reference = YulAddmodKeyword),
+                                EnumVariant(reference = YulAddressKeyword),
+                                EnumVariant(reference = YulAndKeyword),
+                                EnumVariant(reference = YulBalanceKeyword),
+                                EnumVariant(reference = YulBlockhashKeyword),
+                                EnumVariant(reference = YulByteKeyword),
+                                EnumVariant(reference = YulCallKeyword),
+                                EnumVariant(reference = YulCallcodeKeyword),
+                                EnumVariant(reference = YulCalldatacopyKeyword),
+                                EnumVariant(reference = YulCalldataloadKeyword),
+                                EnumVariant(reference = YulCalldatasizeKeyword),
+                                EnumVariant(reference = YulCallerKeyword),
+                                EnumVariant(reference = YulCallvalueKeyword),
+                                EnumVariant(reference = YulCoinbaseKeyword),
+                                EnumVariant(reference = YulCreateKeyword),
+                                EnumVariant(reference = YulDelegatecallKeyword),
+                                EnumVariant(reference = YulDivKeyword),
+                                EnumVariant(reference = YulEqKeyword),
+                                EnumVariant(reference = YulExpKeyword),
+                                EnumVariant(reference = YulExtcodecopyKeyword),
+                                EnumVariant(reference = YulExtcodesizeKeyword),
+                                EnumVariant(reference = YulGasKeyword),
+                                EnumVariant(reference = YulGaslimitKeyword),
+                                EnumVariant(reference = YulGaspriceKeyword),
+                                EnumVariant(reference = YulGtKeyword),
+                                EnumVariant(reference = YulInvalidKeyword),
+                                EnumVariant(reference = YulIszeroKeyword),
+                                EnumVariant(reference = YulLog0Keyword),
+                                EnumVariant(reference = YulLog1Keyword),
+                                EnumVariant(reference = YulLog2Keyword),
+                                EnumVariant(reference = YulLog3Keyword),
+                                EnumVariant(reference = YulLog4Keyword),
+                                EnumVariant(reference = YulLtKeyword),
+                                EnumVariant(reference = YulMloadKeyword),
+                                EnumVariant(reference = YulModKeyword),
+                                EnumVariant(reference = YulMsizeKeyword),
+                                EnumVariant(reference = YulMstoreKeyword),
+                                EnumVariant(reference = YulMstore8Keyword),
+                                EnumVariant(reference = YulMulKeyword),
+                                EnumVariant(reference = YulMulmodKeyword),
+                                EnumVariant(reference = YulNotKeyword),
+                                EnumVariant(reference = YulNumberKeyword),
+                                EnumVariant(reference = YulOrKeyword),
+                                EnumVariant(reference = YulOriginKeyword),
+                                EnumVariant(reference = YulPopKeyword),
+                                EnumVariant(reference = YulReturnKeyword),
+                                EnumVariant(reference = YulRevertKeyword),
+                                EnumVariant(reference = YulSdivKeyword),
+                                EnumVariant(reference = YulSelfdestructKeyword),
+                                EnumVariant(reference = YulSgtKeyword),
+                                EnumVariant(reference = YulSignextendKeyword),
+                                EnumVariant(reference = YulSloadKeyword),
+                                EnumVariant(reference = YulSltKeyword),
+                                EnumVariant(reference = YulSmodKeyword),
+                                EnumVariant(reference = YulSstoreKeyword),
+                                EnumVariant(reference = YulStopKeyword),
+                                EnumVariant(reference = YulSubKeyword),
+                                EnumVariant(reference = YulTimestampKeyword),
+                                EnumVariant(reference = YulXorKeyword),
+                                // Renamed keccak256 in 0.4.12, sha3 alias removed in 0.5.0
+                                EnumVariant(reference = YulSha3Keyword, enabled = Till("0.5.0")),
+                                // Introduced as alias to selfdestruct in 0.2.0, removed in 0.5.0
+                                EnumVariant(reference = YulSuicideKeyword, enabled = Till("0.5.0")),
+                                EnumVariant(
+                                    reference = YulKeccak256Keyword,
+                                    enabled = From("0.4.12")
+                                ),
+                                // Introduced in byzantium
+                                EnumVariant(
+                                    reference = YulReturndatacopyKeyword,
+                                    enabled = From("0.4.12")
+                                ),
+                                EnumVariant(
+                                    reference = YulReturndatasizeKeyword,
+                                    enabled = From("0.4.12")
+                                ),
+                                EnumVariant(
+                                    reference = YulStaticcallKeyword,
+                                    enabled = From("0.4.12")
+                                ),
+                                // Introduced in constantinople
+                                EnumVariant(
+                                    reference = YulCreate2Keyword,
+                                    enabled = From("0.4.12")
+                                ),
+                                EnumVariant(
+                                    reference = YulExtcodehashKeyword,
+                                    enabled = From("0.5.0")
+                                ),
+                                EnumVariant(reference = YulSarKeyword),
+                                EnumVariant(reference = YulShlKeyword),
+                                EnumVariant(reference = YulShrKeyword),
+                                // Introduced in instanbul
+                                EnumVariant(reference = YulChainidKeyword),
+                                EnumVariant(reference = YulSelfbalanceKeyword),
+                                // Introduced in london
+                                EnumVariant(reference = YulBasefeeKeyword, enabled = From("0.8.7")),
+                                // Introduced in paris
+                                EnumVariant(reference = YulPrevrandaoKeyword, enabled = From("0.8.18")),
+                                EnumVariant(reference = YulDifficultyKeyword, enabled = Till("0.8.18"))
+                            ]
                         ),
                         Enum(
                             name = YulLiteral,
@@ -4132,12 +4234,6 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.1"),
                                 value = Atom("abstract")
                             )]
-                        ),
-                        Keyword(
-                            name = YulAddressKeyword,
-                            identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = YulAfterKeyword,
@@ -4215,11 +4311,6 @@ codegen_language_macros::compile!(Language(
                             name = YulBreakKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("break"))]
-                        ),
-                        Keyword(
-                            name = YulByteKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("byte"))]
                         ),
                         Keyword(
                             name = YulBytesKeyword,
@@ -5122,12 +5213,6 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = YulReturnKeyword,
-                            identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("return"))]
-                        ),
-                        Keyword(
                             name = YulReturnsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
@@ -5135,12 +5220,6 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.1"),
                                 value = Atom("returns")
                             )]
-                        ),
-                        Keyword(
-                            name = YulRevertKeyword,
-                            identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("revert"))]
                         ),
                         Keyword(
                             name = YulSealedKeyword,
@@ -5690,6 +5769,449 @@ codegen_language_macros::compile!(Language(
                                 enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("years")
+                            )]
+                        ),
+                        // Yul EVM Builtins
+                        Keyword(
+                            name = YulAddKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("add"))]
+                        ),
+                        Keyword(
+                            name = YulAddmodKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("addmod"))]
+                        ),
+                        Keyword(
+                            name = YulAddressKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("address"))]
+                        ),
+                        Keyword(
+                            name = YulAndKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("and"))]
+                        ),
+                        Keyword(
+                            name = YulBalanceKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("balance"))]
+                        ),
+                        Keyword(
+                            name = YulBlockhashKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("blockhash"))]
+                        ),
+                        Keyword(
+                            name = YulByteKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("byte"))]
+                        ),
+                        Keyword(
+                            name = YulCallKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("call"))]
+                        ),
+                        Keyword(
+                            name = YulCallcodeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("callcode"))]
+                        ),
+                        Keyword(
+                            name = YulCalldatacopyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("calldatacopy"))]
+                        ),
+                        Keyword(
+                            name = YulCalldataloadKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("calldataload"))]
+                        ),
+                        Keyword(
+                            name = YulCalldatasizeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("calldatasize"))]
+                        ),
+                        Keyword(
+                            name = YulCallerKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("caller"))]
+                        ),
+                        Keyword(
+                            name = YulCallvalueKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("callvalue"))]
+                        ),
+                        Keyword(
+                            name = YulCoinbaseKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("coinbase"))]
+                        ),
+                        Keyword(
+                            name = YulCreateKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("create"))]
+                        ),
+                        Keyword(
+                            name = YulDelegatecallKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("delegatecall"))]
+                        ),
+                        Keyword(
+                            name = YulDifficultyKeyword,
+                            identifier = YulIdentifier,
+                            // Replaced by prevrandao in London
+                            definitions = [KeywordDefinition(enabled = Till("0.8.18"), value = Atom("difficulty"))]
+                        ),
+                        Keyword(
+                            name = YulDivKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("div"))]
+                        ),
+                        Keyword(
+                            name = YulEqKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("eq"))]
+                        ),
+                        Keyword(
+                            name = YulExpKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("exp"))]
+                        ),
+                        Keyword(
+                            name = YulExtcodecopyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("extcodecopy"))]
+                        ),
+                        Keyword(
+                            name = YulExtcodesizeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("extcodesize"))]
+                        ),
+                        Keyword(
+                            name = YulGasKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("gas"))]
+                        ),
+                        Keyword(
+                            name = YulGaslimitKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("gaslimit"))]
+                        ),
+                        Keyword(
+                            name = YulGaspriceKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("gasprice"))]
+                        ),
+                        Keyword(
+                            name = YulGtKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("gt"))]
+                        ),
+                        Keyword(
+                            name = YulInvalidKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("invalid"))]
+                        ),
+                        Keyword(
+                            name = YulIszeroKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("iszero"))]
+                        ),
+                        Keyword(
+                            name = YulKeccak256Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.12"),
+                                reserved = From("0.4.12"),
+                                value = Atom("keccak256")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulLog0Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("log0"))]
+                        ),
+                        Keyword(
+                            name = YulLog1Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("log1"))]
+                        ),
+                        Keyword(
+                            name = YulLog2Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("log2"))]
+                        ),
+                        Keyword(
+                            name = YulLog3Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("log3"))]
+                        ),
+                        Keyword(
+                            name = YulLog4Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("log4"))]
+                        ),
+                        Keyword(
+                            name = YulLtKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("lt"))]
+                        ),
+                        Keyword(
+                            name = YulMloadKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mload"))]
+                        ),
+                        Keyword(
+                            name = YulModKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mod"))]
+                        ),
+                        Keyword(
+                            name = YulMsizeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("msize"))]
+                        ),
+                        Keyword(
+                            name = YulMstoreKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mstore"))]
+                        ),
+                        Keyword(
+                            name = YulMstore8Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mstore8"))]
+                        ),
+                        Keyword(
+                            name = YulMulKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mul"))]
+                        ),
+                        Keyword(
+                            name = YulMulmodKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("mulmod"))]
+                        ),
+                        Keyword(
+                            name = YulNotKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("not"))]
+                        ),
+                        Keyword(
+                            name = YulNumberKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("number"))]
+                        ),
+                        Keyword(
+                            name = YulOrKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("or"))]
+                        ),
+                        Keyword(
+                            name = YulOriginKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("origin"))]
+                        ),
+                        Keyword(
+                            name = YulPopKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("pop"))]
+                        ),
+                        Keyword(
+                            name = YulReturnKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("return"))]
+                        ),
+                        Keyword(
+                            name = YulRevertKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("revert"))]
+                        ),
+                        Keyword(
+                            name = YulSha3Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = Till("0.5.0"),
+                                reserved = Till("0.5.0"),
+                                value = Atom("sha3")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSuicideKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = Till("0.5.0"),
+                                reserved = Till("0.5.0"),
+                                value = Atom("suicide")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSdivKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("sdiv"))]
+                        ),
+                        Keyword(
+                            name = YulSelfdestructKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("selfdestruct"))]
+                        ),
+                        Keyword(
+                            name = YulSgtKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("sgt"))]
+                        ),
+                        Keyword(
+                            name = YulSignextendKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("signextend"))]
+                        ),
+                        Keyword(
+                            name = YulSloadKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("sload"))]
+                        ),
+                        Keyword(
+                            name = YulSltKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("slt"))]
+                        ),
+                        Keyword(
+                            name = YulSmodKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("smod"))]
+                        ),
+                        Keyword(
+                            name = YulSstoreKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("sstore"))]
+                        ),
+                        Keyword(
+                            name = YulStopKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("stop"))]
+                        ),
+                        Keyword(
+                            name = YulSubKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("sub"))]
+                        ),
+                        Keyword(
+                            name = YulTimestampKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("timestamp"))]
+                        ),
+                        Keyword(
+                            name = YulXorKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("xor"))]
+                        ),
+                        // Introduced in byzantium
+                        Keyword(
+                            name = YulReturndatacopyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.12"),
+                                reserved = From("0.4.12"),
+                                value = Atom("returndatacopy")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulReturndatasizeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.12"),
+                                reserved = From("0.4.12"),
+                                value = Atom("returndatasize")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulStaticcallKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.12"),
+                                reserved = From("0.4.12"),
+                                value = Atom("staticcall")
+                            )]
+                        ),
+                        // Introduced in constantinople
+                        Keyword(
+                            name = YulCreate2Keyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.12"),
+                                reserved = From("0.4.12"),
+                                value = Atom("create2")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulExtcodehashKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                // NOTE: Only considered as part of Constantinople target by solc since 0.5.5
+                                enabled = From("0.5.0"),
+                                reserved = From("0.5.0"),
+                                value = Atom("extcodehash")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSarKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.4.21"),
+                                value = Atom("sar")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulShlKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.4.21"),
+                                value = Atom("shl")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulShrKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.4.21"),
+                                value = Atom("shr")
+                            )]
+                        ),
+                        // Introduced in instanbul
+                        Keyword(
+                            name = YulChainidKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.5.12"),
+                                value = Atom("chainid")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSelfbalanceKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.5.12"),
+                                value = Atom("selfbalance")
+                            )]
+                        ),
+                        // Introduced in london
+                        Keyword(
+                            name = YulBasefeeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.7"),
+                                reserved = From("0.8.7"),
+                                value = Atom("basefee")
+                            )]
+                        ),
+                        // Introduced in paris
+                        Keyword(
+                            name = YulPrevrandaoKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.18"),
+                                reserved = From("0.8.18"),
+                                value = Atom("prevrandao")
                             )]
                         )
                     ]

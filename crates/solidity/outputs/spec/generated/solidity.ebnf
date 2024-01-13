@@ -1383,7 +1383,82 @@ YulIdentifierPath = YUL_IDENTIFIER (PERIOD YUL_IDENTIFIER)*;
 
 YUL_IDENTIFIER = «RAW_IDENTIFIER»;
 
-YulEvmBuiltin = YUL_BYTE_KEYWORD;
+YulEvmBuiltin = YUL_ADD_KEYWORD
+              | YUL_ADDMOD_KEYWORD
+              | YUL_ADDRESS_KEYWORD
+              | YUL_AND_KEYWORD
+              | YUL_BALANCE_KEYWORD
+              | YUL_BLOCKHASH_KEYWORD
+              | YUL_BYTE_KEYWORD
+              | YUL_CALL_KEYWORD
+              | YUL_CALLCODE_KEYWORD
+              | YUL_CALLDATACOPY_KEYWORD
+              | YUL_CALLDATALOAD_KEYWORD
+              | YUL_CALLDATASIZE_KEYWORD
+              | YUL_CALLER_KEYWORD
+              | YUL_CALLVALUE_KEYWORD
+              | YUL_COINBASE_KEYWORD
+              | YUL_CREATE_KEYWORD
+              | YUL_DELEGATECALL_KEYWORD
+              | YUL_DIV_KEYWORD
+              | YUL_EQ_KEYWORD
+              | YUL_EXP_KEYWORD
+              | YUL_EXTCODECOPY_KEYWORD
+              | YUL_EXTCODESIZE_KEYWORD
+              | YUL_GAS_KEYWORD
+              | YUL_GASLIMIT_KEYWORD
+              | YUL_GASPRICE_KEYWORD
+              | YUL_GT_KEYWORD
+              | YUL_INVALID_KEYWORD
+              | YUL_ISZERO_KEYWORD
+              | YUL_LOG_0_KEYWORD
+              | YUL_LOG_1_KEYWORD
+              | YUL_LOG_2_KEYWORD
+              | YUL_LOG_3_KEYWORD
+              | YUL_LOG_4_KEYWORD
+              | YUL_LT_KEYWORD
+              | YUL_MLOAD_KEYWORD
+              | YUL_MOD_KEYWORD
+              | YUL_MSIZE_KEYWORD
+              | YUL_MSTORE_KEYWORD
+              | YUL_MSTORE_8_KEYWORD
+              | YUL_MUL_KEYWORD
+              | YUL_MULMOD_KEYWORD
+              | YUL_NOT_KEYWORD
+              | YUL_NUMBER_KEYWORD
+              | YUL_OR_KEYWORD
+              | YUL_ORIGIN_KEYWORD
+              | YUL_POP_KEYWORD
+              | YUL_RETURN_KEYWORD
+              | YUL_REVERT_KEYWORD
+              | YUL_SDIV_KEYWORD
+              | YUL_SELFDESTRUCT_KEYWORD
+              | YUL_SGT_KEYWORD
+              | YUL_SIGNEXTEND_KEYWORD
+              | YUL_SLOAD_KEYWORD
+              | YUL_SLT_KEYWORD
+              | YUL_SMOD_KEYWORD
+              | YUL_SSTORE_KEYWORD
+              | YUL_STOP_KEYWORD
+              | YUL_SUB_KEYWORD
+              | YUL_TIMESTAMP_KEYWORD
+              | YUL_XOR_KEYWORD
+              | YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
+              | YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
+              | YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
+              | YUL_RETURNDATACOPY_KEYWORD (* Introduced in 0.4.12 *)
+              | YUL_RETURNDATASIZE_KEYWORD (* Introduced in 0.4.12 *)
+              | YUL_STATICCALL_KEYWORD (* Introduced in 0.4.12 *)
+              | YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
+              | YUL_EXTCODEHASH_KEYWORD (* Introduced in 0.5.0 *)
+              | YUL_SAR_KEYWORD
+              | YUL_SHL_KEYWORD
+              | YUL_SHR_KEYWORD
+              | YUL_CHAINID_KEYWORD
+              | YUL_SELFBALANCE_KEYWORD
+              | YUL_BASEFEE_KEYWORD (* Introduced in 0.8.7 *)
+              | YUL_PREVRANDAO_KEYWORD (* Introduced in 0.8.18 *)
+              | YUL_DIFFICULTY_KEYWORD; (* Deprecated in 0.8.18 *)
 
 YulLiteral = YUL_TRUE_KEYWORD
            | YUL_FALSE_KEYWORD
@@ -1400,8 +1475,6 @@ YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+;
 
 (* Reserved until 0.7.1 *)
 YUL_ABSTRACT_KEYWORD = "abstract";
-
-YUL_ADDRESS_KEYWORD = "address";
 
 (* Reserved until 0.7.1 *)
 YUL_AFTER_KEYWORD = "after";
@@ -1428,8 +1501,6 @@ YUL_AUTO_KEYWORD = "auto";
 YUL_BOOL_KEYWORD = "bool";
 
 YUL_BREAK_KEYWORD = "break";
-
-YUL_BYTE_KEYWORD = "byte";
 
 (* Reserved until 0.7.1 *)
 YUL_BYTES_KEYWORD = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32")?;
@@ -1630,12 +1701,8 @@ YUL_REFERENCE_KEYWORD = "reference";
 (* Reserved until 0.7.1 *)
 YUL_RELOCATABLE_KEYWORD = "relocatable";
 
-YUL_RETURN_KEYWORD = "return";
-
 (* Reserved until 0.7.1 *)
 YUL_RETURNS_KEYWORD = "returns";
-
-YUL_REVERT_KEYWORD = "revert";
 
 (* Reserved from 0.5.0 until 0.7.1 *)
 YUL_SEALED_KEYWORD = "sealed";
@@ -1727,4 +1794,182 @@ YUL_WHILE_KEYWORD = "while";
 
 (* Reserved until 0.7.1 *)
 YUL_YEARS_KEYWORD = "years";
+
+YUL_ADD_KEYWORD = "add";
+
+YUL_ADDMOD_KEYWORD = "addmod";
+
+YUL_ADDRESS_KEYWORD = "address";
+
+YUL_AND_KEYWORD = "and";
+
+YUL_BALANCE_KEYWORD = "balance";
+
+YUL_BLOCKHASH_KEYWORD = "blockhash";
+
+YUL_BYTE_KEYWORD = "byte";
+
+YUL_CALL_KEYWORD = "call";
+
+YUL_CALLCODE_KEYWORD = "callcode";
+
+YUL_CALLDATACOPY_KEYWORD = "calldatacopy";
+
+YUL_CALLDATALOAD_KEYWORD = "calldataload";
+
+YUL_CALLDATASIZE_KEYWORD = "calldatasize";
+
+YUL_CALLER_KEYWORD = "caller";
+
+YUL_CALLVALUE_KEYWORD = "callvalue";
+
+YUL_COINBASE_KEYWORD = "coinbase";
+
+YUL_CREATE_KEYWORD = "create";
+
+YUL_DELEGATECALL_KEYWORD = "delegatecall";
+
+(* Deprecated in 0.8.18 *)
+YUL_DIFFICULTY_KEYWORD = "difficulty";
+
+YUL_DIV_KEYWORD = "div";
+
+YUL_EQ_KEYWORD = "eq";
+
+YUL_EXP_KEYWORD = "exp";
+
+YUL_EXTCODECOPY_KEYWORD = "extcodecopy";
+
+YUL_EXTCODESIZE_KEYWORD = "extcodesize";
+
+YUL_GAS_KEYWORD = "gas";
+
+YUL_GASLIMIT_KEYWORD = "gaslimit";
+
+YUL_GASPRICE_KEYWORD = "gasprice";
+
+YUL_GT_KEYWORD = "gt";
+
+YUL_INVALID_KEYWORD = "invalid";
+
+YUL_ISZERO_KEYWORD = "iszero";
+
+(* Introduced in 0.4.12 *)
+(* Reserved in 0.4.12 *)
+YUL_KECCAK_256_KEYWORD = "keccak256";
+
+YUL_LOG_0_KEYWORD = "log0";
+
+YUL_LOG_1_KEYWORD = "log1";
+
+YUL_LOG_2_KEYWORD = "log2";
+
+YUL_LOG_3_KEYWORD = "log3";
+
+YUL_LOG_4_KEYWORD = "log4";
+
+YUL_LT_KEYWORD = "lt";
+
+YUL_MLOAD_KEYWORD = "mload";
+
+YUL_MOD_KEYWORD = "mod";
+
+YUL_MSIZE_KEYWORD = "msize";
+
+YUL_MSTORE_KEYWORD = "mstore";
+
+YUL_MSTORE_8_KEYWORD = "mstore8";
+
+YUL_MUL_KEYWORD = "mul";
+
+YUL_MULMOD_KEYWORD = "mulmod";
+
+YUL_NOT_KEYWORD = "not";
+
+YUL_NUMBER_KEYWORD = "number";
+
+YUL_OR_KEYWORD = "or";
+
+YUL_ORIGIN_KEYWORD = "origin";
+
+YUL_POP_KEYWORD = "pop";
+
+YUL_RETURN_KEYWORD = "return";
+
+YUL_REVERT_KEYWORD = "revert";
+
+(* Deprecated in 0.5.0 *)
+(* Reserved until 0.5.0 *)
+YUL_SHA_3_KEYWORD = "sha3";
+
+(* Deprecated in 0.5.0 *)
+(* Reserved until 0.5.0 *)
+YUL_SUICIDE_KEYWORD = "suicide";
+
+YUL_SDIV_KEYWORD = "sdiv";
+
+YUL_SELFDESTRUCT_KEYWORD = "selfdestruct";
+
+YUL_SGT_KEYWORD = "sgt";
+
+YUL_SIGNEXTEND_KEYWORD = "signextend";
+
+YUL_SLOAD_KEYWORD = "sload";
+
+YUL_SLT_KEYWORD = "slt";
+
+YUL_SMOD_KEYWORD = "smod";
+
+YUL_SSTORE_KEYWORD = "sstore";
+
+YUL_STOP_KEYWORD = "stop";
+
+YUL_SUB_KEYWORD = "sub";
+
+YUL_TIMESTAMP_KEYWORD = "timestamp";
+
+YUL_XOR_KEYWORD = "xor";
+
+(* Introduced in 0.4.12 *)
+(* Reserved in 0.4.12 *)
+YUL_RETURNDATACOPY_KEYWORD = "returndatacopy";
+
+(* Introduced in 0.4.12 *)
+(* Reserved in 0.4.12 *)
+YUL_RETURNDATASIZE_KEYWORD = "returndatasize";
+
+(* Introduced in 0.4.12 *)
+(* Reserved in 0.4.12 *)
+YUL_STATICCALL_KEYWORD = "staticcall";
+
+(* Introduced in 0.4.12 *)
+(* Reserved in 0.4.12 *)
+YUL_CREATE_2_KEYWORD = "create2";
+
+(* Introduced in 0.5.0 *)
+(* Reserved in 0.5.0 *)
+YUL_EXTCODEHASH_KEYWORD = "extcodehash";
+
+(* Reserved in 0.4.21 *)
+YUL_SAR_KEYWORD = "sar";
+
+(* Reserved in 0.4.21 *)
+YUL_SHL_KEYWORD = "shl";
+
+(* Reserved in 0.4.21 *)
+YUL_SHR_KEYWORD = "shr";
+
+(* Reserved in 0.5.12 *)
+YUL_CHAINID_KEYWORD = "chainid";
+
+(* Reserved in 0.5.12 *)
+YUL_SELFBALANCE_KEYWORD = "selfbalance";
+
+(* Introduced in 0.8.7 *)
+(* Reserved in 0.8.7 *)
+YUL_BASEFEE_KEYWORD = "basefee";
+
+(* Introduced in 0.8.18 *)
+(* Reserved in 0.8.18 *)
+YUL_PREVRANDAO_KEYWORD = "prevrandao";
 

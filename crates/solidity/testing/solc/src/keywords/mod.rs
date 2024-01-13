@@ -225,6 +225,8 @@ impl TestCase {
                 "State mutability can only be specified for address types.",
                 "Cannot use instruction names for identifier names.",
                 "Cannot use builtin function name",
+                "Cannot use instruction name",
+                "is reserved and can not be used.",
             ]
             .iter()
             .any(|part| error.message.contains(part))
