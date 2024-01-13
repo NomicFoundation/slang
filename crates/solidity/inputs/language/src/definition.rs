@@ -4177,8 +4177,14 @@ codegen_language_macros::compile!(Language(
                                 // Introduced in london
                                 EnumVariant(reference = YulBasefeeKeyword, enabled = From("0.8.7")),
                                 // Introduced in paris
-                                EnumVariant(reference = YulPrevrandaoKeyword, enabled = From("0.8.18")),
-                                EnumVariant(reference = YulDifficultyKeyword, enabled = Till("0.8.18"))
+                                EnumVariant(
+                                    reference = YulPrevrandaoKeyword,
+                                    enabled = From("0.8.18")
+                                ),
+                                EnumVariant(
+                                    reference = YulDifficultyKeyword,
+                                    enabled = Till("0.8.18")
+                                )
                             ]
                         ),
                         Enum(
@@ -5861,7 +5867,10 @@ codegen_language_macros::compile!(Language(
                             name = YulDifficultyKeyword,
                             identifier = YulIdentifier,
                             // Replaced by prevrandao in London
-                            definitions = [KeywordDefinition(enabled = Till("0.8.18"), value = Atom("difficulty"))]
+                            definitions = [KeywordDefinition(
+                                enabled = Till("0.8.18"),
+                                value = Atom("difficulty")
+                            )]
                         ),
                         Keyword(
                             name = YulDivKeyword,
