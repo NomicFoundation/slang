@@ -121,14 +121,18 @@ fn get_binaries_dir() -> Result<PathBuf> {
 }
 
 fn get_mirror_url() -> Result<Url> {
-    let platform_dir = if cfg!(target_os = "macos") {
-        "macosx-amd64"
-    } else {
-        panic!(
+    use std::env::consts::{ARCH, OS};
+
+    let platform_dir = match (OS, ARCH) {
+        ("macos", "x86_64") => "macosx-amd64",
+        ("linux", "x86_64") => "linux-amd64",
+        ("windows", "x86_64") => "windows-amd64",
+        _ => panic!(
             "Unrecognized platform. Please add it to the list defined in '{source_file}'.",
             source_file = file!(),
-        );
+        ),
     };
 
+    // See the list at <https://github.com/ethereum/solc-bin>.
     Ok(format!("https://binaries.soliditylang.org/{platform_dir}/").parse()?)
 }
