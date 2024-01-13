@@ -4052,6 +4052,7 @@ codegen_language_macros::compile!(Language(
                             )],
                             primary_expressions = [
                                 PrimaryExpression(reference = YulLiteral),
+                                PrimaryExpression(reference = YulEvmBuiltin),
                                 PrimaryExpression(reference = YulIdentifierPath)
                             ]
                         ),
@@ -4073,6 +4074,10 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = YulIdentifier,
                             definitions = [TokenDefinition(scanner = Fragment(RawIdentifier))]
+                        ),
+                        Enum(
+                            name = YulEvmBuiltin,
+                            variants = [EnumVariant(reference = YulByteKeyword)]
                         ),
                         Enum(
                             name = YulLiteral,
@@ -4214,8 +4219,7 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulByteKeyword,
                             identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("byte"))]
+                            definitions = [KeywordDefinition(value = Atom("byte"))]
                         ),
                         Keyword(
                             name = YulBytesKeyword,

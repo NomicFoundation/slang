@@ -1372,6 +1372,7 @@ YulValueCase = YUL_CASE_KEYWORD
 
 YulExpression = YulFunctionCallExpression
               | YulLiteral
+              | YulEvmBuiltin
               | YulIdentifierPath;
 
 YulArguments = YulExpression (COMMA YulExpression)*;
@@ -1381,6 +1382,8 @@ YulIdentifierPaths = YulIdentifierPath (COMMA YulIdentifierPath)*;
 YulIdentifierPath = YUL_IDENTIFIER (PERIOD YUL_IDENTIFIER)*;
 
 YUL_IDENTIFIER = «RAW_IDENTIFIER»;
+
+YulEvmBuiltin = YUL_BYTE_KEYWORD;
 
 YulLiteral = YUL_TRUE_KEYWORD
            | YUL_FALSE_KEYWORD

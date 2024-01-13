@@ -1506,6 +1506,7 @@ pub fn select_choice(
         RuleKind::YulStatement => selector.yul_statement()?,
         RuleKind::YulSwitchCase => selector.yul_switch_case()?,
         RuleKind::YulExpression => selector.yul_expression()?,
+        RuleKind::YulEvmBuiltin => selector.yul_evm_builtin()?,
         RuleKind::YulLiteral => selector.yul_literal()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
@@ -2030,9 +2031,16 @@ impl Selector {
             node.is_rule_with_kinds(&[
                 RuleKind::YulFunctionCallExpression,
                 RuleKind::YulLiteral,
+                RuleKind::YulEvmBuiltin,
                 RuleKind::YulIdentifierPath,
             ])
         })
+    }
+}
+
+impl Selector {
+    fn yul_evm_builtin(&mut self) -> Result<JsObject> {
+        self.select(|node| node.is_token_with_kind(TokenKind::YulByteKeyword))
     }
 }
 

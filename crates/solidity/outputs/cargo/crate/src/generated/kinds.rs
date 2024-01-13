@@ -206,6 +206,7 @@ pub enum RuleKind {
     YulBreakStatement,
     YulContinueStatement,
     YulDefaultCase,
+    YulEvmBuiltin,
     YulExpression,
     YulForStatement,
     YulFunctionCallExpression,

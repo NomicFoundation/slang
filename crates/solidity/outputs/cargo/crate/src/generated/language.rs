@@ -5821,6 +5821,20 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_evm_builtin(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulByteKeyword,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_name(FieldName::Variant)
+        .with_kind(RuleKind::YulEvmBuiltin)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_postfix_yul_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
@@ -5860,6 +5874,8 @@ impl Language {
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_literal(input);
+                choice.consider(input, result)?;
+                let result = self.yul_evm_builtin(input);
                 choice.consider(input, result)?;
                 let result = self.yul_identifier_path(input);
                 choice.consider(input, result)?;
@@ -8565,6 +8581,7 @@ impl Language {
             RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input, true),
             RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input, true),
             RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input, true),
+            RuleKind::YulEvmBuiltin => Self::yul_evm_builtin.parse(self, input, true),
             RuleKind::YulExpression => Self::yul_expression.parse(self, input, true),
             RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input, true),
             RuleKind::YulFunctionCallExpression => {

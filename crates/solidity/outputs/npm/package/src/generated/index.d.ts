@@ -198,6 +198,7 @@ export namespace kinds {
     YulBreakStatement = "YulBreakStatement",
     YulContinueStatement = "YulContinueStatement",
     YulDefaultCase = "YulDefaultCase",
+    YulEvmBuiltin = "YulEvmBuiltin",
     YulExpression = "YulExpression",
     YulForStatement = "YulForStatement",
     YulFunctionCallExpression = "YulFunctionCallExpression",

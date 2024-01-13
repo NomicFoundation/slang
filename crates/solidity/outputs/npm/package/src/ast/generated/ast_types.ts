@@ -4973,16 +4973,42 @@ export class YulSwitchCase {
 }
 
 export class YulExpression {
-  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulIdentifierPath = once(() => {
+  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulEvmBuiltin | YulIdentifierPath = once(
+    () => {
+      const variant = ast_internal.selectChoice(this.cst);
+
+      switch (variant.kind) {
+        case RuleKind.YulFunctionCallExpression:
+          return new YulFunctionCallExpression(variant as RuleNode);
+        case RuleKind.YulLiteral:
+          return new YulLiteral(variant as RuleNode);
+        case RuleKind.YulEvmBuiltin:
+          return new YulEvmBuiltin(variant as RuleNode);
+        case RuleKind.YulIdentifierPath:
+          return new YulIdentifierPath(variant as RuleNode);
+
+        default:
+          assert.fail(`Unexpected variant: ${variant.kind}`);
+      }
+    },
+  );
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulExpression);
+  }
+
+  public get variant(): YulFunctionCallExpression | YulLiteral | YulEvmBuiltin | YulIdentifierPath {
+    return this.fetch();
+  }
+}
+
+export class YulEvmBuiltin {
+  private readonly fetch: () => TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case RuleKind.YulFunctionCallExpression:
-        return new YulFunctionCallExpression(variant as RuleNode);
-      case RuleKind.YulLiteral:
-        return new YulLiteral(variant as RuleNode);
-      case RuleKind.YulIdentifierPath:
-        return new YulIdentifierPath(variant as RuleNode);
+      case TokenKind.YulByteKeyword:
+        return variant as TokenNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4990,10 +5016,10 @@ export class YulExpression {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulExpression);
+    assertKind(this.cst.kind, RuleKind.YulEvmBuiltin);
   }
 
-  public get variant(): YulFunctionCallExpression | YulLiteral | YulIdentifierPath {
+  public get variant(): TokenNode {
     return this.fetch();
   }
 }
