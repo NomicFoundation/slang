@@ -50,9 +50,9 @@ codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
 slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
+slang_solidity_node_addon = { path = "crates/solidity/outputs/npm/crate" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests" }
 solidity_language = { path = "crates/solidity/inputs/language" }
-solidity_npm_crate = { path = "crates/solidity/outputs/npm/crate" }
 solidity_npm_package = { path = "crates/solidity/outputs/npm/package" }
 solidity_spec = { path = "crates/solidity/outputs/spec" }
 solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary" }

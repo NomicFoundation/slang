@@ -2030,6 +2030,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "slang_solidity_node_addon"
+version = "0.13.0"
+dependencies = [
+ "ariadne",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "semver",
+ "serde",
+ "slang_solidity",
+ "strum",
+ "strum_macros",
+ "thiserror",
+]
+
+[[package]]
 name = "slug"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2087,22 +2103,6 @@ dependencies = [
  "infra_utils",
  "semver",
  "strum_macros",
-]
-
-[[package]]
-name = "solidity_npm_crate"
-version = "0.13.0"
-dependencies = [
- "ariadne",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "slang_solidity",
- "strum",
- "strum_macros",
- "thiserror",
 ]
 
 [[package]]

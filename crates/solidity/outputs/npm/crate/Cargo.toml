@@ -1,5 +1,5 @@
 [package]
-name = "solidity_npm_crate"
+name = "slang_solidity_node_addon"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

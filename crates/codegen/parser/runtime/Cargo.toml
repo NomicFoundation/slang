@@ -16,7 +16,7 @@ strum = { workspace = true }
 strum_macros = { workspace = true }
 
 # Since the source code is copied over as-is, we need to retain exact feature set with target crate,
-# i.e `solidity_npm_crate`.
+# i.e `slang_solidity_node_addon`.
 [features]
 default = [
 	"slang_napi_interfaces",

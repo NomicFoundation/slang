@@ -13,7 +13,7 @@ pub struct NapiResolver;
 
 impl NapiResolver {
     pub fn crate_dir() -> PathBuf {
-        CargoWorkspace::locate_source_crate("solidity_npm_crate").unwrap()
+        CargoWorkspace::locate_source_crate("slang_solidity_node_addon").unwrap()
     }
 
     pub fn main_package_dir() -> PathBuf {
