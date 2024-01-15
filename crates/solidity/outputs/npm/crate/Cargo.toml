@@ -33,6 +33,8 @@ slang_napi_interfaces = [
 
 [build-dependencies]
 napi-build = { workspace = true }
+# Make sure to always rebuild the cdylib crate when the Rust code changes.
+slang_solidity = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
@@ -40,7 +42,6 @@ napi = { workspace = true }
 napi-derive = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
-slang_solidity = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }

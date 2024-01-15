@@ -465,7 +465,6 @@ version = "0.13.0"
 dependencies = [
  "ariadne",
  "napi",
- "napi-build",
  "napi-derive",
  "serde",
  "strum",
