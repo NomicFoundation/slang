@@ -3,8 +3,6 @@ pub use solidity::SolidityDefinition;
 codegen_language_macros::compile!(Language(
     name = Solidity,
     root_item = SourceUnit,
-    // TODO(#638): For now this is on par with the DSL v1 definition to minimize the fallout.
-    // We should replace this with the new definition from #629.
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
         Trivia(EndOfLine),
