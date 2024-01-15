@@ -11,10 +11,9 @@ use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
     DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
-    KeywordScannerDefinitionNode, KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition,
-    ParserDefinitionNode, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
-    ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
-    VersionQualityRange,
+    KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition, ParserDefinitionNode,
+    PrecedenceParserDefinition, PrecedenceParserDefinitionNode, ScannerDefinition,
+    ScannerDefinitionNode, TriviaParserDefinition, VersionQuality, VersionQualityRange,
 };
 
 impl Grammar {
@@ -389,13 +388,10 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         .definitions
                         .iter()
                         .cloned()
-                        .map(|def| {
-                            let value = resolve_keyword_value(def.value);
-                            KeywordScannerDefinitionVersionedNode {
-                                value,
-                                enabled: enabled_to_range(def.enabled),
-                                reserved: enabled_to_range(def.reserved),
-                            }
+                        .map(|def| KeywordScannerDefinitionVersionedNode {
+                            value: def.value,
+                            enabled: enabled_to_range(def.enabled),
+                            reserved: enabled_to_range(def.reserved),
                         })
                         .collect();
 
@@ -484,21 +480,6 @@ fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDe
         0 => panic!("Token {} has no definitions", token.name),
         1 => resolved_defs.into_iter().next().unwrap(),
         _ => ScannerDefinitionNode::Choice(resolved_defs),
-    }
-}
-
-fn resolve_keyword_value(value: model::KeywordValue) -> KeywordScannerDefinitionNode {
-    match value {
-        model::KeywordValue::Sequence { values } => KeywordScannerDefinitionNode::Sequence(
-            values.into_iter().map(resolve_keyword_value).collect(),
-        ),
-        model::KeywordValue::Choice { values } => KeywordScannerDefinitionNode::Choice(
-            values.into_iter().map(resolve_keyword_value).collect(),
-        ),
-        model::KeywordValue::Optional { value } => {
-            KeywordScannerDefinitionNode::Optional(Box::new(resolve_keyword_value(*value)))
-        }
-        model::KeywordValue::Atom { atom } => KeywordScannerDefinitionNode::Atom(atom),
     }
 }
 

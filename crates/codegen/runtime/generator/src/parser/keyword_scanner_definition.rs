@@ -1,9 +1,8 @@
+use codegen_language_definition::model;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::grammar::{
-    KeywordScannerDefinitionNode, KeywordScannerDefinitionRef, ScannerDefinitionNode,
-};
+use crate::parser::grammar::{KeywordScannerDefinitionRef, ScannerDefinitionNode};
 use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 use crate::parser::scanner_definition::ScannerDefinitionNodeExtensions;
 
@@ -80,7 +79,7 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
     }
 }
 
-impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionNode {
+impl KeywordScannerDefinitionExtensions for model::KeywordValue {
     fn to_scanner_code(&self) -> TokenStream {
         // This is a subset; let's reuse that
         ScannerDefinitionNode::from(self.clone()).to_scanner_code()
