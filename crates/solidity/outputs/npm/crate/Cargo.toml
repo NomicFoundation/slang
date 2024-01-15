@@ -5,14 +5,25 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
+description = "slang_solidity compiled as a cdylib crate, to be used as Node.js addon."
+
+# At the time of writing, building cdylib/plugins with Cargo has limited support
+# (see <https://github.com/rust-lang/cargo/issues/8628> for the general tracking issue).
+# To workaround some of the issues, we create a synthetic crate that shares the same code as the original Rust crate
+# but only exposes a `cdylib` library.
+# There are a couple of things at play here:
+# - To build a Node addon, we need to build a standalone cdylib, that's set up to expect host `napi_*` functions at runtime
+# - `napi build` does that for us but only supports `cdylib` for the `lib` targets (e.g. not bin/examples)
+# - expansion of #[napi] macros is enabled behind a feature flag; it expands the code that expects the host functions
+# - while `napi/noop` feature exists that disables that, we test in worksace with `--all-features` and Cargo features are additive
+# - thus, they get conflated and so the regular `rlib` library target gets built with the host functions expectation
+# - ...which reasonably fails to link when `rlib` library is used as a regular Rust library (i.e. not in Node environment).
+# Another workaround is to use an example with `cdylib` crate-type (wouldn't conflate the features in a downstream usable
+# library), but napi doesn't support that yet.
+# Also see <https://github.com/PyO3/pyo3/issues/771> for a similar issue with PyO3.
 [lib]
-# Import the original Rust source files containing both Rust + NAPI types:
-# Unfortunately, we cannot just build the NAPI types using the original Rust crate, as this will prevent importing it
-# into other crates that are not configured to be built via NAPI (produces various linker errors).
-# So for now, we chose to use this separate crate to enable/expose the NAPI types, since nothing else needs to import it.
-# Maybe we can spend more time in the future to debug/resolve the linker issues, but this solution is good enough for now.
 path = "../../cargo/crate/src/lib.rs"
-crate-type = ["lib", "cdylib"]
+crate-type = ["cdylib"]
 
 [features]
 default = ["slang_napi_interfaces"]
