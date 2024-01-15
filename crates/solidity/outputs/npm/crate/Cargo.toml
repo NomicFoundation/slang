@@ -15,7 +15,7 @@ description = "slang_solidity compiled as a cdylib crate, to be used as Node.js 
 # - To build a Node addon, we need to build a standalone cdylib, that's set up to expect host `napi_*` functions at runtime
 # - `napi build` does that for us but only supports `cdylib` for the `lib` targets (e.g. not bin/examples)
 # - expansion of #[napi] macros is enabled behind a feature flag; it expands the code that expects the host functions
-# - while `napi/noop` feature exists that disables that, we test in worksace with `--all-features` and Cargo features are additive
+# - while `napi/noop` feature exists that disables that, we test in workspace with `--all-features` and Cargo features are additive
 # - thus, they get conflated and so the regular `rlib` library target gets built with the host functions expectation
 # - ...which reasonably fails to link when `rlib` library is used as a regular Rust library (i.e. not in Node environment).
 # Another workaround is to use an example with `cdylib` crate-type (wouldn't conflate the features in a downstream usable
