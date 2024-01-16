@@ -2020,7 +2020,6 @@ dependencies = [
  "anyhow",
  "ariadne",
  "clap",
- "codegen_grammar",
  "codegen_parser_generator",
  "infra_utils",
  "semver",

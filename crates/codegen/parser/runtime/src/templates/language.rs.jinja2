@@ -28,7 +28,7 @@ use crate::support::{
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
-    {%- for version in code.referenced_versions -%}
+    {%- for version in generator.referenced_versions -%}
         pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
     {%- endfor -%}
 }
@@ -60,7 +60,7 @@ impl Language {
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
-                {%- for version in code.referenced_versions %}
+                {%- for version in generator.referenced_versions %}
                     version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                 {%- endfor -%}
                 version,
@@ -78,7 +78,7 @@ impl Language {
      *         Parser Functions
      ********************************************/
 
-    {% for parser_name, parser_code in code.parser_functions %}
+    {% for parser_name, parser_code in generator.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
     {% endfor %}
@@ -87,20 +87,20 @@ impl Language {
      *         Scanner Functions
      ********************************************/
 
-    {% for scanner_name, scanner_code in code.scanner_functions %}
+    {% for scanner_name, scanner_code in generator.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ scanner_code }} }
     {% endfor %}
 
     // Keyword scanners
-    {%- for keyword_name, code in code.keyword_compound_scanners %}
+    {%- for keyword_name, keyword_code in generator.keyword_compound_scanners %}
         #[inline]
-        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ code }} }
+        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ keyword_code }} }
     {% endfor %}
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
-            {%- for parser_name, _code in code.parser_functions -%}
+            {%- for parser_name, _ in generator.parser_functions -%}
             {# TODO(#737): Remove the special case once we stop generating RuleKind for trivia #}
             {%- if parser_name is ending_with("Trivia") -%}
                 RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, false),
@@ -123,7 +123,7 @@ impl Lexer for Language {
 
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
         match LexCtx::value() {
-            {%- for context_name, context in code.scanner_contexts %}
+            {%- for context_name, context in generator.scanner_contexts %}
                 LexicalContext::{{ context_name }} => &[
                     {%- for open, close in context.delimiters %}
                         (TokenKind::{{ open }}, TokenKind::{{ close }}),
@@ -152,7 +152,7 @@ impl Lexer for Language {
         }
 
         match LexCtx::value() {
-            {%- for context_name, context in code.scanner_contexts %}
+            {%- for context_name, context in generator.scanner_contexts %}
                 LexicalContext::{{ context_name }} => {
                     if let Some(kind) = {{ context.literal_scanner }} {
                         furthest_position = input.position();
