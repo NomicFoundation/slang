@@ -7,12 +7,10 @@
 //! Call the [`SolidityLanguageExtensions::load_solidity`] method to load the precompiled language definition.
 
 mod definition;
-mod grammar;
 
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
 pub use definition::SolidityDefinition;
-pub use grammar::GrammarConstructorDslV2;
 
 pub trait SolidityLanguageExtensions {
     /// Loads the precompiled Solidity language definition.

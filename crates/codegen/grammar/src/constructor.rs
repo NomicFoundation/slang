@@ -6,15 +6,16 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
-use codegen_grammar::{
+use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
+use indexmap::IndexMap;
+
+use crate::{
     Grammar, GrammarElement, KeywordScannerDefinition, KeywordScannerDefinitionNode,
     KeywordScannerDefinitionVersionedNode, Named, ParserDefinition, ParserDefinitionNode,
     PrecedenceOperatorModel, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
     ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
     VersionQualityRange,
 };
-use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
-use indexmap::IndexMap;
 
 /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
 pub trait GrammarConstructorDslV2 {
@@ -143,7 +144,7 @@ impl KeywordScannerDefinition for NamedKeywordScanner {
         self.name
     }
 
-    fn definitions(&self) -> &[codegen_grammar::KeywordScannerDefinitionVersionedNode] {
+    fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode] {
         &self.defs
     }
 

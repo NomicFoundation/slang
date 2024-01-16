@@ -392,6 +392,8 @@ dependencies = [
 name = "codegen_grammar"
 version = "0.13.0"
 dependencies = [
+ "codegen_language_definition",
+ "indexmap 1.9.3",
  "semver",
  "strum_macros",
 ]
@@ -2080,14 +2082,11 @@ dependencies = [
  "anyhow",
  "bson",
  "cargo-emit",
- "codegen_grammar",
  "codegen_language_definition",
  "codegen_language_macros",
  "codegen_schema",
- "indexmap 1.9.3",
  "infra_utils",
  "semver",
- "strum_macros",
 ]
 
 [[package]]

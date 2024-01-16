@@ -2,10 +2,10 @@
 //! It is removed when publishing to crates.io.
 
 use anyhow::Result;
-use codegen_grammar::Grammar;
+use codegen_grammar::{Grammar, GrammarConstructorDslV2};
 use codegen_parser_generator::{AstModel, RustGenerator};
 use infra_utils::cargo::CargoWorkspace;
-use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
+use solidity_language::SolidityDefinition;
 
 fn main() -> Result<()> {
     let language = SolidityDefinition::create();
