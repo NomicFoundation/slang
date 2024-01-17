@@ -46,7 +46,7 @@ Tree:
                           - (LeadingTrivia) ► (Whitespace): " " # (43..44)
                           - (colon_equal꞉ ColonEqual): ":=" # (44..46)
                           - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mul(a, b)\n" (46..57)
-                              - (operand꞉ YulExpression) ► (variant꞉ YulEvmBuiltin): # " mul" (46..50)
+                              - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mul" (46..50)
                                   - (LeadingTrivia) ► (Whitespace): " " # (46..47)
                                   - (variant꞉ YulMulKeyword): "mul" # (47..50)
                               - (open_paren꞉ OpenParen): "(" # (50..51)

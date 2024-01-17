@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ staticcall := 0                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "staticcall := 0\n" (0..16)
+      - (names꞉ YulIdentifierPaths): # "staticcall" (0..10)
+          - (item꞉ YulIdentifierPath): # "staticcall" (0..10)
+              - (item꞉ YulIdentifier): "staticcall" # (0..10)
+      - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+      - (colon_equal꞉ ColonEqual): ":=" # (11..13)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (13..16)
+          - (LeadingTrivia) ► (Whitespace): " " # (13..14)
+          - (variant꞉ YulDecimalLiteral): "0" # (14..15)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (15..16)

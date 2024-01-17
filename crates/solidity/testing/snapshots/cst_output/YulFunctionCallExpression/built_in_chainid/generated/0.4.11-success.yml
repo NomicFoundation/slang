@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ chainid()                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "chainid()\n" (0..10)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulChainIdKeyword): "chainid" # (0..7)
+      - (open_paren꞉ OpenParen): "(" # (7..8)
+      - (close_paren꞉ CloseParen): ")" # (8..9)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (9..10)
