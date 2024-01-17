@@ -4973,7 +4973,7 @@ export class YulSwitchCase {
 }
 
 export class YulExpression {
-  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulEvmBuiltin | YulIdentifierPath = once(
+  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulIdentifierPath = once(
     () => {
       const variant = ast_internal.selectChoice(this.cst);
 
@@ -4982,8 +4982,8 @@ export class YulExpression {
           return new YulFunctionCallExpression(variant as RuleNode);
         case RuleKind.YulLiteral:
           return new YulLiteral(variant as RuleNode);
-        case RuleKind.YulEvmBuiltin:
-          return new YulEvmBuiltin(variant as RuleNode);
+        case RuleKind.YulBuiltInFunction:
+          return new YulBuiltInFunction(variant as RuleNode);
         case RuleKind.YulIdentifierPath:
           return new YulIdentifierPath(variant as RuleNode);
 
@@ -4997,92 +4997,92 @@ export class YulExpression {
     assertKind(this.cst.kind, RuleKind.YulExpression);
   }
 
-  public get variant(): YulFunctionCallExpression | YulLiteral | YulEvmBuiltin | YulIdentifierPath {
+  public get variant(): YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulIdentifierPath {
     return this.fetch();
   }
 }
 
-export class YulEvmBuiltin {
+export class YulBuiltInFunction {
   private readonly fetch: () => TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
       case TokenKind.YulAddKeyword:
-      case TokenKind.YulAddmodKeyword:
+      case TokenKind.YulAddModKeyword:
       case TokenKind.YulAddressKeyword:
       case TokenKind.YulAndKeyword:
       case TokenKind.YulBalanceKeyword:
-      case TokenKind.YulBlockhashKeyword:
+      case TokenKind.YulBlockHashKeyword:
       case TokenKind.YulByteKeyword:
-      case TokenKind.YulCallKeyword:
-      case TokenKind.YulCallcodeKeyword:
-      case TokenKind.YulCalldatacopyKeyword:
-      case TokenKind.YulCalldataloadKeyword:
-      case TokenKind.YulCalldatasizeKeyword:
+      case TokenKind.YulCallCodeKeyword:
+      case TokenKind.YulCallDataCopyKeyword:
+      case TokenKind.YulCallDataLoadKeyword:
+      case TokenKind.YulCallDataSizeKeyword:
       case TokenKind.YulCallerKeyword:
-      case TokenKind.YulCallvalueKeyword:
-      case TokenKind.YulCoinbaseKeyword:
+      case TokenKind.YulCallKeyword:
+      case TokenKind.YulCallValueKeyword:
+      case TokenKind.YulCoinBaseKeyword:
       case TokenKind.YulCreateKeyword:
-      case TokenKind.YulDelegatecallKeyword:
+      case TokenKind.YulDelegateCallKeyword:
       case TokenKind.YulDivKeyword:
       case TokenKind.YulEqKeyword:
       case TokenKind.YulExpKeyword:
-      case TokenKind.YulExtcodecopyKeyword:
-      case TokenKind.YulExtcodesizeKeyword:
+      case TokenKind.YulExtCodeCopyKeyword:
+      case TokenKind.YulExtCodeSizeKeyword:
       case TokenKind.YulGasKeyword:
-      case TokenKind.YulGaslimitKeyword:
-      case TokenKind.YulGaspriceKeyword:
+      case TokenKind.YulGasLimitKeyword:
+      case TokenKind.YulGasPriceKeyword:
       case TokenKind.YulGtKeyword:
       case TokenKind.YulInvalidKeyword:
-      case TokenKind.YulIszeroKeyword:
+      case TokenKind.YulIsZeroKeyword:
       case TokenKind.YulLog0Keyword:
       case TokenKind.YulLog1Keyword:
       case TokenKind.YulLog2Keyword:
       case TokenKind.YulLog3Keyword:
       case TokenKind.YulLog4Keyword:
       case TokenKind.YulLtKeyword:
-      case TokenKind.YulMloadKeyword:
+      case TokenKind.YulMLoadKeyword:
       case TokenKind.YulModKeyword:
-      case TokenKind.YulMsizeKeyword:
-      case TokenKind.YulMstoreKeyword:
-      case TokenKind.YulMstore8Keyword:
+      case TokenKind.YulMSizeKeyword:
+      case TokenKind.YulMStore8Keyword:
+      case TokenKind.YulMStoreKeyword:
       case TokenKind.YulMulKeyword:
-      case TokenKind.YulMulmodKeyword:
+      case TokenKind.YulMulModKeyword:
       case TokenKind.YulNotKeyword:
       case TokenKind.YulNumberKeyword:
-      case TokenKind.YulOrKeyword:
       case TokenKind.YulOriginKeyword:
+      case TokenKind.YulOrKeyword:
       case TokenKind.YulPopKeyword:
       case TokenKind.YulReturnKeyword:
       case TokenKind.YulRevertKeyword:
-      case TokenKind.YulSdivKeyword:
-      case TokenKind.YulSelfdestructKeyword:
+      case TokenKind.YulSDivKeyword:
+      case TokenKind.YulSelfDestructKeyword:
       case TokenKind.YulSgtKeyword:
-      case TokenKind.YulSignextendKeyword:
-      case TokenKind.YulSloadKeyword:
+      case TokenKind.YulSignExtendKeyword:
+      case TokenKind.YulSLoadKeyword:
       case TokenKind.YulSltKeyword:
-      case TokenKind.YulSmodKeyword:
-      case TokenKind.YulSstoreKeyword:
+      case TokenKind.YulSModKeyword:
+      case TokenKind.YulSStoreKeyword:
       case TokenKind.YulStopKeyword:
       case TokenKind.YulSubKeyword:
       case TokenKind.YulTimestampKeyword:
       case TokenKind.YulXorKeyword:
+      case TokenKind.YulKeccak256Keyword:
       case TokenKind.YulSha3Keyword:
       case TokenKind.YulSuicideKeyword:
-      case TokenKind.YulKeccak256Keyword:
-      case TokenKind.YulReturndatacopyKeyword:
-      case TokenKind.YulReturndatasizeKeyword:
-      case TokenKind.YulStaticcallKeyword:
+      case TokenKind.YulReturnDataCopyKeyword:
+      case TokenKind.YulReturnDataSizeKeyword:
+      case TokenKind.YulStaticCallKeyword:
       case TokenKind.YulCreate2Keyword:
-      case TokenKind.YulExtcodehashKeyword:
+      case TokenKind.YulExtCodeHashKeyword:
       case TokenKind.YulSarKeyword:
       case TokenKind.YulShlKeyword:
       case TokenKind.YulShrKeyword:
-      case TokenKind.YulChainidKeyword:
-      case TokenKind.YulSelfbalanceKeyword:
-      case TokenKind.YulBasefeeKeyword:
-      case TokenKind.YulPrevrandaoKeyword:
+      case TokenKind.YulChainIdKeyword:
+      case TokenKind.YulSelfBalanceKeyword:
+      case TokenKind.YulBaseFeeKeyword:
       case TokenKind.YulDifficultyKeyword:
+      case TokenKind.YulPrevRandaoKeyword:
         return variant as TokenNode;
 
       default:
@@ -5091,7 +5091,7 @@ export class YulEvmBuiltin {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulEvmBuiltin);
+    assertKind(this.cst.kind, RuleKind.YulBuiltInFunction);
   }
 
   public get variant(): TokenNode {

@@ -5801,33 +5801,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::Yul>(
-            input,
-            TokenKind::YulContinueKeyword,
-        )
-        .with_name(FieldName::ContinueKeyword)
-        .with_kind(RuleKind::YulContinueStatement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_default_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::DefaultKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::YulDefaultKeyword,
-                ),
-            )?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::YulDefaultCase)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_evm_builtin(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn yul_built_in_function(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -5836,7 +5810,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulAddmodKeyword,
+                TokenKind::YulAddModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5856,7 +5830,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulBlockhashKeyword,
+                TokenKind::YulBlockHashKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5866,27 +5840,22 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallKeyword,
+                TokenKind::YulCallCodeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallcodeKeyword,
+                TokenKind::YulCallDataCopyKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCalldatacopyKeyword,
+                TokenKind::YulCallDataLoadKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCalldataloadKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::YulCalldatasizeKeyword,
+                TokenKind::YulCallDataSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5896,12 +5865,17 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallvalueKeyword,
+                TokenKind::YulCallKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCoinbaseKeyword,
+                TokenKind::YulCallValueKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulCoinBaseKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5911,7 +5885,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulDelegatecallKeyword,
+                TokenKind::YulDelegateCallKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5929,12 +5903,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulExtcodecopyKeyword,
+                TokenKind::YulExtCodeCopyKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulExtcodesizeKeyword,
+                TokenKind::YulExtCodeSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5944,12 +5918,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulGaslimitKeyword,
+                TokenKind::YulGasLimitKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulGaspriceKeyword,
+                TokenKind::YulGasPriceKeyword,
             );
             choice.consider(input, result)?;
             let result = self
@@ -5962,7 +5936,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulIszeroKeyword,
+                TokenKind::YulIsZeroKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -5995,7 +5969,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMloadKeyword,
+                TokenKind::YulMLoadKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6005,17 +5979,17 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMsizeKeyword,
+                TokenKind::YulMSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMstoreKeyword,
+                TokenKind::YulMStore8Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMstore8Keyword,
+                TokenKind::YulMStoreKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6025,7 +5999,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMulmodKeyword,
+                TokenKind::YulMulModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6038,13 +6012,13 @@ impl Language {
                 TokenKind::YulNumberKeyword,
             );
             choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulOrKeyword);
-            choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TokenKind::YulOriginKeyword,
             );
+            choice.consider(input, result)?;
+            let result = self
+                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulOrKeyword);
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6063,12 +6037,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSdivKeyword,
+                TokenKind::YulSDivKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSelfdestructKeyword,
+                TokenKind::YulSelfDestructKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6078,12 +6052,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSignextendKeyword,
+                TokenKind::YulSignExtendKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSloadKeyword,
+                TokenKind::YulSLoadKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6093,12 +6067,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSmodKeyword,
+                TokenKind::YulSModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSstoreKeyword,
+                TokenKind::YulSStoreKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6121,6 +6095,13 @@ impl Language {
                 TokenKind::YulXorKeyword,
             );
             choice.consider(input, result)?;
+            if self.version_is_at_least_0_4_12 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulKeccak256Keyword,
+                );
+                choice.consider(input, result)?;
+            }
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
@@ -6138,28 +6119,21 @@ impl Language {
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulKeccak256Keyword,
+                    TokenKind::YulReturnDataCopyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulReturndatacopyKeyword,
+                    TokenKind::YulReturnDataSizeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulReturndatasizeKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::YulStaticcallKeyword,
+                    TokenKind::YulStaticCallKeyword,
                 );
                 choice.consider(input, result)?;
             }
@@ -6173,7 +6147,7 @@ impl Language {
             if self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulExtcodehashKeyword,
+                    TokenKind::YulExtCodeHashKeyword,
                 );
                 choice.consider(input, result)?;
             }
@@ -6194,25 +6168,18 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulChainidKeyword,
+                TokenKind::YulChainIdKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSelfbalanceKeyword,
+                TokenKind::YulSelfBalanceKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_7 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulBasefeeKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_18 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::YulPrevrandaoKeyword,
+                    TokenKind::YulBaseFeeKeyword,
                 );
                 choice.consider(input, result)?;
             }
@@ -6223,10 +6190,43 @@ impl Language {
                 );
                 choice.consider(input, result)?;
             }
+            if self.version_is_at_least_0_8_18 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulPrevRandaoKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             choice.finish(input)
         })
         .with_name(FieldName::Variant)
-        .with_kind(RuleKind::YulEvmBuiltin)
+        .with_kind(RuleKind::YulBuiltInFunction)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            input,
+            TokenKind::YulContinueKeyword,
+        )
+        .with_name(FieldName::ContinueKeyword)
+        .with_kind(RuleKind::YulContinueStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_default_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem_named(
+                FieldName::DefaultKeyword,
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulDefaultKeyword,
+                ),
+            )?;
+            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::YulDefaultCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6270,7 +6270,7 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_literal(input);
                 choice.consider(input, result)?;
-                let result = self.yul_evm_builtin(input);
+                let result = self.yul_built_in_function(input);
                 choice.consider(input, result)?;
                 let result = self.yul_identifier_path(input);
                 choice.consider(input, result)?;
@@ -8974,9 +8974,9 @@ impl Language {
             }
             RuleKind::YulBlock => Self::yul_block.parse(self, input, true),
             RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input, true),
+            RuleKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input, true),
             RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input, true),
             RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input, true),
-            RuleKind::YulEvmBuiltin => Self::yul_evm_builtin.parse(self, input, true),
             RuleKind::YulExpression => Self::yul_expression.parse(self, input, true),
             RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input, true),
             RuleKind::YulFunctionCallExpression => {
@@ -10622,7 +10622,7 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('m') => {
                                             if scan_chars!(input, 'o', 'd') {
-                                                KeywordScan::Reserved(TokenKind::YulAddmodKeyword)
+                                                KeywordScan::Reserved(TokenKind::YulAddModKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10759,7 +10759,7 @@ impl Lexer for Language {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'f', 'e', 'e') {
                                         if self.version_is_at_least_0_8_7 {
-                                            KeywordScan::Reserved(TokenKind::YulBasefeeKeyword)
+                                            KeywordScan::Reserved(TokenKind::YulBaseFeeKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10775,7 +10775,7 @@ impl Lexer for Language {
                             },
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'c', 'k', 'h', 'a', 's', 'h') {
-                                    KeywordScan::Reserved(TokenKind::YulBlockhashKeyword)
+                                    KeywordScan::Reserved(TokenKind::YulBlockHashKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10819,7 +10819,7 @@ impl Lexer for Language {
                                             Some('c') => {
                                                 if scan_chars!(input, 'o', 'd', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulCallcodeKeyword,
+                                                        TokenKind::YulCallCodeKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -10830,21 +10830,21 @@ impl Lexer for Language {
                                                     match input.next() {
                                                         Some('c') => {
                                                             if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCalldatacopyKeyword)
+                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataCopyKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
                                                         }
                                                         Some('l') => {
                                                             if scan_chars!(input, 'o', 'a', 'd') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCalldataloadKeyword)
+                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataLoadKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
                                                         }
                                                         Some('s') => {
                                                             if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCalldatasizeKeyword)
+                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataSizeKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -10889,7 +10889,7 @@ impl Lexer for Language {
                                             Some('v') => {
                                                 if scan_chars!(input, 'a', 'l', 'u', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulCallvalueKeyword,
+                                                        TokenKind::YulCallValueKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -10934,9 +10934,9 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'a', 'i', 'n', 'i', 'd') {
                                     if self.version_is_at_least_0_5_12 {
-                                        KeywordScan::Reserved(TokenKind::YulChainidKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulChainIdKeyword)
                                     } else {
-                                        KeywordScan::Present(TokenKind::YulChainidKeyword)
+                                        KeywordScan::Present(TokenKind::YulChainIdKeyword)
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -10945,7 +10945,7 @@ impl Lexer for Language {
                             Some('o') => match input.next() {
                                 Some('i') => {
                                     if scan_chars!(input, 'n', 'b', 'a', 's', 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulCoinbaseKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulCoinBaseKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11118,7 +11118,7 @@ impl Lexer for Language {
                                                     input, 'a', 't', 'e', 'c', 'a', 'l', 'l'
                                                 ) {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulDelegatecallKeyword,
+                                                        TokenKind::YulDelegateCallKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11250,7 +11250,7 @@ impl Lexer for Language {
                                                     match input.next() {
                                                         Some('c') => {
                                                             if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulExtcodecopyKeyword)
+                                                                KeywordScan :: Reserved (TokenKind :: YulExtCodeCopyKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11258,7 +11258,7 @@ impl Lexer for Language {
                                                         Some('h') => {
                                                             if scan_chars!(input, 'a', 's', 'h') {
                                                                 if self.version_is_at_least_0_5_0 {
-                                                                    KeywordScan :: Reserved (TokenKind :: YulExtcodehashKeyword)
+                                                                    KeywordScan :: Reserved (TokenKind :: YulExtCodeHashKeyword)
                                                                 } else {
                                                                     KeywordScan::Absent
                                                                 }
@@ -11268,7 +11268,7 @@ impl Lexer for Language {
                                                         }
                                                         Some('s') => {
                                                             if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulExtcodesizeKeyword)
+                                                                KeywordScan :: Reserved (TokenKind :: YulExtCodeSizeKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11417,14 +11417,14 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('l') => {
                                             if scan_chars!(input, 'i', 'm', 'i', 't') {
-                                                KeywordScan::Reserved(TokenKind::YulGaslimitKeyword)
+                                                KeywordScan::Reserved(TokenKind::YulGasLimitKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some('p') => {
                                             if scan_chars!(input, 'r', 'i', 'c', 'e') {
-                                                KeywordScan::Reserved(TokenKind::YulGaspriceKeyword)
+                                                KeywordScan::Reserved(TokenKind::YulGasPriceKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -11627,7 +11627,7 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('z') => {
                                     if scan_chars!(input, 'e', 'r', 'o') {
-                                        KeywordScan::Reserved(TokenKind::YulIszeroKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulIsZeroKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11800,7 +11800,7 @@ impl Lexer for Language {
                             }
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'a', 'd') {
-                                    KeywordScan::Reserved(TokenKind::YulMloadKeyword)
+                                    KeywordScan::Reserved(TokenKind::YulMLoadKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -11834,7 +11834,7 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('i') => {
                                     if scan_chars!(input, 'z', 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulMsizeKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulMSizeKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11843,14 +11843,14 @@ impl Lexer for Language {
                                     if scan_chars!(input, 'o', 'r', 'e') {
                                         match input.next() {
                                             Some('8') => {
-                                                KeywordScan::Reserved(TokenKind::YulMstore8Keyword)
+                                                KeywordScan::Reserved(TokenKind::YulMStore8Keyword)
                                             }
                                             Some(_) => {
                                                 input.undo();
-                                                KeywordScan::Reserved(TokenKind::YulMstoreKeyword)
+                                                KeywordScan::Reserved(TokenKind::YulMStoreKeyword)
                                             }
                                             None => {
-                                                KeywordScan::Reserved(TokenKind::YulMstoreKeyword)
+                                                KeywordScan::Reserved(TokenKind::YulMStoreKeyword)
                                             }
                                         }
                                     } else {
@@ -11867,7 +11867,7 @@ impl Lexer for Language {
                                 Some('l') => match input.next() {
                                     Some('m') => {
                                         if scan_chars!(input, 'o', 'd') {
-                                            KeywordScan::Reserved(TokenKind::YulMulmodKeyword)
+                                            KeywordScan::Reserved(TokenKind::YulMulModKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12048,7 +12048,7 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'v', 'r', 'a', 'n', 'd', 'a', 'o') {
                                         if self.version_is_at_least_0_8_18 {
-                                            KeywordScan::Reserved(TokenKind::YulPrevrandaoKeyword)
+                                            KeywordScan::Reserved(TokenKind::YulPrevRandaoKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12179,7 +12179,7 @@ impl Lexer for Language {
                                                                     if self
                                                                         .version_is_at_least_0_4_12
                                                                     {
-                                                                        KeywordScan :: Reserved (TokenKind :: YulReturndatacopyKeyword)
+                                                                        KeywordScan :: Reserved (TokenKind :: YulReturnDataCopyKeyword)
                                                                     } else {
                                                                         KeywordScan::Absent
                                                                     }
@@ -12193,7 +12193,7 @@ impl Lexer for Language {
                                                                     if self
                                                                         .version_is_at_least_0_4_12
                                                                     {
-                                                                        KeywordScan :: Reserved (TokenKind :: YulReturndatasizeKeyword)
+                                                                        KeywordScan :: Reserved (TokenKind :: YulReturnDataSizeKeyword)
                                                                     } else {
                                                                         KeywordScan::Absent
                                                                     }
@@ -12265,7 +12265,7 @@ impl Lexer for Language {
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'i', 'v') {
-                                    KeywordScan::Reserved(TokenKind::YulSdivKeyword)
+                                    KeywordScan::Reserved(TokenKind::YulSDivKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12303,11 +12303,11 @@ impl Lexer for Language {
                                                 {
                                                     if self.version_is_at_least_0_5_12 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulSelfbalanceKeyword,
+                                                            TokenKind::YulSelfBalanceKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Present(
-                                                            TokenKind::YulSelfbalanceKeyword,
+                                                            TokenKind::YulSelfBalanceKeyword,
                                                         )
                                                     }
                                                 } else {
@@ -12319,7 +12319,7 @@ impl Lexer for Language {
                                                     input, 'e', 's', 't', 'r', 'u', 'c', 't'
                                                 ) {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulSelfdestructKeyword,
+                                                        TokenKind::YulSelfDestructKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -12383,7 +12383,7 @@ impl Lexer for Language {
                             Some('i') => match input.next() {
                                 Some('g') => {
                                     if scan_chars!(input, 'n', 'e', 'x', 't', 'e', 'n', 'd') {
-                                        KeywordScan::Reserved(TokenKind::YulSignextendKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulSignExtendKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12410,7 +12410,7 @@ impl Lexer for Language {
                             Some('l') => match input.next() {
                                 Some('o') => {
                                     if scan_chars!(input, 'a', 'd') {
-                                        KeywordScan::Reserved(TokenKind::YulSloadKeyword)
+                                        KeywordScan::Reserved(TokenKind::YulSLoadKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12424,14 +12424,14 @@ impl Lexer for Language {
                             },
                             Some('m') => {
                                 if scan_chars!(input, 'o', 'd') {
-                                    KeywordScan::Reserved(TokenKind::YulSmodKeyword)
+                                    KeywordScan::Reserved(TokenKind::YulSModKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('s') => {
                                 if scan_chars!(input, 't', 'o', 'r', 'e') {
-                                    KeywordScan::Reserved(TokenKind::YulSstoreKeyword)
+                                    KeywordScan::Reserved(TokenKind::YulSStoreKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12444,7 +12444,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'a', 'l', 'l') {
                                                     if self.version_is_at_least_0_4_12 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulStaticcallKeyword,
+                                                            TokenKind::YulStaticCallKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent

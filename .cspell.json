@@ -6,7 +6,6 @@
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
-    "builtins",
     "codegen",
     "devcontainer",
     "doxygen",
