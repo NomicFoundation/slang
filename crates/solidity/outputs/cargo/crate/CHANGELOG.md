@@ -1,5 +1,11 @@
 # changelog
 
+## 0.13.1
+
+### Patch Changes
+
+-   [#748](https://github.com/NomicFoundation/slang/pull/748) [`c289cbf7`](https://github.com/NomicFoundation/slang/commit/c289cbf7e22118881818b82d0ffc5933a424a7aa) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Properly parse EVM built-ins up till Paris/Solidity 0.8.18
+
 ## 0.13.0
 
 ### Minor Changes
