@@ -37,7 +37,6 @@ cli = ["dep:anyhow", "dep:clap", "dep:serde_json"]
 
 [build-dependencies] # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 anyhow = { workspace = true }                   # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
-codegen_grammar = { workspace = true }          # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 codegen_parser_generator = { workspace = true } # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 infra_utils = { workspace = true }              # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 solidity_language = { workspace = true }        # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__

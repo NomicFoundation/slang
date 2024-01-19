@@ -3,10 +3,12 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
-    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
-    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
+    Grammar, GrammarConstructorDslV2, GrammarVisitor, KeywordScannerAtomic,
+    KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
 };
+use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
 use quote::{format_ident, quote};
@@ -58,22 +60,26 @@ struct ScannerContext {
 }
 
 impl RustGenerator {
-    pub fn generate(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
-        let mut code = Self::default();
-        grammar.accept_visitor(&mut code);
-        let code = &code;
+    pub fn generate(language: &Language, output_dir: &Path) -> Result<()> {
+        let grammar = Grammar::from_dsl_v2(language);
+
+        let generator = &mut Self::default();
+        grammar.accept_visitor(generator);
 
         let runtime_dir =
             CargoWorkspace::locate_source_crate("codegen_parser_runtime")?.join("src");
+
         let mut codegen = Codegen::read_write(&runtime_dir)?;
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub ast_model: &'a AstModel,
+            struct Context {
+                ast_model: AstModel,
             }
             codegen.render(
-                Template { ast_model },
+                Context {
+                    ast_model: AstModel::create(language),
+                },
                 runtime_dir.join("napi/templates/ast_selectors.rs.jinja2"),
                 output_dir.join("napi/napi_ast_selectors.rs"),
             )?;
@@ -81,11 +87,11 @@ impl RustGenerator {
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub code: &'a RustGenerator,
+            struct Context<'a> {
+                generator: &'a RustGenerator,
             }
             codegen.render(
-                Template { code },
+                Context { generator },
                 runtime_dir.join("templates/kinds.rs.jinja2"),
                 output_dir.join("kinds.rs"),
             )?;
@@ -93,14 +99,14 @@ impl RustGenerator {
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub code: &'a RustGenerator,
-                pub language_name: String,
-                pub versions: BTreeSet<Version>,
+            struct Context<'a> {
+                generator: &'a RustGenerator,
+                language_name: String,
+                versions: BTreeSet<Version>,
             }
             codegen.render(
-                Template {
-                    code,
+                Context {
+                    generator,
                     language_name: grammar.name.clone(),
                     versions: grammar.versions.clone(),
                 },
@@ -111,9 +117,9 @@ impl RustGenerator {
 
         {
             #[derive(Serialize)]
-            pub struct Template {}
+            struct Context {}
             codegen.render(
-                Template {},
+                Context {},
                 runtime_dir.join("templates/mod.rs.jinja2"),
                 output_dir.join("mod.rs"),
             )?;

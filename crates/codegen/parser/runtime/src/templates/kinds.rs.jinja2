@@ -16,7 +16,7 @@ use napi_derive::napi;
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
-    {%- for variant in code.rule_kinds -%}
+    {%- for variant in generator.rule_kinds -%}
         {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
         {{ variant }},
     {%- endfor -%}
@@ -26,7 +26,7 @@ impl RuleKind {
     pub fn is_trivia(&self) -> bool {
         #[allow(clippy::match_like_matches_macro)]
         match self {
-            {%- for variant in code.trivia_kinds -%}
+            {%- for variant in generator.trivia_kinds -%}
                 Self::{{ variant }} => true,
             {%- endfor -%}
             _ => false,
@@ -59,7 +59,7 @@ pub enum FieldName {
     LeftOperand,
     RightOperand,
     // Generated
-    {% for variant in code.field_names -%}
+    {% for variant in generator.field_names -%}
         {{ variant | pascal_case }},
     {%- endfor -%}
 }
@@ -80,7 +80,7 @@ pub enum FieldName {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    {%- for variant in code.token_kinds -%}
+    {%- for variant in generator.token_kinds -%}
         {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
         {{ variant }},
     {%- endfor -%}
@@ -89,7 +89,7 @@ pub enum TokenKind {
 /// The lexical context of the scanner.
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
-    {%- for context_name, _context in code.scanner_contexts %}
+    {%- for context_name, _context in generator.scanner_contexts %}
         {{ context_name }},
     {%- endfor %}
 }
@@ -104,7 +104,7 @@ pub(crate) trait IsLexicalContext {
 pub(crate) mod LexicalContextType {
     use super::{IsLexicalContext, LexicalContext};
 
-    {%- for context_name, _ in code.scanner_contexts %}
+    {%- for context_name, _ in generator.scanner_contexts %}
         pub struct {{ context_name }} {}
         impl IsLexicalContext for {{ context_name }} {
             fn value() -> LexicalContext {
