@@ -88,22 +88,28 @@ mod VariableDeclarationStatement;
 #[allow(non_snake_case)]
 mod VersionPragma;
 #[allow(non_snake_case)]
+mod YulAssignmentStatement;
+#[allow(non_snake_case)]
 mod YulBlock;
 #[allow(non_snake_case)]
 mod YulExpression;
+#[allow(non_snake_case)]
+mod YulFunctionCallExpression;
 #[allow(non_snake_case)]
 mod YulLeaveStatement;
 #[allow(non_snake_case)]
 mod YulVariableDeclarationStatement;
 
-pub const VERSION_BREAKS: [Version; 22] = [
+pub const VERSION_BREAKS: [Version; 25] = [
     Version::new(0, 4, 11),
+    Version::new(0, 4, 12),
     Version::new(0, 4, 14),
     Version::new(0, 4, 21),
     Version::new(0, 4, 22),
     Version::new(0, 5, 0),
     Version::new(0, 5, 3),
     Version::new(0, 5, 10),
+    Version::new(0, 5, 12),
     Version::new(0, 6, 0),
     Version::new(0, 6, 2),
     Version::new(0, 6, 5),
@@ -114,6 +120,7 @@ pub const VERSION_BREAKS: [Version; 22] = [
     Version::new(0, 7, 4),
     Version::new(0, 8, 0),
     Version::new(0, 8, 4),
+    Version::new(0, 8, 7),
     Version::new(0, 8, 8),
     Version::new(0, 8, 13),
     Version::new(0, 8, 18),

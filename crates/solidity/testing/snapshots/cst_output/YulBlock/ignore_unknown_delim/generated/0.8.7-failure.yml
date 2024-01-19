@@ -1,0 +1,80 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ {                                                                                │ 0..1
+  2  │ 	function mult(a, b) -> result {                                                 │ 2..34
+  3  │ 		result := mul(a, b)                                                            │ 35..56
+  4  │ 		result := [mul(a, b)                                                           │ 57..79
+  5  │ 	}                                                                               │ 80..82
+  6  │ }                                                                                │ 83..84
+
+Errors: # 1 total
+  - >
+    Error: Expected AsciiStringLiteral or CloseBrace or HexStringLiteral or OpenBrace or YulAddKeyword or YulAddModKeyword or YulAddressKeyword or YulAndKeyword or YulBalanceKeyword or YulBaseFeeKeyword or YulBlockHashKeyword or YulBreakKeyword or YulByteKeyword or YulCallCodeKeyword or YulCallDataCopyKeyword or YulCallDataLoadKeyword or YulCallDataSizeKeyword or YulCallKeyword or YulCallValueKeyword or YulCallerKeyword or YulChainIdKeyword or YulCoinBaseKeyword or YulContinueKeyword or YulCreate2Keyword or YulCreateKeyword or YulDecimalLiteral or YulDelegateCallKeyword or YulDifficultyKeyword or YulDivKeyword or YulEqKeyword or YulExpKeyword or YulExtCodeCopyKeyword or YulExtCodeHashKeyword or YulExtCodeSizeKeyword or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulGasKeyword or YulGasLimitKeyword or YulGasPriceKeyword or YulGtKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulInvalidKeyword or YulIsZeroKeyword or YulKeccak256Keyword or YulLeaveKeyword or YulLetKeyword or YulLog0Keyword or YulLog1Keyword or YulLog2Keyword or YulLog3Keyword or YulLog4Keyword or YulLtKeyword or YulMLoadKeyword or YulMSizeKeyword or YulMStore8Keyword or YulMStoreKeyword or YulModKeyword or YulMulKeyword or YulMulModKeyword or YulNotKeyword or YulNumberKeyword or YulOrKeyword or YulOriginKeyword or YulPopKeyword or YulReturnDataCopyKeyword or YulReturnDataSizeKeyword or YulReturnKeyword or YulRevertKeyword or YulSDivKeyword or YulSLoadKeyword or YulSModKeyword or YulSStoreKeyword or YulSarKeyword or YulSelfBalanceKeyword or YulSelfDestructKeyword or YulSgtKeyword or YulShlKeyword or YulShrKeyword or YulSignExtendKeyword or YulSltKeyword or YulStaticCallKeyword or YulStopKeyword or YulSubKeyword or YulSwitchKeyword or YulTimestampKeyword or YulTrueKeyword or YulXorKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
+       │
+     4 │ ╭─▶        result := [mul(a, b)
+     5 │ ├─▶     }
+       │ │           
+       │ ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (0..85)
+      - (open_brace꞉ OpenBrace): "{" # (0..1)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (1..2)
+      - (statements꞉ YulStatements): # "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..." (2..83)
+          - (item꞉ YulStatement) ► (variant꞉ YulFunctionDefinition): # "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..." (2..83)
+              - (LeadingTrivia) ► (Whitespace): "\t" # (2..3)
+              - (function_keyword꞉ YulFunctionKeyword): "function" # (3..11)
+              - (LeadingTrivia) ► (Whitespace): " " # (11..12)
+              - (name꞉ YulIdentifier): "mult" # (12..16)
+              - (parameters꞉ YulParametersDeclaration): # "(a, b)" (16..22)
+                  - (open_paren꞉ OpenParen): "(" # (16..17)
+                  - (parameters꞉ YulParameters): # "a, b" (17..21)
+                      - (item꞉ YulIdentifier): "a" # (17..18)
+                      - (separator꞉ Comma): "," # (18..19)
+                      - (LeadingTrivia) ► (Whitespace): " " # (19..20)
+                      - (item꞉ YulIdentifier): "b" # (20..21)
+                  - (close_paren꞉ CloseParen): ")" # (21..22)
+              - (returns꞉ YulReturnsDeclaration): # " -> result" (22..32)
+                  - (LeadingTrivia) ► (Whitespace): " " # (22..23)
+                  - (minus_greater_than꞉ MinusGreaterThan): "->" # (23..25)
+                  - (variables꞉ YulReturnVariables): # " result" (25..32)
+                      - (LeadingTrivia) ► (Whitespace): " " # (25..26)
+                      - (item꞉ YulIdentifier): "result" # (26..32)
+              - (body꞉ YulBlock): # " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..." (32..83)
+                  - (LeadingTrivia) ► (Whitespace): " " # (32..33)
+                  - (open_brace꞉ OpenBrace): "{" # (33..34)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (34..35)
+                  - (statements꞉ YulStatements): # "\t\tresult := mul(a, b)\n\t\tresult" (35..65)
+                      - (item꞉ YulStatement) ► (variant꞉ YulAssignmentStatement): # "\t\tresult := mul(a, b)\n" (35..57)
+                          - (names꞉ YulIdentifierPaths): # "\t\tresult" (35..43)
+                              - (item꞉ YulIdentifierPath): # "\t\tresult" (35..43)
+                                  - (LeadingTrivia) ► (Whitespace): "\t\t" # (35..37)
+                                  - (item꞉ YulIdentifier): "result" # (37..43)
+                          - (LeadingTrivia) ► (Whitespace): " " # (43..44)
+                          - (colon_equal꞉ ColonEqual): ":=" # (44..46)
+                          - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mul(a, b)\n" (46..57)
+                              - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mul" (46..50)
+                                  - (LeadingTrivia) ► (Whitespace): " " # (46..47)
+                                  - (variant꞉ YulMulKeyword): "mul" # (47..50)
+                              - (open_paren꞉ OpenParen): "(" # (50..51)
+                              - (arguments꞉ YulArguments): # "a, b" (51..55)
+                                  - (item꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "a" (51..52)
+                                      - (item꞉ YulIdentifier): "a" # (51..52)
+                                  - (separator꞉ Comma): "," # (52..53)
+                                  - (item꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # " b" (53..55)
+                                      - (LeadingTrivia) ► (Whitespace): " " # (53..54)
+                                      - (item꞉ YulIdentifier): "b" # (54..55)
+                              - (close_paren꞉ CloseParen): ")" # (55..56)
+                              - (TrailingTrivia) ► (EndOfLine): "\n" # (56..57)
+                      - (item꞉ YulStatement) ► (variant꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "\t\tresult" (57..65)
+                          - (LeadingTrivia) ► (Whitespace): "\t\t" # (57..59)
+                          - (item꞉ YulIdentifier): "result" # (59..65)
+                  - (LeadingTrivia) ► (Whitespace): " " # (65..66)
+                  - (SKIPPED): ":= [mul(a, b)\n\t" # (66..81)
+                  - (close_brace꞉ CloseBrace): "}" # (81..82)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (82..83)
+      - (close_brace꞉ CloseBrace): "}" # (83..84)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (84..85)

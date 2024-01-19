@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ extcodecopy()                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "extcodecopy()\n" (0..14)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulExtCodeCopyKeyword): "extcodecopy" # (0..11)
+      - (open_paren꞉ OpenParen): "(" # (11..12)
+      - (close_paren꞉ CloseParen): ")" # (12..13)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (13..14)

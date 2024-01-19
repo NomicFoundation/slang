@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ mod()                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "mod()\n" (0..6)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulModKeyword): "mod" # (0..3)
+      - (open_paren꞉ OpenParen): "(" # (3..4)
+      - (close_paren꞉ CloseParen): ")" # (4..5)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (5..6)

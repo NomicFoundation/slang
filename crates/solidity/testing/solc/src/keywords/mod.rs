@@ -32,32 +32,48 @@ pub fn check_solidity_keywords() -> Result<()> {
     let style = "[{elapsed_precise}] [{bar:80.cyan/blue}] {pos}/{len} │ ETA: {eta_precise}";
     progress_bar.set_style(ProgressStyle::with_template(style)?);
 
-    test_cases.par_iter().for_each(|test_case| {
-        let result = test_case.execute(&binaries);
+    let total_errors = test_cases
+        .par_iter()
+        .map(|test_case| {
+            let result = test_case.execute(&binaries);
+            let mut errors = 0;
 
-        if !result.should_be_reserved_in.is_empty() {
-            progress_bar.println(format!(
-                "[{item}] '{variation}' should be reserved in: {versions:?}",
-                item = test_case.item,
-                variation = test_case.variation,
-                versions = result.should_be_reserved_in
-            ));
-        }
+            if !result.should_be_reserved_in.is_empty() {
+                errors += 1;
+                progress_bar.println(format!(
+                    "[{item}] '{variation}' should be reserved in: {versions:?}",
+                    item = test_case.item,
+                    variation = test_case.variation,
+                    versions = result.should_be_reserved_in
+                ));
+            }
 
-        if !result.should_be_unreserved_in.is_empty() {
-            progress_bar.println(format!(
-                "[{item}] '{variation}' should be unreserved in: {versions:?}",
-                item = test_case.item,
-                variation = test_case.variation,
-                versions = result.should_be_unreserved_in
-            ));
-        }
+            if !result.should_be_unreserved_in.is_empty() {
+                errors += 1;
+                progress_bar.println(format!(
+                    "[{item}] '{variation}' should be unreserved in: {versions:?}",
+                    item = test_case.item,
+                    variation = test_case.variation,
+                    versions = result.should_be_unreserved_in
+                ));
+            }
 
-        progress_bar.inc(1);
-    });
+            progress_bar.inc(1);
+            errors
+        })
+        .sum::<usize>();
 
     progress_bar.finish();
     println!();
+
+    if total_errors > 0 {
+        println!();
+        println!("Found {total_errors} errors.");
+        println!();
+
+        #[allow(clippy::exit)]
+        std::process::exit(1);
+    }
 
     Ok(())
 }
@@ -223,8 +239,9 @@ impl TestCase {
                 "Expected token Semicolon got",
                 "Expected ';' but got ",
                 "State mutability can only be specified for address types.",
-                "Cannot use instruction names for identifier names.",
                 "Cannot use builtin function name",
+                "Cannot use instruction name",
+                "is reserved and can not be used.",
             ]
             .iter()
             .any(|part| error.message.contains(part))

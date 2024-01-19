@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ returndatacopy()                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "returndatacopy()\n" (0..17)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulReturnDataCopyKeyword): "returndatacopy" # (0..14)
+      - (open_paren꞉ OpenParen): "(" # (14..15)
+      - (close_paren꞉ CloseParen): ")" # (15..16)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)
