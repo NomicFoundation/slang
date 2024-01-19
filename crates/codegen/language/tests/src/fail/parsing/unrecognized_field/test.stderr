@@ -1,5 +1,5 @@
 error: unexpected token
-  --> src/fail/parsing/unrecognized_field/test.rs:17:13
+  --> src/fail/parsing/unrecognized_field/test.rs:18:13
    |
-17 |             unrecognized_field = true
+18 |             unrecognized_field = true
    |             ^^^^^^^^^^^^^^^^^^

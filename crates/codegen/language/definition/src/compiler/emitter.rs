@@ -25,8 +25,8 @@ impl LanguageEmitter {
                 pub struct #definition_struct;
 
                 impl #definition_struct {
-                    pub fn create() -> codegen_language_definition::model::Language {
-                        return #definition;
+                    pub fn create() -> std::rc::Rc<codegen_language_definition::model::Language> {
+                        return std::rc::Rc::new(#definition);
                     }
                 }
 

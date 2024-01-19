@@ -26,12 +26,14 @@ impl GrammarConstructorDslV2 for Grammar {
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
         let items: HashMap<_, _> = lang
-            .items_with_section()
-            .map(|(_, topic, item)| {
-                (
-                    item.name().clone(),
-                    (topic.lexical_context.clone(), item.clone()),
-                )
+            .topics()
+            .flat_map(|topic| {
+                topic.items.iter().map(|item| {
+                    (
+                        item.name().clone(),
+                        (topic.lexical_context.clone(), item.clone()),
+                    )
+                })
             })
             .collect();
 

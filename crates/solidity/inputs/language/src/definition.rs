@@ -2,6 +2,7 @@ pub use solidity::SolidityDefinition;
 
 codegen_language_macros::compile!(Language(
     name = Solidity,
+    documentation_dir = "crates/solidity/inputs/language/docs",
     root_item = SourceUnit,
     // TODO(#638): For now this is on par with the DSL v1 definition to minimize the fallout.
     // We should replace this with the new definition from #629.
@@ -31,6 +32,7 @@ codegen_language_macros::compile!(Language(
         Section(
             title = "File Structure",
             topics = [
+                Topic(title = "License Specifiers", items = []),
                 Topic(
                     title = "Source Unit",
                     items = [
@@ -403,6 +405,7 @@ codegen_language_macros::compile!(Language(
                         )
                     ]
                 ),
+                Topic(title = "Nat Spec Format", items = []),
                 Topic(
                     title = "Keywords",
                     items = [
@@ -4227,7 +4230,7 @@ codegen_language_macros::compile!(Language(
                     ]
                 ),
                 Topic(
-                    title = "Keywords",
+                    title = "Yul Keywords",
                     lexical_context = Yul,
                     items = [
                         Keyword(

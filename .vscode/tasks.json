@@ -4,43 +4,6 @@
     {
       "label": "Run Rust Analyzer Checks",
       "command": "${command:rust-analyzer.runFlycheck}"
-    },
-    {
-      "label": "Validate Solidity Definition",
-      "type": "shell",
-      "command": "${workspaceFolder}/scripts/bin/infra",
-      "args": ["check", "cargo"],
-      "options": {
-        "env": {
-          "VSCODE_PROBLEM_MATCHER": "true"
-        }
-      },
-      "problemMatcher": {
-        "owner": "solidity",
-        "source": "slang",
-        "applyTo": "allDocuments",
-        "fileLocation": "absolute",
-        "pattern": [
-          {
-            "regexp": "^\\s*slang-problem-matcher:([^:]+):([^:]+):([^-]+)-([^:]+):([^:]+): ([^:]+): (.+)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "endLine": 4,
-            "endColumn": 5,
-            "severity": 6,
-            "message": 7
-          }
-        ]
-      },
-      "runOptions": {
-        "instanceLimit": 1
-      },
-      "presentation": {
-        "group": "slang",
-        "reveal": "never",
-        "clear": true
-      }
     }
   ]
 }
