@@ -15,6 +15,7 @@ use napi_derive::napi;
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(use_phf)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
@@ -253,7 +254,7 @@ impl RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[strum(serialize_all = "snake_case")]
+#[strum(use_phf, serialize_all = "snake_case")]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum FieldName {
@@ -402,6 +403,7 @@ pub enum FieldName {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(use_phf)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {

@@ -13,11 +13,17 @@ use napi_derive::napi;
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(use_phf)]
 #[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
+    Identifier,
     // Expanded by the template engine
+    // Used for testing
+    X,
+    Y,
+    Z,
 }
 
 #[derive(
@@ -32,12 +38,18 @@ pub enum TokenKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(use_phf)]
 #[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
     // Expanded by the template engine
+    // Used for testing
+    A,
+    B,
+    C,
+    D,
 }
 
 impl RuleKind {
@@ -58,6 +70,7 @@ impl RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
+#[strum(use_phf)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum FieldName {

@@ -26,9 +26,9 @@ impl PathRuleNode {
 
 /// A pointer to a [`Node`] in a CST, used by the [`Cursor`] to implement the traversal.
 #[derive(Clone, Debug, PartialEq, Eq)]
-struct PathNode {
+pub(super) struct PathNode {
     /// The node the cursor is currently pointing to.
-    node: Node,
+    pub(super) node: Node,
     /// The index of the current child node in the parent's children.
     // Required to go to the next/previous sibling.
     child_number: usize,
@@ -64,7 +64,7 @@ pub struct Cursor {
     /// The list of ancestor rule nodes that the `current` node is a part of.
     path: Vec<PathRuleNode>,
     /// The node the cursor is currently pointing to.
-    current: PathNode,
+    pub(super) current: PathNode,
     /// Whether the cursor is completed, i.e. at the root node as a result of traversal (or when `complete`d).
     /// If `true`, the cursor cannot be moved.
     is_completed: bool,

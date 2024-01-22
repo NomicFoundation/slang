@@ -77,6 +77,7 @@ napi = { version = "2.14.2", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.1.0" }
 napi-derive = { version = "2.14.6" }
 once_cell = { version = "1.19.0" }
+nom = { version = "7.1.3" }
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }
@@ -87,8 +88,9 @@ semver = { version = "1.0.17", features = ["serde"] }
 serde = { version = "1.0.158", features = ["derive", "rc"] }
 serde_json = { version = "1.0.94", features = ["preserve_order"] }
 similar-asserts = { version = "1.4.2" }
-strum = { version = "0.24.0" }
-strum_macros = { version = "0.24.0" }
+stack-graphs = { version = "0.12.0" }
+strum = { version = "0.25.0", features = ["phf"] }
+strum_macros = { version = "0.25.3" }
 syn = { version = "2.0.29", features = [
     "fold",
     "full",
