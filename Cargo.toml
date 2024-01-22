@@ -15,7 +15,6 @@ members = [
     "crates/codegen/language/tests",
     "crates/codegen/parser/generator",
     "crates/codegen/parser/runtime",
-    "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
     "crates/infra/cli",
@@ -44,7 +43,6 @@ codegen_language_macros = { path = "crates/codegen/language/macros" }
 codegen_language_tests = { path = "crates/codegen/language/tests" }
 codegen_parser_generator = { path = "crates/codegen/parser/generator" }
 codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
-codegen_schema = { path = "crates/codegen/schema" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }
@@ -64,7 +62,6 @@ solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 #
 anyhow = { version = "1.0.75", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
-bson = { version = "2.6.1" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
 clap = { version = "4.1.13", features = ["derive", "wrap_help"] }
@@ -86,11 +83,9 @@ quote = { version = "1.0.26" }
 rayon = { version = "1.7.0" }
 regex = { version = "1.9.1" }
 reqwest = { version = "0.11.22", features = ["blocking"] }
-schemars = { version = "0.8.12", features = ["derive", "preserve_order"] }
 semver = { version = "1.0.17", features = ["serde"] }
 serde = { version = "1.0.158", features = ["derive", "rc"] }
 serde_json = { version = "1.0.94", features = ["preserve_order"] }
-serde_yaml = { version = "0.9.19" }
 similar-asserts = { version = "1.4.2" }
 strum = { version = "0.24.0" }
 strum_macros = { version = "0.24.0" }
@@ -106,6 +101,4 @@ terminal_size = { version = "0.2.6" }
 thiserror = { version = "1.0.40" }
 trybuild = { version = "1.0.85" }
 toml = { version = "0.7.6" }
-typed-arena = { version = "2.0.2" }
 url = { version = "2.3.1" }
-yaml-rust = { version = "0.4.5" }

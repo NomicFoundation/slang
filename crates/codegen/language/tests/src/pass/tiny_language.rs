@@ -1,11 +1,15 @@
+use std::path::Path;
+
 use codegen_language_definition::model::{
     Field, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem, Topic,
     TriviaParser,
 };
+use infra_utils::paths::PathExtensions;
 use semver::Version;
 
 codegen_language_macros::compile!(Language(
     name = Tiny,
+    documentation_dir = "tiny/docs",
     root_item = Foo,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
@@ -42,6 +46,7 @@ fn definition() {
         tiny::TinyDefinition::create(),
         Language {
             name: "Tiny".into(),
+            documentation_dir: Path::repo_path("tiny/docs"),
             root_item: "Foo".into(),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
             trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
@@ -113,6 +118,7 @@ fn definition() {
                     .into()
                 }],
             }],
-        },
+        }
+        .into(),
     );
 }

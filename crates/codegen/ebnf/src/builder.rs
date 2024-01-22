@@ -12,30 +12,43 @@ use inflector::Inflector;
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 
 pub struct Builder {
-    entries: HashMap<String, Entry>,
+    section_index: usize,
+    topic_index: usize,
+
+    entries: HashMap<Identifier, Entry>,
 }
 
 impl Builder {
-    pub fn build(language: &Language) -> HashMap<String, Entry> {
-        let mut builder = Self {
-            entries: HashMap::new(),
-        };
+    pub fn build(language: &Language) -> HashMap<Identifier, Entry> {
+        let mut all_entries = HashMap::new();
 
-        for item in language.items() {
-            match item {
-                Item::Struct { item } => builder.add_struct_item(item),
-                Item::Enum { item } => builder.add_enum_item(item),
-                Item::Repeated { item } => builder.add_repeated_item(item),
-                Item::Separated { item } => builder.add_separated_item(item),
-                Item::Precedence { item } => builder.add_precedence_item(item),
-                Item::Trivia { item } => builder.add_trivia_item(item),
-                Item::Keyword { item } => builder.add_keyword_item(item),
-                Item::Token { item } => builder.add_token_item(item),
-                Item::Fragment { item } => builder.add_fragment_item(item),
-            };
+        for (section_index, section) in language.sections.iter().enumerate() {
+            for (topic_index, topic) in section.topics.iter().enumerate() {
+                let mut builder = Self {
+                    section_index,
+                    topic_index,
+                    entries: HashMap::new(),
+                };
+
+                for item in &topic.items {
+                    match item {
+                        Item::Struct { item } => builder.add_struct_item(item),
+                        Item::Enum { item } => builder.add_enum_item(item),
+                        Item::Repeated { item } => builder.add_repeated_item(item),
+                        Item::Separated { item } => builder.add_separated_item(item),
+                        Item::Precedence { item } => builder.add_precedence_item(item),
+                        Item::Trivia { item } => builder.add_trivia_item(item),
+                        Item::Keyword { item } => builder.add_keyword_item(item),
+                        Item::Token { item } => builder.add_token_item(item),
+                        Item::Fragment { item } => builder.add_fragment_item(item),
+                    };
+                }
+
+                all_entries.extend(builder.entries);
+            }
         }
 
-        builder.entries
+        all_entries
     }
 
     fn add_entry(&mut self, name: &Identifier, is_terminal: Terminal, is_inlined: Inlined) {
@@ -50,8 +63,14 @@ impl Builder {
         }
 
         let existing_entry = self.entries.insert(
-            name.to_string(),
-            Entry::new(name.to_string(), ebnf_id, vec![]),
+            name.to_owned(),
+            Entry::new(
+                name.to_owned(),
+                ebnf_id,
+                self.section_index,
+                self.topic_index,
+                vec![],
+            ),
         );
 
         assert!(
@@ -74,7 +93,7 @@ impl Builder {
         );
 
         self.entries
-            .get_mut(name.as_str())
+            .get_mut(name)
             .unwrap_or_else(|| panic!("Entry '{name}' is not defined."))
             .definitions
             .push(definition);
@@ -430,7 +449,7 @@ impl Builder {
     }
 
     fn build_ref(reference: &Identifier) -> Expression {
-        Expression::new_reference(reference.to_string())
+        Expression::new_reference(reference.to_owned())
     }
 }
 

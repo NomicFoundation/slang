@@ -1,3 +1,5 @@
+use codegen_language_definition::model::Identifier;
+
 /// A [`Entry`] holds all definitions under the same name.
 /// Some grammar items can produce more than one definition each (tokens, keywords, operators).
 ///
@@ -8,8 +10,11 @@
 /// - For fragments, we add `«guillemets»` around the name.
 #[derive(derive_new::new)]
 pub struct Entry {
-    pub name: String,
+    pub name: Identifier,
     pub ebnf_id: String,
+
+    pub section_index: usize,
+    pub topic_index: usize,
 
     pub definitions: Vec<Definition>,
 }
@@ -85,7 +90,7 @@ pub enum Expression {
         atom: String,
     },
     Reference {
-        reference: String,
+        reference: Identifier,
     },
 }
 

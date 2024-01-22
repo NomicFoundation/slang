@@ -32,7 +32,7 @@
 
     {% if "/documentation/public/solidity-specification/" in edit_url %}
         <!-- Redirect users to the language definition instead of the generated files: -->
-        {% set edit_url = config.repo_url + "/edit/main/crates/solidity/inputs/language/definition" %}
+    {% set edit_url = config.repo_url + "/edit/main/crates/solidity/inputs/language/src/definition.rs" %}
     {% endif %}
 
     <!-- Edit Button -->

@@ -1,7 +1,9 @@
 use std::fmt::Debug;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use indexmap::{IndexMap, IndexSet};
+use infra_utils::paths::PathExtensions;
 use proc_macro2::Ident;
 use semver::Version;
 use syn::parse::ParseStream;
@@ -91,6 +93,14 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
             Ok(key) if key == name => Ok(Some(ParseHelpers::field(name, input, errors)?)),
             _ => Ok(None),
         }
+    }
+}
+
+impl ParseInputTokens for PathBuf {
+    fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
+        let value = String::parse_value(input, errors)?;
+
+        Ok(Path::repo_path(value))
     }
 }
 
