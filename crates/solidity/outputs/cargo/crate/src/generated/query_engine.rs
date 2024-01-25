@@ -27,7 +27,7 @@ impl Cursor {
     }
 
     fn matches_query_node_id(&self, node_id: &NodeId) -> bool {
-        match &self.current.node {
+        match self.node() {
             cst::Node::Rule(rule) => match node_id {
                 NodeId::Anonymous => true,
                 NodeId::Kind { kind } => Kind::Rule(rule.kind) == *kind,
