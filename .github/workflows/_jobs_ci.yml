@@ -16,11 +16,11 @@ jobs:
       #
 
       - name: "Clone repository"
-        uses: "actions/checkout@v3.4.0"
+        uses: "actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f"
 
       - name: "Restore CI cache"
         if: "${{ github.ref_name != 'main' }}"
-        uses: "actions/cache/restore@v3.3.1"
+        uses: "actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
@@ -47,7 +47,7 @@ jobs:
       #
 
       - name: "Save cache"
-        uses: "actions/cache/save@v3.3.1"
+        uses: "actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           path: |

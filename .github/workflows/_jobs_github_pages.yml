@@ -23,10 +23,10 @@ jobs:
       #
 
       - name: "Clone repository"
-        uses: "actions/checkout@v3.4.0"
+        uses: "actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f"
 
       - name: "Restore CI cache"
-        uses: "actions/cache/restore@v3.3.1"
+        uses: "actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
@@ -46,13 +46,13 @@ jobs:
       - run: "scripts/bin/infra check mkdocs"
 
       - name: "Configure GitHub Pages"
-        uses: "actions/configure-pages@v3.0.5"
+        uses: "actions/configure-pages@7110e9e03ffb4a421945e5d0607007b8e9f1f52b"
 
       - name: "Upload artifacts"
-        uses: "actions/upload-pages-artifact@v1.0.8"
+        uses: "actions/upload-pages-artifact@64bcae551a7b18bcb9a09042ddf1960979799187"
         with:
           path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
       - name: "Deploy to GitHub Pages"
         id: "deployment"
-        uses: "actions/deploy-pages@v2.0.0"
+        uses: "actions/deploy-pages@73e62e651178eeba977de2dc9f4c7645b3d01015"
