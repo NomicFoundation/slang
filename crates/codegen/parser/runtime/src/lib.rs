@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 #[macro_use]
-mod support;
+mod parser_support;
 
 pub mod cst;
 pub mod cursor;
@@ -9,16 +9,8 @@ pub mod kinds;
 pub(crate) mod lexer;
 pub mod parse_error;
 pub mod parse_output;
-pub mod query_engine;
-pub mod query_model;
-pub(crate) mod query_parser;
+pub mod query;
 pub mod text_index;
 
 #[cfg(feature = "slang_napi_interfaces")]
-pub mod napi;
-
-#[cfg(test)]
-pub mod query_engine_tests;
-
-#[cfg(test)]
-pub mod query_parser_tests;
+pub mod napi_interface;

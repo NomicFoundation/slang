@@ -1,5 +1,3 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 #[macro_use]
 pub mod parser_support;
 

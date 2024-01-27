@@ -19,9 +19,9 @@ use crate::kinds::{
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
-use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
+use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
-use crate::support::{
+use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
     PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
