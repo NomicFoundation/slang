@@ -17,6 +17,7 @@
     "napi",
     "nomic",
     "nomicfoundation",
+    "rustup",
     "struct",
     "structs",
     "tera",
