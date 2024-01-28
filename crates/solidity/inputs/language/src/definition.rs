@@ -9,8 +9,10 @@ codegen_language_macros::compile!(Language(
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
         Trivia(EndOfLine),
-        Trivia(MultilineComment),
-        Trivia(SingleLineComment)
+        Trivia(SingleLineComment),
+        Trivia(MultiLineComment),
+        Trivia(SingleLineNatSpecComment),
+        Trivia(MultiLineNatSpecComment)
     ])),
     trailing_trivia = Sequence([
         Optional(Trivia(Whitespace)),
@@ -384,10 +386,16 @@ codegen_language_macros::compile!(Language(
                             scanner = Sequence([Optional(Atom("\r")), Atom("\n")])
                         ),
                         Trivia(
-                            name = MultilineComment,
+                            name = SingleLineComment,
                             scanner = Sequence([
-                                Atom("/"),
-                                Atom("*"),
+                                TrailingContext(scanner = Atom("//"), not_followed_by = Atom("/")),
+                                ZeroOrMore(Not(['\r', '\n']))
+                            ])
+                        ),
+                        Trivia(
+                            name = MultiLineComment,
+                            scanner = Sequence([
+                                TrailingContext(scanner = Atom("/*"), not_followed_by = Atom("*")),
                                 ZeroOrMore(Choice([
                                     Not(['*']),
                                     TrailingContext(
@@ -395,13 +403,26 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Atom("/")
                                     )
                                 ])),
-                                Atom("*"),
-                                Atom("/")
+                                Atom("*/")
                             ])
                         ),
                         Trivia(
-                            name = SingleLineComment,
-                            scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
+                            name = SingleLineNatSpecComment,
+                            scanner = Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                        ),
+                        Trivia(
+                            name = MultiLineNatSpecComment,
+                            scanner = Sequence([
+                                Atom("/**"),
+                                ZeroOrMore(Choice([
+                                    Not(['*']),
+                                    TrailingContext(
+                                        scanner = Atom("*"),
+                                        not_followed_by = Atom("/")
+                                    )
+                                ])),
+                                Atom("*/")
+                            ])
                         )
                     ]
                 ),
@@ -1940,7 +1961,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Slash,
-                            definitions = [TokenDefinition(scanner = Atom("/"))]
+                            definitions = [TokenDefinition(
+                                scanner = TrailingContext(
+                                    scanner = Atom("/"),
+                                    not_followed_by = Choice([Atom("*"), Atom("/"), Atom("=")])
+                                )
+                            )]
                         ),
                         Token(
                             name = SlashEqual,

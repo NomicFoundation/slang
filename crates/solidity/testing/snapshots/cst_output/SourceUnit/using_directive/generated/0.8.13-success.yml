@@ -81,7 +81,7 @@ Tree:
       - (item꞉ SourceUnitMember) ► (variant꞉ StructDefinition): # "\n/**\n * @notice Object with the necessary informat..." (145..793)
           - (LeadingTrivia): # "\n/**\n * @notice Object with the necessary informat..." (145..643)
               - (EndOfLine): "\n" # (145..146)
-              - (MultilineComment): "/**\n * @notice Object with the necessary informati..." # (146..642)
+              - (MultiLineNatSpecComment): "/**\n * @notice Object with the necessary informati..." # (146..642)
               - (EndOfLine): "\n" # (642..643)
           - (struct_keyword꞉ StructKeyword): "struct" # (643..649)
           - (LeadingTrivia) ► (Whitespace): " " # (649..650)

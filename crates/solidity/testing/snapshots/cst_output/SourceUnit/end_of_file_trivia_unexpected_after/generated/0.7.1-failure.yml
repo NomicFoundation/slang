@@ -32,7 +32,7 @@ Tree:
       - (LeadingTrivia): # "    \n/* new lines after this */\n\n" (15..48)
           - (Whitespace): "    " # (15..19)
           - (EndOfLine): "\n" # (19..20)
-          - (MultilineComment): "/* new lines after this */" # (20..46)
+          - (MultiLineComment): "/* new lines after this */" # (20..46)
           - (EndOfLine): "\n" # (46..47)
           - (EndOfLine): "\n" # (47..48)
       - (SKIPPED): "unexpectedchars\n" # (48..64)
