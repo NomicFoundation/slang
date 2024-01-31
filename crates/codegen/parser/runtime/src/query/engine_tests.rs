@@ -105,13 +105,13 @@ fn run_query_test(tree: &NamedNode, query: &str, results: Vec<BTreeMap<String, V
 
 fn common_test_tree() -> NamedNode {
     cst_tree!(
-        A [
-            N1: X "t1",
-            X "t2",
-            X "t3",
-            B [
-                X "t5",
-                N1: X "t6",
+        Rule1 [
+            Name1: Token1 "t1",
+            Token1 "t2",
+            Token1 "t3",
+            Rule2 [
+                Token1 "t5",
+                Name1: Token1 "t6",
             ],
         ]
     )
@@ -121,7 +121,7 @@ fn common_test_tree() -> NamedNode {
 fn test_spread() {
     run_query_test(
         &common_test_tree(),
-        "[A ... @x1 [X] ... @x2 [X] ...]",
+        "[Rule1 ... @x1 [Token1] ... @x2 [Token1] ...]",
         query_results! {
             {x1: ["t1"], x2: ["t2"]}
             {x1: ["t1"], x2: ["t3"]}
@@ -134,7 +134,7 @@ fn test_spread() {
 fn test_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[A ... @y1 [X] @y2 [X] ...]",
+        "[Rule1 ... @y1 [Token1] @y2 [Token1] ...]",
         query_results! {
             {y1: ["t1"], y2: ["t2"]}
             {y1: ["t2"], y2: ["t3"]}
@@ -146,7 +146,7 @@ fn test_adjacent() {
 fn test_child() {
     run_query_test(
         &common_test_tree(),
-        "[B ... @x [X] ...]",
+        "[Rule2 ... @x [Token1] ...]",
         query_results! {
             {x: ["t5"]}
             {x: ["t6"]}
@@ -158,7 +158,7 @@ fn test_child() {
 fn test_parent_and_child() {
     run_query_test(
         &common_test_tree(),
-        "[A ... @p [N1:_] ...  [B ... @c [X] ...]]",
+        "[Rule1 ... @p [Name1:_] ...  [Rule2 ... @c [Token1] ...]]",
         query_results! {
             {c: ["t5"], p: ["t1"]}
             {c: ["t6"], p: ["t1"]}
@@ -170,7 +170,7 @@ fn test_parent_and_child() {
 fn test_named() {
     run_query_test(
         &common_test_tree(),
-        "[A ... @x [N1:X] ...]",
+        "[Rule1 ... @x [Name1:Token1] ...]",
         query_results! {
             {x: ["t1"]}
         },
@@ -181,7 +181,7 @@ fn test_named() {
 fn test_multilevel_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [X] @y [X] ...]",
+        "[_ ... @x [Token1] @y [Token1] ...]",
         query_results! {
             {x: ["t1"], y: ["t2"]}
             {x: ["t2"], y: ["t3"]}
@@ -194,7 +194,7 @@ fn test_multilevel_adjacent() {
 fn test_multilevel_named() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [N1:_] ...]",
+        "[_ ... @x [Name1:_] ...]",
         query_results! {
             {x: ["t1"]}
             {x: ["t6"]}
@@ -206,7 +206,7 @@ fn test_multilevel_named() {
 fn test_text_value() {
     run_query_test(
         &common_test_tree(),
-        r#"[A ... @z1 [X] ["t2"] @z2 [X] ...]"#,
+        r#"[Rule1 ... @z1 [Token1] ["t2"] @z2 [Token1] ...]"#,
         query_results! {
             {z1: ["t1"], z2: ["t3"]}
         },
@@ -217,7 +217,7 @@ fn test_text_value() {
 fn test_one_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[A ... (@x [X])+ [_] ]",
+        "[Rule1 ... (@x [Token1])+ [_] ]",
         query_results! {
             {x: ["t1", "t2", "t3"]}
             {x: ["t2", "t3"]}
@@ -230,7 +230,7 @@ fn test_one_or_more() {
 fn test_zero_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[A ... (@y [X])* [_] ]",
+        "[Rule1 ... (@y [Token1])* [_] ]",
         query_results! {
             {y: ["t1", "t2", "t3"]}
             {y: ["t2", "t3"]}
@@ -244,7 +244,7 @@ fn test_zero_or_more() {
 fn test_optional() {
     run_query_test(
         &common_test_tree(),
-        "[A ... (@z [X])? [_] ]",
+        "[Rule1 ... (@z [Token1])? [_] ]",
         query_results! {
             {z: ["t3"]}
             {}

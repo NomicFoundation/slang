@@ -25,17 +25,17 @@ fn test_anonymous() {
 
 #[test]
 fn test_root_binding() {
-    run_parser_test(r#"@root [X]"#, r#"@root [X]"#);
+    run_parser_test(r#"@root [Token1]"#, r#"@root [Token1]"#);
 }
 
 #[test]
 fn test_binding() {
-    run_parser_test(r#"[A @b [X]]"#, r#"[A @b [X]]"#);
+    run_parser_test(r#"[Rule1 @b [Token1]]"#, r#"[Rule1 @b [Token1]]"#);
 }
 
 #[test]
 fn test_zero_or_more_canonicalisation() {
-    run_parser_test(r#"[A ([B])*]"#, r#"[A (([B])+)?]"#);
+    run_parser_test(r#"[Rule1 ([Rule2])*]"#, r#"[Rule1 (([Rule2])+)?]"#);
 }
 
 // Test the error message on parse failure

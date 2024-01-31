@@ -13,16 +13,15 @@ use napi_derive::napi;
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[strum(use_phf)]
 #[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    // Used for testing ithis crate, this is generated in the client code
+    // Used for testing this crate, this is generated in the client code
     Identifier,
-    X,
-    Y,
-    Z,
+    Token1,
+    Token2,
+    Token3,
 }
 
 #[derive(
@@ -37,17 +36,15 @@ pub enum TokenKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[strum(use_phf)]
 #[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
-    // Used for testing ithis crate, this is generated in the client code
-    A,
-    B,
-    C,
-    D,
+    // Used for testing this crate, this is generated in the client code
+    Rule1,
+    Rule2,
+    Rule3,
 }
 
 impl RuleKind {
@@ -68,7 +65,6 @@ impl RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[strum(use_phf)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum FieldName {
@@ -80,11 +76,10 @@ pub enum FieldName {
     Operand,
     LeftOperand,
     RightOperand,
-    // Used for testing ithis crate, this is generated in the client code
-    N1,
-    N2,
-    N3,
-    N4,
+    // Used for testing this crate, this is generated in the client code
+    Name1,
+    Name2,
+    Name3,
 }
 
 /// The lexical context of the scanner.

@@ -14,7 +14,7 @@ impl Cursor {
         QueryResultIterator::new(self, queries)
     }
 
-    fn consume(&mut self) -> bool {
+    fn irrevocably_go_to_next_sibling(&mut self) -> bool {
         if self.is_completed() {
             false
         } else {
@@ -25,33 +25,30 @@ impl Cursor {
         }
     }
 
-    fn matches_node_selector(&self, node_selectot: &NodeSelector) -> bool {
+    fn matches_node_selector(&self, node_selector: &NodeSelector) -> bool {
         match self.node() {
-            cst::Node::Rule(rule) => match node_selectot {
+            cst::Node::Rule(rule) => match node_selector {
                 NodeSelector::Anonymous => true,
                 NodeSelector::Kind { kind } => Kind::Rule(rule.kind) == *kind,
                 NodeSelector::Text { .. } => false,
-                NodeSelector::FieldName { field_name: field } => Some(*field) == self.node_name(),
-                NodeSelector::FieldNameAndKind {
-                    field_name: field,
-                    kind,
-                } => Some(*field) == self.node_name() && Kind::Rule(rule.kind) == *kind,
+                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
+                NodeSelector::FieldNameAndKind { field_name, kind } => {
+                    Some(*field_name) == self.node_name() && Kind::Rule(rule.kind) == *kind
+                }
                 NodeSelector::FieldNameAndText { .. } => false,
             },
 
-            cst::Node::Token(token) => match node_selectot {
+            cst::Node::Token(token) => match node_selector {
                 NodeSelector::Anonymous => true,
                 NodeSelector::Kind { kind } => Kind::Token(token.kind) == *kind,
                 NodeSelector::Text { text } => token.text == *text,
-                NodeSelector::FieldName { field_name: field } => Some(*field) == self.node_name(),
-                NodeSelector::FieldNameAndKind {
-                    field_name: field,
-                    kind,
-                } => Some(*field) == self.node_name() && Kind::Token(token.kind) == *kind,
-                NodeSelector::FieldNameAndText {
-                    field_name: field,
-                    text,
-                } => Some(*field) == self.node_name() && token.text == *text,
+                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
+                NodeSelector::FieldNameAndKind { field_name, kind } => {
+                    Some(*field_name) == self.node_name() && Kind::Token(token.kind) == *kind
+                }
+                NodeSelector::FieldNameAndText { field_name, text } => {
+                    Some(*field_name) == self.node_name() && token.text == *text
+                }
             },
         }
     }
@@ -230,7 +227,7 @@ impl Combinator for NodeCombinator {
                 self.child = Some(child.create_combinator(child_cursor));
             } else {
                 let mut return_cursor = self.cursor.clone();
-                return_cursor.consume();
+                return_cursor.irrevocably_go_to_next_sibling();
                 return Some(return_cursor);
             }
         }
@@ -239,7 +236,7 @@ impl Combinator for NodeCombinator {
             while let Some(cursor) = child.as_mut().next() {
                 if cursor.is_completed() {
                     let mut return_cursor = self.cursor.clone();
-                    return_cursor.consume();
+                    return_cursor.irrevocably_go_to_next_sibling();
                     return Some(return_cursor);
                 }
             }
@@ -470,7 +467,7 @@ impl Combinator for EllipsisCombinator {
             return Some(self.cursor.clone());
         }
 
-        if self.cursor.consume() {
+        if self.cursor.irrevocably_go_to_next_sibling() {
             return Some(self.cursor.clone());
         }
 
