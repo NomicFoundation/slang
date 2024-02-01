@@ -2,7 +2,7 @@
 
 use crate::cst::{self, NamedNode};
 use crate::kinds::{IsLexicalContext, TokenKind};
-use crate::support::{ParserContext, ParserResult};
+use crate::parser_support::{ParserContext, ParserResult};
 
 /// Whether a keyword has been scanned and if so, whether it is reserved (unusable as an identifier)
 /// or not.

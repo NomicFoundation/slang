@@ -27,6 +27,7 @@ napi-build = { workspace = true }
 ariadne = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
+nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 slang_solidity = { workspace = true }
