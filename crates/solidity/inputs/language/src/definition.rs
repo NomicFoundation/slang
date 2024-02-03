@@ -2670,7 +2670,6 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = ByteKeyword, enabled = Till("0.8.0")),
                                 EnumVariant(reference = StringKeyword),
                                 EnumVariant(reference = AddressType),
-                                EnumVariant(reference = PayableKeyword),
                                 EnumVariant(reference = BytesKeyword),
                                 EnumVariant(reference = IntKeyword),
                                 EnumVariant(reference = UintKeyword),
@@ -3361,6 +3360,10 @@ codegen_language_macros::compile!(Language(
                                 PrimaryExpression(reference = DecimalNumberExpression),
                                 PrimaryExpression(reference = StringExpression),
                                 PrimaryExpression(reference = ElementaryType),
+                                PrimaryExpression(
+                                    reference = PayableKeyword,
+                                    enabled = From("0.6.0")
+                                ),
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
