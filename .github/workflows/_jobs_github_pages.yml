@@ -46,7 +46,7 @@ jobs:
       - run: "scripts/bin/infra check mkdocs"
 
       - name: "Configure GitHub Pages"
-        uses: "actions/configure-pages@7110e9e03ffb4a421945e5d0607007b8e9f1f52b"
+        uses: "actions/configure-pages@1f0c5cde4bc74cd7e1254d0cb4de8d49e9068c7d"
 
       - name: "Upload artifacts"
         uses: "actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8"
