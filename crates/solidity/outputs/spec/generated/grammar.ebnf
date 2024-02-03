@@ -902,7 +902,6 @@ ElementaryType = BOOL_KEYWORD
                | BYTE_KEYWORD (* Deprecated in 0.8.0 *)
                | STRING_KEYWORD
                | AddressType
-               | PAYABLE_KEYWORD
                | BYTES_KEYWORD
                | INT_KEYWORD
                | UINT_KEYWORD
@@ -1125,6 +1124,7 @@ Expression = AssignmentExpression
            | DecimalNumberExpression
            | StringExpression
            | ElementaryType
+           | PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
            | TRUE_KEYWORD
            | FALSE_KEYWORD
            | IDENTIFIER;

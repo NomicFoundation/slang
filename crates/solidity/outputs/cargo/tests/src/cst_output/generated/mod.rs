@@ -36,6 +36,8 @@ mod Expression;
 #[allow(non_snake_case)]
 mod FallbackFunctionDefinition;
 #[allow(non_snake_case)]
+mod FunctionCallExpression;
+#[allow(non_snake_case)]
 mod FunctionDefinition;
 #[allow(non_snake_case)]
 mod HexNumberExpression;

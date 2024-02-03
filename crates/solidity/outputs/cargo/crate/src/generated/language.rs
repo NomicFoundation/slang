@@ -1137,11 +1137,6 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PayableKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
                 TokenKind::BytesKeyword,
             );
             choice.consider(input, result)?;
@@ -2170,6 +2165,13 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.elementary_type(input);
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PayableKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::TrueKeyword,
