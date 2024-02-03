@@ -1811,7 +1811,6 @@ impl Selector {
                     TokenKind::BoolKeyword,
                     TokenKind::ByteKeyword,
                     TokenKind::StringKeyword,
-                    TokenKind::PayableKeyword,
                     TokenKind::BytesKeyword,
                     TokenKind::IntKeyword,
                     TokenKind::UintKeyword,
@@ -1930,6 +1929,7 @@ impl Selector {
                 RuleKind::StringExpression,
                 RuleKind::ElementaryType,
             ]) || node.is_token_with_kinds(&[
+                TokenKind::PayableKeyword,
                 TokenKind::TrueKeyword,
                 TokenKind::FalseKeyword,
                 TokenKind::Identifier,

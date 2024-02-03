@@ -268,11 +268,6 @@ fn overlapping_operators() -> Result<()> {
 }
 
 #[test]
-fn payable_call() -> Result<()> {
-    run("Expression", "payable_call")
-}
-
-#[test]
 fn postfix_decrement() -> Result<()> {
     run("Expression", "postfix_decrement")
 }

@@ -4379,7 +4379,6 @@ export class ElementaryType {
       case TokenKind.BoolKeyword:
       case TokenKind.ByteKeyword:
       case TokenKind.StringKeyword:
-      case TokenKind.PayableKeyword:
       case TokenKind.BytesKeyword:
       case TokenKind.IntKeyword:
       case TokenKind.UintKeyword:
@@ -4709,6 +4708,7 @@ export class Expression {
       case RuleKind.ElementaryType:
         return new ElementaryType(variant as RuleNode);
 
+      case TokenKind.PayableKeyword:
       case TokenKind.TrueKeyword:
       case TokenKind.FalseKeyword:
       case TokenKind.Identifier:
