@@ -19,10 +19,10 @@ jobs:
       #
 
       - name: "Clone repository"
-        uses: "actions/checkout@v3.4.0"
+        uses: "actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f"
 
       - name: "Restore CI cache"
-        uses: "actions/cache/restore@v3.3.1"
+        uses: "actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
@@ -41,7 +41,7 @@ jobs:
       - run: "scripts/bin/infra setup npm"
 
       - id: "changesets"
-        uses: "changesets/action@v1.4.1"
+        uses: "changesets/action@e9cc34b540dd3ad1b030c57fd97269e8f6ad905a"
         with:
           title: "Bump Slang Version"
           commit: "Bump Slang Version"
@@ -66,10 +66,10 @@ jobs:
       #
 
       - name: "Clone repository"
-        uses: "actions/checkout@v3.4.0"
+        uses: "actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f"
 
       - name: "Restore CI cache"
-        uses: "actions/cache/restore@v3.3.1"
+        uses: "actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
