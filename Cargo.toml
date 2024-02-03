@@ -60,34 +60,34 @@ solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 #
 # External
 #
-anyhow = { version = "1.0.75", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.79", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
-clap = { version = "4.1.13", features = ["derive", "wrap_help"] }
-clap_complete = { version = "4.3.2" }
+clap = { version = "4.4.18", features = ["derive", "wrap_help"] }
+clap_complete = { version = "4.4.10" }
 derive-new = { version = "0.6.0" }
-ignore = { version = "0.4.20" }
+ignore = { version = "0.4.22" }
 indexmap = { version = "1.9.2", features = ["serde"] }
-indicatif = { version = "0.17.3" }
+indicatif = { version = "0.17.7" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }
 markdown = { version = "0.3.0" }
-napi = { version = "2.14.2", features = ["compat-mode", "napi8", "serde-json"] }
+napi = { version = "2.15.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.1.0" }
-napi-derive = { version = "2.14.6" }
+napi-derive = { version = "2.15.0" }
 nom = { version = "7.1.3" }
 once_cell = { version = "1.19.0" }
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
-proc-macro2 = { version = "1.0.53" }
-quote = { version = "1.0.26" }
-rayon = { version = "1.7.0" }
-regex = { version = "1.9.1" }
-reqwest = { version = "0.11.22", features = ["blocking"] }
-semver = { version = "1.0.17", features = ["serde"] }
+proc-macro2 = { version = "1.0.78" }
+quote = { version = "1.0.35" }
+rayon = { version = "1.8.1" }
+regex = { version = "1.10.3" }
+reqwest = { version = "0.11.24", features = ["blocking"] }
+semver = { version = "1.0.21", features = ["serde"] }
 serde = { version = "1.0.158", features = ["derive", "rc"] }
 serde_json = { version = "1.0.94", features = ["preserve_order"] }
-similar-asserts = { version = "1.4.2" }
+similar-asserts = { version = "1.5.0" }
 stack-graphs = { version = "0.12.0" }
 strum = { version = "0.25.0" }
 strum_macros = { version = "0.25.3" }
@@ -98,9 +98,9 @@ syn = { version = "2.0.29", features = [
     "parsing",
     "printing",
 ] }
-tera = { version = "1.19.0" }
-terminal_size = { version = "0.2.6" }
-thiserror = { version = "1.0.40" }
-trybuild = { version = "1.0.85" }
-toml = { version = "0.7.6" }
+tera = { version = "1.19.1" }
+terminal_size = { version = "0.3.0" }
+thiserror = { version = "1.0.56" }
+trybuild = { version = "1.0.89" }
+toml = { version = "0.7.8" }
 url = { version = "2.3.1" }
