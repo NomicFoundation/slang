@@ -99,8 +99,7 @@ _arguments "${_arguments_options[@]}" \
 ':command:((changesets\:"Consume pending changesets, update changelogs and package versions, then send a PR"
 npm\:"Publish source packages to \[npmjs.com\]"
 cargo\:"Publish source crates to \[crates.io\]"
-github-release\:"Publish a new release in the GitHub repository"
-lock-files\:"Publish updated lock files to a PR for review"))' \
+github-release\:"Publish a new release in the GitHub repository"))' \
 && ret=0
 ;;
 (help)

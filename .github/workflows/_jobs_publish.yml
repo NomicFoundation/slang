@@ -98,7 +98,3 @@ jobs:
       - run: "scripts/bin/infra publish github-release"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - run: "scripts/bin/infra publish lock-files"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

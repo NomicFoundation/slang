@@ -4,8 +4,17 @@
   "include": ["./src/**/*.ts"],
 
   "compilerOptions": {
+    /* Modules */
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "target": "ES2016"
+    "rootDir": "./src",
+
+    /* Language and Environment */
+    "target": "ES2016",
+
+    /* Projects */
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
   }
 }
