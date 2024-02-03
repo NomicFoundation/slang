@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - (LeadingTrivia): # "/* multi-line comment **/\n" (0..26)
-      - (MultilineComment): "/* multi-line comment **/" # (0..25)
+      - (MultiLineComment): "/* multi-line comment **/" # (0..25)
       - (EndOfLine): "\n" # (25..26)

@@ -153,9 +153,13 @@ WHITESPACE = (" " | "\t")+;
 
 END_OF_LINE = "\r"? "\n";
 
-MULTILINE_COMMENT = "/" "*" (!"*" | "*")* "*" "/";
-
 SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+
+MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
+
+SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" "\n"))*;
+
+MULTI_LINE_NAT_SPEC_COMMENT = "/**" (!"*" | "*")* "*/";
 
 (* 1.7. Nat Spec Format: *)
 

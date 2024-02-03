@@ -3132,12 +3132,22 @@ impl Language {
                 let result =
                     self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
                 choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultilineComment);
-                choice.consider(input, result)?;
                 let result = self.parse_token::<LexicalContextType::Default>(
                     input,
                     TokenKind::SingleLineComment,
+                );
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment);
+                choice.consider(input, result)?;
+                let result = self.parse_token::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::SingleLineNatSpecComment,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::MultiLineNatSpecComment,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
@@ -6974,10 +6984,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn multiline_comment(&self, input: &mut ParserContext<'_>) -> bool {
+    fn multi_line_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
-            scan_chars!(input, '/'),
-            scan_chars!(input, '*'),
+            scan_not_followed_by!(input, scan_chars!(input, '/', '*'), scan_chars!(input, '*')),
             scan_zero_or_more!(
                 input,
                 scan_choice!(
@@ -6986,8 +6995,23 @@ impl Language {
                     scan_not_followed_by!(input, scan_chars!(input, '*'), scan_chars!(input, '/'))
                 )
             ),
-            scan_chars!(input, '*'),
-            scan_chars!(input, '/')
+            scan_chars!(input, '*', '/')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn multi_line_nat_spec_comment(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_sequence!(
+            scan_chars!(input, '/', '*', '*'),
+            scan_zero_or_more!(
+                input,
+                scan_choice!(
+                    input,
+                    scan_none_of!(input, '*'),
+                    scan_not_followed_by!(input, scan_chars!(input, '*'), scan_chars!(input, '/'))
+                )
+            ),
+            scan_chars!(input, '*', '/')
         )
     }
 
@@ -7002,7 +7026,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn single_line_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
-            scan_chars!(input, '/', '/'),
+            scan_not_followed_by!(input, scan_chars!(input, '/', '/'), scan_chars!(input, '/')),
+            scan_zero_or_more!(input, scan_none_of!(input, '\r', '\n'))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn single_line_nat_spec_comment(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_sequence!(
+            scan_chars!(input, '/', '/', '/'),
             scan_zero_or_more!(input, scan_none_of!(input, '\r', '\n'))
         )
     }
@@ -7052,6 +7084,20 @@ impl Language {
         } else {
             false
         }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn slash(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '/'),
+            scan_choice!(
+                input,
+                scan_chars!(input, '='),
+                scan_chars!(input, '/'),
+                scan_chars!(input, '*')
+            )
+        )
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9118,14 +9164,13 @@ impl Lexer for Language {
                         None => Some(TokenKind::Minus),
                     },
                     Some('.') => Some(TokenKind::Period),
-                    Some('/') => match input.next() {
-                        Some('=') => Some(TokenKind::SlashEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Slash)
+                    Some('/') => {
+                        if scan_chars!(input, '=') {
+                            Some(TokenKind::SlashEqual)
+                        } else {
+                            None
                         }
-                        None => Some(TokenKind::Slash),
-                    },
+                    }
                     Some(':') => Some(TokenKind::Colon),
                     Some(';') => Some(TokenKind::Semicolon),
                     Some('<') => match input.next() {
@@ -9219,8 +9264,11 @@ impl Lexer for Language {
                     { EndOfLine = end_of_line }
                     { HexLiteral = hex_literal }
                     { HexStringLiteral = hex_string_literal }
-                    { MultilineComment = multiline_comment }
+                    { MultiLineComment = multi_line_comment }
+                    { MultiLineNatSpecComment = multi_line_nat_spec_comment }
                     { SingleLineComment = single_line_comment }
+                    { SingleLineNatSpecComment = single_line_nat_spec_comment }
+                    { Slash = slash }
                     { UnicodeStringLiteral = unicode_string_literal }
                     { Whitespace = whitespace }
                 }
