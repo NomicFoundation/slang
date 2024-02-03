@@ -333,7 +333,7 @@ dependencies = [
  "Inflector",
  "codegen_language_definition",
  "derive-new",
- "indexmap 1.9.3",
+ "indexmap",
 ]
 
 [[package]]
@@ -341,7 +341,7 @@ name = "codegen_grammar"
 version = "0.13.1"
 dependencies = [
  "codegen_language_definition",
- "indexmap 1.9.3",
+ "indexmap",
  "semver",
  "strum_macros",
 ]
@@ -352,7 +352,7 @@ version = "0.13.1"
 dependencies = [
  "Inflector",
  "codegen_language_internal_macros",
- "indexmap 1.9.3",
+ "indexmap",
  "infra_utils",
  "itertools",
  "proc-macro2",
@@ -401,7 +401,7 @@ dependencies = [
  "anyhow",
  "codegen_grammar",
  "codegen_language_definition",
- "indexmap 1.9.3",
+ "indexmap",
  "infra_utils",
  "itertools",
  "proc-macro2",
@@ -790,18 +790,12 @@ dependencies = [
  "futures-sink",
  "futures-util",
  "http",
- "indexmap 2.0.0",
+ "indexmap",
  "slab",
  "tokio",
  "tokio-util",
  "tracing",
 ]
-
-[[package]]
-name = "hashbrown"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hashbrown"
@@ -962,23 +956,13 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "1.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99"
-dependencies = [
- "autocfg",
- "hashbrown 0.12.3",
- "serde",
-]
-
-[[package]]
-name = "indexmap"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5477fe2230a79769d8dc68e0eabf5437907c0457a5614a9e8dddb67f65eb65d"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.0",
+ "hashbrown",
+ "serde",
 ]
 
 [[package]]
@@ -1795,7 +1779,7 @@ version = "1.0.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "076066c5f1078eac5b722a31827a8832fe108bed65dfa75e233c89f8206e976c"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap",
  "itoa",
  "ryu",
  "serde",
@@ -2259,7 +2243,7 @@ version = "0.19.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8123f27e969974a3dfba720fdb560be359f57b44302d280ba72e76a74480e8a"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",
