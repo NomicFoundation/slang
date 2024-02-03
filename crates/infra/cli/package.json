@@ -6,7 +6,7 @@
     "@changesets/changelog-github": "0.4.8",
     "@changesets/cli": "2.26.2",
     "@types/node": "20.3.2",
-    "cspell": "6.31.1",
+    "cspell": "8.3.2",
     "markdown-link-check": "3.11.2",
     "markdownlint-cli": "0.35.0",
     "prettier-plugin-sh": "0.12.8",
