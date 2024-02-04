@@ -1,3 +1,6 @@
+# Scripts controlled by Hermit:
+bin/
+
 # Ember Templates
 documentation/overrides/**/*.html
 
@@ -5,9 +8,9 @@ documentation/overrides/**/*.html
 **/*.jinja2
 
 # Packages and Dependencies
-.hermit/
-node_modules/
+**/.hermit/
+**/node_modules/
 
 # Generated Artifacts
-target/
-Pipfile.lock
+**/target/
+**/Pipfile.lock

@@ -42,7 +42,8 @@
     "useUnknownInCatchVariables": true,
 
     /* Modules */
-    "moduleResolution": "node16",
+    "module": "Node16",
+    "moduleResolution": "Node16",
 
     /* Emit */
     "noEmit": true,
