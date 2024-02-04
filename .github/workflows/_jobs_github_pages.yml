@@ -1,20 +1,12 @@
 name: "jobs/github-pages"
 
-permissions:
-  pages: "write" # to deploy to Pages
-  id-token: "write" # to verify the deployment originates from an appropriate source
-
 on:
   # Run when invoked from other workflows:
   workflow_call: {}
 
 jobs:
-  run:
+  prepare:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    environment:
-      name: "github-pages"
-      url: "${{ steps.deployment.outputs.page_url }}"
 
     steps:
       #
@@ -53,6 +45,19 @@ jobs:
         with:
           path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
+  deploy:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "prepare"
+
+    permissions:
+      pages: "write" # to deploy to Pages
+      id-token: "write" # to verify the deployment originates from an appropriate source
+
+    steps:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@87c3283f01cd6fe19a0ab93a23b2f6fcba5a8e42"
+
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"

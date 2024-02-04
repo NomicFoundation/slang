@@ -1,9 +1,5 @@
 name: "jobs/publish"
 
-permissions:
-  contents: "write" # to create new branches and releases
-  pull-requests: "write" # to create new pull requests for changesets
-
 on:
   # Run when invoked from other workflows:
   workflow_call: {}
@@ -11,6 +7,10 @@ on:
 jobs:
   changesets:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "write" # to create new branches and releases
+      pull-requests: "write" # to create new pull requests for changesets
 
     steps:
       #
