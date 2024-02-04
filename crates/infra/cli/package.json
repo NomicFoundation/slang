@@ -10,7 +10,7 @@
     "markdown-link-check": "3.11.2",
     "markdownlint-cli": "0.39.0",
     "prettier-plugin-sh": "0.14.0",
-    "prettier": "2.8.8",
+    "prettier": "3.2.5",
     "remark-parse": "11.0.0",
     "remark-stringify": "11.0.0",
     "typescript": "5.3.3",
