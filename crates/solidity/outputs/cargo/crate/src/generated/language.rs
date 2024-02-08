@@ -6432,6 +6432,32 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_label(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_named(
+                    FieldName::Label,
+                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::YulIdentifier,
+                    ),
+                )?;
+                seq.elem_named(
+                    FieldName::Colon,
+                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::Colon,
+                    ),
+                )?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::YulLabel)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_leave_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6595,6 +6621,10 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.yul_continue_statement(input);
             choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.yul_label(input);
+                choice.consider(input, result)?;
+            }
             let result = self.yul_expression(input);
             choice.consider(input, result)?;
             choice.finish(input)
@@ -9036,6 +9066,7 @@ impl Language {
             RuleKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input, true),
             RuleKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input, true),
             RuleKind::YulIfStatement => Self::yul_if_statement.parse(self, input, true),
+            RuleKind::YulLabel => Self::yul_label.parse(self, input, true),
             RuleKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input, true),
             RuleKind::YulLiteral => Self::yul_literal.parse(self, input, true),
             RuleKind::YulParameters => Self::yul_parameters.parse(self, input, true),
@@ -10619,13 +10650,14 @@ impl Lexer for Language {
                         }
                     }
                     Some('.') => Some(TokenKind::Period),
-                    Some(':') => {
-                        if scan_chars!(input, '=') {
-                            Some(TokenKind::ColonEqual)
-                        } else {
-                            None
+                    Some(':') => match input.next() {
+                        Some('=') => Some(TokenKind::ColonEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Colon)
                         }
-                    }
+                        None => Some(TokenKind::Colon),
+                    },
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some(_) => {

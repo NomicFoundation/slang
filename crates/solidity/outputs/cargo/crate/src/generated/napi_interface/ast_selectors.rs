@@ -148,13 +148,14 @@ pub fn select_sequence(
         RuleKind::YulVariableDeclarationValue => selector.yul_variable_declaration_value()?,
         RuleKind::YulAssignmentStatement => selector.yul_assignment_statement()?,
         RuleKind::YulIfStatement => selector.yul_if_statement()?,
-        RuleKind::YulLeaveStatement => selector.yul_leave_statement()?,
-        RuleKind::YulBreakStatement => selector.yul_break_statement()?,
-        RuleKind::YulContinueStatement => selector.yul_continue_statement()?,
         RuleKind::YulForStatement => selector.yul_for_statement()?,
         RuleKind::YulSwitchStatement => selector.yul_switch_statement()?,
         RuleKind::YulDefaultCase => selector.yul_default_case()?,
         RuleKind::YulValueCase => selector.yul_value_case()?,
+        RuleKind::YulLeaveStatement => selector.yul_leave_statement()?,
+        RuleKind::YulBreakStatement => selector.yul_break_statement()?,
+        RuleKind::YulContinueStatement => selector.yul_continue_statement()?,
+        RuleKind::YulLabel => selector.yul_label()?,
         RuleKind::YulFunctionCallExpression => selector.yul_function_call_expression()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
@@ -1382,30 +1383,6 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_leave_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
-        Ok(vec![Some(self.select(|node| {
-            node.is_token_with_kind(TokenKind::YulLeaveKeyword)
-        })?)])
-    }
-}
-
-impl Selector {
-    fn yul_break_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
-        Ok(vec![Some(self.select(|node| {
-            node.is_token_with_kind(TokenKind::YulBreakKeyword)
-        })?)])
-    }
-}
-
-impl Selector {
-    fn yul_continue_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
-        Ok(vec![Some(self.select(|node| {
-            node.is_token_with_kind(TokenKind::YulContinueKeyword)
-        })?)])
-    }
-}
-
-impl Selector {
     fn yul_for_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulForKeyword))?),
@@ -1442,6 +1419,39 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulCaseKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulLiteral))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulBlock))?),
+        ])
+    }
+}
+
+impl Selector {
+    fn yul_leave_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![Some(self.select(|node| {
+            node.is_token_with_kind(TokenKind::YulLeaveKeyword)
+        })?)])
+    }
+}
+
+impl Selector {
+    fn yul_break_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![Some(self.select(|node| {
+            node.is_token_with_kind(TokenKind::YulBreakKeyword)
+        })?)])
+    }
+}
+
+impl Selector {
+    fn yul_continue_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![Some(self.select(|node| {
+            node.is_token_with_kind(TokenKind::YulContinueKeyword)
+        })?)])
+    }
+}
+
+impl Selector {
+    fn yul_label(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
         ])
     }
 }
@@ -2011,6 +2021,7 @@ impl Selector {
                 RuleKind::YulLeaveStatement,
                 RuleKind::YulBreakStatement,
                 RuleKind::YulContinueStatement,
+                RuleKind::YulLabel,
                 RuleKind::YulExpression,
             ])
         })
