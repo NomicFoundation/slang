@@ -4989,6 +4989,11 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
+                    TokenKind::PublicKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
                     TokenKind::PureKeyword,
                 );
                 choice.consider(input, result)?;

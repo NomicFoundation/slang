@@ -4181,6 +4181,7 @@ export class UnnamedFunctionAttribute {
 
       case TokenKind.ExternalKeyword:
       case TokenKind.PayableKeyword:
+      case TokenKind.PublicKeyword:
       case TokenKind.PureKeyword:
       case TokenKind.ViewKeyword:
         return variant as TokenNode;

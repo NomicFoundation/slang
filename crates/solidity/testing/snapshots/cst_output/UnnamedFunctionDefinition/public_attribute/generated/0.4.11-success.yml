@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() public {}                                                             │ 0..20
+
+Errors: []
+
+Tree:
+  - (UnnamedFunctionDefinition): # "function() public {}\n" (0..21)
+      - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+      - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+          - (open_paren꞉ OpenParen): "(" # (8..9)
+          - (close_paren꞉ CloseParen): ")" # (9..10)
+      - (attributes꞉ UnnamedFunctionAttributes): # " public" (10..17)
+          - (item꞉ UnnamedFunctionAttribute): # " public" (10..17)
+              - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+              - (variant꞉ PublicKeyword): "public" # (11..17)
+      - (body꞉ FunctionBody) ► (variant꞉ Block): # " {}\n" (17..21)
+          - (LeadingTrivia) ► (Whitespace): " " # (17..18)
+          - (open_brace꞉ OpenBrace): "{" # (18..19)
+          - (close_brace꞉ CloseBrace): "}" # (19..20)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (20..21)

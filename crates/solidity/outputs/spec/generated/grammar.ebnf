@@ -752,6 +752,7 @@ UnnamedFunctionAttribute = ModifierInvocation
                          | OverrideSpecifier
                          | EXTERNAL_KEYWORD
                          | PAYABLE_KEYWORD
+                         | PUBLIC_KEYWORD
                          | PURE_KEYWORD
                          | VIEW_KEYWORD;
 

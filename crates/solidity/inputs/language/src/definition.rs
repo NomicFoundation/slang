@@ -2373,6 +2373,7 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = OverrideSpecifier),
                                 EnumVariant(reference = ExternalKeyword),
                                 EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = PublicKeyword),
                                 EnumVariant(reference = PureKeyword),
                                 EnumVariant(reference = ViewKeyword)
                             ]

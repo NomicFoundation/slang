@@ -1721,6 +1721,7 @@ impl Selector {
                 || node.is_token_with_kinds(&[
                     TokenKind::ExternalKeyword,
                     TokenKind::PayableKeyword,
+                    TokenKind::PublicKeyword,
                     TokenKind::PureKeyword,
                     TokenKind::ViewKeyword,
                 ])

@@ -80,6 +80,8 @@ mod TypeName;
 #[allow(non_snake_case)]
 mod UnicodeStringLiterals;
 #[allow(non_snake_case)]
+mod UnnamedFunctionDefinition;
+#[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]
 mod UsingDeconstructionSymbol;
