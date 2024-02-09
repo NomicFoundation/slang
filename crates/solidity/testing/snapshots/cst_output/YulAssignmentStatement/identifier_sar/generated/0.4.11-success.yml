@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ sar := 0                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "sar := 0\n" (0..9)
+      - (names꞉ YulIdentifierPaths): # "sar" (0..3)
+          - (item꞉ YulIdentifierPath): # "sar" (0..3)
+              - (item꞉ YulIdentifier): "sar" # (0..3)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (colon_equal꞉ ColonEqual): ":=" # (4..6)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (6..9)
+          - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+          - (variant꞉ YulDecimalLiteral): "0" # (7..8)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (8..9)

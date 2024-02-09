@@ -27,7 +27,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
         │
       4 │ ╭─▶ using EnvelopeUtils for Envelope global;

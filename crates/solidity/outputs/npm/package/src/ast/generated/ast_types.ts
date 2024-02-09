@@ -3481,60 +3481,6 @@ export class YulIfStatement {
   }
 }
 
-export class YulLeaveStatement {
-  private readonly fetch = once(() => {
-    const [$leaveKeyword] = ast_internal.selectSequence(this.cst);
-
-    return {
-      leaveKeyword: $leaveKeyword as TokenNode,
-    };
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulLeaveStatement);
-  }
-
-  public get leaveKeyword(): TokenNode {
-    return this.fetch().leaveKeyword;
-  }
-}
-
-export class YulBreakStatement {
-  private readonly fetch = once(() => {
-    const [$breakKeyword] = ast_internal.selectSequence(this.cst);
-
-    return {
-      breakKeyword: $breakKeyword as TokenNode,
-    };
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulBreakStatement);
-  }
-
-  public get breakKeyword(): TokenNode {
-    return this.fetch().breakKeyword;
-  }
-}
-
-export class YulContinueStatement {
-  private readonly fetch = once(() => {
-    const [$continueKeyword] = ast_internal.selectSequence(this.cst);
-
-    return {
-      continueKeyword: $continueKeyword as TokenNode,
-    };
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulContinueStatement);
-  }
-
-  public get continueKeyword(): TokenNode {
-    return this.fetch().continueKeyword;
-  }
-}
-
 export class YulForStatement {
   private readonly fetch = once(() => {
     const [$forKeyword, $initialization, $condition, $iterator, $body] = ast_internal.selectSequence(this.cst);
@@ -3649,6 +3595,83 @@ export class YulValueCase {
 
   public get body(): YulBlock {
     return this.fetch().body;
+  }
+}
+
+export class YulLeaveStatement {
+  private readonly fetch = once(() => {
+    const [$leaveKeyword] = ast_internal.selectSequence(this.cst);
+
+    return {
+      leaveKeyword: $leaveKeyword as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulLeaveStatement);
+  }
+
+  public get leaveKeyword(): TokenNode {
+    return this.fetch().leaveKeyword;
+  }
+}
+
+export class YulBreakStatement {
+  private readonly fetch = once(() => {
+    const [$breakKeyword] = ast_internal.selectSequence(this.cst);
+
+    return {
+      breakKeyword: $breakKeyword as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulBreakStatement);
+  }
+
+  public get breakKeyword(): TokenNode {
+    return this.fetch().breakKeyword;
+  }
+}
+
+export class YulContinueStatement {
+  private readonly fetch = once(() => {
+    const [$continueKeyword] = ast_internal.selectSequence(this.cst);
+
+    return {
+      continueKeyword: $continueKeyword as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulContinueStatement);
+  }
+
+  public get continueKeyword(): TokenNode {
+    return this.fetch().continueKeyword;
+  }
+}
+
+export class YulLabel {
+  private readonly fetch = once(() => {
+    const [$label, $colon] = ast_internal.selectSequence(this.cst);
+
+    return {
+      label: $label as TokenNode,
+      colon: $colon as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulLabel);
+  }
+
+  public get label(): TokenNode {
+    return this.fetch().label;
+  }
+
+  public get colon(): TokenNode {
+    return this.fetch().colon;
   }
 }
 
@@ -4379,7 +4402,6 @@ export class ElementaryType {
       case TokenKind.BoolKeyword:
       case TokenKind.ByteKeyword:
       case TokenKind.StringKeyword:
-      case TokenKind.PayableKeyword:
       case TokenKind.BytesKeyword:
       case TokenKind.IntKeyword:
       case TokenKind.UintKeyword:
@@ -4709,6 +4731,7 @@ export class Expression {
       case RuleKind.ElementaryType:
         return new ElementaryType(variant as RuleNode);
 
+      case TokenKind.PayableKeyword:
       case TokenKind.TrueKeyword:
       case TokenKind.FalseKeyword:
       case TokenKind.Identifier:
@@ -4896,6 +4919,7 @@ export class YulStatement {
     | YulLeaveStatement
     | YulBreakStatement
     | YulContinueStatement
+    | YulLabel
     | YulExpression = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
@@ -4920,6 +4944,8 @@ export class YulStatement {
         return new YulBreakStatement(variant as RuleNode);
       case RuleKind.YulContinueStatement:
         return new YulContinueStatement(variant as RuleNode);
+      case RuleKind.YulLabel:
+        return new YulLabel(variant as RuleNode);
       case RuleKind.YulExpression:
         return new YulExpression(variant as RuleNode);
 
@@ -4943,6 +4969,7 @@ export class YulStatement {
     | YulLeaveStatement
     | YulBreakStatement
     | YulContinueStatement
+    | YulLabel
     | YulExpression {
     return this.fetch();
   }
@@ -4973,16 +5000,117 @@ export class YulSwitchCase {
 }
 
 export class YulExpression {
-  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulIdentifierPath = once(() => {
+  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulIdentifierPath = once(
+    () => {
+      const variant = ast_internal.selectChoice(this.cst);
+
+      switch (variant.kind) {
+        case RuleKind.YulFunctionCallExpression:
+          return new YulFunctionCallExpression(variant as RuleNode);
+        case RuleKind.YulLiteral:
+          return new YulLiteral(variant as RuleNode);
+        case RuleKind.YulBuiltInFunction:
+          return new YulBuiltInFunction(variant as RuleNode);
+        case RuleKind.YulIdentifierPath:
+          return new YulIdentifierPath(variant as RuleNode);
+
+        default:
+          assert.fail(`Unexpected variant: ${variant.kind}`);
+      }
+    },
+  );
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulExpression);
+  }
+
+  public get variant(): YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulIdentifierPath {
+    return this.fetch();
+  }
+}
+
+export class YulBuiltInFunction {
+  private readonly fetch: () => TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case RuleKind.YulFunctionCallExpression:
-        return new YulFunctionCallExpression(variant as RuleNode);
-      case RuleKind.YulLiteral:
-        return new YulLiteral(variant as RuleNode);
-      case RuleKind.YulIdentifierPath:
-        return new YulIdentifierPath(variant as RuleNode);
+      case TokenKind.YulAddKeyword:
+      case TokenKind.YulAddModKeyword:
+      case TokenKind.YulAddressKeyword:
+      case TokenKind.YulAndKeyword:
+      case TokenKind.YulBalanceKeyword:
+      case TokenKind.YulBlockHashKeyword:
+      case TokenKind.YulByteKeyword:
+      case TokenKind.YulCallCodeKeyword:
+      case TokenKind.YulCallDataCopyKeyword:
+      case TokenKind.YulCallDataLoadKeyword:
+      case TokenKind.YulCallDataSizeKeyword:
+      case TokenKind.YulCallerKeyword:
+      case TokenKind.YulCallKeyword:
+      case TokenKind.YulCallValueKeyword:
+      case TokenKind.YulCoinBaseKeyword:
+      case TokenKind.YulCreateKeyword:
+      case TokenKind.YulDelegateCallKeyword:
+      case TokenKind.YulDivKeyword:
+      case TokenKind.YulEqKeyword:
+      case TokenKind.YulExpKeyword:
+      case TokenKind.YulExtCodeCopyKeyword:
+      case TokenKind.YulExtCodeSizeKeyword:
+      case TokenKind.YulGasKeyword:
+      case TokenKind.YulGasLimitKeyword:
+      case TokenKind.YulGasPriceKeyword:
+      case TokenKind.YulGtKeyword:
+      case TokenKind.YulInvalidKeyword:
+      case TokenKind.YulIsZeroKeyword:
+      case TokenKind.YulLog0Keyword:
+      case TokenKind.YulLog1Keyword:
+      case TokenKind.YulLog2Keyword:
+      case TokenKind.YulLog3Keyword:
+      case TokenKind.YulLog4Keyword:
+      case TokenKind.YulLtKeyword:
+      case TokenKind.YulMLoadKeyword:
+      case TokenKind.YulModKeyword:
+      case TokenKind.YulMSizeKeyword:
+      case TokenKind.YulMStore8Keyword:
+      case TokenKind.YulMStoreKeyword:
+      case TokenKind.YulMulKeyword:
+      case TokenKind.YulMulModKeyword:
+      case TokenKind.YulNotKeyword:
+      case TokenKind.YulNumberKeyword:
+      case TokenKind.YulOriginKeyword:
+      case TokenKind.YulOrKeyword:
+      case TokenKind.YulPopKeyword:
+      case TokenKind.YulReturnKeyword:
+      case TokenKind.YulRevertKeyword:
+      case TokenKind.YulSDivKeyword:
+      case TokenKind.YulSelfDestructKeyword:
+      case TokenKind.YulSgtKeyword:
+      case TokenKind.YulSignExtendKeyword:
+      case TokenKind.YulSLoadKeyword:
+      case TokenKind.YulSltKeyword:
+      case TokenKind.YulSModKeyword:
+      case TokenKind.YulSStoreKeyword:
+      case TokenKind.YulStopKeyword:
+      case TokenKind.YulSubKeyword:
+      case TokenKind.YulTimestampKeyword:
+      case TokenKind.YulXorKeyword:
+      case TokenKind.YulKeccak256Keyword:
+      case TokenKind.YulSha3Keyword:
+      case TokenKind.YulSuicideKeyword:
+      case TokenKind.YulReturnDataCopyKeyword:
+      case TokenKind.YulReturnDataSizeKeyword:
+      case TokenKind.YulStaticCallKeyword:
+      case TokenKind.YulCreate2Keyword:
+      case TokenKind.YulExtCodeHashKeyword:
+      case TokenKind.YulSarKeyword:
+      case TokenKind.YulShlKeyword:
+      case TokenKind.YulShrKeyword:
+      case TokenKind.YulChainIdKeyword:
+      case TokenKind.YulSelfBalanceKeyword:
+      case TokenKind.YulBaseFeeKeyword:
+      case TokenKind.YulDifficultyKeyword:
+      case TokenKind.YulPrevRandaoKeyword:
+        return variant as TokenNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4990,10 +5118,10 @@ export class YulExpression {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.YulExpression);
+    assertKind(this.cst.kind, RuleKind.YulBuiltInFunction);
   }
 
-  public get variant(): YulFunctionCallExpression | YulLiteral | YulIdentifierPath {
+  public get variant(): TokenNode {
     return this.fetch();
   }
 }

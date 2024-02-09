@@ -2,6 +2,7 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.associations": {
+    "**/documentation/overrides/**/*.html": "jinja-html",
     "*.ts.jinja2": "jinja-js" // until this is merged: https://github.com/samuelcolvin/jinjahtml-vscode/pull/148
   },
   "editor.unicodeHighlight.allowedCharacters": {
@@ -34,8 +35,7 @@
     "**/Pipfile.lock": true
   },
   "triggerTaskOnSave.tasks": {
-    "Run Rust Analyzer Checks": ["**/*.jinja2"],
-    "Validate Solidity Definition": ["crates/solidity/inputs/language/definition/**/*.yml"]
+    "Run Rust Analyzer Checks": ["**/*.jinja2"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks

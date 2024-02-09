@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ mload()                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "mload()\n" (0..8)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMLoadKeyword): "mload" # (0..5)
+      - (open_paren꞉ OpenParen): "(" # (5..6)
+      - (close_paren꞉ CloseParen): ")" # (6..7)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (7..8)

@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
+use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
 use serde::Serialize;
@@ -10,7 +11,7 @@ use crate::ast_model::AstModel;
 pub struct TypeScriptGenerator;
 
 impl TypeScriptGenerator {
-    pub fn generate(ast_model: &AstModel, output_dir: &Path) -> Result<()> {
+    pub fn generate(language: &Language, output_dir: &Path) -> Result<()> {
         let runtime_dir =
             CargoWorkspace::locate_source_crate("codegen_parser_runtime")?.join("src");
 
@@ -18,12 +19,14 @@ impl TypeScriptGenerator {
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub ast_model: &'a AstModel,
+            struct Context {
+                ast_model: AstModel,
             }
             codegen.render(
-                Template { ast_model },
-                runtime_dir.join("napi/templates/ast_types.ts.jinja2"),
+                Context {
+                    ast_model: AstModel::create(language),
+                },
+                runtime_dir.join("napi_interface/templates/ast_types.ts.jinja2"),
                 output_dir.join("src/ast/generated/ast_types.ts"),
             )?;
         }

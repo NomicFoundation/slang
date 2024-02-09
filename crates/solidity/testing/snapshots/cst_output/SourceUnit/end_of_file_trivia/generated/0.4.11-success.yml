@@ -28,6 +28,6 @@ Tree:
           - (SingleLineComment): "// spaces before this" # (20..41)
           - (EndOfLine): "\n" # (41..42)
           - (EndOfLine): "\n" # (42..43)
-          - (MultilineComment): "/* new lines after this */" # (43..69)
+          - (MultiLineComment): "/* new lines after this */" # (43..69)
           - (EndOfLine): "\n" # (69..70)
           - (EndOfLine): "\n" # (70..71)

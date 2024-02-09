@@ -1,6 +1,8 @@
 use std::fmt::Display;
 use std::mem::discriminant;
 
+use codegen_language_definition::model::Identifier;
+
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 use crate::{EbnfModel, EbnfWriter};
 
@@ -10,10 +12,10 @@ pub struct Serializer<'s, W: EbnfWriter> {
 }
 
 impl<'s, W: EbnfWriter> Serializer<'s, W> {
-    pub fn serialize<'m: 's>(
-        model: &'m EbnfModel,
-        name: &str,
-        writer: &'m mut W,
+    pub fn serialize(
+        model: &'s EbnfModel,
+        name: &Identifier,
+        writer: &'s mut W,
     ) -> std::fmt::Result {
         let entry = model
             .entries
@@ -27,14 +29,16 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
         let Entry {
             name,
             ebnf_id: _,
+            section_index: _,
+            topic_index: _,
             definitions,
         } = entry;
 
         for (index, definition) in definitions.iter().enumerate() {
             if index > 0 {
                 // Insert a blank line between definitions:
-                self.writer.start_line()?;
-                self.writer.end_line()?;
+                self.writer.line_break()?;
+                self.writer.line_break()?;
             }
 
             let Definition {
@@ -44,9 +48,8 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
             } = definition;
 
             for comment in leading_comments {
-                self.writer.start_line()?;
                 self.serialize_comment(comment)?;
-                self.writer.end_line()?;
+                self.writer.line_break()?;
             }
 
             self.serialize_definition(name, values, kind)?;
@@ -57,7 +60,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
 
     fn serialize_definition(
         &mut self,
-        name: &str,
+        name: &Identifier,
         values: &Vec<Value>,
         kind: &DefinitionKind,
     ) -> std::fmt::Result {
@@ -72,12 +75,12 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                 trailing_comment,
             } = value;
 
-            self.writer.start_line()?;
-
             if index == 0 {
                 self.serialize_identifier(name)?;
                 self.serialize_punctuation(" = ")?;
             } else {
+                self.writer.line_break()?;
+
                 self.serialize_punctuation(format!(
                     "{padding} {separator} ",
                     padding = " ".repeat(name.len()),
@@ -94,8 +97,6 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                 self.serialize_punctuation(" ")?;
                 self.serialize_comment(comment)?;
             }
-
-            self.writer.end_line()?;
         }
 
         Ok(())
@@ -175,7 +176,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
         self.writer.write_comment(format!("(* {value} *)"))
     }
 
-    fn serialize_identifier(&mut self, name: &str) -> std::fmt::Result {
+    fn serialize_identifier(&mut self, name: &Identifier) -> std::fmt::Result {
         let entry = self
             .model
             .entries

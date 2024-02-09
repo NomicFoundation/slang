@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ payable(msg.sender)                                                              │ 0..19
+
+Errors: []
+
+Tree:
+  - (FunctionCallExpression): # "payable(msg.sender)\n" (0..20)
+      - (operand꞉ Expression) ► (variant꞉ PayableKeyword): "payable" # (0..7)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(msg.sender)\n" (7..20)
+          - (open_paren꞉ OpenParen): "(" # (7..8)
+          - (arguments꞉ PositionalArguments): # "msg.sender" (8..18)
+              - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "msg.sender" (8..18)
+                  - (operand꞉ Expression) ► (variant꞉ Identifier): "msg" # (8..11)
+                  - (period꞉ Period): "." # (11..12)
+                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (12..18)
+          - (close_paren꞉ CloseParen): ")" # (18..19)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (19..20)

@@ -1,20 +1,12 @@
 name: "jobs/github-pages"
 
-permissions:
-  pages: "write" # to deploy to Pages
-  id-token: "write" # to verify the deployment originates from an appropriate source
-
 on:
   # Run when invoked from other workflows:
   workflow_call: {}
 
 jobs:
-  run:
+  prepare:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    environment:
-      name: "github-pages"
-      url: "${{ steps.deployment.outputs.page_url }}"
 
     steps:
       #
@@ -23,10 +15,10 @@ jobs:
       #
 
       - name: "Clone repository"
-        uses: "actions/checkout@v3.4.0"
+        uses: "actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11"
 
       - name: "Restore CI cache"
-        uses: "actions/cache/restore@v3.3.1"
+        uses: "actions/cache/restore@13aacd865c20de90d75de3b17ebe84f7a17d57d2"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
@@ -46,13 +38,26 @@ jobs:
       - run: "scripts/bin/infra check mkdocs"
 
       - name: "Configure GitHub Pages"
-        uses: "actions/configure-pages@v3.0.5"
+        uses: "actions/configure-pages@1f0c5cde4bc74cd7e1254d0cb4de8d49e9068c7d"
 
       - name: "Upload artifacts"
-        uses: "actions/upload-pages-artifact@v1.0.8"
+        uses: "actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8"
         with:
           path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
+  deploy:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "prepare"
+
+    permissions:
+      pages: "write" # to deploy to Pages
+      id-token: "write" # to verify the deployment originates from an appropriate source
+
+    steps:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
-        uses: "actions/deploy-pages@v2.0.0"
+        uses: "actions/deploy-pages@87c3283f01cd6fe19a0ab93a23b2f6fcba5a8e42"
+
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"

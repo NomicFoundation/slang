@@ -206,7 +206,7 @@ Tree:
                           - (separator꞉ Comma): "," # (346..347)
                       - (LeadingTrivia): # " /* empty */" (347..359)
                           - (Whitespace): " " # (347..348)
-                          - (MultilineComment): "/* empty */" # (348..359)
+                          - (MultiLineComment): "/* empty */" # (348..359)
                       - (SKIPPED): ", other.arg.here, and.here" # (359..385)
                       - (close_paren꞉ CloseParen): ")" # (385..386)
           - (body꞉ FunctionBody): # ";\n" (386..388)

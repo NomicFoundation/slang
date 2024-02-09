@@ -1,4 +1,15 @@
 {
+  "include": [
+    // This is the mono-repo root project, and it should not contain any files.
+    // All JS/TS files should be defined under sub-projects, and included in "references" below.
+  ],
+
+  "references": [
+    { "path": "./crates/solidity/outputs/npm/package/tsconfig.json" },
+    { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
+    { "path": "./documentation/public/assets/javascripts/tsconfig.json" }
+  ],
+
   "exclude": [
     /* Packages and Dependencies */
     "**/.hermit/**",
@@ -9,46 +20,49 @@
   ],
 
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2016",
-    "lib": ["DOM", "DOM.Iterable"],
+    /* Type Checking */
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
 
     /* Modules */
-    "moduleResolution": "node16",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+
+    /* Emit */
+    "noEmit": true,
 
     /* JavaScript Support */
     "allowJs": true,
     "checkJs": true,
 
-    /* Projects */
-    "incremental": true,
-    "tsBuildInfoFile": "target/tsc/.tsbuildinfo",
-
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
 
-    /* Emit */
-    "noEmit": true,
+    /* Language and Environment */
+    "target": "ES2016",
+    "lib": ["DOM", "DOM.Iterable"],
 
-    /* Type Checking */
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false
+    /* Projects */
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
   }
 }

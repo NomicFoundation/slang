@@ -6,4 +6,4 @@ name = "pypi"
 [packages]
 # Other than `pipenv` that is used to configure individual projects, this Pipfile should not have any other packages defined.
 # Individual projects should define their own packages/dependencies in repsective folders/Pipfiles.
-pipenv = "==2023.2.18"
+pipenv = "==2023.12.1"

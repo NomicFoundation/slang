@@ -10,6 +10,11 @@ fn multi_line() -> Result<()> {
 }
 
 #[test]
+fn multi_line_natspec_comment() -> Result<()> {
+    run("LeadingTrivia", "multi_line_natspec_comment")
+}
+
+#[test]
 fn multi_line_trailing_double_star() -> Result<()> {
     run("LeadingTrivia", "multi_line_trailing_double_star")
 }
@@ -22,6 +27,11 @@ fn new_line() -> Result<()> {
 #[test]
 fn single_line_comment() -> Result<()> {
     run("LeadingTrivia", "single_line_comment")
+}
+
+#[test]
+fn single_line_natspec_comment() -> Result<()> {
+    run("LeadingTrivia", "single_line_natspec_comment")
 }
 
 #[test]

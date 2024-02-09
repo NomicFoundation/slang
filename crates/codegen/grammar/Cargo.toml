@@ -6,5 +6,7 @@ edition.workspace = true
 publish = false
 
 [dependencies]
+codegen_language_definition = { workspace = true }
+indexmap = { workspace = true }
 semver = { workspace = true }
 strum_macros = { workspace = true }

@@ -77,7 +77,7 @@ impl CodegenReadWrite {
 
     pub fn render(
         &mut self,
-        model: impl Serialize,
+        context: impl Serialize,
         template_path: impl AsRef<Path>,
         output_path: impl AsRef<Path>,
     ) -> Result<()> {
@@ -92,8 +92,8 @@ impl CodegenReadWrite {
             })?
             .unwrap_str();
 
-        let model = tera::Context::from_serialize(model)?;
-        let rendered = self.tera.render(template_path, &model)?;
+        let context = tera::Context::from_serialize(context)?;
+        let rendered = self.tera.render(template_path, &context)?;
 
         self.write_file(output_path, rendered)
     }

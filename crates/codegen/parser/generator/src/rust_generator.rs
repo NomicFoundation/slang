@@ -3,10 +3,12 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
-    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
-    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
-    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
+    Grammar, GrammarConstructorDslV2, GrammarVisitor, KeywordScannerAtomic,
+    KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
 };
+use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
 use quote::{format_ident, quote};
@@ -58,34 +60,38 @@ struct ScannerContext {
 }
 
 impl RustGenerator {
-    pub fn generate(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
-        let mut code = Self::default();
-        grammar.accept_visitor(&mut code);
-        let code = &code;
+    pub fn generate(language: &Language, output_dir: &Path) -> Result<()> {
+        let grammar = Grammar::from_dsl_v2(language);
+
+        let generator = &mut Self::default();
+        grammar.accept_visitor(generator);
 
         let runtime_dir =
             CargoWorkspace::locate_source_crate("codegen_parser_runtime")?.join("src");
+
         let mut codegen = Codegen::read_write(&runtime_dir)?;
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub ast_model: &'a AstModel,
+            struct Context {
+                ast_model: AstModel,
             }
             codegen.render(
-                Template { ast_model },
-                runtime_dir.join("napi/templates/ast_selectors.rs.jinja2"),
-                output_dir.join("napi/napi_ast_selectors.rs"),
+                Context {
+                    ast_model: AstModel::create(language),
+                },
+                runtime_dir.join("napi_interface/templates/ast_selectors.rs.jinja2"),
+                output_dir.join("napi_interface/ast_selectors.rs"),
             )?;
         }
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub code: &'a RustGenerator,
+            struct Context<'a> {
+                generator: &'a RustGenerator,
             }
             codegen.render(
-                Template { code },
+                Context { generator },
                 runtime_dir.join("templates/kinds.rs.jinja2"),
                 output_dir.join("kinds.rs"),
             )?;
@@ -93,14 +99,14 @@ impl RustGenerator {
 
         {
             #[derive(Serialize)]
-            pub struct Template<'a> {
-                pub code: &'a RustGenerator,
-                pub language_name: String,
-                pub versions: BTreeSet<Version>,
+            struct Context<'a> {
+                generator: &'a RustGenerator,
+                language_name: String,
+                versions: BTreeSet<Version>,
             }
             codegen.render(
-                Template {
-                    code,
+                Context {
+                    generator,
                     language_name: grammar.name.clone(),
                     versions: grammar.versions.clone(),
                 },
@@ -109,13 +115,13 @@ impl RustGenerator {
             )?;
         }
 
-        {
-            #[derive(Serialize)]
-            pub struct Template {}
-            codegen.render(
-                Template {},
-                runtime_dir.join("templates/mod.rs.jinja2"),
-                output_dir.join("mod.rs"),
+        for (src_file, destination_file) in &[
+            ("query/mod_for_destination.rs", "query/mod.rs"),
+            ("mod_for_destination.rs", "mod.rs"),
+        ] {
+            codegen.copy_file(
+                runtime_dir.join(src_file),
+                output_dir.join(destination_file),
             )?;
         }
 
@@ -125,25 +131,28 @@ impl RustGenerator {
             "lexer.rs",
             "parse_error.rs",
             "parse_output.rs",
+            "query/engine.rs",
+            "query/model.rs",
+            "query/parser.rs",
             "text_index.rs",
-            "napi/napi_cst.rs",
-            "napi/napi_cursor.rs",
-            "napi/napi_parse_error.rs",
-            "napi/napi_parse_output.rs",
-            "napi/napi_text_index.rs",
-            "napi/mod.rs",
-            "support/mod.rs",
-            "support/context.rs",
-            "support/parser_function.rs",
-            "support/optional_helper.rs",
-            "support/sequence_helper.rs",
-            "support/repetition_helper.rs",
-            "support/choice_helper.rs",
-            "support/precedence_helper.rs",
-            "support/parser_result.rs",
-            "support/recovery.rs",
-            "support/separated_helper.rs",
-            "support/scanner_macros.rs",
+            "napi_interface/cst.rs",
+            "napi_interface/cursor.rs",
+            "napi_interface/parse_error.rs",
+            "napi_interface/parse_output.rs",
+            "napi_interface/text_index.rs",
+            "napi_interface/mod.rs",
+            "parser_support/mod.rs",
+            "parser_support/context.rs",
+            "parser_support/parser_function.rs",
+            "parser_support/optional_helper.rs",
+            "parser_support/sequence_helper.rs",
+            "parser_support/repetition_helper.rs",
+            "parser_support/choice_helper.rs",
+            "parser_support/precedence_helper.rs",
+            "parser_support/parser_result.rs",
+            "parser_support/recovery.rs",
+            "parser_support/separated_helper.rs",
+            "parser_support/scanner_macros.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
         }

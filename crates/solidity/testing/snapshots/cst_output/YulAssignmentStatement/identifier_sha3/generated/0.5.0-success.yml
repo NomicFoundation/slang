@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ sha3 := 0                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "sha3 := 0\n" (0..10)
+      - (names꞉ YulIdentifierPaths): # "sha3" (0..4)
+          - (item꞉ YulIdentifierPath): # "sha3" (0..4)
+              - (item꞉ YulIdentifier): "sha3" # (0..4)
+      - (LeadingTrivia) ► (Whitespace): " " # (4..5)
+      - (colon_equal꞉ ColonEqual): ":=" # (5..7)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (7..10)
+          - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+          - (variant꞉ YulDecimalLiteral): "0" # (8..9)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (9..10)

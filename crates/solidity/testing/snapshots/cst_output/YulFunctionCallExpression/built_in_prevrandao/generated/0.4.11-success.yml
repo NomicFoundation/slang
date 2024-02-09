@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ prevrandao()                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "prevrandao()\n" (0..13)
+      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "prevrandao" (0..10)
+          - (item꞉ YulIdentifier): "prevrandao" # (0..10)
+      - (open_paren꞉ OpenParen): "(" # (10..11)
+      - (close_paren꞉ CloseParen): ")" # (11..12)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (12..13)

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ extcodehash := 0                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "extcodehash := 0\n" (0..17)
+      - (names꞉ YulIdentifierPaths): # "extcodehash" (0..11)
+          - (item꞉ YulIdentifierPath): # "extcodehash" (0..11)
+              - (item꞉ YulIdentifier): "extcodehash" # (0..11)
+      - (LeadingTrivia) ► (Whitespace): " " # (11..12)
+      - (colon_equal꞉ ColonEqual): ":=" # (12..14)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (14..17)
+          - (LeadingTrivia) ► (Whitespace): " " # (14..15)
+          - (variant꞉ YulDecimalLiteral): "0" # (15..16)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)

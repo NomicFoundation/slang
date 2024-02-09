@@ -7,6 +7,5 @@ mod scanner_definition;
 mod trie;
 mod typescript_generator;
 
-pub use ast_model::AstModel;
 pub use rust_generator::RustGenerator;
 pub use typescript_generator::TypeScriptGenerator;
