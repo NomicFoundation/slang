@@ -69,7 +69,7 @@ impl PathExtensions for Path {
 
         return self
             .strip_prefix(&repo_root)
-            .with_context(|| format!("Failed to strip repo root of: {repo_root:?}"));
+            .with_context(|| format!("Failed to strip repo root from: {self:?}"));
     }
 
     fn unwrap_str(&self) -> &str {

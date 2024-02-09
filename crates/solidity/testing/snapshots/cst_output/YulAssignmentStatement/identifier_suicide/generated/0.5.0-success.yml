@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ suicide := 0                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "suicide := 0\n" (0..13)
+      - (names꞉ YulIdentifierPaths): # "suicide" (0..7)
+          - (item꞉ YulIdentifierPath): # "suicide" (0..7)
+              - (item꞉ YulIdentifier): "suicide" # (0..7)
+      - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+      - (colon_equal꞉ ColonEqual): ":=" # (8..10)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (10..13)
+          - (LeadingTrivia) ► (Whitespace): " " # (10..11)
+          - (variant꞉ YulDecimalLiteral): "0" # (11..12)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (12..13)

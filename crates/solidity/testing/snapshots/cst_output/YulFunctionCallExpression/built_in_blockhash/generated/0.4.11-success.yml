@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ blockhash()                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "blockhash()\n" (0..12)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBlockHashKeyword): "blockhash" # (0..9)
+      - (open_paren꞉ OpenParen): "(" # (9..10)
+      - (close_paren꞉ CloseParen): ")" # (10..11)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (11..12)

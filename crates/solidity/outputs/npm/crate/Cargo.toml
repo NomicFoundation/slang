@@ -40,6 +40,7 @@ slang_solidity = { workspace = true }
 ariadne = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
+nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 strum = { workspace = true }

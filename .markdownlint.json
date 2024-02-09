@@ -7,6 +7,7 @@
   "list-marker-space": false,
   "no-duplicate-heading": false,
   "no-inline-html": false,
+  "no-space-in-emphasis": false,
   "ul-indent": {
     "indent": 4
   }

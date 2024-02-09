@@ -5,19 +5,17 @@ mod builder;
 mod model;
 mod serializer;
 
-pub mod legacy;
-
 use std::collections::HashMap;
 use std::fmt::{Display, Write};
 
-use codegen_language_definition::model::Language;
+use codegen_language_definition::model::{Identifier, Language};
 
 use crate::builder::Builder;
 use crate::model::Entry;
 use crate::serializer::Serializer;
 
 pub struct EbnfModel {
-    entries: HashMap<String, Entry>,
+    entries: HashMap<Identifier, Entry>,
 }
 
 impl EbnfModel {
@@ -27,8 +25,17 @@ impl EbnfModel {
         }
     }
 
-    pub fn serialize(&self, name: &str, writer: &mut impl EbnfWriter) -> std::fmt::Result {
+    pub fn serialize(&self, name: &Identifier, writer: &mut impl EbnfWriter) -> std::fmt::Result {
         Serializer::serialize(self, name, writer)
+    }
+
+    pub fn locate(&self, name: &Identifier) -> (usize, usize) {
+        let entry = self
+            .entries
+            .get(name)
+            .unwrap_or_else(|| panic!("Entry not defined: '{name}'."));
+
+        (entry.section_index, entry.topic_index)
     }
 }
 
@@ -37,38 +44,36 @@ impl EbnfModel {
 /// - The general use case: serializing to a plain string, for doc comments, or plain `.ebnf` files.
 /// - More specialized use cases: like syntax highlighting in the human readable spec, that uses 'span' and 'a' HTML tags.
 ///
-/// For the general use case, we introduce the reusable [`PlainEbnfWriter`] implementation below.
+/// For the general use case, we introduce the reusable [`PlainWriter`] implementation below.
 pub trait EbnfWriter {
-    fn start_line(&mut self) -> std::fmt::Result;
-    fn end_line(&mut self) -> std::fmt::Result;
+    fn line_break(&mut self) -> std::fmt::Result;
 
     fn write_comment(&mut self, value: impl Display) -> std::fmt::Result;
-    fn write_identifier(&mut self, value: impl Display, entry_name: &str) -> std::fmt::Result;
     fn write_punctuation(&mut self, value: impl Display) -> std::fmt::Result;
     fn write_string_literal(&mut self, value: impl Display) -> std::fmt::Result;
+
+    fn write_identifier(&mut self, value: impl Display, name: &Identifier) -> std::fmt::Result;
 }
 
 /// A reusable [`EbnfWriter`] implementation that serializes to a plain string.
 /// Suitable for usage in doc comments, or plain `.ebnf` files.
 #[derive(Default)]
-pub struct PlainEbnfWriter {
+pub struct PlainWriter {
     buffer: String,
 }
 
-impl EbnfWriter for PlainEbnfWriter {
-    fn start_line(&mut self) -> std::fmt::Result {
-        Ok(()) // No-op
+impl PlainWriter {
+    pub fn flush(&mut self) -> String {
+        std::mem::take(&mut self.buffer)
     }
+}
 
-    fn end_line(&mut self) -> std::fmt::Result {
+impl EbnfWriter for PlainWriter {
+    fn line_break(&mut self) -> std::fmt::Result {
         writeln!(self.buffer)
     }
 
     fn write_comment(&mut self, value: impl Display) -> std::fmt::Result {
-        write!(self.buffer, "{value}")
-    }
-
-    fn write_identifier(&mut self, value: impl Display, _: &str) -> std::fmt::Result {
         write!(self.buffer, "{value}")
     }
 
@@ -79,10 +84,8 @@ impl EbnfWriter for PlainEbnfWriter {
     fn write_string_literal(&mut self, value: impl Display) -> std::fmt::Result {
         write!(self.buffer, "{value}")
     }
-}
 
-impl Display for PlainEbnfWriter {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{buffer}", buffer = self.buffer)
+    fn write_identifier(&mut self, value: impl Display, _name: &Identifier) -> std::fmt::Result {
+        write!(self.buffer, "{value}")
     }
 }

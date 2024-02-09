@@ -86,6 +86,16 @@ plugins:
       minify_css: true
       htmlmin_opts:
         remove_comments: true
+        remove_empty_space: true
+      css_files:
+        - "./assets/stylesheets/colors.css"
+      js_files:
+        - "./assets/javascripts/grammar-navigation.js"
+
+extra_css:
+  - "./assets/stylesheets/colors.css"
+extra_javascript:
+  - "./assets/javascripts/grammar-navigation.js"
 
 #
 # Theme:
@@ -125,9 +135,3 @@ theme:
       toggle:
         icon: "material/brightness-4"
         name: "Switch to dark mode"
-
-extra_css:
-  - "./assets/stylesheets/colors.css"
-
-extra_javascript:
-  - "./assets/scripts/grammar-navigation.js"

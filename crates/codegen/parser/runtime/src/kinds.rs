@@ -17,7 +17,11 @@ use napi_derive::napi;
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    // Expanded by the template engine
+    // Used for testing this crate, this is generated in the client code
+    Identifier,
+    Token1,
+    Token2,
+    Token3,
 }
 
 #[derive(
@@ -37,7 +41,10 @@ pub enum TokenKind {
 pub enum RuleKind {
     LeadingTrivia,
     TrailingTrivia,
-    // Expanded by the template engine
+    // Used for testing this crate, this is generated in the client code
+    Rule1,
+    Rule2,
+    Rule3,
 }
 
 impl RuleKind {
@@ -69,8 +76,10 @@ pub enum FieldName {
     Operand,
     LeftOperand,
     RightOperand,
-    // Generated
-    XXX,
+    // Used for testing this crate, this is generated in the client code
+    Name1,
+    Name2,
+    Name3,
 }
 
 /// The lexical context of the scanner.

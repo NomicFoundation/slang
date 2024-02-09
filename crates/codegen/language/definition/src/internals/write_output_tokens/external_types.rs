@@ -1,6 +1,8 @@
+use std::path::PathBuf;
 use std::rc::Rc;
 
 use indexmap::{IndexMap, IndexSet};
+use infra_utils::paths::PathExtensions;
 use proc_macro2::{Literal, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
@@ -73,6 +75,16 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Option<T> {
                     None
                 }
             }
+        }
+    }
+}
+
+impl WriteOutputTokens for PathBuf {
+    fn write_output_tokens(&self) -> TokenStream {
+        let value = Literal::string(self.unwrap_str());
+
+        quote! {
+            #value.into()
         }
     }
 }

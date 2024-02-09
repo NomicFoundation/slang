@@ -5,6 +5,7 @@ use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct AstModel {
+    #[serde(skip)]
     terminals: IndexSet<model::Identifier>,
 
     pub sequences: Vec<Sequence>,

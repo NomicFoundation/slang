@@ -1,7 +1,6 @@
 mod cargo;
 mod changesets;
 mod github_release;
-mod lock_files;
 mod npm;
 
 use anyhow::Result;
@@ -10,7 +9,6 @@ use clap::{Parser, ValueEnum};
 use crate::commands::publish::cargo::publish_cargo;
 use crate::commands::publish::changesets::publish_changesets;
 use crate::commands::publish::github_release::publish_github_release;
-use crate::commands::publish::lock_files::publish_lock_files;
 use crate::commands::publish::npm::publish_npm;
 use crate::utils::{ClapExtensions, Terminal};
 
@@ -29,8 +27,6 @@ enum PublishCommand {
     Cargo,
     /// Publish a new release in the GitHub repository.
     GithubRelease,
-    /// Publish updated lock files to a PR for review.
-    LockFiles,
 }
 
 impl PublishController {
@@ -42,7 +38,6 @@ impl PublishController {
             PublishCommand::Npm => publish_npm(),
             PublishCommand::Cargo => publish_cargo(),
             PublishCommand::GithubRelease => publish_github_release(),
-            PublishCommand::LockFiles => publish_lock_files(),
         }
     }
 }

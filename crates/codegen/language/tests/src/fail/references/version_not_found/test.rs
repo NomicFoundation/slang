@@ -2,6 +2,7 @@
 
 codegen_language_macros::compile!(Language(
     name = Foo,
+    documentation_dir = "foo/bar",
     root_item = One,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),

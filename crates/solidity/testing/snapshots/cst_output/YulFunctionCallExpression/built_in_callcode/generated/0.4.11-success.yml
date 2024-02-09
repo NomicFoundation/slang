@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ callcode()                                                                       │ 0..10
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "callcode()\n" (0..11)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulCallCodeKeyword): "callcode" # (0..8)
+      - (open_paren꞉ OpenParen): "(" # (8..9)
+      - (close_paren꞉ CloseParen): ")" # (9..10)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (10..11)

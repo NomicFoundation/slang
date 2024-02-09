@@ -1,51 +1,68 @@
-//! Generates a human-readable specification for the [`LanguageDefinitionRef`].
+//! Generates a human-readable specification for [`codegen_language_definition`].
 //!
 //! At the time of writing, the generated pages include:
-//! - A list of supported versions
-//! - A grammar page for each version
-//! - A reference page for each version
+//! - A page containing a list of supported versions.
+//! - A page for each topic, containing both the grammar and documentation.
 //!
-//! and the auxiliary snippet files included by the grammar mkdocs pages.
-//!
-//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the specification pages for a given language.
-mod grammar;
-mod markdown;
-mod navigation;
-mod reference;
-mod snippets;
+//! And the auxiliary snippet files included by the grammar mkdocs pages.
+
+mod generators;
+mod model;
 
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
-use codegen_schema::types::LanguageDefinitionRef;
+use codegen_language_definition::model::Language;
 use infra_utils::codegen::CodegenWriteOnly;
 
-use crate::grammar::{generate_grammar_dir, generate_supported_versions_page};
-use crate::navigation::NavigationEntry;
-use crate::reference::generate_reference_dir;
-use crate::snippets::Snippets;
+use crate::generators::grammar_ebnf::generate_grammar_ebnf;
+use crate::generators::navigation::{generate_section_navigation, generate_top_navigation};
+use crate::generators::supported_versions::generate_supported_versions;
+use crate::generators::topic_page::generate_topic_page;
+use crate::model::SpecModel;
 
-/// Extension trait for [`LanguageDefinitionRef`] that generates the specification files.
-pub trait SpecGeneratorExtensions {
-    /// Generates the specification files in `output_dir`.
-    fn generate_spec(&self, codegen: &mut CodegenWriteOnly, output_dir: &Path) -> Result<()>;
-}
+pub struct Spec;
 
-impl SpecGeneratorExtensions for LanguageDefinitionRef {
-    fn generate_spec(&self, codegen: &mut CodegenWriteOnly, output_dir: &Path) -> Result<()> {
-        let snippets = Snippets::new(self, output_dir);
-        snippets.write_files(codegen)?;
+impl Spec {
+    pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
+        let model = SpecModel::build(language);
 
-        let root_entry = NavigationEntry::Directory {
-            title: format!("{title} Specification", title = self.title),
-            path: "public".to_owned(),
-            children: vec![
-                generate_supported_versions_page(self),
-                generate_grammar_dir(self, &snippets),
-                generate_reference_dir(self),
-            ],
-        };
+        let mut codegen = CodegenWriteOnly::new()?;
 
-        root_entry.write_files(codegen, output_dir)
+        codegen.write_file(
+            output_dir.join("grammar.ebnf"),
+            generate_grammar_ebnf(&model)?,
+        )?;
+
+        codegen.write_file(
+            output_dir.join("public/NAV.md"),
+            generate_top_navigation(&model)?,
+        )?;
+
+        codegen.write_file(
+            output_dir.join("public/supported-versions.md"),
+            generate_supported_versions(&model)?,
+        )?;
+
+        for (section_index, section) in model.sections.iter().enumerate() {
+            let section_slug = &section.slug;
+
+            codegen.write_file(
+                output_dir.join(format!("public/{section_slug}/NAV.md")),
+                generate_section_navigation(&model, section_index)?,
+            )?;
+
+            for (topic_index, topic) in section.topics.iter().enumerate() {
+                let topic_slug = &topic.slug;
+
+                codegen.write_file(
+                    output_dir.join(format!("public/{section_slug}/{topic_slug}.md")),
+                    generate_topic_page(&model, section_index, topic_index)?,
+                )?;
+            }
+        }
+
+        Ok(())
     }
 }

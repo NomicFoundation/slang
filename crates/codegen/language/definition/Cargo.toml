@@ -9,6 +9,7 @@ publish = false
 codegen_language_internal_macros = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
+infra_utils = { workspace = true }
 itertools = { workspace = true }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }

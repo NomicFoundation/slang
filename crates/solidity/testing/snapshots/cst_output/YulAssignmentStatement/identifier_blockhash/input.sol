@@ -1,0 +1,1 @@
+blockhash := 0

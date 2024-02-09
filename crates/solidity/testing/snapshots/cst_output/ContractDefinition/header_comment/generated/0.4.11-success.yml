@@ -28,7 +28,7 @@ Errors: []
 Tree:
   - (ContractDefinition): # "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." (0..2001)
       - (LeadingTrivia): # "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." (0..1986)
-          - (MultilineComment): "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # (0..1985)
+          - (MultiLineComment): "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # (0..1985)
           - (EndOfLine): "\n" # (1985..1986)
       - (contract_keyword꞉ ContractKeyword): "contract" # (1986..1994)
       - (LeadingTrivia) ► (Whitespace): " " # (1994..1995)

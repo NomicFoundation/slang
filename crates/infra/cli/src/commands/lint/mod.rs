@@ -130,10 +130,10 @@ fn run_shellcheck() -> Result<()> {
 }
 
 fn run_tsc() -> Result<()> {
-    let config_file = Path::repo_path("tsconfig.json");
+    let root_project = Path::repo_path("tsconfig.json");
 
     return Command::new("tsc")
-        .property("--project", config_file.unwrap_str())
+        .property("--build", root_project.unwrap_str())
         .run();
 }
 
