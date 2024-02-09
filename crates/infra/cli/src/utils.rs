@@ -1,5 +1,3 @@
-use std::io::IsTerminal;
-
 use anyhow::{Ok, Result};
 use clap::ValueEnum;
 use owo_colors::colors::{BrightBlue, BrightGreen, BrightRed};
@@ -62,10 +60,6 @@ impl Terminal {
         const DEFAULT_WIDTH: usize = 100;
         const BANNER_GLYPHS: usize = 6; // "╾┤  ├╼"
 
-        if !std::io::stdout().is_terminal() {
-            return;
-        }
-
         let title = title.into();
 
         let terminal_width = terminal_size().map_or(DEFAULT_WIDTH, |(width, _)| width.0 as usize);
@@ -81,10 +75,10 @@ impl Terminal {
             end = format!("├{sep}╼", sep = "─".repeat(right_spacer_width)).dimmed(),
         );
 
-        println!();
-        println!();
-        println!("{contents}");
-        println!();
-        println!();
+        eprintln!();
+        eprintln!();
+        eprintln!("{contents}");
+        eprintln!();
+        eprintln!();
     }
 }

@@ -2,9 +2,9 @@ mod cargo;
 mod npm;
 mod pipenv;
 
-use std::path::PathBuf;
+use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{CommandFactory, Parser, ValueEnum};
 use clap_complete::Shell;
 use infra_utils::paths::PathExtensions;
@@ -54,20 +54,23 @@ impl OrderedCommand for SetupCommand {
 fn generate_shell_completions() -> Result<()> {
     println!("Generating shell completions...\n");
 
-    let target_dir = std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "target".to_string());
-    let shell_completions_dir = PathBuf::from(target_dir).join("shell-completions");
-
-    std::fs::create_dir_all(&shell_completions_dir)?;
+    let shell_completions_dir = Path::repo_path("target/shell-completions");
+    std::fs::create_dir_all(&shell_completions_dir)
+        .context("Failed to create shell completions directory")?;
 
     let mut cmd = crate::commands::Cli::command();
     let bin_name = cmd.get_bin_name().expect("Set by #[command]").to_owned();
 
     for shell in [Shell::Bash, Shell::Zsh] {
-        let file = clap_complete::generate_to(shell, &mut cmd, &bin_name, &shell_completions_dir)?;
+        let mut out_buf = vec![];
+        clap_complete::generate(shell, &mut cmd, &bin_name, &mut out_buf);
+
+        let file = shell_completions_dir.join(format!("infra.{shell}"));
+        std::fs::write(&file, out_buf).context("Couldn't write a shell completion file")?;
 
         let canonicalized = file.canonicalize()?;
         let stripped = canonicalized.strip_repo_root()?;
-        println!("Generated file at {}", stripped.display());
+        println!("Generated {shell} completions at {}", stripped.display());
     }
 
     Ok(())
