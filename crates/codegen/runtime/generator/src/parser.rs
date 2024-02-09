@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_language_definition::model::{Identifier, Language};
+use codegen_language_definition::model::{Identifier, Language, VersionSpecifier};
 use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
@@ -254,13 +254,21 @@ impl GrammarVisitor for ParserAccumulatorState {
         for def in scanner.definitions() {
             let versions = def.enabled.iter().chain(def.reserved.iter());
 
-            self.referenced_versions.extend(
-                versions
-                    .map(|vqr| &vqr.from)
-                    // "Removed from 0.0.0" is an alias for "never"; it's never directly checked
-                    .filter(|v| *v != &Version::new(0, 0, 0))
-                    .cloned(),
-            );
+            for version in versions {
+                match version {
+                    VersionSpecifier::Never => {}
+                    VersionSpecifier::From { from } => {
+                        self.referenced_versions.insert(from.clone());
+                    }
+                    VersionSpecifier::Till { till } => {
+                        self.referenced_versions.insert(till.clone());
+                    }
+                    VersionSpecifier::Range { from, till } => {
+                        self.referenced_versions.insert(from.clone());
+                        self.referenced_versions.insert(till.clone());
+                    }
+                }
+            }
         }
     }
 
@@ -338,20 +346,38 @@ impl GrammarVisitor for ParserAccumulatorState {
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
-        if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) = node {
-            for vqr in version_quality_ranges {
-                self.referenced_versions.insert(vqr.from.clone());
+        if let ScannerDefinitionNode::Versioned(_, version_specifier) = node {
+            match version_specifier {
+                VersionSpecifier::Never => {}
+                VersionSpecifier::From { from } => {
+                    self.referenced_versions.insert(from.clone());
+                }
+                VersionSpecifier::Till { till } => {
+                    self.referenced_versions.insert(till.clone());
+                }
+                VersionSpecifier::Range { from, till } => {
+                    self.referenced_versions.insert(from.clone());
+                    self.referenced_versions.insert(till.clone());
+                }
             }
         }
     }
 
     fn parser_definition_node_enter(&mut self, node: &ParserDefinitionNode) {
         match node {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
-                for vqr in version_quality_ranges {
-                    self.referenced_versions.insert(vqr.from.clone());
+            ParserDefinitionNode::Versioned(_, version_specifier) => match version_specifier {
+                VersionSpecifier::Never => {}
+                VersionSpecifier::From { from } => {
+                    self.referenced_versions.insert(from.clone());
                 }
-            }
+                VersionSpecifier::Till { till } => {
+                    self.referenced_versions.insert(till.clone());
+                }
+                VersionSpecifier::Range { from, till } => {
+                    self.referenced_versions.insert(from.clone());
+                    self.referenced_versions.insert(till.clone());
+                }
+            },
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name().clone());
                 self.terminal_kinds.insert(scanner.name().clone());

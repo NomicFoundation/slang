@@ -20,8 +20,8 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
             .iter()
             .map(|versioned_kw| {
                 let scanner = versioned_kw.value.to_scanner_code();
-                let enabled_cond = versioned_kw.enabled.as_bool_expr();
-                let reserved_cond = versioned_kw.reserved.as_bool_expr();
+                let enabled_cond = versioned_kw.enabled.as_ref().as_bool_expr();
+                let reserved_cond = versioned_kw.reserved.as_ref().as_bool_expr();
 
                 // Simplify the emitted code if we trivially know that reserved or enabled is true
                 match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {

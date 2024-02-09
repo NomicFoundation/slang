@@ -51,7 +51,7 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
         match self {
             ScannerDefinitionNode::Versioned(body, version_quality_ranges) => {
                 let body = body.to_scanner_code();
-                version_quality_ranges.wrap_code(body, Some(quote! { false }))
+                Some(version_quality_ranges).wrap_code(body, Some(quote! { false }))
             }
 
             ScannerDefinitionNode::Optional(node) => {

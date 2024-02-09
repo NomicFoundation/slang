@@ -1,12 +1,11 @@
-use codegen_language_definition::model::Identifier;
+use codegen_language_definition::model::{Identifier, VersionSpecifier};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use semver::Version;
 
 use crate::parser::grammar::{
-    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
-    VersionQualityRange,
+    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef,
 };
 
 pub trait ParserDefinitionExtensions {
@@ -30,7 +29,7 @@ impl ParserDefinitionExtensions for TriviaParserDefinitionRef {
 
 pub trait ParserDefinitionNodeExtensions {
     fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream;
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange>;
+    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier>;
 }
 
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
@@ -300,11 +299,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
         }
     }
 
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
+    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier> {
         match self {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
-                version_quality_ranges.clone()
-            }
+            ParserDefinitionNode::Versioned(_, version_specifier) => Some(version_specifier),
 
             ParserDefinitionNode::Optional(value)
             | ParserDefinitionNode::ZeroOrMore(Labeled { value, .. })
@@ -312,7 +309,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 value.applicable_version_quality_ranges()
             }
 
-            _ => vec![],
+            _ => None,
         }
     }
 }
@@ -323,37 +320,9 @@ pub trait VersionQualityRangeVecExtensions {
     fn as_bool_expr(&self) -> TokenStream;
 }
 
-impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
-    fn as_bool_expr(&self) -> TokenStream {
-        if self.is_empty() {
-            quote!(true)
-        } else {
-            // Optimize for legibility; return `false` for "never enabled"
-            match self.as_slice() {
-                [VersionQualityRange {
-                    from,
-                    quality: VersionQuality::Removed,
-                }] if from == &Version::new(0, 0, 0) => return quote!(false),
-                _ => {}
-            }
-
-            let flags = self.iter().map(|vqr| {
-                let flag = format_ident!(
-                    "version_is_at_least_{v}",
-                    v = &vqr.from.to_string().replace('.', "_")
-                );
-                if vqr.quality == VersionQuality::Introduced {
-                    quote! { self.#flag }
-                } else {
-                    quote! { !self.#flag }
-                }
-            });
-            quote! { #(#flags)&&* }
-        }
-    }
-
+impl VersionQualityRangeVecExtensions for Option<&VersionSpecifier> {
     fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream {
-        if self.is_empty() {
+        if self.is_none() {
             if_true
         } else {
             let condition = self.as_bool_expr();
@@ -362,18 +331,46 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
             quote! { if #condition { #if_true } #else_part }
         }
     }
+
+    fn as_bool_expr(&self) -> TokenStream {
+        let to_version_flag_name = |v: &Version| {
+            format_ident!(
+                "version_is_at_least_{v}",
+                v = &v.to_string().replace('.', "_")
+            )
+        };
+
+        match self {
+            // No constraints imposed, so always enabled
+            None => quote!(true),
+            Some(VersionSpecifier::Never) => quote!(false),
+            Some(VersionSpecifier::From { from }) => {
+                let flag = to_version_flag_name(from);
+                quote! { self.#flag }
+            }
+            Some(VersionSpecifier::Till { till }) => {
+                let flag = to_version_flag_name(till);
+                quote! { ! self.#flag }
+            }
+            Some(VersionSpecifier::Range { from, till }) => {
+                let from_flag = to_version_flag_name(from);
+                let till_flag = to_version_flag_name(till);
+                quote! { self.#from_flag && ! self.#till_flag }
+            }
+        }
+    }
 }
 
 pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
     make_sequence_versioned(
         parsers
             .into_iter()
-            .map(|parser| (parser, String::new(), vec![])),
+            .map(|parser| (parser, String::new(), None)),
     )
 }
 
-pub fn make_sequence_versioned(
-    parsers: impl IntoIterator<Item = (TokenStream, String, Vec<VersionQualityRange>)>,
+pub fn make_sequence_versioned<'a>(
+    parsers: impl IntoIterator<Item = (TokenStream, String, Option<&'a VersionSpecifier>)>,
 ) -> TokenStream {
     let parsers = parsers
         .into_iter()
@@ -398,11 +395,11 @@ pub fn make_sequence_versioned(
 }
 
 pub fn make_choice(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
-    make_choice_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+    make_choice_versioned(parsers.into_iter().map(|parser| (parser, None)))
 }
 
-fn make_choice_versioned(
-    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+fn make_choice_versioned<'a>(
+    parsers: impl IntoIterator<Item = (TokenStream, Option<&'a VersionSpecifier>)>,
 ) -> TokenStream {
     let parsers = parsers
         .into_iter()

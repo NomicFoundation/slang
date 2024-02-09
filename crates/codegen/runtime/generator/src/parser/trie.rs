@@ -1,13 +1,12 @@
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
+// use crate::grammar::model::KeywordDefinition;
+use codegen_language_definition::model::{self, VersionSpecifier};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::grammar::{
-    KeywordScannerAtomic, KeywordScannerDefinitionVersionedNode, ScannerDefinitionNode,
-    ScannerDefinitionRef, VersionQualityRange,
-};
+use crate::parser::grammar::{KeywordScannerAtomic, ScannerDefinitionNode, ScannerDefinitionRef};
 use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 
 #[derive(Clone, Debug, Default)]
@@ -93,21 +92,21 @@ impl<T: Payload> Trie<T> {
 }
 
 trait VersionWrapped {
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange>;
+    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier>;
 }
 
 impl VersionWrapped for ScannerDefinitionNode {
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
+    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier> {
         match self {
             ScannerDefinitionNode::Versioned(_, version_quality_ranges) => {
-                version_quality_ranges.clone()
+                Some(version_quality_ranges)
             }
 
             ScannerDefinitionNode::Optional(node)
             | ScannerDefinitionNode::ZeroOrMore(node)
             | ScannerDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
 
-            _ => vec![],
+            _ => None,
         }
     }
 }
@@ -141,12 +140,12 @@ impl Payload for KeywordScannerAtomic {
     fn to_leaf_code(&self) -> TokenStream {
         let kind = format_ident!("{}", self.name());
 
-        let KeywordScannerDefinitionVersionedNode {
+        let model::KeywordDefinition {
             enabled, reserved, ..
         } = self.definition();
 
-        let enabled_cond = enabled.as_bool_expr();
-        let reserved_cond = reserved.as_bool_expr();
+        let enabled_cond = enabled.as_ref().as_bool_expr();
+        let reserved_cond = reserved.as_ref().as_bool_expr();
 
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {

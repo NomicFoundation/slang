@@ -13,13 +13,11 @@ pub mod constructor;
 pub mod parser_definition;
 pub mod precedence_parser_definition;
 pub mod scanner_definition;
-pub mod version_quality;
 pub mod visitor;
 
 pub use parser_definition::*;
 pub use precedence_parser_definition::*;
 pub use scanner_definition::*;
-pub use version_quality::*;
 pub use visitor::*;
 
 pub struct Grammar {

@@ -10,10 +10,10 @@ use indexmap::IndexMap;
 use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
-    DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
-    KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition, ParserDefinitionNode,
-    PrecedenceParserDefinition, PrecedenceParserDefinitionNode, ScannerDefinition,
-    ScannerDefinitionNode, TriviaParserDefinition, VersionQuality, VersionQualityRange,
+    DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition, Labeled,
+    ParserDefinition, ParserDefinitionNode, PrecedenceParserDefinition,
+    PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
+    TriviaParserDefinition,
 };
 
 impl Grammar {
@@ -133,7 +133,7 @@ impl ScannerDefinition for NamedScanner {
 struct NamedKeywordScanner {
     name: Identifier,
     identifier_scanner_name: Identifier,
-    defs: Vec<KeywordScannerDefinitionVersionedNode>,
+    defs: Vec<model::KeywordDefinition>,
 }
 
 impl KeywordScannerDefinition for NamedKeywordScanner {
@@ -141,7 +141,7 @@ impl KeywordScannerDefinition for NamedKeywordScanner {
         &self.name
     }
 
-    fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode] {
+    fn definitions(&self) -> &[model::KeywordDefinition] {
         &self.defs
     }
 
@@ -234,37 +234,6 @@ impl ParserThunk {
             ParserThunk::Precedence(thunk) => &thunk.def,
             ParserThunk::Regular(..) => panic!("Expected a precedence parser thunk"),
         }
-    }
-}
-
-fn enabled_to_range(spec: impl Into<Option<model::VersionSpecifier>>) -> Vec<VersionQualityRange> {
-    let Some(spec) = spec.into() else {
-        return vec![];
-    };
-
-    match spec {
-        model::VersionSpecifier::Never => vec![VersionQualityRange {
-            from: semver::Version::new(0, 0, 0),
-            quality: VersionQuality::Removed,
-        }],
-        model::VersionSpecifier::From { from } => vec![VersionQualityRange {
-            from,
-            quality: VersionQuality::Introduced,
-        }],
-        model::VersionSpecifier::Till { till } => vec![VersionQualityRange {
-            from: till,
-            quality: VersionQuality::Removed,
-        }],
-        model::VersionSpecifier::Range { from, till } => vec![
-            VersionQualityRange {
-                from,
-                quality: VersionQuality::Introduced,
-            },
-            VersionQualityRange {
-                from: till,
-                quality: VersionQuality::Removed,
-            },
-        ],
     }
 }
 
@@ -384,21 +353,10 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                     def: resolve_token(item.deref().clone(), ctx),
                 },
                 Item::Keyword { item } => {
-                    let defs: Vec<_> = item
-                        .definitions
-                        .iter()
-                        .cloned()
-                        .map(|def| KeywordScannerDefinitionVersionedNode {
-                            value: def.value,
-                            enabled: enabled_to_range(def.enabled),
-                            reserved: enabled_to_range(def.reserved),
-                        })
-                        .collect();
-
                     let kw_scanner = NamedKeywordScanner {
                         name: ident.clone(),
                         identifier_scanner_name: item.identifier.clone(),
-                        defs,
+                        defs: item.definitions.clone(),
                     };
 
                     // Keywords are special scanners and are handled separately
@@ -812,7 +770,7 @@ trait VersionWrapped {
 impl VersionWrapped for ParserDefinitionNode {
     fn versioned(self, enabled: Option<model::VersionSpecifier>) -> Self {
         if let Some(enabled) = enabled {
-            Self::Versioned(Box::new(self), enabled_to_range(enabled))
+            Self::Versioned(Box::new(self), enabled)
         } else {
             self
         }
@@ -822,7 +780,7 @@ impl VersionWrapped for ParserDefinitionNode {
 impl VersionWrapped for ScannerDefinitionNode {
     fn versioned(self, enabled: Option<model::VersionSpecifier>) -> Self {
         if let Some(enabled) = enabled {
-            Self::Versioned(Box::new(self), enabled_to_range(enabled))
+            Self::Versioned(Box::new(self), enabled)
         } else {
             self
         }

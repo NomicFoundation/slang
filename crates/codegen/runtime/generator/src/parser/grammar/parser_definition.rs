@@ -6,7 +6,6 @@ use codegen_language_definition::model::{self, Identifier};
 use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
 use crate::parser::grammar::{
     KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
-    VersionQualityRange,
 };
 
 /// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
@@ -76,7 +75,7 @@ impl From<model::FieldDelimiters> for DelimitedRecoveryTokenThreshold {
 
 #[derive(Clone, Debug)]
 pub enum ParserDefinitionNode {
-    Versioned(Box<Self>, Vec<VersionQualityRange>),
+    Versioned(Box<Self>, model::VersionSpecifier),
     Optional(Box<Self>),
     ZeroOrMore(Labeled<Box<Self>>),
     OneOrMore(Labeled<Box<Self>>),

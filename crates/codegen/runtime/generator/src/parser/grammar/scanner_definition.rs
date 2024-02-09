@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use codegen_language_definition::model::{self, Identifier};
 
-use crate::parser::grammar::{GrammarVisitor, VersionQualityRange, Visitable};
+use crate::parser::grammar::{GrammarVisitor, Visitable};
 
 pub trait ScannerDefinition: Debug {
     fn name(&self) -> &Identifier;
@@ -21,7 +21,7 @@ impl Visitable for ScannerDefinitionRef {
 
 #[derive(Clone, Debug)]
 pub enum ScannerDefinitionNode {
-    Versioned(Box<Self>, Vec<VersionQualityRange>),
+    Versioned(Box<Self>, model::VersionSpecifier),
     Optional(Box<Self>),
     ZeroOrMore(Box<Self>),
     OneOrMore(Box<Self>),
@@ -71,7 +71,7 @@ impl Visitable for ScannerDefinitionNode {
 pub trait KeywordScannerDefinition: Debug {
     fn name(&self) -> &Identifier;
     fn identifier_scanner(&self) -> &Identifier;
-    fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode];
+    fn definitions(&self) -> &[model::KeywordDefinition];
 }
 
 pub type KeywordScannerDefinitionRef = Rc<dyn KeywordScannerDefinition>;
@@ -80,16 +80,6 @@ impl Visitable for KeywordScannerDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.keyword_scanner_definition_enter(self);
     }
-}
-
-#[derive(Debug)]
-pub struct KeywordScannerDefinitionVersionedNode {
-    // Underlying keyword scanner (i.e. identifier scanner)
-    pub value: model::KeywordValue,
-    /// When the keyword scanner is enabled
-    pub enabled: Vec<VersionQualityRange>,
-    /// When the keyword is reserved, i.e. can't be used in other position (e.g. as a name)
-    pub reserved: Vec<VersionQualityRange>,
 }
 
 impl From<model::KeywordValue> for ScannerDefinitionNode {
@@ -121,7 +111,7 @@ impl KeywordScannerAtomic {
     /// Wraps the keyword scanner definition if it is a single atom value.
     pub fn try_from_def(def: &KeywordScannerDefinitionRef) -> Option<Self> {
         match def.definitions() {
-            [KeywordScannerDefinitionVersionedNode {
+            [model::KeywordDefinition {
                 value: model::KeywordValue::Atom { .. },
                 ..
             }] => Some(Self(Rc::clone(def))),
@@ -139,13 +129,16 @@ impl std::ops::Deref for KeywordScannerAtomic {
 }
 
 impl KeywordScannerAtomic {
-    pub fn definition(&self) -> &KeywordScannerDefinitionVersionedNode {
-        let def = &self.0.definitions().first();
-        def.expect("KeywordScannerAtomic should have exactly one definition")
+    pub fn definition(&self) -> &model::KeywordDefinition {
+        self.0
+            .definitions()
+            .first()
+            .expect("KeywordScannerAtomic should have exactly one definition")
     }
+
     pub fn value(&self) -> &str {
         match self.definition() {
-            KeywordScannerDefinitionVersionedNode {
+            model::KeywordDefinition {
                 value: model::KeywordValue::Atom { atom },
                 ..
             } => atom,
