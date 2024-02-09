@@ -214,6 +214,7 @@ pub enum RuleKind {
     YulIdentifierPath,
     YulIdentifierPaths,
     YulIfStatement,
+    YulLabel,
     YulLeaveStatement,
     YulLiteral,
     YulParameters,

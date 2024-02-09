@@ -3932,6 +3932,7 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulLeaveStatement, enabled = From("0.6.0")),
                                 EnumVariant(reference = YulBreakStatement),
                                 EnumVariant(reference = YulContinueStatement),
+                                EnumVariant(reference = YulLabel, enabled = Till("0.5.0")),
                                 EnumVariant(reference = YulExpression)
                             ]
                         ),
@@ -4006,19 +4007,6 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Struct(
-                            name = YulLeaveStatement,
-                            enabled = From("0.6.0"),
-                            fields = (leave_keyword = Required(YulLeaveKeyword))
-                        ),
-                        Struct(
-                            name = YulBreakStatement,
-                            fields = (break_keyword = Required(YulBreakKeyword))
-                        ),
-                        Struct(
-                            name = YulContinueStatement,
-                            fields = (continue_keyword = Required(YulContinueKeyword))
-                        ),
-                        Struct(
                             name = YulForStatement,
                             fields = (
                                 for_keyword = Required(YulForKeyword),
@@ -4058,6 +4046,24 @@ codegen_language_macros::compile!(Language(
                                 value = Required(YulLiteral),
                                 body = Required(YulBlock)
                             )
+                        ),
+                        Struct(
+                            name = YulLeaveStatement,
+                            enabled = From("0.6.0"),
+                            fields = (leave_keyword = Required(YulLeaveKeyword))
+                        ),
+                        Struct(
+                            name = YulBreakStatement,
+                            fields = (break_keyword = Required(YulBreakKeyword))
+                        ),
+                        Struct(
+                            name = YulContinueStatement,
+                            fields = (continue_keyword = Required(YulContinueKeyword))
+                        ),
+                        Struct(
+                            name = YulLabel,
+                            enabled = Till("0.5.0"),
+                            fields = (label = Required(YulIdentifier), colon = Required(Colon))
                         )
                     ]
                 ),

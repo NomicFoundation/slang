@@ -206,6 +206,7 @@ export namespace kinds {
     YulIdentifierPath = "YulIdentifierPath",
     YulIdentifierPaths = "YulIdentifierPaths",
     YulIfStatement = "YulIfStatement",
+    YulLabel = "YulLabel",
     YulLeaveStatement = "YulLeaveStatement",
     YulLiteral = "YulLiteral",
     YulParameters = "YulParameters",

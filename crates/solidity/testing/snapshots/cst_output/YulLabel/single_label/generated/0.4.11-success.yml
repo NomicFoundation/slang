@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo:                                                                             │ 0..4
+
+Errors: []
+
+Tree:
+  - (YulLabel): # "foo:\n" (0..5)
+      - (label꞉ YulIdentifier): "foo" # (0..3)
+      - (colon꞉ Colon): ":" # (3..4)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (4..5)

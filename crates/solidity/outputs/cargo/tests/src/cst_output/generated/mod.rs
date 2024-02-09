@@ -98,6 +98,8 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulFunctionCallExpression;
 #[allow(non_snake_case)]
+mod YulLabel;
+#[allow(non_snake_case)]
 mod YulLeaveStatement;
 #[allow(non_snake_case)]
 mod YulVariableDeclarationStatement;

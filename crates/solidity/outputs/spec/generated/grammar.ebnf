@@ -1317,6 +1317,7 @@ YulStatement = YulBlock
              | YulLeaveStatement (* Introduced in 0.6.0 *)
              | YulBreakStatement
              | YulContinueStatement
+             | YulLabel (* Deprecated in 0.5.0 *)
              | YulExpression;
 
 YulFunctionDefinition = YUL_FUNCTION_KEYWORD
@@ -1351,13 +1352,6 @@ YulIfStatement = YUL_IF_KEYWORD
                  YulExpression
                  YulBlock;
 
-(* Introduced in 0.6.0 *)
-YulLeaveStatement = YUL_LEAVE_KEYWORD;
-
-YulBreakStatement = YUL_BREAK_KEYWORD;
-
-YulContinueStatement = YUL_CONTINUE_KEYWORD;
-
 YulForStatement = YUL_FOR_KEYWORD
                   YulBlock
                   YulExpression
@@ -1379,6 +1373,17 @@ YulDefaultCase = YUL_DEFAULT_KEYWORD
 YulValueCase = YUL_CASE_KEYWORD
                YulLiteral
                YulBlock;
+
+(* Introduced in 0.6.0 *)
+YulLeaveStatement = YUL_LEAVE_KEYWORD;
+
+YulBreakStatement = YUL_BREAK_KEYWORD;
+
+YulContinueStatement = YUL_CONTINUE_KEYWORD;
+
+(* Deprecated in 0.5.0 *)
+YulLabel = YUL_IDENTIFIER
+           COLON;
 
 (* 6.2. Yul Expressions: *)
 
