@@ -18,9 +18,5 @@ strum_macros = { workspace = true }
 # Since the source code is copied over as-is, we need to retain exact feature set with target crate,
 # i.e `slang_solidity_node_addon`.
 [features]
-default = [
-	"slang_napi_interfaces",
-	# Don't bother expanding macros in this stub crate; will be done in the target crate.
-	"napi/noop",
-]
+default = ["slang_napi_interfaces"]
 slang_napi_interfaces = ["dep:napi", "dep:napi-derive"]
