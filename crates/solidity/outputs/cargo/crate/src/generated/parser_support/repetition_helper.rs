@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::parser_support::context::ParserContext;
-use crate::parser_support::parser_result::{IncompleteMatch, NoMatch, ParserResult};
+use crate::parser_support::parser_result::{IncompleteMatch, NoMatch, ParserResult, PrattElement};
 
 pub struct RepetitionHelper<const MIN_COUNT: usize>;
 
@@ -75,15 +75,24 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return accum;
                 }
 
+                (
+                    ParserResult::PrattOperatorMatch(pratt),
+                    ParserResult::SkippedUntil(mut skipped),
+                ) => {
+                    skipped.nodes = std::mem::take(&mut pratt.elements)
+                        .into_iter()
+                        .flat_map(PrattElement::into_nodes)
+                        .chain(skipped.nodes)
+                        .collect();
+
+                    return ParserResult::SkippedUntil(skipped);
+                }
+
                 (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
                     running.nodes.extend(std::mem::take(&mut skipped.nodes));
                     skipped.nodes = std::mem::take(&mut running.nodes);
 
                     return ParserResult::SkippedUntil(skipped);
-                }
-
-                (ParserResult::PrattOperatorMatch(..), ParserResult::SkippedUntil(_)) => {
-                    unreachable!("We don't do recovery when reducing the Pratt matches")
                 }
 
                 (
