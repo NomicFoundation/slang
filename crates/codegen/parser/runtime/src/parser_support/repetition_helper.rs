@@ -67,7 +67,9 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
                 (
                     ParserResult::PrattOperatorMatch(_),
-                    ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_),
+                    ParserResult::IncompleteMatch(_)
+                    | ParserResult::NoMatch(_)
+                    | ParserResult::SkippedUntil(_),
                 ) => {
                     input.rewind(save);
                     return accum;
@@ -78,10 +80,6 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     skipped.nodes = std::mem::take(&mut running.nodes);
 
                     return ParserResult::SkippedUntil(skipped);
-                }
-
-                (ParserResult::PrattOperatorMatch(..), ParserResult::SkippedUntil(_)) => {
-                    unreachable!("We don't do recovery when reducing the Pratt matches")
                 }
 
                 (
