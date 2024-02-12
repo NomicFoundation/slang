@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::parser_support::context::ParserContext;
-use crate::parser_support::parser_result::{IncompleteMatch, NoMatch, ParserResult};
+use crate::parser_support::parser_result::{IncompleteMatch, NoMatch, ParserResult, PrattElement};
 
 pub struct RepetitionHelper<const MIN_COUNT: usize>;
 
@@ -69,12 +69,23 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
                 (
                     ParserResult::PrattOperatorMatch(_),
-                    ParserResult::IncompleteMatch(_)
-                    | ParserResult::NoMatch(_)
-                    | ParserResult::SkippedUntil(_),
+                    ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_),
                 ) => {
                     input.rewind(save);
                     return accum;
+                }
+
+                (
+                    ParserResult::PrattOperatorMatch(pratt),
+                    ParserResult::SkippedUntil(mut skipped),
+                ) => {
+                    skipped.nodes = std::mem::take(&mut pratt.elements)
+                        .into_iter()
+                        .flat_map(PrattElement::into_nodes)
+                        .chain(skipped.nodes)
+                        .collect();
+
+                    return ParserResult::SkippedUntil(skipped);
                 }
 
                 (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {

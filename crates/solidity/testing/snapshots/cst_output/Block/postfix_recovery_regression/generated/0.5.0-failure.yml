@@ -10,7 +10,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:4:8]
        │
      4 │ ╭─▶     a.b('
