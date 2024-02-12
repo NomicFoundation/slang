@@ -5,12 +5,13 @@ mod npm;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
+use infra_utils::terminal::Terminal;
 
 use crate::commands::publish::cargo::publish_cargo;
 use crate::commands::publish::changesets::publish_changesets;
 use crate::commands::publish::github_release::publish_github_release;
 use crate::commands::publish::npm::publish_npm;
-use crate::utils::{ClapExtensions, Terminal};
+use crate::utils::ClapExtensions;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PublishController {

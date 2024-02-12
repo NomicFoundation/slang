@@ -6,8 +6,9 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
+use infra_utils::terminal::Terminal;
 
-use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
+use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
 pub struct LintController {

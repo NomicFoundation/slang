@@ -4,11 +4,12 @@ mod pipenv;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
+use infra_utils::terminal::Terminal;
 
 use crate::commands::setup::cargo::setup_cargo;
 use crate::commands::setup::npm::setup_npm;
 use crate::commands::setup::pipenv::setup_pipenv;
-use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
+use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
 pub struct SetupController {

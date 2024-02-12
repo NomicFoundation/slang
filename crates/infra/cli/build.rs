@@ -19,7 +19,7 @@ fn main() -> Result<()> {
 /// Generate auto-completions for the shell.
 fn generate_zsh_completions() -> Result<()> {
     let mut buffer = vec![];
-    let mut command = <crate_main::commands::CLI as CommandFactory>::command();
+    let mut command = <crate_main::CLI as CommandFactory>::command();
 
     generate(Zsh, &mut command, "infra", &mut buffer);
 

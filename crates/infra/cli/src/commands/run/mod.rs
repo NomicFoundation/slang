@@ -1,19 +1,26 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
+use infra_utils::terminal::Terminal;
 
-use crate::utils::{ClapExtensions, Terminal};
+use crate::utils::ClapExtensions;
 
 #[derive(Clone, Debug, Parser)]
 pub struct RunController {
-    command: RunCommand,
+    /// Name of the binary to run.
+    #[arg(long)]
+    bin: BinaryName,
+
+    /// Run the release build of the binary (with optimizations turned on).
+    #[arg(long)]
+    release: bool,
 
     #[clap(trailing_var_arg = true)]
     args: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, ValueEnum)]
-enum RunCommand {
+enum BinaryName {
     /// Runs the public 'slang_solidity' crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
@@ -25,36 +32,20 @@ enum RunCommand {
     SolidityTestingSolc,
 }
 
-impl RunCommand {
-    fn should_run_in_release_mode(&self) -> bool {
-        match self {
-            Self::SolidityTestingSanctuary => {
-                // This crate parses tens of thousands of Solidity files:
-                // It is worth spending the extra time to recompiling its dependencies.
-                true
-            }
-            Self::SlangSolidity | Self::SolidityTestingSolc => {
-                // These run during local development. Just build in debug mode.
-                false
-            }
-        }
-    }
-}
-
 impl RunController {
     pub fn execute(&self) -> Result<()> {
-        let crate_name = self.command.clap_name();
+        let bin = self.bin.clap_name();
 
-        Terminal::step(format!("run {crate_name}"));
+        Terminal::step(format!("run {bin}"));
 
         let mut command = Command::new("cargo").arg("run");
 
-        if self.command.should_run_in_release_mode() {
+        if self.release {
             command = command.flag("--release");
         }
 
         command
-            .property("--bin", &crate_name)
+            .property("--bin", bin)
             .arg("--")
             .args(&self.args)
             .run()
