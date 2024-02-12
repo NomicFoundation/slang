@@ -1730,7 +1730,9 @@ impl Selector {
             node.is_rule_with_kinds(&[RuleKind::ModifierInvocation, RuleKind::OverrideSpecifier])
                 || node.is_token_with_kinds(&[
                     TokenKind::ExternalKeyword,
+                    TokenKind::InternalKeyword,
                     TokenKind::PayableKeyword,
+                    TokenKind::PublicKeyword,
                     TokenKind::PureKeyword,
                     TokenKind::ViewKeyword,
                 ])
