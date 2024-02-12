@@ -41,7 +41,7 @@ jobs:
         uses: "actions/configure-pages@1f0c5cde4bc74cd7e1254d0cb4de8d49e9068c7d"
 
       - name: "Upload artifacts"
-        uses: "actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8"
+        uses: "actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa"
         with:
           path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
@@ -56,7 +56,7 @@ jobs:
     steps:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
-        uses: "actions/deploy-pages@87c3283f01cd6fe19a0ab93a23b2f6fcba5a8e42"
+        uses: "actions/deploy-pages@decdde0ac072f6dcbe43649d82d9c635fff5b4e4"
 
     environment:
       name: "github-pages"
