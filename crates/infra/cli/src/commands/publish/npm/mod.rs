@@ -10,22 +10,32 @@ use crate::toolchains::napi::{
 };
 
 pub fn publish_npm() -> Result<()> {
-    NapiCompiler::run(NapiProfile::Release)?;
+    let resolver = NapiResolver::solidity();
+
+    NapiCompiler::run(&resolver, NapiProfile::Release)?;
 
     // Publish platform-specific packages first, as the main package now depends on their latest version:
 
-    for platform_dir in NapiResolver::platforms_dir().collect_children()? {
+    for platform_dir in resolver.platforms_dir().collect_children()? {
         let platform = platform_dir.unwrap_name().to_owned();
-        publish_package(&platform_dir, &NapiPackageKind::Platform(platform))?;
+        publish_package(
+            &resolver,
+            &platform_dir,
+            &NapiPackageKind::Platform(platform),
+        )?;
     }
 
     //  Then publish the main package, that depends on the previously published platform-specific packages:
 
-    let package_dir = NapiResolver::main_package_dir();
-    publish_package(&package_dir, &NapiPackageKind::Main)
+    let package_dir = resolver.main_package_dir();
+    publish_package(&resolver, &package_dir, &NapiPackageKind::Main)
 }
 
-fn publish_package(package_dir: &Path, kind: &NapiPackageKind) -> Result<()> {
+fn publish_package(
+    resolver: &NapiResolver,
+    package_dir: &Path,
+    kind: &NapiPackageKind,
+) -> Result<()> {
     println!("Publishing: {package_dir:?}");
 
     let local_version = NapiConfig::local_version(package_dir)?;
@@ -39,7 +49,7 @@ fn publish_package(package_dir: &Path, kind: &NapiPackageKind) -> Result<()> {
         return Ok(());
     }
 
-    let output_dir = NapiResolver::npm_output_dir(kind);
+    let output_dir = resolver.npm_output_dir(kind);
 
     let mut command = Command::new("npm")
         .args(["publish", output_dir.unwrap_str()])

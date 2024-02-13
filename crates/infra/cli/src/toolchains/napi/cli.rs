@@ -21,10 +21,14 @@ pub struct NapiCliOutput {
 pub struct NapiCli;
 
 impl NapiCli {
-    pub fn build(output_dir: impl AsRef<Path>, target: &BuildTarget) -> Result<NapiCliOutput> {
+    pub fn build(
+        resolver: &NapiResolver,
+        output_dir: impl AsRef<Path>,
+        target: &BuildTarget,
+    ) -> Result<NapiCliOutput> {
         let output_dir = output_dir.as_ref();
-        let package_dir = NapiResolver::main_package_dir();
-        let crate_dir = NapiResolver::crate_dir();
+        let package_dir = resolver.main_package_dir();
+        let crate_dir = resolver.crate_dir();
 
         let mut command = Command::new("napi");
 
@@ -93,9 +97,9 @@ impl NapiCli {
         })
     }
 
-    pub fn prepublish() -> Result<()> {
-        let package_dir = NapiResolver::main_package_dir();
-        let platforms_dir = NapiResolver::platforms_dir();
+    pub fn prepublish(resolver: &NapiResolver) -> Result<()> {
+        let package_dir = resolver.main_package_dir();
+        let platforms_dir = resolver.platforms_dir();
 
         // Note: NAPI expects all arguments to be relative to the current directory.
         let package_dir = package_dir.strip_repo_root()?;

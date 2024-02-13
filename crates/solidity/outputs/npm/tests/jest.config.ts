@@ -2,7 +2,7 @@ import type { Config } from "jest";
 
 const config: Config = {
   rootDir: __dirname,
-  testMatch: ["<rootDir>/src/doc-examples/**/*.ts", "<rootDir>/src/tests/**/*.ts"],
+  testMatch: ["<rootDir>/src/doc-examples/**/*.ts"],
 
   moduleNameMapper: {
     // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)

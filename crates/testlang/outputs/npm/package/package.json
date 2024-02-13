@@ -1,0 +1,17 @@
+{
+  "name": "@slang-private/slang-testlang",
+  "private": true,
+  "type": "commonjs",
+  "devDependencies": {
+    "@napi-rs/cli": "2.16.1"
+  },
+  "napi": {
+    "triples": {
+      "defaults": false,
+      "additional": []
+    }
+  },
+  "engines": {
+    "node": ">= 10"
+  }
+}

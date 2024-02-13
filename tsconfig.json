@@ -7,6 +7,8 @@
   "references": [
     { "path": "./crates/solidity/outputs/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
+    { "path": "./crates/testlang/outputs/npm/package/tsconfig.json" },
+    { "path": "./crates/testlang/outputs/npm/tests/tsconfig.json" },
     { "path": "./documentation/public/assets/javascripts/tsconfig.json" }
   ],
 

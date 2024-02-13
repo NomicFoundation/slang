@@ -45,8 +45,8 @@ impl NapiConfig {
         Ok(Version::parse(version.trim())?)
     }
 
-    pub fn list_all_targets() -> Result<Vec<String>> {
-        let package = load_package(&NapiResolver::main_package_dir())?;
+    pub fn list_all_targets(resolver: &NapiResolver) -> Result<Vec<String>> {
+        let package = load_package(&resolver.main_package_dir())?;
 
         let triples = package
             .napi

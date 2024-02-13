@@ -6,7 +6,8 @@
     clippy::too_many_lines,
     clippy::unused_self,
     clippy::struct_excessive_bools,
-    clippy::similar_names
+    clippy::similar_names,
+    unused_imports
 )]
 
 #[cfg(feature = "slang_napi_interfaces")]

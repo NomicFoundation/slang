@@ -1,0 +1,22 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+name = "slang_testlang"
+
+[build-dependencies]
+anyhow = { workspace = true }
+codegen_parser_generator = { workspace = true }
+infra_utils = { workspace = true }
+testlang_language = { workspace = true }
+
+[dependencies]
+ariadne = { workspace = true }
+nom = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
+thiserror = { workspace = true }
