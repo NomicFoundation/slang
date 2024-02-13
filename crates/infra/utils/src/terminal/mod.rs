@@ -43,11 +43,11 @@ impl Terminal {
             end = style(format!("├{sep}╼", sep = "─".repeat(right_spacer_width))).dim(),
         );
 
-        println!();
-        println!();
-        println!("{contents}");
-        println!();
-        println!();
+        eprintln!();
+        eprintln!();
+        eprintln!("{contents}");
+        eprintln!();
+        eprintln!();
     }
 }
 
