@@ -2004,7 +2004,8 @@ impl Selector {
                 RuleKind::HexStringLiterals,
                 RuleKind::AsciiStringLiterals,
                 RuleKind::UnicodeStringLiterals,
-            ])
+            ]) || node
+                .is_token_with_kinds(&[TokenKind::HexStringLiteral, TokenKind::AsciiStringLiteral])
         })
     }
 }

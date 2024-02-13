@@ -3690,15 +3690,30 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StringExpression,
                             variants = [
-                                EnumVariant(reference = HexStringLiterals),
-                                EnumVariant(reference = AsciiStringLiterals),
+                                EnumVariant(reference = HexStringLiteral, enabled = Till("0.5.14")),
+                                EnumVariant(
+                                    reference = HexStringLiterals,
+                                    enabled = From("0.5.14")
+                                ),
+                                EnumVariant(
+                                    reference = AsciiStringLiteral,
+                                    enabled = Till("0.5.14")
+                                ),
+                                EnumVariant(
+                                    reference = AsciiStringLiterals,
+                                    enabled = From("0.5.14")
+                                ),
                                 EnumVariant(
                                     reference = UnicodeStringLiterals,
                                     enabled = From("0.7.0")
                                 )
                             ]
                         ),
-                        Repeated(name = HexStringLiterals, reference = HexStringLiteral),
+                        Repeated(
+                            name = HexStringLiterals,
+                            reference = HexStringLiteral,
+                            enabled = From("0.5.14")
+                        ),
                         Token(
                             name = HexStringLiteral,
                             definitions = [
@@ -3742,7 +3757,11 @@ codegen_language_macros::compile!(Language(
                                 Range(inclusive_start = 'A', inclusive_end = 'F')
                             ])
                         ),
-                        Repeated(name = AsciiStringLiterals, reference = AsciiStringLiteral),
+                        Repeated(
+                            name = AsciiStringLiterals,
+                            reference = AsciiStringLiteral,
+                            enabled = From("0.5.14")
+                        ),
                         Token(
                             name = AsciiStringLiteral,
                             definitions = [

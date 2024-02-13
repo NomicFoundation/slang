@@ -1234,10 +1234,13 @@ NumberUnit = WEI_KEYWORD
 
 (* 5.5. Strings: *)
 
-StringExpression = HexStringLiterals
-                 | AsciiStringLiterals
+StringExpression = HEX_STRING_LITERAL (* Deprecated in 0.5.14 *)
+                 | HexStringLiterals (* Introduced in 0.5.14 *)
+                 | ASCII_STRING_LITERAL (* Deprecated in 0.5.14 *)
+                 | AsciiStringLiterals (* Introduced in 0.5.14 *)
                  | UnicodeStringLiterals; (* Introduced in 0.7.0 *)
 
+(* Introduced in 0.5.14 *)
 HexStringLiterals = HEX_STRING_LITERAL+;
 
 HEX_STRING_LITERAL = «SINGLE_QUOTED_HEX_STRING_LITERAL»;
@@ -1252,6 +1255,7 @@ HEX_STRING_LITERAL = «DOUBLE_QUOTED_HEX_STRING_LITERAL»;
 
 «HEX_CHARACTER» = ("0"…"9") | ("a"…"f") | ("A"…"F");
 
+(* Introduced in 0.5.14 *)
 AsciiStringLiterals = ASCII_STRING_LITERAL+;
 
 ASCII_STRING_LITERAL = «SINGLE_QUOTED_ASCII_STRING_LITERAL»;
