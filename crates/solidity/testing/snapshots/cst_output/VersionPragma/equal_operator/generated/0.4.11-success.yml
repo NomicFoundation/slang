@@ -12,7 +12,7 @@ Tree:
           - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaPrefixExpression): # " =0.8.0" (8..15)
               - (LeadingTrivia) ► (Whitespace): " " # (8..9)
               - (operator꞉ Equal): "=" # (9..10)
-              - (operand꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # "0.8.0" (10..15)
+              - (operand꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaSpecifier): # "0.8.0" (10..15)
                   - (item꞉ VersionPragmaValue): "0" # (10..11)
                   - (separator꞉ Period): "." # (11..12)
                   - (item꞉ VersionPragmaValue): "8" # (12..13)

@@ -12,7 +12,7 @@ Tree:
           - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaPrefixExpression): # " <1.0.0" (8..15)
               - (LeadingTrivia) ► (Whitespace): " " # (8..9)
               - (operator꞉ LessThan): "<" # (9..10)
-              - (operand꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # "1.0.0" (10..15)
+              - (operand꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaSpecifier): # "1.0.0" (10..15)
                   - (item꞉ VersionPragmaValue): "1" # (10..11)
                   - (separator꞉ Period): "." # (11..12)
                   - (item꞉ VersionPragmaValue): "0" # (12..13)
