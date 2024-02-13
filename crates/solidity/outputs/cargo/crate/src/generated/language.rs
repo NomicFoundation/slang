@@ -4982,11 +4982,25 @@ impl Language {
                     TokenKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::InternalKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PublicKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::PureKeyword,

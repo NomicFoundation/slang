@@ -9,7 +9,7 @@ mod test;
 mod watch;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{command, Parser, Subcommand};
 
 use crate::commands::check::CheckController;
 use crate::commands::ci::CiController;
@@ -29,7 +29,7 @@ pub struct Cli {
 }
 
 #[derive(Debug, Subcommand)]
-enum AppCommand {
+pub enum AppCommand {
     /// Setup toolchains and dependencies.
     ///
     /// Running this command without any args will setup everything.
@@ -60,7 +60,13 @@ enum AppCommand {
 
 impl Cli {
     pub fn execute(&self) -> Result<()> {
-        match &self.command {
+        self.command.execute()
+    }
+}
+
+impl AppCommand {
+    pub fn execute(&self) -> Result<()> {
+        match self {
             AppCommand::Setup(command) => command.execute(),
             AppCommand::Check(command) => command.execute(),
             AppCommand::Test(command) => command.execute(),

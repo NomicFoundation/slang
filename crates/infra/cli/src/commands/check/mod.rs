@@ -1,10 +1,11 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::cargo::CargoWorkspace;
+use infra_utils::terminal::Terminal;
 
 use crate::toolchains::mkdocs::Mkdocs;
 use crate::toolchains::napi::{NapiCompiler, NapiProfile};
-use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
+use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
 pub struct CheckController {

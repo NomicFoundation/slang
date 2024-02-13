@@ -1,8 +1,5 @@
 use anyhow::{Ok, Result};
 use clap::ValueEnum;
-use owo_colors::colors::{BrightBlue, BrightGreen, BrightRed};
-use owo_colors::{Color, OwoColorize};
-use terminal_size::terminal_size;
 
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
     fn execute(&self) -> Result<()>;
@@ -38,47 +35,5 @@ impl<T: ValueEnum> ClapExtensions for T {
             .expect("Expected Clap ValueEnum to have a name (not skipped).")
             .get_name()
             .to_owned();
-    }
-}
-
-pub struct Terminal;
-
-impl Terminal {
-    pub fn step(title: impl Into<String>) {
-        Self::banner::<BrightBlue>(title);
-    }
-
-    pub fn success() {
-        Self::banner::<BrightGreen>("Success");
-    }
-
-    pub fn failure() {
-        Self::banner::<BrightRed>("Failure");
-    }
-
-    fn banner<C: Color>(title: impl Into<String>) {
-        const DEFAULT_WIDTH: usize = 100;
-        const BANNER_GLYPHS: usize = 6; // "╾┤  ├╼"
-
-        let title = title.into();
-
-        let terminal_width = terminal_size().map_or(DEFAULT_WIDTH, |(width, _)| width.0 as usize);
-        let spacer_width = terminal_width - title.chars().count() - BANNER_GLYPHS;
-
-        let left_spacer_width = spacer_width / 2;
-        let right_spacer_width = spacer_width - left_spacer_width;
-
-        let contents = format!(
-            "{start} {middle} {end}",
-            start = format!("╾{sep}┤", sep = "─".repeat(left_spacer_width)).dimmed(),
-            middle = title.fg::<C>().bold(),
-            end = format!("├{sep}╼", sep = "─".repeat(right_spacer_width)).dimmed(),
-        );
-
-        eprintln!();
-        eprintln!();
-        eprintln!("{contents}");
-        eprintln!();
-        eprintln!();
     }
 }
