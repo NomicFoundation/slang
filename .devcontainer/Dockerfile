@@ -27,5 +27,6 @@ RUN sudo apt-get update \
   && sudo apt-get install --yes pkg-config \
   && rm -rf /var/lib/apt/lists/*
 
-# Setup ZSH for local development inside the image:
+# Setup Bash/Zsh for local development inside the image:
 COPY ./scripts/ /home/vscode/
+RUN cat /home/vscode/.bashrc_devcontainer >> /home/vscode/.bashrc

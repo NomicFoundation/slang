@@ -1,0 +1,13 @@
+#!/bin/bash
+# This is appended to the .bashrc file in the devcontainer, as in not to override the default one.
+
+repo_root="/workspaces/slang"
+
+# Hermit
+eval "$("${repo_root}/bin/hermit" shell-hooks --print --bash)"
+
+if [[ ! -f "${repo_root}/target/shell-completions/infra.bash" ]]; then
+  echo "Make sure to reload the shell after \`infra setup\` completes for \`infra\` shell completion." >&2
+else
+  source ${repo_root}/target/shell-completions/infra.bash
+fi
