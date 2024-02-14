@@ -1,5 +1,4 @@
 #!/bin/bash
-# This is appended to the .bashrc file in the devcontainer, as in not to override the default one.
 
 repo_root="/workspaces/slang"
 
