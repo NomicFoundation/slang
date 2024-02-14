@@ -38,6 +38,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_5_3: bool,
     pub(crate) version_is_at_least_0_5_10: bool,
     pub(crate) version_is_at_least_0_5_12: bool,
+    pub(crate) version_is_at_least_0_5_14: bool,
     pub(crate) version_is_at_least_0_6_0: bool,
     pub(crate) version_is_at_least_0_6_2: bool,
     pub(crate) version_is_at_least_0_6_5: bool,
@@ -165,6 +166,7 @@ impl Language {
                 version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
                 version_is_at_least_0_5_10: Version::new(0, 5, 10) <= version,
                 version_is_at_least_0_5_12: Version::new(0, 5, 12) <= version,
+                version_is_at_least_0_5_14: Version::new(0, 5, 14) <= version,
                 version_is_at_least_0_6_0: Version::new(0, 6, 0) <= version,
                 version_is_at_least_0_6_2: Version::new(0, 6, 2) <= version,
                 version_is_at_least_0_6_5: Version::new(0, 6, 5) <= version,
@@ -372,13 +374,17 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn ascii_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
-            self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::AsciiStringLiteral,
-            )
-            .with_name(FieldName::Item)
-        })
+        if self.version_is_at_least_0_5_14 {
+            OneOrMoreHelper::run(input, |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                )
+                .with_name(FieldName::Item)
+            })
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::AsciiStringLiterals)
     }
 
@@ -2745,13 +2751,17 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
-            self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::HexStringLiteral,
-            )
-            .with_name(FieldName::Item)
-        })
+        if self.version_is_at_least_0_5_14 {
+            OneOrMoreHelper::run(input, |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::HexStringLiteral,
+                )
+                .with_name(FieldName::Item)
+            })
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::HexStringLiterals)
     }
 
@@ -4459,10 +4469,28 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn string_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.hex_string_literals(input);
-            choice.consider(input, result)?;
-            let result = self.ascii_string_literals(input);
-            choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_14 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::HexStringLiteral,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_5_14 {
+                let result = self.hex_string_literals(input);
+                choice.consider(input, result)?;
+            }
+            if !self.version_is_at_least_0_5_14 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_5_14 {
+                let result = self.ascii_string_literals(input);
+                choice.consider(input, result)?;
+            }
             if self.version_is_at_least_0_7_0 {
                 let result = self.unicode_string_literals(input);
                 choice.consider(input, result)?;
@@ -4982,11 +5010,25 @@ impl Language {
                     TokenKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::InternalKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PublicKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::PureKeyword,
@@ -5563,8 +5605,14 @@ impl Language {
                 choice.finish(input)
             })
         };
-        let primary_expression_parser =
-            |input: &mut ParserContext<'_>| self.version_pragma_specifier(input);
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.version_pragma_specifier(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_name(FieldName::Variant)
+        };
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;

@@ -4203,7 +4203,9 @@ export class UnnamedFunctionAttribute {
         return new OverrideSpecifier(variant as RuleNode);
 
       case TokenKind.ExternalKeyword:
+      case TokenKind.InternalKeyword:
       case TokenKind.PayableKeyword:
+      case TokenKind.PublicKeyword:
       case TokenKind.PureKeyword:
       case TokenKind.ViewKeyword:
         return variant as TokenNode;
@@ -4882,27 +4884,33 @@ export class NumberUnit {
 }
 
 export class StringExpression {
-  private readonly fetch: () => HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals = once(() => {
-    const variant = ast_internal.selectChoice(this.cst);
+  private readonly fetch: () => HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals | TokenNode = once(
+    () => {
+      const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case RuleKind.HexStringLiterals:
-        return new HexStringLiterals(variant as RuleNode);
-      case RuleKind.AsciiStringLiterals:
-        return new AsciiStringLiterals(variant as RuleNode);
-      case RuleKind.UnicodeStringLiterals:
-        return new UnicodeStringLiterals(variant as RuleNode);
+      switch (variant.kind) {
+        case RuleKind.HexStringLiterals:
+          return new HexStringLiterals(variant as RuleNode);
+        case RuleKind.AsciiStringLiterals:
+          return new AsciiStringLiterals(variant as RuleNode);
+        case RuleKind.UnicodeStringLiterals:
+          return new UnicodeStringLiterals(variant as RuleNode);
 
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
-  });
+        case TokenKind.HexStringLiteral:
+        case TokenKind.AsciiStringLiteral:
+          return variant as TokenNode;
+
+        default:
+          assert.fail(`Unexpected variant: ${variant.kind}`);
+      }
+    },
+  );
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.StringExpression);
   }
 
-  public get variant(): HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals {
+  public get variant(): HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals | TokenNode {
     return this.fetch();
   }
 }

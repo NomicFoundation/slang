@@ -5,15 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected HexStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol:1:8]
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol:1:1]
        │
      1 │ hex"12"b
-       │        ─┬  
-       │         ╰── Error occurred here.
+       │ ────┬────  
+       │     ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - (HexStringLiterals): # 'hex"12"b\n' (0..9)
-      - (item꞉ HexStringLiteral): 'hex"12"' # (0..7)
-      - (SKIPPED): "b\n" # (7..9)
+  - (SKIPPED): 'hex"12"b\n' # (0..9)

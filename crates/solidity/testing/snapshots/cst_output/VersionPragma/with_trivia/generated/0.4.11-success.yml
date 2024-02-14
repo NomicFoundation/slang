@@ -9,7 +9,7 @@ Tree:
   - (VersionPragma): # "solidity /* comments */ 0 /* are */ . /* allowed *..." (0..68)
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (expressions꞉ VersionPragmaExpressions): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
-          - (item꞉ VersionPragmaExpression) ► (VersionPragmaSpecifier): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
+          - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaSpecifier): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
               - (LeadingTrivia): # " /* comments */ " (8..24)
                   - (Whitespace): " " # (8..9)
                   - (MultiLineComment): "/* comments */" # (9..23)

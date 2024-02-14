@@ -8,13 +8,13 @@
 
 ```
 
-<pre ebnf-snippet="StringExpression" style="display: none;"><a href="#StringExpression"><span class="k">StringExpression</span></a><span class="o"> = </span><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><br /><span class="o">                 | </span><a href="#AsciiStringLiterals"><span class="k">AsciiStringLiterals</span></a><br /><span class="o">                 | </span><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.7.0 *)</span></pre>
+<pre ebnf-snippet="StringExpression" style="display: none;"><a href="#StringExpression"><span class="k">StringExpression</span></a><span class="o"> = </span><a href="#HexStringLiteral"><span class="k">HEX_STRING_LITERAL</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#AsciiStringLiterals"><span class="k">AsciiStringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.7.0 *)</span></pre>
 
 ```{ .ebnf #HexStringLiterals }
 
 ```
 
-<pre ebnf-snippet="HexStringLiterals" style="display: none;"><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> = </span><a href="#HexStringLiteral"><span class="k">HEX_STRING_LITERAL</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="HexStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> = </span><a href="#HexStringLiteral"><span class="k">HEX_STRING_LITERAL</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #HexStringLiteral }
 
@@ -50,7 +50,7 @@
 
 ```
 
-<pre ebnf-snippet="AsciiStringLiterals" style="display: none;"><a href="#AsciiStringLiterals"><span class="k">AsciiStringLiterals</span></a><span class="o"> = </span><a href="#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AsciiStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#AsciiStringLiterals"><span class="k">AsciiStringLiterals</span></a><span class="o"> = </span><a href="#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AsciiStringLiteral }
 

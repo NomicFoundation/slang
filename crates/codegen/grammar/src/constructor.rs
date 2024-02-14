@@ -690,7 +690,6 @@ fn resolve_precedence(
         .collect();
     let primary_expression = Box::new(match primaries.len() {
         0 => panic!("Precedence operator has no primary expressions"),
-        1 => primaries.into_iter().next().unwrap(),
         _ => ParserDefinitionNode::Choice(Named::with_builtin_name(
             BuiltinFieldName::Variant,
             primaries,

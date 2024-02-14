@@ -66,10 +66,11 @@ cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
 clap = { version = "4.4.18", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.4.10" }
+console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
 ignore = { version = "0.4.22" }
 indexmap = { version = "2.2.2", features = ["serde"] }
-indicatif = { version = "0.17.7" }
+indicatif = { version = "0.17.8", features = ["in_memory"] }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }
 markdown = { version = "0.3.0" }
@@ -77,8 +78,8 @@ napi = { version = "2.15.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.1.0" }
 napi-derive = { version = "2.15.0" }
 nom = { version = "7.1.3" }
+num-format = { version = "0.4.4" }
 once_cell = { version = "1.19.0" }
-owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.78" }
 quote = { version = "1.0.35" }
 rayon = { version = "1.8.1" }
@@ -99,7 +100,6 @@ syn = { version = "2.0.32", features = [
     "printing",
 ] }
 tera = { version = "1.19.1" }
-terminal_size = { version = "0.3.0" }
 thiserror = { version = "1.0.56" }
 trybuild = { version = "1.0.89" }
 toml = { version = "0.7.8" }

@@ -80,6 +80,8 @@ mod TypeName;
 #[allow(non_snake_case)]
 mod UnicodeStringLiterals;
 #[allow(non_snake_case)]
+mod UnnamedFunctionDefinition;
+#[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]
 mod UsingDeconstructionSymbol;
@@ -104,7 +106,7 @@ mod YulLeaveStatement;
 #[allow(non_snake_case)]
 mod YulVariableDeclarationStatement;
 
-pub const VERSION_BREAKS: [Version; 25] = [
+pub const VERSION_BREAKS: [Version; 26] = [
     Version::new(0, 4, 11),
     Version::new(0, 4, 12),
     Version::new(0, 4, 14),
@@ -114,6 +116,7 @@ pub const VERSION_BREAKS: [Version; 25] = [
     Version::new(0, 5, 3),
     Version::new(0, 5, 10),
     Version::new(0, 5, 12),
+    Version::new(0, 5, 14),
     Version::new(0, 6, 0),
     Version::new(0, 6, 2),
     Version::new(0, 6, 5),

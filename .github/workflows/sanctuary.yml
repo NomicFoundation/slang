@@ -1,0 +1,24 @@
+name: "sanctuary"
+
+on:
+  # Run using manual triggers from GitHub UI:
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: "Name of the chain/sanctuary to run against, e.g. 'ethereum' or 'tron'."
+        default: "ethereum"
+        required: true
+        type: "string"
+      network:
+        description: "Name of the sub-network to run against, e.g. 'mainnet' or 'testnet'."
+        default: "mainnet"
+        required: true
+        type: "string"
+
+jobs:
+  ci:
+    uses: "./.github/workflows/_jobs_sanctuary.yml"
+    with:
+      chain: "${{ inputs.chain }}"
+      network: "${{ inputs.network }}"

@@ -5,7 +5,7 @@
     "@actions/github": "6.0.0",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.1",
-    "@types/node": "20.11.16",
+    "@types/node": "20.11.17",
     "cspell": "8.3.2",
     "markdown-link-check": "3.11.2",
     "markdownlint-cli": "0.39.0",

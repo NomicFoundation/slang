@@ -1,5 +1,6 @@
 mod check;
 mod ci;
+mod completions;
 mod lint;
 mod publish;
 mod run;
@@ -8,10 +9,11 @@ mod test;
 mod watch;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{command, Parser, Subcommand};
 
 use crate::commands::check::CheckController;
 use crate::commands::ci::CiController;
+use crate::commands::completions::CompletionController;
 use crate::commands::lint::LintController;
 use crate::commands::publish::PublishController;
 use crate::commands::run::RunController;
@@ -20,13 +22,14 @@ use crate::commands::test::TestController;
 use crate::commands::watch::WatchController;
 
 #[derive(Debug, Parser)]
-pub struct CLI {
+#[command(bin_name = "infra")]
+pub struct Cli {
     #[command(subcommand)]
     command: AppCommand,
 }
 
 #[derive(Debug, Subcommand)]
-enum AppCommand {
+pub enum AppCommand {
     /// Setup toolchains and dependencies.
     ///
     /// Running this command without any args will setup everything.
@@ -51,11 +54,19 @@ enum AppCommand {
     Watch(WatchController),
     /// Publish different artifacts from this repository.
     Publish(PublishController),
+    /// Generate shell completions for this CLI.
+    Completions(CompletionController),
 }
 
-impl CLI {
+impl Cli {
     pub fn execute(&self) -> Result<()> {
-        match &self.command {
+        self.command.execute()
+    }
+}
+
+impl AppCommand {
+    pub fn execute(&self) -> Result<()> {
+        match self {
             AppCommand::Setup(command) => command.execute(),
             AppCommand::Check(command) => command.execute(),
             AppCommand::Test(command) => command.execute(),
@@ -64,6 +75,7 @@ impl CLI {
             AppCommand::Run(command) => command.execute(),
             AppCommand::Watch(command) => command.execute(),
             AppCommand::Publish(command) => command.execute(),
+            AppCommand::Completions(command) => command.execute(),
         }
     }
 }

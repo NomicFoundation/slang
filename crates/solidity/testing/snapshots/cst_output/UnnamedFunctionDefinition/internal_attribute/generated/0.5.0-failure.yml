@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function () internal {}                                                          │ 0..23
+
+Errors: # 1 total
+  - >
+    Error: Expected ExternalKeyword or Identifier or OpenBrace or OverrideKeyword or PayableKeyword or PureKeyword or Semicolon or ViewKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/internal_attribute/input.sol:1:12]
+       │
+     1 │ function () internal {}
+       │            ──────┬──────  
+       │                  ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (UnnamedFunctionDefinition): # "function () internal {}\n" (0..24)
+      - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+      - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
+          - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+          - (open_paren꞉ OpenParen): "(" # (9..10)
+          - (close_paren꞉ CloseParen): ")" # (10..11)
+      - (SKIPPED): " internal {}\n" # (11..24)

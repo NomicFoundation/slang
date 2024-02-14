@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "foo"bar                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected AsciiStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/AsciiStringLiterals/single_trailing_ident/input.sol:1:6]
+       │
+     1 │ "foo"bar
+       │      ──┬─  
+       │        ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (AsciiStringLiterals): # '"foo"bar\n' (0..9)
+      - (item꞉ AsciiStringLiteral): '"foo"' # (0..5)
+      - (SKIPPED): "bar\n" # (5..9)

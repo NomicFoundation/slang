@@ -1,98 +1,133 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::io::Write;
 use std::time::Duration;
 
-use anyhow::Result;
-use indicatif::ProgressBar;
-use semver::Version;
-use slang_solidity::parse_output::ParseOutput;
+use console::{style, Color, Term};
+use indicatif::{InMemoryTerm, MultiProgress, ProgressBar, ProgressDrawTarget, ProgressStyle};
+
+const TICK_FREQUENCY: Duration = Duration::from_millis(250);
 
 pub struct Reporter {
-    progress_bar: ProgressBar,
-    total_tests: AtomicUsize,
-    failed_tests: AtomicUsize,
+    parent: MultiProgress,
+    children: Vec<ProgressBar>,
+    is_visible: bool,
 }
 
 impl Reporter {
-    const MAX_PRINTED_FAILURES: usize = 100;
+    pub fn new() -> Self {
+        let mut reporter = Self {
+            parent: MultiProgress::new(),
+            children: vec![],
+            is_visible: true,
+        };
 
-    pub fn new(total_files: usize) -> Result<Self> {
-        let bar_style = indicatif::ProgressStyle::with_template(
-            "\n[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} files checked ({percent}%) │ {msg} │ ETA: {eta_precise}",
-        )?.progress_chars("#>-");
+        // [`MultiProgress`] is created visible by default.
+        // Hide until there is data to show:
+        reporter.hide();
 
-        let progress_bar = indicatif::ProgressBar::new(total_files as u64);
-        progress_bar.set_style(bar_style);
-        progress_bar.enable_steady_tick(Duration::from_secs(1));
-
-        Ok(Self {
-            progress_bar,
-            total_tests: AtomicUsize::new(0),
-            failed_tests: AtomicUsize::new(0),
-        })
+        reporter
     }
 
-    pub fn finish(&self) -> usize {
-        self.progress_bar.finish();
+    pub fn println(&self, line: impl AsRef<str>) {
+        assert!(self.is_visible);
 
-        self.failed_tests.load(Ordering::Relaxed)
+        self.parent.suspend(|| {
+            println!("{0}", line.as_ref());
+        });
     }
 
-    pub fn report_file_completed(&self) {
-        self.progress_bar.inc(1);
+    pub fn show(&mut self) {
+        assert!(!self.is_visible);
 
-        let failed_tests = self.failed_tests.load(Ordering::Relaxed);
-        let total_tests = self.total_tests.load(Ordering::Relaxed);
-        #[allow(clippy::cast_precision_loss)]
-        let failure_percent = 100f64 * (failed_tests as f64) / (total_tests as f64);
-
-        self.progress_bar.set_message(format!(
-            "{failed_tests}/{total_tests} tests failed ({failure_percent:.0}%)",
-        ));
+        self.parent.set_draw_target(ProgressDrawTarget::stderr());
+        self.is_visible = true;
     }
 
-    pub fn report_test_result(
-        &self,
-        source_id: &str,
-        source: &str,
-        version: &Version,
-        output: &ParseOutput,
-    ) {
-        self.total_tests.fetch_add(1, Ordering::Relaxed);
+    pub fn hide(&mut self) {
+        assert!(self.is_visible);
 
-        let errors = output.errors();
-        if errors.is_empty() {
-            return;
+        self.parent.clear().unwrap();
+        self.parent.set_draw_target(ProgressDrawTarget::hidden());
+        self.is_visible = false;
+    }
+
+    pub fn print_full_report(&mut self) {
+        assert!(!self.is_visible);
+
+        let (rows, cols) = Term::stdout().size();
+        let buffer = InMemoryTerm::new(rows, cols);
+
+        self.parent
+            .set_draw_target(ProgressDrawTarget::term_like(Box::new(buffer.clone())));
+
+        for child in &self.children {
+            child.disable_steady_tick();
+            child.tick();
+            child.enable_steady_tick(TICK_FREQUENCY);
         }
 
-        let failures_before_update = self.failed_tests.fetch_add(1, Ordering::Relaxed);
+        self.parent.set_draw_target(ProgressDrawTarget::hidden());
 
-        match Self::MAX_PRINTED_FAILURES.checked_sub(failures_before_update) {
-            None => { /* Don't print more errors */ }
-            Some(0) => {
-                self.progress_bar.suspend(|| {
-                    eprintln!();
-                    eprintln!(
-                        "More than {max_failures} tests failed. Further errors will not be shown.",
-                        max_failures = Self::MAX_PRINTED_FAILURES
-                    );
-                });
-            }
-            Some(remaining) => {
-                let reports: Vec<_> = errors
-                    .iter()
-                    .take(remaining)
-                    .map(|error| {
-                        error.to_error_report(source_id, source, /* with_color */ true)
-                    })
-                    .collect();
+        std::io::stdout()
+            .write_all(&buffer.contents_formatted()[..])
+            .unwrap();
+    }
 
-                self.progress_bar.suspend(|| {
-                    for report in reports {
-                        eprintln!();
-                        eprintln!("[{version}] {report}");
-                    }
-                });
-            }
+    pub fn add_blank(&mut self) {
+        let message = " ".repeat(1000);
+        let template = "{wide_msg}";
+
+        self.add_bar(message, template, 0);
+    }
+
+    pub fn add_progress(&mut self, message: impl Into<String>, total: usize) -> ProgressBar {
+        let template = "[{elapsed_precise}]  {msg:^17}  [{wide_bar:.cyan/blue}]  {human_pos:>5}/{human_len:<5}  [ETA: {eta_precise:>3}]";
+
+        self.add_bar(message, template, total)
+    }
+
+    pub fn add_counter(
+        &mut self,
+        message: impl Into<String>,
+        color: Color,
+        total: usize,
+    ) -> ProgressBar {
+        let template = format!(
+            "  {{msg:<15}}  :  {position}  :  {percent}",
+            position = style("{human_pos:>7}").fg(color).bright(),
+            percent = style("{percent_precise:>7} %").fg(color).bright(),
+        );
+
+        self.add_bar(message, template, total)
+    }
+
+    fn add_bar(
+        &mut self,
+        message: impl Into<String>,
+        template: impl AsRef<str>,
+        total: usize,
+    ) -> ProgressBar {
+        let style = ProgressStyle::with_template(template.as_ref())
+            .unwrap()
+            .progress_chars("#>-");
+
+        let bar = ProgressBar::hidden();
+
+        bar.set_message(message.into());
+        bar.set_style(style);
+        bar.set_length(total as u64);
+        bar.enable_steady_tick(TICK_FREQUENCY);
+
+        self.children.push(bar.clone());
+        self.parent.add(bar)
+    }
+}
+
+impl Drop for Reporter {
+    fn drop(&mut self) {
+        for child in &self.children {
+            child.finish_and_clear();
+
+            self.parent.remove(child);
         }
     }
 }
