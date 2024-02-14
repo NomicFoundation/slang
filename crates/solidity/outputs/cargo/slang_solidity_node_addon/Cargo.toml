@@ -22,7 +22,7 @@ description = "slang_solidity compiled as a cdylib crate, to be used as Node.js 
 # library), but napi doesn't support that yet.
 # Also see <https://github.com/PyO3/pyo3/issues/771> for a similar issue with PyO3.
 [lib]
-path = "../../cargo/crate/src/lib.rs"
+path = "../slang_solidity/src/lib.rs"
 crate-type = ["cdylib"]
 
 [features]
