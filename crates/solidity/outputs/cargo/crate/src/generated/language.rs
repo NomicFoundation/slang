@@ -5605,8 +5605,14 @@ impl Language {
                 choice.finish(input)
             })
         };
-        let primary_expression_parser =
-            |input: &mut ParserContext<'_>| self.version_pragma_specifier(input);
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.version_pragma_specifier(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_name(FieldName::Variant)
+        };
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
