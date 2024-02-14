@@ -5,11 +5,7 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-[lib]
-crate-type = ["lib", "cdylib"]
-
-[build-dependencies]
-napi-build = { workspace = true, optional = true }
+description = "Language-agnostic parser runtime copied over by codegen"
 
 [dependencies]
 ariadne = { workspace = true }
@@ -20,6 +16,8 @@ serde = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 
+# Since the source code is copied over as-is, we need to retain exact feature set with target crate,
+# i.e `slang_solidity_node_addon`.
 [features]
 default = ["slang_napi_interfaces"]
-slang_napi_interfaces = ["dep:napi", "dep:napi-build", "dep:napi-derive"]
+slang_napi_interfaces = ["dep:napi", "dep:napi-derive"]

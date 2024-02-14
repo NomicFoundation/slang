@@ -20,9 +20,9 @@ members = [
     "crates/infra/cli",
     "crates/infra/utils",
     "crates/solidity/inputs/language",
-    "crates/solidity/outputs/cargo/crate",
+    "crates/solidity/outputs/cargo/slang_solidity",
+    "crates/solidity/outputs/cargo/slang_solidity_node_addon",
     "crates/solidity/outputs/cargo/tests",
-    "crates/solidity/outputs/npm/crate",
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/sanctuary",
@@ -47,10 +47,10 @@ codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity" }
+slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests" }
 solidity_language = { path = "crates/solidity/inputs/language" }
-solidity_npm_crate = { path = "crates/solidity/outputs/npm/crate" }
 solidity_npm_package = { path = "crates/solidity/outputs/npm/package" }
 solidity_spec = { path = "crates/solidity/outputs/spec" }
 solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary" }
