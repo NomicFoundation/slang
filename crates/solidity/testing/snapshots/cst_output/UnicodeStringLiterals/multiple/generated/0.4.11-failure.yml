@@ -8,7 +8,9 @@ Errors: # 1 total
     Error: Expected end of file.
        ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/multiple/input.sol:1:1]
        │
-     1 │ ╭─▶ unicode"happy 😃" unicode'sad 😔'
+     1 │ unicode"happy 😃" unicode'sad 😔'
+       │ ────────────────┬────────────────  
+       │                 ╰────────────────── Error occurred here.
     ───╯
 
 Tree:

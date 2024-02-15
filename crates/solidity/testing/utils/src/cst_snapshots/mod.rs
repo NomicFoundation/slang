@@ -1,4 +1,4 @@
-use std::cmp::max;
+use std::cmp::{max, min};
 use std::collections::HashSet;
 use std::fmt::Write;
 use std::ops::Range;
@@ -149,29 +149,29 @@ fn render_key(cursor: &mut CursorWithNames) -> String {
 }
 
 fn render_value(cursor: &mut CursorWithNames, source: &str) -> String {
-    let range = cursor.text_range().utf8();
-    let preview = render_preview(source, &range);
+    let utf8_range = cursor.text_range().utf8();
+    let char_range = cursor.text_range().char();
+    let preview = render_preview(source, &char_range);
 
     match cursor.node() {
-        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({range:?})"),
-        Node::Rule(_) => format!("# {preview} ({range:?})"),
-        Node::Token(_) => format!("{preview} # ({range:?})"),
+        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
+        Node::Rule(_) => format!("# {preview} ({utf8_range:?})"),
+        Node::Token(_) => format!("{preview} # ({utf8_range:?})"),
     }
 }
 
-fn render_preview(source: &str, range: &Range<usize>) -> String {
-    let length = range.len();
+fn render_preview(source: &str, char_range: &Range<usize>) -> String {
+    let length = char_range.len();
 
     // Trim long values:
     let max_length = 50;
-    let contents = source
-        .bytes()
-        .skip(range.start)
-        .take(length.clamp(0, max_length))
+    let mut contents: String = source
+        .chars()
+        .skip(char_range.start)
+        .take(min(length, max_length))
         .collect();
 
     // Add terminator if trimmed:
-    let mut contents = String::from_utf8(contents).unwrap();
     if length > max_length {
         contents.push_str("...");
     }
