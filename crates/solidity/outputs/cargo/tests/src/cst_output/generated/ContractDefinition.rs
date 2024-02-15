@@ -126,6 +126,11 @@ fn recovery_testbed() -> Result<()> {
 }
 
 #[test]
+fn unicode_in_doc_comments() -> Result<()> {
+    run("ContractDefinition", "unicode_in_doc_comments")
+}
+
+#[test]
 fn unterminated_body() -> Result<()> {
     run("ContractDefinition", "unterminated_body")
 }

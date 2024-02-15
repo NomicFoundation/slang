@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // ╒════════════════════════════════════════════════════════════════╕            │ 0..201
+  2  │ // │ More Info: https://github.com/NomicFoundation/slang/issues/742 │            │ 202..275
+  3  │ // ╘════════════════════════════════════════════════════════════════╛            │ 276..477
+  4  │ unexpected                                                                       │ 478..488
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:1:1]
+       │
+     1 │ ╭─▶ // ╒════════════════════════════════════════════════════════════════╕
+       ┆ ┆   
+     4 │ ├─▶ unexpected
+       │ │                
+       │ ╰──────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): "// ╒══════════════════════════════════════════════..." # (0..489)
