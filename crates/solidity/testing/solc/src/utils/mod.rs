@@ -1,5 +1,5 @@
 mod binaries;
-mod json_api;
+mod json_cli;
 
 pub use binaries::*;
-pub use json_api::*;
+pub use json_cli::*;

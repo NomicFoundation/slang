@@ -1,3 +1,6 @@
+//! This module contains the serde types for the of 'solc' JSON CLI:
+//! <https://docs.soliditylang.org/en/latest/using-the-compiler.html#compiler-input-and-output-json-description>
+
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -5,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 
 #[derive(Debug, Serialize)]
-pub struct ApiInput {
+pub struct CliInput {
     pub language: LanguageSelector,
     pub sources: HashMap<String, InputSource>,
 }
@@ -21,7 +24,7 @@ pub struct InputSource {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ApiOutput {
+pub struct CliOutput {
     pub errors: Option<Vec<Error>>,
 }
 

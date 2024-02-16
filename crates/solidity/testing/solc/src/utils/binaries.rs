@@ -14,7 +14,7 @@ use semver::Version;
 use serde::Deserialize;
 use url::Url;
 
-use crate::utils::{ApiInput, ApiOutput};
+use crate::utils::{CliInput, CliOutput};
 
 #[derive(Debug)]
 pub struct Binary {
@@ -67,7 +67,7 @@ impl Binary {
         Ok(binaries)
     }
 
-    pub fn run(&self, input: &ApiInput) -> Result<ApiOutput> {
+    pub fn run(&self, input: &CliInput) -> Result<CliOutput> {
         let input = serde_json::to_string(input)?;
 
         let output = Command::new(self.local_path.unwrap_str())
@@ -75,7 +75,7 @@ impl Binary {
             .evaluate_with_input(input)?;
 
         serde_json::from_str(&output)
-            .with_context(|| format!("Failed to parse ApiOutput:\n{output}"))
+            .with_context(|| format!("Failed to parse solc JSON output:\n{output}"))
     }
 }
 

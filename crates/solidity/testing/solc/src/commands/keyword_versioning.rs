@@ -9,8 +9,9 @@ use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
-use crate::utils::{ApiInput, Binary, InputSource, LanguageSelector};
+use crate::utils::{Binary, CliInput, InputSource, LanguageSelector};
 
+/// Makes sure all Solidity definition keywords have the corrent version specifiers.
 #[derive(Debug, Parser)]
 pub struct KeywordVersioningCommand {
     /// By default, all keyword variations are tested:
@@ -239,7 +240,7 @@ impl TestCase {
     }
 
     fn test_version(&self, binary: &Binary) -> bool {
-        let input = ApiInput {
+        let input = CliInput {
             language: LanguageSelector::Solidity,
             sources: [(
                 "input.sol".into(),
