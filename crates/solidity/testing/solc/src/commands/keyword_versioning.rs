@@ -1,109 +1,148 @@
 use std::collections::HashSet;
 
 use anyhow::Result;
+use clap::Parser;
 use codegen_language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use indicatif::{ProgressBar, ProgressStyle};
+use infra_utils::terminal::NumbersDefaultDisplay;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
-use crate::utils::{ApiInput, Binary, InputSource};
+use crate::utils::{ApiInput, Binary, InputSource, LanguageSelector};
 
-pub fn check_solidity_keywords() -> Result<()> {
-    println!();
-    println!("  > Checking Solidity keywords:");
-    println!();
-
-    let language = SolidityDefinition::create();
-    let test_cases = generate_test_cases(&language);
-
-    println!();
-    println!("  > Downloading solc binaries:");
-    println!();
-
-    let binaries = Binary::fetch_all(&language)?;
-
-    println!();
-    println!("  > Testing all variations:");
-    println!();
-
-    let progress_bar = ProgressBar::new(test_cases.len() as u64);
-
-    let style = "[{elapsed_precise}] [{bar:80.cyan/blue}] {pos}/{len} │ ETA: {eta_precise}";
-    progress_bar.set_style(ProgressStyle::with_template(style)?);
-
-    let total_errors = test_cases
-        .par_iter()
-        .map(|test_case| {
-            let result = test_case.execute(&binaries);
-            let mut errors = 0;
-
-            if !result.should_be_reserved_in.is_empty() {
-                errors += 1;
-                progress_bar.println(format!(
-                    "[{item}] '{variation}' should be reserved in: {versions:?}",
-                    item = test_case.item,
-                    variation = test_case.variation,
-                    versions = result.should_be_reserved_in
-                ));
-            }
-
-            if !result.should_be_unreserved_in.is_empty() {
-                errors += 1;
-                progress_bar.println(format!(
-                    "[{item}] '{variation}' should be unreserved in: {versions:?}",
-                    item = test_case.item,
-                    variation = test_case.variation,
-                    versions = result.should_be_unreserved_in
-                ));
-            }
-
-            progress_bar.inc(1);
-            errors
-        })
-        .sum::<usize>();
-
-    progress_bar.finish();
-    println!();
-
-    if total_errors > 0 {
-        println!();
-        println!("Found {total_errors} errors.");
-        println!();
-
-        #[allow(clippy::exit)]
-        std::process::exit(1);
-    }
-
-    Ok(())
+#[derive(Debug, Parser)]
+pub struct KeywordVersioningCommand {
+    /// By default, all keyword variations are tested:
+    /// Most keywords generate only one variation (`function`, `contract`, `struct`, ...).
+    /// A few keywords generate 2-50 variations (`bytes1`, `bytes2`, `bytes3`, ...).
+    /// And a handful generate thousands of variations (`fixed{N}x{M}`, `ufixed{N}x{M}`, ...).
+    ///
+    /// For local development, you can adjust the limit as needed.
+    /// For example, using a limit of 10 will test the majority of the grammar, but in a fraction of the time.
+    #[arg(long)]
+    variations_limit: Option<usize>,
 }
 
-fn generate_test_cases(language: &Language) -> Vec<TestCase> {
-    let mut test_cases = vec![];
-    let mut variations = HashSet::new();
+impl KeywordVersioningCommand {
+    pub fn execute(self) -> Result<()> {
+        println!();
+        println!("  > Checking Solidity keywords:");
+        println!();
 
-    for item in language.items() {
-        let Item::Keyword { item } = item else {
-            continue;
-        };
+        let language = SolidityDefinition::create();
+        let test_cases = self.generate_test_cases(&language);
 
-        if !should_test_item(item.name.as_str()) {
-            continue;
+        println!();
+        println!("  > Downloading solc binaries:");
+        println!();
+
+        let binaries = Binary::fetch_all(&language)?;
+
+        println!();
+        println!("  > Testing all variations:");
+        println!();
+
+        let progress_bar = ProgressBar::new(test_cases.len() as u64);
+
+        let style = "[{elapsed_precise}] [{bar:80.cyan/blue}] {pos}/{len} │ ETA: {eta_precise}";
+        progress_bar.set_style(ProgressStyle::with_template(style)?);
+
+        let total_errors = test_cases
+            .par_iter()
+            .map(|test_case| {
+                let result = test_case.execute(&binaries);
+                let mut errors = 0;
+
+                if !result.should_be_reserved_in.is_empty() {
+                    errors += 1;
+                    progress_bar.println(format!(
+                        "[{item}] '{variation}' should be reserved in: {versions:?}",
+                        item = test_case.item,
+                        variation = test_case.variation,
+                        versions = result.should_be_reserved_in
+                    ));
+                }
+
+                if !result.should_be_unreserved_in.is_empty() {
+                    errors += 1;
+                    progress_bar.println(format!(
+                        "[{item}] '{variation}' should be unreserved in: {versions:?}",
+                        item = test_case.item,
+                        variation = test_case.variation,
+                        versions = result.should_be_unreserved_in
+                    ));
+                }
+
+                progress_bar.inc(1);
+                errors
+            })
+            .sum::<usize>();
+
+        progress_bar.finish();
+        println!();
+
+        println!();
+        println!("Found {total_errors} errors in keyword definitions.");
+        println!();
+
+        if total_errors > 0 {
+            std::process::exit(1);
         }
 
-        for definition in &item.definitions {
-            for variation in definition.value.collect_variations() {
-                assert!(
-                    variations.insert(format!("{} -> {}", item.identifier, variation)),
-                    "Duplicate variation: {variation}"
-                );
-
-                test_cases.push(TestCase::new(language, item, definition, variation));
-            }
-        }
+        Ok(())
     }
 
-    test_cases
+    fn generate_test_cases(&self, language: &Language) -> Vec<TestCase> {
+        let mut test_cases = vec![];
+        let mut already_seen = HashSet::new();
+
+        for item in language.items() {
+            let Item::Keyword { item } = item else {
+                continue;
+            };
+
+            for definition in &item.definitions {
+                let mut variations = definition.value.collect_variations();
+
+                match self.variations_limit {
+                    Some(limit) => {
+                        if variations.len() > limit {
+                            println!(
+                                "WARNING: One of '{name}' definitions generated {total} variations. Based on the '--variations-limit' option provided, only testing the first {limit} variations (skipping {skipped}).",
+                                name = item.name,
+                                total = variations.len().num_display(),
+                                skipped = (variations.len() - limit).num_display(),
+                            );
+
+                            variations.truncate(limit);
+                        }
+                    }
+                    None => {
+                        if variations.len() > 100 {
+                            // Hint to the user that they can limit the variations:
+                            println!(
+                                "INFO: One of '{name}' definitions generated {total} variations. Testing all of them. You can limit the variations using the '--variations-limit' option.",
+                                name = item.name,
+                                total = variations.len().num_display(),
+                            );
+                        }
+                    }
+                };
+
+                for variation in variations {
+                    assert!(
+                        already_seen.insert((&item.identifier, variation.to_owned())),
+                        "Duplicate variation: {variation}"
+                    );
+
+                    test_cases.push(TestCase::new(language, item, definition, variation));
+                }
+            }
+        }
+
+        test_cases
+    }
 }
 
 struct TestCase {
@@ -201,7 +240,7 @@ impl TestCase {
 
     fn test_version(&self, binary: &Binary) -> bool {
         let input = ApiInput {
-            language: "Solidity".into(),
+            language: LanguageSelector::Solidity,
             sources: [(
                 "input.sol".into(),
                 InputSource {
@@ -268,15 +307,5 @@ impl TestCase {
         }
 
         true
-    }
-}
-
-fn should_test_item(item: &str) -> bool {
-    match item {
-        "FixedKeyword" | "UfixedKeyword" | "YulUfixedKeyword" | "YulFixedKeyword" => {
-            println!("WARNING: skipping '{item}' by default, as it generates thousands of variations. Enable manually if needed.");
-            false
-        }
-        _ => true,
     }
 }

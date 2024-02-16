@@ -7,14 +7,18 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+ariadne = { workspace = true }
 clap = { workspace = true }
 codegen_language_definition = { workspace = true }
+console = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
+itertools = { workspace = true }
 rayon = { workspace = true }
 reqwest = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 solidity_language = { workspace = true }
+strum_macros = { workspace = true }
 url = { workspace = true }

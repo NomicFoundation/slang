@@ -3,7 +3,7 @@ use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use codegen_language_definition::model::Language;
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::cargo::CargoWorkspace;
@@ -59,7 +59,7 @@ impl Binary {
             })
             .collect::<Result<Vec<_>>>()?;
 
-        progress_bar.finish();
+        progress_bar.finish_and_clear();
         println!();
 
         binaries.sort_by_key(|binary| binary.version.to_owned());
@@ -74,7 +74,8 @@ impl Binary {
             .flag("--standard-json")
             .evaluate_with_input(input)?;
 
-        Ok(serde_json::from_str(&output)?)
+        serde_json::from_str(&output)
+            .with_context(|| format!("Failed to parse ApiOutput:\n{output}"))
     }
 }
 

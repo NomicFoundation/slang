@@ -175,11 +175,19 @@ fn extract_output(command: &Command, output: Output) -> Result<String> {
 
     match check_status(command, output.status) {
         Ok(()) => Ok(stdout),
-        Err(error) => {
+        Err(mut error) => {
+            if !stdout.is_empty() {
+                error = error.context(format!("stdout:\n{stdout}"));
+            }
+
             let stderr = String::from_utf8(output.stderr)
                 .with_context(|| format!("Failed to read stderr: {command}"))?;
 
-            Err(error).with_context(|| format!("stdout:\n{stdout}\n\nstderr:\n{stderr}"))
+            if !stderr.is_empty() {
+                error = error.context(format!("stderr:\n{stderr}"));
+            }
+
+            Err(error)
         }
     }
 }

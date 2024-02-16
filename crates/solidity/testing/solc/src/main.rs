@@ -1,31 +1,23 @@
-mod keywords;
+mod commands;
 mod utils;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::Parser;
 
-use crate::keywords::check_solidity_keywords;
+use crate::commands::AppCommand;
 
 #[derive(Debug, Parser)]
-pub struct CLI {
+struct Cli {
     #[command(subcommand)]
     command: AppCommand,
 }
 
-#[derive(Debug, Subcommand)]
-enum AppCommand {
-    /// Makes sure all Solidity keywords have the corrent metadata.
-    CheckSolidityKeywords,
-}
-
-fn main() -> Result<()> {
-    match CLI::parse().command {
-        AppCommand::CheckSolidityKeywords => check_solidity_keywords(),
-    }
+pub fn main() -> Result<()> {
+    Cli::parse().command.execute()
 }
 
 #[test]
 fn verify_clap_cli() {
     // Catches problems earlier in the development cycle:
-    <CLI as clap::CommandFactory>::command().debug_assert();
+    <Cli as clap::CommandFactory>::command().debug_assert();
 }
