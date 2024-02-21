@@ -3838,7 +3838,8 @@ export class VersionPragmaExpression {
     | VersionPragmaOrExpression
     | VersionPragmaRangeExpression
     | VersionPragmaPrefixExpression
-    | VersionPragmaSpecifier = once(() => {
+    | VersionPragmaSpecifier
+    | TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
@@ -3850,6 +3851,9 @@ export class VersionPragmaExpression {
         return new VersionPragmaPrefixExpression(variant as RuleNode);
       case RuleKind.VersionPragmaSpecifier:
         return new VersionPragmaSpecifier(variant as RuleNode);
+
+      case TokenKind.AsciiStringLiteral:
+        return variant as TokenNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3864,7 +3868,8 @@ export class VersionPragmaExpression {
     | VersionPragmaOrExpression
     | VersionPragmaRangeExpression
     | VersionPragmaPrefixExpression
-    | VersionPragmaSpecifier {
+    | VersionPragmaSpecifier
+    | TokenNode {
     return this.fetch();
   }
 }

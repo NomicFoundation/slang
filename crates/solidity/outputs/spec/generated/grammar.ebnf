@@ -55,6 +55,7 @@ VersionPragmaExpressions = VersionPragmaExpression+;
 VersionPragmaExpression = VersionPragmaOrExpression
                         | VersionPragmaRangeExpression
                         | VersionPragmaPrefixExpression
+                        | ASCII_STRING_LITERAL
                         | VersionPragmaSpecifier;
 
 VersionPragmaSpecifier = VERSION_PRAGMA_VALUE (PERIOD VERSION_PRAGMA_VALUE)*;

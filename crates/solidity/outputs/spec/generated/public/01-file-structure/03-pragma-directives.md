@@ -50,7 +50,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionPragmaExpression" style="display: none;"><a href="#VersionPragmaExpression"><span class="k">VersionPragmaExpression</span></a><span class="o"> = </span><a href="#VersionPragmaOrExpression"><span class="k">VersionPragmaOrExpression</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaRangeExpression"><span class="k">VersionPragmaRangeExpression</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaPrefixExpression"><span class="k">VersionPragmaPrefixExpression</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaSpecifier"><span class="k">VersionPragmaSpecifier</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionPragmaExpression" style="display: none;"><a href="#VersionPragmaExpression"><span class="k">VersionPragmaExpression</span></a><span class="o"> = </span><a href="#VersionPragmaOrExpression"><span class="k">VersionPragmaOrExpression</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaRangeExpression"><span class="k">VersionPragmaRangeExpression</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaPrefixExpression"><span class="k">VersionPragmaPrefixExpression</span></a><br /><span class="o">                        | </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><br /><span class="o">                        | </span><a href="#VersionPragmaSpecifier"><span class="k">VersionPragmaSpecifier</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionPragmaSpecifier }
 

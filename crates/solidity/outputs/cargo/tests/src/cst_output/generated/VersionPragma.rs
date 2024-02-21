@@ -10,6 +10,11 @@ fn alternatives() -> Result<()> {
 }
 
 #[test]
+fn double_quotes_string() -> Result<()> {
+    run("VersionPragma", "double_quotes_string")
+}
+
+#[test]
 fn equal_operator() -> Result<()> {
     run("VersionPragma", "equal_operator")
 }
@@ -30,6 +35,11 @@ fn multiple_exact_versions() -> Result<()> {
 }
 
 #[test]
+fn multiple_strings() -> Result<()> {
+    run("VersionPragma", "multiple_strings")
+}
+
+#[test]
 fn nested_expressions() -> Result<()> {
     run("VersionPragma", "nested_expressions")
 }
@@ -37,6 +47,11 @@ fn nested_expressions() -> Result<()> {
 #[test]
 fn ranges() -> Result<()> {
     run("VersionPragma", "ranges")
+}
+
+#[test]
+fn single_quote_string() -> Result<()> {
+    run("VersionPragma", "single_quote_string")
 }
 
 #[test]
