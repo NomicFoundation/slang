@@ -2789,6 +2789,8 @@ codegen_language_macros::compile!(Language(
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
                             fields = (
+                                var_keyword =
+                                    Optional(reference = VarKeyword, enabled = Till("0.5.0")),
                                 open_paren = Required(OpenParen),
                                 elements = Required(TupleDeconstructionElements),
                                 close_paren = Required(CloseParen),

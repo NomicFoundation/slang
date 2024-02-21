@@ -43,3 +43,8 @@ fn with_type() -> Result<()> {
 fn with_type_and_location() -> Result<()> {
     run("TupleDeconstructionStatement", "with_type_and_location")
 }
+
+#[test]
+fn with_var() -> Result<()> {
+    run("TupleDeconstructionStatement", "with_var")
+}

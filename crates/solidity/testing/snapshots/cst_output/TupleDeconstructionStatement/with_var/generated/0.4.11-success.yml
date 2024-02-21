@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // "var" should be disabled in "0.5.0":                                          │ 0..39
+  2  │ var (foo, bar) = rhs;                                                            │ 40..61
+
+Errors: []
+
+Tree:
+  - (TupleDeconstructionStatement): # '// "var" should be disabled in "0.5.0":\nvar (foo, ...' (0..62)
+      - (LeadingTrivia): # '// "var" should be disabled in "0.5.0":\n' (0..40)
+          - (SingleLineComment): '// "var" should be disabled in "0.5.0":' # (0..39)
+          - (EndOfLine): "\n" # (39..40)
+      - (var_keyword꞉ VarKeyword): "var" # (40..43)
+      - (LeadingTrivia) ► (Whitespace): " " # (43..44)
+      - (open_paren꞉ OpenParen): "(" # (44..45)
+      - (elements꞉ TupleDeconstructionElements): # "foo, bar" (45..53)
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember) ► (name꞉ Identifier): "foo" # (45..48)
+          - (separator꞉ Comma): "," # (48..49)
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # " bar" (49..53)
+              - (LeadingTrivia) ► (Whitespace): " " # (49..50)
+              - (name꞉ Identifier): "bar" # (50..53)
+      - (close_paren꞉ CloseParen): ")" # (53..54)
+      - (LeadingTrivia) ► (Whitespace): " " # (54..55)
+      - (equal꞉ Equal): "=" # (55..56)
+      - (expression꞉ Expression): # " rhs" (56..60)
+          - (LeadingTrivia) ► (Whitespace): " " # (56..57)
+          - (variant꞉ Identifier): "rhs" # (57..60)
+      - (semicolon꞉ Semicolon): ";" # (60..61)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (61..62)

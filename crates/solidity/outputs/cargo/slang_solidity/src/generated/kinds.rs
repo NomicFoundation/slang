@@ -385,6 +385,7 @@ pub enum FieldName {
     UsingKeyword,
     Value,
     ValueType,
+    VarKeyword,
     VariableType,
     Variables,
     Version,
