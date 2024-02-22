@@ -1,12 +1,11 @@
 use std::collections::{BTreeMap, HashMap};
 
 // This crate is copied to another crate, so all imports should be relative
-use super::super::cst::{NamedNode, Node};
-use super::super::cursor::Cursor;
-use super::super::kinds::{FieldName, RuleKind, TokenKind};
-use super::super::text_index::TextIndex;
-use super::engine::QueryResult;
-use super::model::Query;
+use slang_testlang::cst::{NamedNode, Node};
+use slang_testlang::cursor::Cursor;
+use slang_testlang::kinds::{FieldName, RuleKind, TokenKind};
+use slang_testlang::query::{Query, QueryResult};
+use slang_testlang::text_index::TextIndex;
 
 fn token(name: Option<FieldName>, kind: TokenKind, text: &str) -> NamedNode {
     NamedNode {
@@ -105,13 +104,13 @@ fn run_query_test(tree: &NamedNode, query: &str, results: Vec<BTreeMap<String, V
 
 fn common_test_tree() -> NamedNode {
     cst_tree!(
-        Rule1 [
-            Name1: Token1 "t1",
-            Token1 "t2",
-            Token1 "t3",
-            Rule2 [
-                Token1 "t5",
-                Name1: Token1 "t6",
+        TreeNode [
+            Node: DelimitedIdentifier "A",
+            DelimitedIdentifier "B",
+            DelimitedIdentifier "C",
+            TreeNodeChild [
+                DelimitedIdentifier "D",
+                Node: DelimitedIdentifier "E",
             ],
         ]
     )
@@ -121,11 +120,11 @@ fn common_test_tree() -> NamedNode {
 fn test_spread() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... @x1 [Token1] ... @x2 [Token1] ...]",
+        "[TreeNode ... @x1 [DelimitedIdentifier] ... @x2 [DelimitedIdentifier] ...]",
         query_results! {
-            {x1: ["t1"], x2: ["t2"]}
-            {x1: ["t1"], x2: ["t3"]}
-            {x1: ["t2"], x2: ["t3"]}
+            {x1: ["A"], x2: ["B"]}
+            {x1: ["A"], x2: ["C"]}
+            {x1: ["B"], x2: ["C"]}
         },
     );
 }
@@ -134,10 +133,10 @@ fn test_spread() {
 fn test_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... @y1 [Token1] @y2 [Token1] ...]",
+        "[TreeNode ... @y1 [DelimitedIdentifier] @y2 [DelimitedIdentifier] ...]",
         query_results! {
-            {y1: ["t1"], y2: ["t2"]}
-            {y1: ["t2"], y2: ["t3"]}
+            {y1: ["A"], y2: ["B"]}
+            {y1: ["B"], y2: ["C"]}
         },
     );
 }
@@ -146,10 +145,10 @@ fn test_adjacent() {
 fn test_child() {
     run_query_test(
         &common_test_tree(),
-        "[Rule2 ... @x [Token1] ...]",
+        "[TreeNodeChild ... @x [DelimitedIdentifier] ...]",
         query_results! {
-            {x: ["t5"]}
-            {x: ["t6"]}
+            {x: ["D"]}
+            {x: ["E"]}
         },
     );
 }
@@ -158,10 +157,10 @@ fn test_child() {
 fn test_parent_and_child() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... @p [Name1:_] ...  [Rule2 ... @c [Token1] ...]]",
+        "[TreeNode ... @p [node:_] ...  [TreeNodeChild ... @c [DelimitedIdentifier] ...]]",
         query_results! {
-            {c: ["t5"], p: ["t1"]}
-            {c: ["t6"], p: ["t1"]}
+            {c: ["D"], p: ["A"]}
+            {c: ["E"], p: ["A"]}
         },
     );
 }
@@ -170,9 +169,9 @@ fn test_parent_and_child() {
 fn test_named() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... @x [Name1:Token1] ...]",
+        "[TreeNode ... @x [node:DelimitedIdentifier] ...]",
         query_results! {
-            {x: ["t1"]}
+            {x: ["A"]}
         },
     );
 }
@@ -181,11 +180,11 @@ fn test_named() {
 fn test_multilevel_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [Token1] @y [Token1] ...]",
+        "[_ ... @x [DelimitedIdentifier] @y [DelimitedIdentifier] ...]",
         query_results! {
-            {x: ["t1"], y: ["t2"]}
-            {x: ["t2"], y: ["t3"]}
-            {x: ["t5"], y: ["t6"]}
+            {x: ["A"], y: ["B"]}
+            {x: ["B"], y: ["C"]}
+            {x: ["D"], y: ["E"]}
         },
     );
 }
@@ -194,10 +193,10 @@ fn test_multilevel_adjacent() {
 fn test_multilevel_named() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [Name1:_] ...]",
+        "[_ ... @x [node:_] ...]",
         query_results! {
-            {x: ["t1"]}
-            {x: ["t6"]}
+            {x: ["A"]}
+            {x: ["E"]}
         },
     );
 }
@@ -206,9 +205,9 @@ fn test_multilevel_named() {
 fn test_text_value() {
     run_query_test(
         &common_test_tree(),
-        r#"[Rule1 ... @z1 [Token1] ["t2"] @z2 [Token1] ...]"#,
+        r#"[TreeNode ... @z1 [DelimitedIdentifier] ["B"] @z2 [DelimitedIdentifier] ...]"#,
         query_results! {
-            {z1: ["t1"], z2: ["t3"]}
+            {z1: ["A"], z2: ["C"]}
         },
     );
 }
@@ -217,11 +216,11 @@ fn test_text_value() {
 fn test_one_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... (@x [Token1])+ [_] ]",
+        "[TreeNode ... (@x [DelimitedIdentifier])+ [_] ]",
         query_results! {
-            {x: ["t1", "t2", "t3"]}
-            {x: ["t2", "t3"]}
-            {x: ["t3"]}
+            {x: ["A", "B", "C"]}
+            {x: ["B", "C"]}
+            {x: ["C"]}
         },
     );
 }
@@ -230,11 +229,11 @@ fn test_one_or_more() {
 fn test_zero_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... (@y [Token1])* [_] ]",
+        "[TreeNode ... (@y [DelimitedIdentifier])* [_] ]",
         query_results! {
-            {y: ["t1", "t2", "t3"]}
-            {y: ["t2", "t3"]}
-            {y: ["t3"]}
+            {y: ["A", "B", "C"]}
+            {y: ["B", "C"]}
+            {y: ["C"]}
             {}
         },
     );
@@ -244,9 +243,9 @@ fn test_zero_or_more() {
 fn test_optional() {
     run_query_test(
         &common_test_tree(),
-        "[Rule1 ... (@z [Token1])? [_] ]",
+        "[TreeNode ... (@z [DelimitedIdentifier])? [_] ]",
         query_results! {
-            {z: ["t3"]}
+            {z: ["C"]}
             {}
         },
     );

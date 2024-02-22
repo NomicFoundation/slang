@@ -1,4 +1,4 @@
-use super::model::Query;
+use slang_testlang::query::Query;
 
 fn run_parser_test(input: &str, result: &str) {
     assert_eq!(Query::parse(input).unwrap().to_string(), result);
@@ -25,17 +25,26 @@ fn test_anonymous() {
 
 #[test]
 fn test_root_binding() {
-    run_parser_test(r#"@root [Token1]"#, r#"@root [Token1]"#);
+    run_parser_test(
+        r#"@root [DelimitedIdentifier]"#,
+        r#"@root [DelimitedIdentifier]"#,
+    );
 }
 
 #[test]
 fn test_binding() {
-    run_parser_test(r#"[Rule1 @b [Token1]]"#, r#"[Rule1 @b [Token1]]"#);
+    run_parser_test(
+        r#"[TreeNode @b [DelimitedIdentifier]]"#,
+        r#"[TreeNode @b [DelimitedIdentifier]]"#,
+    );
 }
 
 #[test]
 fn test_zero_or_more_canonicalisation() {
-    run_parser_test(r#"[Rule1 ([Rule2])*]"#, r#"[Rule1 (([Rule2])+)?]"#);
+    run_parser_test(
+        r#"[TreeNode ([TreeNodeChild])*]"#,
+        r#"[TreeNode (([TreeNodeChild])+)?]"#,
+    );
 }
 
 // Test the error message on parse failure

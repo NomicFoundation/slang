@@ -115,10 +115,9 @@ impl RustGenerator {
             )?;
         }
 
-        for (src_file, destination_file) in &[
-            ("query/mod_for_destination.rs", "query/mod.rs"),
-            ("mod_for_destination.rs", "mod.rs"),
-        ] {
+        #[allow(clippy::single_element_loop)]
+        // kept in case there is once again more than one of these
+        for (src_file, destination_file) in &[("mod_for_destination.rs", "mod.rs")] {
             codegen.copy_file(
                 runtime_dir.join(src_file),
                 output_dir.join(destination_file),
@@ -129,30 +128,32 @@ impl RustGenerator {
             "cst.rs",
             "cursor.rs",
             "lexer.rs",
+            "napi_interface/cst.rs",
+            "napi_interface/cursor.rs",
+            "napi_interface/mod.rs",
+            "napi_interface/parse_error.rs",
+            "napi_interface/parse_output.rs",
+            "napi_interface/query.rs",
+            "napi_interface/text_index.rs",
             "parse_error.rs",
             "parse_output.rs",
+            "parser_support/choice_helper.rs",
+            "parser_support/context.rs",
+            "parser_support/mod.rs",
+            "parser_support/optional_helper.rs",
+            "parser_support/parser_function.rs",
+            "parser_support/parser_result.rs",
+            "parser_support/precedence_helper.rs",
+            "parser_support/recovery.rs",
+            "parser_support/repetition_helper.rs",
+            "parser_support/scanner_macros.rs",
+            "parser_support/separated_helper.rs",
+            "parser_support/sequence_helper.rs",
             "query/engine.rs",
+            "query/mod.rs",
             "query/model.rs",
             "query/parser.rs",
             "text_index.rs",
-            "napi_interface/cst.rs",
-            "napi_interface/cursor.rs",
-            "napi_interface/parse_error.rs",
-            "napi_interface/parse_output.rs",
-            "napi_interface/text_index.rs",
-            "napi_interface/mod.rs",
-            "parser_support/mod.rs",
-            "parser_support/context.rs",
-            "parser_support/parser_function.rs",
-            "parser_support/optional_helper.rs",
-            "parser_support/sequence_helper.rs",
-            "parser_support/repetition_helper.rs",
-            "parser_support/choice_helper.rs",
-            "parser_support/precedence_helper.rs",
-            "parser_support/parser_result.rs",
-            "parser_support/recovery.rs",
-            "parser_support/separated_helper.rs",
-            "parser_support/scanner_macros.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
         }
