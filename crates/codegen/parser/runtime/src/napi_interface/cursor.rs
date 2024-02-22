@@ -12,18 +12,18 @@ use text_index::{TextIndex, TextRange};
 use crate::napi_interface::{cst, text_index, FieldName, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
-pub struct Cursor(Box<RustCursor>);
+pub struct Cursor(pub(super) RustCursor);
 
 impl From<RustCursor> for Cursor {
     fn from(value: RustCursor) -> Self {
-        Self(value.into())
+        Self(value)
     }
 }
 
 #[napi(namespace = "cursor")]
 impl Cursor {
     pub(crate) fn new(cursor: RustCursor) -> Self {
-        Self(Box::new(cursor))
+        Self(cursor)
     }
 
     #[napi(catch_unwind)]

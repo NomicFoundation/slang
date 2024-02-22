@@ -116,6 +116,7 @@ export namespace cursor {
     goToNextRule(): boolean;
     goToNextRuleWithKind(kind: kinds.RuleKind): boolean;
     goToNextRuleWithKinds(kinds: Array<kinds.RuleKind>): boolean;
+    query(queries: Array<query.Query>): query.QueryResultIterator;
   }
 }
 export namespace parse_error {
@@ -131,6 +132,18 @@ export namespace parse_output {
     get isValid(): boolean;
     /** Creates a cursor that starts at the root of the parse tree. */
     createTreeCursor(): cursor.Cursor;
+  }
+}
+export namespace query {
+  export interface QueryResult {
+    queryNumber: number;
+    bindings: { [key: string]: cursor.Cursor[] };
+  }
+  export class Query {
+    static parse(text: string): Query;
+  }
+  export class QueryResultIterator {
+    next(): QueryResult | null;
   }
 }
 export namespace text_index {
