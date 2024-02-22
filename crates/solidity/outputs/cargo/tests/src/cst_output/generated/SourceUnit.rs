@@ -35,6 +35,11 @@ fn empty_multiline_comment_4_asterisks() -> Result<()> {
 }
 
 #[test]
+fn empty_multiline_over_natspec() -> Result<()> {
+    run("SourceUnit", "empty_multiline_over_natspec")
+}
+
+#[test]
 fn end_of_file_trivia() -> Result<()> {
     run("SourceUnit", "end_of_file_trivia")
 }

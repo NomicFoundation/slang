@@ -425,7 +425,7 @@ codegen_language_macros::compile!(Language(
                         Trivia(
                             name = MultiLineNatSpecComment,
                             scanner = Sequence([
-                                Atom("/**"),
+                                TrailingContext(scanner = Atom("/**"), not_followed_by = Atom("/")),
                                 ZeroOrMore(Choice([
                                     Not(['*']),
                                     TrailingContext(
