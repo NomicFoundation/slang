@@ -1733,6 +1733,7 @@ impl Selector {
                     TokenKind::ExternalKeyword,
                     TokenKind::InternalKeyword,
                     TokenKind::PayableKeyword,
+                    TokenKind::PrivateKeyword,
                     TokenKind::PublicKeyword,
                     TokenKind::PureKeyword,
                     TokenKind::ViewKeyword,

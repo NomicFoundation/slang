@@ -753,6 +753,7 @@ UnnamedFunctionAttribute = ModifierInvocation
                          | EXTERNAL_KEYWORD
                          | INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
                          | PAYABLE_KEYWORD
+                         | PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
                          | PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
                          | PURE_KEYWORD
                          | VIEW_KEYWORD;

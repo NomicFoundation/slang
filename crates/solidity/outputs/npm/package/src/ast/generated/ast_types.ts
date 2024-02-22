@@ -4211,6 +4211,7 @@ export class UnnamedFunctionAttribute {
       case TokenKind.ExternalKeyword:
       case TokenKind.InternalKeyword:
       case TokenKind.PayableKeyword:
+      case TokenKind.PrivateKeyword:
       case TokenKind.PublicKeyword:
       case TokenKind.PureKeyword:
       case TokenKind.ViewKeyword:
