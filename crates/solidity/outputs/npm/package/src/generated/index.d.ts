@@ -348,6 +348,7 @@ export namespace kinds {
     UsingKeyword = "UsingKeyword",
     Value = "Value",
     ValueType = "ValueType",
+    VarKeyword = "VarKeyword",
     VariableType = "VariableType",
     Variables = "Variables",
     Version = "Version",

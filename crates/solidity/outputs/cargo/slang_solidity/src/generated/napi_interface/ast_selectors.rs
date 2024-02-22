@@ -783,6 +783,7 @@ impl Selector {
 impl Selector {
     fn tuple_deconstruction_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            self.try_select(|node| node.is_token_with_kind(TokenKind::VarKeyword))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(
                 self.select(|node| node.is_rule_with_kind(RuleKind::TupleDeconstructionElements))?,

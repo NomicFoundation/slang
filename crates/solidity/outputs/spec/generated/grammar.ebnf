@@ -964,7 +964,8 @@ AssemblyFlags = ASCII_STRING_LITERAL (COMMA ASCII_STRING_LITERAL)*;
 
 (* 4.2. Declaration Statements: *)
 
-TupleDeconstructionStatement = OPEN_PAREN
+TupleDeconstructionStatement = VAR_KEYWORD? (* Deprecated in 0.5.0 *)
+                               OPEN_PAREN
                                TupleDeconstructionElements
                                CLOSE_PAREN
                                EQUAL

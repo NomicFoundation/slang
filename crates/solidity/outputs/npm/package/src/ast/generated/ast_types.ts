@@ -1779,9 +1779,11 @@ export class AssemblyFlagsDeclaration {
 
 export class TupleDeconstructionStatement {
   private readonly fetch = once(() => {
-    const [$openParen, $elements, $closeParen, $equal, $expression, $semicolon] = ast_internal.selectSequence(this.cst);
+    const [$varKeyword, $openParen, $elements, $closeParen, $equal, $expression, $semicolon] =
+      ast_internal.selectSequence(this.cst);
 
     return {
+      varKeyword: $varKeyword === null ? undefined : ($varKeyword as TokenNode),
       openParen: $openParen as TokenNode,
       elements: new TupleDeconstructionElements($elements as RuleNode),
       closeParen: $closeParen as TokenNode,
@@ -1793,6 +1795,10 @@ export class TupleDeconstructionStatement {
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.TupleDeconstructionStatement);
+  }
+
+  public get varKeyword(): TokenNode | undefined {
+    return this.fetch().varKeyword;
   }
 
   public get openParen(): TokenNode {

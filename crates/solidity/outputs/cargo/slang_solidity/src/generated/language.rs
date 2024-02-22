@@ -4698,6 +4698,17 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
+                    if !self.version_is_at_least_0_5_0 {
+                        seq.elem_named(
+                            FieldName::VarKeyword,
+                            OptionalHelper::transform(
+                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::VarKeyword,
+                                ),
+                            ),
+                        )?;
+                    }
                     seq.elem(SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
