@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (a, b) = (123, 135)                                                              │ 0..19
+  2  │ /**/                                                                             │ 20..24
+  3  │ { throw;                                                                         │ 25..34
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseBrace or Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:3]
+       │
+     3 │ { throw;
+       │   ──┬──  
+       │     ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - (TupleDeconstructionStatement): # "(a, b) = (123, 135)\n/**/\n{ throw; \n" (0..35)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (elements꞉ TupleDeconstructionElements): # "a, b" (1..5)
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember) ► (name꞉ Identifier): "a" # (1..2)
+          - (separator꞉ Comma): "," # (2..3)
+          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # " b" (3..5)
+              - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+              - (name꞉ Identifier): "b" # (4..5)
+      - (close_paren꞉ CloseParen): ")" # (5..6)
+      - (LeadingTrivia) ► (Whitespace): " " # (6..7)
+      - (equal꞉ Equal): "=" # (7..8)
+      - (expression꞉ Expression): # " (123, 135)\n/**/\n{" (8..26)
+          - (variant꞉ TupleExpression): # " (123, 135)\n" (8..20)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (open_paren꞉ OpenParen): "(" # (9..10)
+              - (items꞉ TupleValues): # "123, 135" (10..18)
+                  - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "123" # (10..13)
+                  - (separator꞉ Comma): "," # (13..14)
+                  - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 135" (14..18)
+                      - (LeadingTrivia) ► (Whitespace): " " # (14..15)
+                      - (literal꞉ DecimalLiteral): "135" # (15..18)
+              - (close_paren꞉ CloseParen): ")" # (18..19)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (19..20)
+          - (options꞉ FunctionCallOptions) ► (variant꞉ NamedArgumentGroups): # "/**/\n{" (20..26)
+              - (item꞉ NamedArgumentGroup): # "/**/\n{" (20..26)
+                  - (LeadingTrivia): # "/**/\n" (20..25)
+                      - (MultiLineComment): "/**/" # (20..24)
+                      - (EndOfLine): "\n" # (24..25)
+                  - (open_brace꞉ OpenBrace): "{" # (25..26)
+      - (LeadingTrivia) ► (Whitespace): " " # (26..27)
+      - (SKIPPED): "throw" # (27..32)
+      - (semicolon꞉ Semicolon): ";" # (32..33)
+      - (TrailingTrivia): # " \n" (33..35)
+          - (Whitespace): " " # (33..34)
+          - (EndOfLine): "\n" # (34..35)

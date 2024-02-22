@@ -15,6 +15,26 @@ fn empty_file() -> Result<()> {
 }
 
 #[test]
+fn empty_multiline_comment_1_asterisk() -> Result<()> {
+    run("SourceUnit", "empty_multiline_comment_1_asterisk")
+}
+
+#[test]
+fn empty_multiline_comment_2_asterisks() -> Result<()> {
+    run("SourceUnit", "empty_multiline_comment_2_asterisks")
+}
+
+#[test]
+fn empty_multiline_comment_3_asterisks() -> Result<()> {
+    run("SourceUnit", "empty_multiline_comment_3_asterisks")
+}
+
+#[test]
+fn empty_multiline_comment_4_asterisks() -> Result<()> {
+    run("SourceUnit", "empty_multiline_comment_4_asterisks")
+}
+
+#[test]
 fn end_of_file_trivia() -> Result<()> {
     run("SourceUnit", "end_of_file_trivia")
 }

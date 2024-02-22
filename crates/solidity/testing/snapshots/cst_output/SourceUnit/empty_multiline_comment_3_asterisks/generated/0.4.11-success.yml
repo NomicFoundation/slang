@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /***/                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - (SourceUnit) ► (LeadingTrivia): # "/***/\n" (0..6)
+      - (MultiLineNatSpecComment): "/***/" # (0..5)
+      - (EndOfLine): "\n" # (5..6)
