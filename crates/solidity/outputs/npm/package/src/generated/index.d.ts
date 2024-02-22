@@ -803,7 +803,6 @@ export namespace query {
   }
   export class Query {
     static parse(text: string): Query;
-    get text(): string;
   }
   export class QueryResultIterator {
     next(): QueryResult | null;

@@ -1,7 +1,7 @@
-import { TokenNode } from "@slang-private/slang-testlang/cst";
-import { RuleKind } from "@slang-private/slang-testlang/kinds";
+import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
 import { Language } from "@slang-private/slang-testlang/language";
 import { Query } from "@slang-private/slang-testlang/query";
+import { expectToken } from "../utils/cst-helpers";
 
 test("simple query", () => {
   const language = new Language("1.0.0");
@@ -12,30 +12,21 @@ test("simple query", () => {
   const query = Query.parse(query_source);
 
   const query_result = parse_output.createTreeCursor().query([query]);
-  {
+
+  const expectNextResult = (name: string) => {
     let result = query_result.next();
+    expect(result).not.toBeNull();
+    expect(Object.keys(result!.bindings)).toStrictEqual(["id"]);
     let cursors = result!.bindings["id"]!;
     expect(cursors.length).toEqual(1);
-    expect((cursors[0]!.node() as TokenNode).text).toEqual("A");
-  }
-  {
-    let result = query_result.next();
-    let cursors = result!.bindings["id"]!;
-    expect(cursors.length).toEqual(1);
-    expect((cursors[0]!.node() as TokenNode).text).toEqual("B");
-  }
-  {
-    let result = query_result.next();
-    let cursors = result!.bindings["id"]!;
-    expect(cursors.length).toEqual(1);
-    expect((cursors[0]!.node() as TokenNode).text).toEqual("C");
-  }
-  {
-    let result = query_result.next();
-    let cursors = result!.bindings["id"]!;
-    expect(cursors.length).toEqual(1);
-    expect((cursors[0]!.node() as TokenNode).text).toEqual("D");
-  }
+    expectToken(cursors[0]!.node(), TokenKind.DelimitedIdentifier, name);
+  };
+
+  expectNextResult("A");
+  expectNextResult("B");
+  expectNextResult("C");
+  expectNextResult("D");
+
   expect(query_result.next()).toBeNull();
 });
 
@@ -48,11 +39,4 @@ expected '(' at: [TreeNode @b [DelimitedIdentifier]
 Alt at: [TreeNode @b [DelimitedIdentifier]
     `.trim(),
   );
-});
-
-test("parser round trip", () => {
-  const source = `[TreeNode @b [DelimitedIdentifier]]`;
-  const query = Query.parse(source);
-  expect(query).toBeDefined();
-  expect(query!.text).toEqual(source);
 });
