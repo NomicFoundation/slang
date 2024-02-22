@@ -1956,16 +1956,20 @@ name = "solidity_testing_solc"
 version = "0.13.1"
 dependencies = [
  "anyhow",
+ "ariadne",
  "clap",
  "codegen_language_definition",
+ "console",
  "indicatif",
  "infra_utils",
+ "itertools",
  "rayon",
  "reqwest",
  "semver",
  "serde",
  "serde_json",
  "solidity_language",
+ "strum_macros",
  "url",
 ]
 
