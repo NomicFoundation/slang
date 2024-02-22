@@ -10,6 +10,11 @@ fn internal_attribute() -> Result<()> {
 }
 
 #[test]
+fn private_attribute() -> Result<()> {
+    run("UnnamedFunctionDefinition", "private_attribute")
+}
+
+#[test]
 fn public_attribute() -> Result<()> {
     run("UnnamedFunctionDefinition", "public_attribute")
 }
