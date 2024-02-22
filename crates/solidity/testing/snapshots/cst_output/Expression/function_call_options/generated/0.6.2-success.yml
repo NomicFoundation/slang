@@ -33,6 +33,6 @@ Tree:
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # '("")' (21..25)
           - (open_paren꞉ OpenParen): "(" # (21..22)
           - (arguments꞉ PositionalArguments): # '""' (22..24)
-              - (item꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ AsciiStringLiterals): # '""' (22..24)
-                  - (item꞉ AsciiStringLiteral): '""' # (22..24)
+              - (item꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ StringLiterals): # '""' (22..24)
+                  - (item꞉ StringLiteral) ► (variant꞉ DoubleQuotedStringLiteral): '""' # (22..24)
           - (close_paren꞉ CloseParen): ")" # (24..25)

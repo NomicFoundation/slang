@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected UnicodeStringLiteral.
+    Error: Expected DoubleQuotedUnicodeStringLiteral or SingleQuotedUnicodeStringLiteral.
        ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:17]
        │
      1 │ unicode"emoji 😃"happy
@@ -15,5 +15,5 @@ Errors: # 1 total
 
 Tree:
   - (UnicodeStringLiterals): # 'unicode"emoji 😃"happy\n' (0..25)
-      - (item꞉ UnicodeStringLiteral): 'unicode"emoji 😃"' # (0..19)
+      - (item꞉ UnicodeStringLiteral) ► (variant꞉ DoubleQuotedUnicodeStringLiteral): 'unicode"emoji 😃"' # (0..19)
       - (SKIPPED): "happy\n" # (19..25)

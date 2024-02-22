@@ -32,7 +32,7 @@
 
 ```
 
-<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                    | </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                    | </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionPragma }
 

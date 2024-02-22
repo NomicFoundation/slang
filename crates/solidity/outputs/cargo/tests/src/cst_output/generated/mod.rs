@@ -2,8 +2,6 @@
 
 use semver::Version;
 #[allow(non_snake_case)]
-mod AsciiStringLiterals;
-#[allow(non_snake_case)]
 mod AssemblyStatement;
 #[allow(non_snake_case)]
 mod Block;
@@ -63,6 +61,8 @@ mod ReturnStatement;
 mod SourceUnit;
 #[allow(non_snake_case)]
 mod Statements;
+#[allow(non_snake_case)]
+mod StringLiterals;
 #[allow(non_snake_case)]
 mod StructDefinition;
 #[allow(non_snake_case)]

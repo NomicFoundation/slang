@@ -236,7 +236,7 @@ export class PathImport {
     const [$path, $alias] = ast_internal.selectSequence(this.cst);
 
     return {
-      path: $path as TokenNode,
+      path: new StringLiteral($path as RuleNode),
       alias: $alias === null ? undefined : new ImportAlias($alias as RuleNode),
     };
   });
@@ -245,7 +245,7 @@ export class PathImport {
     assertKind(this.cst.kind, RuleKind.PathImport);
   }
 
-  public get path(): TokenNode {
+  public get path(): StringLiteral {
     return this.fetch().path;
   }
 
@@ -262,7 +262,7 @@ export class NamedImport {
       asterisk: $asterisk as TokenNode,
       alias: new ImportAlias($alias as RuleNode),
       fromKeyword: $fromKeyword as TokenNode,
-      path: $path as TokenNode,
+      path: new StringLiteral($path as RuleNode),
     };
   });
 
@@ -282,7 +282,7 @@ export class NamedImport {
     return this.fetch().fromKeyword;
   }
 
-  public get path(): TokenNode {
+  public get path(): StringLiteral {
     return this.fetch().path;
   }
 }
@@ -296,7 +296,7 @@ export class ImportDeconstruction {
       symbols: new ImportDeconstructionSymbols($symbols as RuleNode),
       closeBrace: $closeBrace as TokenNode,
       fromKeyword: $fromKeyword as TokenNode,
-      path: $path as TokenNode,
+      path: new StringLiteral($path as RuleNode),
     };
   });
 
@@ -320,7 +320,7 @@ export class ImportDeconstruction {
     return this.fetch().fromKeyword;
   }
 
-  public get path(): TokenNode {
+  public get path(): StringLiteral {
     return this.fetch().path;
   }
 }
@@ -1722,7 +1722,7 @@ export class AssemblyStatement {
 
     return {
       assemblyKeyword: $assemblyKeyword as TokenNode,
-      label: $label === null ? undefined : ($label as TokenNode),
+      label: $label === null ? undefined : new StringLiteral($label as RuleNode),
       flags: $flags === null ? undefined : new AssemblyFlagsDeclaration($flags as RuleNode),
       body: new YulBlock($body as RuleNode),
     };
@@ -1736,7 +1736,7 @@ export class AssemblyStatement {
     return this.fetch().assemblyKeyword;
   }
 
-  public get label(): TokenNode | undefined {
+  public get label(): StringLiteral | undefined {
     return this.fetch().label;
   }
 
@@ -3817,12 +3817,14 @@ export class Pragma {
 }
 
 export class ExperimentalFeature {
-  private readonly fetch: () => TokenNode = once(() => {
+  private readonly fetch: () => StringLiteral | TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
+      case RuleKind.StringLiteral:
+        return new StringLiteral(variant as RuleNode);
+
       case TokenKind.Identifier:
-      case TokenKind.AsciiStringLiteral:
         return variant as TokenNode;
 
       default:
@@ -3834,7 +3836,7 @@ export class ExperimentalFeature {
     assertKind(this.cst.kind, RuleKind.ExperimentalFeature);
   }
 
-  public get variant(): TokenNode {
+  public get variant(): StringLiteral | TokenNode {
     return this.fetch();
   }
 }
@@ -4891,33 +4893,105 @@ export class NumberUnit {
 }
 
 export class StringExpression {
-  private readonly fetch: () => HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals | TokenNode = once(
-    () => {
-      const variant = ast_internal.selectChoice(this.cst);
+  private readonly fetch: () =>
+    | StringLiteral
+    | StringLiterals
+    | HexStringLiteral
+    | HexStringLiterals
+    | UnicodeStringLiterals = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
 
-      switch (variant.kind) {
-        case RuleKind.HexStringLiterals:
-          return new HexStringLiterals(variant as RuleNode);
-        case RuleKind.AsciiStringLiterals:
-          return new AsciiStringLiterals(variant as RuleNode);
-        case RuleKind.UnicodeStringLiterals:
-          return new UnicodeStringLiterals(variant as RuleNode);
+    switch (variant.kind) {
+      case RuleKind.StringLiteral:
+        return new StringLiteral(variant as RuleNode);
+      case RuleKind.StringLiterals:
+        return new StringLiterals(variant as RuleNode);
+      case RuleKind.HexStringLiteral:
+        return new HexStringLiteral(variant as RuleNode);
+      case RuleKind.HexStringLiterals:
+        return new HexStringLiterals(variant as RuleNode);
+      case RuleKind.UnicodeStringLiterals:
+        return new UnicodeStringLiterals(variant as RuleNode);
 
-        case TokenKind.HexStringLiteral:
-        case TokenKind.AsciiStringLiteral:
-          return variant as TokenNode;
-
-        default:
-          assert.fail(`Unexpected variant: ${variant.kind}`);
-      }
-    },
-  );
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.StringExpression);
   }
 
-  public get variant(): HexStringLiterals | AsciiStringLiterals | UnicodeStringLiterals | TokenNode {
+  public get variant(): StringLiteral | StringLiterals | HexStringLiteral | HexStringLiterals | UnicodeStringLiterals {
+    return this.fetch();
+  }
+}
+
+export class StringLiteral {
+  private readonly fetch: () => TokenNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    switch (variant.kind) {
+      case TokenKind.SingleQuotedStringLiteral:
+      case TokenKind.DoubleQuotedStringLiteral:
+        return variant as TokenNode;
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.StringLiteral);
+  }
+
+  public get variant(): TokenNode {
+    return this.fetch();
+  }
+}
+
+export class HexStringLiteral {
+  private readonly fetch: () => TokenNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    switch (variant.kind) {
+      case TokenKind.SingleQuotedHexStringLiteral:
+      case TokenKind.DoubleQuotedHexStringLiteral:
+        return variant as TokenNode;
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.HexStringLiteral);
+  }
+
+  public get variant(): TokenNode {
+    return this.fetch();
+  }
+}
+
+export class UnicodeStringLiteral {
+  private readonly fetch: () => TokenNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    switch (variant.kind) {
+      case TokenKind.SingleQuotedUnicodeStringLiteral:
+      case TokenKind.DoubleQuotedUnicodeStringLiteral:
+        return variant as TokenNode;
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.UnicodeStringLiteral);
+  }
+
+  public get variant(): TokenNode {
     return this.fetch();
   }
 }
@@ -5142,16 +5216,19 @@ export class YulBuiltInFunction {
 }
 
 export class YulLiteral {
-  private readonly fetch: () => TokenNode = once(() => {
+  private readonly fetch: () => HexStringLiteral | StringLiteral | TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
+      case RuleKind.HexStringLiteral:
+        return new HexStringLiteral(variant as RuleNode);
+      case RuleKind.StringLiteral:
+        return new StringLiteral(variant as RuleNode);
+
       case TokenKind.YulTrueKeyword:
       case TokenKind.YulFalseKeyword:
       case TokenKind.YulDecimalLiteral:
       case TokenKind.YulHexLiteral:
-      case TokenKind.HexStringLiteral:
-      case TokenKind.AsciiStringLiteral:
         return variant as TokenNode;
 
       default:
@@ -5163,7 +5240,7 @@ export class YulLiteral {
     assertKind(this.cst.kind, RuleKind.YulLiteral);
   }
 
-  public get variant(): TokenNode {
+  public get variant(): HexStringLiteral | StringLiteral | TokenNode {
     return this.fetch();
   }
 }
@@ -5427,32 +5504,32 @@ export class NamedArgumentGroups {
   }
 }
 
+export class StringLiterals {
+  private readonly fetch = once(() => {
+    const items = ast_internal.selectRepeated(this.cst);
+    return items.map((item) => new StringLiteral(item as RuleNode));
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.StringLiterals);
+  }
+
+  public get items(): readonly StringLiteral[] {
+    return this.fetch();
+  }
+}
+
 export class HexStringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items as TokenNode[];
+    return items.map((item) => new HexStringLiteral(item as RuleNode));
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.HexStringLiterals);
   }
 
-  public get items(): readonly TokenNode[] {
-    return this.fetch();
-  }
-}
-
-export class AsciiStringLiterals {
-  private readonly fetch = once(() => {
-    const items = ast_internal.selectRepeated(this.cst);
-    return items as TokenNode[];
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.AsciiStringLiterals);
-  }
-
-  public get items(): readonly TokenNode[] {
+  public get items(): readonly HexStringLiteral[] {
     return this.fetch();
   }
 }
@@ -5460,14 +5537,14 @@ export class AsciiStringLiterals {
 export class UnicodeStringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items as TokenNode[];
+    return items.map((item) => new UnicodeStringLiteral(item as RuleNode));
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.UnicodeStringLiterals);
   }
 
-  public get items(): readonly TokenNode[] {
+  public get items(): readonly UnicodeStringLiteral[] {
     return this.fetch();
   }
 }
@@ -5696,14 +5773,14 @@ export class AssemblyFlags {
   private readonly fetch = once(() => {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
-    return { items: items as TokenNode[], separators: separators as TokenNode[] };
+    return { items: items.map((item) => new StringLiteral(item as RuleNode)), separators: separators as TokenNode[] };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.AssemblyFlags);
   }
 
-  public get items(): readonly TokenNode[] {
+  public get items(): readonly StringLiteral[] {
     return this.fetch().items;
   }
 
