@@ -9803,11 +9803,7 @@ impl Lexer for Language {
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'o', 'm') {
-                                    if true {
-                                        KeywordScan::Present(TokenKind::FromKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
+                                    KeywordScan::Present(TokenKind::FromKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10650,11 +10646,7 @@ impl Lexer for Language {
                     let kw_scan = match input.next() {
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                if true {
-                                    KeywordScan::Present(TokenKind::AbicoderKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
+                                KeywordScan::Present(TokenKind::AbicoderKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10663,11 +10655,7 @@ impl Lexer for Language {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                if true {
-                                    KeywordScan::Present(TokenKind::ExperimentalKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
+                                KeywordScan::Present(TokenKind::ExperimentalKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10681,11 +10669,7 @@ impl Lexer for Language {
                         }
                         Some('s') => {
                             if scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                                if true {
-                                    KeywordScan::Present(TokenKind::SolidityKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
+                                KeywordScan::Present(TokenKind::SolidityKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
