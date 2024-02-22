@@ -10,6 +10,7 @@ use crate::text_index::TextRangeExtensions;
 pub struct SeparatedHelper;
 
 impl SeparatedHelper {
+    #[allow(dead_code)]
     pub(crate) fn run<L: Lexer, LexCtx: IsLexicalContext>(
         input: &mut ParserContext<'_>,
         lexer: &L,

@@ -19,9 +19,10 @@ members = [
     "crates/codegen/testing",
     "crates/infra/cli",
     "crates/infra/utils",
+
     "crates/solidity/inputs/language",
-    "crates/solidity/outputs/cargo/slang_solidity",
     "crates/solidity/outputs/cargo/slang_solidity_node_addon",
+    "crates/solidity/outputs/cargo/slang_solidity",
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
@@ -29,6 +30,12 @@ members = [
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
     "crates/solidity/testing/utils",
+
+    "crates/testlang/inputs/language",
+    "crates/testlang/outputs/cargo/slang_testlang_node_addon",
+    "crates/testlang/outputs/cargo/slang_testlang",
+    "crates/testlang/outputs/cargo/tests",
+    "crates/testlang/outputs/npm/package",
 ]
 
 [workspace.dependencies]
@@ -47,6 +54,7 @@ codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
+
 slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity" }
 slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests" }
@@ -57,6 +65,13 @@ solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary" }
 solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots" }
 solidity_testing_solc = { path = "crates/solidity/testing/solc" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
+
+slang_testlang = { path = "crates/testlang/outputs/cargo/slang_testlang" }
+slang_testlang_node_addon = { path = "crates/testlang/outputs/cargo/slang_testlang_node_addon" }
+testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests" }
+testlang_language = { path = "crates/testlang/inputs/language" }
+testlang_npm_package = { path = "crates/testlang/outputs/npm/package" }
+
 #
 # External
 #

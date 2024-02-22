@@ -1,0 +1,10 @@
+[package]
+name = "testlang_cargo_tests"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dev-dependencies]
+semver = { workspace = true }
+slang_testlang = { workspace = true }

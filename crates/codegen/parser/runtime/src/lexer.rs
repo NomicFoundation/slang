@@ -9,6 +9,7 @@ pub enum KeywordScan {
     /// The keyword is not present.
     Absent,
     /// The keyword is present, but is not reserved.
+    #[allow(unused)]
     Present(TokenKind),
     /// The keyword is present and is reserved.
     Reserved(TokenKind),

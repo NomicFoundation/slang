@@ -4,7 +4,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::terminal::Terminal;
 
 use crate::toolchains::mkdocs::Mkdocs;
-use crate::toolchains::napi::{NapiCompiler, NapiProfile};
+use crate::toolchains::napi::{NapiCompiler, NapiProfile, NapiResolver};
 use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
@@ -62,7 +62,9 @@ fn check_rustdoc() -> Result<()> {
 }
 
 fn check_npm() -> Result<()> {
-    NapiCompiler::run(NapiProfile::Debug)
+    NapiCompiler::run(&NapiResolver::testlang(), NapiProfile::Debug)?;
+    NapiCompiler::run(&NapiResolver::solidity(), NapiProfile::Debug)?;
+    Ok(())
 }
 
 fn check_mkdocs() -> Result<()> {

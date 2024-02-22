@@ -4,6 +4,8 @@
   "workspaces": [
     "crates/infra/cli",
     "crates/solidity/outputs/npm/package",
-    "crates/solidity/outputs/npm/tests"
+    "crates/solidity/outputs/npm/tests",
+    "crates/testlang/outputs/npm/package",
+    "crates/testlang/outputs/npm/tests"
   ]
 }

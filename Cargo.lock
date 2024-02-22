@@ -1823,6 +1823,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "slang_testlang"
+version = "0.13.1"
+dependencies = [
+ "anyhow",
+ "ariadne",
+ "codegen_parser_generator",
+ "infra_utils",
+ "nom",
+ "semver",
+ "serde",
+ "strum",
+ "strum_macros",
+ "testlang_language",
+ "thiserror",
+]
+
+[[package]]
+name = "slang_testlang_node_addon"
+version = "0.13.1"
+dependencies = [
+ "ariadne",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "nom",
+ "semver",
+ "serde",
+ "slang_testlang",
+ "strum",
+ "strum_macros",
+ "thiserror",
+]
+
+[[package]]
 name = "slug"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2063,6 +2097,33 @@ checksum = "21bebf2b7c9e0a515f6e0f8c51dc0f8e4696391e6f1ff30379559f8365fb0df7"
 dependencies = [
  "rustix",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "testlang_cargo_tests"
+version = "0.13.1"
+dependencies = [
+ "semver",
+ "slang_testlang",
+]
+
+[[package]]
+name = "testlang_language"
+version = "0.13.1"
+dependencies = [
+ "codegen_language_definition",
+ "codegen_language_macros",
+ "semver",
+]
+
+[[package]]
+name = "testlang_npm_package"
+version = "0.13.1"
+dependencies = [
+ "anyhow",
+ "codegen_parser_generator",
+ "infra_utils",
+ "testlang_language",
 ]
 
 [[package]]

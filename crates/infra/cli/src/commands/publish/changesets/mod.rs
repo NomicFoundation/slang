@@ -15,7 +15,8 @@ use crate::toolchains::napi::{NapiCli, NapiConfig, NapiResolver};
 /// However, NAPI platform-specific packages cannot be added to the workspace, because other platforms will fail "npm install".
 /// So we have to bump the versions over ourselves anyways.
 pub fn publish_changesets() -> Result<()> {
-    let package_dir = NapiResolver::main_package_dir();
+    let resolver = NapiResolver::solidity();
+    let package_dir = resolver.main_package_dir();
 
     let package_version = NapiConfig::local_version(&package_dir)?;
     println!("Package version: {package_version}");
@@ -45,11 +46,11 @@ pub fn publish_changesets() -> Result<()> {
 
     // Update platform-specific packages:
 
-    NapiCli::prepublish()?;
+    NapiCli::prepublish(&resolver)?;
 
     // Format the updated package files:
 
-    let package_dir = NapiResolver::main_package_dir();
+    let package_dir = resolver.main_package_dir();
     Command::new("prettier")
         .property("--write", package_dir.unwrap_str())
         .run()?;

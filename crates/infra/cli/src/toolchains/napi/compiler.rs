@@ -22,27 +22,27 @@ pub enum NapiProfile {
 pub struct NapiCompiler;
 
 impl NapiCompiler {
-    pub fn run(profile: NapiProfile) -> Result<()> {
+    pub fn run(resolver: &NapiResolver, profile: NapiProfile) -> Result<()> {
         match profile {
             NapiProfile::Debug => {
                 // Compiles the default target for local development
-                let napi_output = compile_target(&BuildTarget::Debug)?;
+                let napi_output = compile_target(resolver, &BuildTarget::Debug)?;
 
                 // Process its generated JavaScript and TypeScript files, and copy any new changes to the source folder.
-                process_generated_files(&napi_output)?;
+                process_generated_files(resolver, &napi_output)?;
 
                 // Compile the main cross-platform package, and copy the build node binary to it for debugging/testing.
-                compile_root_package(Some(&napi_output.node_binary))?;
+                compile_root_package(resolver, Some(&napi_output.node_binary))?;
             }
             NapiProfile::Release => {
                 // Compile all available targets for publishing to NPM.
-                let node_binaries = compile_all_targets()?;
+                let node_binaries = compile_all_targets(resolver)?;
 
                 // Compile the main cross-platform package, but without any binaries.
-                compile_root_package(None)?;
+                compile_root_package(resolver, None)?;
 
                 // Compile all platform-specific packages, and copy the built node binaries to them.
-                compile_platform_packages(&node_binaries)?;
+                compile_platform_packages(resolver, &node_binaries)?;
             }
         }
 
@@ -50,8 +50,14 @@ impl NapiCompiler {
     }
 }
 
-fn compile_all_targets() -> Result<Vec<PathBuf>> {
-    let targets = NapiConfig::list_all_targets()?;
+fn compile_all_targets(resolver: &NapiResolver) -> Result<Vec<PathBuf>> {
+    let targets = NapiConfig::list_all_targets(resolver)?;
+
+    assert_ne!(
+        targets.len(),
+        0,
+        "No release targets found. Is this a publicly released package?"
+    );
 
     Command::new("rustup")
         .args(["target", "add"])
@@ -64,7 +70,7 @@ fn compile_all_targets() -> Result<Vec<PathBuf>> {
     let mut node_binaries = vec![];
 
     for target in targets {
-        let output = compile_target(&BuildTarget::ReleaseTarget(target))?;
+        let output = compile_target(resolver, &BuildTarget::ReleaseTarget(target))?;
 
         node_binaries.push(output.node_binary);
     }
@@ -72,12 +78,12 @@ fn compile_all_targets() -> Result<Vec<PathBuf>> {
     Ok(node_binaries)
 }
 
-fn compile_target(target: &BuildTarget) -> Result<NapiCliOutput> {
-    let output_dir = NapiResolver::napi_output_dir(target);
+fn compile_target(resolver: &NapiResolver, target: &BuildTarget) -> Result<NapiCliOutput> {
+    let output_dir = resolver.napi_output_dir(target);
 
     std::fs::create_dir_all(&output_dir)?;
 
-    NapiCli::build(output_dir, target)
+    NapiCli::build(resolver, output_dir, target)
 }
 
 #[derive(Serialize)]
@@ -85,9 +91,8 @@ struct LicenseHeaderTemplate {
     contents: String,
 }
 
-fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
-    let templates_dir =
-        CargoWorkspace::locate_source_crate("solidity_npm_package")?.join("templates");
+fn process_generated_files(resolver: &NapiResolver, napi_output: &NapiCliOutput) -> Result<()> {
+    let templates_dir = resolver.templates_dir();
 
     let mut codegen = Codegen::read_write(&templates_dir)?;
 
@@ -95,7 +100,7 @@ fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
         let file_name = source.unwrap_name();
         let contents = source.read_to_string()?;
 
-        let destination_path = NapiResolver::generated_dir().join(file_name);
+        let destination_path = resolver.generated_dir().join(file_name);
         let template_path = templates_dir.join(format!("{file_name}.jinja2"));
 
         codegen.render(
@@ -108,9 +113,9 @@ fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
     Ok(())
 }
 
-fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
-    let package_dir = NapiResolver::main_package_dir();
-    let output_dir = NapiResolver::npm_output_dir(&NapiPackageKind::Main);
+fn compile_root_package(resolver: &NapiResolver, node_binary: Option<&Path>) -> Result<()> {
+    let package_dir = resolver.main_package_dir();
+    let output_dir = resolver.npm_output_dir(&NapiPackageKind::Main);
 
     std::fs::create_dir_all(&output_dir)?;
 
@@ -128,8 +133,8 @@ fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
         std::fs::copy(source, destination)?;
     }
 
-    let generated_dir = NapiResolver::generated_dir();
-    let generated_output_dir = NapiResolver::generated_output_dir();
+    let generated_dir = resolver.generated_dir();
+    let generated_output_dir = resolver.generated_output_dir();
 
     std::fs::create_dir_all(&generated_output_dir)?;
 
@@ -148,11 +153,11 @@ fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
     Ok(())
 }
 
-fn compile_platform_packages(node_binaries: &[PathBuf]) -> Result<()> {
-    for platform_dir in NapiResolver::platforms_dir().collect_children()? {
+fn compile_platform_packages(resolver: &NapiResolver, node_binaries: &[PathBuf]) -> Result<()> {
+    for platform_dir in resolver.platforms_dir().collect_children()? {
         let platform = platform_dir.unwrap_name();
         let package_kind = NapiPackageKind::Platform(platform.to_owned());
-        let output_dir = NapiResolver::npm_output_dir(&package_kind);
+        let output_dir = resolver.npm_output_dir(&package_kind);
 
         std::fs::create_dir_all(&output_dir)?;
 
