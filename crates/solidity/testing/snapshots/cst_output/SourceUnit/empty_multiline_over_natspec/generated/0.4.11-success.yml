@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // The below comments should be parsed into two separate tokens, instead of one NatSpec comment: │ 0..96
+  2  │                                                                                                  │ 97..97
+  3  │ contract Foo {                                                                                   │ 98..112
+  4  │   /**/                                                                                           │ 113..119
+  5  │ }                                                                                                │ 120..121
+  6  │ /**/                                                                                             │ 122..126
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "// The below comments should be parsed into two se..." (0..127)
+      - (members꞉ SourceUnitMembers): # "// The below comments should be parsed into two se..." (0..122)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "// The below comments should be parsed into two se..." (0..122)
+              - (LeadingTrivia): # "// The below comments should be parsed into two se..." (0..98)
+                  - (SingleLineComment): "// The below comments should be parsed into two se..." # (0..96)
+                  - (EndOfLine): "\n" # (96..97)
+                  - (EndOfLine): "\n" # (97..98)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (98..106)
+              - (LeadingTrivia) ► (Whitespace): " " # (106..107)
+              - (name꞉ Identifier): "Foo" # (107..110)
+              - (LeadingTrivia) ► (Whitespace): " " # (110..111)
+              - (open_brace꞉ OpenBrace): "{" # (111..112)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (112..113)
+              - (LeadingTrivia): # "  /**/\n" (113..120)
+                  - (Whitespace): "  " # (113..115)
+                  - (MultiLineComment): "/**/" # (115..119)
+                  - (EndOfLine): "\n" # (119..120)
+              - (close_brace꞉ CloseBrace): "}" # (120..121)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (121..122)
+      - (LeadingTrivia): # "/**/\n" (122..127)
+          - (MultiLineComment): "/**/" # (122..126)
+          - (EndOfLine): "\n" # (126..127)

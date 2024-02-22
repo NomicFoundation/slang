@@ -7105,7 +7105,11 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn multi_line_nat_spec_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
-            scan_chars!(input, '/', '*', '*'),
+            scan_not_followed_by!(
+                input,
+                scan_chars!(input, '/', '*', '*'),
+                scan_chars!(input, '/')
+            ),
             scan_zero_or_more!(
                 input,
                 scan_choice!(
