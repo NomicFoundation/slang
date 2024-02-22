@@ -151,6 +151,7 @@ impl Payload for KeywordScannerAtomic {
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
             ("true", _) => quote!(KeywordScan::Reserved(TokenKind::#kind)),
+            ("false", "true") => quote!(KeywordScan::Present(TokenKind::#kind)),
             ("false", _) => quote! {
                 if #enabled_cond {
                     KeywordScan::Present(TokenKind::#kind)

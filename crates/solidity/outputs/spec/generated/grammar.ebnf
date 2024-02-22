@@ -61,11 +61,14 @@ VersionPragmaSpecifier = VERSION_PRAGMA_VALUE (PERIOD VERSION_PRAGMA_VALUE)*;
 
 VERSION_PRAGMA_VALUE = (("0"…"9") | "x" | "X" | "*")+;
 
-SOLIDITY_KEYWORD = "solidity";
+(* Never reserved *)
+ABICODER_KEYWORD = "abicoder";
 
+(* Never reserved *)
 EXPERIMENTAL_KEYWORD = "experimental";
 
-ABICODER_KEYWORD = "abicoder";
+(* Never reserved *)
+SOLIDITY_KEYWORD = "solidity";
 
 (* 1.4. Import Directives: *)
 
