@@ -20,19 +20,19 @@
 
 ```
 
-<pre ebnf-snippet="PathImport" style="display: none;"><a href="#PathImport"><span class="k">PathImport</span></a><span class="o"> = </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><br /><span class="o">             </span><a href="#ImportAlias"><span class="k">ImportAlias</span></a><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="PathImport" style="display: none;"><a href="#PathImport"><span class="k">PathImport</span></a><span class="o"> = </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><br /><span class="o">             </span><a href="#ImportAlias"><span class="k">ImportAlias</span></a><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedImport }
 
 ```
 
-<pre ebnf-snippet="NamedImport" style="display: none;"><a href="#NamedImport"><span class="k">NamedImport</span></a><span class="o"> = </span><a href="../09-punctuation#Asterisk"><span class="k">ASTERISK</span></a><br /><span class="o">              </span><a href="#ImportAlias"><span class="k">ImportAlias</span></a><br /><span class="o">              </span><a href="../08-keywords#FromKeyword"><span class="k">FROM_KEYWORD</span></a><br /><span class="o">              </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedImport" style="display: none;"><a href="#NamedImport"><span class="k">NamedImport</span></a><span class="o"> = </span><a href="../09-punctuation#Asterisk"><span class="k">ASTERISK</span></a><br /><span class="o">              </span><a href="#ImportAlias"><span class="k">ImportAlias</span></a><br /><span class="o">              </span><a href="../08-keywords#FromKeyword"><span class="k">FROM_KEYWORD</span></a><br /><span class="o">              </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ImportDeconstruction }
 
 ```
 
-<pre ebnf-snippet="ImportDeconstruction" style="display: none;"><a href="#ImportDeconstruction"><span class="k">ImportDeconstruction</span></a><span class="o"> = </span><a href="../09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                       </span><a href="#ImportDeconstructionSymbols"><span class="k">ImportDeconstructionSymbols</span></a><br /><span class="o">                       </span><a href="../09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><br /><span class="o">                       </span><a href="../08-keywords#FromKeyword"><span class="k">FROM_KEYWORD</span></a><br /><span class="o">                       </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ImportDeconstruction" style="display: none;"><a href="#ImportDeconstruction"><span class="k">ImportDeconstruction</span></a><span class="o"> = </span><a href="../09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                       </span><a href="#ImportDeconstructionSymbols"><span class="k">ImportDeconstructionSymbols</span></a><br /><span class="o">                       </span><a href="../09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><br /><span class="o">                       </span><a href="../08-keywords#FromKeyword"><span class="k">FROM_KEYWORD</span></a><br /><span class="o">                       </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ImportDeconstructionSymbols }
 

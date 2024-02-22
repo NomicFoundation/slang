@@ -253,7 +253,7 @@ impl Selector {
 impl Selector {
     fn path_import(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ImportAlias))?,
         ])
     }
@@ -265,7 +265,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Asterisk))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ImportAlias))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FromKeyword))?),
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?),
         ])
     }
 }
@@ -279,7 +279,7 @@ impl Selector {
             ),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FromKeyword))?),
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?),
         ])
     }
 }
@@ -763,7 +763,7 @@ impl Selector {
     fn assembly_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AssemblyKeyword))?),
-            self.try_select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?,
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?,
             self.try_select(|node| node.is_rule_with_kind(RuleKind::AssemblyFlagsDeclaration))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulBlock))?),
         ])
@@ -1514,6 +1514,9 @@ pub fn select_choice(
         RuleKind::ArgumentsDeclaration => selector.arguments_declaration()?,
         RuleKind::NumberUnit => selector.number_unit()?,
         RuleKind::StringExpression => selector.string_expression()?,
+        RuleKind::StringLiteral => selector.string_literal()?,
+        RuleKind::HexStringLiteral => selector.hex_string_literal()?,
+        RuleKind::UnicodeStringLiteral => selector.unicode_string_literal()?,
         RuleKind::YulStatement => selector.yul_statement()?,
         RuleKind::YulSwitchCase => selector.yul_switch_case()?,
         RuleKind::YulExpression => selector.yul_expression()?,
@@ -1565,7 +1568,8 @@ impl Selector {
 impl Selector {
     fn experimental_feature(&mut self) -> Result<JsObject> {
         self.select(|node| {
-            node.is_token_with_kinds(&[TokenKind::Identifier, TokenKind::AsciiStringLiteral])
+            node.is_rule_with_kind(RuleKind::StringLiteral)
+                || node.is_token_with_kind(TokenKind::Identifier)
         })
     }
 }
@@ -2003,11 +2007,45 @@ impl Selector {
     fn string_expression(&mut self) -> Result<JsObject> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
+                RuleKind::StringLiteral,
+                RuleKind::StringLiterals,
+                RuleKind::HexStringLiteral,
                 RuleKind::HexStringLiterals,
-                RuleKind::AsciiStringLiterals,
                 RuleKind::UnicodeStringLiterals,
-            ]) || node
-                .is_token_with_kinds(&[TokenKind::HexStringLiteral, TokenKind::AsciiStringLiteral])
+            ])
+        })
+    }
+}
+
+impl Selector {
+    fn string_literal(&mut self) -> Result<JsObject> {
+        self.select(|node| {
+            node.is_token_with_kinds(&[
+                TokenKind::SingleQuotedStringLiteral,
+                TokenKind::DoubleQuotedStringLiteral,
+            ])
+        })
+    }
+}
+
+impl Selector {
+    fn hex_string_literal(&mut self) -> Result<JsObject> {
+        self.select(|node| {
+            node.is_token_with_kinds(&[
+                TokenKind::SingleQuotedHexStringLiteral,
+                TokenKind::DoubleQuotedHexStringLiteral,
+            ])
+        })
+    }
+}
+
+impl Selector {
+    fn unicode_string_literal(&mut self) -> Result<JsObject> {
+        self.select(|node| {
+            node.is_token_with_kinds(&[
+                TokenKind::SingleQuotedUnicodeStringLiteral,
+                TokenKind::DoubleQuotedUnicodeStringLiteral,
+            ])
         })
     }
 }
@@ -2142,14 +2180,13 @@ impl Selector {
 impl Selector {
     fn yul_literal(&mut self) -> Result<JsObject> {
         self.select(|node| {
-            node.is_token_with_kinds(&[
-                TokenKind::YulTrueKeyword,
-                TokenKind::YulFalseKeyword,
-                TokenKind::YulDecimalLiteral,
-                TokenKind::YulHexLiteral,
-                TokenKind::HexStringLiteral,
-                TokenKind::AsciiStringLiteral,
-            ])
+            node.is_rule_with_kinds(&[RuleKind::HexStringLiteral, RuleKind::StringLiteral])
+                || node.is_token_with_kinds(&[
+                    TokenKind::YulTrueKeyword,
+                    TokenKind::YulFalseKeyword,
+                    TokenKind::YulDecimalLiteral,
+                    TokenKind::YulHexLiteral,
+                ])
         })
     }
 }
@@ -2187,8 +2224,8 @@ pub fn select_repeated(
         RuleKind::Statements => selector.statements()?,
         RuleKind::CatchClauses => selector.catch_clauses()?,
         RuleKind::NamedArgumentGroups => selector.named_argument_groups()?,
+        RuleKind::StringLiterals => selector.string_literals()?,
         RuleKind::HexStringLiterals => selector.hex_string_literals()?,
-        RuleKind::AsciiStringLiterals => selector.ascii_string_literals()?,
         RuleKind::UnicodeStringLiterals => selector.unicode_string_literals()?,
         RuleKind::YulStatements => selector.yul_statements()?,
         RuleKind::YulSwitchCases => selector.yul_switch_cases()?,
@@ -2440,11 +2477,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_string_literals(&mut self) -> Result<Vec<JsObject>> {
+    fn string_literals(&mut self) -> Result<Vec<JsObject>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::HexStringLiteral))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?
         {
             items.push(item);
         }
@@ -2454,11 +2491,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn ascii_string_literals(&mut self) -> Result<Vec<JsObject>> {
+    fn hex_string_literals(&mut self) -> Result<Vec<JsObject>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::HexStringLiteral))?
         {
             items.push(item);
         }
@@ -2472,7 +2509,7 @@ impl Selector {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::UnicodeStringLiteral))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::UnicodeStringLiteral))?
         {
             items.push(item);
         }
@@ -2739,15 +2776,14 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?);
+        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?);
 
         while let Some(separator) =
             self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
         {
             separators.push(separator);
 
-            separated
-                .push(self.select(|node| node.is_token_with_kind(TokenKind::AsciiStringLiteral))?);
+            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?);
         }
 
         Ok(vec![separated, separators])

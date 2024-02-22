@@ -5,8 +5,8 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AsciiStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/AsciiStringLiterals/single_trailing_ident/input.sol:1:6]
+    Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiterals/single_trailing_ident/input.sol:1:6]
        │
      1 │ "foo"bar
        │      ──┬─  
@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (AsciiStringLiterals): # '"foo"bar\n' (0..9)
-      - (item꞉ AsciiStringLiteral): '"foo"' # (0..5)
+  - (StringLiterals): # '"foo"bar\n' (0..9)
+      - (item꞉ StringLiteral) ► (variant꞉ DoubleQuotedStringLiteral): '"foo"' # (0..5)
       - (SKIPPED): "bar\n" # (5..9)

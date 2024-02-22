@@ -40,7 +40,7 @@ Errors: # 12 total
        │                             ╰──────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or BytesKeyword or DecimalLiteral or FalseKeyword or FixedKeyword or HexLiteral or HexStringLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UnicodeStringLiteral.
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:4:40]
        │
      4 │   msg.sender.call{arg: 1, missing_expr: , no_semicolon, , }();

@@ -374,33 +374,11 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        if self.version_is_at_least_0_5_14 {
-            OneOrMoreHelper::run(input, |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                )
-                .with_name(FieldName::Item)
-            })
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::AsciiStringLiterals)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn assembly_flags(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                )
-                .with_name(FieldName::Item)
-            },
+            |input| self.string_literal(input).with_name(FieldName::Item),
             TokenKind::Comma,
             FieldName::Separator,
         )
@@ -453,12 +431,7 @@ impl Language {
             )?;
             seq.elem_named(
                 FieldName::Label,
-                OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsciiStringLiteral,
-                    ),
-                ),
+                OptionalHelper::transform(self.string_literal(input)),
             )?;
             seq.elem_named(
                 FieldName::Flags,
@@ -1578,10 +1551,7 @@ impl Language {
                 TokenKind::Identifier,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TokenKind::AsciiStringLiteral,
-            );
+            let result = self.string_literal(input);
             choice.consider(input, result)?;
             choice.finish(input)
         })
@@ -2751,14 +2721,29 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn hex_string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::SingleQuotedHexStringLiteral,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::DoubleQuotedHexStringLiteral,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_name(FieldName::Variant)
+        .with_kind(RuleKind::HexStringLiteral)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn hex_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_14 {
             OneOrMoreHelper::run(input, |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::HexStringLiteral,
-                )
-                .with_name(FieldName::Item)
+                self.hex_string_literal(input).with_name(FieldName::Item)
             })
         } else {
             ParserResult::disabled()
@@ -2909,13 +2894,7 @@ impl Language {
                     TokenKind::FromKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Path,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                ),
-            )?;
+            seq.elem_named(FieldName::Path, self.string_literal(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDeconstruction)
@@ -3603,13 +3582,7 @@ impl Language {
                     TokenKind::FromKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Path,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                ),
-            )?;
+            seq.elem_named(FieldName::Path, self.string_literal(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedImport)
@@ -3862,13 +3835,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn path_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Path,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                ),
-            )?;
+            seq.elem_named(FieldName::Path, self.string_literal(input))?;
             seq.elem_named(
                 FieldName::Alias,
                 OptionalHelper::transform(self.import_alias(input)),
@@ -4471,25 +4438,19 @@ impl Language {
     fn string_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             if !self.version_is_at_least_0_5_14 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::HexStringLiteral,
-                );
+                let result = self.string_literal(input);
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_5_14 {
+                let result = self.string_literals(input);
+                choice.consider(input, result)?;
+            }
+            if !self.version_is_at_least_0_5_14 {
+                let result = self.hex_string_literal(input);
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_5_14 {
                 let result = self.hex_string_literals(input);
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_5_14 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_5_14 {
-                let result = self.ascii_string_literals(input);
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_7_0 {
@@ -4500,6 +4461,37 @@ impl Language {
         })
         .with_name(FieldName::Variant)
         .with_kind(RuleKind::StringExpression)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::SingleQuotedStringLiteral,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::DoubleQuotedStringLiteral,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_name(FieldName::Variant)
+        .with_kind(RuleKind::StringLiteral)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_0_5_14 {
+            OneOrMoreHelper::run(input, |input| {
+                self.string_literal(input).with_name(FieldName::Item)
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::StringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4994,14 +4986,34 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn unicode_string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_0_7_0 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::SingleQuotedUnicodeStringLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::DoubleQuotedUnicodeStringLiteral,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_name(FieldName::Variant)
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::UnicodeStringLiteral)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn unicode_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::UnicodeStringLiteral,
-                )
-                .with_name(FieldName::Item)
+                self.unicode_string_literal(input)
+                    .with_name(FieldName::Item)
             })
         } else {
             ParserResult::disabled()
@@ -6561,15 +6573,9 @@ impl Language {
                 TokenKind::YulHexLiteral,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::HexStringLiteral,
-            );
+            let result = self.hex_string_literal(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::AsciiStringLiteral,
-            );
+            let result = self.string_literal(input);
             choice.consider(input, result)?;
             choice.finish(input)
         })
@@ -6819,15 +6825,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            self.single_quoted_ascii_string_literal(input),
-            self.double_quoted_ascii_string_literal(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -6905,29 +6902,48 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn double_quoted_ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, '"'),
-            scan_zero_or_more!(
-                input,
-                scan_choice!(
-                    input,
-                    self.escape_sequence(input),
-                    scan_char_range!(input, ' '..='!'),
-                    scan_char_range!(input, '#'..='['),
-                    scan_char_range!(input, ']'..='~')
-                )
-            ),
-            scan_chars!(input, '"')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn double_quoted_hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'h', 'e', 'x', '"'),
             scan_optional!(input, self.hex_string_contents(input)),
             scan_chars!(input, '"')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn double_quoted_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_choice!(
+            input,
+            if self.version_is_at_least_0_4_12 && !self.version_is_at_least_0_7_0 {
+                scan_sequence!(
+                    scan_chars!(input, '"'),
+                    scan_zero_or_more!(
+                        input,
+                        scan_choice!(
+                            input,
+                            self.escape_sequence(input),
+                            scan_none_of!(input, '"', '\\', '\r', '\n')
+                        )
+                    ),
+                    scan_chars!(input, '"')
+                )
+            } else {
+                false
+            },
+            scan_sequence!(
+                scan_chars!(input, '"'),
+                scan_zero_or_more!(
+                    input,
+                    scan_choice!(
+                        input,
+                        self.escape_sequence(input),
+                        scan_char_range!(input, ' '..='!'),
+                        scan_char_range!(input, '#'..='['),
+                        scan_char_range!(input, ']'..='~')
+                    )
+                ),
+                scan_chars!(input, '"')
+            )
         )
     }
 
@@ -7049,15 +7065,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            self.single_quoted_hex_string_literal(input),
-            self.double_quoted_hex_string_literal(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn identifier(&self, input: &mut ParserContext<'_>) -> bool {
         self.raw_identifier(input)
     }
@@ -7147,29 +7154,48 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn single_quoted_ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_chars!(input, '\''),
-            scan_zero_or_more!(
-                input,
-                scan_choice!(
-                    input,
-                    self.escape_sequence(input),
-                    scan_char_range!(input, ' '..='&'),
-                    scan_char_range!(input, '('..='['),
-                    scan_char_range!(input, ']'..='~')
-                )
-            ),
-            scan_chars!(input, '\'')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn single_quoted_hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'h', 'e', 'x', '\''),
             scan_optional!(input, self.hex_string_contents(input)),
             scan_chars!(input, '\'')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn single_quoted_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_choice!(
+            input,
+            if self.version_is_at_least_0_4_12 && !self.version_is_at_least_0_7_0 {
+                scan_sequence!(
+                    scan_chars!(input, '\''),
+                    scan_zero_or_more!(
+                        input,
+                        scan_choice!(
+                            input,
+                            self.escape_sequence(input),
+                            scan_none_of!(input, '\'', '\\', '\r', '\n')
+                        )
+                    ),
+                    scan_chars!(input, '\'')
+                )
+            } else {
+                false
+            },
+            scan_sequence!(
+                scan_chars!(input, '\''),
+                scan_zero_or_more!(
+                    input,
+                    scan_choice!(
+                        input,
+                        self.escape_sequence(input),
+                        scan_char_range!(input, ' '..='&'),
+                        scan_char_range!(input, '('..='['),
+                        scan_char_range!(input, ']'..='~')
+                    )
+                ),
+                scan_chars!(input, '\'')
+            )
         )
     }
 
@@ -7215,23 +7241,6 @@ impl Language {
             self.hex_character(input),
             self.hex_character(input),
             self.hex_character(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn unicode_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_choice!(
-            input,
-            if self.version_is_at_least_0_7_0 {
-                self.single_quoted_unicode_string_literal(input)
-            } else {
-                false
-            },
-            if self.version_is_at_least_0_7_0 {
-                self.double_quoted_unicode_string_literal(input)
-            } else {
-                false
-            }
         )
     }
 
@@ -8845,7 +8854,6 @@ impl Language {
             RuleKind::ArrayExpression => Self::array_expression.parse(self, input, true),
             RuleKind::ArrayTypeName => Self::array_type_name.parse(self, input, true),
             RuleKind::ArrayValues => Self::array_values.parse(self, input, true),
-            RuleKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input, true),
             RuleKind::AssemblyFlags => Self::assembly_flags.parse(self, input, true),
             RuleKind::AssemblyFlagsDeclaration => {
                 Self::assembly_flags_declaration.parse(self, input, true)
@@ -8939,6 +8947,7 @@ impl Language {
                 Self::function_type_attributes.parse(self, input, true)
             }
             RuleKind::HexNumberExpression => Self::hex_number_expression.parse(self, input, true),
+            RuleKind::HexStringLiteral => Self::hex_string_literal.parse(self, input, true),
             RuleKind::HexStringLiterals => Self::hex_string_literals.parse(self, input, true),
             RuleKind::IdentifierPath => Self::identifier_path.parse(self, input, true),
             RuleKind::IfStatement => Self::if_statement.parse(self, input, true),
@@ -9041,6 +9050,8 @@ impl Language {
             RuleKind::Statements => Self::statements.parse(self, input, true),
             RuleKind::StorageLocation => Self::storage_location.parse(self, input, true),
             RuleKind::StringExpression => Self::string_expression.parse(self, input, true),
+            RuleKind::StringLiteral => Self::string_literal.parse(self, input, true),
+            RuleKind::StringLiterals => Self::string_literals.parse(self, input, true),
             RuleKind::StructDefinition => Self::struct_definition.parse(self, input, true),
             RuleKind::StructMember => Self::struct_member.parse(self, input, true),
             RuleKind::StructMembers => Self::struct_members.parse(self, input, true),
@@ -9064,6 +9075,7 @@ impl Language {
             RuleKind::TypeName => Self::type_name.parse(self, input, true),
             RuleKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input, true),
             RuleKind::UncheckedBlock => Self::unchecked_block.parse(self, input, true),
+            RuleKind::UnicodeStringLiteral => Self::unicode_string_literal.parse(self, input, true),
             RuleKind::UnicodeStringLiterals => {
                 Self::unicode_string_literals.parse(self, input, true)
             }
@@ -9367,17 +9379,20 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { AsciiStringLiteral = ascii_string_literal }
                     { DecimalLiteral = decimal_literal }
+                    { DoubleQuotedHexStringLiteral = double_quoted_hex_string_literal }
+                    { DoubleQuotedStringLiteral = double_quoted_string_literal }
+                    { DoubleQuotedUnicodeStringLiteral = double_quoted_unicode_string_literal }
                     { EndOfLine = end_of_line }
                     { HexLiteral = hex_literal }
-                    { HexStringLiteral = hex_string_literal }
                     { MultiLineComment = multi_line_comment }
                     { MultiLineNatSpecComment = multi_line_nat_spec_comment }
                     { SingleLineComment = single_line_comment }
                     { SingleLineNatSpecComment = single_line_nat_spec_comment }
+                    { SingleQuotedHexStringLiteral = single_quoted_hex_string_literal }
+                    { SingleQuotedStringLiteral = single_quoted_string_literal }
+                    { SingleQuotedUnicodeStringLiteral = single_quoted_unicode_string_literal }
                     { Slash = slash }
-                    { UnicodeStringLiteral = unicode_string_literal }
                     { Whitespace = whitespace }
                 }
                 // Make sure promotable identifiers are last so they don't grab other things
@@ -10646,7 +10661,6 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { AsciiStringLiteral = ascii_string_literal }
                     { VersionPragmaValue = version_pragma_value }
                 }
                 // Make sure promotable identifiers are last so they don't grab other things
@@ -10743,8 +10757,6 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { AsciiStringLiteral = ascii_string_literal }
-                    { HexStringLiteral = hex_string_literal }
                     { YulDecimalLiteral = yul_decimal_literal }
                     { YulHexLiteral = yul_hex_literal }
                 }

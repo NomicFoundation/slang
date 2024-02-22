@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (AsciiStringLiterals): # '"foo"' (0..5)
-      - (item꞉ AsciiStringLiteral): '"foo"' # (0..5)
+  - (StringLiterals): # '"foo"' (0..5)
+      - (item꞉ StringLiteral) ► (variant꞉ DoubleQuotedStringLiteral): '"foo"' # (0..5)

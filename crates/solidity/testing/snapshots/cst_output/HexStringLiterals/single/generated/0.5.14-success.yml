@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - (HexStringLiterals): # 'hex"abcdef"' (0..11)
-      - (item꞉ HexStringLiteral): 'hex"abcdef"' # (0..11)
+      - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"abcdef"' # (0..11)

@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected HexStringLiteral.
+    Error: Expected DoubleQuotedHexStringLiteral or SingleQuotedHexStringLiteral.
        ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/invalid_leading_separator/input.sol:1:1]
        │
      1 │ hex"_1234"

@@ -38,7 +38,7 @@
 
 ```
 
-<pre ebnf-snippet="AssemblyStatement" style="display: none;"><a href="#AssemblyStatement"><span class="k">AssemblyStatement</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#AssemblyKeyword"><span class="k">ASSEMBLY_KEYWORD</span></a><br /><span class="o">                    </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">?</span><br /><span class="o">                    </span><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o">?</span><br /><span class="o">                    </span><a href="../../06-yul/01-yul-statements#YulBlock"><span class="k">YulBlock</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AssemblyStatement" style="display: none;"><a href="#AssemblyStatement"><span class="k">AssemblyStatement</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#AssemblyKeyword"><span class="k">ASSEMBLY_KEYWORD</span></a><br /><span class="o">                    </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">?</span><br /><span class="o">                    </span><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o">?</span><br /><span class="o">                    </span><a href="../../06-yul/01-yul-statements#YulBlock"><span class="k">YulBlock</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #AssemblyFlagsDeclaration }
 
@@ -50,6 +50,6 @@
 
 ```
 
-<pre ebnf-snippet="AssemblyFlags" style="display: none;"><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../../05-expressions/05-strings#AsciiStringLiteral"><span class="k">ASCII_STRING_LITERAL</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AssemblyFlags" style="display: none;"><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 --8<-- "crates/solidity/inputs/language/docs/04-statements/01-blocks.md"

@@ -45,7 +45,7 @@ ExperimentalPragma = EXPERIMENTAL_KEYWORD
                      ExperimentalFeature;
 
 ExperimentalFeature = IDENTIFIER
-                    | ASCII_STRING_LITERAL;
+                    | StringLiteral;
 
 VersionPragma = SOLIDITY_KEYWORD
                 VersionPragmaExpressions;
@@ -80,19 +80,19 @@ ImportClause = PathImport
              | NamedImport
              | ImportDeconstruction;
 
-PathImport = ASCII_STRING_LITERAL
+PathImport = StringLiteral
              ImportAlias?;
 
 NamedImport = ASTERISK
               ImportAlias
               FROM_KEYWORD
-              ASCII_STRING_LITERAL;
+              StringLiteral;
 
 ImportDeconstruction = OPEN_BRACE
                        ImportDeconstructionSymbols
                        CLOSE_BRACE
                        FROM_KEYWORD
-                       ASCII_STRING_LITERAL;
+                       StringLiteral;
 
 ImportDeconstructionSymbols = ImportDeconstructionSymbol (COMMA ImportDeconstructionSymbol)*;
 
@@ -956,7 +956,7 @@ ExpressionStatement = Expression
                       SEMICOLON;
 
 AssemblyStatement = ASSEMBLY_KEYWORD
-                    ASCII_STRING_LITERAL?
+                    StringLiteral?
                     AssemblyFlagsDeclaration?
                     YulBlock;
 
@@ -964,7 +964,7 @@ AssemblyFlagsDeclaration = OPEN_PAREN
                            AssemblyFlags
                            CLOSE_PAREN;
 
-AssemblyFlags = ASCII_STRING_LITERAL (COMMA ASCII_STRING_LITERAL)*;
+AssemblyFlags = StringLiteral (COMMA StringLiteral)*;
 
 (* 4.2. Declaration Statements: *)
 
@@ -1239,52 +1239,54 @@ NumberUnit = WEI_KEYWORD
 
 (* 5.5. Strings: *)
 
-StringExpression = HEX_STRING_LITERAL (* Deprecated in 0.5.14 *)
+StringExpression = StringLiteral (* Deprecated in 0.5.14 *)
+                 | StringLiterals (* Introduced in 0.5.14 *)
+                 | HexStringLiteral (* Deprecated in 0.5.14 *)
                  | HexStringLiterals (* Introduced in 0.5.14 *)
-                 | ASCII_STRING_LITERAL (* Deprecated in 0.5.14 *)
-                 | AsciiStringLiterals (* Introduced in 0.5.14 *)
                  | UnicodeStringLiterals; (* Introduced in 0.7.0 *)
 
 (* Introduced in 0.5.14 *)
-HexStringLiterals = HEX_STRING_LITERAL+;
+StringLiterals = StringLiteral+;
 
-HEX_STRING_LITERAL = «SINGLE_QUOTED_HEX_STRING_LITERAL»;
+StringLiteral = SINGLE_QUOTED_STRING_LITERAL
+              | DOUBLE_QUOTED_STRING_LITERAL;
 
-HEX_STRING_LITERAL = «DOUBLE_QUOTED_HEX_STRING_LITERAL»;
+(* Introduced in 0.4.12 and deprecated in 0.7.0. *)
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
 
-«SINGLE_QUOTED_HEX_STRING_LITERAL» = "hex'" «HEX_STRING_CONTENTS»? "'";
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
 
-«DOUBLE_QUOTED_HEX_STRING_LITERAL» = 'hex"' «HEX_STRING_CONTENTS»? '"';
+(* Introduced in 0.4.12 and deprecated in 0.7.0. *)
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
+
+(* Introduced in 0.5.14 *)
+HexStringLiterals = HexStringLiteral+;
+
+HexStringLiteral = SINGLE_QUOTED_HEX_STRING_LITERAL
+                 | DOUBLE_QUOTED_HEX_STRING_LITERAL;
+
+SINGLE_QUOTED_HEX_STRING_LITERAL = "hex'" «HEX_STRING_CONTENTS»? "'";
+
+DOUBLE_QUOTED_HEX_STRING_LITERAL = 'hex"' «HEX_STRING_CONTENTS»? '"';
 
 «HEX_STRING_CONTENTS» = «HEX_CHARACTER» «HEX_CHARACTER» ("_"? «HEX_CHARACTER» «HEX_CHARACTER»)*;
 
 «HEX_CHARACTER» = ("0"…"9") | ("a"…"f") | ("A"…"F");
 
-(* Introduced in 0.5.14 *)
-AsciiStringLiterals = ASCII_STRING_LITERAL+;
-
-ASCII_STRING_LITERAL = «SINGLE_QUOTED_ASCII_STRING_LITERAL»;
-
-ASCII_STRING_LITERAL = «DOUBLE_QUOTED_ASCII_STRING_LITERAL»;
-
-«SINGLE_QUOTED_ASCII_STRING_LITERAL» = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
-
-«DOUBLE_QUOTED_ASCII_STRING_LITERAL» = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
+(* Introduced in 0.7.0 *)
+UnicodeStringLiterals = UnicodeStringLiteral+;
 
 (* Introduced in 0.7.0 *)
-UnicodeStringLiterals = UNICODE_STRING_LITERAL+;
+UnicodeStringLiteral = SINGLE_QUOTED_UNICODE_STRING_LITERAL
+                     | DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
 
 (* Introduced in 0.7.0 *)
-UNICODE_STRING_LITERAL = «SINGLE_QUOTED_UNICODE_STRING_LITERAL»;
+SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
 
 (* Introduced in 0.7.0 *)
-UNICODE_STRING_LITERAL = «DOUBLE_QUOTED_UNICODE_STRING_LITERAL»;
-
-(* Introduced in 0.7.0 *)
-«SINGLE_QUOTED_UNICODE_STRING_LITERAL» = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
-
-(* Introduced in 0.7.0 *)
-«DOUBLE_QUOTED_UNICODE_STRING_LITERAL» = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
 
 «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
@@ -1492,8 +1494,8 @@ YulLiteral = YUL_TRUE_KEYWORD
            | YUL_FALSE_KEYWORD
            | YUL_DECIMAL_LITERAL
            | YUL_HEX_LITERAL
-           | HEX_STRING_LITERAL
-           | ASCII_STRING_LITERAL;
+           | HexStringLiteral
+           | StringLiteral;
 
 YUL_DECIMAL_LITERAL = "0" | (("1"…"9") ("0"…"9")*);
 
