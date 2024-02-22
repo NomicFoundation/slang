@@ -395,7 +395,10 @@ codegen_language_macros::compile!(Language(
                         Trivia(
                             name = MultiLineComment,
                             scanner = Sequence([
-                                TrailingContext(scanner = Atom("/*"), not_followed_by = Atom("*")),
+                                TrailingContext(
+                                    scanner = Atom("/*"),
+                                    not_followed_by = Sequence([Atom("*"), Not(['/'])])
+                                ),
                                 ZeroOrMore(Choice([
                                     Not(['*']),
                                     TrailingContext(

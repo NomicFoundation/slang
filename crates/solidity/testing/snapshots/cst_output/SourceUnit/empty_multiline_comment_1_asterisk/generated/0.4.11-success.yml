@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /*/ needs another one to terminate: /*/                                          │ 0..39
+
+Errors: []
+
+Tree:
+  - (SourceUnit) ► (LeadingTrivia): # "/*/ needs another one to terminate: /*/\n" (0..40)
+      - (MultiLineComment): "/*/ needs another one to terminate: /*/" # (0..39)
+      - (EndOfLine): "\n" # (39..40)
