@@ -64,22 +64,22 @@
 
 <pre ebnf-snippet="VersionPragmaValue" style="display: none;"><a href="#VersionPragmaValue"><span class="k">VERSION_PRAGMA_VALUE</span></a><span class="o"> = </span><span class="o">(</span><span class="o">(</span><span class="s2">"0"</span><span class="o">…</span><span class="s2">"9"</span><span class="o">)</span><span class="o"> | </span><span class="s2">"x"</span><span class="o"> | </span><span class="s2">"X"</span><span class="o"> | </span><span class="s2">"*"</span><span class="o">)</span><span class="o">+</span><span class="o">;</span></pre>
 
-```{ .ebnf #SolidityKeyword }
+```{ .ebnf #AbicoderKeyword }
 
 ```
 
-<pre ebnf-snippet="SolidityKeyword" style="display: none;"><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"solidity"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalKeyword }
 
 ```
 
-<pre ebnf-snippet="ExperimentalKeyword" style="display: none;"><a href="#ExperimentalKeyword"><span class="k">EXPERIMENTAL_KEYWORD</span></a><span class="o"> = </span><span class="s2">"experimental"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#ExperimentalKeyword"><span class="k">EXPERIMENTAL_KEYWORD</span></a><span class="o"> = </span><span class="s2">"experimental"</span><span class="o">;</span></pre>
 
-```{ .ebnf #AbicoderKeyword }
+```{ .ebnf #SolidityKeyword }
 
 ```
 
-<pre ebnf-snippet="AbicoderKeyword" style="display: none;"><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SolidityKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"solidity"</span><span class="o">;</span></pre>
 
 --8<-- "crates/solidity/inputs/language/docs/01-file-structure/03-pragma-directives.md"

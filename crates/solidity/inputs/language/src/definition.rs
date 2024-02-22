@@ -196,19 +196,28 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = SolidityKeyword,
+                            name = AbicoderKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("solidity"))]
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("abicoder")
+                            )]
                         ),
                         Keyword(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("experimental"))]
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("experimental")
+                            )]
                         ),
                         Keyword(
-                            name = AbicoderKeyword,
+                            name = SolidityKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("abicoder"))]
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("solidity")
+                            )]
                         )
                     ]
                 ),

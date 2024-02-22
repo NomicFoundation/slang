@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Always valid as an identifier (never reserved):                               │ 0..50
+  2  │ uint experimental;                                                               │ 51..69
+
+Errors: []
+
+Tree:
+  - (VariableDeclarationStatement): # "// Always valid as an identifier (never reserved):..." (0..70)
+      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "// Always valid as an identifier (never reserved):..." (0..55)
+          - (LeadingTrivia): # "// Always valid as an identifier (never reserved):..." (0..51)
+              - (SingleLineComment): "// Always valid as an identifier (never reserved):" # (0..50)
+              - (EndOfLine): "\n" # (50..51)
+          - (variant꞉ UintKeyword): "uint" # (51..55)
+      - (LeadingTrivia) ► (Whitespace): " " # (55..56)
+      - (name꞉ Identifier): "experimental" # (56..68)
+      - (semicolon꞉ Semicolon): ";" # (68..69)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (69..70)

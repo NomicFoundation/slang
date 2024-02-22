@@ -10650,7 +10650,11 @@ impl Lexer for Language {
                     let kw_scan = match input.next() {
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                KeywordScan::Reserved(TokenKind::AbicoderKeyword)
+                                if true {
+                                    KeywordScan::Present(TokenKind::AbicoderKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10659,7 +10663,11 @@ impl Lexer for Language {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                KeywordScan::Reserved(TokenKind::ExperimentalKeyword)
+                                if true {
+                                    KeywordScan::Present(TokenKind::ExperimentalKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10673,7 +10681,11 @@ impl Lexer for Language {
                         }
                         Some('s') => {
                             if scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                                KeywordScan::Reserved(TokenKind::SolidityKeyword)
+                                if true {
+                                    KeywordScan::Present(TokenKind::SolidityKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
