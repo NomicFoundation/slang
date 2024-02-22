@@ -147,7 +147,7 @@ impl std::ops::Deref for KeywordScannerAtomic {
 
 impl KeywordScannerAtomic {
     pub fn definition(&self) -> &KeywordScannerDefinitionVersionedNode {
-        let def = &self.0.definitions().get(0);
+        let def = &self.0.definitions().first();
         def.expect("KeywordScannerAtomic should have exactly one definition")
     }
     pub fn value(&self) -> &str {

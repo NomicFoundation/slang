@@ -23,7 +23,7 @@ impl TextIndex {
 
 impl PartialOrd for TextIndex {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.utf8.partial_cmp(&other.utf8)
+        Some(self.cmp(other))
     }
 }
 

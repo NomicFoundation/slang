@@ -6,8 +6,8 @@ incremental = true
 lto = true
 
 [build]
-# TODO: Replace with `[lints]` once we upgrade to Rust 1.74
-# https://blog.rust-lang.org/2023/11/16/Rust-1.74.0.html#lint-configuration-through-cargo
+# TODO: Replace with [lints]:
+# https://github.com/NomicFoundation/slang/issues/837
 rustflags = [
 	# rustc additional warnings:
 	"-Wunused_crate_dependencies",

@@ -76,7 +76,7 @@ impl From<Error> for napi::Error {
 }
 
 impl Language {
-    pub const SUPPORTED_VERSIONS: &[Version] = &[
+    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
         Version::new(0, 4, 11),
         Version::new(0, 4, 12),
         Version::new(0, 4, 13),

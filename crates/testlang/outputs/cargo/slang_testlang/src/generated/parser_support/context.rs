@@ -21,12 +21,6 @@ pub struct Marker {
     err_len: usize,
 }
 
-impl Marker {
-    pub fn err_len(&self) -> usize {
-        self.err_len
-    }
-}
-
 impl<'s> ParserContext<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {

@@ -27,7 +27,7 @@ impl ParseHelpers {
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> Vec<T> {
-        match Self::delimited(Delimiter::Bracket, input, |_, inner_input| {
+        Self::delimited(Delimiter::Bracket, input, |_, inner_input| {
             let mut result = Vec::new();
 
             while !inner_input.is_empty() {
@@ -43,21 +43,18 @@ impl ParseHelpers {
             }
 
             Ok(result)
-        }) {
-            Ok(value) => value,
-            Err(error) => {
-                errors.push(error);
-
-                vec![]
-            }
-        }
+        })
+        .unwrap_or_else(|error| {
+            errors.push(error);
+            vec![]
+        })
     }
 
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> indexmap::IndexMap<K, V> {
-        match Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
+        Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
             let mut result = IndexMap::new();
 
             while !inner_input.is_empty() {
@@ -83,14 +80,11 @@ impl ParseHelpers {
             }
 
             Ok(result)
-        }) {
-            Ok(value) => value,
-            Err(error) => {
-                errors.push(error);
-
-                IndexMap::new()
-            }
-        }
+        })
+        .unwrap_or_else(|error| {
+            errors.push(error);
+            IndexMap::new()
+        })
     }
 
     pub fn field<T: ParseInputTokens>(

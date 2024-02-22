@@ -45,17 +45,6 @@ impl ParserResult {
         ParserResult::NoMatch(NoMatch::new(expected_tokens))
     }
 
-    pub fn is_match(&self) -> bool {
-        matches!(
-            self,
-            ParserResult::Match(_) | ParserResult::PrattOperatorMatch(_)
-        )
-    }
-
-    pub fn is_no_match(&self) -> bool {
-        matches!(self, ParserResult::NoMatch(_))
-    }
-
     #[must_use]
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {

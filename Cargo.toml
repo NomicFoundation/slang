@@ -1,6 +1,6 @@
 [workspace.package]
 version = "0.13.1"
-rust-version = "1.72.0" # Keep in sync with other "RUST_STABLE_VERSION" references
+rust-version = "1.76.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
 
