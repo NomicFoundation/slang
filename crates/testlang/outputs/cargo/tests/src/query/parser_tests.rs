@@ -1,3 +1,5 @@
+#![allow(clippy::needless_raw_string_hashes)]
+
 use slang_testlang::query::Query;
 
 fn run_parser_test(input: &str, result: &str) {

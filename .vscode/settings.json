@@ -20,7 +20,7 @@
   "rust-analyzer.imports.granularity.group": "module",
   "rust-analyzer.imports.prefix": "crate",
   "rust-analyzer.rustfmt.extraArgs": [
-    "+nightly-2023-12-01" // Keep in sync with other "RUST_NIGHTLY_VERSION" references
+    "+nightly-2024-02-21" // __RUST_NIGHTLY_VERSION_MARKER__ (keep in sync)
   ],
   "rust-analyzer.server.path": "${workspaceFolder}/scripts/bin/rust-analyzer",
   "search.exclude": {

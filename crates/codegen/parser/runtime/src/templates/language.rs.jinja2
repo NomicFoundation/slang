@@ -52,7 +52,7 @@ impl From<Error> for napi::Error {
 }
 
 impl Language {
-    pub const SUPPORTED_VERSIONS: &[Version] = &[
+    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
         {% for version in versions %}
             Version::new({{ version | split(pat=".") | join(sep=", ") }}),
         {% endfor %}

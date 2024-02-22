@@ -19,12 +19,6 @@ enum State {
 }
 
 impl SequenceHelper {
-    pub fn new() -> Self {
-        SequenceHelper {
-            result: State::Empty,
-        }
-    }
-
     /// Whether the sequence cannot make more progress.
     pub fn is_done(&self) -> bool {
         matches!(

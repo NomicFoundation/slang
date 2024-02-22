@@ -59,7 +59,7 @@ where
 
             ParserResult::NoMatch(no_match) => ParseOutput {
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
-                errors: vec![ParseError::new_covering_range(
+                errors: vec![ParseError::new(
                     TextIndex::ZERO..input.into(),
                     no_match.expected_tokens,
                 )],
@@ -110,10 +110,7 @@ where
                     new_children.push(NamedNode::anonymous(skipped_node));
 
                     let mut errors = stream.into_errors();
-                    errors.push(ParseError::new_covering_range(
-                        start..input.into(),
-                        expected_tokens,
-                    ));
+                    errors.push(ParseError::new(start..input.into(), expected_tokens));
 
                     ParseOutput {
                         parse_tree: cst::Node::rule(topmost_rule.kind, new_children),

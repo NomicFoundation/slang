@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::{bail, Result};
@@ -58,7 +59,7 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
             [parser_name, test_name, "input.sol"] => {
                 parser_tests
                     .entry(parser_name.to_owned())
-                    .or_insert_with(BTreeSet::new)
+                    .or_default()
                     .insert(test_name.to_owned());
             }
             _ => {
@@ -76,27 +77,32 @@ fn generate_mod_file(
     mod_file_path: &Path,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
 ) -> Result<()> {
-    let module_declarations = parser_tests
-        .keys()
-        .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
-        .collect::<String>();
+    let module_declarations_str =
+        parser_tests
+            .keys()
+            .fold(String::new(), |mut buffer, parser_name| {
+                writeln!(buffer, "#[allow(non_snake_case)] mod {parser_name};").unwrap();
+                buffer
+            });
 
     let version_breaks = language.collect_breaking_versions();
     let version_breaks_len = version_breaks.len();
     let version_breaks_str = version_breaks
         .iter()
-        .map(|version| {
-            format!(
+        .fold(String::new(), |mut buffer, version| {
+            writeln!(
+                buffer,
                 "Version::new({}, {}, {}),",
                 version.major, version.minor, version.patch
             )
-        })
-        .collect::<String>();
+            .unwrap();
+            buffer
+        });
 
     let contents = format!(
         "
             use semver::Version;
-            {module_declarations}
+            {module_declarations_str}
 
             pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
                 {version_breaks_str}
@@ -113,19 +119,21 @@ fn generate_unit_test_file(
     test_names: &BTreeSet<String>,
     unit_test_file_path: &Path,
 ) -> Result<()> {
-    let unit_tests = test_names
+    let unit_tests_str = test_names
         .iter()
-        .map(|test_name| {
-            format!(
-                "
+        .fold(String::new(), |mut buffer, test_name| {
+            writeln!(
+                buffer,
+                r#"
                     #[test]
                     fn {test_name}() -> Result<()> {{
-                        run(\"{parser_name}\", \"{test_name}\")
+                        run("{parser_name}", "{test_name}")
                     }}
-                "
+                "#
             )
-        })
-        .collect::<String>();
+            .unwrap();
+            buffer
+        });
 
     let contents = format!(
         "
@@ -133,7 +141,7 @@ fn generate_unit_test_file(
 
             use crate::cst_output::runner::run;
 
-            {unit_tests}
+            {unit_tests_str}
         "
     );
 

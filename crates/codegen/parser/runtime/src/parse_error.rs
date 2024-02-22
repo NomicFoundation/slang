@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use crate::kinds::TokenKind;
-use crate::text_index::{TextIndex, TextRange, TextRangeExtensions};
+use crate::text_index::{TextRange, TextRangeExtensions};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
@@ -32,18 +32,7 @@ impl ParseError {
 }
 
 impl ParseError {
-    #[allow(dead_code)]
-    pub(crate) fn new_at_position(
-        position: TextIndex,
-        tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
-    ) -> Self {
-        Self {
-            text_range: position..position,
-            tokens_that_would_have_allowed_more_progress,
-        }
-    }
-
-    pub(crate) fn new_covering_range(
+    pub(crate) fn new(
         text_range: TextRange,
         tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
     ) -> Self {

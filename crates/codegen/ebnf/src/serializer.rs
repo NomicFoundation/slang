@@ -61,7 +61,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
     fn serialize_definition(
         &mut self,
         name: &Identifier,
-        values: &Vec<Value>,
+        values: &[Value],
         kind: &DefinitionKind,
     ) -> std::fmt::Result {
         let separator = match kind {
