@@ -2358,8 +2358,16 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(reference = ModifierInvocation),
                                 EnumVariant(reference = InternalKeyword),
+                                EnumVariant(
+                                    reference = OverrideKeyword,
+                                    enabled = Range(from = "0.6.0", till = "0.6.7")
+                                ),
                                 EnumVariant(reference = PayableKeyword),
-                                EnumVariant(reference = PublicKeyword)
+                                EnumVariant(reference = PublicKeyword),
+                                EnumVariant(
+                                    reference = VirtualKeyword,
+                                    enabled = Range(from = "0.6.0", till = "0.6.7")
+                                )
                             ]
                         ),
                         Struct(

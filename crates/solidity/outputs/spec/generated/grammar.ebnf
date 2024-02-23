@@ -738,8 +738,10 @@ ConstructorAttributes = ConstructorAttribute+;
 (* Introduced in 0.4.22 *)
 ConstructorAttribute = ModifierInvocation
                      | INTERNAL_KEYWORD
+                     | OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
                      | PAYABLE_KEYWORD
-                     | PUBLIC_KEYWORD;
+                     | PUBLIC_KEYWORD
+                     | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
 
 (* Deprecated in 0.6.0 *)
 UnnamedFunctionDefinition = FUNCTION_KEYWORD

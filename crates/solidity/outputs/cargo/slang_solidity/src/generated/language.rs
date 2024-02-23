@@ -43,6 +43,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_6_0: bool,
     pub(crate) version_is_at_least_0_6_2: bool,
     pub(crate) version_is_at_least_0_6_5: bool,
+    pub(crate) version_is_at_least_0_6_7: bool,
     pub(crate) version_is_at_least_0_6_8: bool,
     pub(crate) version_is_at_least_0_6_11: bool,
     pub(crate) version_is_at_least_0_7_0: bool,
@@ -171,6 +172,7 @@ impl Language {
                 version_is_at_least_0_6_0: Version::new(0, 6, 0) <= version,
                 version_is_at_least_0_6_2: Version::new(0, 6, 2) <= version,
                 version_is_at_least_0_6_5: Version::new(0, 6, 5) <= version,
+                version_is_at_least_0_6_7: Version::new(0, 6, 7) <= version,
                 version_is_at_least_0_6_8: Version::new(0, 6, 8) <= version,
                 version_is_at_least_0_6_11: Version::new(0, 6, 11) <= version,
                 version_is_at_least_0_7_0: Version::new(0, 7, 0) <= version,
@@ -765,6 +767,13 @@ impl Language {
                     TokenKind::InternalKeyword,
                 );
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::OverrideKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::PayableKeyword,
@@ -775,6 +784,13 @@ impl Language {
                     TokenKind::PublicKeyword,
                 );
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::VirtualKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 choice.finish(input)
             })
             .with_name(FieldName::Variant)
