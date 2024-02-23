@@ -4182,8 +4182,10 @@ export class ConstructorAttribute {
         return new ModifierInvocation(variant as RuleNode);
 
       case TokenKind.InternalKeyword:
+      case TokenKind.OverrideKeyword:
       case TokenKind.PayableKeyword:
       case TokenKind.PublicKeyword:
+      case TokenKind.VirtualKeyword:
         return variant as TokenNode;
 
       default:

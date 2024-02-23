@@ -106,7 +106,7 @@ mod YulLeaveStatement;
 #[allow(non_snake_case)]
 mod YulVariableDeclarationStatement;
 
-pub const VERSION_BREAKS: [Version; 26] = [
+pub const VERSION_BREAKS: [Version; 27] = [
     Version::new(0, 4, 11),
     Version::new(0, 4, 12),
     Version::new(0, 4, 14),
@@ -120,6 +120,7 @@ pub const VERSION_BREAKS: [Version; 26] = [
     Version::new(0, 6, 0),
     Version::new(0, 6, 2),
     Version::new(0, 6, 5),
+    Version::new(0, 6, 7),
     Version::new(0, 6, 8),
     Version::new(0, 6, 11),
     Version::new(0, 7, 0),
