@@ -29,6 +29,9 @@ pub fn select_sequence(
         RuleKind::SourceUnit => selector.source_unit()?,
         RuleKind::Tree => selector.tree()?,
         RuleKind::TreeNode => selector.tree_node()?,
+        RuleKind::AdditionExpression => selector.addition_expression()?,
+        RuleKind::NegationExpression => selector.negation_expression()?,
+        RuleKind::MemberAccessExpression => selector.member_access_expression()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -67,6 +70,35 @@ impl Selector {
     }
 }
 
+impl Selector {
+    fn addition_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Plus))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+        ])
+    }
+}
+
+impl Selector {
+    fn negation_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Bang))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+        ])
+    }
+}
+
+impl Selector {
+    fn member_access_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Period))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
+        ])
+    }
+}
+
 //
 // Choices:
 //
@@ -81,6 +113,7 @@ pub fn select_choice(
     let result = match node.kind() {
         RuleKind::SourceUnitMember => selector.source_unit_member()?,
         RuleKind::TreeNodeChild => selector.tree_node_child()?,
+        RuleKind::Expression => selector.expression()?,
         RuleKind::Literal => selector.literal()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
@@ -96,6 +129,7 @@ impl Selector {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::Tree,
+                RuleKind::Expression,
                 RuleKind::SeparatedIdentifiers,
                 RuleKind::Literal,
             ])
@@ -108,6 +142,18 @@ impl Selector {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::TreeNode)
                 || node.is_token_with_kind(TokenKind::DelimitedIdentifier)
+        })
+    }
+}
+
+impl Selector {
+    fn expression(&mut self) -> Result<JsObject> {
+        self.select(|node| {
+            node.is_rule_with_kinds(&[
+                RuleKind::AdditionExpression,
+                RuleKind::NegationExpression,
+                RuleKind::MemberAccessExpression,
+            ]) || node.is_token_with_kinds(&[TokenKind::StringLiteral, TokenKind::Identifier])
         })
     }
 }

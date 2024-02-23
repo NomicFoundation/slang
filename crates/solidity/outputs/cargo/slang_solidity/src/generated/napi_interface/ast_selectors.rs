@@ -234,8 +234,8 @@ impl Selector {
 impl Selector {
     fn version_pragma_prefix_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Caret))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
         ])
     }
 }
@@ -672,10 +672,10 @@ impl Selector {
 impl Selector {
     fn array_type_name(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBracket))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
         ])
     }
 }
@@ -1019,10 +1019,10 @@ impl Selector {
 impl Selector {
     fn conditional_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::QuestionMark))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
         ])
     }
@@ -1141,8 +1141,8 @@ impl Selector {
 impl Selector {
     fn postfix_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::PlusPlus))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::PlusPlus))?),
         ])
     }
 }
@@ -1150,8 +1150,8 @@ impl Selector {
 impl Selector {
     fn prefix_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::PlusPlus))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
         ])
     }
 }
@@ -1159,9 +1159,9 @@ impl Selector {
 impl Selector {
     fn function_call_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::FunctionCallOptions))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
         ])
     }
 }
@@ -1169,9 +1169,9 @@ impl Selector {
 impl Selector {
     fn member_access_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Period))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::MemberAccess))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
         ])
     }
 }
@@ -1179,11 +1179,11 @@ impl Selector {
 impl Selector {
     fn index_access_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))?,
             self.try_select(|node| node.is_rule_with_kind(RuleKind::IndexAccessEnd))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBracket))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
         ])
     }
 }
@@ -1460,10 +1460,10 @@ impl Selector {
 impl Selector {
     fn yul_function_call_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::YulArguments))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
         ])
     }
 }

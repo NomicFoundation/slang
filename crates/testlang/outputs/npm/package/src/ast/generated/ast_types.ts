@@ -88,17 +88,98 @@ export class TreeNode {
   }
 }
 
+export class AdditionExpression {
+  private readonly fetch = once(() => {
+    const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
+
+    return {
+      leftOperand: new Expression($leftOperand as RuleNode),
+      operator: $operator as TokenNode,
+      rightOperand: new Expression($rightOperand as RuleNode),
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.AdditionExpression);
+  }
+
+  public get leftOperand(): Expression {
+    return this.fetch().leftOperand;
+  }
+
+  public get operator(): TokenNode {
+    return this.fetch().operator;
+  }
+
+  public get rightOperand(): Expression {
+    return this.fetch().rightOperand;
+  }
+}
+
+export class NegationExpression {
+  private readonly fetch = once(() => {
+    const [$operator, $operand] = ast_internal.selectSequence(this.cst);
+
+    return {
+      operator: $operator as TokenNode,
+      operand: new Expression($operand as RuleNode),
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.NegationExpression);
+  }
+
+  public get operator(): TokenNode {
+    return this.fetch().operator;
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
+  }
+}
+
+export class MemberAccessExpression {
+  private readonly fetch = once(() => {
+    const [$operand, $period, $member] = ast_internal.selectSequence(this.cst);
+
+    return {
+      operand: new Expression($operand as RuleNode),
+      period: $period as TokenNode,
+      member: $member as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.MemberAccessExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
+  }
+
+  public get period(): TokenNode {
+    return this.fetch().period;
+  }
+
+  public get member(): TokenNode {
+    return this.fetch().member;
+  }
+}
+
 /*
  * Choices:
  */
 
 export class SourceUnitMember {
-  private readonly fetch: () => Tree | SeparatedIdentifiers | Literal = once(() => {
+  private readonly fetch: () => Tree | Expression | SeparatedIdentifiers | Literal = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
       case RuleKind.Tree:
         return new Tree(variant as RuleNode);
+      case RuleKind.Expression:
+        return new Expression(variant as RuleNode);
       case RuleKind.SeparatedIdentifiers:
         return new SeparatedIdentifiers(variant as RuleNode);
       case RuleKind.Literal:
@@ -113,7 +194,7 @@ export class SourceUnitMember {
     assertKind(this.cst.kind, RuleKind.SourceUnitMember);
   }
 
-  public get variant(): Tree | SeparatedIdentifiers | Literal {
+  public get variant(): Tree | Expression | SeparatedIdentifiers | Literal {
     return this.fetch();
   }
 }
@@ -139,6 +220,38 @@ export class TreeNodeChild {
   }
 
   public get variant(): TreeNode | TokenNode {
+    return this.fetch();
+  }
+}
+
+export class Expression {
+  private readonly fetch: () => AdditionExpression | NegationExpression | MemberAccessExpression | TokenNode = once(
+    () => {
+      const variant = ast_internal.selectChoice(this.cst);
+
+      switch (variant.kind) {
+        case RuleKind.AdditionExpression:
+          return new AdditionExpression(variant as RuleNode);
+        case RuleKind.NegationExpression:
+          return new NegationExpression(variant as RuleNode);
+        case RuleKind.MemberAccessExpression:
+          return new MemberAccessExpression(variant as RuleNode);
+
+        case TokenKind.StringLiteral:
+        case TokenKind.Identifier:
+          return variant as TokenNode;
+
+        default:
+          assert.fail(`Unexpected variant: ${variant.kind}`);
+      }
+    },
+  );
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.Expression);
+  }
+
+  public get variant(): AdditionExpression | NegationExpression | MemberAccessExpression | TokenNode {
     return this.fetch();
   }
 }

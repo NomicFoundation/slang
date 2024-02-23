@@ -1,6 +1,17 @@
+import assert from "node:assert";
 import { Language } from "@slang-private/slang-testlang/language";
 import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
-import { SeparatedIdentifiers, SourceUnit, Tree, TreeNode, TreeNodeChild } from "@slang-private/slang-testlang/ast";
+import {
+  AdditionExpression,
+  Expression,
+  MemberAccessExpression,
+  NegationExpression,
+  SeparatedIdentifiers,
+  SourceUnit,
+  Tree,
+  TreeNode,
+  TreeNodeChild,
+} from "@slang-private/slang-testlang/ast";
 import { expectRule, expectToken } from "../utils/cst-helpers";
 import { TokenNode } from "@slang-private/slang-testlang/cst";
 
@@ -126,4 +137,63 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   expect(() => tree.node).toThrowError(
     "Unexpected SKIPPED token at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
   );
+});
+
+test("create and use prefix expressions", () => {
+  const source = `!foo`;
+
+  const language = new Language("1.0.0");
+
+  const parseOutput = language.parse(RuleKind.Expression, source);
+  expect(parseOutput.errors()).toHaveLength(0);
+
+  const cst = parseOutput.tree();
+  expectRule(cst, RuleKind.Expression);
+
+  const expression = new Expression(cst);
+  assert(expression.variant instanceof NegationExpression);
+
+  const { operator, operand } = expression.variant;
+  expectToken(operator, TokenKind.Bang, "!");
+  expectToken(operand.variant, TokenKind.Identifier, "foo");
+});
+
+test("create and use postfix expressions", () => {
+  const source = `foo.bar`;
+
+  const language = new Language("1.0.0");
+
+  const parseOutput = language.parse(RuleKind.Expression, source);
+  expect(parseOutput.errors()).toHaveLength(0);
+
+  const cst = parseOutput.tree();
+  expectRule(cst, RuleKind.Expression);
+
+  const expression = new Expression(cst);
+  assert(expression.variant instanceof MemberAccessExpression);
+
+  const { operand, period, member } = expression.variant;
+  expectToken(operand.variant, TokenKind.Identifier, "foo");
+  expectToken(period, TokenKind.Period, ".");
+  expectToken(member, TokenKind.Identifier, "bar");
+});
+
+test("create and use binary expressions", () => {
+  const source = `foo + bar`;
+
+  const language = new Language("1.0.0");
+
+  const parseOutput = language.parse(RuleKind.Expression, source);
+  expect(parseOutput.errors()).toHaveLength(0);
+
+  const cst = parseOutput.tree();
+  expectRule(cst, RuleKind.Expression);
+
+  const expression = new Expression(cst);
+  assert(expression.variant instanceof AdditionExpression);
+
+  const { leftOperand, operator, rightOperand } = expression.variant;
+  expectToken(leftOperand.variant, TokenKind.Identifier, "foo");
+  expectToken(operator, TokenKind.Plus, "+");
+  expectToken(rightOperand.variant, TokenKind.Identifier, "bar");
 });
