@@ -4,12 +4,6 @@
 
 ## Syntax
 
-```{ .ebnf #FunctionCallOptions }
-
-```
-
-<pre ebnf-snippet="FunctionCallOptions" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#FunctionCallOptions"><span class="k">FunctionCallOptions</span></a><span class="o"> = </span><a href="#NamedArgumentGroups"><span class="k">NamedArgumentGroups</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.6.2 and deprecated in 0.8.0. *)</span><br /><span class="o">                    | </span><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.0 *)</span></pre>
-
 ```{ .ebnf #ArgumentsDeclaration }
 
 ```
@@ -33,12 +27,6 @@
 ```
 
 <pre ebnf-snippet="NamedArgumentsDeclaration" style="display: none;"><a href="#NamedArgumentsDeclaration"><span class="k">NamedArgumentsDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                            </span><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o">?</span><br /><span class="o">                            </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
-
-```{ .ebnf #NamedArgumentGroups }
-
-```
-
-<pre ebnf-snippet="NamedArgumentGroups" style="display: none;"><span class="cm">(* Introduced in 0.6.2 and deprecated in 0.8.0. *)</span><br /><a href="#NamedArgumentGroups"><span class="k">NamedArgumentGroups</span></a><span class="o"> = </span><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgumentGroup }
 
