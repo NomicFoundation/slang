@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo.deposit{value: 100}                                                          │ 0..23
+
+Errors: # 1 total
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/member_access_options/input.sol:1:12]
+       │
+     1 │ foo.deposit{value: 100}
+       │            ──────┬──────  
+       │                  ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (Expression): # "foo.deposit{value: 100}\n" (0..24)
+      - (variant꞉ MemberAccessExpression): # "foo.deposit" (0..11)
+          - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
+          - (period꞉ Period): "." # (3..4)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "deposit" # (4..11)
+      - (SKIPPED): "{value: 100}\n" # (11..24)

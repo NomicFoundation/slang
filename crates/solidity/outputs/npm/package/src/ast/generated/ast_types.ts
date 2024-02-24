@@ -2860,10 +2860,9 @@ export class PrefixExpression {
 
 export class FunctionCallExpression {
   private readonly fetch = once(() => {
-    const [$options, $arguments, $operand] = ast_internal.selectSequence(this.cst);
+    const [$arguments, $operand] = ast_internal.selectSequence(this.cst);
 
     return {
-      options: $options === null ? undefined : new FunctionCallOptions($options as RuleNode),
       arguments: new ArgumentsDeclaration($arguments as RuleNode),
       operand: new Expression($operand as RuleNode),
     };
@@ -2873,12 +2872,41 @@ export class FunctionCallExpression {
     assertKind(this.cst.kind, RuleKind.FunctionCallExpression);
   }
 
-  public get options(): FunctionCallOptions | undefined {
-    return this.fetch().options;
-  }
-
   public get arguments(): ArgumentsDeclaration {
     return this.fetch().arguments;
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
+  }
+}
+
+export class CallOptionsExpression {
+  private readonly fetch = once(() => {
+    const [$openBrace, $arguments, $closeBrace, $operand] = ast_internal.selectSequence(this.cst);
+
+    return {
+      openBrace: $openBrace as TokenNode,
+      arguments: new NamedArguments($arguments as RuleNode),
+      closeBrace: $closeBrace as TokenNode,
+      operand: new Expression($operand as RuleNode),
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.CallOptionsExpression);
+  }
+
+  public get openBrace(): TokenNode {
+    return this.fetch().openBrace;
+  }
+
+  public get arguments(): NamedArguments {
+    return this.fetch().arguments;
+  }
+
+  public get closeBrace(): TokenNode {
+    return this.fetch().closeBrace;
   }
 
   public get operand(): Expression {
@@ -4677,6 +4705,7 @@ export class Expression {
     | PostfixExpression
     | PrefixExpression
     | FunctionCallExpression
+    | CallOptionsExpression
     | MemberAccessExpression
     | IndexAccessExpression
     | NewExpression
@@ -4723,6 +4752,8 @@ export class Expression {
         return new PrefixExpression(variant as RuleNode);
       case RuleKind.FunctionCallExpression:
         return new FunctionCallExpression(variant as RuleNode);
+      case RuleKind.CallOptionsExpression:
+        return new CallOptionsExpression(variant as RuleNode);
       case RuleKind.MemberAccessExpression:
         return new MemberAccessExpression(variant as RuleNode);
       case RuleKind.IndexAccessExpression:
@@ -4776,6 +4807,7 @@ export class Expression {
     | PostfixExpression
     | PrefixExpression
     | FunctionCallExpression
+    | CallOptionsExpression
     | MemberAccessExpression
     | IndexAccessExpression
     | NewExpression
@@ -4810,30 +4842,6 @@ export class MemberAccess {
   }
 
   public get variant(): TokenNode {
-    return this.fetch();
-  }
-}
-
-export class FunctionCallOptions {
-  private readonly fetch: () => NamedArgumentGroups | NamedArgumentGroup = once(() => {
-    const variant = ast_internal.selectChoice(this.cst);
-
-    switch (variant.kind) {
-      case RuleKind.NamedArgumentGroups:
-        return new NamedArgumentGroups(variant as RuleNode);
-      case RuleKind.NamedArgumentGroup:
-        return new NamedArgumentGroup(variant as RuleNode);
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.FunctionCallOptions);
-  }
-
-  public get variant(): NamedArgumentGroups | NamedArgumentGroup {
     return this.fetch();
   }
 }
@@ -5487,21 +5495,6 @@ export class CatchClauses {
   }
 
   public get items(): readonly CatchClause[] {
-    return this.fetch();
-  }
-}
-
-export class NamedArgumentGroups {
-  private readonly fetch = once(() => {
-    const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new NamedArgumentGroup(item as RuleNode));
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.NamedArgumentGroups);
-  }
-
-  public get items(): readonly NamedArgumentGroup[] {
     return this.fetch();
   }
 }

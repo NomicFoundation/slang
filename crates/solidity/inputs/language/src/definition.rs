@@ -3335,12 +3335,24 @@ codegen_language_macros::compile!(Language(
                                     name = FunctionCallExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
+                                        fields = (arguments = Required(ArgumentsDeclaration))
+                                    )]
+                                ),
+                                PrecedenceExpression(
+                                    name = CallOptionsExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        enabled = From("0.6.2"),
+                                        error_recovery = FieldsErrorRecovery(
+                                            delimiters = FieldDelimiters(
+                                                open = open_brace,
+                                                close = close_brace
+                                            )
+                                        ),
                                         fields = (
-                                            options = Optional(
-                                                reference = FunctionCallOptions,
-                                                enabled = From("0.6.2")
-                                            ),
-                                            arguments = Required(ArgumentsDeclaration)
+                                            open_brace = Required(OpenBrace),
+                                            arguments = Required(NamedArguments),
+                                            close_brace = Required(CloseBrace)
                                         )
                                     )]
                                 ),
@@ -3414,20 +3426,6 @@ codegen_language_macros::compile!(Language(
                     title = "Function Calls",
                     items = [
                         Enum(
-                            name = FunctionCallOptions,
-                            enabled = From("0.6.2"),
-                            variants = [
-                                EnumVariant(
-                                    reference = NamedArgumentGroups,
-                                    enabled = Range(from = "0.6.2", till = "0.8.0")
-                                ),
-                                EnumVariant(
-                                    reference = NamedArgumentGroup,
-                                    enabled = From("0.8.0")
-                                )
-                            ]
-                        ),
-                        Enum(
                             name = ArgumentsDeclaration,
                             variants = [
                                 EnumVariant(reference = PositionalArgumentsDeclaration),
@@ -3462,11 +3460,6 @@ codegen_language_macros::compile!(Language(
                                 arguments = Optional(reference = NamedArgumentGroup),
                                 close_paren = Required(CloseParen)
                             )
-                        ),
-                        Repeated(
-                            name = NamedArgumentGroups,
-                            reference = NamedArgumentGroup,
-                            enabled = Range(from = "0.6.2", till = "0.8.0")
                         ),
                         Struct(
                             name = NamedArgumentGroup,

@@ -600,6 +600,29 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn call_options_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::CallOptionsExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                }
+                _ => ParserResult::no_match(vec![]),
+            },
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn catch_clause(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
@@ -2058,22 +2081,46 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::FunctionCallExpression,
                 33u8,
-                SequenceHelper::run(|mut seq| {
+                self.arguments_declaration(input)
+                    .with_name(FieldName::Arguments),
+            )
+        };
+        let parse_postfix_call_options_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::CallOptionsExpression,
+                35u8,
+                ChoiceHelper::run(input, |mut choice, input| {
                     if self.version_is_at_least_0_6_2 {
-                        seq.elem_named(
-                            FieldName::Options,
-                            OptionalHelper::transform(self.function_call_options(input)),
-                        )?;
+                        let result = SequenceHelper::run(|mut seq| {
+                            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                            let input = delim_guard.ctx();
+                            seq.elem_named(
+                                FieldName::OpenBrace,
+                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::OpenBrace,
+                                ),
+                            )?;
+                            seq . elem (self . named_arguments (input) . with_name (FieldName :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ;
+                            seq.elem_named(
+                                FieldName::CloseBrace,
+                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::CloseBrace,
+                                ),
+                            )?;
+                            seq.finish()
+                        });
+                        choice.consider(input, result)?;
                     }
-                    seq.elem_named(FieldName::Arguments, self.arguments_declaration(input))?;
-                    seq.finish()
+                    choice.finish(input)
                 }),
             )
         };
         let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
-                35u8,
+                37u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         FieldName::Period,
@@ -2090,7 +2137,7 @@ impl Language {
         let parse_postfix_index_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
-                37u8,
+                39u8,
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
@@ -2191,6 +2238,8 @@ impl Language {
                 let result = parse_postfix_postfix_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_postfix_function_call_expression(input);
+                choice.consider(input, result)?;
+                let result = parse_postfix_call_options_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_postfix_member_access_expression(input);
                 choice.consider(input, result)?;
@@ -2565,27 +2614,6 @@ impl Language {
             },
             _ => ParserResult::no_match(vec![]),
         }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn function_call_options(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        if self.version_is_at_least_0_6_2 {
-            ChoiceHelper::run(input, |mut choice, input| {
-                if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
-                    let result = self.named_argument_groups(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_8_0 {
-                    let result = self.named_argument_group(input);
-                    choice.consider(input, result)?;
-                }
-                choice.finish(input)
-            })
-            .with_name(FieldName::Variant)
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::FunctionCallOptions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3520,18 +3548,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentGroup)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn named_argument_groups(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
-            OneOrMoreHelper::run(input, |input| {
-                self.named_argument_group(input).with_name(FieldName::Item)
-            })
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::NamedArgumentGroups)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -8881,6 +8897,9 @@ impl Language {
             RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input, true),
             RuleKind::Block => Self::block.parse(self, input, true),
             RuleKind::BreakStatement => Self::break_statement.parse(self, input, true),
+            RuleKind::CallOptionsExpression => {
+                Self::call_options_expression.parse(self, input, true)
+            }
             RuleKind::CatchClause => Self::catch_clause.parse(self, input, true),
             RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input, true),
             RuleKind::CatchClauses => Self::catch_clauses.parse(self, input, true),
@@ -8952,7 +8971,6 @@ impl Language {
             RuleKind::FunctionCallExpression => {
                 Self::function_call_expression.parse(self, input, true)
             }
-            RuleKind::FunctionCallOptions => Self::function_call_options.parse(self, input, true),
             RuleKind::FunctionDefinition => Self::function_definition.parse(self, input, true),
             RuleKind::FunctionName => Self::function_name.parse(self, input, true),
             RuleKind::FunctionType => Self::function_type.parse(self, input, true),
@@ -9006,7 +9024,6 @@ impl Language {
             }
             RuleKind::NamedArgument => Self::named_argument.parse(self, input, true),
             RuleKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input, true),
-            RuleKind::NamedArgumentGroups => Self::named_argument_groups.parse(self, input, true),
             RuleKind::NamedArguments => Self::named_arguments.parse(self, input, true),
             RuleKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input, true)
