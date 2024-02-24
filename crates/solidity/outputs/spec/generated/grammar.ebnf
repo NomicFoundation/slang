@@ -154,7 +154,7 @@ UsingTarget = TypeName
 
 WHITESPACE = (" " | "\t")+;
 
-END_OF_LINE = "\r"? "\n";
+END_OF_LINE = "\n" | ("\r" "\n"?);
 
 SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
 

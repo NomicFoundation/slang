@@ -392,7 +392,8 @@ codegen_language_macros::compile!(Language(
                         ),
                         Trivia(
                             name = EndOfLine,
-                            scanner = Sequence([Optional(Atom("\r")), Atom("\n")])
+                            scanner =
+                                Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
                         ),
                         Trivia(
                             name = SingleLineComment,

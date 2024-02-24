@@ -6985,9 +6985,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn end_of_line(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            scan_optional!(input, scan_chars!(input, '\r')),
-            scan_chars!(input, '\n')
+        scan_choice!(
+            input,
+            scan_chars!(input, '\n'),
+            scan_sequence!(
+                scan_chars!(input, '\r'),
+                scan_optional!(input, scan_chars!(input, '\n'))
+            )
         )
     }
 
