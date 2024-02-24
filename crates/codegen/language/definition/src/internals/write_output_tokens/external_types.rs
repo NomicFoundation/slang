@@ -63,14 +63,14 @@ impl<T: WriteOutputTokens> WriteOutputTokens for IndexSet<T> {
 impl<T: WriteOutputTokens> WriteOutputTokens for Option<T> {
     fn write_output_tokens(&self) -> TokenStream {
         match self {
-            Some(value) => {
+            | Some(value) => {
                 let value = value.write_output_tokens();
 
                 quote! {
                     Some(#value)
                 }
             }
-            None => {
+            | None => {
                 quote! {
                     None
                 }

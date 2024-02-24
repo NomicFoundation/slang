@@ -47,14 +47,14 @@ impl OrderedCommand for LintCommand {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         match self {
-            LintCommand::Cspell => run_cspell(),
-            LintCommand::Prettier => run_prettier(),
-            LintCommand::MarkdownLinkCheck => run_markdown_link_check(),
-            LintCommand::MarkdownLint => run_markdown_lint(),
-            LintCommand::Rustfmt => run_rustfmt(),
-            LintCommand::Shellcheck => run_shellcheck(),
-            LintCommand::Tsc => run_tsc(),
-            LintCommand::Yamllint => run_yamllint(),
+            | LintCommand::Cspell => run_cspell(),
+            | LintCommand::Prettier => run_prettier(),
+            | LintCommand::MarkdownLinkCheck => run_markdown_link_check(),
+            | LintCommand::MarkdownLint => run_markdown_lint(),
+            | LintCommand::Rustfmt => run_rustfmt(),
+            | LintCommand::Shellcheck => run_shellcheck(),
+            | LintCommand::Tsc => run_tsc(),
+            | LintCommand::Yamllint => run_yamllint(),
         }
     }
 }

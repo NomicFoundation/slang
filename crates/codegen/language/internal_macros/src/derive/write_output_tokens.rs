@@ -6,8 +6,8 @@ use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVaria
 
 pub fn write_output_tokens(item: InputItem) -> TokenStream {
     match item {
-        InputItem::Struct { name, fields } => derive_struct(&name, &fields),
-        InputItem::Enum { name, variants } => derive_enum(&name, &variants),
+        | InputItem::Struct { name, fields } => derive_struct(&name, &fields),
+        | InputItem::Enum { name, variants } => derive_enum(&name, &variants),
     }
 }
 
@@ -38,7 +38,7 @@ fn derive_enum(name: &Ident, variants: &[InputVariant]) -> TokenStream {
         let variant_name = &variant.name;
 
         match &variant.fields {
-            None => {
+            | None => {
                 quote! {
                     Self::#variant_name => {
                         return quote::quote! {
@@ -47,7 +47,7 @@ fn derive_enum(name: &Ident, variants: &[InputVariant]) -> TokenStream {
                     }
                 }
             }
-            Some(fields) => {
+            | Some(fields) => {
                 let keys = fields.iter().map(|field| &field.name).collect_vec();
 
                 quote! {

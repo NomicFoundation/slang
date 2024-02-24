@@ -17,18 +17,18 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
         let mut accum = match parser(input) {
             // First item parsed correctly
-            result @ ParserResult::Match(_) => result,
-            result @ ParserResult::PrattOperatorMatch(_) => result,
+            | result @ ParserResult::Match(_) => result,
+            | result @ ParserResult::PrattOperatorMatch(_) => result,
             // Or recovering, push it upwards
-            result @ ParserResult::SkippedUntil(_) => return result,
+            | result @ ParserResult::SkippedUntil(_) => return result,
 
             // Couldn't get a full match but we allow 0 items - return an empty match
             // so the parse is considered valid but note the expected tokens
-            ParserResult::NoMatch(NoMatch { expected_tokens }) if MIN_COUNT == 0 => {
+            | ParserResult::NoMatch(NoMatch { expected_tokens }) if MIN_COUNT == 0 => {
                 return ParserResult::r#match(vec![], expected_tokens);
             }
             // Don't try repeating if we don't have a full match and we require at least one
-            incomplete_or_no_match => return incomplete_or_no_match,
+            | incomplete_or_no_match => return incomplete_or_no_match,
         };
 
         loop {
@@ -36,24 +36,27 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             let next_result = parser(input);
 
             match (&mut accum, next_result) {
-                (ParserResult::Match(running), ParserResult::Match(next)) => {
+                | (ParserResult::Match(running), ParserResult::Match(next)) => {
                     running.nodes.extend(next.nodes);
                     running.expected_tokens = next.expected_tokens;
                 }
 
-                (ParserResult::PrattOperatorMatch(cur), ParserResult::PrattOperatorMatch(next)) => {
+                | (
+                    ParserResult::PrattOperatorMatch(cur),
+                    ParserResult::PrattOperatorMatch(next),
+                ) => {
                     cur.elements.extend(next.elements);
                 }
 
-                (ParserResult::Match(..), ParserResult::PrattOperatorMatch(..)) => unreachable!(
+                | (ParserResult::Match(..), ParserResult::PrattOperatorMatch(..)) => unreachable!(
                     "PrattOperatorMatch seen while repeating Matches in RepetitionHelper"
                 ),
-                (ParserResult::PrattOperatorMatch(..), ParserResult::Match(..)) => unreachable!(
+                | (ParserResult::PrattOperatorMatch(..), ParserResult::Match(..)) => unreachable!(
                     "Match seen while repeating PrattOperatorMatches in RepetitionHelper"
                 ),
                 // Can't proceed further with a complete parse, so back up, return
                 // the accumulated result and note the expected tokens
-                (
+                | (
                     ParserResult::Match(running),
                     ParserResult::IncompleteMatch(IncompleteMatch {
                         expected_tokens, ..
@@ -65,7 +68,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return accum;
                 }
 
-                (
+                | (
                     ParserResult::PrattOperatorMatch(_),
                     ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_),
                 ) => {
@@ -73,7 +76,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return accum;
                 }
 
-                (
+                | (
                     ParserResult::PrattOperatorMatch(pratt),
                     ParserResult::SkippedUntil(mut skipped),
                 ) => {
@@ -86,14 +89,14 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return ParserResult::SkippedUntil(skipped);
                 }
 
-                (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
+                | (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
                     running.nodes.extend(std::mem::take(&mut skipped.nodes));
                     skipped.nodes = std::mem::take(&mut running.nodes);
 
                     return ParserResult::SkippedUntil(skipped);
                 }
 
-                (
+                | (
                     ParserResult::IncompleteMatch(..)
                     | ParserResult::NoMatch(..)
                     | ParserResult::SkippedUntil(..),

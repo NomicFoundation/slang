@@ -54,15 +54,15 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     );
 
     let inner_expression = match &expression_rule.children[..] {
-        [NamedNode {
+        | [NamedNode {
             node: Node::Rule(rule),
             ..
         }] => rule,
-        [NamedNode {
+        | [NamedNode {
             node: Node::Token(token),
             ..
         }] => bail!("Expected rule: {token:?}"),
-        _ => unreachable!("Expected single child: {expression_rule:?}"),
+        | _ => unreachable!("Expected single child: {expression_rule:?}"),
     };
 
     let inner_children: Vec<_> = inner_expression
@@ -72,7 +72,7 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
         .collect();
 
     match inner_expression.kind {
-        RuleKind::VersionPragmaOrExpression => {
+        | RuleKind::VersionPragmaOrExpression => {
             let [left, NamedNode {
                 name: _,
                 node: Node::Token(_op),
@@ -85,7 +85,7 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
 
             Ok(VersionPragma::or(left, right))
         }
-        RuleKind::VersionPragmaRangeExpression => {
+        | RuleKind::VersionPragmaRangeExpression => {
             let [left, NamedNode {
                 name: _,
                 node: Node::Token(_op),
@@ -107,19 +107,19 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
                 VersionPragma::single(right),
             ))
         }
-        RuleKind::VersionPragmaPrefixExpression => {
+        | RuleKind::VersionPragmaPrefixExpression => {
             let value = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&value)?;
 
             Ok(VersionPragma::single(comparator))
         }
-        RuleKind::VersionPragmaSpecifier => {
+        | RuleKind::VersionPragmaSpecifier => {
             let specifier = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&format!("={specifier}"))?;
 
             Ok(VersionPragma::single(comparator))
         }
-        _ => bail!("Unexpected inner expression: {inner_expression:?}"),
+        | _ => bail!("Unexpected inner expression: {inner_expression:?}"),
     }
 }
 
@@ -145,16 +145,16 @@ impl VersionPragma {
 
     pub fn matches(&self, version: &Version) -> bool {
         match self {
-            Self::Or(left, right) => left.matches(version) || right.matches(version),
-            Self::And(left, right) => left.matches(version) && right.matches(version),
-            Self::Single(comparator) => comparator.matches(version),
+            | Self::Or(left, right) => left.matches(version) || right.matches(version),
+            | Self::And(left, right) => left.matches(version) && right.matches(version),
+            | Self::Single(comparator) => comparator.matches(version),
         }
     }
 
     fn comparator(self) -> Result<Comparator> {
         match self {
-            Self::Single(comparator) => Ok(comparator),
-            _ => bail!("Expected Single Comparator: {self:?}"),
+            | Self::Single(comparator) => Ok(comparator),
+            | _ => bail!("Expected Single Comparator: {self:?}"),
         }
     }
 }

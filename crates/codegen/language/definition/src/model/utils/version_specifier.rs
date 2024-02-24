@@ -14,10 +14,10 @@ pub enum VersionSpecifier {
 impl VersionSpecifier {
     pub fn contains(&self, version: &Version) -> bool {
         match self {
-            VersionSpecifier::Never => false,
-            VersionSpecifier::From { from } => from <= version,
-            VersionSpecifier::Till { till } => version < till,
-            VersionSpecifier::Range { from, till } => from <= version && version < till,
+            | VersionSpecifier::Never => false,
+            | VersionSpecifier::From { from } => from <= version,
+            | VersionSpecifier::Till { till } => version < till,
+            | VersionSpecifier::Range { from, till } => from <= version && version < till,
         }
     }
 }

@@ -238,9 +238,9 @@ impl RuleKind {
     pub fn is_trivia(&self) -> bool {
         #[allow(clippy::match_like_matches_macro)]
         match self {
-            Self::LeadingTrivia => true,
-            Self::TrailingTrivia => true,
-            _ => false,
+            | Self::LeadingTrivia => true,
+            | Self::TrailingTrivia => true,
+            | _ => false,
         }
     }
 }

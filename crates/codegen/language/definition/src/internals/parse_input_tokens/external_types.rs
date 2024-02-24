@@ -90,8 +90,8 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
         errors: &mut ErrorsCollection,
     ) -> Result<Self> {
         match ParseHelpers::syn::<Ident>(&input.fork()) {
-            Ok(key) if key == name => Ok(Some(ParseHelpers::field(name, input, errors)?)),
-            _ => Ok(None),
+            | Ok(key) if key == name => Ok(Some(ParseHelpers::field(name, input, errors)?)),
+            | _ => Ok(None),
         }
     }
 }
@@ -151,8 +151,8 @@ impl ParseInputTokens for Version {
         let literal = ParseHelpers::syn::<LitStr>(input)?;
 
         match Self::parse(&literal.value()) {
-            Ok(version) => Ok(version),
-            Err(error) => {
+            | Ok(version) => Ok(version),
+            | Err(error) => {
                 errors.add(&literal, &error);
 
                 Ok(Version::new(0, 0, 0))

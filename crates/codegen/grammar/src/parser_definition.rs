@@ -99,39 +99,39 @@ impl Visitable for ParserDefinitionNode {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.parser_definition_node_enter(self);
         match self {
-            Self::Versioned(node, _)
+            | Self::Versioned(node, _)
             | Self::Optional(node)
             | Self::ZeroOrMore(Named { node, .. })
             | Self::OneOrMore(Named { node, .. }) => node.accept_visitor(visitor),
 
-            Self::Sequence(nodes) => {
+            | Self::Sequence(nodes) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
-            Self::Choice(Named { node: nodes, .. }) => {
+            | Self::Choice(Named { node: nodes, .. }) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
 
-            Self::DelimitedBy(open, body, close) => {
+            | Self::DelimitedBy(open, body, close) => {
                 open.accept_visitor(visitor);
                 body.accept_visitor(visitor);
                 close.accept_visitor(visitor);
             }
 
-            Self::SeparatedBy(body, separator) => {
+            | Self::SeparatedBy(body, separator) => {
                 body.accept_visitor(visitor);
                 separator.accept_visitor(visitor);
             }
 
-            Self::TerminatedBy(body, terminator) => {
+            | Self::TerminatedBy(body, terminator) => {
                 body.accept_visitor(visitor);
                 terminator.accept_visitor(visitor);
             }
 
-            Self::ScannerDefinition(_)
+            | Self::ScannerDefinition(_)
             | Self::KeywordScannerDefinition(_)
             | Self::TriviaParserDefinition(_)
             | Self::ParserDefinition(_)

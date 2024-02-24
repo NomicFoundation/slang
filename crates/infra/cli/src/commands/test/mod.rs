@@ -32,8 +32,8 @@ impl OrderedCommand for TestCommand {
         Terminal::step(format!("test {name}", name = self.clap_name()));
 
         match self {
-            TestCommand::Cargo => test_cargo(),
-            TestCommand::Npm => test_npm(),
+            | TestCommand::Cargo => test_cargo(),
+            | TestCommand::Npm => test_npm(),
         }
     }
 }

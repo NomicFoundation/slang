@@ -27,14 +27,14 @@ impl Parse for InputItem {
 impl InputItem {
     fn from_syn(input: DeriveInput) -> Result<Self> {
         Ok(match input.data {
-            Data::Struct(data) => InputItem::Struct {
+            | Data::Struct(data) => InputItem::Struct {
                 name: input.ident,
                 fields: match data.fields {
-                    Fields::Named(fields) => InputField::from_syn(fields)?,
-                    _ => error(&data.fields, "Only named fields are supported.")?,
+                    | Fields::Named(fields) => InputField::from_syn(fields)?,
+                    | _ => error(&data.fields, "Only named fields are supported.")?,
                 },
             },
-            Data::Enum(data) => InputItem::Enum {
+            | Data::Enum(data) => InputItem::Enum {
                 name: input.ident,
                 variants: data
                     .variants
@@ -42,7 +42,7 @@ impl InputItem {
                     .map(InputVariant::from_syn)
                     .try_collect()?,
             },
-            Data::Union(data) => error(data.union_token, "Unions are not supported.")?,
+            | Data::Union(data) => error(data.union_token, "Unions are not supported.")?,
         })
     }
 }
@@ -55,15 +55,15 @@ pub struct InputVariant {
 impl InputVariant {
     fn from_syn(input: Variant) -> Result<Self> {
         Ok(match input.fields {
-            Fields::Named(fields) => InputVariant {
+            | Fields::Named(fields) => InputVariant {
                 name: input.ident,
                 fields: Some(InputField::from_syn(fields)?),
             },
-            Fields::Unit => InputVariant {
+            | Fields::Unit => InputVariant {
                 name: input.ident,
                 fields: None,
             },
-            Fields::Unnamed(fields) => error(fields, "Unnamed fields are not supported.")?,
+            | Fields::Unnamed(fields) => error(fields, "Unnamed fields are not supported.")?,
         })
     }
 }
@@ -79,11 +79,11 @@ impl InputField {
             .named
             .into_iter()
             .map(|field| match field.ident {
-                Some(name) => Ok(Self {
+                | Some(name) => Ok(Self {
                     name,
                     r#type: field.ty,
                 }),
-                None => error(field, "Unnamed fields are not supported."),
+                | None => error(field, "Unnamed fields are not supported."),
             })
             .try_collect()
     }
@@ -95,8 +95,8 @@ pub fn add_spanned_prefix(input: impl Display) -> String {
 
 pub fn strip_spanned_prefix(input: String) -> String {
     match input.strip_prefix("Spanned") {
-        Some(suffix) if !suffix.is_empty() => suffix.to_owned(),
-        _ => input,
+        | Some(suffix) if !suffix.is_empty() => suffix.to_owned(),
+        | _ => input,
     }
 }
 

@@ -6,8 +6,8 @@ use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVaria
 
 pub fn parse_input_tokens(item: InputItem) -> TokenStream {
     match item {
-        InputItem::Struct { name, fields } => derive_struct(&name, &fields),
-        InputItem::Enum { name, variants } => derive_enum(&name, &variants),
+        | InputItem::Struct { name, fields } => derive_struct(&name, &fields),
+        | InputItem::Enum { name, variants } => derive_enum(&name, &variants),
     }
 }
 

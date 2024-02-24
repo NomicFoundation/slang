@@ -12,15 +12,15 @@ pub trait NodeExtensions {
 impl NodeExtensions for Node {
     fn is_trivia(&self) -> bool {
         match self {
-            Node::Token(token) => token.is_trivia(),
-            Node::Rule(rule) => rule.is_trivia(),
+            | Node::Token(token) => token.is_trivia(),
+            | Node::Rule(rule) => rule.is_trivia(),
         }
     }
 
     fn extract_non_trivia(&self) -> String {
         match self {
-            Node::Token(token) => token.extract_non_trivia(),
-            Node::Rule(rule) => rule.extract_non_trivia(),
+            | Node::Token(token) => token.extract_non_trivia(),
+            | Node::Rule(rule) => rule.extract_non_trivia(),
         }
     }
 }

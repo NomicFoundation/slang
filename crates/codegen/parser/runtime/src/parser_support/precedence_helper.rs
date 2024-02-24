@@ -10,29 +10,29 @@ pub struct PrecedenceHelper;
 impl PrecedenceHelper {
     pub fn to_prefix_operator(kind: RuleKind, right: u8, result: ParserResult) -> ParserResult {
         match result {
-            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
+            | ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
                 nodes: r#match.nodes,
                 kind,
                 right,
             }]),
-            ParserResult::PrattOperatorMatch(_) => {
+            | ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("This is already a PrattOperatorMatch")
             }
-            _ => result,
+            | _ => result,
         }
     }
 
     pub fn to_postfix_operator(kind: RuleKind, left: u8, result: ParserResult) -> ParserResult {
         match result {
-            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
+            | ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
                 nodes: r#match.nodes,
                 kind,
                 left,
             }]),
-            ParserResult::PrattOperatorMatch(_) => {
+            | ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("This is already a PrattOperatorMatch")
             }
-            _ => result,
+            | _ => result,
         }
     }
 
@@ -43,16 +43,16 @@ impl PrecedenceHelper {
         result: ParserResult,
     ) -> ParserResult {
         match result {
-            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Binary {
+            | ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Binary {
                 nodes: r#match.nodes,
                 kind,
                 left,
                 right,
             }]),
-            ParserResult::PrattOperatorMatch(_) => {
+            | ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("This is already a PrattOperatorMatch")
             }
-            _ => result,
+            | _ => result,
         }
     }
 
@@ -76,17 +76,17 @@ impl PrecedenceHelper {
             // `prefixop* expr postfixop* ( binaryop prefixop* expr postfixop* )*`
 
             match &elements[i..] {
-                [Expression { .. }, Postfix { .. }, ..] => {
+                | [Expression { .. }, Postfix { .. }, ..] => {
                     i += 1;
                     continue;
                 }
 
-                [Expression { .. }, Binary { .. }, ..] => {
+                | [Expression { .. }, Binary { .. }, ..] => {
                     i += 1;
                     continue;
                 }
 
-                [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                | [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -95,7 +95,7 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                | [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -104,14 +104,14 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Prefix { .. }, Expression { .. }] => { /* Reduce */ }
+                | [Prefix { .. }, Expression { .. }] => { /* Reduce */ }
 
-                [Prefix { .. }, Prefix { .. }, ..] => {
+                | [Prefix { .. }, Prefix { .. }, ..] => {
                     i += 1;
                     continue;
                 }
 
-                [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                | [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -120,7 +120,7 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                | [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -129,16 +129,16 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Binary { .. }, Prefix { .. }, ..] => {
+                | [Binary { .. }, Prefix { .. }, ..] => {
                     i += 1;
                     continue;
                 }
 
-                [Binary { .. }, Expression { .. }] => { /* Reduce */ }
+                | [Binary { .. }, Expression { .. }] => { /* Reduce */ }
 
-                [Postfix { .. }, ..] => { /* Reduce */ }
+                | [Postfix { .. }, ..] => { /* Reduce */ }
 
-                _ => {
+                | _ => {
                     unreachable!(
                         "Unmatched precedence pattern at index {} in: {:#?}",
                         i, elements
@@ -162,25 +162,25 @@ impl PrecedenceHelper {
                     .map_or(FieldName::Operand, |_| FieldName::RightOperand);
 
                 let left_nodes = match left {
-                    Some(Expression { nodes }) => {
+                    | Some(Expression { nodes }) => {
                         vec![NamedNode {
                             name: Some(left_name),
                             node: cst::Node::rule(child_kind, nodes),
                         }]
                     }
-                    None => vec![],
-                    _ => unreachable!("Operator not preceeded by expression"),
+                    | None => vec![],
+                    | _ => unreachable!("Operator not preceeded by expression"),
                 };
 
                 let right_nodes = match right {
-                    Some(Expression { nodes }) => {
+                    | Some(Expression { nodes }) => {
                         vec![NamedNode {
                             name: Some(right_name),
                             node: cst::Node::rule(child_kind, nodes),
                         }]
                     }
-                    None => vec![],
-                    _ => unreachable!("Operator not followed by expression"),
+                    | None => vec![],
+                    | _ => unreachable!("Operator not followed by expression"),
                 };
 
                 let children = [left_nodes, nodes, right_nodes].concat();
@@ -194,18 +194,18 @@ impl PrecedenceHelper {
             };
 
             match elements.remove(i) {
-                Prefix { kind, nodes, .. } => {
+                | Prefix { kind, nodes, .. } => {
                     let expr = elements.remove(i);
                     elements.insert(i, make_expression(None, kind, nodes, Some(expr)));
                 }
 
-                Postfix { kind, nodes, .. } => {
+                | Postfix { kind, nodes, .. } => {
                     let expr = elements.remove(i - 1);
                     i -= 1;
                     elements.insert(i, make_expression(Some(expr), kind, nodes, None));
                 }
 
-                Binary { kind, nodes, .. } => {
+                | Binary { kind, nodes, .. } => {
                     let right_expr = elements.remove(i);
                     let left_expr = elements.remove(i - 1);
                     i -= 1;
@@ -215,7 +215,7 @@ impl PrecedenceHelper {
                     );
                 }
 
-                Expression { .. } => {
+                | Expression { .. } => {
                     unreachable!("Expected an operator at index {}: {:#?}", i, elements)
                 }
             }
@@ -226,9 +226,9 @@ impl PrecedenceHelper {
         // 3. Until we have a single expression.
 
         match <[_; 1]>::try_from(elements) {
-            Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
-            Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
-            Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
+            | Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
+            | Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
+            | Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
         }
     }
 }

@@ -215,8 +215,8 @@ impl GrammarVisitor for RustGenerator {
             let mut keyword_trie = Trie::new();
             for (name, def) in &context.keyword_scanner_defs {
                 match KeywordScannerAtomic::try_from_def(def) {
-                    Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
-                    None => {
+                    | Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
+                    | None => {
                         context
                             .keyword_compound_scanners
                             .insert(name, def.to_scanner_code().to_string());
@@ -339,12 +339,12 @@ impl GrammarVisitor for RustGenerator {
 
     fn parser_definition_node_enter(&mut self, node: &ParserDefinitionNode) {
         match node {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
+            | ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
                 for vqr in version_quality_ranges {
                     self.referenced_versions.insert(vqr.from.clone());
                 }
             }
-            ParserDefinitionNode::ScannerDefinition(scanner) => {
+            | ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
                 self.token_kinds.insert(scanner.name());
 
@@ -352,7 +352,7 @@ impl GrammarVisitor for RustGenerator {
                     .scanner_definitions
                     .insert(scanner.name());
             }
-            ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
+            | ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
                 self.token_kinds.insert(scanner.name());
 
                 self.current_context()
@@ -361,33 +361,33 @@ impl GrammarVisitor for RustGenerator {
             }
 
             // Collect field names
-            ParserDefinitionNode::Choice(choice) => {
+            | ParserDefinitionNode::Choice(choice) => {
                 self.field_names.insert(choice.name.clone());
             }
-            ParserDefinitionNode::Sequence(sequence) => {
+            | ParserDefinitionNode::Sequence(sequence) => {
                 for node in sequence {
                     self.field_names.insert(node.name.clone());
                 }
             }
-            ParserDefinitionNode::SeparatedBy(item, separator) => {
+            | ParserDefinitionNode::SeparatedBy(item, separator) => {
                 self.field_names.insert(item.name.clone());
                 self.field_names.insert(separator.name.clone());
             }
-            ParserDefinitionNode::TerminatedBy(_, terminator) => {
+            | ParserDefinitionNode::TerminatedBy(_, terminator) => {
                 self.field_names.insert(terminator.name.clone());
             }
 
             // Collect delimiters for each context
-            ParserDefinitionNode::DelimitedBy(open, _, close) => {
+            | ParserDefinitionNode::DelimitedBy(open, _, close) => {
                 self.field_names.insert(open.name.clone());
                 self.field_names.insert(close.name.clone());
 
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
-                    (
+                    | (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
                         ParserDefinitionNode::ScannerDefinition(close, ..),
                     ) => (open.name(), close.name()),
-                    _ => panic!("DelimitedBy must be delimited by scanners"),
+                    | _ => panic!("DelimitedBy must be delimited by scanners"),
                 };
 
                 let delimiters = &mut self.current_context().delimiters;
@@ -398,7 +398,7 @@ impl GrammarVisitor for RustGenerator {
                 );
                 delimiters.insert(open, close);
             }
-            _ => {}
+            | _ => {}
         };
     }
 }

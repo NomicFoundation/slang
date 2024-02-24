@@ -36,10 +36,10 @@ impl OrderedCommand for CheckCommand {
         Terminal::step(format!("check {name}", name = self.clap_name()));
 
         match self {
-            CheckCommand::Cargo => check_cargo(),
-            CheckCommand::Rustdoc => check_rustdoc(),
-            CheckCommand::Npm => check_npm(),
-            CheckCommand::Mkdocs => check_mkdocs(),
+            | CheckCommand::Cargo => check_cargo(),
+            | CheckCommand::Rustdoc => check_rustdoc(),
+            | CheckCommand::Npm => check_npm(),
+            | CheckCommand::Mkdocs => check_mkdocs(),
         }
     }
 }

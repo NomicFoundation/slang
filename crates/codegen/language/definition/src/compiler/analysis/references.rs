@@ -42,31 +42,31 @@ pub(crate) fn analyze_references(analysis: &mut Analysis) {
 
 fn check_item(analysis: &mut Analysis, item: &SpannedItem, enablement: &VersionSet) {
     match item {
-        SpannedItem::Struct { item } => {
+        | SpannedItem::Struct { item } => {
             check_struct(analysis, item, enablement);
         }
-        SpannedItem::Enum { item } => {
+        | SpannedItem::Enum { item } => {
             check_enum(analysis, item, enablement);
         }
-        SpannedItem::Repeated { item } => {
+        | SpannedItem::Repeated { item } => {
             check_repeated(analysis, item, enablement);
         }
-        SpannedItem::Separated { item } => {
+        | SpannedItem::Separated { item } => {
             check_separated(analysis, item, enablement);
         }
-        SpannedItem::Precedence { item } => {
+        | SpannedItem::Precedence { item } => {
             check_precedence(analysis, item, enablement);
         }
-        SpannedItem::Trivia { item } => {
+        | SpannedItem::Trivia { item } => {
             check_trivia(analysis, item, enablement);
         }
-        SpannedItem::Keyword { item } => {
+        | SpannedItem::Keyword { item } => {
             check_keyword(analysis, item, enablement);
         }
-        SpannedItem::Token { item } => {
+        | SpannedItem::Token { item } => {
             check_token(analysis, item, enablement);
         }
-        SpannedItem::Fragment { item } => {
+        | SpannedItem::Fragment { item } => {
             check_fragment(analysis, item, enablement);
         }
     }
@@ -210,7 +210,7 @@ fn check_fields(
 ) {
     for field in fields.values() {
         match field {
-            SpannedField::Required { reference } => {
+            | SpannedField::Required { reference } => {
                 check_reference(
                     analysis,
                     source,
@@ -221,7 +221,7 @@ fn check_fields(
                     ],
                 );
             }
-            SpannedField::Optional { reference, enabled } => {
+            | SpannedField::Optional { reference, enabled } => {
                 let enablement = update_enablement(analysis, enablement, enabled);
 
                 check_reference(
@@ -244,17 +244,17 @@ fn check_trivia_parser(
     enablement: &VersionSet,
 ) {
     match parser {
-        SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
+        | SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
             for parser in parsers {
                 check_trivia_parser(analysis, parser, enablement);
             }
         }
-        SpannedTriviaParser::OneOrMore { parser }
+        | SpannedTriviaParser::OneOrMore { parser }
         | SpannedTriviaParser::ZeroOrMore { parser }
         | SpannedTriviaParser::Optional { parser } => {
             check_trivia_parser(analysis, parser, enablement);
         }
-        SpannedTriviaParser::Trivia { reference } => {
+        | SpannedTriviaParser::Trivia { reference } => {
             check_reference(analysis, None, reference, enablement, &[Trivia]);
         }
     };
@@ -321,17 +321,17 @@ fn check_scanner(
     enablement: &VersionSet,
 ) {
     match scanner {
-        SpannedScanner::Sequence { scanners } | SpannedScanner::Choice { scanners } => {
+        | SpannedScanner::Sequence { scanners } | SpannedScanner::Choice { scanners } => {
             for scanner in scanners {
                 check_scanner(analysis, source, scanner, enablement);
             }
         }
-        SpannedScanner::Optional { scanner }
+        | SpannedScanner::Optional { scanner }
         | SpannedScanner::ZeroOrMore { scanner }
         | SpannedScanner::OneOrMore { scanner } => {
             check_scanner(analysis, source, scanner, enablement);
         }
-        SpannedScanner::Not { chars: _ }
+        | SpannedScanner::Not { chars: _ }
         | SpannedScanner::Range {
             inclusive_start: _,
             inclusive_end: _,
@@ -339,14 +339,14 @@ fn check_scanner(
         | SpannedScanner::Atom { atom: _ } => {
             // Nothing to check for now.
         }
-        SpannedScanner::TrailingContext {
+        | SpannedScanner::TrailingContext {
             scanner,
             not_followed_by,
         } => {
             check_scanner(analysis, source, scanner, enablement);
             check_scanner(analysis, source, not_followed_by, enablement);
         }
-        SpannedScanner::Fragment { reference } => {
+        | SpannedScanner::Fragment { reference } => {
             check_reference(analysis, source, reference, enablement, &[Fragment]);
         }
     };
@@ -421,10 +421,10 @@ fn update_enablement(
 
 fn check_version_specifier(analysis: &mut Analysis, specifier: &SpannedVersionSpecifier) -> bool {
     match specifier {
-        SpannedVersionSpecifier::Never => true,
-        SpannedVersionSpecifier::From { from } => check_version(analysis, from),
-        SpannedVersionSpecifier::Till { till } => check_version(analysis, till),
-        SpannedVersionSpecifier::Range { from, till } => {
+        | SpannedVersionSpecifier::Never => true,
+        | SpannedVersionSpecifier::From { from } => check_version(analysis, from),
+        | SpannedVersionSpecifier::Till { till } => check_version(analysis, till),
+        | SpannedVersionSpecifier::Range { from, till } => {
             if from >= till {
                 analysis
                     .errors

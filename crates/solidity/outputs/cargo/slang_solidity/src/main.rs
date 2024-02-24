@@ -43,7 +43,7 @@ enum Commands {
 
 fn main() -> Result<ExitCode> {
     match Cli::parse().command {
-        Commands::Parse {
+        | Commands::Parse {
             file_path,
             version,
             json,

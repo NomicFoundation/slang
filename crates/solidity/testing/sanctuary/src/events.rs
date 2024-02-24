@@ -95,24 +95,24 @@ impl Events {
         self.not_found.inc_length(1);
 
         match outcome {
-            TestOutcome::Passed => self.passed.inc(1),
-            TestOutcome::Failed => self.failed.inc(1),
-            TestOutcome::Incompatible => self.incompatible.inc(1),
-            TestOutcome::NotFound => self.not_found.inc(1),
+            | TestOutcome::Passed => self.passed.inc(1),
+            | TestOutcome::Failed => self.failed.inc(1),
+            | TestOutcome::Incompatible => self.incompatible.inc(1),
+            | TestOutcome::NotFound => self.not_found.inc(1),
         };
     }
 
     pub fn parse_error(&self, message: impl AsRef<str>) {
         match self.failed.position().cmp(&MAX_PRINTED_FAILURES) {
-            cmp::Ordering::Less => {
+            | cmp::Ordering::Less => {
                 self.reporter.println(message);
             }
-            cmp::Ordering::Equal => {
+            | cmp::Ordering::Equal => {
                 self.reporter.println(format!(
                     "More than {MAX_PRINTED_FAILURES} failures shown. Additional failures will be silent."
                 ));
             }
-            cmp::Ordering::Greater => {
+            | cmp::Ordering::Greater => {
                 // Don't print any more messages...
             }
         };

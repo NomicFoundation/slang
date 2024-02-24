@@ -45,11 +45,11 @@ pub enum GrammarElement {
 impl GrammarElement {
     pub fn name(&self) -> &'static str {
         match self {
-            Self::ScannerDefinition(scanner) => scanner.name(),
-            Self::KeywordScannerDefinition(scanner) => scanner.name(),
-            Self::TriviaParserDefinition(trivia_parser) => trivia_parser.name(),
-            Self::ParserDefinition(parser) => parser.name(),
-            Self::PrecedenceParserDefinition(precedence_parser) => precedence_parser.name(),
+            | Self::ScannerDefinition(scanner) => scanner.name(),
+            | Self::KeywordScannerDefinition(scanner) => scanner.name(),
+            | Self::TriviaParserDefinition(trivia_parser) => trivia_parser.name(),
+            | Self::ParserDefinition(parser) => parser.name(),
+            | Self::PrecedenceParserDefinition(precedence_parser) => precedence_parser.name(),
         }
     }
 }
@@ -81,11 +81,11 @@ impl From<PrecedenceParserDefinitionRef> for GrammarElement {
 impl Visitable for GrammarElement {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         match self {
-            Self::ScannerDefinition(scanner) => scanner.accept_visitor(visitor),
-            Self::KeywordScannerDefinition(scanner) => scanner.accept_visitor(visitor),
-            Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
-            Self::ParserDefinition(parser) => parser.accept_visitor(visitor),
-            Self::PrecedenceParserDefinition(precedence_parser) => {
+            | Self::ScannerDefinition(scanner) => scanner.accept_visitor(visitor),
+            | Self::KeywordScannerDefinition(scanner) => scanner.accept_visitor(visitor),
+            | Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
+            | Self::ParserDefinition(parser) => parser.accept_visitor(visitor),
+            | Self::PrecedenceParserDefinition(precedence_parser) => {
                 precedence_parser.accept_visitor(visitor);
             }
         }

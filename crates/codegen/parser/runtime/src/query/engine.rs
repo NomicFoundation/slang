@@ -27,26 +27,26 @@ impl Cursor {
 
     fn matches_node_selector(&self, node_selector: &NodeSelector) -> bool {
         match self.node() {
-            cst::Node::Rule(rule) => match node_selector {
-                NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::Rule(rule.kind) == *kind,
-                NodeSelector::Text { .. } => false,
-                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
-                NodeSelector::FieldNameAndKind { field_name, kind } => {
+            | cst::Node::Rule(rule) => match node_selector {
+                | NodeSelector::Anonymous => true,
+                | NodeSelector::Kind { kind } => Kind::Rule(rule.kind) == *kind,
+                | NodeSelector::Text { .. } => false,
+                | NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
+                | NodeSelector::FieldNameAndKind { field_name, kind } => {
                     Some(*field_name) == self.node_name() && Kind::Rule(rule.kind) == *kind
                 }
-                NodeSelector::FieldNameAndText { .. } => false,
+                | NodeSelector::FieldNameAndText { .. } => false,
             },
 
-            cst::Node::Token(token) => match node_selector {
-                NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::Token(token.kind) == *kind,
-                NodeSelector::Text { text } => token.text == *text,
-                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
-                NodeSelector::FieldNameAndKind { field_name, kind } => {
+            | cst::Node::Token(token) => match node_selector {
+                | NodeSelector::Anonymous => true,
+                | NodeSelector::Kind { kind } => Kind::Token(token.kind) == *kind,
+                | NodeSelector::Text { text } => token.text == *text,
+                | NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
+                | NodeSelector::FieldNameAndKind { field_name, kind } => {
                     Some(*field_name) == self.node_name() && Kind::Token(token.kind) == *kind
                 }
-                NodeSelector::FieldNameAndText { field_name, text } => {
+                | NodeSelector::FieldNameAndText { field_name, text } => {
                     Some(*field_name) == self.node_name() && token.text == *text
                 }
             },
@@ -58,27 +58,29 @@ impl Matcher {
     // This allows for queries to pre-flight against a cursor without allocating
     fn can_match(&self, cursor: &Cursor) -> bool {
         match self {
-            Self::Binding(matcher) => matcher.child.can_match(cursor),
-            Self::Node(matcher) => cursor.matches_node_selector(&matcher.node_selector),
-            Self::Alternatives(matcher) => matcher.children.iter().any(|c| c.can_match(cursor)),
-            Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
-            Self::OneOrMore(matcher) => matcher.child.can_match(cursor),
-            Self::Optional(_) => true,
-            Self::Ellipsis => true,
+            | Self::Binding(matcher) => matcher.child.can_match(cursor),
+            | Self::Node(matcher) => cursor.matches_node_selector(&matcher.node_selector),
+            | Self::Alternatives(matcher) => matcher.children.iter().any(|c| c.can_match(cursor)),
+            | Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
+            | Self::OneOrMore(matcher) => matcher.child.can_match(cursor),
+            | Self::Optional(_) => true,
+            | Self::Ellipsis => true,
         }
     }
 
     fn create_combinator(&self, cursor: Cursor) -> CombinatorRef {
         match self {
-            Self::Binding(matcher) => Box::new(BindingCombinator::new(matcher.clone(), cursor)),
-            Self::Node(matcher) => Box::new(NodeCombinator::new(matcher.clone(), cursor)),
-            Self::Sequence(matcher) => Box::new(SequenceCombinator::new(matcher.clone(), cursor)),
-            Self::Alternatives(matcher) => {
+            | Self::Binding(matcher) => Box::new(BindingCombinator::new(matcher.clone(), cursor)),
+            | Self::Node(matcher) => Box::new(NodeCombinator::new(matcher.clone(), cursor)),
+            | Self::Sequence(matcher) => Box::new(SequenceCombinator::new(matcher.clone(), cursor)),
+            | Self::Alternatives(matcher) => {
                 Box::new(AlternativesCombinator::new(matcher.clone(), cursor))
             }
-            Self::Optional(matcher) => Box::new(OptionalCombinator::new(matcher.clone(), cursor)),
-            Self::OneOrMore(matcher) => Box::new(OneOrMoreCombinator::new(matcher.clone(), cursor)),
-            Self::Ellipsis => Box::new(EllipsisCombinator::new(cursor)),
+            | Self::Optional(matcher) => Box::new(OptionalCombinator::new(matcher.clone(), cursor)),
+            | Self::OneOrMore(matcher) => {
+                Box::new(OneOrMoreCombinator::new(matcher.clone(), cursor))
+            }
+            | Self::Ellipsis => Box::new(EllipsisCombinator::new(cursor)),
         }
     }
 }
@@ -328,18 +330,18 @@ impl Combinator for AlternativesCombinator {
         loop {
             if self.child.is_none() {
                 match self.matcher.children.get(self.next_child_number) {
-                    Some(child) => {
+                    | Some(child) => {
                         let child = child.create_combinator(self.cursor.clone());
                         self.child = Some(child);
                         self.next_child_number += 1;
                     }
-                    None => return None,
+                    | None => return None,
                 }
             }
 
             match self.child.as_mut().unwrap().next() {
-                Some(cursor) => return Some(cursor),
-                None => self.child = None,
+                | Some(cursor) => return Some(cursor),
+                | None => self.child = None,
             }
         }
     }
@@ -371,11 +373,11 @@ impl Combinator for OptionalCombinator {
     fn next(&mut self) -> Option<Cursor> {
         if let Some(child) = self.child.as_mut() {
             match child.next() {
-                result @ Some(_) => {
+                | result @ Some(_) => {
                     self.have_nonempty_match = true;
                     result
                 }
-                None => {
+                | None => {
                     self.child = None;
                     None
                 }

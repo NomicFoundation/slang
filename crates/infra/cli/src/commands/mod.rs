@@ -67,15 +67,15 @@ impl Cli {
 impl AppCommand {
     pub fn execute(&self) -> Result<()> {
         match self {
-            AppCommand::Setup(command) => command.execute(),
-            AppCommand::Check(command) => command.execute(),
-            AppCommand::Test(command) => command.execute(),
-            AppCommand::Lint(command) => command.execute(),
-            AppCommand::Ci(command) => command.execute(),
-            AppCommand::Run(command) => command.execute(),
-            AppCommand::Watch(command) => command.execute(),
-            AppCommand::Publish(command) => command.execute(),
-            AppCommand::Completions(command) => command.execute(),
+            | AppCommand::Setup(command) => command.execute(),
+            | AppCommand::Check(command) => command.execute(),
+            | AppCommand::Test(command) => command.execute(),
+            | AppCommand::Lint(command) => command.execute(),
+            | AppCommand::Ci(command) => command.execute(),
+            | AppCommand::Run(command) => command.execute(),
+            | AppCommand::Watch(command) => command.execute(),
+            | AppCommand::Publish(command) => command.execute(),
+            | AppCommand::Completions(command) => command.execute(),
         }
     }
 }

@@ -24,7 +24,7 @@ pub struct NapiCompiler;
 impl NapiCompiler {
     pub fn run(resolver: &NapiResolver, profile: NapiProfile) -> Result<()> {
         match profile {
-            NapiProfile::Debug => {
+            | NapiProfile::Debug => {
                 // Compiles the default target for local development
                 let napi_output = compile_target(resolver, &BuildTarget::Debug)?;
 
@@ -34,7 +34,7 @@ impl NapiCompiler {
                 // Compile the main cross-platform package, and copy the build node binary to it for debugging/testing.
                 compile_root_package(resolver, Some(&napi_output.node_binary))?;
             }
-            NapiProfile::Release => {
+            | NapiProfile::Release => {
                 // Compile all available targets for publishing to NPM.
                 let node_binaries = compile_all_targets(resolver)?;
 

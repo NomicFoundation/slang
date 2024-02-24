@@ -99,15 +99,15 @@ fn check_precedence_items(analysis: &mut Analysis) {
 
 fn get_item_name(item: &SpannedItem) -> &Spanned<Identifier> {
     match item {
-        SpannedItem::Struct { item } => &item.name,
-        SpannedItem::Enum { item } => &item.name,
-        SpannedItem::Repeated { item } => &item.name,
-        SpannedItem::Separated { item } => &item.name,
-        SpannedItem::Precedence { item } => &item.name,
-        SpannedItem::Trivia { item } => &item.name,
-        SpannedItem::Keyword { item } => &item.name,
-        SpannedItem::Token { item } => &item.name,
-        SpannedItem::Fragment { item } => &item.name,
+        | SpannedItem::Struct { item } => &item.name,
+        | SpannedItem::Enum { item } => &item.name,
+        | SpannedItem::Repeated { item } => &item.name,
+        | SpannedItem::Separated { item } => &item.name,
+        | SpannedItem::Precedence { item } => &item.name,
+        | SpannedItem::Trivia { item } => &item.name,
+        | SpannedItem::Keyword { item } => &item.name,
+        | SpannedItem::Token { item } => &item.name,
+        | SpannedItem::Fragment { item } => &item.name,
     }
 }
 
@@ -123,35 +123,35 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionS
     };
 
     match item {
-        SpannedItem::Struct { item } => {
+        | SpannedItem::Struct { item } => {
             try_add_specifier(&item.enabled);
         }
-        SpannedItem::Enum { item } => {
+        | SpannedItem::Enum { item } => {
             try_add_specifier(&item.enabled);
         }
-        SpannedItem::Repeated { item } => {
+        | SpannedItem::Repeated { item } => {
             try_add_specifier(&item.enabled);
         }
-        SpannedItem::Separated { item } => {
+        | SpannedItem::Separated { item } => {
             try_add_specifier(&item.enabled);
         }
-        SpannedItem::Precedence { item } => {
+        | SpannedItem::Precedence { item } => {
             try_add_specifier(&item.enabled);
         }
-        SpannedItem::Trivia { item: _ } => {
+        | SpannedItem::Trivia { item: _ } => {
             try_add_specifier(&None);
         }
-        SpannedItem::Keyword { item } => {
+        | SpannedItem::Keyword { item } => {
             for definition in &item.definitions {
                 try_add_specifier(&definition.enabled);
             }
         }
-        SpannedItem::Token { item } => {
+        | SpannedItem::Token { item } => {
             for definition in &item.definitions {
                 try_add_specifier(&definition.enabled);
             }
         }
-        SpannedItem::Fragment { item } => {
+        | SpannedItem::Fragment { item } => {
             try_add_specifier(&item.enabled);
         }
     };

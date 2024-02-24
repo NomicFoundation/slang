@@ -59,12 +59,12 @@ impl ParserResult {
         let before_recovery = input.position();
 
         let (mut nodes, mut expected_tokens, result_kind) = match self {
-            ParserResult::IncompleteMatch(result) => (
+            | ParserResult::IncompleteMatch(result) => (
                 result.nodes,
                 result.expected_tokens,
                 ParseResultKind::Incomplete,
             ),
-            ParserResult::Match(result)
+            | ParserResult::Match(result)
                 if lexer
                     .peek_token_with_trivia::<LexCtx>(input)
                     .map(ScannedToken::unambiguous)
@@ -72,11 +72,11 @@ impl ParserResult {
             {
                 (result.nodes, result.expected_tokens, ParseResultKind::Match)
             }
-            ParserResult::NoMatch(result) if recover_from_no_match.as_bool() => {
+            | ParserResult::NoMatch(result) if recover_from_no_match.as_bool() => {
                 (vec![], result.expected_tokens, ParseResultKind::NoMatch)
             }
             // No need to recover, so just return as-is.
-            _ => return self,
+            | _ => return self,
         };
 
         let leading_trivia = opt_parse(input, |input| lexer.leading_trivia(input));
@@ -107,11 +107,11 @@ impl ParserResult {
             input.set_position(before_recovery);
 
             match result_kind {
-                ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
-                ParseResultKind::Incomplete => {
+                | ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
+                | ParseResultKind::Incomplete => {
                     ParserResult::incomplete_match(nodes, expected_tokens)
                 }
-                ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
+                | ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
             }
         }
     }
@@ -140,7 +140,7 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
             // we can unwind on a token that's expected by us or by our ancestor.
-            Some(token)
+            | Some(token)
                 if local_delims.is_empty()
                     && (token == until || input.closing_delimiters().contains(&token)) =>
             {
@@ -150,10 +150,10 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
                 return Some((token, start..save));
             }
             // Found the local closing delimiter, pop the stack
-            Some(token) if local_delims.last() == Some(&token) => {
+            | Some(token) if local_delims.last() == Some(&token) => {
                 local_delims.pop();
             }
-            Some(token) => {
+            | Some(token) => {
                 // Found a local opening delimiter, skip until we find a closing one
                 if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
                     local_delims.push(*close);
@@ -162,7 +162,7 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
                 }
             }
             // EOF, revert the cursor
-            None => {
+            | None => {
                 input.set_position(start);
 
                 return None;

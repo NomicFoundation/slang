@@ -20,20 +20,20 @@ impl SeparatedHelper {
         let mut accum = vec![];
         loop {
             match body_parser(input) {
-                ParserResult::Match(r#match) => {
+                | ParserResult::Match(r#match) => {
                     accum.extend(r#match.nodes);
 
                     match lexer.peek_token_with_trivia::<LexCtx>(input) {
-                        Some(scanned) if scanned.accepted_as(separator) => {
+                        | Some(scanned) if scanned.accepted_as(separator) => {
                             match lexer
                                 .parse_token_with_trivia::<LexCtx>(input, separator)
                                 .with_name(separator_field_name)
                             {
-                                ParserResult::Match(r#match) => {
+                                | ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
                                 }
-                                _ => unreachable!("We just checked that the separator matches"),
+                                | _ => unreachable!("We just checked that the separator matches"),
                             }
                         }
 
@@ -41,18 +41,18 @@ impl SeparatedHelper {
                         // NOTE: We can't correctly attempt recovery until #600 lands, otherwise we'd risk misparses,
                         // as we need to stop at certain synchronizing tokens (and we can't reliably scan until
                         // a delimiter, as not every list is enclosed in a delimited group).
-                        Some(..) | None => return ParserResult::r#match(accum, vec![separator]),
+                        | Some(..) | None => return ParserResult::r#match(accum, vec![separator]),
                     }
                 }
                 // Body was partially parsed, so try to recover by skipping tokens until we see a separator
-                ParserResult::IncompleteMatch(incomplete) => {
+                | ParserResult::IncompleteMatch(incomplete) => {
                     accum.extend(incomplete.nodes);
 
                     let start = input.position();
 
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
-                        Some((found, skipped_range)) if found == separator => {
+                        | Some((found, skipped_range)) if found == separator => {
                             accum.push(NamedNode::anonymous(cst::Node::token(
                                 TokenKind::SKIPPED,
                                 input.content(skipped_range.utf8()),
@@ -64,17 +64,17 @@ impl SeparatedHelper {
                             });
 
                             match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
-                                ParserResult::Match(r#match) => {
+                                | ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
                                 }
-                                _ => unreachable!("We just checked that the separator matches"),
+                                | _ => unreachable!("We just checked that the separator matches"),
                             }
                         }
 
                         // Didn't find a separator during recovery. It might've been the last of the
                         // separatees, so we can't recover to not risk misparses.
-                        Some(..) | None => {
+                        | Some(..) | None => {
                             // Undo the recovery attempt
                             input.set_position(start);
 
@@ -85,7 +85,7 @@ impl SeparatedHelper {
                         }
                     }
                 }
-                ParserResult::NoMatch(no_match) => {
+                | ParserResult::NoMatch(no_match) => {
                     return if accum.is_empty() {
                         ParserResult::no_match(no_match.expected_tokens)
                     } else {
@@ -93,7 +93,7 @@ impl SeparatedHelper {
                     };
                 }
 
-                ParserResult::SkippedUntil(skipped) => {
+                | ParserResult::SkippedUntil(skipped) => {
                     accum.extend(skipped.nodes);
 
                     return ParserResult::SkippedUntil(SkippedUntil {
@@ -102,7 +102,7 @@ impl SeparatedHelper {
                     });
                 }
 
-                ParserResult::PrattOperatorMatch(..) => {
+                | ParserResult::PrattOperatorMatch(..) => {
                     unreachable!("PrattOperatorMatch in SeparatedHelper")
                 }
             }

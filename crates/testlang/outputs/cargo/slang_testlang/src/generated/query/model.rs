@@ -41,20 +41,20 @@ impl Matcher {
 impl fmt::Display for Matcher {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Binding(binding) => {
+            | Self::Binding(binding) => {
                 write!(f, "@{} {}", binding.name, binding.child)
             }
-            Self::Node(node) => {
+            | Self::Node(node) => {
                 if let Some(child) = &node.child {
                     write!(f, "[{} {}]", node.node_selector, child)
                 } else {
                     write!(f, "[{}]", node.node_selector)
                 }
             }
-            Self::Optional(optional) => {
+            | Self::Optional(optional) => {
                 write!(f, "({})?", optional.child)
             }
-            Self::Alternatives(alternatives) => {
+            | Self::Alternatives(alternatives) => {
                 let mut done_first = false;
                 write!(f, "(")?;
                 for a in &alternatives.children {
@@ -68,7 +68,7 @@ impl fmt::Display for Matcher {
                 write!(f, ")")?;
                 Ok(())
             }
-            Self::Sequence(sequence) => {
+            | Self::Sequence(sequence) => {
                 let mut done_first = false;
                 for a in &sequence.children {
                     if done_first {
@@ -80,10 +80,10 @@ impl fmt::Display for Matcher {
                 }
                 Ok(())
             }
-            Self::OneOrMore(one_or_more) => {
+            | Self::OneOrMore(one_or_more) => {
                 write!(f, "({})+", one_or_more.child)
             }
-            Self::Ellipsis => write!(f, "..."),
+            | Self::Ellipsis => write!(f, "..."),
         }
     }
 }
@@ -97,8 +97,8 @@ pub(super) enum Kind {
 impl fmt::Display for Kind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Kind::Rule(rule) => write!(f, "{rule}"),
-            Kind::Token(token) => write!(f, "{token}"),
+            | Kind::Rule(rule) => write!(f, "{rule}"),
+            | Kind::Token(token) => write!(f, "{token}"),
         }
     }
 }
@@ -119,28 +119,28 @@ impl fmt::Display for NodeSelector {
             string
                 .chars()
                 .map(|c| match c {
-                    '"' => "\\\"".to_string(),
-                    '\\' => "\\\\".to_string(),
-                    '\n' => "\\n".to_string(),
-                    '\r' => "\\r".to_string(),
-                    '\t' => "\\t".to_string(),
-                    '\u{08}' => "\\b".to_string(),
-                    '\u{0c}' => "\\f".to_string(),
-                    _ if c.is_ascii_graphic() => c.to_string(),
-                    _ => format!("\\u{{{:x}}}", c as u32),
+                    | '"' => "\\\"".to_string(),
+                    | '\\' => "\\\\".to_string(),
+                    | '\n' => "\\n".to_string(),
+                    | '\r' => "\\r".to_string(),
+                    | '\t' => "\\t".to_string(),
+                    | '\u{08}' => "\\b".to_string(),
+                    | '\u{0c}' => "\\f".to_string(),
+                    | _ if c.is_ascii_graphic() => c.to_string(),
+                    | _ => format!("\\u{{{:x}}}", c as u32),
                 })
                 .collect::<String>()
         }
 
         match self {
-            Self::Anonymous => write!(f, "_"),
-            Self::Kind { kind } => kind.fmt(f),
-            Self::Text { text } => write!(f, "\"{}\"", escape_string(text)),
-            Self::FieldName { field_name } => field_name.fmt(f),
-            Self::FieldNameAndKind { field_name, kind } => {
+            | Self::Anonymous => write!(f, "_"),
+            | Self::Kind { kind } => kind.fmt(f),
+            | Self::Text { text } => write!(f, "\"{}\"", escape_string(text)),
+            | Self::FieldName { field_name } => field_name.fmt(f),
+            | Self::FieldNameAndKind { field_name, kind } => {
                 write!(f, "{field_name}; {kind}")
             }
-            Self::FieldNameAndText { field_name, text } => {
+            | Self::FieldNameAndText { field_name, text } => {
                 write!(f, "{field_name}: \"{}\"", escape_string(text))
             }
         }

@@ -36,10 +36,10 @@ where
                 };
 
                 let eof_trivia = match Lexer::leading_trivia(language, &mut stream) {
-                    ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
+                    | ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
                         Some(eof_trivia.nodes)
                     }
-                    _ => None,
+                    | _ => None,
                 };
 
                 if let (cst::Node::Rule(rule), Some(eof_trivia)) = (&mut topmost.node, eof_trivia) {
@@ -55,21 +55,23 @@ where
         let is_recovering = matches!(result, ParserResult::SkippedUntil(_));
 
         match result {
-            ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
+            | ParserResult::PrattOperatorMatch(..) => {
+                unreachable!("PrattOperatorMatch is internal")
+            }
 
-            ParserResult::NoMatch(no_match) => ParseOutput {
+            | ParserResult::NoMatch(no_match) => ParseOutput {
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new(
                     TextIndex::ZERO..input.into(),
                     no_match.expected_tokens,
                 )],
             },
-            some_match => {
+            | some_match => {
                 let (nodes, expected_tokens) = match some_match {
-                    ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
+                    | ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
                         unreachable!("Handled above")
                     }
-                    ParserResult::Match(Match {
+                    | ParserResult::Match(Match {
                         nodes,
                         expected_tokens,
                     })
@@ -78,7 +80,7 @@ where
                         expected_tokens,
                     }) => (nodes, expected_tokens),
 
-                    ParserResult::SkippedUntil(SkippedUntil {
+                    | ParserResult::SkippedUntil(SkippedUntil {
                         nodes, expected, ..
                     }) => (nodes, vec![expected]),
                 };

@@ -142,8 +142,8 @@ impl ToJS for Rc<RustTokenNode> {
 impl ToJS for RustNode {
     fn to_js(&self, env: &Env) -> JsObject {
         match self {
-            RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
-            RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
+            | RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
+            | RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
         }
     }
 }

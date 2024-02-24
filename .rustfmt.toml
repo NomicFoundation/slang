@@ -3,3 +3,4 @@
 
 group_imports = "StdExternalCrate"
 imports_granularity = "Module"
+match_arm_leading_pipes = "Always"

@@ -229,15 +229,15 @@ enum ParserThunk {
 impl ParserThunk {
     fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
         match self {
-            ParserThunk::Regular(thunk) => &thunk.def,
-            ParserThunk::Precedence(..) => panic!("Expected a regular parser thunk"),
+            | ParserThunk::Regular(thunk) => &thunk.def,
+            | ParserThunk::Precedence(..) => panic!("Expected a regular parser thunk"),
         }
     }
 
     fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
         match self {
-            ParserThunk::Precedence(thunk) => &thunk.def,
-            ParserThunk::Regular(..) => panic!("Expected a precedence parser thunk"),
+            | ParserThunk::Precedence(thunk) => &thunk.def,
+            | ParserThunk::Regular(..) => panic!("Expected a precedence parser thunk"),
         }
     }
 }
@@ -248,19 +248,19 @@ fn enabled_to_range(spec: impl Into<Option<model::VersionSpecifier>>) -> Vec<Ver
     };
 
     match spec {
-        model::VersionSpecifier::Never => vec![VersionQualityRange {
+        | model::VersionSpecifier::Never => vec![VersionQualityRange {
             from: semver::Version::new(0, 0, 0),
             quality: VersionQuality::Removed,
         }],
-        model::VersionSpecifier::From { from } => vec![VersionQualityRange {
+        | model::VersionSpecifier::From { from } => vec![VersionQualityRange {
             from,
             quality: VersionQuality::Introduced,
         }],
-        model::VersionSpecifier::Till { till } => vec![VersionQualityRange {
+        | model::VersionSpecifier::Till { till } => vec![VersionQualityRange {
             from: till,
             quality: VersionQuality::Removed,
         }],
-        model::VersionSpecifier::Range { from, till } => vec![
+        | model::VersionSpecifier::Range { from, till } => vec![
             VersionQualityRange {
                 from,
                 quality: VersionQuality::Introduced,
@@ -290,7 +290,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
     // The non-terminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
     let inserted_thunk = match (elem, ctx.resolved.contains_key(ident)) {
-        (
+        | (
             Item::Struct { .. }
             | Item::Enum { .. }
             | Item::Repeated { .. }
@@ -309,7 +309,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             );
             Some(ParserThunk::Regular(thunk))
         }
-        (Item::Precedence { .. }, false) => {
+        | (Item::Precedence { .. }, false) => {
             let thunk = Rc::new(NamedPrecedenceParserThunk {
                 name: ident.to_string().leak(),
                 context: lex_ctx,
@@ -321,19 +321,19 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             );
             Some(ParserThunk::Precedence(thunk))
         }
-        _ => None,
+        | _ => None,
     };
 
     match (inserted_thunk, ctx.resolved.get(ident)) {
         // Already resolved
-        (None, Some(resolved)) => resolved.clone(),
-        (Some(..), None) => unreachable!("We just inserted a thunk!"),
+        | (None, Some(resolved)) => resolved.clone(),
+        | (Some(..), None) => unreachable!("We just inserted a thunk!"),
         // First time resolving a non-terminal named `ident` (since we just inserted a thunk)
         // Any recursive resolution for this non-terminal will already use the thunk.
         // Once we're finished, we initialize the cell with the resolved definition.
-        (Some(thunk), _) => {
+        | (Some(thunk), _) => {
             match elem {
-                Item::Struct { item } => {
+                | Item::Struct { item } => {
                     let item = item.deref().clone();
                     thunk
                         .as_regular_def()
@@ -345,51 +345,51 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         ))
                         .unwrap();
                 }
-                Item::Enum { item } => {
+                | Item::Enum { item } => {
                     thunk
                         .as_regular_def()
                         .set(resolve_choice(item.deref().clone(), ctx))
                         .unwrap();
                 }
-                Item::Repeated { item } => {
+                | Item::Repeated { item } => {
                     thunk
                         .as_regular_def()
                         .set(resolve_repeated(item.deref().clone(), ctx))
                         .unwrap();
                 }
-                Item::Separated { item } => {
+                | Item::Separated { item } => {
                     thunk
                         .as_regular_def()
                         .set(resolve_separated(item.deref().clone(), ctx))
                         .unwrap();
                 }
-                Item::Precedence { item } => {
+                | Item::Precedence { item } => {
                     thunk
                         .as_precedence_def()
                         .set(resolve_precedence(item.deref().clone(), lex_ctx, ctx))
                         .unwrap();
                 }
-                _ => unreachable!("Only non-terminals can be resolved here"),
+                | _ => unreachable!("Only non-terminals can be resolved here"),
             };
 
             ctx.resolved.get(ident).cloned().unwrap()
         }
         // First time resolving a terminal named `ident`
-        (None, None) => {
+        | (None, None) => {
             let named_scanner = match elem {
-                Item::Trivia { item } => NamedScanner {
+                | Item::Trivia { item } => NamedScanner {
                     name: ident.to_string().leak(),
                     def: resolve_scanner(item.scanner.clone(), ctx),
                 },
-                Item::Fragment { item } => NamedScanner {
+                | Item::Fragment { item } => NamedScanner {
                     name: ident.to_string().leak(),
                     def: resolve_fragment(item.deref().clone(), ctx),
                 },
-                Item::Token { item } => NamedScanner {
+                | Item::Token { item } => NamedScanner {
                     name: ident.to_string().leak(),
                     def: resolve_token(item.deref().clone(), ctx),
                 },
-                Item::Keyword { item } => {
+                | Item::Keyword { item } => {
                     let defs: Vec<_> = item
                         .definitions
                         .iter()
@@ -415,7 +415,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                     ctx.resolved.insert(ident.clone(), resolved.clone());
                     return resolved;
                 }
-                _ => unreachable!("Only terminals can be resolved here"),
+                | _ => unreachable!("Only terminals can be resolved here"),
             };
 
             let resolved = GrammarElement::ScannerDefinition(Rc::new(named_scanner));
@@ -428,46 +428,50 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
 
 fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     match scanner {
-        model::Scanner::Optional { scanner } => {
+        | model::Scanner::Optional { scanner } => {
             ScannerDefinitionNode::Optional(Box::new(resolve_scanner(*scanner, ctx)))
         }
-        model::Scanner::ZeroOrMore { scanner } => {
+        | model::Scanner::ZeroOrMore { scanner } => {
             ScannerDefinitionNode::ZeroOrMore(Box::new(resolve_scanner(*scanner, ctx)))
         }
-        model::Scanner::OneOrMore { scanner } => {
+        | model::Scanner::OneOrMore { scanner } => {
             ScannerDefinitionNode::OneOrMore(Box::new(resolve_scanner(*scanner, ctx)))
         }
-        model::Scanner::Sequence { scanners } => ScannerDefinitionNode::Sequence(
+        | model::Scanner::Sequence { scanners } => ScannerDefinitionNode::Sequence(
             scanners
                 .into_iter()
                 .map(|scanner| resolve_scanner(scanner, ctx))
                 .collect(),
         ),
-        model::Scanner::Choice { scanners } => ScannerDefinitionNode::Choice(
+        | model::Scanner::Choice { scanners } => ScannerDefinitionNode::Choice(
             scanners
                 .into_iter()
                 .map(|scanner| resolve_scanner(scanner, ctx))
                 .collect(),
         ),
-        model::Scanner::Not { chars } => ScannerDefinitionNode::NoneOf(chars.into_iter().collect()),
-        model::Scanner::TrailingContext {
+        | model::Scanner::Not { chars } => {
+            ScannerDefinitionNode::NoneOf(chars.into_iter().collect())
+        }
+        | model::Scanner::TrailingContext {
             scanner,
             not_followed_by,
         } => ScannerDefinitionNode::NotFollowedBy(
             Box::new(resolve_scanner(*scanner, ctx)),
             Box::new(resolve_scanner(*not_followed_by, ctx)),
         ),
-        model::Scanner::Range {
+        | model::Scanner::Range {
             inclusive_start,
             inclusive_end,
         } => ScannerDefinitionNode::CharRange(inclusive_start, inclusive_end),
-        model::Scanner::Atom { atom } => ScannerDefinitionNode::Literal(atom),
-        model::Scanner::Fragment { reference } => match resolve_grammar_element(&reference, ctx) {
-            GrammarElement::ScannerDefinition(parser) => {
-                ScannerDefinitionNode::ScannerDefinition(parser)
+        | model::Scanner::Atom { atom } => ScannerDefinitionNode::Literal(atom),
+        | model::Scanner::Fragment { reference } => {
+            match resolve_grammar_element(&reference, ctx) {
+                | GrammarElement::ScannerDefinition(parser) => {
+                    ScannerDefinitionNode::ScannerDefinition(parser)
+                }
+                | _ => panic!("Expected {reference} to be a ScannerDefinition"),
             }
-            _ => panic!("Expected {reference} to be a ScannerDefinition"),
-        },
+        }
     }
 }
 
@@ -486,56 +490,58 @@ fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDe
         .collect();
 
     match resolved_defs.len() {
-        0 => panic!("Token {} has no definitions", token.name),
-        1 => resolved_defs.into_iter().next().unwrap(),
-        _ => ScannerDefinitionNode::Choice(resolved_defs),
+        | 0 => panic!("Token {} has no definitions", token.name),
+        | 1 => resolved_defs.into_iter().next().unwrap(),
+        | _ => ScannerDefinitionNode::Choice(resolved_defs),
     }
 }
 
 fn resolve_keyword_value(value: model::KeywordValue) -> KeywordScannerDefinitionNode {
     match value {
-        model::KeywordValue::Sequence { values } => KeywordScannerDefinitionNode::Sequence(
+        | model::KeywordValue::Sequence { values } => KeywordScannerDefinitionNode::Sequence(
             values.into_iter().map(resolve_keyword_value).collect(),
         ),
-        model::KeywordValue::Choice { values } => KeywordScannerDefinitionNode::Choice(
+        | model::KeywordValue::Choice { values } => KeywordScannerDefinitionNode::Choice(
             values.into_iter().map(resolve_keyword_value).collect(),
         ),
-        model::KeywordValue::Optional { value } => {
+        | model::KeywordValue::Optional { value } => {
             KeywordScannerDefinitionNode::Optional(Box::new(resolve_keyword_value(*value)))
         }
-        model::KeywordValue::Atom { atom } => KeywordScannerDefinitionNode::Atom(atom),
+        | model::KeywordValue::Atom { atom } => KeywordScannerDefinitionNode::Atom(atom),
     }
 }
 
 fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match parser {
-        model::TriviaParser::Optional { parser } => {
+        | model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
         }
-        model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(
+        | model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(
             Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
         ),
-        model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(
+        | model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(
             Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
         ),
-        model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
+        | model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
                 .map(|scanner| Named::anonymous(resolve_trivia(scanner, ctx)))
                 .collect(),
         ),
-        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(Named::anonymous(
-            parsers
-                .into_iter()
-                .map(|scanner| resolve_trivia(scanner, ctx))
-                .collect(),
-        )),
-        model::TriviaParser::Trivia { reference } => {
+        | model::TriviaParser::Choice { parsers } => {
+            ParserDefinitionNode::Choice(Named::anonymous(
+                parsers
+                    .into_iter()
+                    .map(|scanner| resolve_trivia(scanner, ctx))
+                    .collect(),
+            ))
+        }
+        | model::TriviaParser::Trivia { reference } => {
             match resolve_grammar_element(&reference, ctx) {
-                GrammarElement::ScannerDefinition(parser) => {
+                | GrammarElement::ScannerDefinition(parser) => {
                     ParserDefinitionNode::ScannerDefinition(parser)
                 }
-                _ => panic!("Expected {reference} to be a ScannerDefinition"),
+                | _ => panic!("Expected {reference} to be a ScannerDefinition"),
             }
         }
     }
@@ -543,14 +549,16 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
 
 fn resolve_field(field: model::Field, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match field {
-        model::Field::Required { reference } => {
+        | model::Field::Required { reference } => {
             resolve_grammar_element(&reference, ctx).into_parser_def_node()
         }
-        model::Field::Optional { reference, enabled } => ParserDefinitionNode::Optional(Box::new(
-            resolve_grammar_element(&reference, ctx)
-                .into_parser_def_node()
-                .versioned(enabled),
-        )),
+        | model::Field::Optional { reference, enabled } => {
+            ParserDefinitionNode::Optional(Box::new(
+                resolve_grammar_element(&reference, ctx)
+                    .into_parser_def_node()
+                    .versioned(enabled),
+            ))
+        }
     }
 }
 
@@ -561,12 +569,12 @@ fn resolve_sequence_like(
     ctx: &mut ResolveCtx<'_>,
 ) -> ParserDefinitionNode {
     let (terminator, delimiters) = match error_recovery {
-        Some(FieldsErrorRecovery {
+        | Some(FieldsErrorRecovery {
             terminator: None,
             delimiters: None,
         }) => panic!("Empty error_recovery"),
-        None => (None, None),
-        Some(FieldsErrorRecovery {
+        | None => (None, None),
+        | Some(FieldsErrorRecovery {
             terminator,
             delimiters,
         }) => (terminator, delimiters),
@@ -614,13 +622,13 @@ fn resolve_sequence_like(
     }
 
     let terminator = match terminator {
-        Some(terminator) => {
+        | Some(terminator) => {
             let (name, def) = fields.pop().unwrap();
             assert_eq!(name, terminator);
 
             Some(Named::with_ident_name(name, Box::new(def)))
         }
-        None => None,
+        | None => None,
     };
 
     let body = ParserDefinitionNode::Sequence(
@@ -689,8 +697,8 @@ fn resolve_precedence(
         })
         .collect();
     let primary_expression = Box::new(match primaries.len() {
-        0 => panic!("Precedence operator has no primary expressions"),
-        _ => ParserDefinitionNode::Choice(Named::with_builtin_name(
+        | 0 => panic!("Precedence operator has no primary expressions"),
+        | _ => ParserDefinitionNode::Choice(Named::with_builtin_name(
             BuiltinFieldName::Variant,
             primaries,
         )),
@@ -699,14 +707,14 @@ fn resolve_precedence(
     #[allow(clippy::items_after_statements)] // simple and specific to this site
     fn model_to_enum(model: model::OperatorModel) -> PrecedenceOperatorModel {
         match model {
-            model::OperatorModel::BinaryLeftAssociative => {
+            | model::OperatorModel::BinaryLeftAssociative => {
                 PrecedenceOperatorModel::BinaryLeftAssociative
             }
-            model::OperatorModel::BinaryRightAssociative => {
+            | model::OperatorModel::BinaryRightAssociative => {
                 PrecedenceOperatorModel::BinaryRightAssociative
             }
-            model::OperatorModel::Prefix => PrecedenceOperatorModel::Prefix,
-            model::OperatorModel::Postfix => PrecedenceOperatorModel::Postfix,
+            | model::OperatorModel::Prefix => PrecedenceOperatorModel::Prefix,
+            | model::OperatorModel::Postfix => PrecedenceOperatorModel::Postfix,
         }
     }
 
@@ -747,12 +755,12 @@ fn resolve_precedence(
             let def = match &defs[..] {
                 // HACK: Despite it being a single definition, we still need to wrap a versioned
                 // node around the choice for it to emit the version checks for the node.
-                [ParserDefinitionNode::Versioned(..)] => {
+                | [ParserDefinitionNode::Versioned(..)] => {
                     ParserDefinitionNode::Choice(Named::anonymous(defs))
                 }
-                [_] => defs.into_iter().next().unwrap(),
+                | [_] => defs.into_iter().next().unwrap(),
                 // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
-                _ => ParserDefinitionNode::Choice(Named::anonymous(defs)),
+                | _ => ParserDefinitionNode::Choice(Named::anonymous(defs)),
             };
 
             all_operators.push(def.clone());
@@ -791,19 +799,19 @@ trait IntoParserDefNode {
 impl IntoParserDefNode for GrammarElement {
     fn into_parser_def_node(self) -> ParserDefinitionNode {
         match self {
-            GrammarElement::ParserDefinition(parser) => {
+            | GrammarElement::ParserDefinition(parser) => {
                 ParserDefinitionNode::ParserDefinition(parser)
             }
-            GrammarElement::ScannerDefinition(parser) => {
+            | GrammarElement::ScannerDefinition(parser) => {
                 ParserDefinitionNode::ScannerDefinition(parser)
             }
-            GrammarElement::KeywordScannerDefinition(scanner) => {
+            | GrammarElement::KeywordScannerDefinition(scanner) => {
                 ParserDefinitionNode::KeywordScannerDefinition(scanner)
             }
-            GrammarElement::TriviaParserDefinition(parser) => {
+            | GrammarElement::TriviaParserDefinition(parser) => {
                 ParserDefinitionNode::TriviaParserDefinition(parser)
             }
-            GrammarElement::PrecedenceParserDefinition(parser) => {
+            | GrammarElement::PrecedenceParserDefinition(parser) => {
                 ParserDefinitionNode::PrecedenceParserDefinition(parser)
             }
         }

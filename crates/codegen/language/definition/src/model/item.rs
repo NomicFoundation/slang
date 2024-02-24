@@ -27,16 +27,16 @@ pub enum Item {
 impl Item {
     pub fn name(&self) -> &Identifier {
         match self {
-            Item::Struct { item } => &item.name,
-            Item::Enum { item } => &item.name,
-            Item::Repeated { item } => &item.name,
-            Item::Separated { item } => &item.name,
-            Item::Precedence { item } => &item.name,
+            | Item::Struct { item } => &item.name,
+            | Item::Enum { item } => &item.name,
+            | Item::Repeated { item } => &item.name,
+            | Item::Separated { item } => &item.name,
+            | Item::Precedence { item } => &item.name,
 
-            Item::Trivia { item } => &item.name,
-            Item::Keyword { item } => &item.name,
-            Item::Token { item } => &item.name,
-            Item::Fragment { item } => &item.name,
+            | Item::Trivia { item } => &item.name,
+            | Item::Keyword { item } => &item.name,
+            | Item::Token { item } => &item.name,
+            | Item::Fragment { item } => &item.name,
         }
     }
 }

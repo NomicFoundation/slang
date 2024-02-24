@@ -100,16 +100,16 @@ impl Expression {
         // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
         match self {
             // Binary
-            Self::Choice { .. } | Self::Range { .. } | Self::Sequence { .. } => 1,
+            | Self::Choice { .. } | Self::Range { .. } | Self::Sequence { .. } => 1,
 
             // Prefix
-            Self::Not { .. } => 2,
+            | Self::Not { .. } => 2,
 
             // Postfix
-            Self::OneOrMore { .. } | Self::Optional { .. } | Self::ZeroOrMore { .. } => 3,
+            | Self::OneOrMore { .. } | Self::Optional { .. } | Self::ZeroOrMore { .. } => 3,
 
             // Primary
-            Self::Atom { .. } | Self::Reference { .. } => 4,
+            | Self::Atom { .. } | Self::Reference { .. } => 4,
         }
     }
 }

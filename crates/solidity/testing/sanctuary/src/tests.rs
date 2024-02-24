@@ -29,7 +29,7 @@ pub(crate) fn select_tests<'d>(
     let directories_count = dataset.directories().len();
 
     let directories = match (shards_count, shard_index) {
-        (Some(shards_count), Some(shard_index)) => {
+        | (Some(shards_count), Some(shard_index)) => {
             let mut shard_size = directories_count / shards_count;
             if shards_count * shard_size != directories_count {
                 // If the division is not exact, add one to compensate for the fractions:
@@ -42,9 +42,9 @@ pub(crate) fn select_tests<'d>(
             directories_iter.skip(from).take(length).collect_vec()
         }
 
-        (None, None) => directories_iter.collect_vec(),
+        | (None, None) => directories_iter.collect_vec(),
 
-        _ => unreachable!("Arguments should require each other."),
+        | _ => unreachable!("Arguments should require each other."),
     };
 
     let files_count: usize = directories

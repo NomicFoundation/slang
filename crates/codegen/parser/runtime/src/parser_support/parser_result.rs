@@ -46,29 +46,29 @@ impl ParserResult {
     #[must_use]
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
-            ParserResult::Match(r#match) => ParserResult::r#match(
+            | ParserResult::Match(r#match) => ParserResult::r#match(
                 vec![NamedNode::anonymous(cst::Node::rule(
                     new_kind,
                     r#match.nodes,
                 ))],
                 r#match.expected_tokens,
             ),
-            ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
+            | ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
                 vec![NamedNode::anonymous(cst::Node::rule(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_tokens,
             ),
-            ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
+            | ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
                 nodes: vec![NamedNode::anonymous(cst::Node::rule(
                     new_kind,
                     skipped.nodes,
                 ))],
                 ..skipped
             }),
-            ParserResult::NoMatch(_) => self,
-            ParserResult::PrattOperatorMatch(_) => {
+            | ParserResult::NoMatch(_) => self,
+            | ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("PrattOperatorMatch cannot be converted to a rule")
             }
         }
@@ -90,29 +90,29 @@ impl ParserResult {
     pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::NamedNode> {
         fn is_significant(named: &cst::NamedNode) -> bool {
             match &named.node {
-                cst::Node::Rule(rule) => !rule.kind.is_trivia(),
+                | cst::Node::Rule(rule) => !rule.kind.is_trivia(),
                 // FIXME: Some tokens are in fact trivia
-                cst::Node::Token(_) => true,
+                | cst::Node::Token(_) => true,
             }
         }
 
         let nodes = match self {
-            ParserResult::Match(r#match) => &mut r#match.nodes[..],
-            ParserResult::IncompleteMatch(incomplete_match) => &mut incomplete_match.nodes[..],
-            ParserResult::SkippedUntil(skipped) => &mut skipped.nodes[..],
-            _ => return None,
+            | ParserResult::Match(r#match) => &mut r#match.nodes[..],
+            | ParserResult::IncompleteMatch(incomplete_match) => &mut incomplete_match.nodes[..],
+            | ParserResult::SkippedUntil(skipped) => &mut skipped.nodes[..],
+            | _ => return None,
         };
 
         let result = nodes.iter_mut().try_fold(None, |acc, next| match acc {
             // Two significant nodes, bail
-            Some(_) if is_significant(next) => ControlFlow::Break(None),
-            Some(_) => ControlFlow::Continue(acc),
-            None => ControlFlow::Continue(is_significant(next).then_some(next)),
+            | Some(_) if is_significant(next) => ControlFlow::Break(None),
+            | Some(_) => ControlFlow::Continue(acc),
+            | None => ControlFlow::Continue(is_significant(next).then_some(next)),
         });
 
         match result {
-            ControlFlow::Continue(value) => value,
-            ControlFlow::Break(value) => value,
+            | ControlFlow::Continue(value) => value,
+            | ControlFlow::Break(value) => value,
         }
     }
 }
@@ -166,8 +166,8 @@ pub enum PrattElement {
 impl PrattElement {
     pub fn into_nodes(self) -> Vec<cst::NamedNode> {
         match self {
-            Self::Expression { nodes } => nodes,
-            Self::Binary { kind, nodes, .. }
+            | Self::Expression { nodes } => nodes,
+            | Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
                 vec![NamedNode::anonymous(cst::Node::rule(kind, nodes))]

@@ -83,15 +83,15 @@ fn parse_node_selector(input: &str) -> IResult<&str, NodeSelector, VerboseError<
             text_token.map(Tail::Text),
         )))
         .map(|(field_name, tail)| match (field_name, tail) {
-            (None, Tail::Anonymous) => NodeSelector::Anonymous,
-            (None, Tail::Kind(kind)) => NodeSelector::Kind { kind },
-            (None, Tail::Text(string)) => NodeSelector::Text { text: string },
-            (Some(field), Tail::Anonymous) => NodeSelector::FieldName { field_name: field },
-            (Some(field), Tail::Kind(kind)) => NodeSelector::FieldNameAndKind {
+            | (None, Tail::Anonymous) => NodeSelector::Anonymous,
+            | (None, Tail::Kind(kind)) => NodeSelector::Kind { kind },
+            | (None, Tail::Text(string)) => NodeSelector::Text { text: string },
+            | (Some(field), Tail::Anonymous) => NodeSelector::FieldName { field_name: field },
+            | (Some(field), Tail::Kind(kind)) => NodeSelector::FieldNameAndKind {
                 field_name: field,
                 kind,
             },
-            (Some(field), Tail::Text(string)) => NodeSelector::FieldNameAndText {
+            | (Some(field), Tail::Text(string)) => NodeSelector::FieldNameAndText {
                 field_name: field,
                 text: string,
             },
@@ -121,11 +121,13 @@ fn parse_match(input: &str) -> IResult<&str, Matcher, VerboseError<&str>> {
                     Matcher::Sequence(Rc::new(SequenceMatcher { children }))
                 };
                 match quantifier {
-                    Quantifier::ZeroOrOne => Matcher::Optional(Rc::new(OptionalMatcher { child })),
-                    Quantifier::ZeroOrMore => Matcher::Optional(Rc::new(OptionalMatcher {
+                    | Quantifier::ZeroOrOne => {
+                        Matcher::Optional(Rc::new(OptionalMatcher { child }))
+                    }
+                    | Quantifier::ZeroOrMore => Matcher::Optional(Rc::new(OptionalMatcher {
                         child: Matcher::OneOrMore(Rc::new(OneOrMoreMatcher { child })),
                     })),
-                    Quantifier::OneOrMore => {
+                    | Quantifier::OneOrMore => {
                         Matcher::OneOrMore(Rc::new(OneOrMoreMatcher { child }))
                     }
                 }
@@ -249,9 +251,9 @@ fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
         char('"'),
         fold_many0(fragment, String::new, |mut string, fragment| {
             match fragment {
-                Fragment::EscapedChar(c) => string.push(c),
-                Fragment::SwallowedWhitespace => {}
-                Fragment::UnescapedSequence(s) => string.push_str(s),
+                | Fragment::EscapedChar(c) => string.push(c),
+                | Fragment::SwallowedWhitespace => {}
+                | Fragment::UnescapedSequence(s) => string.push_str(s),
             }
             string
         }),

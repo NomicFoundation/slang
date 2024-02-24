@@ -32,15 +32,15 @@ impl Builder {
 
                 for item in &topic.items {
                     match item {
-                        Item::Struct { item } => builder.add_struct_item(item),
-                        Item::Enum { item } => builder.add_enum_item(item),
-                        Item::Repeated { item } => builder.add_repeated_item(item),
-                        Item::Separated { item } => builder.add_separated_item(item),
-                        Item::Precedence { item } => builder.add_precedence_item(item),
-                        Item::Trivia { item } => builder.add_trivia_item(item),
-                        Item::Keyword { item } => builder.add_keyword_item(item),
-                        Item::Token { item } => builder.add_token_item(item),
-                        Item::Fragment { item } => builder.add_fragment_item(item),
+                        | Item::Struct { item } => builder.add_struct_item(item),
+                        | Item::Enum { item } => builder.add_enum_item(item),
+                        | Item::Repeated { item } => builder.add_repeated_item(item),
+                        | Item::Separated { item } => builder.add_separated_item(item),
+                        | Item::Precedence { item } => builder.add_precedence_item(item),
+                        | Item::Trivia { item } => builder.add_trivia_item(item),
+                        | Item::Keyword { item } => builder.add_keyword_item(item),
+                        | Item::Token { item } => builder.add_token_item(item),
+                        | Item::Fragment { item } => builder.add_fragment_item(item),
                     };
                 }
 
@@ -247,23 +247,23 @@ impl Builder {
         let mut values = Self::build_fields(fields);
 
         match operator_model {
-            OperatorModel::Prefix => {
+            | OperatorModel::Prefix => {
                 leading_comments.push("Prefix unary operator".to_string());
 
                 values.push(Value::new(Self::build_ref(base_name), None));
             }
-            OperatorModel::Postfix => {
+            | OperatorModel::Postfix => {
                 leading_comments.push("Postfix unary operator".to_string());
 
                 values.insert(0, Value::new(Self::build_ref(base_name), None));
             }
-            OperatorModel::BinaryLeftAssociative => {
+            | OperatorModel::BinaryLeftAssociative => {
                 leading_comments.push("Left-associative binary operator".to_string());
 
                 values.insert(0, Value::new(Self::build_ref(base_name), None));
                 values.push(Value::new(Self::build_ref(base_name), None));
             }
-            OperatorModel::BinaryRightAssociative => {
+            | OperatorModel::BinaryRightAssociative => {
                 leading_comments.push("Right-associative binary operator".to_string());
 
                 values.insert(0, Value::new(Self::build_ref(base_name), None));
@@ -280,8 +280,8 @@ impl Builder {
         fields
             .values()
             .map(|field| match field {
-                Field::Required { reference } => Value::new(Self::build_ref(reference), None),
-                Field::Optional { reference, enabled } => Value::new(
+                | Field::Required { reference } => Value::new(Self::build_ref(reference), None),
+                | Field::Optional { reference, enabled } => Value::new(
                     Expression::new_optional(Self::build_ref(reference).into()),
                     Self::build_enabled_comment(enabled),
                 ),
@@ -365,26 +365,26 @@ impl Builder {
 
     fn build_keyword_value(keyword_value: &KeywordValue) -> Expression {
         match keyword_value {
-            KeywordValue::Sequence { values } => {
+            | KeywordValue::Sequence { values } => {
                 Expression::new_sequence(values.iter().map(Self::build_keyword_value).collect())
             }
-            KeywordValue::Optional { value } => {
+            | KeywordValue::Optional { value } => {
                 Expression::new_optional(Self::build_keyword_value(value).into())
             }
-            KeywordValue::Choice { values } => {
+            | KeywordValue::Choice { values } => {
                 Expression::new_choice(values.iter().map(Self::build_keyword_value).collect())
             }
-            KeywordValue::Atom { atom } => Expression::new_atom(atom.clone()),
+            | KeywordValue::Atom { atom } => Expression::new_atom(atom.clone()),
         }
     }
 
     fn build_reserved_comment(reserved: &Option<VersionSpecifier>) -> Option<String> {
         match reserved {
-            None => None,
-            Some(VersionSpecifier::Never) => Some("Never reserved".to_string()),
-            Some(VersionSpecifier::From { from }) => Some(format!("Reserved in {from}")),
-            Some(VersionSpecifier::Till { till }) => Some(format!("Reserved until {till}")),
-            Some(VersionSpecifier::Range { from, till }) => {
+            | None => None,
+            | Some(VersionSpecifier::Never) => Some("Never reserved".to_string()),
+            | Some(VersionSpecifier::From { from }) => Some(format!("Reserved in {from}")),
+            | Some(VersionSpecifier::Till { till }) => Some(format!("Reserved until {till}")),
+            | Some(VersionSpecifier::Range { from, till }) => {
                 Some(format!("Reserved from {from} until {till}"))
             }
         }
@@ -392,11 +392,11 @@ impl Builder {
 
     fn build_enabled_comment(enabled: &Option<VersionSpecifier>) -> Option<String> {
         match enabled {
-            None => None,
-            Some(VersionSpecifier::Never) => None,
-            Some(VersionSpecifier::From { from }) => Some(format!("Introduced in {from}")),
-            Some(VersionSpecifier::Till { till }) => Some(format!("Deprecated in {till}")),
-            Some(VersionSpecifier::Range { from, till }) => {
+            | None => None,
+            | Some(VersionSpecifier::Never) => None,
+            | Some(VersionSpecifier::From { from }) => Some(format!("Introduced in {from}")),
+            | Some(VersionSpecifier::Till { till }) => Some(format!("Deprecated in {till}")),
+            | Some(VersionSpecifier::Range { from, till }) => {
                 Some(format!("Introduced in {from} and deprecated in {till}."))
             }
         }
@@ -404,22 +404,22 @@ impl Builder {
 
     fn build_scanner(scanner: &Scanner) -> Expression {
         match scanner {
-            Scanner::Sequence { scanners } => {
+            | Scanner::Sequence { scanners } => {
                 Expression::new_sequence(scanners.iter().map(Self::build_scanner).collect())
             }
-            Scanner::Choice { scanners } => {
+            | Scanner::Choice { scanners } => {
                 Expression::new_choice(scanners.iter().map(Self::build_scanner).collect())
             }
-            Scanner::Optional { scanner } => {
+            | Scanner::Optional { scanner } => {
                 Expression::new_optional(Self::build_scanner(scanner).into())
             }
-            Scanner::ZeroOrMore { scanner } => {
+            | Scanner::ZeroOrMore { scanner } => {
                 Expression::new_zero_or_more(Self::build_scanner(scanner).into())
             }
-            Scanner::OneOrMore { scanner } => {
+            | Scanner::OneOrMore { scanner } => {
                 Expression::new_one_or_more(Self::build_scanner(scanner).into())
             }
-            Scanner::Not { chars } => {
+            | Scanner::Not { chars } => {
                 let expression = if chars.len() == 1 {
                     Expression::new_atom(chars[0].to_string())
                 } else {
@@ -432,19 +432,19 @@ impl Builder {
                 };
                 Expression::new_not(expression.into())
             }
-            Scanner::Range {
+            | Scanner::Range {
                 inclusive_start,
                 inclusive_end,
             } => Expression::new_range(
                 Expression::new_atom(inclusive_start.to_string()).into(),
                 Expression::new_atom(inclusive_end.to_string()).into(),
             ),
-            Scanner::Atom { atom } => Expression::new_atom(atom.clone()),
-            Scanner::TrailingContext {
+            | Scanner::Atom { atom } => Expression::new_atom(atom.clone()),
+            | Scanner::TrailingContext {
                 scanner,
                 not_followed_by: _,
             } => Self::build_scanner(scanner),
-            Scanner::Fragment { reference } => Self::build_ref(reference),
+            | Scanner::Fragment { reference } => Self::build_ref(reference),
         }
     }
 

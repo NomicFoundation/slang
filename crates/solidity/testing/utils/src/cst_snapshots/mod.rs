@@ -137,8 +137,8 @@ fn write_node(
 
 fn render_key(cursor: &mut CursorWithNames) -> String {
     let kind = match cursor.node() {
-        Node::Rule(rule) => rule.kind.to_string(),
-        Node::Token(token) => token.kind.to_string(),
+        | Node::Rule(rule) => rule.kind.to_string(),
+        | Node::Token(token) => token.kind.to_string(),
     };
 
     if let Some(name) = cursor.node_name() {
@@ -154,9 +154,9 @@ fn render_value(cursor: &mut CursorWithNames, source: &str) -> String {
     let preview = render_preview(source, &char_range);
 
     match cursor.node() {
-        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
-        Node::Rule(_) => format!("# {preview} ({utf8_range:?})"),
-        Node::Token(_) => format!("{preview} # ({utf8_range:?})"),
+        | Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
+        | Node::Rule(_) => format!("# {preview} ({utf8_range:?})"),
+        | Node::Token(_) => format!("{preview} # ({utf8_range:?})"),
     }
 }
 
@@ -197,15 +197,15 @@ static NON_INLINABLE: Lazy<HashSet<RuleKind>> = Lazy::new(|| {
 
     for item in SolidityDefinition::create().items() {
         match item {
-            Item::Repeated { .. } | Item::Separated { .. } => {
+            | Item::Repeated { .. } | Item::Separated { .. } => {
                 // Do not inline these parents, even if they have a single child.
                 kinds.insert(item.name().parse().unwrap());
             }
-            Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
+            | Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
                 // These non-terminals can be inlined if they have a single child.
                 // Note: same goes for 'PrecedenceExpression' items under each 'Precedence' item.
             }
-            Item::Trivia { .. }
+            | Item::Trivia { .. }
             | Item::Keyword { .. }
             | Item::Token { .. }
             | Item::Fragment { .. } => {

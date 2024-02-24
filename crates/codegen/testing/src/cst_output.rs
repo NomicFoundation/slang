@@ -56,13 +56,13 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
             .collect();
 
         match parts[..] {
-            [parser_name, test_name, "input.sol"] => {
+            | [parser_name, test_name, "input.sol"] => {
                 parser_tests
                     .entry(parser_name.to_owned())
                     .or_default()
                     .insert(test_name.to_owned());
             }
-            _ => {
+            | _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/PARSER_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
         };

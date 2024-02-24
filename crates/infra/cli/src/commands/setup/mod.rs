@@ -44,10 +44,10 @@ impl OrderedCommand for SetupCommand {
         Terminal::step(format!("setup {name}", name = self.clap_name()));
 
         match self {
-            SetupCommand::ShellCompletions => generate_shell_completions(),
-            SetupCommand::Cargo => setup_cargo(),
-            SetupCommand::Npm => setup_npm(),
-            SetupCommand::Pipenv => setup_pipenv(),
+            | SetupCommand::ShellCompletions => generate_shell_completions(),
+            | SetupCommand::Cargo => setup_cargo(),
+            | SetupCommand::Npm => setup_npm(),
+            | SetupCommand::Pipenv => setup_pipenv(),
         }
     }
 }

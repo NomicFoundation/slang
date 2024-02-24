@@ -73,13 +73,13 @@ impl Dissector {
 
         match self.snapshot {
             // If it is the first snapshot, store it:
-            None => self.snapshot = Some(new_snapshot),
+            | None => self.snapshot = Some(new_snapshot),
 
             // If it is the same snapshot, do nothing:
-            Some(ref existing_snapshot) if existing_snapshot == &new_snapshot => {}
+            | Some(ref existing_snapshot) if existing_snapshot == &new_snapshot => {}
 
             // Otherwise, print the existing one, and start fresh:
-            _ => {
+            | _ => {
                 self.flush()?;
                 self.snapshot = Some(new_snapshot);
             }
@@ -104,10 +104,10 @@ impl Dissector {
 
         let errors = match binary.run(&input) {
             // Forward the compiler errors, if any:
-            Ok(output) => output.errors.unwrap_or_default(),
+            | Ok(output) => output.errors.unwrap_or_default(),
 
             // Normalize any process/execution errors into the same compiler error types:
-            Err(error) => vec![Error {
+            | Err(error) => vec![Error {
                 message: format!("{error}"),
                 severity: Severity::Error,
                 location: None,
@@ -125,14 +125,14 @@ impl Dissector {
         let highest_severity = errors.iter().map(|e| &e.severity).max();
 
         let (color, status) = match highest_severity {
-            None => (Color::Green, "Success".to_string()),
-            Some(severity) => (get_color(severity), severity.to_string()),
+            | None => (Color::Green, "Success".to_string()),
+            | Some(severity) => (get_color(severity), severity.to_string()),
         };
 
         let version_range = match &versions_so_far[..] {
-            [] => panic!("No versions to flush."),
-            [single] => format!("'{single}'"),
-            [first, .., last] => format!("'{first}' - '{last}'"),
+            | [] => panic!("No versions to flush."),
+            | [single] => format!("'{single}'"),
+            | [first, .., last] => format!("'{first}' - '{last}'"),
         };
 
         let header = format!("[{status}] {version_range}");
@@ -153,7 +153,7 @@ impl Dissector {
         } = error;
 
         let (start, end) = match location {
-            Some(SourceLocation { start, end, file })
+            | Some(SourceLocation { start, end, file })
                 if !start.is_negative() && !end.is_negative() =>
             {
                 assert_eq!(file, &self.file);
@@ -161,7 +161,7 @@ impl Dissector {
                 #[allow(clippy::cast_sign_loss)]
                 (*start as usize, *end as usize)
             }
-            _ => {
+            | _ => {
                 println!(
                     "[{severity}] {message}",
                     severity = style(severity).fg(get_color(severity))
@@ -172,9 +172,9 @@ impl Dissector {
         };
 
         let kind = match severity {
-            Severity::Info => ariadne::ReportKind::Advice,
-            Severity::Warning => ariadne::ReportKind::Warning,
-            Severity::Error => ariadne::ReportKind::Error,
+            | Severity::Info => ariadne::ReportKind::Advice,
+            | Severity::Warning => ariadne::ReportKind::Warning,
+            | Severity::Error => ariadne::ReportKind::Error,
         };
 
         let source_id = self.file.unwrap_str();
@@ -196,8 +196,8 @@ impl Dissector {
 
 fn get_color(severity: &Severity) -> Color {
     match severity {
-        Severity::Info => Color::White,
-        Severity::Warning => Color::Yellow,
-        Severity::Error => Color::Red,
+        | Severity::Info => Color::White,
+        | Severity::Warning => Color::Yellow,
+        | Severity::Error => Color::Red,
     }
 }

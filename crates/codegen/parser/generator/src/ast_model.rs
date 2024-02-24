@@ -72,23 +72,23 @@ impl AstModel {
     fn collect_terminals(&mut self, language: &model::Language) {
         for item in language.items() {
             match item {
-                model::Item::Struct { .. }
+                | model::Item::Struct { .. }
                 | model::Item::Enum { .. }
                 | model::Item::Repeated { .. }
                 | model::Item::Separated { .. }
                 | model::Item::Precedence { .. } => {
                     // These items are non-terminals.
                 }
-                model::Item::Trivia { item } => {
+                | model::Item::Trivia { item } => {
                     self.terminals.insert(item.name.clone());
                 }
-                model::Item::Keyword { item } => {
+                | model::Item::Keyword { item } => {
                     self.terminals.insert(item.name.clone());
                 }
-                model::Item::Token { item } => {
+                | model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone());
                 }
-                model::Item::Fragment { .. } => {
+                | model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
             };
@@ -98,31 +98,31 @@ impl AstModel {
     fn collect_non_terminals(&mut self, language: &model::Language) {
         for item in language.items() {
             match item {
-                model::Item::Struct { item } => {
+                | model::Item::Struct { item } => {
                     self.add_struct_item(item);
                 }
-                model::Item::Enum { item } => {
+                | model::Item::Enum { item } => {
                     self.add_enum_item(item);
                 }
-                model::Item::Repeated { item } => {
+                | model::Item::Repeated { item } => {
                     self.add_repeated_item(item);
                 }
-                model::Item::Separated { item } => {
+                | model::Item::Separated { item } => {
                     self.add_separated_item(item);
                 }
-                model::Item::Precedence { item } => {
+                | model::Item::Precedence { item } => {
                     self.add_precedence_item(item);
 
                     for expr in &item.precedence_expressions {
                         self.add_precedence_expression(&item.name, expr);
                     }
                 }
-                model::Item::Trivia { .. }
+                | model::Item::Trivia { .. }
                 | model::Item::Keyword { .. }
                 | model::Item::Token { .. } => {
                     // These items are terminals.
                 }
-                model::Item::Fragment { .. } => {
+                | model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
             };
@@ -220,13 +220,13 @@ impl AstModel {
         };
 
         match operator.model {
-            model::OperatorModel::Prefix => {
+            | model::OperatorModel::Prefix => {
                 fields.insert(0, operand("operand"));
             }
-            model::OperatorModel::Postfix => {
+            | model::OperatorModel::Postfix => {
                 fields.push(operand("operand"));
             }
-            model::OperatorModel::BinaryLeftAssociative
+            | model::OperatorModel::BinaryLeftAssociative
             | model::OperatorModel::BinaryRightAssociative => {
                 fields.insert(0, operand("left_operand"));
                 fields.push(operand("right_operand"));
@@ -278,13 +278,13 @@ impl AstModel {
         fields
             .iter()
             .map(|(name, field)| match field {
-                model::Field::Required { reference } => Field {
+                | model::Field::Required { reference } => Field {
                     name: name.clone(),
                     reference: reference.clone(),
                     is_terminal: self.terminals.contains(reference),
                     is_optional: false,
                 },
-                model::Field::Optional {
+                | model::Field::Optional {
                     reference,
                     enabled: _,
                 } => Field {

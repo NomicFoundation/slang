@@ -29,11 +29,11 @@ pub enum ScannedToken {
 impl ScannedToken {
     pub fn accepted_as(self, expected: TokenKind) -> bool {
         match self {
-            Self::Single(kind) => kind == expected,
-            Self::IdentifierOrKeyword { identifier, kw } => match kw {
-                KeywordScan::Reserved(kind) => kind == expected,
-                KeywordScan::Present(kind) => kind == expected || identifier == expected,
-                KeywordScan::Absent => identifier == expected,
+            | Self::Single(kind) => kind == expected,
+            | Self::IdentifierOrKeyword { identifier, kw } => match kw {
+                | KeywordScan::Reserved(kind) => kind == expected,
+                | KeywordScan::Present(kind) => kind == expected || identifier == expected,
+                | KeywordScan::Absent => identifier == expected,
             },
         }
     }
@@ -44,12 +44,12 @@ impl ScannedToken {
     /// otherwise returns the general identifier kind. For other tokens, returns the token kind itself.
     pub fn unambiguous(self) -> TokenKind {
         match self {
-            Self::Single(kind) => kind,
-            Self::IdentifierOrKeyword { identifier, kw } => match kw {
-                KeywordScan::Reserved(kind) => kind,
+            | Self::Single(kind) => kind,
+            | Self::IdentifierOrKeyword { identifier, kw } => match kw {
+                | KeywordScan::Reserved(kind) => kind,
                 // Ambiguous; prefer using the more general identifier
-                KeywordScan::Present(..) => identifier,
-                KeywordScan::Absent => identifier,
+                | KeywordScan::Present(..) => identifier,
+                | KeywordScan::Absent => identifier,
             },
         }
     }

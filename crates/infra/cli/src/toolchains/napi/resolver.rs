@@ -53,18 +53,18 @@ impl NapiResolver {
         self.main_package_dir()
             .join("target/napi")
             .join(match target {
-                BuildTarget::Debug => "debug",
-                BuildTarget::ReleaseTarget(target) => target,
+                | BuildTarget::Debug => "debug",
+                | BuildTarget::ReleaseTarget(target) => target,
             })
     }
 
     pub fn npm_output_dir(&self, kind: &NapiPackageKind) -> PathBuf {
         self.main_package_dir().join("target/npm").join(match kind {
-            NapiPackageKind::Main => {
+            | NapiPackageKind::Main => {
                 // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)
                 "main"
             }
-            NapiPackageKind::Platform(platform) => platform,
+            | NapiPackageKind::Platform(platform) => platform,
         })
     }
 

@@ -88,9 +88,9 @@ fn fetch_releases(mirror_url: &Url, binaries_dir: &Path) -> Result<HashMap<Versi
     let list_path = binaries_dir.join("list.json");
 
     let should_download_list = match list_path.metadata() {
-        Err(err) if err.kind() == std::io::ErrorKind::NotFound => true,
-        Err(err) => return Err(err)?,
-        Ok(metadata) => metadata.created()?.elapsed()? > Duration::from_secs(60 * 60 * 24),
+        | Err(err) if err.kind() == std::io::ErrorKind::NotFound => true,
+        | Err(err) => return Err(err)?,
+        | Ok(metadata) => metadata.created()?.elapsed()? > Duration::from_secs(60 * 60 * 24),
     };
 
     if should_download_list {

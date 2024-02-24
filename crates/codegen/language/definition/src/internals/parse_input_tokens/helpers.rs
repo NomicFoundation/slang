@@ -94,8 +94,8 @@ impl ParseHelpers {
     ) -> Result<T> {
         let span = input.span();
         match Self::syn::<Ident>(input) {
-            Ok(key) if key == name => {}
-            _ => return Error::fatal(&span, &Errors::ExpectedField(name)),
+            | Ok(key) if key == name => {}
+            | _ => return Error::fatal(&span, &Errors::ExpectedField(name)),
         };
 
         Self::syn::<Token![=]>(input)?;
@@ -122,10 +122,10 @@ fn delimited<T>(
 ) -> syn::Result<T> {
     let inner_input;
     let span = match delimiter {
-        Delimiter::Brace => braced!(inner_input in input).span,
-        Delimiter::Bracket => bracketed!(inner_input in input).span,
-        Delimiter::Parenthesis => parenthesized!(inner_input in input).span,
-        Delimiter::None => {
+        | Delimiter::Brace => braced!(inner_input in input).span,
+        | Delimiter::Bracket => bracketed!(inner_input in input).span,
+        | Delimiter::Parenthesis => parenthesized!(inner_input in input).span,
+        | Delimiter::None => {
             return Err(syn::Error::new(input.span(), "Expected a delimited block."));
         }
     };

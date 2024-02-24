@@ -59,15 +59,15 @@ fn extract_latest_changelogs(
     let latest_version_blocks = all_blocks
         .take_while(|block| match block {
             // H2 for previous_version: '## 1.2.3'
-            Block::Header(contents, level) if *level == 2 => {
+            | Block::Header(contents, level) if *level == 2 => {
                 assert_eq!(contents, &vec![Span::Text(format!("{previous_version}"))]);
                 false
             }
             // H3 for change kinds: breaking changes, features, or fixes.
-            Block::Header(_, level) if *level == 3 => true,
+            | Block::Header(_, level) if *level == 3 => true,
             // Individual changelog entries.
-            Block::UnorderedList(_) => true,
-            _ => panic!("Unexpected block: {block:#?}"),
+            | Block::UnorderedList(_) => true,
+            | _ => panic!("Unexpected block: {block:#?}"),
         })
         .collect::<Vec<_>>();
 

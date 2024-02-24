@@ -51,10 +51,10 @@ impl NapiCli {
             .flag("--no-const-enum");
 
         match target {
-            BuildTarget::Debug => {
+            | BuildTarget::Debug => {
                 // Default
             }
-            BuildTarget::ReleaseTarget(target) => {
+            | BuildTarget::ReleaseTarget(target) => {
                 command = command.flag("--release").property("--target", target);
             }
         };
@@ -70,13 +70,13 @@ impl NapiCli {
             // NAPI emits files with lowercase names.
             #[allow(clippy::case_sensitive_file_extension_comparisons)]
             match file_name {
-                "index.js" | "index.d.ts" => {
+                | "index.js" | "index.d.ts" => {
                     source_files.push(output_dir.join(file_name));
                 }
-                file if file.ends_with(".node") && node_binary.is_none() => {
+                | file if file.ends_with(".node") && node_binary.is_none() => {
                     node_binary = Some(output_dir.join(file));
                 }
-                _ => {
+                | _ => {
                     bail!("Unexpected file {file_name:?} in {output_dir:?}");
                 }
             };

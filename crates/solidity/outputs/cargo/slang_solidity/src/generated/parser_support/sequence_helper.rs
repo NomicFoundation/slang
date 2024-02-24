@@ -168,8 +168,8 @@ impl SequenceHelper {
     /// Useful when you want to eagerly return a result from the parse function (e.g. when we can't make more progress).
     pub fn run(f: impl FnOnce(Self) -> ControlFlow<ParserResult, Self>) -> ParserResult {
         match f(SequenceHelper::default()) {
-            ControlFlow::Break(result) => result,
-            ControlFlow::Continue(helper) => helper.unwrap_result(),
+            | ControlFlow::Break(result) => result,
+            | ControlFlow::Continue(helper) => helper.unwrap_result(),
         }
     }
 
@@ -202,15 +202,15 @@ impl SequenceHelper {
 
     fn take_result(&mut self) -> ParserResult {
         match std::mem::take(&mut self.result) {
-            State::Empty => panic!("SequenceHelper was not driven"),
-            State::Running(result) => result,
+            | State::Empty => panic!("SequenceHelper was not driven"),
+            | State::Running(result) => result,
         }
     }
 
     fn unwrap_result(self) -> ParserResult {
         match self.result {
-            State::Empty => panic!("SequenceHelper was not driven"),
-            State::Running(result) => result,
+            | State::Empty => panic!("SequenceHelper was not driven"),
+            | State::Running(result) => result,
         }
     }
 }

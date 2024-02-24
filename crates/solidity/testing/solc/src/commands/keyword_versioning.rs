@@ -107,7 +107,7 @@ impl KeywordVersioningCommand {
                 let mut variations = definition.value.collect_variations();
 
                 match self.variations_limit {
-                    Some(limit) => {
+                    | Some(limit) => {
                         if variations.len() > limit {
                             println!(
                                 "WARNING: One of '{name}' definitions generated {total} variations. Based on the '--variations-limit' option provided, only testing the first {limit} variations (skipping {skipped}).",
@@ -119,7 +119,7 @@ impl KeywordVersioningCommand {
                             variations.truncate(limit);
                         }
                     }
-                    None => {
+                    | None => {
                         if variations.len() > 100 {
                             // Hint to the user that they can limit the variations:
                             println!(
@@ -167,7 +167,7 @@ impl TestCase {
         variation: String,
     ) -> Self {
         let source = match item.identifier.as_str() {
-            "Identifier" => format!(
+            | "Identifier" => format!(
                 "// SPDX-License-Identifier: GPL-3.0
                 pragma solidity x.x.x;
                 
@@ -177,7 +177,7 @@ impl TestCase {
                     }}
                 }}"
             ),
-            "YulIdentifier" => format!(
+            | "YulIdentifier" => format!(
                 "// SPDX-License-Identifier: GPL-3.0
                 pragma solidity x.x.x;
                 
@@ -189,7 +189,7 @@ impl TestCase {
                     }}
                 }}"
             ),
-            other => {
+            | other => {
                 panic!("Unexpected identifier: {other}");
             }
         };
@@ -198,8 +198,8 @@ impl TestCase {
             .versions
             .iter()
             .filter(|version| match &definition.reserved {
-                None => true,
-                Some(specifier) => specifier.contains(version),
+                | None => true,
+                | Some(specifier) => specifier.contains(version),
             })
             .cloned()
             .collect();
@@ -252,8 +252,8 @@ impl TestCase {
         };
 
         let output = match binary.run(&input) {
-            Ok(output) => output,
-            Err(error) => {
+            | Ok(output) => output,
+            | Err(error) => {
                 let error = format!("{error:#?}");
                 if binary.version == Version::new(0, 4, 11)
                     && error.contains("Command failed with code 'UNKNOWN' and signal '11'")

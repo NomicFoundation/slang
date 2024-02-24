@@ -35,9 +35,9 @@ impl ChoiceHelper {
     /// Whether the choice has found and settled on a full match.
     pub fn is_done(&self) -> bool {
         match &self.result {
-            ParserResult::Match(r#match) if r#match.is_full_recursive() => true,
-            ParserResult::PrattOperatorMatch(..) => true,
-            _ => false,
+            | ParserResult::Match(r#match) if r#match.is_full_recursive() => true,
+            | ParserResult::PrattOperatorMatch(..) => true,
+            | _ => false,
         }
     }
 
@@ -45,28 +45,28 @@ impl ChoiceHelper {
     fn attempt_pick(&mut self, input: &mut ParserContext<'_>, next_result: ParserResult) {
         let better_pick = match (&mut self.result, &next_result) {
             // We settle for the first full match.
-            (ParserResult::Match(running), _) if running.is_full_recursive() => {
+            | (ParserResult::Match(running), _) if running.is_full_recursive() => {
                 debug_assert!(self.is_done());
                 return;
             }
-            (ParserResult::PrattOperatorMatch(..), _) => {
+            | (ParserResult::PrattOperatorMatch(..), _) => {
                 debug_assert!(self.is_done());
                 return;
             }
 
             // Still no match, extend the possible expected tokens.
-            (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
+            | (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
                 running.expected_tokens.extend(next.expected_tokens.clone());
                 false
             }
             // Otherwise, we already have some match, so we ignore a next missing one.
-            (_, ParserResult::NoMatch(..)) => false,
+            | (_, ParserResult::NoMatch(..)) => false,
 
             // Try to improve our match.
-            (_, ParserResult::Match(next)) if next.is_full_recursive() => true,
-            (_, ParserResult::PrattOperatorMatch(..)) => true,
+            | (_, ParserResult::Match(next)) if next.is_full_recursive() => true,
+            | (_, ParserResult::PrattOperatorMatch(..)) => true,
             // Optimize for matches that have a longer span of non-skipped tokens.
-            (cur, next) => total_not_skipped_span(cur) < total_not_skipped_span(next),
+            | (cur, next) => total_not_skipped_span(cur) < total_not_skipped_span(next),
         };
 
         // Store currently accumulated errors if we had a better pick.
@@ -87,8 +87,8 @@ impl ChoiceHelper {
         f: impl FnOnce(Self, &mut ParserContext<'_>) -> ControlFlow<ParserResult, Self>,
     ) -> ParserResult {
         match f(ChoiceHelper::new(input), input) {
-            ControlFlow::Break(result) => result,
-            ControlFlow::Continue(..) => {
+            | ControlFlow::Break(result) => result,
+            | ControlFlow::Continue(..) => {
                 panic!("ChoiceHelper not `finish`()-ed in the `run` closure")
             }
         }
@@ -139,8 +139,8 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .iter()
         .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
-            cst::Node::Token(token) if token.kind != TokenKind::SKIPPED => Some(token.text.len()),
-            _ => None,
+            | cst::Node::Token(token) if token.kind != TokenKind::SKIPPED => Some(token.text.len()),
+            | _ => None,
         })
         .sum()
 }

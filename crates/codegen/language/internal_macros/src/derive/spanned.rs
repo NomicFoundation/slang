@@ -15,7 +15,7 @@ pub fn spanned(item: InputItem, spanned_derive_args: TokenStream) -> TokenStream
     };
 
     match item {
-        InputItem::Struct { name, fields } => {
+        | InputItem::Struct { name, fields } => {
             let name = format_ident!("{}", add_spanned_prefix(name));
             let fields = fields.into_iter().map(derive_field);
 
@@ -26,7 +26,7 @@ pub fn spanned(item: InputItem, spanned_derive_args: TokenStream) -> TokenStream
                 }
             }
         }
-        InputItem::Enum { name, variants } => {
+        | InputItem::Enum { name, variants } => {
             let name = format_ident!("{}", add_spanned_prefix(name));
             let variants = variants.into_iter().map(derive_variant);
 
@@ -44,12 +44,12 @@ fn derive_variant(variant: InputVariant) -> TokenStream {
     let name = &variant.name;
 
     match variant.fields {
-        None => {
+        | None => {
             quote! {
                 #name
             }
         }
-        Some(fields) => {
+        | Some(fields) => {
             let fields = fields.into_iter().map(derive_field);
 
             quote! {
@@ -110,7 +110,7 @@ fn get_spanned_type(input: Type) -> Type {
     match type_name.as_str() {
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead:
-        "EnumItem"
+        | "EnumItem"
         | "EnumVariant"
         | "Field"
         | "FieldDelimiters"
@@ -143,7 +143,7 @@ fn get_spanned_type(input: Type) -> Type {
 
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead, but also wrap it in 'Spanned<T>' because we want to capture its complete span for validation:
-        "OperatorModel" | "VersionSpecifier" => {
+        | "OperatorModel" | "VersionSpecifier" => {
             let spanned_type = format_ident!("{}", add_spanned_prefix(type_name));
             parse_quote! {
                 crate::internals::Spanned<crate::model::#spanned_type>
@@ -152,20 +152,20 @@ fn get_spanned_type(input: Type) -> Type {
 
         // These are model Types that don't have a derived 'SpannedXXX' type.
         // Let's just wrap it in 'Spanned<T>':
-        "Identifier" => {
+        | "Identifier" => {
             parse_quote! {
                 crate::internals::Spanned<#input>
             }
         }
 
         // External types should also be wrapped in 'Spanned<T>':
-        "bool" | "char" | "PathBuf" | "String" | "Version" => {
+        | "bool" | "char" | "PathBuf" | "String" | "Version" => {
             parse_quote! {
                 crate::internals::Spanned<#input>
             }
         }
 
-        _ => {
+        | _ => {
             let message = format!(
                 "Unrecognized type '{type_name}'. Update the list of predefined model types in: {file}:{line}",
                 file = file!(),

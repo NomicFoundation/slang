@@ -46,14 +46,14 @@ impl Language {
             };
 
             match spec.clone() {
-                VersionSpecifier::Never => (),
-                VersionSpecifier::From { from } => {
+                | VersionSpecifier::Never => (),
+                | VersionSpecifier::From { from } => {
                     res.insert(from);
                 }
-                VersionSpecifier::Till { till } => {
+                | VersionSpecifier::Till { till } => {
                     res.insert(till);
                 }
-                VersionSpecifier::Range { from, till } => {
+                | VersionSpecifier::Range { from, till } => {
                     res.insert(from);
                     res.insert(till);
                 }
@@ -62,32 +62,32 @@ impl Language {
 
         for item in self.items() {
             match item {
-                Item::Struct { item } => {
+                | Item::Struct { item } => {
                     add_spec(&item.enabled);
                     for field in item.fields.values() {
                         match field {
-                            Field::Required { .. } => (),
-                            Field::Optional { enabled, .. } => add_spec(enabled),
+                            | Field::Required { .. } => (),
+                            | Field::Optional { enabled, .. } => add_spec(enabled),
                         }
                     }
                 }
-                Item::Enum { item } => {
+                | Item::Enum { item } => {
                     add_spec(&item.enabled);
                     for variant in &item.variants {
                         add_spec(&variant.enabled);
                     }
                 }
-                Item::Repeated { item } => add_spec(&item.enabled),
-                Item::Separated { item } => add_spec(&item.enabled),
-                Item::Precedence { item } => {
+                | Item::Repeated { item } => add_spec(&item.enabled),
+                | Item::Separated { item } => add_spec(&item.enabled),
+                | Item::Precedence { item } => {
                     add_spec(&item.enabled);
                     for prec in &item.precedence_expressions {
                         for op in &prec.operators {
                             add_spec(&op.enabled);
                             for field in op.fields.values() {
                                 match field {
-                                    Field::Required { .. } => (),
-                                    Field::Optional { enabled, .. } => add_spec(enabled),
+                                    | Field::Required { .. } => (),
+                                    | Field::Optional { enabled, .. } => add_spec(enabled),
                                 }
                             }
                         }
@@ -96,19 +96,19 @@ impl Language {
                         add_spec(&prim.enabled);
                     }
                 }
-                Item::Keyword { item } => {
+                | Item::Keyword { item } => {
                     for definition in &item.definitions {
                         add_spec(&definition.enabled);
                         add_spec(&definition.reserved);
                     }
                 }
-                Item::Token { item } => {
+                | Item::Token { item } => {
                     for definition in &item.definitions {
                         add_spec(&definition.enabled);
                     }
                 }
-                Item::Fragment { item } => add_spec(&item.enabled),
-                Item::Trivia { .. } => {}
+                | Item::Fragment { item } => add_spec(&item.enabled),
+                | Item::Trivia { .. } => {}
             }
         }
 

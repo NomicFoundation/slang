@@ -19,8 +19,8 @@ pub enum AppCommand {
 impl AppCommand {
     pub fn execute(self) -> Result<()> {
         match self {
-            AppCommand::KeywordVersioning(command) => command.execute(),
-            AppCommand::Dissect(command) => command.execute(),
+            | AppCommand::KeywordVersioning(command) => command.execute(),
+            | AppCommand::Dissect(command) => command.execute(),
         }
     }
 }

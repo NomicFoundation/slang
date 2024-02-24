@@ -457,17 +457,19 @@ impl Language {
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
-            RuleKind::Literal => Self::literal.parse(self, input, true),
-            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input, true),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input, true),
-            RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input, false),
-            RuleKind::Tree => Self::tree.parse(self, input, true),
-            RuleKind::TreeNode => Self::tree_node.parse(self, input, true),
-            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input, true),
-            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input, true),
+            | RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
+            | RuleKind::Literal => Self::literal.parse(self, input, true),
+            | RuleKind::SeparatedIdentifiers => {
+                Self::separated_identifiers.parse(self, input, true)
+            }
+            | RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
+            | RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
+            | RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input, true),
+            | RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input, false),
+            | RuleKind::Tree => Self::tree.parse(self, input, true),
+            | RuleKind::TreeNode => Self::tree_node.parse(self, input, true),
+            | RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input, true),
+            | RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input, true),
         }
     }
 }
@@ -483,8 +485,8 @@ impl Lexer for Language {
 
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
         match LexCtx::value() {
-            LexicalContext::Default => &[],
-            LexicalContext::Tree => &[(TokenKind::OpenBracket, TokenKind::CloseBracket)],
+            | LexicalContext::Default => &[],
+            | LexicalContext::Tree => &[(TokenKind::OpenBracket, TokenKind::CloseBracket)],
         }
     }
 
@@ -510,7 +512,7 @@ impl Lexer for Language {
         }
 
         match LexCtx::value() {
-            LexicalContext::Default => {
+            | LexicalContext::Default => {
                 if let Some(kind) = if scan_chars!(input, '.') {
                     Some(TokenKind::Period)
                 } else {
@@ -537,8 +539,8 @@ impl Lexer for Language {
                     let kw_scan = KeywordScan::Absent;
                     let kw_scan = match kw_scan {
                         // Strict prefix; we need to match the whole identifier to promote
-                        _ if input.position() < furthest_position => KeywordScan::Absent,
-                        value => value,
+                        | _ if input.position() < furthest_position => KeywordScan::Absent,
+                        | value => value,
                     };
 
                     input.set_position(furthest_position);
@@ -548,16 +550,16 @@ impl Lexer for Language {
                     });
                 }
             }
-            LexicalContext::Tree => {
+            | LexicalContext::Tree => {
                 if let Some(kind) = match input.next() {
-                    Some(';') => Some(TokenKind::Semicolon),
-                    Some('[') => Some(TokenKind::OpenBracket),
-                    Some(']') => Some(TokenKind::CloseBracket),
-                    Some(_) => {
+                    | Some(';') => Some(TokenKind::Semicolon),
+                    | Some('[') => Some(TokenKind::OpenBracket),
+                    | Some(']') => Some(TokenKind::CloseBracket),
+                    | Some(_) => {
                         input.undo();
                         None
                     }
-                    None => None,
+                    | None => None,
                 } {
                     furthest_position = input.position();
                     longest_token = Some(kind);
@@ -583,8 +585,8 @@ impl Lexer for Language {
                     };
                     let kw_scan = match kw_scan {
                         // Strict prefix; we need to match the whole identifier to promote
-                        _ if input.position() < furthest_position => KeywordScan::Absent,
-                        value => value,
+                        | _ if input.position() < furthest_position => KeywordScan::Absent,
+                        | value => value,
                     };
 
                     input.set_position(furthest_position);
@@ -597,16 +599,16 @@ impl Lexer for Language {
         }
 
         match longest_token {
-            Some(token) => {
+            | Some(token) => {
                 input.set_position(furthest_position);
                 Some(ScannedToken::Single(token))
             }
             // Skip a character if possible and if we didn't recognize a token
-            None if input.peek().is_some() => {
+            | None if input.peek().is_some() => {
                 let _ = input.next();
                 Some(ScannedToken::Single(TokenKind::SKIPPED))
             }
-            None => None,
+            | None => None,
         }
     }
 }

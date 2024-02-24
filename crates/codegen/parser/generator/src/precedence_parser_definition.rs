@@ -115,10 +115,10 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             let operator_code = operator_definition.to_parser_code(context_name, false);
             let rule_kind = format_ident!("{}", name);
             let model_name = match model {
-                PrecedenceOperatorModel::BinaryLeftAssociative => "left",
-                PrecedenceOperatorModel::BinaryRightAssociative => "right",
-                PrecedenceOperatorModel::Prefix => "prefix",
-                PrecedenceOperatorModel::Postfix => "postfix",
+                | PrecedenceOperatorModel::BinaryLeftAssociative => "left",
+                | PrecedenceOperatorModel::BinaryRightAssociative => "right",
+                | PrecedenceOperatorModel::Prefix => "prefix",
+                | PrecedenceOperatorModel::Postfix => "postfix",
             };
             let closure_name =
                 format_ident!("parse_{model_name}_{name}", name = name.to_snake_case());
@@ -126,7 +126,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             let parser = quote! { #closure_name(input) };
 
             match model {
-                PrecedenceOperatorModel::BinaryLeftAssociative => {
+                | PrecedenceOperatorModel::BinaryLeftAssociative => {
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_binary_operator(
@@ -138,7 +138,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     });
                     binary_operator_parsers.push(parser);
                 }
-                PrecedenceOperatorModel::BinaryRightAssociative => {
+                | PrecedenceOperatorModel::BinaryRightAssociative => {
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_binary_operator(
@@ -150,7 +150,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     });
                     binary_operator_parsers.push(parser);
                 }
-                PrecedenceOperatorModel::Prefix => {
+                | PrecedenceOperatorModel::Prefix => {
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_prefix_operator(
@@ -161,7 +161,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     });
                     prefix_operator_parsers.push(parser);
                 }
-                PrecedenceOperatorModel::Postfix => {
+                | PrecedenceOperatorModel::Postfix => {
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_postfix_operator(

@@ -42,23 +42,23 @@ impl Visitable for ScannerDefinitionNode {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.scanner_definition_node_enter(self);
         match self {
-            Self::Versioned(node, _)
+            | Self::Versioned(node, _)
             | Self::Optional(node)
             | Self::ZeroOrMore(node)
             | Self::OneOrMore(node) => node.accept_visitor(visitor),
 
-            Self::Sequence(nodes) | Self::Choice(nodes) => {
+            | Self::Sequence(nodes) | Self::Choice(nodes) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
 
-            Self::NotFollowedBy(node, lookahead) => {
+            | Self::NotFollowedBy(node, lookahead) => {
                 node.accept_visitor(visitor);
                 lookahead.accept_visitor(visitor);
             }
 
-            Self::NoneOf(_)
+            | Self::NoneOf(_)
             | Self::CharRange(_, _)
             | Self::Literal(_)
             | Self::ScannerDefinition(_) => {}
@@ -102,14 +102,14 @@ pub enum KeywordScannerDefinitionNode {
 impl From<KeywordScannerDefinitionNode> for ScannerDefinitionNode {
     fn from(val: KeywordScannerDefinitionNode) -> Self {
         match val {
-            KeywordScannerDefinitionNode::Optional(node) => {
+            | KeywordScannerDefinitionNode::Optional(node) => {
                 ScannerDefinitionNode::Optional(Box::new((*node).into()))
             }
-            KeywordScannerDefinitionNode::Sequence(nodes) => {
+            | KeywordScannerDefinitionNode::Sequence(nodes) => {
                 ScannerDefinitionNode::Sequence(nodes.into_iter().map(Into::into).collect())
             }
-            KeywordScannerDefinitionNode::Atom(string) => ScannerDefinitionNode::Literal(string),
-            KeywordScannerDefinitionNode::Choice(nodes) => {
+            | KeywordScannerDefinitionNode::Atom(string) => ScannerDefinitionNode::Literal(string),
+            | KeywordScannerDefinitionNode::Choice(nodes) => {
                 ScannerDefinitionNode::Choice(nodes.into_iter().map(Into::into).collect())
             }
         }
@@ -128,11 +128,11 @@ impl KeywordScannerAtomic {
     /// Wraps the keyword scanner definition if it is a single atom value.
     pub fn try_from_def(def: &KeywordScannerDefinitionRef) -> Option<Self> {
         match def.definitions() {
-            [KeywordScannerDefinitionVersionedNode {
+            | [KeywordScannerDefinitionVersionedNode {
                 value: KeywordScannerDefinitionNode::Atom(_),
                 ..
             }] => Some(Self(def.clone())),
-            _ => None,
+            | _ => None,
         }
     }
 }
@@ -152,11 +152,11 @@ impl KeywordScannerAtomic {
     }
     pub fn value(&self) -> &str {
         match self.definition() {
-            KeywordScannerDefinitionVersionedNode {
+            | KeywordScannerDefinitionVersionedNode {
                 value: KeywordScannerDefinitionNode::Atom(atom),
                 ..
             } => atom,
-            _ => unreachable!("KeywordScannerAtomic should have a single atom value"),
+            | _ => unreachable!("KeywordScannerAtomic should have a single atom value"),
         }
     }
 }

@@ -26,10 +26,10 @@ pub fn select_sequence(
     let mut selector = Selector::new(node, env);
 
     let result = match node.kind() {
-        RuleKind::SourceUnit => selector.source_unit()?,
-        RuleKind::Tree => selector.tree()?,
-        RuleKind::TreeNode => selector.tree_node()?,
-        _ => {
+        | RuleKind::SourceUnit => selector.source_unit()?,
+        | RuleKind::Tree => selector.tree()?,
+        | RuleKind::TreeNode => selector.tree_node()?,
+        | _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
     };
@@ -79,10 +79,10 @@ pub fn select_choice(
     let mut selector = Selector::new(node, env);
 
     let result = match node.kind() {
-        RuleKind::SourceUnitMember => selector.source_unit_member()?,
-        RuleKind::TreeNodeChild => selector.tree_node_child()?,
-        RuleKind::Literal => selector.literal()?,
-        _ => {
+        | RuleKind::SourceUnitMember => selector.source_unit_member()?,
+        | RuleKind::TreeNodeChild => selector.tree_node_child()?,
+        | RuleKind::Literal => selector.literal()?,
+        | _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
     };
@@ -134,9 +134,9 @@ pub fn select_repeated(
     let mut selector = Selector::new(node, env);
 
     let result = match node.kind() {
-        RuleKind::SourceUnitMembers => selector.source_unit_members()?,
-        RuleKind::TreeNodeChildren => selector.tree_node_children()?,
-        _ => {
+        | RuleKind::SourceUnitMembers => selector.source_unit_members()?,
+        | RuleKind::TreeNodeChildren => selector.tree_node_children()?,
+        | _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
     };
@@ -189,8 +189,8 @@ pub fn select_separated(
     let mut selector = Selector::new(node, env);
 
     let result = match node.kind() {
-        RuleKind::SeparatedIdentifiers => selector.separated_identifiers()?,
-        _ => {
+        | RuleKind::SeparatedIdentifiers => selector.separated_identifiers()?,
+        | _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
     };
@@ -239,15 +239,15 @@ impl Selector {
 
     fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<JsObject> {
         match self.try_select(filter)? {
-            Some(node) => Ok(node),
-            None => Error::MissingChild(self.index).into(),
+            | Some(node) => Ok(node),
+            | None => Error::MissingChild(self.index).into(),
         }
     }
 
     fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<JsObject>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
-                RustNamedNode {
+                | RustNamedNode {
                     name: _,
                     node: RustNode::Rule(rule),
                 } if rule.kind.is_trivia() => {
@@ -255,17 +255,17 @@ impl Selector {
                     self.index += 1;
                     continue;
                 }
-                RustNamedNode {
+                | RustNamedNode {
                     name: _,
                     node: RustNode::Token(token),
                 } if matches!(token.kind, TokenKind::SKIPPED) => {
                     return Error::SkippedToken(self.index).into();
                 }
-                node if filter(node) => {
+                | node if filter(node) => {
                     self.index += 1;
                     return Ok(Some(node.to_js(&self.env)));
                 }
-                _ => {
+                | _ => {
                     break;
                 }
             }

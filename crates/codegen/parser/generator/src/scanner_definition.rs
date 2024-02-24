@@ -35,52 +35,52 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
     // Returns true if this is nothing but a set of literals
     fn literals(&self, accum: &mut BTreeSet<String>) -> bool {
         match self {
-            ScannerDefinitionNode::Versioned(body, _) => body.literals(accum),
-            ScannerDefinitionNode::Literal(string) => {
+            | ScannerDefinitionNode::Versioned(body, _) => body.literals(accum),
+            | ScannerDefinitionNode::Literal(string) => {
                 accum.insert(string.clone());
                 true
             }
-            ScannerDefinitionNode::Choice(nodes) => nodes
+            | ScannerDefinitionNode::Choice(nodes) => nodes
                 .iter()
                 .fold(true, |result, node| node.literals(accum) && result),
-            _ => false,
+            | _ => false,
         }
     }
 
     fn to_scanner_code(&self) -> TokenStream {
         match self {
-            ScannerDefinitionNode::Versioned(body, version_quality_ranges) => {
+            | ScannerDefinitionNode::Versioned(body, version_quality_ranges) => {
                 let body = body.to_scanner_code();
                 version_quality_ranges.wrap_code(body, Some(quote! { false }))
             }
 
-            ScannerDefinitionNode::Optional(node) => {
+            | ScannerDefinitionNode::Optional(node) => {
                 let scanner = node.to_scanner_code();
                 quote! { scan_optional!(input, #scanner) }
             }
 
-            ScannerDefinitionNode::ZeroOrMore(node) => {
+            | ScannerDefinitionNode::ZeroOrMore(node) => {
                 let scanner = node.to_scanner_code();
                 quote! { scan_zero_or_more!(input, #scanner) }
             }
 
-            ScannerDefinitionNode::OneOrMore(node) => {
+            | ScannerDefinitionNode::OneOrMore(node) => {
                 let scanner = node.to_scanner_code();
                 quote! { scan_one_or_more!(input, #scanner) }
             }
 
-            ScannerDefinitionNode::NoneOf(string) => {
+            | ScannerDefinitionNode::NoneOf(string) => {
                 let chars = string.chars();
                 quote! { scan_none_of!(input, #(#chars),*) }
             }
 
-            ScannerDefinitionNode::NotFollowedBy(node, lookahead) => {
+            | ScannerDefinitionNode::NotFollowedBy(node, lookahead) => {
                 let scanner = node.to_scanner_code();
                 let negative_lookahead_scanner = lookahead.to_scanner_code();
                 quote! { scan_not_followed_by!(input, #scanner, #negative_lookahead_scanner) }
             }
 
-            ScannerDefinitionNode::Sequence(nodes) => {
+            | ScannerDefinitionNode::Sequence(nodes) => {
                 let scanners = nodes
                     .iter()
                     .map(|e| e.to_scanner_code())
@@ -88,7 +88,7 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                 quote! { scan_sequence!(#(#scanners),*) }
             }
 
-            ScannerDefinitionNode::Choice(nodes) => {
+            | ScannerDefinitionNode::Choice(nodes) => {
                 let mut scanners = vec![];
                 let mut non_literal_scanners = vec![];
                 for node in nodes {
@@ -112,16 +112,16 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                 quote! { scan_choice!(input, #(#scanners),*) }
             }
 
-            ScannerDefinitionNode::CharRange(from, to) => {
+            | ScannerDefinitionNode::CharRange(from, to) => {
                 quote! { scan_char_range!(input, #from..=#to) }
             }
 
-            ScannerDefinitionNode::Literal(string) => {
+            | ScannerDefinitionNode::Literal(string) => {
                 let chars = string.chars();
                 quote! { scan_chars!(input, #(#chars),*) }
             }
 
-            ScannerDefinitionNode::ScannerDefinition(scanner_definition) => {
+            | ScannerDefinitionNode::ScannerDefinition(scanner_definition) => {
                 let name = scanner_definition.name();
                 let snake_case = name.to_snake_case();
                 let scanner_function_name = format_ident!("{snake_case}");

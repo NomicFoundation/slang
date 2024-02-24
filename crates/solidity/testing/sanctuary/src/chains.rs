@@ -33,15 +33,15 @@ impl Chain {
 
     pub fn network_name(&self) -> &str {
         match self {
-            Chain::Arbitrum { network } => network.as_ref(),
-            Chain::Avalanche { network } => network.as_ref(),
-            Chain::Bsc { network } => network.as_ref(),
-            Chain::Celo { network } => network.as_ref(),
-            Chain::Ethereum { network } => network.as_ref(),
-            Chain::Fantom { network } => network.as_ref(),
-            Chain::Optimism { network } => network.as_ref(),
-            Chain::Polygon { network } => network.as_ref(),
-            Chain::Tron { network } => network.as_ref(),
+            | Chain::Arbitrum { network } => network.as_ref(),
+            | Chain::Avalanche { network } => network.as_ref(),
+            | Chain::Bsc { network } => network.as_ref(),
+            | Chain::Celo { network } => network.as_ref(),
+            | Chain::Ethereum { network } => network.as_ref(),
+            | Chain::Fantom { network } => network.as_ref(),
+            | Chain::Optimism { network } => network.as_ref(),
+            | Chain::Polygon { network } => network.as_ref(),
+            | Chain::Tron { network } => network.as_ref(),
         }
     }
 }

@@ -65,8 +65,8 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
         kind: &DefinitionKind,
     ) -> std::fmt::Result {
         let separator = match kind {
-            DefinitionKind::Sequence => ' ',
-            DefinitionKind::Choice => '|',
+            | DefinitionKind::Sequence => ' ',
+            | DefinitionKind::Choice => '|',
         };
 
         for (index, value) in values.iter().enumerate() {
@@ -104,7 +104,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
 
     fn serialize_expr(&mut self, parent: &Expression) -> std::fmt::Result {
         match parent {
-            Expression::Sequence { expressions } => {
+            | Expression::Sequence { expressions } => {
                 self.serialize_child_expr(parent, &expressions[0])?;
 
                 for expression in expressions.iter().skip(1) {
@@ -112,7 +112,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                     self.serialize_child_expr(parent, expression)?;
                 }
             }
-            Expression::Choice { expressions } => {
+            | Expression::Choice { expressions } => {
                 self.serialize_child_expr(parent, &expressions[0])?;
 
                 for expression in expressions.iter().skip(1) {
@@ -120,23 +120,23 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                     self.serialize_child_expr(parent, expression)?;
                 }
             }
-            Expression::Optional { expression } => {
+            | Expression::Optional { expression } => {
                 self.serialize_child_expr(parent, expression)?;
                 self.serialize_punctuation("?")?;
             }
-            Expression::ZeroOrMore { expression } => {
+            | Expression::ZeroOrMore { expression } => {
                 self.serialize_child_expr(parent, expression)?;
                 self.serialize_punctuation("*")?;
             }
-            Expression::OneOrMore { expression } => {
+            | Expression::OneOrMore { expression } => {
                 self.serialize_child_expr(parent, expression)?;
                 self.serialize_punctuation("+")?;
             }
-            Expression::Not { expression } => {
+            | Expression::Not { expression } => {
                 self.serialize_punctuation("!")?;
                 self.serialize_child_expr(parent, expression)?;
             }
-            Expression::Range {
+            | Expression::Range {
                 inclusive_start,
                 inclusive_end,
             } => {
@@ -144,10 +144,10 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                 self.serialize_punctuation("…")?;
                 self.serialize_child_expr(parent, inclusive_end)?;
             }
-            Expression::Atom { atom } => {
+            | Expression::Atom { atom } => {
                 self.serialize_string_literal(atom)?;
             }
-            Expression::Reference { reference } => {
+            | Expression::Reference { reference } => {
                 self.serialize_identifier(reference)?;
             }
         };
@@ -200,12 +200,12 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
         let formatted: String = value
             .chars()
             .map(|c| match c {
-                c if c == '\\' || c == delimiter => format!("\\{c}"),
-                c if c == ' ' || c.is_ascii_graphic() => c.to_string(),
-                '\t' => "\\t".to_string(),
-                '\r' => "\\r".to_string(),
-                '\n' => "\\n".to_string(),
-                _ => {
+                | c if c == '\\' || c == delimiter => format!("\\{c}"),
+                | c if c == ' ' || c.is_ascii_graphic() => c.to_string(),
+                | '\t' => "\\t".to_string(),
+                | '\r' => "\\r".to_string(),
+                | '\n' => "\\n".to_string(),
+                | _ => {
                     panic!(
                         "Unexpected character in string literal: '{c}'",
                         c = c.escape_unicode()

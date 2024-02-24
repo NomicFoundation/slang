@@ -174,8 +174,8 @@ fn extract_output(command: &Command, output: Output) -> Result<String> {
         .with_context(|| format!("Failed to read stdout: {command}"))?;
 
     match check_status(command, output.status) {
-        Ok(()) => Ok(stdout),
-        Err(mut error) => {
+        | Ok(()) => Ok(stdout),
+        | Err(mut error) => {
             if !stdout.is_empty() {
                 error = error.context(format!("stdout:\n{stdout}"));
             }
@@ -199,12 +199,12 @@ fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
         bail!(
             "Command failed with code '{code}' and signal '{signal}':\n{command}",
             code = match status.code() {
-                Some(code) => code.to_string(),
-                None => "UNKNOWN".to_owned(),
+                | Some(code) => code.to_string(),
+                | None => "UNKNOWN".to_owned(),
             },
             signal = match status.signal() {
-                Some(signal) => signal.to_string(),
-                None => "UNKNOWN".to_owned(),
+                | Some(signal) => signal.to_string(),
+                | None => "UNKNOWN".to_owned(),
             },
         );
     }

@@ -10,8 +10,8 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
     let unformatted = format!("{header}\n\n{contents}");
 
     match run_formatter(file_path, &unformatted) {
-        Ok(formatted) => Ok(formatted),
-        Err(formatter_error) => {
+        | Ok(formatted) => Ok(formatted),
+        | Err(formatter_error) => {
             // Still write the unformatted version to disk, to be able to debug what went wrong:
             file_path.write_string(unformatted)?;
 
@@ -25,12 +25,12 @@ fn generate_header(file_path: &Path) -> String {
         "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path) {
-        "ebnf" => format!("(* {warning_line} *)"),
-        "json" => String::new(),
-        "html" | "md" => format!("<!-- {warning_line} -->"),
-        "js" | "rs" | "ts" => format!("// {warning_line}"),
-        "yml" => format!("# {warning_line}"),
-        ext => panic!("Unsupported extension to generate a header for: {ext}"),
+        | "ebnf" => format!("(* {warning_line} *)"),
+        | "json" => String::new(),
+        | "html" | "md" => format!("<!-- {warning_line} -->"),
+        | "js" | "rs" | "ts" => format!("// {warning_line}"),
+        | "yml" => format!("# {warning_line}"),
+        | ext => panic!("Unsupported extension to generate a header for: {ext}"),
     };
 }
 
@@ -46,17 +46,17 @@ fn get_extension(file_path: &Path) -> &str {
 
 fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
     return match get_extension(file_path) {
-        "js" | "json" | "ts" => run_prettier(file_path, contents),
-        "rs" => run_rustfmt(contents),
-        "html" | "md" | "yml" => {
+        | "js" | "json" | "ts" => run_prettier(file_path, contents),
+        | "rs" => run_rustfmt(contents),
+        | "html" | "md" | "yml" => {
             // We already generate formatted content for these, so no need to run expensive formatting.
             Ok(contents.to_owned())
         }
-        "ebnf" => {
+        | "ebnf" => {
             // No formatters available for these (yet).
             Ok(contents.to_owned())
         }
-        ext => {
+        | ext => {
             panic!("Unsupported extension to format: {ext}");
         }
     };

@@ -66,16 +66,16 @@ impl Node {
 
     pub fn text_len(&self) -> TextIndex {
         match self {
-            Self::Rule(node) => node.text_len,
-            Self::Token(node) => (&node.text).into(),
+            | Self::Rule(node) => node.text_len,
+            | Self::Token(node) => (&node.text).into(),
         }
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
     pub fn children(&self) -> &[NamedNode] {
         match self {
-            Self::Rule(node) => &node.children,
-            Self::Token(_) => &[],
+            | Self::Rule(node) => &node.children,
+            | Self::Token(_) => &[],
         }
     }
 
@@ -87,15 +87,15 @@ impl Node {
     /// Reconstructs the original source code from the parse tree.
     pub fn unparse(self) -> String {
         match self {
-            Self::Rule(rule) => rule.unparse(),
-            Self::Token(token) => token.text.clone(),
+            | Self::Rule(rule) => rule.unparse(),
+            | Self::Token(token) => token.text.clone(),
         }
     }
 
     pub fn into_rule(self) -> Option<Rc<RuleNode>> {
         match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
+            | Self::Rule(rule) => Some(rule),
+            | Self::Token(..) => None,
         }
     }
 
@@ -105,8 +105,8 @@ impl Node {
 
     pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
         match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
+            | Self::Rule(rule) => Some(rule),
+            | Self::Token(..) => None,
         }
     }
 
@@ -128,8 +128,8 @@ impl Node {
 
     pub fn into_token(self) -> Option<Rc<TokenNode>> {
         match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            | Self::Token(token) => Some(token),
+            | Self::Rule(..) => None,
         }
     }
 
@@ -139,8 +139,8 @@ impl Node {
 
     pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
         match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            | Self::Token(token) => Some(token),
+            | Self::Rule(..) => None,
         }
     }
 

@@ -70,8 +70,8 @@ impl QueryResultIterator {
     #[napi(catch_unwind)]
     pub fn next(&mut self, env: Env) -> napi::Result<Option<QueryResult>> {
         match self.0.next() {
-            Some(result) => Ok(Some(QueryResult::new(env, result)?)),
-            None => Ok(None),
+            | Some(result) => Ok(Some(QueryResult::new(env, result)?)),
+            | None => Ok(None),
         }
     }
 }

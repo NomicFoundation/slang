@@ -26,21 +26,21 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
 
                 // Simplify the emitted code if we trivially know that reserved or enabled is true
                 match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
-                    ("true", _) => quote! {
+                    | ("true", _) => quote! {
                         if #scanner {
                             KeywordScan::Reserved(#token_kind)
                         } else {
                             KeywordScan::Absent
                         }
                     },
-                    ("false", _) => quote! {
+                    | ("false", _) => quote! {
                         if #enabled_cond && #scanner {
                             KeywordScan::Present(#token_kind)
                         } else {
                             KeywordScan::Absent
                         }
                     },
-                    (_, "true") => quote! {
+                    | (_, "true") => quote! {
                         if #scanner {
                             if #reserved_cond {
                                 KeywordScan::Reserved(#token_kind)
@@ -51,14 +51,14 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                             KeywordScan::Absent
                         }
                     },
-                    (_, "false") => quote! {
+                    | (_, "false") => quote! {
                         if #reserved_cond && #scanner {
                             KeywordScan::Reserved(#token_kind)
                         } else {
                             KeywordScan::Absent
                         }
                     },
-                    _ => quote! {
+                    | _ => quote! {
                         if (#reserved_cond || #enabled_cond) && #scanner {
                             if #reserved_cond {
                                 KeywordScan::Reserved(#token_kind)
@@ -74,8 +74,8 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
             .collect();
 
         match &kw_scanners[..] {
-            [] => quote! { KeywordScan::Absent },
-            multiple => quote! { scan_keyword_choice!(input, ident, #(#multiple),*) },
+            | [] => quote! { KeywordScan::Absent },
+            | multiple => quote! { scan_keyword_choice!(input, ident, #(#multiple),*) },
         }
     }
 }

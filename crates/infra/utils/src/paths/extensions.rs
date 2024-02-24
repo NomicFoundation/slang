@@ -50,11 +50,11 @@ impl PathExtensions for Path {
             .collect();
 
         let generated_index = match generated_indexes[..] {
-            [] => {
+            | [] => {
                 bail!("Generated file path should have a 'generated' ancestor dir: {self:?}")
             }
-            [single] => single.0,
-            _ => bail!("Multiple 'generated' dirs in path: {self:?}"),
+            | [single] => single.0,
+            | _ => bail!("Multiple 'generated' dirs in path: {self:?}"),
         };
 
         let generated_dir = self.iter().take(generated_index + 1).collect();

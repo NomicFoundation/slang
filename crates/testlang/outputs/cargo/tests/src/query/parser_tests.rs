@@ -54,8 +54,8 @@ fn test_zero_or_more_canonicalisation() {
 fn test_parsing_error() {
     let result = Query::parse(r#"@root [_ ..."#);
     match result {
-        Ok(_) => panic!("Expected error"),
-        Err(e) => assert_eq!(
+        | Ok(_) => panic!("Expected error"),
+        | Err(e) => assert_eq!(
             e.to_string(),
             "Parse error:\nexpected '(' at: [_ ...\nAlt at: [_ ...\n"
         ),

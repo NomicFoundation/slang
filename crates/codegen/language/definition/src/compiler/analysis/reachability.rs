@@ -54,17 +54,17 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
 
 fn collect_trivia<'l>(parser: &'l SpannedTriviaParser, acc: &mut Vec<&'l Identifier>) {
     match parser {
-        SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
+        | SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
             for parser in parsers {
                 collect_trivia(parser, acc);
             }
         }
-        SpannedTriviaParser::OneOrMore { parser }
+        | SpannedTriviaParser::OneOrMore { parser }
         | SpannedTriviaParser::ZeroOrMore { parser }
         | SpannedTriviaParser::Optional { parser } => {
             collect_trivia(parser, acc);
         }
-        SpannedTriviaParser::Trivia { reference } => {
+        | SpannedTriviaParser::Trivia { reference } => {
             acc.push(reference);
         }
     };

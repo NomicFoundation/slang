@@ -42,8 +42,8 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let output = match last_output {
             // Skip this version if it produces the same output.
             // Note: comparing objects cheaply before expensive serialization.
-            Some(ref last) if last == &output => continue,
-            _ => &*last_output.insert(output),
+            | Some(ref last) if last == &output => continue,
+            | _ => &*last_output.insert(output),
         };
 
         let errors = output

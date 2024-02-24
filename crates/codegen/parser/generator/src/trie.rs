@@ -99,15 +99,15 @@ trait VersionWrapped {
 impl VersionWrapped for ScannerDefinitionNode {
     fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
         match self {
-            ScannerDefinitionNode::Versioned(_, version_quality_ranges) => {
+            | ScannerDefinitionNode::Versioned(_, version_quality_ranges) => {
                 version_quality_ranges.clone()
             }
 
-            ScannerDefinitionNode::Optional(node)
+            | ScannerDefinitionNode::Optional(node)
             | ScannerDefinitionNode::ZeroOrMore(node)
             | ScannerDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
 
-            _ => vec![],
+            | _ => vec![],
         }
     }
 }
@@ -150,37 +150,37 @@ impl Payload for KeywordScannerAtomic {
 
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
-            ("true", _) => quote!(KeywordScan::Reserved(TokenKind::#kind)),
-            ("false", "true") => quote!(KeywordScan::Present(TokenKind::#kind)),
-            ("false", _) => quote! {
+            | ("true", _) => quote!(KeywordScan::Reserved(TokenKind::#kind)),
+            | ("false", "true") => quote!(KeywordScan::Present(TokenKind::#kind)),
+            | ("false", _) => quote! {
                 if #enabled_cond {
                     KeywordScan::Present(TokenKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
-            (_, "false") => quote! {
+            | (_, "false") => quote! {
                 if #reserved_cond {
                     KeywordScan::Reserved(TokenKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
-            (_, "true") => quote! {
+            | (_, "true") => quote! {
                 if #reserved_cond {
                     KeywordScan::Reserved(TokenKind::#kind)
                 } else {
                     KeywordScan::Present(TokenKind::#kind)
                 }
             },
-            (reserved, enabled) if reserved == enabled => quote! {
+            | (reserved, enabled) if reserved == enabled => quote! {
                 if #reserved_cond {
                     KeywordScan::Reserved(TokenKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
-            _ => quote! {
+            | _ => quote! {
                 if #reserved_cond {
                     KeywordScan::Reserved(TokenKind::#kind)
                 } else if #enabled_cond {
