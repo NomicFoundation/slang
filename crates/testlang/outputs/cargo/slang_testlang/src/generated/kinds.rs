@@ -18,8 +18,12 @@ use napi_derive::napi;
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
+    AdditionExpression,
+    Expression,
     LeadingTrivia,
     Literal,
+    MemberAccessExpression,
+    NegationExpression,
     SeparatedIdentifiers,
     SourceUnit,
     SourceUnitMember,
@@ -68,10 +72,13 @@ pub enum FieldName {
     // Generated
     CloseBracket,
     Keyword,
+    Member,
     Members,
     Name,
     Node,
     OpenBracket,
+    Operator,
+    Period,
     Semicolon,
 }
 
@@ -91,6 +98,7 @@ pub enum FieldName {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
+    Bang,
     CloseBracket,
     DelimitedIdentifier,
     EndOfLine,
@@ -98,6 +106,7 @@ pub enum TokenKind {
     MultiLineComment,
     OpenBracket,
     Period,
+    Plus,
     Semicolon,
     SingleLineComment,
     StringLiteral,

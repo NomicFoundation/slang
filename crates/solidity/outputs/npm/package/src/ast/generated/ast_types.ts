@@ -182,11 +182,11 @@ export class VersionPragmaRangeExpression {
 
 export class VersionPragmaPrefixExpression {
   private readonly fetch = once(() => {
-    const [$operand, $operator] = ast_internal.selectSequence(this.cst);
+    const [$operator, $operand] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new VersionPragmaExpression($operand as RuleNode),
       operator: $operator as TokenNode,
+      operand: new VersionPragmaExpression($operand as RuleNode),
     };
   });
 
@@ -194,12 +194,12 @@ export class VersionPragmaPrefixExpression {
     assertKind(this.cst.kind, RuleKind.VersionPragmaPrefixExpression);
   }
 
-  public get operand(): VersionPragmaExpression {
-    return this.fetch().operand;
-  }
-
   public get operator(): TokenNode {
     return this.fetch().operator;
+  }
+
+  public get operand(): VersionPragmaExpression {
+    return this.fetch().operand;
   }
 }
 
@@ -1465,18 +1465,22 @@ export class ErrorParameter {
 
 export class ArrayTypeName {
   private readonly fetch = once(() => {
-    const [$openBracket, $index, $closeBracket, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operand, $openBracket, $index, $closeBracket] = ast_internal.selectSequence(this.cst);
 
     return {
+      operand: new TypeName($operand as RuleNode),
       openBracket: $openBracket as TokenNode,
       index: $index === null ? undefined : new Expression($index as RuleNode),
       closeBracket: $closeBracket as TokenNode,
-      operand: new TypeName($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.ArrayTypeName);
+  }
+
+  public get operand(): TypeName {
+    return this.fetch().operand;
   }
 
   public get openBracket(): TokenNode {
@@ -1489,10 +1493,6 @@ export class ArrayTypeName {
 
   public get closeBracket(): TokenNode {
     return this.fetch().closeBracket;
-  }
-
-  public get operand(): TypeName {
-    return this.fetch().operand;
   }
 }
 
@@ -2468,19 +2468,23 @@ export class AssignmentExpression {
 
 export class ConditionalExpression {
   private readonly fetch = once(() => {
-    const [$questionMark, $trueExpression, $colon, $falseExpression, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operand, $questionMark, $trueExpression, $colon, $falseExpression] = ast_internal.selectSequence(this.cst);
 
     return {
+      operand: new Expression($operand as RuleNode),
       questionMark: $questionMark as TokenNode,
       trueExpression: new Expression($trueExpression as RuleNode),
       colon: $colon as TokenNode,
       falseExpression: new Expression($falseExpression as RuleNode),
-      operand: new Expression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.ConditionalExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
   }
 
   public get questionMark(): TokenNode {
@@ -2497,10 +2501,6 @@ export class ConditionalExpression {
 
   public get falseExpression(): Expression {
     return this.fetch().falseExpression;
-  }
-
-  public get operand(): Expression {
-    return this.fetch().operand;
   }
 }
 
@@ -2814,29 +2814,6 @@ export class ExponentiationExpression {
 
 export class PostfixExpression {
   private readonly fetch = once(() => {
-    const [$operator, $operand] = ast_internal.selectSequence(this.cst);
-
-    return {
-      operator: $operator as TokenNode,
-      operand: new Expression($operand as RuleNode),
-    };
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.PostfixExpression);
-  }
-
-  public get operator(): TokenNode {
-    return this.fetch().operator;
-  }
-
-  public get operand(): Expression {
-    return this.fetch().operand;
-  }
-}
-
-export class PrefixExpression {
-  private readonly fetch = once(() => {
     const [$operand, $operator] = ast_internal.selectSequence(this.cst);
 
     return {
@@ -2846,7 +2823,7 @@ export class PrefixExpression {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.PrefixExpression);
+    assertKind(this.cst.kind, RuleKind.PostfixExpression);
   }
 
   public get operand(): Expression {
@@ -2858,19 +2835,46 @@ export class PrefixExpression {
   }
 }
 
-export class FunctionCallExpression {
+export class PrefixExpression {
   private readonly fetch = once(() => {
-    const [$options, $arguments, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operator, $operand] = ast_internal.selectSequence(this.cst);
 
     return {
-      options: $options === null ? undefined : new FunctionCallOptions($options as RuleNode),
-      arguments: new ArgumentsDeclaration($arguments as RuleNode),
+      operator: $operator as TokenNode,
       operand: new Expression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.PrefixExpression);
+  }
+
+  public get operator(): TokenNode {
+    return this.fetch().operator;
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
+  }
+}
+
+export class FunctionCallExpression {
+  private readonly fetch = once(() => {
+    const [$operand, $options, $arguments] = ast_internal.selectSequence(this.cst);
+
+    return {
+      operand: new Expression($operand as RuleNode),
+      options: $options === null ? undefined : new FunctionCallOptions($options as RuleNode),
+      arguments: new ArgumentsDeclaration($arguments as RuleNode),
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.FunctionCallExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
   }
 
   public get options(): FunctionCallOptions | undefined {
@@ -2880,25 +2884,25 @@ export class FunctionCallExpression {
   public get arguments(): ArgumentsDeclaration {
     return this.fetch().arguments;
   }
-
-  public get operand(): Expression {
-    return this.fetch().operand;
-  }
 }
 
 export class MemberAccessExpression {
   private readonly fetch = once(() => {
-    const [$period, $member, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operand, $period, $member] = ast_internal.selectSequence(this.cst);
 
     return {
+      operand: new Expression($operand as RuleNode),
       period: $period as TokenNode,
       member: new MemberAccess($member as RuleNode),
-      operand: new Expression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.MemberAccessExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
   }
 
   public get period(): TokenNode {
@@ -2908,27 +2912,27 @@ export class MemberAccessExpression {
   public get member(): MemberAccess {
     return this.fetch().member;
   }
-
-  public get operand(): Expression {
-    return this.fetch().operand;
-  }
 }
 
 export class IndexAccessExpression {
   private readonly fetch = once(() => {
-    const [$openBracket, $start, $end, $closeBracket, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operand, $openBracket, $start, $end, $closeBracket] = ast_internal.selectSequence(this.cst);
 
     return {
+      operand: new Expression($operand as RuleNode),
       openBracket: $openBracket as TokenNode,
       start: $start === null ? undefined : new Expression($start as RuleNode),
       end: $end === null ? undefined : new IndexAccessEnd($end as RuleNode),
       closeBracket: $closeBracket as TokenNode,
-      operand: new Expression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.IndexAccessExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
   }
 
   public get openBracket(): TokenNode {
@@ -2945,10 +2949,6 @@ export class IndexAccessExpression {
 
   public get closeBracket(): TokenNode {
     return this.fetch().closeBracket;
-  }
-
-  public get operand(): Expression {
-    return this.fetch().operand;
   }
 }
 
@@ -3683,18 +3683,22 @@ export class YulLabel {
 
 export class YulFunctionCallExpression {
   private readonly fetch = once(() => {
-    const [$openParen, $arguments, $closeParen, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operand, $openParen, $arguments, $closeParen] = ast_internal.selectSequence(this.cst);
 
     return {
+      operand: new YulExpression($operand as RuleNode),
       openParen: $openParen as TokenNode,
       arguments: $arguments === null ? undefined : new YulArguments($arguments as RuleNode),
       closeParen: $closeParen as TokenNode,
-      operand: new YulExpression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.YulFunctionCallExpression);
+  }
+
+  public get operand(): YulExpression {
+    return this.fetch().operand;
   }
 
   public get openParen(): TokenNode {
@@ -3707,10 +3711,6 @@ export class YulFunctionCallExpression {
 
   public get closeParen(): TokenNode {
     return this.fetch().closeParen;
-  }
-
-  public get operand(): YulExpression {
-    return this.fetch().operand;
   }
 }
 

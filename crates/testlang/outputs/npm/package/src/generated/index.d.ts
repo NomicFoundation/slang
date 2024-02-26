@@ -10,8 +10,12 @@
 
 export namespace kinds {
   export enum RuleKind {
+    AdditionExpression = "AdditionExpression",
+    Expression = "Expression",
     LeadingTrivia = "LeadingTrivia",
     Literal = "Literal",
+    MemberAccessExpression = "MemberAccessExpression",
+    NegationExpression = "NegationExpression",
     SeparatedIdentifiers = "SeparatedIdentifiers",
     SourceUnit = "SourceUnit",
     SourceUnitMember = "SourceUnitMember",
@@ -31,14 +35,18 @@ export namespace kinds {
     RightOperand = "RightOperand",
     CloseBracket = "CloseBracket",
     Keyword = "Keyword",
+    Member = "Member",
     Members = "Members",
     Name = "Name",
     Node = "Node",
     OpenBracket = "OpenBracket",
+    Operator = "Operator",
+    Period = "Period",
     Semicolon = "Semicolon",
   }
   export enum TokenKind {
     SKIPPED = "SKIPPED",
+    Bang = "Bang",
     CloseBracket = "CloseBracket",
     DelimitedIdentifier = "DelimitedIdentifier",
     EndOfLine = "EndOfLine",
@@ -46,6 +54,7 @@ export namespace kinds {
     MultiLineComment = "MultiLineComment",
     OpenBracket = "OpenBracket",
     Period = "Period",
+    Plus = "Plus",
     Semicolon = "Semicolon",
     SingleLineComment = "SingleLineComment",
     StringLiteral = "StringLiteral",

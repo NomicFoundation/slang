@@ -31,6 +31,7 @@ codegen_language_macros::compile!(Language(
                         name = SourceUnitMember,
                         variants = [
                             EnumVariant(reference = Tree),
+                            EnumVariant(reference = Expression),
                             EnumVariant(reference = SeparatedIdentifiers),
                             EnumVariant(reference = Literal)
                         ]
@@ -80,11 +81,45 @@ codegen_language_macros::compile!(Language(
             ),
             Topic(
                 title = "DummyToAvoidWarnings",
-                items = [Separated(
-                    name = SeparatedIdentifiers,
-                    reference = Identifier,
-                    separator = Period
-                )]
+                items = [
+                    Precedence(
+                        name = Expression,
+                        precedence_expressions = [
+                            PrecedenceExpression(
+                                name = AdditionExpression,
+                                operators = [PrecedenceOperator(
+                                    model = BinaryLeftAssociative,
+                                    fields = (operator = Required(Plus))
+                                )]
+                            ),
+                            PrecedenceExpression(
+                                name = NegationExpression,
+                                operators = [PrecedenceOperator(
+                                    model = Prefix,
+                                    fields = (operator = Required(Bang))
+                                )]
+                            ),
+                            PrecedenceExpression(
+                                name = MemberAccessExpression,
+                                operators = [PrecedenceOperator(
+                                    model = Postfix,
+                                    fields =
+                                        (period = Required(Period), member = Required(Identifier))
+                                )]
+                            )
+                        ],
+                        primary_expressions = [
+                            PrimaryExpression(reference = StringLiteral),
+                            PrimaryExpression(reference = Identifier)
+                        ]
+                    ),
+                    Separated(
+                        name = SeparatedIdentifiers,
+                        reference = Identifier,
+                        separator = Period,
+                        enabled = From("1.0.0")
+                    )
+                ]
             ),
             Topic(
                 title = "Literals",
@@ -212,6 +247,10 @@ codegen_language_macros::compile!(Language(
                 title = "Punctuation",
                 items = [
                     Token(
+                        name = Bang,
+                        definitions = [TokenDefinition(scanner = Atom("!"))]
+                    ),
+                    Token(
                         name = OpenBracket,
                         definitions = [TokenDefinition(scanner = Atom("["))]
                     ),
@@ -222,6 +261,10 @@ codegen_language_macros::compile!(Language(
                     Token(
                         name = Period,
                         definitions = [TokenDefinition(scanner = Atom("."))]
+                    ),
+                    Token(
+                        name = Plus,
+                        definitions = [TokenDefinition(scanner = Atom("+"))]
                     ),
                     Token(
                         name = Semicolon,

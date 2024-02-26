@@ -221,10 +221,10 @@ impl AstModel {
 
         match operator.model {
             model::OperatorModel::Prefix => {
-                fields.insert(0, operand("operand"));
+                fields.push(operand("operand"));
             }
             model::OperatorModel::Postfix => {
-                fields.push(operand("operand"));
+                fields.insert(0, operand("operand"));
             }
             model::OperatorModel::BinaryLeftAssociative
             | model::OperatorModel::BinaryRightAssociative => {

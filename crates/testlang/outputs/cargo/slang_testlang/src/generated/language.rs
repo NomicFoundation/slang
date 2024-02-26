@@ -31,6 +31,7 @@ use crate::parser_support::{
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
+    pub(crate) version_is_at_least_1_0_0: bool,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -60,7 +61,10 @@ impl Language {
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
-            Ok(Self { version })
+            Ok(Self {
+                version_is_at_least_1_0_0: Version::new(1, 0, 0) <= version,
+                version,
+            })
         } else {
             Err(Error::UnsupportedLanguageVersion(version))
         }
@@ -73,6 +77,136 @@ impl Language {
     /********************************************
      *         Parser Functions
      ********************************************/
+
+    #[allow(unused_assignments, unused_parens)]
+    fn addition_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::AdditionExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                }
+                _ => ParserResult::no_match(vec![]),
+            },
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let parse_left_addition_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_binary_operator(
+                RuleKind::AdditionExpression,
+                1u8,
+                1u8 + 1,
+                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Plus)
+                    .with_name(FieldName::Operator),
+            )
+        };
+        let parse_prefix_negation_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_prefix_operator(
+                RuleKind::NegationExpression,
+                3u8,
+                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bang)
+                    .with_name(FieldName::Operator),
+            )
+        };
+        let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::MemberAccessExpression,
+                5u8,
+                SequenceHelper::run(|mut seq| {
+                    seq.elem_named(
+                        FieldName::Period,
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Period,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        FieldName::Member,
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Identifier,
+                        ),
+                    )?;
+                    seq.finish()
+                }),
+            )
+        };
+        let prefix_operator_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = parse_prefix_negation_expression(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        };
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::StringLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Identifier,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_name(FieldName::Variant)
+        };
+        let postfix_operator_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = parse_postfix_member_access_expression(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        };
+        let binary_operand_parser = |input: &mut ParserContext<'_>| {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
+                seq.elem(primary_expression_parser(input))?;
+                seq.elem(ZeroOrMoreHelper::run(input, postfix_operator_parser))?;
+                seq.finish()
+            })
+        };
+        let binary_operator_parser = |input: &mut ParserContext<'_>| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = parse_left_addition_expression(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        };
+        let linear_expression_parser = |input: &mut ParserContext<'_>| {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(binary_operand_parser(input))?;
+                seq.elem(ZeroOrMoreHelper::run(input, |input| {
+                    SequenceHelper::run(|mut seq| {
+                        seq.elem(binary_operator_parser(input))?;
+                        seq.elem(binary_operand_parser(input))?;
+                        seq.finish()
+                    })
+                }))?;
+                seq.finish()
+            })
+        };
+        PrecedenceHelper::reduce_precedence_result(
+            RuleKind::Expression,
+            linear_expression_parser(input),
+        )
+        .with_kind(RuleKind::Expression)
+    }
 
     #[allow(unused_assignments, unused_parens)]
     fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
@@ -113,20 +247,70 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn separated_identifiers(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                )
-                .with_name(FieldName::Item)
+    fn member_access_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::MemberAccessExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                }
+                _ => ParserResult::no_match(vec![]),
             },
-            TokenKind::Period,
-            FieldName::Separator,
-        )
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn negation_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::NegationExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                }
+                _ => ParserResult::no_match(vec![]),
+            },
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn separated_identifiers(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_1_0_0 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| {
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Identifier,
+                    )
+                    .with_name(FieldName::Item)
+                },
+                TokenKind::Period,
+                FieldName::Separator,
+            )
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::SeparatedIdentifiers)
     }
 
@@ -141,6 +325,8 @@ impl Language {
     fn source_unit_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.tree(input);
+            choice.consider(input, result)?;
+            let result = self.expression(input);
             choice.consider(input, result)?;
             let result = self.separated_identifiers(input);
             choice.consider(input, result)?;
@@ -457,8 +643,14 @@ impl Language {
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
+            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input, true),
+            RuleKind::Expression => Self::expression.parse(self, input, true),
             RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
             RuleKind::Literal => Self::literal.parse(self, input, true),
+            RuleKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input, true)
+            }
+            RuleKind::NegationExpression => Self::negation_expression.parse(self, input, true),
             RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input, true),
             RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
             RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
@@ -511,10 +703,15 @@ impl Lexer for Language {
 
         match LexCtx::value() {
             LexicalContext::Default => {
-                if let Some(kind) = if scan_chars!(input, '.') {
-                    Some(TokenKind::Period)
-                } else {
-                    None
+                if let Some(kind) = match input.next() {
+                    Some('!') => Some(TokenKind::Bang),
+                    Some('+') => Some(TokenKind::Plus),
+                    Some('.') => Some(TokenKind::Period),
+                    Some(_) => {
+                        input.undo();
+                        None
+                    }
+                    None => None,
                 } {
                     furthest_position = input.position();
                     longest_token = Some(kind);
