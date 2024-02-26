@@ -84,6 +84,20 @@ fn nested_expressions() -> Result<()> {
     )
 }
 
+#[test]
+fn string_literals() -> Result<()> {
+    test_aux(
+        &[
+            "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
+            "0.8.9",
+        ],
+        r#"
+            pragma solidity "0.8.4" - '0.8.6';
+        "#,
+        &["0.8.4", "0.8.5", "0.8.6"],
+    )
+}
+
 fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()> {
     let all_versions = all_versions
         .iter()

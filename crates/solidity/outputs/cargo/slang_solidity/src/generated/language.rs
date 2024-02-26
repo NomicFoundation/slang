@@ -5654,6 +5654,11 @@ impl Language {
         };
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                );
+                choice.consider(input, result)?;
                 let result = self.version_pragma_specifier(input);
                 choice.consider(input, result)?;
                 choice.finish(input)

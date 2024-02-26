@@ -1582,7 +1582,7 @@ impl Selector {
                 RuleKind::VersionPragmaRangeExpression,
                 RuleKind::VersionPragmaPrefixExpression,
                 RuleKind::VersionPragmaSpecifier,
-            ])
+            ]) || node.is_token_with_kind(TokenKind::AsciiStringLiteral)
         })
     }
 }

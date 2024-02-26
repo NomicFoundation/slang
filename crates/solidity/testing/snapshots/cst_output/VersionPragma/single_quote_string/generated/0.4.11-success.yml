@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ solidity '1.2.3'                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - (VersionPragma): # "solidity '1.2.3'\n" (0..17)
+      - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
+      - (expressions꞉ VersionPragmaExpressions): # " '1.2.3'\n" (8..17)
+          - (item꞉ VersionPragmaExpression): # " '1.2.3'\n" (8..17)
+              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (variant꞉ AsciiStringLiteral): "'1.2.3'" # (9..16)
+              - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)

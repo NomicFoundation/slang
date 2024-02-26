@@ -3,10 +3,10 @@ mod tests;
 
 use std::str::FromStr;
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{bail, Context, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::cst::{NamedNode, Node};
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::cst::Node;
+use slang_solidity::kinds::{RuleKind, TokenKind};
 use slang_solidity::language::Language;
 
 use crate::node_extensions::NodeExtensions;
@@ -43,83 +43,74 @@ pub fn extract_version_pragmas(
     Ok(pragmas)
 }
 
-fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
-    let Node::Rule(expression_rule) = expression_node else {
-        bail!("Expected rule: {expression_node:?}")
-    };
+fn extract_pragma(node: &Node) -> Result<VersionPragma> {
+    match node {
+        Node::Rule(rule) => {
+            let children = rule
+                .children
+                .iter()
+                .filter(|child| !child.is_trivia())
+                .collect::<Vec<_>>();
 
-    ensure!(
-        expression_rule.kind == RuleKind::VersionPragmaExpression,
-        "Expected VersionPragmaExpression: {expression_rule:?}",
-    );
+            match (rule.kind, &children[..]) {
+                (RuleKind::VersionPragmaExpression, [inner]) => extract_pragma(inner),
 
-    let inner_expression = match &expression_rule.children[..] {
-        [NamedNode {
-            node: Node::Rule(rule),
-            ..
-        }] => rule,
-        [NamedNode {
-            node: Node::Token(token),
-            ..
-        }] => bail!("Expected rule: {token:?}"),
-        _ => unreachable!("Expected single child: {expression_rule:?}"),
-    };
+                (RuleKind::VersionPragmaOrExpression, [left, op, right])
+                    if op.is_token_with_kind(TokenKind::BarBar) =>
+                {
+                    let left = extract_pragma(left)?;
+                    let right = extract_pragma(right)?;
 
-    let inner_children: Vec<_> = inner_expression
-        .children
-        .iter()
-        .filter(|child| !child.is_trivia())
-        .collect();
+                    Ok(VersionPragma::or(left, right))
+                }
 
-    match inner_expression.kind {
-        RuleKind::VersionPragmaOrExpression => {
-            let [left, NamedNode {
-                name: _,
-                node: Node::Token(_op),
-            }, right] = &inner_children[..]
-            else {
-                bail!("Expected 3 children: {inner_expression:?}");
-            };
-            let left = extract_pragma(left)?;
-            let right = extract_pragma(right)?;
+                (RuleKind::VersionPragmaRangeExpression, [left, op, right])
+                    if op.is_token_with_kind(TokenKind::Minus) =>
+                {
+                    let mut left = extract_pragma(left)?.into_comparator()?;
+                    let mut right = extract_pragma(right)?.into_comparator()?;
 
-            Ok(VersionPragma::or(left, right))
+                    // Simulate solc bug:
+                    // https://github.com/ethereum/solidity/issues/13920
+                    left.op = Op::GreaterEq;
+                    right.op = Op::LessEq;
+
+                    Ok(VersionPragma::and(
+                        VersionPragma::single(left),
+                        VersionPragma::single(right),
+                    ))
+                }
+
+                (RuleKind::VersionPragmaPrefixExpression, _) => {
+                    let value = rule.extract_non_trivia();
+                    let comparator = Comparator::from_str(&value)?;
+
+                    Ok(VersionPragma::single(comparator))
+                }
+
+                (RuleKind::VersionPragmaSpecifier, _) => {
+                    let value = rule.extract_non_trivia();
+                    let comparator = Comparator::from_str(&format!("={value}"))?;
+
+                    Ok(VersionPragma::single(comparator))
+                }
+
+                (kind, children) => {
+                    bail!("Unexpected rule kind '{kind}' and children: {children:#?}")
+                }
+            }
         }
-        RuleKind::VersionPragmaRangeExpression => {
-            let [left, NamedNode {
-                name: _,
-                node: Node::Token(_op),
-            }, right] = &inner_children[..]
-            else {
-                bail!("Expected 3 children: {inner_expression:?}");
-            };
 
-            let mut left = extract_pragma(left)?.comparator()?;
-            let mut right = extract_pragma(right)?.comparator()?;
+        Node::Token(token) => match token.kind {
+            TokenKind::AsciiStringLiteral => {
+                let value = token.text.trim_matches('"').trim_matches('\'');
+                let comparator = Comparator::from_str(&format!("={value}"))?;
 
-            // Simulate solc bug:
-            // https://github.com/ethereum/solidity/issues/13920
-            left.op = Op::GreaterEq;
-            right.op = Op::LessEq;
+                Ok(VersionPragma::single(comparator))
+            }
 
-            Ok(VersionPragma::and(
-                VersionPragma::single(left),
-                VersionPragma::single(right),
-            ))
-        }
-        RuleKind::VersionPragmaPrefixExpression => {
-            let value = inner_expression.extract_non_trivia();
-            let comparator = Comparator::from_str(&value)?;
-
-            Ok(VersionPragma::single(comparator))
-        }
-        RuleKind::VersionPragmaSpecifier => {
-            let specifier = inner_expression.extract_non_trivia();
-            let comparator = Comparator::from_str(&format!("={specifier}"))?;
-
-            Ok(VersionPragma::single(comparator))
-        }
-        _ => bail!("Unexpected inner expression: {inner_expression:?}"),
+            _ => bail!("Unexpected token: {token:#?}"),
+        },
     }
 }
 
@@ -151,7 +142,7 @@ impl VersionPragma {
         }
     }
 
-    fn comparator(self) -> Result<Comparator> {
+    fn into_comparator(self) -> Result<Comparator> {
         match self {
             Self::Single(comparator) => Ok(comparator),
             _ => bail!("Expected Single Comparator: {self:?}"),

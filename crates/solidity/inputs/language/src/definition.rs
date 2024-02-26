@@ -176,8 +176,10 @@ codegen_language_macros::compile!(Language(
                                     ]
                                 )
                             ],
-                            primary_expressions =
-                                [PrimaryExpression(reference = VersionPragmaSpecifier)]
+                            primary_expressions = [
+                                PrimaryExpression(reference = AsciiStringLiteral),
+                                PrimaryExpression(reference = VersionPragmaSpecifier)
+                            ]
                         ),
                         Separated(
                             name = VersionPragmaSpecifier,
