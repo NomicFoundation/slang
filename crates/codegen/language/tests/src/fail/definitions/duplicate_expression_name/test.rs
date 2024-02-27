@@ -28,7 +28,8 @@ codegen_language_macros::compile!(Language(
             ]
         )]
     )],
-    queries = ()
+    queries = (),
+    binding_actions = ()
 ));
 
 fn main() {}

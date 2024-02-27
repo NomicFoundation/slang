@@ -306,9 +306,13 @@ codegen_language_macros::compile!(Language(
         ]
     )],
     queries = (
-        // TODO(#554): replace with real queries:
-        query_one = "query 1 code",
-        query_two = "query 2 code",
-        query_three = "query 3 code"
+        pairs_of_identifiers =
+            "[TreeNode ... @x1 [DelimitedIdentifier] ... @x2 [DelimitedIdentifier] ...]",
+        all_identifiers = "[TreeNodeChild ... @x [DelimitedIdentifier] ...]",
+        identifier_before_a_child = "[TreeNode ... (@z [DelimitedIdentifier])? [_] ]"
+    ),
+    binding_actions = (
+        pairs_of_identifiers = binding_action_one,
+        all_identifiers = binding_action_two
     )
 ));

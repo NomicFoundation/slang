@@ -1,5 +1,5 @@
+mod binding_actions;
 mod definitions;
-mod queries;
 mod reachability;
 mod references;
 mod utils;
@@ -9,8 +9,8 @@ use std::rc::Rc;
 use indexmap::IndexMap;
 use proc_macro2::Span;
 
+use crate::compiler::analysis::binding_actions::analyze_binding_actions;
 use crate::compiler::analysis::definitions::analyze_definitions;
-use crate::compiler::analysis::queries::analyze_queries;
 use crate::compiler::analysis::reachability::analyze_reachability;
 use crate::compiler::analysis::references::analyze_references;
 use crate::compiler::version_set::VersionSet;
@@ -64,7 +64,8 @@ impl Analysis {
         }
 
         analyze_reachability(&mut analysis);
-        analyze_queries(&mut analysis);
+        // TODO(#883): validate the queries.
+        analyze_binding_actions(&mut analysis);
 
         analysis
     }

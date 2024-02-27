@@ -250,3 +250,43 @@ fn test_optional() {
         },
     );
 }
+
+// #[test]
+// fn test_query_and_apply_actions() {
+//     type Context = String;
+
+//     fn pairs_of_identifiers(context: &mut Context, result: &QueryResult) {
+//         if let Some(bindings) = result.bindings.get("x1") {
+//             for b in bindings {
+//                 context.push_str(b.node().unparse().as_str());
+//             }
+//         }
+//         if let Some(bindings) = result.bindings.get("x2") {
+//             for b in bindings {
+//                 context.push_str(b.node().unparse().as_str());
+//             }
+//         }
+//     }
+
+//     let queries_and_actions: Vec<(Query, &Action<Context>)> = vec![
+//         // We can use function references
+//         (Kind::PairsOfIdentifiers.into(), &pairs_of_identifiers),
+//         // We can use closures
+//         (
+//             Kind::AllIdentifiers.into(),
+//             &|context: &mut Context, result: &QueryResult| {
+//                 if let Some(bindings) = result.bindings.get("x") {
+//                     for b in bindings {
+//                         context.push_str(b.node().unparse().as_str());
+//                     }
+//                 }
+//             },
+//         ),
+//     ];
+
+//     let mut context = String::new();
+//     common_test_tree()
+//         .cursor_with_offset(TextIndex::ZERO)
+//         .query_and_apply_actions(&mut context, queries_and_actions);
+//     assert_eq!(context, "ABACBCDE");
+// }

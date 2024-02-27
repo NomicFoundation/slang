@@ -104,26 +104,38 @@ impl RustGenerator {
         {
             #[derive(Serialize)]
             struct Context {
-                queries: IndexMap<String, Vec<&'static str>>,
+                actions: IndexMap<String, String>,
+            }
+
+            let actions = language
+                .binding_actions
+                .iter()
+                .map(|(key, value)| (key.to_string(), value.to_string()))
+                .collect();
+
+            codegen.render(
+                Context { actions },
+                runtime_dir.join("templates/binding.rs.jinja2"),
+                output_dir.join("binding.rs"),
+            )?;
+        }
+
+        {
+            #[derive(Serialize)]
+            struct Context {
+                queries: IndexMap<String, String>,
             }
 
             let queries = language
                 .queries
-                .keys()
-                .enumerate()
-                .map(|(index, key)| {
-                    // TODO(#554): parse the query and extract the real captures:
-                    (
-                        key.to_string(),
-                        ["foo", "bar", "baz"].into_iter().take(index + 1).collect(),
-                    )
-                })
+                .iter()
+                .map(|(key, value)| (key.to_string(), value.clone()))
                 .collect();
 
             codegen.render(
                 Context { queries },
-                runtime_dir.join("templates/user_defined_queries.rs.jinja2"),
-                output_dir.join("query/user_defined_queries.rs"),
+                runtime_dir.join("templates/queries.rs.jinja2"),
+                output_dir.join("queries.rs"),
             )?;
         }
 

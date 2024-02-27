@@ -18,7 +18,8 @@ codegen_language_macros::compile!(Language(
             unrecognized_field = true
         )]
     )],
-    queries = ()
+    queries = (),
+    binding_actions = ()
 ));
 
 fn main() {}

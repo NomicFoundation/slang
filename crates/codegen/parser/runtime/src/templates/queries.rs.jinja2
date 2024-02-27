@@ -1,0 +1,53 @@
+#[cfg(feature = "slang_napi_interfaces")]
+use napi_derive::napi;
+
+use std::sync::Once;
+use crate::generated::query::Query;
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "queries"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum QueryKind {
+    {%- for name, _ in queries -%}
+        {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+        {{ name | pascal_case }},
+    {%- endfor -%}
+}
+
+static mut QUERIES: Vec<Query> = Vec::new();
+static INIT: Once = Once::new();
+
+pub struct Queries;
+
+impl std::ops::Index<QueryKind> for Queries {
+    type Output = Query;
+
+    fn index(&self, kind: QueryKind) -> &Self::Output {
+        unsafe {
+            INIT.call_once(|| {
+            {%- for _, query in queries %}
+                QUERIES.push(Query::parse("{{query}}").unwrap());
+            {%- endfor %}
+            });
+
+            &QUERIES[kind as usize]
+        }
+    }
+}
+
+impl From<QueryKind> for Query {
+    fn from(kind: QueryKind) -> Self {
+        Queries[kind].clone()
+    }
+}

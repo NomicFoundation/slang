@@ -278,10 +278,12 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const { kinds, language, ast_internal, cst, cursor, parse_error, parse_output, query, text_index } = nativeBinding;
+const { kinds, language, queries, ast_internal, cst, cursor, parse_error, parse_output, query, text_index } =
+  nativeBinding;
 
 module.exports.kinds = kinds;
 module.exports.language = language;
+module.exports.queries = queries;
 module.exports.ast_internal = ast_internal;
 module.exports.cst = cst;
 module.exports.cursor = cursor;
