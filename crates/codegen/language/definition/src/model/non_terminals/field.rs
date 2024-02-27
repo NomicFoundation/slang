@@ -15,6 +15,7 @@ pub struct FieldsErrorRecovery {
 pub struct FieldDelimiters {
     pub open: Identifier,
     pub close: Identifier,
+    pub recover_from_no_match: Option<bool>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

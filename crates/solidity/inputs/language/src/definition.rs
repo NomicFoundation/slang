@@ -3389,7 +3389,12 @@ codegen_language_macros::compile!(Language(
                                         error_recovery = FieldsErrorRecovery(
                                             delimiters = FieldDelimiters(
                                                 open = open_brace,
-                                                close = close_brace
+                                                close = close_brace,
+                                                // NOTE: Despite `NamedArguments` requiring at least one element,
+                                                // we need to disable attempting to recover from empty elements,
+                                                // because this postfix is ambiguous with `try <EXPR> {} catch {}`
+                                                // and could lead to incorrect parsing if we recover past valid syntax.
+                                                recover_from_no_match = false
                                             )
                                         ),
                                         fields = (

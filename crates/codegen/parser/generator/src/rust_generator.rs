@@ -421,7 +421,7 @@ impl GrammarVisitor for RustGenerator {
             }
 
             // Collect delimiters for each context
-            ParserDefinitionNode::DelimitedBy(open, _, close) => {
+            ParserDefinitionNode::DelimitedBy(open, _, close, ..) => {
                 self.labels.insert(open.label.clone());
                 self.labels.insert(close.label.clone());
 

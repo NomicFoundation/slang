@@ -2103,7 +2103,7 @@ impl Language {
                                     TokenKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . named_arguments (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ;
+                            seq . elem (self . named_arguments (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: No ,)) ? ;
                             seq.elem_labeled(
                                 NodeLabel::CloseBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(

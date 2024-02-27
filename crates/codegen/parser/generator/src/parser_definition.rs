@@ -191,7 +191,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! { self.#function_name(input) }
             }
 
-            Self::DelimitedBy(open, body, close) => {
+            Self::DelimitedBy(open, body, close, opts) => {
                 let open_label = format_ident!("{}", open.label.to_pascal_case());
                 let close_label = format_ident!("{}", close.label.to_pascal_case());
                 let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
@@ -201,6 +201,12 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
+                let opts = opts.clone().unwrap_or_default();
+                let recover = if opts.recover_from_no_match {
+                    quote! { RecoverFromNoMatch::Yes }
+                } else {
+                    quote! { RecoverFromNoMatch::No }
+                };
 
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
@@ -209,7 +215,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#close_delim,
-                                RecoverFromNoMatch::Yes,
+                                #recover,
                             )
                         )?;
                     },

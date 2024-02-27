@@ -54,6 +54,21 @@ impl Visitable for TriviaParserDefinitionRef {
 }
 
 #[derive(Clone, Debug)]
+pub struct DelimitedRecoveryOpts {
+    /// If true, the parser will attempt to recover inside the delimiters even
+    // if the body parser fails to match any prefix of the input.
+    pub recover_from_no_match: bool,
+}
+
+impl Default for DelimitedRecoveryOpts {
+    fn default() -> Self {
+        Self {
+            recover_from_no_match: true,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub enum ParserDefinitionNode {
     Versioned(Box<Self>, Vec<VersionQualityRange>),
     Optional(Box<Self>),
@@ -66,7 +81,12 @@ pub enum ParserDefinitionNode {
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
-    DelimitedBy(Labeled<Box<Self>>, Box<Self>, Labeled<Box<Self>>),
+    DelimitedBy(
+        Labeled<Box<Self>>,
+        Box<Self>,
+        Labeled<Box<Self>>,
+        Option<DelimitedRecoveryOpts>,
+    ),
     SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
     TerminatedBy(Box<Self>, Labeled<Box<Self>>),
 }
@@ -115,7 +135,7 @@ impl Visitable for ParserDefinitionNode {
                 }
             }
 
-            Self::DelimitedBy(open, body, close) => {
+            Self::DelimitedBy(open, body, close, ..) => {
                 open.accept_visitor(visitor);
                 body.accept_visitor(visitor);
                 close.accept_visitor(visitor);
