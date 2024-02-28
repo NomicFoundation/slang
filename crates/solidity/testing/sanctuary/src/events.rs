@@ -2,6 +2,7 @@ use std::cmp;
 
 use console::Color;
 use indicatif::ProgressBar;
+use infra_utils::github::GitHub;
 
 use crate::reporting::Reporter;
 
@@ -82,7 +83,10 @@ impl Events {
         self.all_directories.inc(1);
 
         self.reporter.hide();
-        self.reporter.print_full_report();
+
+        GitHub::collapse_group("Statistics:", || {
+            self.reporter.print_full_report();
+        });
     }
 
     pub fn test(&self, outcome: TestOutcome) {

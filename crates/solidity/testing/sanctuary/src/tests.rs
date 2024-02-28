@@ -73,6 +73,8 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let source = file
         .path
         .read_to_string()?
+        // Some files are null terminated, remove the null character:
+        .trim_end_matches('\0')
         // Remove unicode character inserted by sanctuary (illegal in Solidity):
         .replace("[email protected]", "[email-protected]");
 

@@ -61,6 +61,12 @@ impl DataSet {
     }
 
     pub fn checkout_directory(&self, directory: &str) -> Result<&Vec<SourceFile>> {
+        Command::new("git")
+            .arg("reset")
+            .flag("--hard")
+            .current_dir(&self.repo_dir)
+            .run()?;
+
         let relative_path = format!("contracts/{network}/{directory}", network = self.network);
 
         Command::new("git")
