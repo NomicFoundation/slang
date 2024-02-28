@@ -14,7 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="EndOfLine" style="display: none;"><a href="#EndOfLine"><span class="k">END_OF_LINE</span></a><span class="o"> = </span><span class="s2">"\r"</span><span class="o">?</span><span class="o"> </span><span class="s2">"\n"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="EndOfLine" style="display: none;"><a href="#EndOfLine"><span class="k">END_OF_LINE</span></a><span class="o"> = </span><span class="s2">"\n"</span><span class="o"> | </span><span class="o">(</span><span class="s2">"\r"</span><span class="o"> </span><span class="s2">"\n"</span><span class="o">?</span><span class="o">)</span><span class="o">;</span></pre>
 
 ```{ .ebnf #SingleLineComment }
 

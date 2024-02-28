@@ -37,6 +37,9 @@ fn write_source(w: &mut String, source: &str) -> Result<()> {
         return Ok(());
     }
 
+    // "lines()" only handles "\n", so let's normalize all line endings:
+    let source = source.replace("\r\n", "\n").replace('\r', "\n");
+
     let line_data = source
         .lines()
         .enumerate()
