@@ -13,8 +13,8 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:15]
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/safe_math/input.sol:3:5]
        │
      3 │ ╭─▶     unchecked {
        ┆ ┆   
@@ -78,13 +78,8 @@ Tree:
                       - (LeadingTrivia) ► (Whitespace): " " # (96..97)
                       - (open_brace꞉ OpenBrace): "{" # (97..98)
                       - (TrailingTrivia) ► (EndOfLine): "\n" # (98..99)
-                      - (statements꞉ Statements): # "    unchecked " (99..113)
-                          - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "    unchecked " (99..113)
-                              - (expression꞉ Expression): # "    unchecked" (99..112)
-                                  - (LeadingTrivia) ► (Whitespace): "    " # (99..103)
-                                  - (variant꞉ Identifier): "unchecked" # (103..112)
-                              - (LeadingTrivia) ► (Whitespace): " " # (112..113)
-                      - (SKIPPED): "{\n      uint256 c = a + b;\n      if (c < a) return..." # (113..208)
+                      - (LeadingTrivia) ► (Whitespace): "    " # (99..103)
+                      - (SKIPPED): "unchecked {\n      uint256 c = a + b;\n      if (c <..." # (103..208)
                       - (close_brace꞉ CloseBrace): "}" # (208..209)
                       - (TrailingTrivia) ► (EndOfLine): "\n" # (209..210)
           - (close_brace꞉ CloseBrace): "}" # (210..211)

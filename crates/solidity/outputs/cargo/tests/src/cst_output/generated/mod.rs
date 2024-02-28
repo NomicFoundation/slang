@@ -1,110 +1,58 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use semver::Version;
-#[allow(non_snake_case)]
-mod AssemblyStatement;
-#[allow(non_snake_case)]
-mod Block;
-#[allow(non_snake_case)]
-mod BreakStatement;
-#[allow(non_snake_case)]
-mod ConditionalExpression;
-#[allow(non_snake_case)]
-mod ConstantDefinition;
-#[allow(non_snake_case)]
-mod ConstructorDefinition;
-#[allow(non_snake_case)]
-mod ContractDefinition;
-#[allow(non_snake_case)]
-mod ContractMembers;
-#[allow(non_snake_case)]
-mod DecimalNumberExpression;
-#[allow(non_snake_case)]
-mod DeleteStatement;
-#[allow(non_snake_case)]
-mod EnumDefinition;
-#[allow(non_snake_case)]
-mod ErrorDefinition;
-#[allow(non_snake_case)]
-mod EventDefinition;
-#[allow(non_snake_case)]
-mod ExponentiationExpression;
-#[allow(non_snake_case)]
-mod Expression;
-#[allow(non_snake_case)]
-mod FallbackFunctionDefinition;
-#[allow(non_snake_case)]
-mod FunctionCallExpression;
-#[allow(non_snake_case)]
-mod FunctionDefinition;
-#[allow(non_snake_case)]
-mod HexNumberExpression;
-#[allow(non_snake_case)]
-mod HexStringLiterals;
-#[allow(non_snake_case)]
-mod ImportDirective;
-#[allow(non_snake_case)]
-mod InterfaceDefinition;
-#[allow(non_snake_case)]
-mod LeadingTrivia;
-#[allow(non_snake_case)]
-mod MappingType;
-#[allow(non_snake_case)]
-mod NewExpression;
-#[allow(non_snake_case)]
-mod PragmaDirective;
-#[allow(non_snake_case)]
-mod ReceiveFunctionDefinition;
-#[allow(non_snake_case)]
-mod ReturnStatement;
-#[allow(non_snake_case)]
-mod SourceUnit;
-#[allow(non_snake_case)]
-mod Statements;
-#[allow(non_snake_case)]
-mod StringLiterals;
-#[allow(non_snake_case)]
-mod StructDefinition;
-#[allow(non_snake_case)]
-mod ThrowStatement;
-#[allow(non_snake_case)]
-mod TrailingTrivia;
-#[allow(non_snake_case)]
-mod TryStatement;
-#[allow(non_snake_case)]
-mod TupleDeconstructionStatement;
-#[allow(non_snake_case)]
-mod TupleExpression;
-#[allow(non_snake_case)]
-mod TypeName;
-#[allow(non_snake_case)]
-mod UnicodeStringLiterals;
-#[allow(non_snake_case)]
-mod UnnamedFunctionDefinition;
-#[allow(non_snake_case)]
-mod UserDefinedValueTypeDefinition;
-#[allow(non_snake_case)]
-mod UsingDeconstructionSymbol;
-#[allow(non_snake_case)]
-mod UsingDirective;
-#[allow(non_snake_case)]
-mod VariableDeclarationStatement;
-#[allow(non_snake_case)]
-mod VersionPragma;
-#[allow(non_snake_case)]
-mod YulAssignmentStatement;
-#[allow(non_snake_case)]
-mod YulBlock;
-#[allow(non_snake_case)]
-mod YulExpression;
-#[allow(non_snake_case)]
-mod YulFunctionCallExpression;
-#[allow(non_snake_case)]
-mod YulLabel;
-#[allow(non_snake_case)]
-mod YulLeaveStatement;
-#[allow(non_snake_case)]
-mod YulVariableDeclarationStatement;
+mod assembly_statement;
+mod block;
+mod break_statement;
+mod conditional_expression;
+mod constant_definition;
+mod constructor_definition;
+mod contract_definition;
+mod contract_members;
+mod decimal_number_expression;
+mod delete_statement;
+mod enum_definition;
+mod error_definition;
+mod event_definition;
+mod exponentiation_expression;
+mod expression;
+mod fallback_function_definition;
+mod function_call_expression;
+mod function_definition;
+mod hex_number_expression;
+mod hex_string_literals;
+mod import_directive;
+mod interface_definition;
+mod leading_trivia;
+mod mapping_type;
+mod new_expression;
+mod pragma_directive;
+mod receive_function_definition;
+mod return_statement;
+mod source_unit;
+mod statements;
+mod string_literals;
+mod struct_definition;
+mod throw_statement;
+mod trailing_trivia;
+mod try_statement;
+mod tuple_deconstruction_statement;
+mod tuple_expression;
+mod type_name;
+mod unicode_string_literals;
+mod unnamed_function_definition;
+mod user_defined_value_type_definition;
+mod using_deconstruction_symbol;
+mod using_directive;
+mod variable_declaration_statement;
+mod version_pragma;
+mod yul_assignment_statement;
+mod yul_block;
+mod yul_expression;
+mod yul_function_call_expression;
+mod yul_label;
+mod yul_leave_statement;
+mod yul_variable_declaration_statement;
 
 pub const VERSION_BREAKS: [Version; 27] = [
     Version::new(0, 4, 11),

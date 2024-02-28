@@ -433,6 +433,7 @@ dependencies = [
 name = "codegen_testing"
 version = "0.13.1"
 dependencies = [
+ "Inflector",
  "anyhow",
  "codegen_language_definition",
  "infra_utils",
