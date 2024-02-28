@@ -61,6 +61,7 @@ impl DataSet {
     }
 
     pub fn checkout_directory(&self, directory: &str) -> Result<&Vec<SourceFile>> {
+        // Make sure to reset any local changes, in case some were made during local development/debugging:
         Command::new("git")
             .arg("reset")
             .flag("--hard")
