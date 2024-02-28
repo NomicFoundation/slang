@@ -2,8 +2,8 @@
 
 use std::rc::Rc;
 
-use crate::cst::{NamedNode, Node, RuleNode};
-use crate::kinds::{FieldName, RuleKind, TokenKind};
+use crate::cst::{LabeledNode, Node, RuleNode};
+use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::{TextIndex, TextRange};
 
 /// A node in the ancestor path of a [`Cursor`].
@@ -124,11 +124,11 @@ impl Cursor {
         self.node.clone()
     }
 
-    pub fn node_name(&self) -> Option<FieldName> {
+    pub fn label(&self) -> Option<NodeLabel> {
         self.parent.as_ref().and_then(|parent| {
             let this = &parent.rule_node.children[self.child_number];
 
-            this.name
+            this.label
         })
     }
 
@@ -413,28 +413,28 @@ impl Cursor {
     }
 }
 
-/// A [`Cursor`] that also keeps track of the names of the nodes it visits.
-pub struct CursorWithNames {
+/// A [`Cursor`] that also keeps track of the labels of the nodes it visits.
+pub struct CursorWithLabels {
     cursor: Cursor,
 }
 
-impl CursorWithNames {
-    pub fn without_names(self) -> Cursor {
+impl CursorWithLabels {
+    pub fn without_labels(self) -> Cursor {
         self.cursor
     }
 }
 
-impl Iterator for CursorWithNames {
-    type Item = NamedNode;
+impl Iterator for CursorWithLabels {
+    type Item = LabeledNode;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let name = self.cursor.node_name();
+        let label = self.cursor.label();
 
-        self.cursor.next().map(|node| NamedNode { name, node })
+        self.cursor.next().map(|node| LabeledNode { label, node })
     }
 }
 
-impl std::ops::Deref for CursorWithNames {
+impl std::ops::Deref for CursorWithLabels {
     type Target = Cursor;
 
     fn deref(&self) -> &Self::Target {
@@ -442,21 +442,21 @@ impl std::ops::Deref for CursorWithNames {
     }
 }
 
-impl std::ops::DerefMut for CursorWithNames {
+impl std::ops::DerefMut for CursorWithLabels {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.cursor
     }
 }
 
 impl Cursor {
-    /// Returns a [`CursorWithNames`] that wraps this cursor.
-    pub fn with_names(self) -> CursorWithNames {
-        CursorWithNames::from(self)
+    /// Returns a [`CursorWithLabels`] that wraps this cursor.
+    pub fn with_labels(self) -> CursorWithLabels {
+        CursorWithLabels::from(self)
     }
 }
 
-impl From<Cursor> for CursorWithNames {
+impl From<Cursor> for CursorWithLabels {
     fn from(cursor: Cursor) -> Self {
-        CursorWithNames { cursor }
+        CursorWithLabels { cursor }
     }
 }

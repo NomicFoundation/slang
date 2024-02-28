@@ -5,23 +5,23 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use crate::cursor::Cursor;
-use crate::kinds::{FieldName, RuleKind, TokenKind};
+use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct NamedNode {
-    pub name: Option<FieldName>,
+pub struct LabeledNode {
+    pub label: Option<NodeLabel>,
     pub node: Node,
 }
 
-impl NamedNode {
-    /// Creates an anonymous (nameless) node.
+impl LabeledNode {
+    /// Creates an anonymous node (without a label).
     pub fn anonymous(node: Node) -> Self {
-        Self { name: None, node }
+        Self { label: None, node }
     }
 }
 
-impl std::ops::Deref for NamedNode {
+impl std::ops::Deref for LabeledNode {
     type Target = Node;
 
     fn deref(&self) -> &Self::Target {
@@ -34,7 +34,7 @@ pub struct RuleNode {
     pub kind: RuleKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<NamedNode>,
+    pub children: Vec<LabeledNode>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -50,7 +50,7 @@ pub enum Node {
 }
 
 impl Node {
-    pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
+    pub fn rule(kind: RuleKind, children: Vec<LabeledNode>) -> Self {
         let text_len = children.iter().map(|node| node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
@@ -72,7 +72,7 @@ impl Node {
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[NamedNode] {
+    pub fn children(&self) -> &[LabeledNode] {
         match self {
             Self::Rule(node) => &node.children,
             Self::Token(_) => &[],

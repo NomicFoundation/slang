@@ -1,5 +1,5 @@
-use crate::cst::{self, NamedNode};
-use crate::kinds::{FieldName, IsLexicalContext, TokenKind};
+use crate::cst::{self, LabeledNode};
+use crate::kinds::{IsLexicalContext, NodeLabel, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::parser_support::parser_result::{ParserResult, SkippedUntil};
@@ -15,7 +15,7 @@ impl SeparatedHelper {
         lexer: &L,
         body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
-        separator_field_name: FieldName,
+        separator_label: NodeLabel,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {
@@ -27,7 +27,7 @@ impl SeparatedHelper {
                         Some(scanned) if scanned.accepted_as(separator) => {
                             match lexer
                                 .parse_token_with_trivia::<LexCtx>(input, separator)
-                                .with_name(separator_field_name)
+                                .with_label(separator_label)
                             {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
@@ -53,7 +53,7 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            accum.push(NamedNode::anonymous(cst::Node::token(
+                            accum.push(LabeledNode::anonymous(cst::Node::token(
                                 TokenKind::SKIPPED,
                                 input.content(skipped_range.utf8()),
                             )));

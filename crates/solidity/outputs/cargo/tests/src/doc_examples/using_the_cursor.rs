@@ -7,7 +7,7 @@ use infra_utils::paths::PathExtensions;
 fn using_the_cursor() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::kinds::{FieldName, RuleKind, TokenKind};
+    use slang_solidity::kinds::{NodeLabel, RuleKind, TokenKind};
     use slang_solidity::language::Language;
     use slang_solidity::text_index::TextRangeExtensions;
     // --8<-- [end:imports]
@@ -101,18 +101,18 @@ fn using_the_cursor() -> Result<()> {
     }
 
     {
-        // --8<-- [start:using-named-cursors]
+        // --8<-- [start:using-labeled-cursors]
         let cursor = parse_output.create_tree_cursor();
 
         let identifiers: Vec<_> = cursor
-            .with_names()
-            .filter(|node| node.name == Some(FieldName::Name))
+            .with_labels()
+            .filter(|node| node.label == Some(NodeLabel::Name))
             .filter_map(|node| node.as_token_with_kind(TokenKind::Identifier).cloned())
             .map(|identifier| identifier.text.clone())
             .collect();
 
         assert_eq!(identifiers, &["Foo", "Bar", "Baz"]);
-        // --8<-- [end:using-named-cursors]
+        // --8<-- [end:using-labeled-cursors]
     }
 
     Ok(())

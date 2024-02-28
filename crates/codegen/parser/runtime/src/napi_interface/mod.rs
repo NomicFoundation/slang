@@ -7,7 +7,7 @@ pub mod query;
 pub mod text_index;
 
 type RustCursor = crate::cursor::Cursor;
-type RustNamedNode = crate::cst::NamedNode;
+type RustLabeledNode = crate::cst::LabeledNode;
 type RustNode = crate::cst::Node;
 type RustParseError = crate::parse_error::ParseError;
 type RustParseOutput = crate::parse_output::ParseOutput;
@@ -21,4 +21,4 @@ type RustTokenNode = crate::cst::TokenNode;
 
 type RuleKind = crate::kinds::RuleKind;
 type TokenKind = crate::kinds::TokenKind;
-type FieldName = crate::kinds::FieldName;
+type NodeLabel = crate::kinds::NodeLabel;

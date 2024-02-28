@@ -61,8 +61,8 @@ impl RuleKind {
 #[strum(serialize_all = "snake_case")]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum FieldName {
-    // Built-in fields
+pub enum NodeLabel {
+    // Built-in labels
     Item,
     Variant,
     Separator,

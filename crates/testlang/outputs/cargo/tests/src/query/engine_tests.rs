@@ -1,26 +1,26 @@
 use std::collections::{BTreeMap, HashMap};
 
 // This crate is copied to another crate, so all imports should be relative
-use slang_testlang::cst::{NamedNode, Node};
+use slang_testlang::cst::{LabeledNode, Node};
 use slang_testlang::cursor::Cursor;
-use slang_testlang::kinds::{FieldName, RuleKind, TokenKind};
+use slang_testlang::kinds::{NodeLabel, RuleKind, TokenKind};
 use slang_testlang::query::{Query, QueryResult};
 use slang_testlang::text_index::TextIndex;
 
-fn token(name: Option<FieldName>, kind: TokenKind, text: &str) -> NamedNode {
-    NamedNode {
-        name,
+fn token(label: Option<NodeLabel>, kind: TokenKind, text: &str) -> LabeledNode {
+    LabeledNode {
+        label,
         node: Node::token(kind, text.to_string()),
     }
 }
 
 fn rule<const N: usize>(
-    name: Option<FieldName>,
+    label: Option<NodeLabel>,
     kind: RuleKind,
-    children: [NamedNode; N],
-) -> NamedNode {
-    NamedNode {
-        name,
+    children: [LabeledNode; N],
+) -> LabeledNode {
+    LabeledNode {
+        label,
         node: Node::rule(kind, children.into_iter().collect()),
     }
 }
@@ -46,16 +46,16 @@ fn binding_cursors_to_strings(
 macro_rules! cst_tree {
     ( @inner [ $($child:expr)* ]) => { [ $($child),* ] };
 
-    ( @inner [ $($child:expr)* ] $field_name:ident : $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* token(Some(FieldName::$field_name), TokenKind::$token_kind, $text) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $label:ident : $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* token(Some(NodeLabel::$label), TokenKind::$token_kind, $text) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
         cst_tree!(@inner [ $($child)* token(None, TokenKind::$token_kind, $text) ] $($($rest)*)?)
     };
 
-    ( @inner [ $($child:expr)* ] $field_name:ident : $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* rule(Some(FieldName::$field_name), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $label:ident : $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* rule(Some(NodeLabel::$label), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
@@ -63,8 +63,8 @@ macro_rules! cst_tree {
     };
 
     // Start with a rule
-    ( $field_name:ident : $rule_kind:ident [ $($children:tt)* ] ) => {
-        rule(Some(FieldName::$field_name), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*))
+    ( $label:ident : $rule_kind:ident [ $($children:tt)* ] ) => {
+        rule(Some(NodeLabel::$label), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*))
     };
 
     ( $rule_kind:ident [ $($children:tt)* ] ) => {
@@ -85,7 +85,7 @@ macro_rules! query_results {
 
 }
 
-fn run_query_test(tree: &NamedNode, query: &str, results: Vec<BTreeMap<String, Vec<String>>>) {
+fn run_query_test(tree: &LabeledNode, query: &str, results: Vec<BTreeMap<String, Vec<String>>>) {
     let cursor = tree.cursor_with_offset(TextIndex::ZERO);
     let query = vec![Query::parse(query).unwrap()];
     let mut results = results.into_iter();
@@ -102,7 +102,7 @@ fn run_query_test(tree: &NamedNode, query: &str, results: Vec<BTreeMap<String, V
     }
 }
 
-fn common_test_tree() -> NamedNode {
+fn common_test_tree() -> LabeledNode {
     cst_tree!(
         TreeNode [
             Node: DelimitedIdentifier "A",

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::cst::{self, NamedNode};
+use crate::cst::{self, LabeledNode};
 use crate::kinds::TokenKind;
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
@@ -84,7 +84,7 @@ where
                 };
 
                 let topmost_rule = match &nodes[..] {
-                    [NamedNode { node: cst::Node::Rule(rule), ..} ] => Rc::clone(rule),
+                    [LabeledNode { node: cst::Node::Rule(rule), ..} ] => Rc::clone(rule),
                     [_] => unreachable!(
                         "(Incomplete)Match at the top level of a parser is not a Rule node"
                     ),
@@ -107,7 +107,7 @@ where
                     let skipped_node =
                         cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
                     let mut new_children = topmost_rule.children.clone();
-                    new_children.push(NamedNode::anonymous(skipped_node));
+                    new_children.push(LabeledNode::anonymous(skipped_node));
 
                     let mut errors = stream.into_errors();
                     errors.push(ParseError::new(start..input.into(), expected_tokens));

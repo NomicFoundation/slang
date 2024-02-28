@@ -10,7 +10,7 @@ use nom::sequence::{delimited, pair, preceded, terminated};
 use nom::{Finish, IResult, Parser};
 
 // This crate is copied to another crate, so all imports should be relative
-use super::super::kinds::{FieldName, RuleKind, TokenKind};
+use super::super::kinds::{NodeLabel, RuleKind, TokenKind};
 use super::model::{
     AlternativesMatcher, BindingMatcher, Kind, Matcher, NodeMatcher, NodeSelector,
     OneOrMoreMatcher, OptionalMatcher, SequenceMatcher,
@@ -76,25 +76,19 @@ fn parse_node_selector(input: &str) -> IResult<&str, NodeSelector, VerboseError<
         Text(String),
     }
 
-    opt(field_name_token)
+    opt(label_token)
         .and(alt((
             token('_').map(|_| Tail::Anonymous),
             kind_token.map(Tail::Kind),
             text_token.map(Tail::Text),
         )))
-        .map(|(field_name, tail)| match (field_name, tail) {
+        .map(|(label, tail)| match (label, tail) {
             (None, Tail::Anonymous) => NodeSelector::Anonymous,
             (None, Tail::Kind(kind)) => NodeSelector::Kind { kind },
             (None, Tail::Text(string)) => NodeSelector::Text { text: string },
-            (Some(field), Tail::Anonymous) => NodeSelector::FieldName { field_name: field },
-            (Some(field), Tail::Kind(kind)) => NodeSelector::FieldNameAndKind {
-                field_name: field,
-                kind,
-            },
-            (Some(field), Tail::Text(string)) => NodeSelector::FieldNameAndText {
-                field_name: field,
-                text: string,
-            },
+            (Some(label), Tail::Anonymous) => NodeSelector::Label { label },
+            (Some(label), Tail::Kind(kind)) => NodeSelector::LabelAndKind { label, kind },
+            (Some(label), Tail::Text(text)) => NodeSelector::LabelAndText { label, text },
         })
         .parse(input)
 }
@@ -189,9 +183,9 @@ fn kind_token(i: &str) -> IResult<&str, Kind, VerboseError<&str>> {
         .parse(i)
 }
 
-fn field_name_token(i: &str) -> IResult<&str, FieldName, VerboseError<&str>> {
+fn label_token(i: &str) -> IResult<&str, NodeLabel, VerboseError<&str>> {
     terminated(raw_identifier, token(':'))
-        .map(|id| FieldName::try_from(id.as_str()).unwrap())
+        .map(|id| NodeLabel::try_from(id.as_str()).unwrap())
         .parse(i)
 }
 

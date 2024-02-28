@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+    IsLexicalContext, LexicalContext, LexicalContextType, NodeLabel, RuleKind, TokenKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -204,15 +204,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn abi_coder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::AbicoderKeyword,
+            seq.elem_labeled(
+                NodeLabel::AbicoderKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::AbicoderKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Version,
+            seq.elem_labeled(
+                NodeLabel::Version,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::Identifier,
@@ -230,12 +230,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::AdditiveExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -249,15 +249,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn address_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::AddressKeyword,
+            seq.elem_labeled(
+                NodeLabel::AddressKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::AddressKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::PayableKeyword,
+            seq.elem_labeled(
+                NodeLabel::PayableKeyword,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -277,12 +277,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::AndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -302,7 +302,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ArgumentsDeclaration)
     }
 
@@ -311,8 +311,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenBracket,
+            seq.elem_labeled(
+                NodeLabel::OpenBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenBracket,
@@ -320,7 +320,7 @@ impl Language {
             )?;
             seq.elem(
                 self.array_values(input)
-                    .with_name(FieldName::Items)
+                    .with_label(NodeLabel::Items)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -328,8 +328,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseBracket,
+            seq.elem_labeled(
+                NodeLabel::CloseBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseBracket,
@@ -347,12 +347,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::TypeName => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::ArrayTypeName => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -368,9 +368,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input).with_name(FieldName::Item),
+            |input| self.expression(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::ArrayValues)
     }
@@ -380,9 +380,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.string_literal(input).with_name(FieldName::Item),
+            |input| self.string_literal(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::AssemblyFlags)
     }
@@ -392,8 +392,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -401,7 +401,7 @@ impl Language {
             )?;
             seq.elem(
                 self.assembly_flags(input)
-                    .with_name(FieldName::Flags)
+                    .with_label(NodeLabel::Flags)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -409,8 +409,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -424,22 +424,22 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn assembly_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::AssemblyKeyword,
+            seq.elem_labeled(
+                NodeLabel::AssemblyKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::AssemblyKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Label,
+            seq.elem_labeled(
+                NodeLabel::Label,
                 OptionalHelper::transform(self.string_literal(input)),
             )?;
-            seq.elem_named(
-                FieldName::Flags,
+            seq.elem_labeled(
+                NodeLabel::Flags,
                 OptionalHelper::transform(self.assembly_flags_declaration(input)),
             )?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::AssemblyStatement)
@@ -452,12 +452,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::AssignmentExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -475,12 +475,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::BitwiseAndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -498,12 +498,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::BitwiseOrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -521,12 +521,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::BitwiseXorExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -542,8 +542,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenBrace,
+            seq.elem_labeled(
+                NodeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenBrace,
@@ -551,7 +551,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.statements(input))
-                    .with_name(FieldName::Statements)
+                    .with_label(NodeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -559,8 +559,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseBrace,
+            seq.elem_labeled(
+                NodeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseBrace,
@@ -579,7 +579,7 @@ impl Language {
                     input,
                     TokenKind::BreakKeyword,
                 )
-                .with_name(FieldName::BreakKeyword)
+                .with_label(NodeLabel::BreakKeyword)
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
@@ -587,8 +587,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -603,18 +603,18 @@ impl Language {
     fn catch_clause(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::CatchKeyword,
+                seq.elem_labeled(
+                    NodeLabel::CatchKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CatchKeyword,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Error,
+                seq.elem_labeled(
+                    NodeLabel::Error,
                     OptionalHelper::transform(self.catch_clause_error(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.block(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
                 seq.finish()
             })
         } else {
@@ -627,8 +627,8 @@ impl Language {
     fn catch_clause_error(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::Name,
+                seq.elem_labeled(
+                    NodeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -636,7 +636,7 @@ impl Language {
                         ),
                     ),
                 )?;
-                seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.finish()
             })
         } else {
@@ -649,7 +649,7 @@ impl Language {
     fn catch_clauses(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
-                self.catch_clause(input).with_name(FieldName::Item)
+                self.catch_clause(input).with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -664,12 +664,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::ComparisonExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -687,12 +687,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::ConditionalExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -709,29 +709,29 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-                        seq.elem_named(
-                            FieldName::ConstantKeyword,
+                        seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                        seq.elem_labeled(
+                            NodeLabel::ConstantKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::ConstantKeyword,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Name,
+                        seq.elem_labeled(
+                            NodeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::Identifier,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Equal,
+                        seq.elem_labeled(
+                            NodeLabel::Equal,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::Equal,
                             ),
                         )?;
-                        seq.elem_named(FieldName::Value, self.expression(input))?;
+                        seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -741,8 +741,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -793,7 +793,7 @@ impl Language {
                 }
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -804,7 +804,8 @@ impl Language {
     fn constructor_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             OneOrMoreHelper::run(input, |input| {
-                self.constructor_attribute(input).with_name(FieldName::Item)
+                self.constructor_attribute(input)
+                    .with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -816,19 +817,19 @@ impl Language {
     fn constructor_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::ConstructorKeyword,
+                seq.elem_labeled(
+                    NodeLabel::ConstructorKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::ConstructorKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-                seq.elem_named(
-                    FieldName::Attributes,
+                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Attributes,
                     OptionalHelper::transform(self.constructor_attributes(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.block(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
                 seq.finish()
             })
         } else {
@@ -845,7 +846,7 @@ impl Language {
                     input,
                     TokenKind::ContinueKeyword,
                 )
-                .with_name(FieldName::ContinueKeyword)
+                .with_label(NodeLabel::ContinueKeyword)
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
@@ -853,8 +854,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -869,8 +870,8 @@ impl Language {
     fn contract_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             if self.version_is_at_least_0_6_0 {
-                seq.elem_named(
-                    FieldName::AbstractKeyword,
+                seq.elem_labeled(
+                    NodeLabel::AbstractKeyword,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -879,29 +880,29 @@ impl Language {
                     ),
                 )?;
             }
-            seq.elem_named(
-                FieldName::ContractKeyword,
+            seq.elem_labeled(
+                NodeLabel::ContractKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ContractKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Inheritence,
+            seq.elem_labeled(
+                NodeLabel::Inheritence,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -909,7 +910,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.contract_members(input))
-                        .with_name(FieldName::Members)
+                        .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -917,8 +918,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -974,14 +975,14 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ContractMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn contract_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_name(FieldName::Item)
+            self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::ContractMembers)
     }
@@ -989,15 +990,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn decimal_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Literal,
+            seq.elem_labeled(
+                NodeLabel::Literal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::DecimalLiteral,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Unit,
+            seq.elem_labeled(
+                NodeLabel::Unit,
                 OptionalHelper::transform(self.number_unit(input)),
             )?;
             seq.finish()
@@ -1010,14 +1011,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::DeleteKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::DeleteKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::DeleteKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Expression, self.expression(input))?;
+                    seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -1027,8 +1028,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -1044,16 +1045,16 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::DoKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::DoKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::DoKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Body, self.statement(input))?;
-                    seq.elem_named(
-                        FieldName::WhileKeyword,
+                    seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+                    seq.elem_labeled(
+                        NodeLabel::WhileKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::WhileKeyword,
@@ -1062,8 +1063,8 @@ impl Language {
                     seq.elem(SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
-                        seq.elem_named(
-                            FieldName::OpenParen,
+                        seq.elem_labeled(
+                            NodeLabel::OpenParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::OpenParen,
@@ -1071,7 +1072,7 @@ impl Language {
                         )?;
                         seq.elem(
                             self.expression(input)
-                                .with_name(FieldName::Condition)
+                                .with_label(NodeLabel::Condition)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
@@ -1079,8 +1080,8 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::CloseParen,
+                        seq.elem_labeled(
+                            NodeLabel::CloseParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::CloseParen,
@@ -1097,8 +1098,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -1158,21 +1159,21 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ElementaryType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn else_branch(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ElseKeyword,
+            seq.elem_labeled(
+                NodeLabel::ElseKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ElseKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Body, self.statement(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ElseBranch)
@@ -1184,15 +1185,15 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(
-                            FieldName::EmitKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::EmitKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::EmitKeyword,
                             ),
                         )?;
-                        seq.elem_named(FieldName::Event, self.identifier_path(input))?;
-                        seq.elem_named(FieldName::Arguments, self.arguments_declaration(input))?;
+                        seq.elem_labeled(NodeLabel::Event, self.identifier_path(input))?;
+                        seq.elem_labeled(NodeLabel::Arguments, self.arguments_declaration(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -1202,8 +1203,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -1220,15 +1221,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn enum_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::EnumKeyword,
+            seq.elem_labeled(
+                NodeLabel::EnumKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::EnumKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -1237,8 +1238,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -1246,7 +1247,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.enum_members(input))
-                        .with_name(FieldName::Members)
+                        .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -1254,8 +1255,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -1278,10 +1279,10 @@ impl Language {
                     input,
                     TokenKind::Identifier,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::EnumMembers)
     }
@@ -1293,12 +1294,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::EqualityExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -1315,22 +1316,22 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(
-                            FieldName::ErrorKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::ErrorKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::ErrorKeyword,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Name,
+                        seq.elem_labeled(
+                            NodeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::Identifier,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Members,
+                        seq.elem_labeled(
+                            NodeLabel::Members,
                             self.error_parameters_declaration(input),
                         )?;
                         seq.finish()
@@ -1342,8 +1343,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -1361,9 +1362,9 @@ impl Language {
     fn error_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-                seq.elem_named(
-                    FieldName::Name,
+                seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -1385,9 +1386,9 @@ impl Language {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.error_parameter(input).with_name(FieldName::Item),
+                |input| self.error_parameter(input).with_label(NodeLabel::Item),
                 TokenKind::Comma,
-                FieldName::Separator,
+                NodeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
@@ -1401,8 +1402,8 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenParen,
+                seq.elem_labeled(
+                    NodeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenParen,
@@ -1410,7 +1411,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.error_parameters(input))
-                        .with_name(FieldName::Parameters)
+                        .with_label(NodeLabel::Parameters)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -1418,8 +1419,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseParen,
+                seq.elem_labeled(
+                    NodeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseParen,
@@ -1438,26 +1439,26 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::EventKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::EventKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::EventKeyword,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Name,
+                    seq.elem_labeled(
+                        NodeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Parameters,
+                    seq.elem_labeled(
+                        NodeLabel::Parameters,
                         self.event_parameters_declaration(input),
                     )?;
-                    seq.elem_named(
-                        FieldName::AnonymousKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::AnonymousKeyword,
                         OptionalHelper::transform(
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
@@ -1474,8 +1475,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -1489,9 +1490,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn event_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-            seq.elem_named(
-                FieldName::IndexedKeyword,
+            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(
+                NodeLabel::IndexedKeyword,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -1499,8 +1500,8 @@ impl Language {
                     ),
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -1518,9 +1519,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.event_parameter(input).with_name(FieldName::Item),
+            |input| self.event_parameter(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::EventParameters)
     }
@@ -1530,8 +1531,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -1539,7 +1540,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.event_parameters(input))
-                    .with_name(FieldName::Parameters)
+                    .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -1547,8 +1548,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -1571,21 +1572,21 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ExperimentalFeature)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ExperimentalKeyword,
+            seq.elem_labeled(
+                NodeLabel::ExperimentalKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::ExperimentalKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Feature, self.experimental_feature(input))?;
+            seq.elem_labeled(NodeLabel::Feature, self.experimental_feature(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ExperimentalPragma)
@@ -1598,12 +1599,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::ExponentiationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -1627,84 +1628,84 @@ impl Language {
                             input,
                             TokenKind::Equal,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::BarEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::PlusEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::MinusEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::CaretEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::SlashEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::PercentEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::AsteriskEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::AmpersandEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::LessThanLessThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThanGreaterThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThanGreaterThanGreaterThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1715,22 +1716,22 @@ impl Language {
                 RuleKind::ConditionalExpression,
                 3u8,
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::QuestionMark,
+                    seq.elem_labeled(
+                        NodeLabel::QuestionMark,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::QuestionMark,
                         ),
                     )?;
-                    seq.elem_named(FieldName::TrueExpression, self.expression(input))?;
-                    seq.elem_named(
-                        FieldName::Colon,
+                    seq.elem_labeled(NodeLabel::TrueExpression, self.expression(input))?;
+                    seq.elem_labeled(
+                        NodeLabel::Colon,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Colon,
                         ),
                     )?;
-                    seq.elem_named(FieldName::FalseExpression, self.expression(input))?;
+                    seq.elem_labeled(NodeLabel::FalseExpression, self.expression(input))?;
                     seq.finish()
                 }),
             )
@@ -1744,7 +1745,7 @@ impl Language {
                     input,
                     TokenKind::BarBar,
                 )
-                .with_name(FieldName::Operator),
+                .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_and_expression = |input: &mut ParserContext<'_>| {
@@ -1756,7 +1757,7 @@ impl Language {
                     input,
                     TokenKind::AmpersandAmpersand,
                 )
-                .with_name(FieldName::Operator),
+                .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_equality_expression = |input: &mut ParserContext<'_>| {
@@ -1770,14 +1771,14 @@ impl Language {
                             input,
                             TokenKind::EqualEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::BangEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1794,28 +1795,28 @@ impl Language {
                             input,
                             TokenKind::LessThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::LessThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1827,7 +1828,7 @@ impl Language {
                 13u8,
                 13u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar)
-                    .with_name(FieldName::Operator),
+                    .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
@@ -1839,7 +1840,7 @@ impl Language {
                     input,
                     TokenKind::Caret,
                 )
-                .with_name(FieldName::Operator),
+                .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_bitwise_and_expression = |input: &mut ParserContext<'_>| {
@@ -1851,7 +1852,7 @@ impl Language {
                     input,
                     TokenKind::Ampersand,
                 )
-                .with_name(FieldName::Operator),
+                .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_shift_expression = |input: &mut ParserContext<'_>| {
@@ -1865,21 +1866,21 @@ impl Language {
                             input,
                             TokenKind::LessThanLessThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThanGreaterThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::GreaterThanGreaterThanGreaterThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1896,14 +1897,14 @@ impl Language {
                             input,
                             TokenKind::Plus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Minus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1920,21 +1921,21 @@ impl Language {
                             input,
                             TokenKind::Asterisk,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Slash,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Percent,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1952,7 +1953,7 @@ impl Language {
                                 input,
                                 TokenKind::AsteriskAsterisk,
                             )
-                            .with_name(FieldName::Operator);
+                            .with_label(NodeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1971,7 +1972,7 @@ impl Language {
                                 input,
                                 TokenKind::AsteriskAsterisk,
                             )
-                            .with_name(FieldName::Operator);
+                            .with_label(NodeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1988,14 +1989,14 @@ impl Language {
                             input,
                             TokenKind::PlusPlus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::MinusMinus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -2011,35 +2012,35 @@ impl Language {
                             input,
                             TokenKind::PlusPlus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::MinusMinus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Tilde,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Bang,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Minus,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
                         let result = self
@@ -2047,7 +2048,7 @@ impl Language {
                                 input,
                                 TokenKind::Plus,
                             )
-                            .with_name(FieldName::Operator);
+                            .with_label(NodeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -2060,12 +2061,12 @@ impl Language {
                 33u8,
                 SequenceHelper::run(|mut seq| {
                     if self.version_is_at_least_0_6_2 {
-                        seq.elem_named(
-                            FieldName::Options,
+                        seq.elem_labeled(
+                            NodeLabel::Options,
                             OptionalHelper::transform(self.function_call_options(input)),
                         )?;
                     }
-                    seq.elem_named(FieldName::Arguments, self.arguments_declaration(input))?;
+                    seq.elem_labeled(NodeLabel::Arguments, self.arguments_declaration(input))?;
                     seq.finish()
                 }),
             )
@@ -2075,14 +2076,14 @@ impl Language {
                 RuleKind::MemberAccessExpression,
                 35u8,
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::Period,
+                    seq.elem_labeled(
+                        NodeLabel::Period,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Period,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Member, self.member_access(input))?;
+                    seq.elem_labeled(NodeLabel::Member, self.member_access(input))?;
                     seq.finish()
                 }),
             )
@@ -2094,8 +2095,8 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem_named(
-                        FieldName::OpenBracket,
+                    seq.elem_labeled(
+                        NodeLabel::OpenBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::OpenBracket,
@@ -2103,12 +2104,12 @@ impl Language {
                     )?;
                     seq.elem(
                         SequenceHelper::run(|mut seq| {
-                            seq.elem_named(
-                                FieldName::Start,
+                            seq.elem_labeled(
+                                NodeLabel::Start,
                                 OptionalHelper::transform(self.expression(input)),
                             )?;
-                            seq.elem_named(
-                                FieldName::End,
+                            seq.elem_labeled(
+                                NodeLabel::End,
                                 OptionalHelper::transform(self.index_access_end(input)),
                             )?;
                             seq.finish()
@@ -2120,8 +2121,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::CloseBracket,
+                    seq.elem_labeled(
+                        NodeLabel::CloseBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::CloseBracket,
@@ -2182,7 +2183,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -2263,7 +2264,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.expression(input)
-                    .with_name(FieldName::Expression)
+                    .with_label(NodeLabel::Expression)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2271,8 +2272,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -2318,7 +2319,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -2330,7 +2331,7 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.fallback_function_attribute(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -2342,23 +2343,23 @@ impl Language {
     fn fallback_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::FallbackKeyword,
+                seq.elem_labeled(
+                    NodeLabel::FallbackKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::FallbackKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-                seq.elem_named(
-                    FieldName::Attributes,
+                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Attributes,
                     OptionalHelper::transform(self.fallback_function_attributes(input)),
                 )?;
-                seq.elem_named(
-                    FieldName::Returns,
+                seq.elem_labeled(
+                    NodeLabel::Returns,
                     OptionalHelper::transform(self.returns_declaration(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.function_body(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
@@ -2370,8 +2371,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ForKeyword,
+            seq.elem_labeled(
+                NodeLabel::ForKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ForKeyword,
@@ -2380,8 +2381,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenParen,
+                seq.elem_labeled(
+                    NodeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenParen,
@@ -2389,13 +2390,16 @@ impl Language {
                 )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(
-                            FieldName::Initialization,
+                        seq.elem_labeled(
+                            NodeLabel::Initialization,
                             self.for_statement_initialization(input),
                         )?;
-                        seq.elem_named(FieldName::Condition, self.for_statement_condition(input))?;
-                        seq.elem_named(
-                            FieldName::Iterator,
+                        seq.elem_labeled(
+                            NodeLabel::Condition,
+                            self.for_statement_condition(input),
+                        )?;
+                        seq.elem_labeled(
+                            NodeLabel::Iterator,
                             OptionalHelper::transform(self.expression(input)),
                         )?;
                         seq.finish()
@@ -2407,8 +2411,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseParen,
+                seq.elem_labeled(
+                    NodeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseParen,
@@ -2416,7 +2420,7 @@ impl Language {
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_named(FieldName::Body, self.statement(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ForStatement)
@@ -2434,7 +2438,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ForStatementCondition)
     }
 
@@ -2454,7 +2458,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ForStatementInitialization)
     }
 
@@ -2516,14 +2520,14 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::FunctionAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.function_attribute(input).with_name(FieldName::Item)
+            self.function_attribute(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::FunctionAttributes)
     }
@@ -2540,7 +2544,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::FunctionBody)
     }
 
@@ -2551,12 +2555,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::FunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -2581,7 +2585,7 @@ impl Language {
                 }
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -2591,24 +2595,24 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::FunctionKeyword,
+            seq.elem_labeled(
+                NodeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::FunctionKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Name, self.function_name(input))?;
-            seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-            seq.elem_named(
-                FieldName::Attributes,
+            seq.elem_labeled(NodeLabel::Name, self.function_name(input))?;
+            seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+            seq.elem_labeled(
+                NodeLabel::Attributes,
                 OptionalHelper::transform(self.function_attributes(input)),
             )?;
-            seq.elem_named(
-                FieldName::Returns,
+            seq.elem_labeled(
+                NodeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
             )?;
-            seq.elem_named(FieldName::Body, self.function_body(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::FunctionDefinition)
@@ -2634,27 +2638,27 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::FunctionName)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn function_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::FunctionKeyword,
+            seq.elem_labeled(
+                NodeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::FunctionKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-            seq.elem_named(
-                FieldName::Attributes,
+            seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+            seq.elem_labeled(
+                NodeLabel::Attributes,
                 OptionalHelper::transform(self.function_type_attributes(input)),
             )?;
-            seq.elem_named(
-                FieldName::Returns,
+            seq.elem_labeled(
+                NodeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
             )?;
             seq.finish()
@@ -2702,7 +2706,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::FunctionTypeAttribute)
     }
 
@@ -2710,7 +2714,7 @@ impl Language {
     fn function_type_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.function_type_attribute(input)
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::FunctionTypeAttributes)
     }
@@ -2718,16 +2722,16 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn hex_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Literal,
+            seq.elem_labeled(
+                NodeLabel::Literal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::HexLiteral,
                 ),
             )?;
             if !self.version_is_at_least_0_5_0 {
-                seq.elem_named(
-                    FieldName::Unit,
+                seq.elem_labeled(
+                    NodeLabel::Unit,
                     OptionalHelper::transform(self.number_unit(input)),
                 )?;
             }
@@ -2751,7 +2755,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::HexStringLiteral)
     }
 
@@ -2759,7 +2763,7 @@ impl Language {
     fn hex_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_14 {
             OneOrMoreHelper::run(input, |input| {
-                self.hex_string_literal(input).with_name(FieldName::Item)
+                self.hex_string_literal(input).with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -2777,10 +2781,10 @@ impl Language {
                     input,
                     TokenKind::Identifier,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Period,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::IdentifierPath)
     }
@@ -2788,8 +2792,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::IfKeyword,
+            seq.elem_labeled(
+                NodeLabel::IfKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::IfKeyword,
@@ -2798,8 +2802,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenParen,
+                seq.elem_labeled(
+                    NodeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenParen,
@@ -2807,7 +2811,7 @@ impl Language {
                 )?;
                 seq.elem(
                     self.expression(input)
-                        .with_name(FieldName::Condition)
+                        .with_label(NodeLabel::Condition)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2815,8 +2819,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseParen,
+                seq.elem_labeled(
+                    NodeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseParen,
@@ -2824,9 +2828,9 @@ impl Language {
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_named(FieldName::Body, self.statement(input))?;
-            seq.elem_named(
-                FieldName::ElseBranch,
+            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+            seq.elem_labeled(
+                NodeLabel::ElseBranch,
                 OptionalHelper::transform(self.else_branch(input)),
             )?;
             seq.finish()
@@ -2837,15 +2841,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn import_alias(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::AsKeyword,
+            seq.elem_labeled(
+                NodeLabel::AsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::AsKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Identifier,
+            seq.elem_labeled(
+                NodeLabel::Identifier,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -2867,7 +2871,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ImportClause)
     }
 
@@ -2877,8 +2881,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -2886,7 +2890,7 @@ impl Language {
                 )?;
                 seq.elem(
                     self.import_deconstruction_symbols(input)
-                        .with_name(FieldName::Symbols)
+                        .with_label(NodeLabel::Symbols)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -2894,8 +2898,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -2903,14 +2907,14 @@ impl Language {
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_named(
-                FieldName::FromKeyword,
+            seq.elem_labeled(
+                NodeLabel::FromKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::FromKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Path, self.string_literal(input))?;
+            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDeconstruction)
@@ -2919,15 +2923,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn import_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Alias,
+            seq.elem_labeled(
+                NodeLabel::Alias,
                 OptionalHelper::transform(self.import_alias(input)),
             )?;
             seq.finish()
@@ -2942,10 +2946,10 @@ impl Language {
             self,
             |input| {
                 self.import_deconstruction_symbol(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             },
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::ImportDeconstructionSymbols)
     }
@@ -2955,14 +2959,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::ImportKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::ImportKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::ImportKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Clause, self.import_clause(input))?;
+                    seq.elem_labeled(NodeLabel::Clause, self.import_clause(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -2972,8 +2976,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -2987,15 +2991,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn index_access_end(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Colon,
+            seq.elem_labeled(
+                NodeLabel::Colon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Colon,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::End,
+            seq.elem_labeled(
+                NodeLabel::End,
                 OptionalHelper::transform(self.expression(input)),
             )?;
             seq.finish()
@@ -3010,12 +3014,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::IndexAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -3029,14 +3033,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::IsKeyword,
+            seq.elem_labeled(
+                NodeLabel::IsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::IsKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Types, self.inheritance_types(input))?;
+            seq.elem_labeled(NodeLabel::Types, self.inheritance_types(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::InheritanceSpecifier)
@@ -3045,9 +3049,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::TypeName, self.identifier_path(input))?;
-            seq.elem_named(
-                FieldName::Arguments,
+            seq.elem_labeled(NodeLabel::TypeName, self.identifier_path(input))?;
+            seq.elem_labeled(
+                NodeLabel::Arguments,
                 OptionalHelper::transform(self.arguments_declaration(input)),
             )?;
             seq.finish()
@@ -3060,9 +3064,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.inheritance_type(input).with_name(FieldName::Item),
+            |input| self.inheritance_type(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::InheritanceTypes)
     }
@@ -3070,29 +3074,29 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn interface_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::InterfaceKeyword,
+            seq.elem_labeled(
+                NodeLabel::InterfaceKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::InterfaceKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Inheritence,
+            seq.elem_labeled(
+                NodeLabel::Inheritence,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -3100,7 +3104,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.interface_members(input))
-                        .with_name(FieldName::Members)
+                        .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -3108,8 +3112,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -3125,7 +3129,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn interface_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_name(FieldName::Item)
+            self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::InterfaceMembers)
     }
@@ -3167,15 +3171,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn library_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::LibraryKeyword,
+            seq.elem_labeled(
+                NodeLabel::LibraryKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::LibraryKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -3184,8 +3188,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -3193,7 +3197,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.library_members(input))
-                        .with_name(FieldName::Members)
+                        .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -3201,8 +3205,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -3218,7 +3222,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn library_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_name(FieldName::Item)
+            self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::LibraryMembers)
     }
@@ -3226,10 +3230,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn mapping_key(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::KeyType, self.mapping_key_type(input))?;
+            seq.elem_labeled(NodeLabel::KeyType, self.mapping_key_type(input))?;
             if self.version_is_at_least_0_8_18 {
-                seq.elem_named(
-                    FieldName::Name,
+                seq.elem_labeled(
+                    NodeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -3252,15 +3256,15 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::MappingKeyType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn mapping_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::MappingKeyword,
+            seq.elem_labeled(
+                NodeLabel::MappingKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::MappingKeyword,
@@ -3269,8 +3273,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenParen,
+                seq.elem_labeled(
+                    NodeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenParen,
@@ -3278,15 +3282,15 @@ impl Language {
                 )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(FieldName::KeyType, self.mapping_key(input))?;
-                        seq.elem_named(
-                            FieldName::EqualGreaterThan,
+                        seq.elem_labeled(NodeLabel::KeyType, self.mapping_key(input))?;
+                        seq.elem_labeled(
+                            NodeLabel::EqualGreaterThan,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::EqualGreaterThan,
                             ),
                         )?;
-                        seq.elem_named(FieldName::ValueType, self.mapping_value(input))?;
+                        seq.elem_labeled(NodeLabel::ValueType, self.mapping_value(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -3296,8 +3300,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseParen,
+                seq.elem_labeled(
+                    NodeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseParen,
@@ -3313,10 +3317,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn mapping_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::TypeName, self.type_name(input))?;
+            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
             if self.version_is_at_least_0_8_18 {
-                seq.elem_named(
-                    FieldName::Name,
+                seq.elem_labeled(
+                    NodeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -3345,7 +3349,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::MemberAccess)
     }
 
@@ -3356,12 +3360,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -3386,14 +3390,14 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::ModifierAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.modifier_attribute(input).with_name(FieldName::Item)
+            self.modifier_attribute(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::ModifierAttributes)
     }
@@ -3401,29 +3405,29 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn modifier_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ModifierKeyword,
+            seq.elem_labeled(
+                NodeLabel::ModifierKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ModifierKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Parameters,
+            seq.elem_labeled(
+                NodeLabel::Parameters,
                 OptionalHelper::transform(self.parameters_declaration(input)),
             )?;
-            seq.elem_named(
-                FieldName::Attributes,
+            seq.elem_labeled(
+                NodeLabel::Attributes,
                 OptionalHelper::transform(self.modifier_attributes(input)),
             )?;
-            seq.elem_named(FieldName::Body, self.function_body(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ModifierDefinition)
@@ -3432,9 +3436,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn modifier_invocation(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::Name, self.identifier_path(input))?;
-            seq.elem_named(
-                FieldName::Arguments,
+            seq.elem_labeled(NodeLabel::Name, self.identifier_path(input))?;
+            seq.elem_labeled(
+                NodeLabel::Arguments,
                 OptionalHelper::transform(self.arguments_declaration(input)),
             )?;
             seq.finish()
@@ -3449,12 +3453,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::MultiplicativeExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -3468,21 +3472,21 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn named_argument(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Colon,
+            seq.elem_labeled(
+                NodeLabel::Colon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Colon,
                 ),
             )?;
-            seq.elem_named(FieldName::Value, self.expression(input))?;
+            seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgument)
@@ -3493,8 +3497,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenBrace,
+            seq.elem_labeled(
+                NodeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenBrace,
@@ -3502,7 +3506,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.named_arguments(input))
-                    .with_name(FieldName::Arguments)
+                    .with_label(NodeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3510,8 +3514,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseBrace,
+            seq.elem_labeled(
+                NodeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseBrace,
@@ -3526,7 +3530,7 @@ impl Language {
     fn named_argument_groups(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
             OneOrMoreHelper::run(input, |input| {
-                self.named_argument_group(input).with_name(FieldName::Item)
+                self.named_argument_group(input).with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -3539,9 +3543,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.named_argument(input).with_name(FieldName::Item),
+            |input| self.named_argument(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::NamedArguments)
     }
@@ -3551,8 +3555,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -3560,7 +3564,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.named_argument_group(input))
-                    .with_name(FieldName::Arguments)
+                    .with_label(NodeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3568,8 +3572,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -3583,22 +3587,22 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn named_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Asterisk,
+            seq.elem_labeled(
+                NodeLabel::Asterisk,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Asterisk,
                 ),
             )?;
-            seq.elem_named(FieldName::Alias, self.import_alias(input))?;
-            seq.elem_named(
-                FieldName::FromKeyword,
+            seq.elem_labeled(NodeLabel::Alias, self.import_alias(input))?;
+            seq.elem_labeled(
+                NodeLabel::FromKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::FromKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Path, self.string_literal(input))?;
+            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedImport)
@@ -3607,14 +3611,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn new_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::NewKeyword,
+            seq.elem_labeled(
+                NodeLabel::NewKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::NewKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::TypeName, self.type_name(input))?;
+            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::NewExpression)
@@ -3688,7 +3692,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::NumberUnit)
     }
 
@@ -3699,12 +3703,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::OrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -3720,9 +3724,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.identifier_path(input).with_name(FieldName::Item),
+            |input| self.identifier_path(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::OverridePaths)
     }
@@ -3732,8 +3736,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -3741,7 +3745,7 @@ impl Language {
             )?;
             seq.elem(
                 self.override_paths(input)
-                    .with_name(FieldName::Paths)
+                    .with_label(NodeLabel::Paths)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3749,8 +3753,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -3764,15 +3768,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::OverrideKeyword,
+            seq.elem_labeled(
+                NodeLabel::OverrideKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OverrideKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Overridden,
+            seq.elem_labeled(
+                NodeLabel::Overridden,
                 OptionalHelper::transform(self.override_paths_declaration(input)),
             )?;
             seq.finish()
@@ -3783,13 +3787,13 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-            seq.elem_named(
-                FieldName::StorageLocation,
+            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(
+                NodeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -3807,9 +3811,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.parameter(input).with_name(FieldName::Item),
+            |input| self.parameter(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::Parameters)
     }
@@ -3819,8 +3823,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -3828,7 +3832,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.parameters(input))
-                    .with_name(FieldName::Parameters)
+                    .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3836,8 +3840,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -3851,9 +3855,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn path_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::Path, self.string_literal(input))?;
-            seq.elem_named(
-                FieldName::Alias,
+            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
+            seq.elem_labeled(
+                NodeLabel::Alias,
                 OptionalHelper::transform(self.import_alias(input)),
             )?;
             seq.finish()
@@ -3866,9 +3870,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input).with_name(FieldName::Item),
+            |input| self.expression(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::PositionalArguments)
     }
@@ -3878,8 +3882,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -3887,7 +3891,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.positional_arguments(input))
-                    .with_name(FieldName::Arguments)
+                    .with_label(NodeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3895,8 +3899,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -3914,12 +3918,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::PostfixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -3941,7 +3945,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::Pragma)
     }
 
@@ -3950,14 +3954,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::PragmaKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::PragmaKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::PragmaKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Pragma, self.pragma(input))?;
+                    seq.elem_labeled(NodeLabel::Pragma, self.pragma(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Pragma>(
@@ -3967,8 +3971,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::Semicolon,
@@ -3986,12 +3990,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::PrefixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -4027,7 +4031,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -4039,7 +4043,7 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.receive_function_attribute(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -4051,19 +4055,19 @@ impl Language {
     fn receive_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::ReceiveKeyword,
+                seq.elem_labeled(
+                    NodeLabel::ReceiveKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::ReceiveKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-                seq.elem_named(
-                    FieldName::Attributes,
+                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Attributes,
                     OptionalHelper::transform(self.receive_function_attributes(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.function_body(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
@@ -4077,15 +4081,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::ReturnKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::ReturnKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::ReturnKeyword,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Expression,
+                    seq.elem_labeled(
+                        NodeLabel::Expression,
                         OptionalHelper::transform(self.expression(input)),
                     )?;
                     seq.finish()
@@ -4097,8 +4101,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -4112,14 +4116,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ReturnsKeyword,
+            seq.elem_labeled(
+                NodeLabel::ReturnsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ReturnsKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Variables, self.parameters_declaration(input))?;
+            seq.elem_labeled(NodeLabel::Variables, self.parameters_declaration(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::ReturnsDeclaration)
@@ -4131,18 +4135,18 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(
-                            FieldName::RevertKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::RevertKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::RevertKeyword,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Error,
+                        seq.elem_labeled(
+                            NodeLabel::Error,
                             OptionalHelper::transform(self.identifier_path(input)),
                         )?;
-                        seq.elem_named(FieldName::Arguments, self.arguments_declaration(input))?;
+                        seq.elem_labeled(NodeLabel::Arguments, self.arguments_declaration(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -4152,8 +4156,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -4174,12 +4178,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::ShiftExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -4193,7 +4197,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.source_unit_members(input))
-            .with_name(FieldName::Members)
+            .with_label(NodeLabel::Members)
             .with_kind(RuleKind::SourceUnit)
     }
 
@@ -4244,14 +4248,14 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::SourceUnitMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.source_unit_member(input).with_name(FieldName::Item)
+            self.source_unit_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::SourceUnitMembers)
     }
@@ -4290,7 +4294,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::StateVariableAttribute)
     }
 
@@ -4298,7 +4302,7 @@ impl Language {
     fn state_variable_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.state_variable_attribute(input)
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::StateVariableAttributes)
     }
@@ -4308,20 +4312,20 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-                    seq.elem_named(
-                        FieldName::Attributes,
+                    seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                    seq.elem_labeled(
+                        NodeLabel::Attributes,
                         OptionalHelper::transform(self.state_variable_attributes(input)),
                     )?;
-                    seq.elem_named(
-                        FieldName::Name,
+                    seq.elem_labeled(
+                        NodeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Value,
+                    seq.elem_labeled(
+                        NodeLabel::Value,
                         OptionalHelper::transform(self.state_variable_definition_value(input)),
                     )?;
                     seq.finish()
@@ -4333,8 +4337,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -4348,14 +4352,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_definition_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Equal,
+            seq.elem_labeled(
+                NodeLabel::Equal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Equal,
                 ),
             )?;
-            seq.elem_named(FieldName::Value, self.expression(input))?;
+            seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::StateVariableDefinitionValue)
@@ -4412,14 +4416,14 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::Statement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.statement(input).with_name(FieldName::Item)
+            self.statement(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::Statements)
     }
@@ -4446,7 +4450,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::StorageLocation)
     }
 
@@ -4475,7 +4479,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::StringExpression)
     }
 
@@ -4494,7 +4498,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::StringLiteral)
     }
 
@@ -4502,7 +4506,7 @@ impl Language {
     fn string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_14 {
             OneOrMoreHelper::run(input, |input| {
-                self.string_literal(input).with_name(FieldName::Item)
+                self.string_literal(input).with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -4513,15 +4517,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn struct_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::StructKeyword,
+            seq.elem_labeled(
+                NodeLabel::StructKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::StructKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -4530,8 +4534,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -4539,7 +4543,7 @@ impl Language {
                 )?;
                 seq.elem(
                     OptionalHelper::transform(self.struct_members(input))
-                        .with_name(FieldName::Members)
+                        .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -4547,8 +4551,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -4566,9 +4570,9 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-                    seq.elem_named(
-                        FieldName::Name,
+                    seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                    seq.elem_labeled(
+                        NodeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
@@ -4583,8 +4587,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -4598,7 +4602,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn struct_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.struct_member(input).with_name(FieldName::Item)
+            self.struct_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::StructMembers)
     }
@@ -4612,7 +4616,7 @@ impl Language {
                         input,
                         TokenKind::ThrowKeyword,
                     )
-                    .with_name(FieldName::ThrowKeyword)
+                    .with_label(NodeLabel::ThrowKeyword)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -4620,8 +4624,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -4657,20 +4661,20 @@ impl Language {
     fn try_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::TryKeyword,
+                seq.elem_labeled(
+                    NodeLabel::TryKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::TryKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Expression, self.expression(input))?;
-                seq.elem_named(
-                    FieldName::Returns,
+                seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Returns,
                     OptionalHelper::transform(self.returns_declaration(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.block(input))?;
-                seq.elem_named(FieldName::CatchClauses, self.catch_clauses(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
+                seq.elem_labeled(NodeLabel::CatchClauses, self.catch_clauses(input))?;
                 seq.finish()
             })
         } else {
@@ -4682,7 +4686,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.tuple_member(input))
-            .with_name(FieldName::Member)
+            .with_label(NodeLabel::Member)
             .with_kind(RuleKind::TupleDeconstructionElement)
     }
 
@@ -4693,10 +4697,10 @@ impl Language {
             self,
             |input| {
                 self.tuple_deconstruction_element(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             },
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::TupleDeconstructionElements)
     }
@@ -4707,8 +4711,8 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     if !self.version_is_at_least_0_5_0 {
-                        seq.elem_named(
-                            FieldName::VarKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::VarKeyword,
                             OptionalHelper::transform(
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
@@ -4720,8 +4724,8 @@ impl Language {
                     seq.elem(SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
-                        seq.elem_named(
-                            FieldName::OpenParen,
+                        seq.elem_labeled(
+                            NodeLabel::OpenParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::OpenParen,
@@ -4729,7 +4733,7 @@ impl Language {
                         )?;
                         seq.elem(
                             self.tuple_deconstruction_elements(input)
-                                .with_name(FieldName::Elements)
+                                .with_label(NodeLabel::Elements)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                     input,
                                     self,
@@ -4737,8 +4741,8 @@ impl Language {
                                     RecoverFromNoMatch::Yes,
                                 ),
                         )?;
-                        seq.elem_named(
-                            FieldName::CloseParen,
+                        seq.elem_labeled(
+                            NodeLabel::CloseParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::CloseParen,
@@ -4746,14 +4750,14 @@ impl Language {
                         )?;
                         seq.finish()
                     }))?;
-                    seq.elem_named(
-                        FieldName::Equal,
+                    seq.elem_labeled(
+                        NodeLabel::Equal,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Equal,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Expression, self.expression(input))?;
+                    seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -4763,8 +4767,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -4780,8 +4784,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::OpenParen,
@@ -4789,7 +4793,7 @@ impl Language {
             )?;
             seq.elem(
                 self.tuple_values(input)
-                    .with_name(FieldName::Items)
+                    .with_label(NodeLabel::Items)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -4797,8 +4801,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::CloseParen,
@@ -4818,14 +4822,14 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::TupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.expression(input))
-            .with_name(FieldName::Expression)
+            .with_label(NodeLabel::Expression)
             .with_kind(RuleKind::TupleValue)
     }
 
@@ -4834,9 +4838,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.tuple_value(input).with_name(FieldName::Item),
+            |input| self.tuple_value(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::TupleValues)
     }
@@ -4845,8 +4849,8 @@ impl Language {
     fn type_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_3 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::TypeKeyword,
+                seq.elem_labeled(
+                    NodeLabel::TypeKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::TypeKeyword,
@@ -4855,8 +4859,8 @@ impl Language {
                 seq.elem(SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem_named(
-                        FieldName::OpenParen,
+                    seq.elem_labeled(
+                        NodeLabel::OpenParen,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::OpenParen,
@@ -4864,7 +4868,7 @@ impl Language {
                     )?;
                     seq.elem(
                         self.type_name(input)
-                            .with_name(FieldName::TypeName)
+                            .with_label(NodeLabel::TypeName)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -4872,8 +4876,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::CloseParen,
+                    seq.elem_labeled(
+                        NodeLabel::CloseParen,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::CloseParen,
@@ -4898,8 +4902,8 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem_named(
-                        FieldName::OpenBracket,
+                    seq.elem_labeled(
+                        NodeLabel::OpenBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::OpenBracket,
@@ -4907,7 +4911,7 @@ impl Language {
                     )?;
                     seq.elem(
                         OptionalHelper::transform(self.expression(input))
-                            .with_name(FieldName::Index)
+                            .with_label(NodeLabel::Index)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
@@ -4915,8 +4919,8 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem_named(
-                        FieldName::CloseBracket,
+                    seq.elem_labeled(
+                        NodeLabel::CloseBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::CloseBracket,
@@ -4938,7 +4942,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -4964,13 +4968,13 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn typed_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::TypeName, self.type_name(input))?;
-            seq.elem_named(
-                FieldName::StorageLocation,
+            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(
+                NodeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -4985,14 +4989,14 @@ impl Language {
     fn unchecked_block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::UncheckedKeyword,
+                seq.elem_labeled(
+                    NodeLabel::UncheckedKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::UncheckedKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Block, self.block(input))?;
+                seq.elem_labeled(NodeLabel::Block, self.block(input))?;
                 seq.finish()
             })
         } else {
@@ -5017,7 +5021,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -5029,7 +5033,7 @@ impl Language {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.unicode_string_literal(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -5088,7 +5092,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -5100,7 +5104,7 @@ impl Language {
         if !self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.unnamed_function_attribute(input)
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
             })
         } else {
             ParserResult::disabled()
@@ -5112,19 +5116,19 @@ impl Language {
     fn unnamed_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::FunctionKeyword,
+                seq.elem_labeled(
+                    NodeLabel::FunctionKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::FunctionKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Parameters, self.parameters_declaration(input))?;
-                seq.elem_named(
-                    FieldName::Attributes,
+                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(
+                    NodeLabel::Attributes,
                     OptionalHelper::transform(self.unnamed_function_attributes(input)),
                 )?;
-                seq.elem_named(FieldName::Body, self.function_body(input))?;
+                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
@@ -5136,12 +5140,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn untyped_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::StorageLocation,
+            seq.elem_labeled(
+                NodeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
@@ -5158,28 +5162,28 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_named(
-                            FieldName::TypeKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::TypeKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::TypeKeyword,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::Name,
+                        seq.elem_labeled(
+                            NodeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::Identifier,
                             ),
                         )?;
-                        seq.elem_named(
-                            FieldName::IsKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::IsKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TokenKind::IsKeyword,
                             ),
                         )?;
-                        seq.elem_named(FieldName::ValueType, self.elementary_type(input))?;
+                        seq.elem_labeled(NodeLabel::ValueType, self.elementary_type(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -5189,8 +5193,8 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Semicolon,
+                seq.elem_labeled(
+                    NodeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
@@ -5208,14 +5212,14 @@ impl Language {
     fn using_alias(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_19 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::AsKeyword,
+                seq.elem_labeled(
+                    NodeLabel::AsKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::AsKeyword,
                     ),
                 )?;
-                seq.elem_named(FieldName::Operator, self.using_operator(input))?;
+                seq.elem_labeled(NodeLabel::Operator, self.using_operator(input))?;
                 seq.finish()
             })
         } else {
@@ -5235,7 +5239,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::UsingClause)
     }
 
@@ -5245,8 +5249,8 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenBrace,
+                seq.elem_labeled(
+                    NodeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenBrace,
@@ -5254,7 +5258,7 @@ impl Language {
                 )?;
                 seq.elem(
                     self.using_deconstruction_symbols(input)
-                        .with_name(FieldName::Symbols)
+                        .with_label(NodeLabel::Symbols)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -5262,8 +5266,8 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseBrace,
+                seq.elem_labeled(
+                    NodeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseBrace,
@@ -5281,10 +5285,10 @@ impl Language {
     fn using_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(FieldName::Name, self.identifier_path(input))?;
+                seq.elem_labeled(NodeLabel::Name, self.identifier_path(input))?;
                 if self.version_is_at_least_0_8_19 {
-                    seq.elem_named(
-                        FieldName::Alias,
+                    seq.elem_labeled(
+                        NodeLabel::Alias,
                         OptionalHelper::transform(self.using_alias(input)),
                     )?;
                 }
@@ -5304,10 +5308,10 @@ impl Language {
                 self,
                 |input| {
                     self.using_deconstruction_symbol(input)
-                        .with_name(FieldName::Item)
+                        .with_label(NodeLabel::Item)
                 },
                 TokenKind::Comma,
-                FieldName::Separator,
+                NodeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
@@ -5320,25 +5324,25 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::UsingKeyword,
+                    seq.elem_labeled(
+                        NodeLabel::UsingKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::UsingKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Clause, self.using_clause(input))?;
-                    seq.elem_named(
-                        FieldName::ForKeyword,
+                    seq.elem_labeled(NodeLabel::Clause, self.using_clause(input))?;
+                    seq.elem_labeled(
+                        NodeLabel::ForKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::ForKeyword,
                         ),
                     )?;
-                    seq.elem_named(FieldName::Target, self.using_target(input))?;
+                    seq.elem_labeled(NodeLabel::Target, self.using_target(input))?;
                     if self.version_is_at_least_0_8_13 {
-                        seq.elem_named(
-                            FieldName::GlobalKeyword,
+                        seq.elem_labeled(
+                            NodeLabel::GlobalKeyword,
                             OptionalHelper::transform(
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
@@ -5356,8 +5360,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -5445,7 +5449,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
@@ -5462,7 +5466,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::UsingTarget)
     }
 
@@ -5471,23 +5475,23 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::VariableType,
+                    seq.elem_labeled(
+                        NodeLabel::VariableType,
                         self.variable_declaration_type(input),
                     )?;
-                    seq.elem_named(
-                        FieldName::StorageLocation,
+                    seq.elem_labeled(
+                        NodeLabel::StorageLocation,
                         OptionalHelper::transform(self.storage_location(input)),
                     )?;
-                    seq.elem_named(
-                        FieldName::Name,
+                    seq.elem_labeled(
+                        NodeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Value,
+                    seq.elem_labeled(
+                        NodeLabel::Value,
                         OptionalHelper::transform(self.variable_declaration_value(input)),
                     )?;
                     seq.finish()
@@ -5499,8 +5503,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
@@ -5525,21 +5529,21 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::VariableDeclarationType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::Equal,
+            seq.elem_labeled(
+                NodeLabel::Equal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Equal,
                 ),
             )?;
-            seq.elem_named(FieldName::Expression, self.expression(input))?;
+            seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::VariableDeclarationValue)
@@ -5548,15 +5552,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::SolidityKeyword,
+            seq.elem_labeled(
+                NodeLabel::SolidityKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::SolidityKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Expressions,
+            seq.elem_labeled(
+                NodeLabel::Expressions,
                 self.version_pragma_expressions(input),
             )?;
             seq.finish()
@@ -5575,7 +5579,7 @@ impl Language {
                     input,
                     TokenKind::BarBar,
                 )
-                .with_name(FieldName::Operator),
+                .with_label(NodeLabel::Operator),
             )
         };
         let parse_left_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
@@ -5584,7 +5588,7 @@ impl Language {
                 3u8,
                 3u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus)
-                    .with_name(FieldName::Operator),
+                    .with_label(NodeLabel::Operator),
             )
         };
         let parse_prefix_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
@@ -5597,49 +5601,49 @@ impl Language {
                             input,
                             TokenKind::Caret,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::Tilde,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::Equal,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::LessThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::GreaterThan,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::LessThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TokenKind::GreaterThanEqual,
                         )
-                        .with_name(FieldName::Operator);
+                        .with_label(NodeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -5658,7 +5662,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         };
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
@@ -5700,7 +5704,7 @@ impl Language {
     fn version_pragma_expressions(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.version_pragma_expression(input)
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::VersionPragmaExpressions)
     }
@@ -5712,12 +5716,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::VersionPragmaOrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -5735,12 +5739,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::VersionPragmaPrefixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -5758,12 +5762,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::VersionPragmaRangeExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -5784,10 +5788,10 @@ impl Language {
                     input,
                     TokenKind::VersionPragmaValue,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Period,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::VersionPragmaSpecifier)
     }
@@ -5795,8 +5799,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::WhileKeyword,
+            seq.elem_labeled(
+                NodeLabel::WhileKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::WhileKeyword,
@@ -5805,8 +5809,8 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem_named(
-                    FieldName::OpenParen,
+                seq.elem_labeled(
+                    NodeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::OpenParen,
@@ -5814,7 +5818,7 @@ impl Language {
                 )?;
                 seq.elem(
                     self.expression(input)
-                        .with_name(FieldName::Condition)
+                        .with_label(NodeLabel::Condition)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -5822,8 +5826,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::CloseParen,
+                seq.elem_labeled(
+                    NodeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::CloseParen,
@@ -5831,7 +5835,7 @@ impl Language {
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_named(FieldName::Body, self.statement(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::WhileStatement)
@@ -5842,9 +5846,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_expression(input).with_name(FieldName::Item),
+            |input| self.yul_expression(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::YulArguments)
     }
@@ -5852,15 +5856,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(FieldName::Names, self.yul_identifier_paths(input))?;
-            seq.elem_named(
-                FieldName::ColonEqual,
+            seq.elem_labeled(NodeLabel::Names, self.yul_identifier_paths(input))?;
+            seq.elem_labeled(
+                NodeLabel::ColonEqual,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::ColonEqual,
                 ),
             )?;
-            seq.elem_named(FieldName::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulAssignmentStatement)
@@ -5871,8 +5875,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenBrace,
+            seq.elem_labeled(
+                NodeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenBrace,
@@ -5880,7 +5884,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_statements(input))
-                    .with_name(FieldName::Statements)
+                    .with_label(NodeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
@@ -5888,8 +5892,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseBrace,
+            seq.elem_labeled(
+                NodeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseBrace,
@@ -5903,7 +5907,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulBreakKeyword)
-            .with_name(FieldName::BreakKeyword)
+            .with_label(NodeLabel::BreakKeyword)
             .with_kind(RuleKind::YulBreakStatement)
     }
 
@@ -6306,7 +6310,7 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::YulBuiltInFunction)
     }
 
@@ -6316,21 +6320,21 @@ impl Language {
             input,
             TokenKind::YulContinueKeyword,
         )
-        .with_name(FieldName::ContinueKeyword)
+        .with_label(NodeLabel::ContinueKeyword)
         .with_kind(RuleKind::YulContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_default_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::DefaultKeyword,
+            seq.elem_labeled(
+                NodeLabel::DefaultKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulDefaultKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulDefaultCase)
@@ -6345,8 +6349,8 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem_named(
-                        FieldName::OpenParen,
+                    seq.elem_labeled(
+                        NodeLabel::OpenParen,
                         self.parse_token_with_trivia::<LexicalContextType::Yul>(
                             input,
                             TokenKind::OpenParen,
@@ -6354,7 +6358,7 @@ impl Language {
                     )?;
                     seq.elem(
                         OptionalHelper::transform(self.yul_arguments(input))
-                            .with_name(FieldName::Arguments)
+                            .with_label(NodeLabel::Arguments)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                                 input,
                                 self,
@@ -6362,8 +6366,8 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem_named(
-                        FieldName::CloseParen,
+                    seq.elem_labeled(
+                        NodeLabel::CloseParen,
                         self.parse_token_with_trivia::<LexicalContextType::Yul>(
                             input,
                             TokenKind::CloseParen,
@@ -6383,7 +6387,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -6409,17 +6413,17 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ForKeyword,
+            seq.elem_labeled(
+                NodeLabel::ForKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulForKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Initialization, self.yul_block(input))?;
-            seq.elem_named(FieldName::Condition, self.yul_expression(input))?;
-            seq.elem_named(FieldName::Iterator, self.yul_block(input))?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Initialization, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Condition, self.yul_expression(input))?;
+            seq.elem_labeled(NodeLabel::Iterator, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulForStatement)
@@ -6432,12 +6436,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::YulExpression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::YulFunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -6451,29 +6455,29 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::FunctionKeyword,
+            seq.elem_labeled(
+                NodeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulFunctionKeyword,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Name,
+            seq.elem_labeled(
+                NodeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulIdentifier,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Parameters,
+            seq.elem_labeled(
+                NodeLabel::Parameters,
                 self.yul_parameters_declaration(input),
             )?;
-            seq.elem_named(
-                FieldName::Returns,
+            seq.elem_labeled(
+                NodeLabel::Returns,
                 OptionalHelper::transform(self.yul_returns_declaration(input)),
             )?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulFunctionDefinition)
@@ -6489,10 +6493,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Period,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::YulIdentifierPath)
     }
@@ -6502,9 +6506,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_identifier_path(input).with_name(FieldName::Item),
+            |input| self.yul_identifier_path(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::YulIdentifierPaths)
     }
@@ -6512,15 +6516,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::IfKeyword,
+            seq.elem_labeled(
+                NodeLabel::IfKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulIfKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Condition, self.yul_expression(input))?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Condition, self.yul_expression(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulIfStatement)
@@ -6530,15 +6534,15 @@ impl Language {
     fn yul_label(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_named(
-                    FieldName::Label,
+                seq.elem_labeled(
+                    NodeLabel::Label,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TokenKind::YulIdentifier,
                     ),
                 )?;
-                seq.elem_named(
-                    FieldName::Colon,
+                seq.elem_labeled(
+                    NodeLabel::Colon,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TokenKind::Colon,
@@ -6559,7 +6563,7 @@ impl Language {
                 input,
                 TokenKind::YulLeaveKeyword,
             )
-            .with_name(FieldName::LeaveKeyword)
+            .with_label(NodeLabel::LeaveKeyword)
         } else {
             ParserResult::disabled()
         }
@@ -6595,7 +6599,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::YulLiteral)
     }
 
@@ -6609,10 +6613,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::YulParameters)
     }
@@ -6622,8 +6626,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenParen,
+            seq.elem_labeled(
+                NodeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenParen,
@@ -6631,7 +6635,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_parameters(input))
-                    .with_name(FieldName::Parameters)
+                    .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
@@ -6639,8 +6643,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseParen,
+            seq.elem_labeled(
+                NodeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseParen,
@@ -6661,10 +6665,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
-                .with_name(FieldName::Item)
+                .with_label(NodeLabel::Item)
             },
             TokenKind::Comma,
-            FieldName::Separator,
+            NodeLabel::Separator,
         )
         .with_kind(RuleKind::YulReturnVariables)
     }
@@ -6672,14 +6676,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::MinusGreaterThan,
+            seq.elem_labeled(
+                NodeLabel::MinusGreaterThan,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::MinusGreaterThan,
                 ),
             )?;
-            seq.elem_named(FieldName::Variables, self.yul_return_variables(input))?;
+            seq.elem_labeled(NodeLabel::Variables, self.yul_return_variables(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulReturnsDeclaration)
@@ -6718,14 +6722,14 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::YulStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.yul_statement(input).with_name(FieldName::Item)
+            self.yul_statement(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::YulStatements)
     }
@@ -6739,14 +6743,14 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::YulSwitchCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_cases(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.yul_switch_case(input).with_name(FieldName::Item)
+            self.yul_switch_case(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::YulSwitchCases)
     }
@@ -6754,15 +6758,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::SwitchKeyword,
+            seq.elem_labeled(
+                NodeLabel::SwitchKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulSwitchKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Expression, self.yul_expression(input))?;
-            seq.elem_named(FieldName::Cases, self.yul_switch_cases(input))?;
+            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(NodeLabel::Cases, self.yul_switch_cases(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulSwitchStatement)
@@ -6771,15 +6775,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_value_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::CaseKeyword,
+            seq.elem_labeled(
+                NodeLabel::CaseKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulCaseKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Value, self.yul_literal(input))?;
-            seq.elem_named(FieldName::Body, self.yul_block(input))?;
+            seq.elem_labeled(NodeLabel::Value, self.yul_literal(input))?;
+            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulValueCase)
@@ -6788,16 +6792,16 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::LetKeyword,
+            seq.elem_labeled(
+                NodeLabel::LetKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulLetKeyword,
                 ),
             )?;
-            seq.elem_named(FieldName::Names, self.yul_identifier_paths(input))?;
-            seq.elem_named(
-                FieldName::Value,
+            seq.elem_labeled(NodeLabel::Names, self.yul_identifier_paths(input))?;
+            seq.elem_labeled(
+                NodeLabel::Value,
                 OptionalHelper::transform(self.yul_variable_declaration_value(input)),
             )?;
             seq.finish()
@@ -6808,14 +6812,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_named(
-                FieldName::ColonEqual,
+            seq.elem_labeled(
+                NodeLabel::ColonEqual,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::ColonEqual,
                 ),
             )?;
-            seq.elem_named(FieldName::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulVariableDeclarationValue)

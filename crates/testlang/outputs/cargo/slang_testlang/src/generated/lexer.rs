@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, NamedNode};
+use crate::cst::{self, LabeledNode};
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::parser_support::{ParserContext, ParserResult};
 
@@ -113,7 +113,7 @@ pub(crate) trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![NamedNode::anonymous(cst::Node::token(
+            vec![LabeledNode::anonymous(cst::Node::token(
                 kind,
                 input.content(start.utf8..end.utf8),
             ))],
@@ -146,7 +146,7 @@ pub(crate) trait Lexer {
             return ParserResult::no_match(vec![kind]);
         }
         let end = input.position();
-        children.push(NamedNode::anonymous(cst::Node::token(
+        children.push(LabeledNode::anonymous(cst::Node::token(
             kind,
             input.content(start.utf8..end.utf8),
         )));
