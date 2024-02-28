@@ -73,7 +73,11 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let source = file
         .path
         .read_to_string()?
+        // Some files are null terminated. Remove the null character:
+        // https://github.com/tintinweb/smart-contract-sanctuary/issues/30
+        .trim_end_matches('\0')
         // Remove unicode character inserted by sanctuary (illegal in Solidity):
+        // https://github.com/tintinweb/smart-contract-sanctuary/issues/31
         .replace("[email protected]", "[email-protected]");
 
     let language = Language::new(version.to_owned())?;

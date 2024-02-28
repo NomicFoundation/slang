@@ -68,8 +68,10 @@ impl Reporter {
         self.parent.set_draw_target(ProgressDrawTarget::hidden());
 
         std::io::stdout()
-            .write_all(&buffer.contents_formatted()[..])
+            .write_all(buffer.contents_formatted().as_slice())
             .unwrap();
+
+        println!();
     }
 
     pub fn add_blank(&mut self) {
