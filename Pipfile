@@ -4,6 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-# Other than `pipenv` that is used to configure individual projects, this Pipfile should not have any other packages defined.
-# Individual projects should define their own packages/dependencies in repsective folders/Pipfiles.
+# Installed first, and used to install/run other dependencies:
 pipenv = "==2023.12.1"
+
+# Used for the published GitHub pages site:
+mkdocs = "==1.4.2"
+mkdocs-literate-nav = "==0.6.0"
+mkdocs-material = "==9.1.1"
+mkdocs-minify-plugin = "==0.6.2"
+mkdocs-pymdownx-material-extras = "==2.4.2"
+
+# Used by 'infra lint':
+yamllint = "==1.29.0"
