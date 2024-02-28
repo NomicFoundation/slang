@@ -5,11 +5,6 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
-fn SafeMath() -> Result<()> {
-    run("SourceUnit", "SafeMath")
-}
-
-#[test]
 fn empty_file() -> Result<()> {
     run("SourceUnit", "empty_file")
 }
@@ -62,6 +57,11 @@ fn everything() -> Result<()> {
 #[test]
 fn partial_definition() -> Result<()> {
     run("SourceUnit", "partial_definition")
+}
+
+#[test]
+fn safe_math() -> Result<()> {
+    run("SourceUnit", "safe_math")
 }
 
 #[test]

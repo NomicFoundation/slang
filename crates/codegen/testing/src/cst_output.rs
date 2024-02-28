@@ -4,6 +4,7 @@ use std::path::Path;
 
 use anyhow::{bail, Result};
 use codegen_language_definition::model::Language;
+use inflector::Inflector;
 use infra_utils::codegen::{Codegen, CodegenReadWrite};
 use infra_utils::paths::{FileWalker, PathExtensions};
 
@@ -28,7 +29,7 @@ pub fn generate_cst_output_tests(
             &mut codegen,
             parser_name,
             test_names,
-            &output_dir.join(format!("{parser_name}.rs")),
+            &output_dir.join(format!("{0}.rs", parser_name.to_snake_case())),
         )?;
     }
 
@@ -81,7 +82,7 @@ fn generate_mod_file(
         parser_tests
             .keys()
             .fold(String::new(), |mut buffer, parser_name| {
-                writeln!(buffer, "#[allow(non_snake_case)] mod {parser_name};").unwrap();
+                writeln!(buffer, "mod {0};", parser_name.to_snake_case()).unwrap();
                 buffer
             });
 
