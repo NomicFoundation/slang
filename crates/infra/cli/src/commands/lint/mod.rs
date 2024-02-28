@@ -2,7 +2,6 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
@@ -149,14 +148,10 @@ fn run_yamllint() -> Result<()> {
             path
         });
 
-    // Run the command next to the Pipfile installing it:
-    let crate_dir = CargoWorkspace::locate_source_crate("infra_cli")?;
-
     return Command::new("python3")
         .property("-m", "pipenv")
         .args(["run", "yamllint"])
         .flag("--strict")
         .property("--config-file", config_file.unwrap_str())
-        .current_dir(crate_dir)
         .run_xargs(yaml_files);
 }
