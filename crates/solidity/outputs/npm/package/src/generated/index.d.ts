@@ -225,7 +225,7 @@ export namespace kinds {
     YulVariableDeclarationStatement = "YulVariableDeclarationStatement",
     YulVariableDeclarationValue = "YulVariableDeclarationValue",
   }
-  export enum FieldName {
+  export enum NodeLabel {
     Item = "Item",
     Variant = "Variant",
     Separator = "Separator",
@@ -764,7 +764,7 @@ export namespace cursor {
     spawn(): Cursor;
     get isCompleted(): boolean;
     node(): cst.Node;
-    get nodeName(): kinds.FieldName;
+    get label(): kinds.NodeLabel;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
     get depth(): number;

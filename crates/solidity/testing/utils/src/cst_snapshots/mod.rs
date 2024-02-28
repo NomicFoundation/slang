@@ -8,7 +8,7 @@ use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use slang_solidity::cst::Node;
-use slang_solidity::cursor::CursorWithNames;
+use slang_solidity::cursor::CursorWithLabels;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::text_index::TextRangeExtensions;
 use solidity_language::SolidityDefinition;
@@ -16,7 +16,7 @@ use solidity_language::SolidityDefinition;
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithNames) -> Result<String> {
+    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithLabels) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -89,7 +89,7 @@ fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree(w: &mut String, mut cursor: CursorWithNames, source: &str) -> Result<()> {
+fn write_tree(w: &mut String, mut cursor: CursorWithLabels, source: &str) -> Result<()> {
     writeln!(w, "Tree:")?;
     write_node(w, &mut cursor, source, 0)?;
 
@@ -99,7 +99,7 @@ fn write_tree(w: &mut String, mut cursor: CursorWithNames, source: &str) -> Resu
 
 fn write_node(
     w: &mut String,
-    cursor: &mut CursorWithNames,
+    cursor: &mut CursorWithLabels,
     source: &str,
     depth: usize,
 ) -> Result<()> {
@@ -135,20 +135,20 @@ fn write_node(
     Ok(())
 }
 
-fn render_key(cursor: &mut CursorWithNames) -> String {
+fn render_key(cursor: &mut CursorWithLabels) -> String {
     let kind = match cursor.node() {
         Node::Rule(rule) => rule.kind.to_string(),
         Node::Token(token) => token.kind.to_string(),
     };
 
-    if let Some(name) = cursor.node_name() {
-        format!("({name}꞉ {kind})", name = name.as_ref().to_snake_case())
+    if let Some(label) = cursor.label() {
+        format!("({label}꞉ {kind})", label = label.as_ref().to_snake_case())
     } else {
         format!("({kind})")
     }
 }
 
-fn render_value(cursor: &mut CursorWithNames, source: &str) -> String {
+fn render_value(cursor: &mut CursorWithLabels, source: &str) -> String {
     let utf8_range = cursor.text_range().utf8();
     let char_range = cursor.text_range().char();
     let preview = render_preview(source, &char_range);

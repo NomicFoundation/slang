@@ -9,16 +9,16 @@ use crate::{
 
 /// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
 #[derive(Clone, Debug)]
-pub struct Named<T> {
-    pub name: String,
-    pub node: T,
+pub struct Labeled<T> {
+    pub label: String,
+    pub value: T,
 }
 
-impl<T> std::ops::Deref for Named<T> {
+impl<T> std::ops::Deref for Labeled<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        &self.node
+        &self.value
     }
 }
 
@@ -57,18 +57,18 @@ impl Visitable for TriviaParserDefinitionRef {
 pub enum ParserDefinitionNode {
     Versioned(Box<Self>, Vec<VersionQualityRange>),
     Optional(Box<Self>),
-    ZeroOrMore(Named<Box<Self>>),
-    OneOrMore(Named<Box<Self>>),
-    Sequence(Vec<Named<Self>>),
-    Choice(Named<Vec<Self>>),
+    ZeroOrMore(Labeled<Box<Self>>),
+    OneOrMore(Labeled<Box<Self>>),
+    Sequence(Vec<Labeled<Self>>),
+    Choice(Labeled<Vec<Self>>),
     ScannerDefinition(ScannerDefinitionRef),
     KeywordScannerDefinition(KeywordScannerDefinitionRef),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
-    DelimitedBy(Named<Box<Self>>, Box<Self>, Named<Box<Self>>),
-    SeparatedBy(Named<Box<Self>>, Named<Box<Self>>),
-    TerminatedBy(Box<Self>, Named<Box<Self>>),
+    DelimitedBy(Labeled<Box<Self>>, Box<Self>, Labeled<Box<Self>>),
+    SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
+    TerminatedBy(Box<Self>, Labeled<Box<Self>>),
 }
 
 impl From<ScannerDefinitionRef> for ParserDefinitionNode {
@@ -99,17 +99,17 @@ impl Visitable for ParserDefinitionNode {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.parser_definition_node_enter(self);
         match self {
-            Self::Versioned(node, _)
-            | Self::Optional(node)
-            | Self::ZeroOrMore(Named { node, .. })
-            | Self::OneOrMore(Named { node, .. }) => node.accept_visitor(visitor),
+            Self::Versioned(value, _)
+            | Self::Optional(value)
+            | Self::ZeroOrMore(Labeled { value, .. })
+            | Self::OneOrMore(Labeled { value, .. }) => value.accept_visitor(visitor),
 
             Self::Sequence(nodes) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
-            Self::Choice(Named { node: nodes, .. }) => {
+            Self::Choice(Labeled { value: nodes, .. }) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }

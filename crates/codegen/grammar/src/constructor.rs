@@ -11,7 +11,7 @@ use indexmap::IndexMap;
 
 use crate::{
     Grammar, GrammarElement, KeywordScannerDefinition, KeywordScannerDefinitionNode,
-    KeywordScannerDefinitionVersionedNode, Named, ParserDefinition, ParserDefinitionNode,
+    KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition, ParserDefinitionNode,
     PrecedenceOperatorModel, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
     ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
     VersionQualityRange,
@@ -513,23 +513,25 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
         }
         model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(
-            Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+            Labeled::anonymous(Box::new(resolve_trivia(*parser, ctx))),
         ),
         model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(
-            Named::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+            Labeled::anonymous(Box::new(resolve_trivia(*parser, ctx))),
         ),
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| Named::anonymous(resolve_trivia(scanner, ctx)))
+                .map(|scanner| Labeled::anonymous(resolve_trivia(scanner, ctx)))
                 .collect(),
         ),
-        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(Named::anonymous(
-            parsers
-                .into_iter()
-                .map(|scanner| resolve_trivia(scanner, ctx))
-                .collect(),
-        )),
+        model::TriviaParser::Choice { parsers } => {
+            ParserDefinitionNode::Choice(Labeled::anonymous(
+                parsers
+                    .into_iter()
+                    .map(|scanner| resolve_trivia(scanner, ctx))
+                    .collect(),
+            ))
+        }
         model::TriviaParser::Trivia { reference } => {
             match resolve_grammar_element(&reference, ctx) {
                 GrammarElement::ScannerDefinition(parser) => {
@@ -588,7 +590,7 @@ fn resolve_sequence_like(
         let delimited_body = ParserDefinitionNode::Sequence(
             fields
                 .drain((open_idx + 1)..close_idx)
-                .map(|(name, field)| Named::with_ident_name(name, field))
+                .map(|(name, field)| Labeled::with_ident_name(name, field))
                 .collect(),
         );
 
@@ -596,7 +598,7 @@ fn resolve_sequence_like(
         let delimited = {
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
-                .map(|(name, field)| Named::with_ident_name(name, Box::new(field)));
+                .map(|(name, field)| Labeled::with_ident_name(name, Box::new(field)));
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
@@ -618,7 +620,7 @@ fn resolve_sequence_like(
             let (name, def) = fields.pop().unwrap();
             assert_eq!(name, terminator);
 
-            Some(Named::with_ident_name(name, Box::new(def)))
+            Some(Labeled::with_ident_name(name, Box::new(def)))
         }
         None => None,
     };
@@ -626,7 +628,7 @@ fn resolve_sequence_like(
     let body = ParserDefinitionNode::Sequence(
         fields
             .into_iter()
-            .map(|(name, def)| Named::with_ident_name(name, def))
+            .map(|(name, def)| Labeled::with_ident_name(name, def))
             .collect(),
     );
 
@@ -649,17 +651,14 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         })
         .collect();
 
-    ParserDefinitionNode::Choice(Named::with_builtin_name(
-        BuiltinFieldName::Variant,
-        variants,
-    ))
-    .versioned(item.enabled)
+    ParserDefinitionNode::Choice(Labeled::with_builtin_label(BuiltInLabel::Variant, variants))
+        .versioned(item.enabled)
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
-    ParserDefinitionNode::OneOrMore(Named::with_builtin_name(BuiltinFieldName::Item, reference))
+    ParserDefinitionNode::OneOrMore(Labeled::with_builtin_label(BuiltInLabel::Item, reference))
         .versioned(item.enabled)
 }
 
@@ -668,8 +667,8 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
     ParserDefinitionNode::SeparatedBy(
-        Named::with_builtin_name(BuiltinFieldName::Item, Box::new(reference)),
-        Named::with_builtin_name(BuiltinFieldName::Separator, Box::new(separator)),
+        Labeled::with_builtin_label(BuiltInLabel::Item, Box::new(reference)),
+        Labeled::with_builtin_label(BuiltInLabel::Separator, Box::new(separator)),
     )
     .versioned(item.enabled)
 }
@@ -690,8 +689,8 @@ fn resolve_precedence(
         .collect();
     let primary_expression = Box::new(match primaries.len() {
         0 => panic!("Precedence operator has no primary expressions"),
-        _ => ParserDefinitionNode::Choice(Named::with_builtin_name(
-            BuiltinFieldName::Variant,
+        _ => ParserDefinitionNode::Choice(Labeled::with_builtin_label(
+            BuiltInLabel::Variant,
             primaries,
         )),
     });
@@ -748,11 +747,11 @@ fn resolve_precedence(
                 // HACK: Despite it being a single definition, we still need to wrap a versioned
                 // node around the choice for it to emit the version checks for the node.
                 [ParserDefinitionNode::Versioned(..)] => {
-                    ParserDefinitionNode::Choice(Named::anonymous(defs))
+                    ParserDefinitionNode::Choice(Labeled::anonymous(defs))
                 }
                 [_] => defs.into_iter().next().unwrap(),
                 // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
-                _ => ParserDefinitionNode::Choice(Named::anonymous(defs)),
+                _ => ParserDefinitionNode::Choice(Labeled::anonymous(defs)),
             };
 
             all_operators.push(def.clone());
@@ -763,7 +762,7 @@ fn resolve_precedence(
         // as reachable and ensure we emit a token kind for each
         thunk
             .def
-            .set(ParserDefinitionNode::Choice(Named::anonymous(
+            .set(ParserDefinitionNode::Choice(Labeled::anonymous(
                 all_operators,
             )))
             .unwrap();
@@ -835,41 +834,44 @@ impl VersionWrapped for ScannerDefinitionNode {
     }
 }
 
-trait NamedExt<T> {
+trait LabeledExt<T> {
     fn anonymous(node: T) -> Self;
     fn with_ident_name(name: Identifier, node: T) -> Self;
-    fn with_builtin_name(name: BuiltinFieldName, node: T) -> Self;
+    fn with_builtin_label(name: BuiltInLabel, node: T) -> Self;
 }
 
-// Subset of _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_; we can't depend directly on
-// the pre-expansion codegen_parser_runtime crate due to NAPI build issues.
+#[allow(dead_code)]
 #[derive(strum_macros::AsRefStr)]
 #[strum(serialize_all = "snake_case")]
-enum BuiltinFieldName {
+enum BuiltInLabel {
+    // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
     Item,
     Variant,
     Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
 }
 
-impl<T> NamedExt<T> for Named<T> {
-    fn anonymous(node: T) -> Self {
+impl<T> LabeledExt<T> for Labeled<T> {
+    fn anonymous(value: T) -> Self {
         Self {
-            name: String::new(),
-            node,
+            label: String::new(),
+            value,
         }
     }
 
-    fn with_ident_name(name: Identifier, node: T) -> Self {
+    fn with_ident_name(name: Identifier, value: T) -> Self {
         Self {
-            name: name.to_string(),
-            node,
+            label: name.to_string(),
+            value,
         }
     }
 
-    fn with_builtin_name(name: BuiltinFieldName, node: T) -> Self {
+    fn with_builtin_label(label: BuiltInLabel, value: T) -> Self {
         Self {
-            name: name.as_ref().to_owned(),
-            node,
+            label: label.as_ref().to_owned(),
+            value,
         }
     }
 }

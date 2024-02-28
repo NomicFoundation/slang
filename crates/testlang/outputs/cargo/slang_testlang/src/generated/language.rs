@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    FieldName, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+    IsLexicalContext, LexicalContext, LexicalContextType, NodeLabel, RuleKind, TokenKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -85,12 +85,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::AdditionExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -109,7 +109,7 @@ impl Language {
                 1u8,
                 1u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Plus)
-                    .with_name(FieldName::Operator),
+                    .with_label(NodeLabel::Operator),
             )
         };
         let parse_prefix_negation_expression = |input: &mut ParserContext<'_>| {
@@ -117,7 +117,7 @@ impl Language {
                 RuleKind::NegationExpression,
                 3u8,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bang)
-                    .with_name(FieldName::Operator),
+                    .with_label(NodeLabel::Operator),
             )
         };
         let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
@@ -125,15 +125,15 @@ impl Language {
                 RuleKind::MemberAccessExpression,
                 5u8,
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::Period,
+                    seq.elem_labeled(
+                        NodeLabel::Period,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Period,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Member,
+                    seq.elem_labeled(
+                        NodeLabel::Member,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
@@ -164,7 +164,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name(FieldName::Variant)
+            .with_label(NodeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -242,7 +242,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::Literal)
     }
 
@@ -253,12 +253,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -276,12 +276,12 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::NamedNode {
-                name: _,
+            [cst::LabeledNode {
+                label: _,
                 node: cst::Node::Rule(node),
             }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::NamedNode {
-                    name: _,
+                [inner @ cst::LabeledNode {
+                    label: _,
                     node: cst::Node::Rule(rule),
                 }] if rule.kind == RuleKind::NegationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
@@ -303,10 +303,10 @@ impl Language {
                         input,
                         TokenKind::Identifier,
                     )
-                    .with_name(FieldName::Item)
+                    .with_label(NodeLabel::Item)
                 },
                 TokenKind::Period,
-                FieldName::Separator,
+                NodeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
@@ -317,7 +317,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.source_unit_members(input)
-            .with_name(FieldName::Members)
+            .with_label(NodeLabel::Members)
             .with_kind(RuleKind::SourceUnit)
     }
 
@@ -334,14 +334,14 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::SourceUnitMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.source_unit_member(input).with_name(FieldName::Item)
+            self.source_unit_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::SourceUnitMembers)
     }
@@ -369,15 +369,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_named(
-                        FieldName::Keyword,
+                    seq.elem_labeled(
+                        NodeLabel::Keyword,
                         self.parse_token_with_trivia::<LexicalContextType::Tree>(
                             input,
                             TokenKind::TreeKeyword,
                         ),
                     )?;
-                    seq.elem_named(
-                        FieldName::Name,
+                    seq.elem_labeled(
+                        NodeLabel::Name,
                         OptionalHelper::transform(
                             self.parse_token_with_trivia::<LexicalContextType::Tree>(
                                 input,
@@ -385,7 +385,7 @@ impl Language {
                             ),
                         ),
                     )?;
-                    seq.elem_named(FieldName::Node, self.tree_node(input))?;
+                    seq.elem_labeled(NodeLabel::Node, self.tree_node(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
@@ -395,8 +395,8 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem_named(
-                FieldName::Semicolon,
+            seq.elem_labeled(
+                NodeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TokenKind::Semicolon,
@@ -412,8 +412,8 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
             let input = delim_guard.ctx();
-            seq.elem_named(
-                FieldName::OpenBracket,
+            seq.elem_labeled(
+                NodeLabel::OpenBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TokenKind::OpenBracket,
@@ -421,7 +421,7 @@ impl Language {
             )?;
             seq.elem(
                 self.tree_node_children(input)
-                    .with_name(FieldName::Members)
+                    .with_label(NodeLabel::Members)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
                         input,
                         self,
@@ -429,8 +429,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem_named(
-                FieldName::CloseBracket,
+            seq.elem_labeled(
+                NodeLabel::CloseBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TokenKind::CloseBracket,
@@ -453,14 +453,14 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_name(FieldName::Variant)
+        .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::TreeNodeChild)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tree_node_children(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.tree_node_child(input).with_name(FieldName::Item)
+            self.tree_node_child(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::TreeNodeChildren)
     }

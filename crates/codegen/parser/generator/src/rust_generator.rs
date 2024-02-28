@@ -29,7 +29,7 @@ pub struct RustGenerator {
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
     trivia_kinds: BTreeSet<&'static str>,
-    field_names: BTreeSet<String>,
+    labels: BTreeSet<String>,
 
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
@@ -240,15 +240,15 @@ impl GrammarVisitor for RustGenerator {
             .collect();
 
         // Make sure empty strings are not there
-        self.field_names.remove("");
+        self.labels.remove("");
         // These are built-in and already pre-defined
-        // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
-        self.field_names.remove("item");
-        self.field_names.remove("variant");
-        self.field_names.remove("separator");
-        self.field_names.remove("operand");
-        self.field_names.remove("left_operand");
-        self.field_names.remove("right_operand");
+        // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
+        self.labels.remove("item");
+        self.labels.remove("variant");
+        self.labels.remove("separator");
+        self.labels.remove("operand");
+        self.labels.remove("left_operand");
+        self.labels.remove("right_operand");
 
         // Just being anal about tidying up :)
         self.all_scanners.clear();
@@ -360,27 +360,27 @@ impl GrammarVisitor for RustGenerator {
                     .insert(scanner.name(), scanner.clone());
             }
 
-            // Collect field names
+            // Collect labels:
             ParserDefinitionNode::Choice(choice) => {
-                self.field_names.insert(choice.name.clone());
+                self.labels.insert(choice.label.clone());
             }
             ParserDefinitionNode::Sequence(sequence) => {
                 for node in sequence {
-                    self.field_names.insert(node.name.clone());
+                    self.labels.insert(node.label.clone());
                 }
             }
             ParserDefinitionNode::SeparatedBy(item, separator) => {
-                self.field_names.insert(item.name.clone());
-                self.field_names.insert(separator.name.clone());
+                self.labels.insert(item.label.clone());
+                self.labels.insert(separator.label.clone());
             }
             ParserDefinitionNode::TerminatedBy(_, terminator) => {
-                self.field_names.insert(terminator.name.clone());
+                self.labels.insert(terminator.label.clone());
             }
 
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {
-                self.field_names.insert(open.name.clone());
-                self.field_names.insert(close.name.clone());
+                self.labels.insert(open.label.clone());
+                self.labels.insert(close.label.clone());
 
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (

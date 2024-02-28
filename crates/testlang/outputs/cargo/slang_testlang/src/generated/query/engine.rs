@@ -33,23 +33,23 @@ impl Cursor {
                 NodeSelector::Anonymous => true,
                 NodeSelector::Kind { kind } => Kind::Rule(rule.kind) == *kind,
                 NodeSelector::Text { .. } => false,
-                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
-                NodeSelector::FieldNameAndKind { field_name, kind } => {
-                    Some(*field_name) == self.node_name() && Kind::Rule(rule.kind) == *kind
+                NodeSelector::Label { label } => Some(*label) == self.label(),
+                NodeSelector::LabelAndKind { label, kind } => {
+                    Some(*label) == self.label() && Kind::Rule(rule.kind) == *kind
                 }
-                NodeSelector::FieldNameAndText { .. } => false,
+                NodeSelector::LabelAndText { .. } => false,
             },
 
             cst::Node::Token(token) => match node_selector {
                 NodeSelector::Anonymous => true,
                 NodeSelector::Kind { kind } => Kind::Token(token.kind) == *kind,
                 NodeSelector::Text { text } => token.text == *text,
-                NodeSelector::FieldName { field_name } => Some(*field_name) == self.node_name(),
-                NodeSelector::FieldNameAndKind { field_name, kind } => {
-                    Some(*field_name) == self.node_name() && Kind::Token(token.kind) == *kind
+                NodeSelector::Label { label } => Some(*label) == self.label(),
+                NodeSelector::LabelAndKind { label, kind } => {
+                    Some(*label) == self.label() && Kind::Token(token.kind) == *kind
                 }
-                NodeSelector::FieldNameAndText { field_name, text } => {
-                    Some(*field_name) == self.node_name() && token.text == *text
+                NodeSelector::LabelAndText { label, text } => {
+                    Some(*label) == self.label() && token.text == *text
                 }
             },
         }

@@ -1,5 +1,5 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { FieldName, RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
+import { NodeLabel, RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
 import { Cursor } from "@slang-private/slang-testlang/cursor";
 import { expectRule, expectToken } from "../utils/cst-helpers";
 import { NodeType } from "@slang-private/slang-testlang/cst";
@@ -117,9 +117,9 @@ test("access the node using its name", () => {
     const innerCursor = cursor.spawn();
     while (innerCursor.goToNext()) {
       const node = innerCursor.node();
-      const nodeName = innerCursor.nodeName;
+      const label = innerCursor.label;
 
-      if (node.type == NodeType.Token && (nodeName == FieldName.OpenBracket || nodeName == FieldName.CloseBracket)) {
+      if (node.type == NodeType.Token && (label == NodeLabel.OpenBracket || label == NodeLabel.CloseBracket)) {
         names.push(node.text);
       }
     }

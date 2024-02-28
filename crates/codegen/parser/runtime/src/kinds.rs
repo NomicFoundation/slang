@@ -67,9 +67,9 @@ impl RuleKind {
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum FieldName {
-    // Built-in fields
-    // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
+pub enum NodeLabel {
+    // Built-in labels
+    // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
     Item,
     Variant,
     Separator,
@@ -77,9 +77,9 @@ pub enum FieldName {
     LeftOperand,
     RightOperand,
     // Used for testing this crate, this is generated in the client code
-    Name1,
-    Name2,
-    Name3,
+    Label1,
+    Label2,
+    Label3,
 }
 
 /// The lexical context of the scanner.

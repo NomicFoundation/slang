@@ -64,12 +64,12 @@ Let's use that to extract all `Identifier` nodes from the source text using that
 
 ## Using a Cursor with Names
 
-In addition to the basic `Cursor`, there's also a `CursorWithNames` type
+In addition to the basic `Cursor`, there's also a `CursorWithLabels` type
 that keeps track of the names of the nodes it visits.
-You can create a `CursorWithNames` from a `Cursor` by using the `with_names()` API.
+You can create a `CursorWithLabels` from a `Cursor` by using the `with_labels()` API.
 
-Let's use that to extract all nodes that are named `Name`:
+Let's use that to extract all nodes that are labeled `Name`:
 
 ```{ .rust }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:using-named-cursors"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:using-labeled-cursors"
 ```

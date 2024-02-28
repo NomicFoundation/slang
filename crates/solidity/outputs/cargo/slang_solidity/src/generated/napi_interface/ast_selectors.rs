@@ -8,7 +8,7 @@ use napi::{Env, JsObject};
 use napi_derive::napi;
 
 use crate::napi_interface::cst::{RuleNode, ToJS};
-use crate::napi_interface::{RuleKind, RustNamedNode, RustNode, RustRuleNode, TokenKind};
+use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, TokenKind};
 
 //
 // Sequences:
@@ -3035,16 +3035,16 @@ impl Selector {
     fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<JsObject>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
-                RustNamedNode {
-                    name: _,
+                RustLabeledNode {
+                    label: _,
                     node: RustNode::Rule(rule),
                 } if rule.kind.is_trivia() => {
                     // skip trivia, since it's not part of the AST
                     self.index += 1;
                     continue;
                 }
-                RustNamedNode {
-                    name: _,
+                RustLabeledNode {
+                    label: _,
                     node: RustNode::Token(token),
                 } if matches!(token.kind, TokenKind::SKIPPED) => {
                     return Error::SkippedToken(self.index).into();

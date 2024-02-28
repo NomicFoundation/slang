@@ -2,8 +2,8 @@
 
 use std::ops::ControlFlow;
 
-use crate::cst::{self, NamedNode};
-use crate::kinds::{FieldName, RuleKind, TokenKind};
+use crate::cst::{self, LabeledNode};
+use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -24,7 +24,7 @@ impl Default for ParserResult {
 }
 
 impl ParserResult {
-    pub fn r#match(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn r#match(nodes: Vec<cst::LabeledNode>, expected_tokens: Vec<TokenKind>) -> Self {
         ParserResult::Match(Match::new(nodes, expected_tokens))
     }
 
@@ -32,7 +32,7 @@ impl ParserResult {
         ParserResult::PrattOperatorMatch(PrattOperatorMatch::new(elements))
     }
 
-    pub fn incomplete_match(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn incomplete_match(nodes: Vec<cst::LabeledNode>, expected_tokens: Vec<TokenKind>) -> Self {
         ParserResult::IncompleteMatch(IncompleteMatch::new(nodes, expected_tokens))
     }
 
@@ -49,21 +49,21 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![NamedNode::anonymous(cst::Node::rule(
+                vec![LabeledNode::anonymous(cst::Node::rule(
                     new_kind,
                     r#match.nodes,
                 ))],
                 r#match.expected_tokens,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![NamedNode::anonymous(cst::Node::rule(
+                vec![LabeledNode::anonymous(cst::Node::rule(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_tokens,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![NamedNode::anonymous(cst::Node::rule(
+                nodes: vec![LabeledNode::anonymous(cst::Node::rule(
                     new_kind,
                     skipped.nodes,
                 ))],
@@ -77,21 +77,21 @@ impl ParserResult {
     }
 
     #[must_use]
-    pub fn with_name(mut self, name: FieldName) -> ParserResult {
-        if let Some(NamedNode {
-            name: prev_name, ..
+    pub fn with_label(mut self, label: NodeLabel) -> ParserResult {
+        if let Some(LabeledNode {
+            label: prev_label, ..
         }) = self.significant_node_mut()
         {
-            *prev_name = Some(name);
+            *prev_label = Some(label);
         }
 
         self
     }
 
     /// Returns a significant (non-trivia) node if there is exactly one.
-    pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::NamedNode> {
-        fn is_significant(named: &cst::NamedNode) -> bool {
-            match &named.node {
+    pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::LabeledNode> {
+        fn is_significant(labeled: &cst::LabeledNode) -> bool {
+            match &labeled.node {
                 cst::Node::Rule(rule) => !rule.kind.is_trivia(),
                 // FIXME: Some tokens are in fact trivia
                 cst::Node::Token(_) => true,
@@ -121,13 +121,13 @@ impl ParserResult {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
-    pub nodes: Vec<cst::NamedNode>,
+    pub nodes: Vec<cst::LabeledNode>,
     /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_tokens: Vec<TokenKind>,
 }
 
 impl Match {
-    pub fn new(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn new(nodes: Vec<cst::LabeledNode>, expected_tokens: Vec<TokenKind>) -> Self {
         Self {
             nodes,
             expected_tokens,
@@ -145,34 +145,34 @@ impl Match {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum PrattElement {
     Expression {
-        nodes: Vec<cst::NamedNode>,
+        nodes: Vec<cst::LabeledNode>,
     },
     Prefix {
         kind: RuleKind,
-        nodes: Vec<cst::NamedNode>,
+        nodes: Vec<cst::LabeledNode>,
         right: u8,
     },
     Binary {
         kind: RuleKind,
-        nodes: Vec<cst::NamedNode>,
+        nodes: Vec<cst::LabeledNode>,
         left: u8,
         right: u8,
     },
     Postfix {
         kind: RuleKind,
-        nodes: Vec<cst::NamedNode>,
+        nodes: Vec<cst::LabeledNode>,
         left: u8,
     },
 }
 
 impl PrattElement {
-    pub fn into_nodes(self) -> Vec<cst::NamedNode> {
+    pub fn into_nodes(self) -> Vec<cst::LabeledNode> {
         match self {
             Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![NamedNode::anonymous(cst::Node::rule(kind, nodes))]
+                vec![LabeledNode::anonymous(cst::Node::rule(kind, nodes))]
             }
         }
     }
@@ -191,13 +191,13 @@ impl PrattOperatorMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct IncompleteMatch {
-    pub nodes: Vec<cst::NamedNode>,
+    pub nodes: Vec<cst::LabeledNode>,
     /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_tokens: Vec<TokenKind>,
 }
 
 impl IncompleteMatch {
-    pub fn new(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn new(nodes: Vec<cst::LabeledNode>, expected_tokens: Vec<TokenKind>) -> Self {
         Self {
             nodes,
             expected_tokens,
@@ -219,7 +219,7 @@ impl NoMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct SkippedUntil {
-    pub nodes: Vec<cst::NamedNode>,
+    pub nodes: Vec<cst::LabeledNode>,
     /// Skipped text following the last node
     pub skipped: String,
     /// At which token was the stream pointing at when we bailed

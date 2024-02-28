@@ -4,7 +4,7 @@ use std::fmt;
 use std::rc::Rc;
 
 // This crate is copied to another crate, so all imports should be relative
-use super::super::kinds::{FieldName, RuleKind, TokenKind};
+use super::super::kinds::{NodeLabel, RuleKind, TokenKind};
 
 #[derive(Clone)]
 pub struct Query(pub(super) Matcher);
@@ -108,9 +108,9 @@ pub(super) enum NodeSelector {
     Anonymous,
     Kind { kind: Kind },
     Text { text: String },
-    FieldName { field_name: FieldName },
-    FieldNameAndKind { field_name: FieldName, kind: Kind },
-    FieldNameAndText { field_name: FieldName, text: String },
+    Label { label: NodeLabel },
+    LabelAndKind { label: NodeLabel, kind: Kind },
+    LabelAndText { label: NodeLabel, text: String },
 }
 
 impl fmt::Display for NodeSelector {
@@ -136,12 +136,12 @@ impl fmt::Display for NodeSelector {
             Self::Anonymous => write!(f, "_"),
             Self::Kind { kind } => kind.fmt(f),
             Self::Text { text } => write!(f, "\"{}\"", escape_string(text)),
-            Self::FieldName { field_name } => field_name.fmt(f),
-            Self::FieldNameAndKind { field_name, kind } => {
-                write!(f, "{field_name}; {kind}")
+            Self::Label { label } => label.fmt(f),
+            Self::LabelAndKind { label, kind } => {
+                write!(f, "{label}; {kind}")
             }
-            Self::FieldNameAndText { field_name, text } => {
-                write!(f, "{field_name}: \"{}\"", escape_string(text))
+            Self::LabelAndText { label, text } => {
+                write!(f, "{label}: \"{}\"", escape_string(text))
             }
         }
     }
