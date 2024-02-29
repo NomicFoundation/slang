@@ -201,7 +201,6 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
-                let opts = opts.clone().unwrap_or_default();
                 let recover = if opts.recover_from_no_match {
                     quote! { RecoverFromNoMatch::Yes }
                 } else {

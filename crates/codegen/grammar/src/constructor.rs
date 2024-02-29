@@ -610,11 +610,7 @@ fn resolve_sequence_like(
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
-            let opts = delimiters
-                .recover_from_no_match
-                .map(|value| DelimitedRecoveryOpts {
-                    recover_from_no_match: value,
-                });
+            let opts = DelimitedRecoveryOpts::from(delimiters);
             ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close, opts)
         };
         // Replace with a new delimited node

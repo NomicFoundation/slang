@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
+use codegen_language_definition::model;
+
 use crate::visitor::{GrammarVisitor, Visitable};
 use crate::{
     KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
@@ -67,6 +69,13 @@ impl Default for DelimitedRecoveryOpts {
         }
     }
 }
+impl From<model::FieldDelimiters> for DelimitedRecoveryOpts {
+    fn from(delimiters: model::FieldDelimiters) -> Self {
+        Self {
+            recover_from_no_match: delimiters.recover_from_no_match.unwrap_or(true),
+        }
+    }
+}
 
 #[derive(Clone, Debug)]
 pub enum ParserDefinitionNode {
@@ -85,7 +94,7 @@ pub enum ParserDefinitionNode {
         Labeled<Box<Self>>,
         Box<Self>,
         Labeled<Box<Self>>,
-        Option<DelimitedRecoveryOpts>,
+        DelimitedRecoveryOpts,
     ),
     SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
     TerminatedBy(Box<Self>, Labeled<Box<Self>>),
