@@ -19,7 +19,8 @@ codegen_language_macros::compile!(Language(
             ),
             Topic(title = "Topic Two", items = [Unrecognized(true)])
         ]
-    )]
+    )],
+    queries = ()
 ));
 
 fn main() {}

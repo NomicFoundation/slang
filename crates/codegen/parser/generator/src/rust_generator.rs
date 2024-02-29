@@ -1,3 +1,6 @@
+// TODO(#863): this is getting replaced by runtime templates:
+#![allow(clippy::too_many_lines)]
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -9,6 +12,7 @@ use codegen_grammar::{
     TriviaParserDefinitionRef,
 };
 use codegen_language_definition::model::Language;
+use indexmap::IndexMap;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
 use quote::{format_ident, quote};
@@ -94,6 +98,32 @@ impl RustGenerator {
                 Context { generator },
                 runtime_dir.join("templates/kinds.rs.jinja2"),
                 output_dir.join("kinds.rs"),
+            )?;
+        }
+
+        {
+            #[derive(Serialize)]
+            struct Context {
+                queries: IndexMap<String, Vec<&'static str>>,
+            }
+
+            let queries = language
+                .queries
+                .keys()
+                .enumerate()
+                .map(|(index, key)| {
+                    // TODO(#554): parse the query and extract the real captures:
+                    (
+                        key.to_string(),
+                        ["foo", "bar", "baz"].into_iter().take(index + 1).collect(),
+                    )
+                })
+                .collect();
+
+            codegen.render(
+                Context { queries },
+                runtime_dir.join("templates/user_defined_queries.rs.jinja2"),
+                output_dir.join("query/user_defined_queries.rs"),
             )?;
         }
 

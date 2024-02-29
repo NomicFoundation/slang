@@ -25,7 +25,8 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )]
-    )]
+    )],
+    queries = ()
 ));
 
 fn main() {}

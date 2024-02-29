@@ -6347,5 +6347,11 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )
-    ]
+    ],
+    queries = (
+        // TODO(#554): replace with real queries:
+        query_one = "query 1 code",
+        query_two = "query 2 code",
+        query_three = "query 3 code"
+    )
 ));

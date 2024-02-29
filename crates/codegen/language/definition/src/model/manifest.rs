@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
-use indexmap::IndexSet;
+use indexmap::{IndexMap, IndexSet};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
@@ -22,6 +22,8 @@ pub struct Language {
     pub versions: IndexSet<Version>,
 
     pub sections: Vec<Section>,
+
+    pub queries: IndexMap<Identifier, String>,
 }
 
 impl Language {

@@ -1,4 +1,6 @@
 mod generated;
+mod user_defined;
+
 pub use generated::*;
 
 // Below are dependencies used by the CLI "main.rs", but not the API `lib.rs`.
