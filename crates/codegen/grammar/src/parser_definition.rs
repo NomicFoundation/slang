@@ -65,7 +65,7 @@ pub struct DelimitedRecoveryOpts {
 impl From<model::FieldDelimiters> for DelimitedRecoveryOpts {
     fn from(delimiters: model::FieldDelimiters) -> Self {
         Self {
-            disallow_unmatched_body: delimiters.disallow_unmatched_body.unwrap_or(false),
+            disallow_unmatched_body: delimiters.disallow_unmatched_body.unwrap_or_default(),
         }
     }
 }
