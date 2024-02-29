@@ -1850,12 +1850,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Colon,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom(":"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom(":"))]
                         ),
                         Token(
                             name = ColonEqual,

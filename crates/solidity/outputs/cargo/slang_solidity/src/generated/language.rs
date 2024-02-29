@@ -6877,11 +6877,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn colon(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, ':'), scan_chars!(input, '='))
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -9356,6 +9351,7 @@ impl Lexer for Language {
                             None
                         }
                     }
+                    Some(':') => Some(TokenKind::Colon),
                     Some(';') => Some(TokenKind::Semicolon),
                     Some('<') => match input.next() {
                         Some('<') => match input.next() {
@@ -9443,7 +9439,6 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { Colon = colon }
                     { DecimalLiteral = decimal_literal }
                     { DoubleQuotedHexStringLiteral = double_quoted_hex_string_literal }
                     { DoubleQuotedStringLiteral = double_quoted_string_literal }
@@ -10800,13 +10795,14 @@ impl Lexer for Language {
                         }
                     }
                     Some('.') => Some(TokenKind::Period),
-                    Some(':') => {
-                        if scan_chars!(input, '=') {
-                            Some(TokenKind::ColonEqual)
-                        } else {
-                            None
+                    Some(':') => match input.next() {
+                        Some('=') => Some(TokenKind::ColonEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Colon)
                         }
-                    }
+                        None => Some(TokenKind::Colon),
+                    },
                     Some('=') => Some(TokenKind::Equal),
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
@@ -10822,7 +10818,6 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { Colon = colon }
                     { YulDecimalLiteral = yul_decimal_literal }
                     { YulHexLiteral = yul_hex_literal }
                 }
