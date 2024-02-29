@@ -4062,7 +4062,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = YulVariableDeclarationValue,
                             fields = (
-                                colon_equal = Required(ColonEqual),
+                                assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
                         ),
@@ -4070,9 +4070,21 @@ codegen_language_macros::compile!(Language(
                             name = YulAssignmentStatement,
                             fields = (
                                 names = Required(YulIdentifierPaths),
-                                colon_equal = Required(ColonEqual),
+                                assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
+                        ),
+                        Enum(
+                            name = YulAssignmentOperator,
+                            variants = [
+                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5")),
+                                EnumVariant(reference = ColonEqual)
+                            ]
+                        ),
+                        Struct(
+                            name = YulColonAndEqual,
+                            enabled = Till("0.5.5"),
+                            fields = (colon = Required(Colon), equal = Required(Equal))
                         ),
                         Struct(
                             name = YulIfStatement,

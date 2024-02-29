@@ -147,6 +147,7 @@ pub fn select_sequence(
         }
         RuleKind::YulVariableDeclarationValue => selector.yul_variable_declaration_value()?,
         RuleKind::YulAssignmentStatement => selector.yul_assignment_statement()?,
+        RuleKind::YulColonAndEqual => selector.yul_colon_and_equal()?,
         RuleKind::YulIfStatement => selector.yul_if_statement()?,
         RuleKind::YulForStatement => selector.yul_for_statement()?,
         RuleKind::YulSwitchStatement => selector.yul_switch_statement()?,
@@ -1357,7 +1358,7 @@ impl Selector {
 impl Selector {
     fn yul_variable_declaration_value(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::ColonEqual))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulAssignmentOperator))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
         ])
     }
@@ -1367,8 +1368,17 @@ impl Selector {
     fn yul_assignment_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPaths))?),
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::ColonEqual))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulAssignmentOperator))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
+        ])
+    }
+}
+
+impl Selector {
+    fn yul_colon_and_equal(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::Equal))?),
         ])
     }
 }
@@ -1518,6 +1528,7 @@ pub fn select_choice(
         RuleKind::HexStringLiteral => selector.hex_string_literal()?,
         RuleKind::UnicodeStringLiteral => selector.unicode_string_literal()?,
         RuleKind::YulStatement => selector.yul_statement()?,
+        RuleKind::YulAssignmentOperator => selector.yul_assignment_operator()?,
         RuleKind::YulSwitchCase => selector.yul_switch_case()?,
         RuleKind::YulExpression => selector.yul_expression()?,
         RuleKind::YulBuiltInFunction => selector.yul_built_in_function()?,
@@ -2069,6 +2080,15 @@ impl Selector {
                 RuleKind::YulLabel,
                 RuleKind::YulExpression,
             ])
+        })
+    }
+}
+
+impl Selector {
+    fn yul_assignment_operator(&mut self) -> Result<JsObject> {
+        self.select(|node| {
+            node.is_rule_with_kind(RuleKind::YulColonAndEqual)
+                || node.is_token_with_kind(TokenKind::ColonEqual)
         })
     }
 }

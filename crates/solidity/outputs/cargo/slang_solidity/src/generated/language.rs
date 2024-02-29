@@ -37,6 +37,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_4_22: bool,
     pub(crate) version_is_at_least_0_5_0: bool,
     pub(crate) version_is_at_least_0_5_3: bool,
+    pub(crate) version_is_at_least_0_5_5: bool,
     pub(crate) version_is_at_least_0_5_10: bool,
     pub(crate) version_is_at_least_0_5_12: bool,
     pub(crate) version_is_at_least_0_5_14: bool,
@@ -166,6 +167,7 @@ impl Language {
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
                 version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
                 version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
+                version_is_at_least_0_5_5: Version::new(0, 5, 5) <= version,
                 version_is_at_least_0_5_10: Version::new(0, 5, 10) <= version,
                 version_is_at_least_0_5_12: Version::new(0, 5, 12) <= version,
                 version_is_at_least_0_5_14: Version::new(0, 5, 14) <= version,
@@ -5854,16 +5856,26 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            if !self.version_is_at_least_0_5_5 {
+                let result = self.yul_colon_and_equal(input);
+                choice.consider(input, result)?;
+            }
+            let result = self
+                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::ColonEqual);
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(NodeLabel::Variant)
+        .with_kind(RuleKind::YulAssignmentOperator)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(NodeLabel::Names, self.yul_identifier_paths(input))?;
-            seq.elem_labeled(
-                NodeLabel::ColonEqual,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::ColonEqual,
-                ),
-            )?;
+            seq.elem_labeled(NodeLabel::Assignment, self.yul_assignment_operator(input))?;
             seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
@@ -6312,6 +6324,32 @@ impl Language {
         })
         .with_label(NodeLabel::Variant)
         .with_kind(RuleKind::YulBuiltInFunction)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_colon_and_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_5 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    NodeLabel::Colon,
+                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::Colon,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    NodeLabel::Equal,
+                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::Equal,
+                    ),
+                )?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::YulColonAndEqual)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6812,13 +6850,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                NodeLabel::ColonEqual,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::ColonEqual,
-                ),
-            )?;
+            seq.elem_labeled(NodeLabel::Assignment, self.yul_assignment_operator(input))?;
             seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
@@ -9158,12 +9190,16 @@ impl Language {
             }
             RuleKind::WhileStatement => Self::while_statement.parse(self, input, true),
             RuleKind::YulArguments => Self::yul_arguments.parse(self, input, true),
+            RuleKind::YulAssignmentOperator => {
+                Self::yul_assignment_operator.parse(self, input, true)
+            }
             RuleKind::YulAssignmentStatement => {
                 Self::yul_assignment_statement.parse(self, input, true)
             }
             RuleKind::YulBlock => Self::yul_block.parse(self, input, true),
             RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input, true),
             RuleKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input, true),
+            RuleKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input, true),
             RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input, true),
             RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input, true),
             RuleKind::YulExpression => Self::yul_expression.parse(self, input, true),
@@ -10767,6 +10803,7 @@ impl Lexer for Language {
                         }
                         None => Some(TokenKind::Colon),
                     },
+                    Some('=') => Some(TokenKind::Equal),
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some(_) => {

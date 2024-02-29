@@ -3410,10 +3410,10 @@ export class YulVariableDeclarationStatement {
 
 export class YulVariableDeclarationValue {
   private readonly fetch = once(() => {
-    const [$colonEqual, $expression] = ast_internal.selectSequence(this.cst);
+    const [$assignment, $expression] = ast_internal.selectSequence(this.cst);
 
     return {
-      colonEqual: $colonEqual as TokenNode,
+      assignment: new YulAssignmentOperator($assignment as RuleNode),
       expression: new YulExpression($expression as RuleNode),
     };
   });
@@ -3422,8 +3422,8 @@ export class YulVariableDeclarationValue {
     assertKind(this.cst.kind, RuleKind.YulVariableDeclarationValue);
   }
 
-  public get colonEqual(): TokenNode {
-    return this.fetch().colonEqual;
+  public get assignment(): YulAssignmentOperator {
+    return this.fetch().assignment;
   }
 
   public get expression(): YulExpression {
@@ -3433,11 +3433,11 @@ export class YulVariableDeclarationValue {
 
 export class YulAssignmentStatement {
   private readonly fetch = once(() => {
-    const [$names, $colonEqual, $expression] = ast_internal.selectSequence(this.cst);
+    const [$names, $assignment, $expression] = ast_internal.selectSequence(this.cst);
 
     return {
       names: new YulIdentifierPaths($names as RuleNode),
-      colonEqual: $colonEqual as TokenNode,
+      assignment: new YulAssignmentOperator($assignment as RuleNode),
       expression: new YulExpression($expression as RuleNode),
     };
   });
@@ -3450,12 +3450,35 @@ export class YulAssignmentStatement {
     return this.fetch().names;
   }
 
-  public get colonEqual(): TokenNode {
-    return this.fetch().colonEqual;
+  public get assignment(): YulAssignmentOperator {
+    return this.fetch().assignment;
   }
 
   public get expression(): YulExpression {
     return this.fetch().expression;
+  }
+}
+
+export class YulColonAndEqual {
+  private readonly fetch = once(() => {
+    const [$colon, $equal] = ast_internal.selectSequence(this.cst);
+
+    return {
+      colon: $colon as TokenNode,
+      equal: $equal as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulColonAndEqual);
+  }
+
+  public get colon(): TokenNode {
+    return this.fetch().colon;
+  }
+
+  public get equal(): TokenNode {
+    return this.fetch().equal;
   }
 }
 
@@ -5062,6 +5085,31 @@ export class YulStatement {
     | YulContinueStatement
     | YulLabel
     | YulExpression {
+    return this.fetch();
+  }
+}
+
+export class YulAssignmentOperator {
+  private readonly fetch: () => YulColonAndEqual | TokenNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    switch (variant.kind) {
+      case RuleKind.YulColonAndEqual:
+        return new YulColonAndEqual(variant as RuleNode);
+
+      case TokenKind.ColonEqual:
+        return variant as TokenNode;
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulAssignmentOperator);
+  }
+
+  public get variant(): YulColonAndEqual | TokenNode {
     return this.fetch();
   }
 }
