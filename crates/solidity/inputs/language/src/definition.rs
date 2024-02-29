@@ -3394,7 +3394,7 @@ codegen_language_macros::compile!(Language(
                                                 // we need to disable attempting to recover from empty elements,
                                                 // because this postfix is ambiguous with `try <EXPR> {} catch {}`
                                                 // and could lead to incorrect parsing if we recover past valid syntax.
-                                                recover_from_no_match = false
+                                                disallow_unmatched_body = true
                                             )
                                         ),
                                         fields = (

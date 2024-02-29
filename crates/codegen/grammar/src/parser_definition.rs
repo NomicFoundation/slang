@@ -57,22 +57,15 @@ impl Visitable for TriviaParserDefinitionRef {
 
 #[derive(Clone, Debug)]
 pub struct DelimitedRecoveryOpts {
-    /// If true, the parser will attempt to recover inside the delimiters even
-    // if the body parser fails to match any prefix of the input.
-    pub recover_from_no_match: bool,
+    /// Whether completely unmatched body between the delimiters should
+    /// prevent the the error recovery from being applied.
+    pub disallow_unmatched_body: bool,
 }
 
-impl Default for DelimitedRecoveryOpts {
-    fn default() -> Self {
-        Self {
-            recover_from_no_match: true,
-        }
-    }
-}
 impl From<model::FieldDelimiters> for DelimitedRecoveryOpts {
     fn from(delimiters: model::FieldDelimiters) -> Self {
         Self {
-            recover_from_no_match: delimiters.recover_from_no_match.unwrap_or(true),
+            disallow_unmatched_body: delimiters.disallow_unmatched_body.unwrap_or(false),
         }
     }
 }

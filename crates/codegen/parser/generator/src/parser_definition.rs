@@ -201,10 +201,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
-                let recover = if opts.recover_from_no_match {
-                    quote! { RecoverFromNoMatch::Yes }
-                } else {
+                let recover = if opts.disallow_unmatched_body {
                     quote! { RecoverFromNoMatch::No }
+                } else {
+                    quote! { RecoverFromNoMatch::Yes }
                 };
 
                 let parser = body.to_parser_code(context_name, is_trivia);
