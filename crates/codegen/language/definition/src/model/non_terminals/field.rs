@@ -18,7 +18,7 @@ pub struct FieldDelimiters {
     /// Whether completely unmatched body between the delimiters should
     /// prevent the the error recovery from being applied.
     ///
-    /// This is generally safe but somehow needs to be disabled if the
+    /// This is generally safe but sometimes needs to be disabled if the
     /// recovery would lead to a misparse in case of ambiguous input.
     pub disallow_unmatched_body: Option<bool>,
 }
