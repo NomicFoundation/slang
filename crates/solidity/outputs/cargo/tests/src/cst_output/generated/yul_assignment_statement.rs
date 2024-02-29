@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn colon_equal_separated() -> Result<()> {
+    run("YulAssignmentStatement", "colon_equal_separated")
+}
+
+#[test]
 fn identifier_add() -> Result<()> {
     run("YulAssignmentStatement", "identifier_add")
 }

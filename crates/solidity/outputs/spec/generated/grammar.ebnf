@@ -1356,12 +1356,19 @@ YulVariableDeclarationStatement = YUL_LET_KEYWORD
                                   YulIdentifierPaths
                                   YulVariableDeclarationValue?;
 
-YulVariableDeclarationValue = COLON_EQUAL
+YulVariableDeclarationValue = YulAssignmentOperator
                               YulExpression;
 
 YulAssignmentStatement = YulIdentifierPaths
-                         COLON_EQUAL
+                         YulAssignmentOperator
                          YulExpression;
+
+YulAssignmentOperator = YulColonAndEqual (* Deprecated in 0.5.5 *)
+                      | COLON_EQUAL;
+
+(* Deprecated in 0.5.5 *)
+YulColonAndEqual = COLON
+                   EQUAL;
 
 YulIfStatement = YUL_IF_KEYWORD
                  YulExpression

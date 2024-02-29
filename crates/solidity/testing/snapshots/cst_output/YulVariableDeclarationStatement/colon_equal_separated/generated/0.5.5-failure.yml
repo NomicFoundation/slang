@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // ColonEqual was two separate tokens before "0.5.0":                            │ 0..53
+  2  │ let foo : = 0                                                                    │ 54..67
+
+Errors: # 1 total
+  - >
+    Error: Expected ColonEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/colon_equal_separated/input.sol:2:9]
+       │
+     2 │ let foo : = 0
+       │         ───┬──  
+       │            ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulVariableDeclarationStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..68)
+      - (LeadingTrivia): # '// ColonEqual was two separate tokens before "0.5....' (0..54)
+          - (SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)
+          - (EndOfLine): "\n" # (53..54)
+      - (let_keyword꞉ YulLetKeyword): "let" # (54..57)
+      - (names꞉ YulIdentifierPaths): # " foo" (57..61)
+          - (item꞉ YulIdentifierPath): # " foo" (57..61)
+              - (LeadingTrivia) ► (Whitespace): " " # (57..58)
+              - (item꞉ YulIdentifier): "foo" # (58..61)
+      - (LeadingTrivia) ► (Whitespace): " " # (61..62)
+      - (SKIPPED): ": = 0\n" # (62..68)

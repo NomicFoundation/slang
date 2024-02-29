@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn colon_equal_separated() -> Result<()> {
+    run("YulVariableDeclarationStatement", "colon_equal_separated")
+}
+
+#[test]
 fn keyword_bytes() -> Result<()> {
     run("YulVariableDeclarationStatement", "keyword_bytes")
 }

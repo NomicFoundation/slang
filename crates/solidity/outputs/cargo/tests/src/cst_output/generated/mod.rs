@@ -54,7 +54,7 @@ mod yul_label;
 mod yul_leave_statement;
 mod yul_variable_declaration_statement;
 
-pub const VERSION_BREAKS: [Version; 27] = [
+pub const VERSION_BREAKS: [Version; 28] = [
     Version::new(0, 4, 11),
     Version::new(0, 4, 12),
     Version::new(0, 4, 14),
@@ -62,6 +62,7 @@ pub const VERSION_BREAKS: [Version; 27] = [
     Version::new(0, 4, 22),
     Version::new(0, 5, 0),
     Version::new(0, 5, 3),
+    Version::new(0, 5, 5),
     Version::new(0, 5, 10),
     Version::new(0, 5, 12),
     Version::new(0, 5, 14),
