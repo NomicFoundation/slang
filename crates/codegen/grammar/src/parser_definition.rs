@@ -55,17 +55,21 @@ impl Visitable for TriviaParserDefinitionRef {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct DelimitedRecoveryOpts {
     /// Whether completely unmatched body between the delimiters should
     /// prevent the the error recovery from being applied.
+    /// This is generally safe but sometimes needs to be disabled if the
+    /// recovery would lead to a misparse in case of ambiguous input.
     pub disallow_unmatched_body: bool,
 }
 
 impl From<model::FieldDelimiters> for DelimitedRecoveryOpts {
     fn from(delimiters: model::FieldDelimiters) -> Self {
         Self {
-            disallow_unmatched_body: delimiters.disallow_unmatched_body.unwrap_or_default(),
+            disallow_unmatched_body: delimiters
+                .disallow_unmatched_body
+                .unwrap_or(DelimitedRecoveryOpts::default().disallow_unmatched_body),
         }
     }
 }
