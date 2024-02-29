@@ -35,6 +35,7 @@ Tree:
               - (variant꞉ Identifier): "someFunc" # (9..17)
           - (parameters꞉ ParametersDeclaration): # "()" (17..19)
               - (open_paren꞉ OpenParen): "(" # (17..18)
+              - (parameters꞉ Parameters): [] # (18..18)
               - (close_paren꞉ CloseParen): ")" # (18..19)
           - (attributes꞉ FunctionAttributes): # " public" (19..26)
               - (item꞉ FunctionAttribute): # " public" (19..26)

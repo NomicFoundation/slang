@@ -14,13 +14,13 @@
 
 ```
 
-<pre ebnf-snippet="FunctionType" style="display: none;"><a href="#FunctionType"><span class="k">FunctionType</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">               </span><a href="../../02-definitions/08-functions#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">               </span><a href="#FunctionTypeAttributes"><span class="k">FunctionTypeAttributes</span></a><span class="o">?</span><br /><span class="o">               </span><a href="../../02-definitions/08-functions#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="FunctionType" style="display: none;"><a href="#FunctionType"><span class="k">FunctionType</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">               </span><a href="../../02-definitions/08-functions#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">               </span><a href="#FunctionTypeAttributes"><span class="k">FunctionTypeAttributes</span></a><br /><span class="o">               </span><a href="../../02-definitions/08-functions#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #FunctionTypeAttributes }
 
 ```
 
-<pre ebnf-snippet="FunctionTypeAttributes" style="display: none;"><a href="#FunctionTypeAttributes"><span class="k">FunctionTypeAttributes</span></a><span class="o"> = </span><a href="#FunctionTypeAttribute"><span class="k">FunctionTypeAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="FunctionTypeAttributes" style="display: none;"><a href="#FunctionTypeAttributes"><span class="k">FunctionTypeAttributes</span></a><span class="o"> = </span><a href="#FunctionTypeAttribute"><span class="k">FunctionTypeAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #FunctionTypeAttribute }
 

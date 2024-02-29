@@ -13,4 +13,5 @@ Tree:
           - (member꞉ MemberAccess) ► (variant꞉ Identifier): "y" # (2..3)
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (3..5)
           - (open_paren꞉ OpenParen): "(" # (3..4)
+          - (arguments꞉ PositionalArguments): [] # (4..4)
           - (close_paren꞉ CloseParen): ")" # (4..5)

@@ -221,24 +221,26 @@ pub fn select_separated(
             let mut separated = vec![];
             let mut separators = vec![];
 
-            separated.push(self.select(|node| {
+            if let Some(first) = self.try_select(|node| {
                 {%- if separated.is_terminal -%}
                     node.is_token_with_kind(TokenKind::{{ separated.reference }})
                 {%- else -%}
                     node.is_rule_with_kind(RuleKind::{{ separated.reference }})
                 {%- endif -%}
-            })?);
+            })? {
+                separated.push(first);
 
-            while let Some(separator) = self.try_select(|node| node.is_token_with_kind(TokenKind::{{ separated.separator }}))? {
-                separators.push(separator);
+                while let Some(separator) = self.try_select(|node| node.is_token_with_kind(TokenKind::{{ separated.separator }}))? {
+                    separators.push(separator);
 
-                separated.push(self.select(|node| {
-                    {%- if separated.is_terminal -%}
-                        node.is_token_with_kind(TokenKind::{{ separated.reference }})
-                    {%- else -%}
-                        node.is_rule_with_kind(RuleKind::{{ separated.reference }})
-                    {%- endif -%}
-                })?);
+                    separated.push(self.select(|node| {
+                        {%- if separated.is_terminal -%}
+                            node.is_token_with_kind(TokenKind::{{ separated.reference }})
+                        {%- else -%}
+                            node.is_rule_with_kind(RuleKind::{{ separated.reference }})
+                        {%- endif -%}
+                    })?);
+                }
             }
 
             Ok(vec![separated, separators])

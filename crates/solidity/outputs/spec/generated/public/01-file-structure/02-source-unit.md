@@ -8,13 +8,13 @@
 
 ```
 
-<pre ebnf-snippet="SourceUnit" style="display: none;"><a href="#SourceUnit"><span class="k">SourceUnit</span></a><span class="o"> = </span><a href="#SourceUnitMembers"><span class="k">SourceUnitMembers</span></a><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SourceUnit" style="display: none;"><a href="#SourceUnit"><span class="k">SourceUnit</span></a><span class="o"> = </span><a href="#SourceUnitMembers"><span class="k">SourceUnitMembers</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #SourceUnitMembers }
 
 ```
 
-<pre ebnf-snippet="SourceUnitMembers" style="display: none;"><a href="#SourceUnitMembers"><span class="k">SourceUnitMembers</span></a><span class="o"> = </span><a href="#SourceUnitMember"><span class="k">SourceUnitMember</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SourceUnitMembers" style="display: none;"><a href="#SourceUnitMembers"><span class="k">SourceUnitMembers</span></a><span class="o"> = </span><a href="#SourceUnitMember"><span class="k">SourceUnitMember</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #SourceUnitMember }
 

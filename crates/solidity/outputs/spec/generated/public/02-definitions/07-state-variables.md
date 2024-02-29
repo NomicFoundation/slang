@@ -8,7 +8,7 @@
 
 ```
 
-<pre ebnf-snippet="StateVariableDefinition" style="display: none;"><a href="#StateVariableDefinition"><span class="k">StateVariableDefinition</span></a><span class="o"> = </span><a href="../../03-types/01-advanced-types#TypeName"><span class="k">TypeName</span></a><br /><span class="o">                          </span><a href="#StateVariableAttributes"><span class="k">StateVariableAttributes</span></a><span class="o">?</span><br /><span class="o">                          </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                          </span><a href="#StateVariableDefinitionValue"><span class="k">StateVariableDefinitionValue</span></a><span class="o">?</span><br /><span class="o">                          </span><a href="../../01-file-structure/09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="StateVariableDefinition" style="display: none;"><a href="#StateVariableDefinition"><span class="k">StateVariableDefinition</span></a><span class="o"> = </span><a href="../../03-types/01-advanced-types#TypeName"><span class="k">TypeName</span></a><br /><span class="o">                          </span><a href="#StateVariableAttributes"><span class="k">StateVariableAttributes</span></a><br /><span class="o">                          </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                          </span><a href="#StateVariableDefinitionValue"><span class="k">StateVariableDefinitionValue</span></a><span class="o">?</span><br /><span class="o">                          </span><a href="../../01-file-structure/09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #StateVariableDefinitionValue }
 
@@ -20,7 +20,7 @@
 
 ```
 
-<pre ebnf-snippet="StateVariableAttributes" style="display: none;"><a href="#StateVariableAttributes"><span class="k">StateVariableAttributes</span></a><span class="o"> = </span><a href="#StateVariableAttribute"><span class="k">StateVariableAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="StateVariableAttributes" style="display: none;"><a href="#StateVariableAttributes"><span class="k">StateVariableAttributes</span></a><span class="o"> = </span><a href="#StateVariableAttribute"><span class="k">StateVariableAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #StateVariableAttribute }
 

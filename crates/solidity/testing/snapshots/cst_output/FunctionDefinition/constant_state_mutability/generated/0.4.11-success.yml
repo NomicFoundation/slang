@@ -13,6 +13,7 @@ Tree:
           - (variant꞉ Identifier): "a" # (9..10)
       - (parameters꞉ ParametersDeclaration): # "()" (10..12)
           - (open_paren꞉ OpenParen): "(" # (10..11)
+          - (parameters꞉ Parameters): [] # (11..11)
           - (close_paren꞉ CloseParen): ")" # (11..12)
       - (attributes꞉ FunctionAttributes): # " constant" (12..21)
           - (item꞉ FunctionAttribute): # " constant" (12..21)
@@ -21,4 +22,5 @@ Tree:
       - (body꞉ FunctionBody) ► (variant꞉ Block): # " {}" (21..24)
           - (LeadingTrivia) ► (Whitespace): " " # (21..22)
           - (open_brace꞉ OpenBrace): "{" # (22..23)
+          - (statements꞉ Statements): [] # (23..23)
           - (close_brace꞉ CloseBrace): "}" # (23..24)

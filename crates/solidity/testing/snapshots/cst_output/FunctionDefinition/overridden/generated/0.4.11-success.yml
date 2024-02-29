@@ -15,6 +15,7 @@ Tree:
           - (variant꞉ Identifier): "some" # (9..13)
       - (parameters꞉ ParametersDeclaration): # "()" (13..15)
           - (open_paren꞉ OpenParen): "(" # (13..14)
+          - (parameters꞉ Parameters): [] # (14..14)
           - (close_paren꞉ CloseParen): ")" # (14..15)
       - (attributes꞉ FunctionAttributes): # " public virtual override" (15..39)
           - (item꞉ FunctionAttribute): # " public" (15..22)

@@ -23,6 +23,7 @@ Tree:
       - (LeadingTrivia) ► (Whitespace): " " # (15..16)
       - (open_brace꞉ OpenBrace): "{" # (16..17)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (17..18)
+      - (members꞉ ContractMembers): [] # (18..18)
       - (LeadingTrivia) ► (Whitespace): "  " # (18..20)
       - (SKIPPED): "type Foo is bool;\n" # (20..38)
       - (close_brace꞉ CloseBrace): "}" # (38..39)

@@ -8,7 +8,7 @@
 
 ```
 
-<pre ebnf-snippet="ContractDefinition" style="display: none;"><a href="#ContractDefinition"><span class="k">ContractDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#AbstractKeyword"><span class="k">ABSTRACT_KEYWORD</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span><br /><span class="o">                     </span><a href="../../01-file-structure/08-keywords#ContractKeyword"><span class="k">CONTRACT_KEYWORD</span></a><br /><span class="o">                     </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><a href="#InheritanceSpecifier"><span class="k">InheritanceSpecifier</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><a href="#ContractMembers"><span class="k">ContractMembers</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ContractDefinition" style="display: none;"><a href="#ContractDefinition"><span class="k">ContractDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#AbstractKeyword"><span class="k">ABSTRACT_KEYWORD</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span><br /><span class="o">                     </span><a href="../../01-file-structure/08-keywords#ContractKeyword"><span class="k">CONTRACT_KEYWORD</span></a><br /><span class="o">                     </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><a href="#InheritanceSpecifier"><span class="k">InheritanceSpecifier</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><a href="#ContractMembers"><span class="k">ContractMembers</span></a><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #InheritanceSpecifier }
 
@@ -32,7 +32,7 @@
 
 ```
 
-<pre ebnf-snippet="ContractMembers" style="display: none;"><a href="#ContractMembers"><span class="k">ContractMembers</span></a><span class="o"> = </span><a href="#ContractMember"><span class="k">ContractMember</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ContractMembers" style="display: none;"><a href="#ContractMembers"><span class="k">ContractMembers</span></a><span class="o"> = </span><a href="#ContractMember"><span class="k">ContractMember</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ContractMember }
 

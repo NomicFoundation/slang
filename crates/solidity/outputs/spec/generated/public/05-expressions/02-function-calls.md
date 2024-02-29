@@ -20,13 +20,13 @@
 
 ```
 
-<pre ebnf-snippet="PositionalArgumentsDeclaration" style="display: none;"><a href="#PositionalArgumentsDeclaration"><span class="k">PositionalArgumentsDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                                 </span><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><span class="o">?</span><br /><span class="o">                                 </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="PositionalArgumentsDeclaration" style="display: none;"><a href="#PositionalArgumentsDeclaration"><span class="k">PositionalArgumentsDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                                 </span><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><br /><span class="o">                                 </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #PositionalArguments }
 
 ```
 
-<pre ebnf-snippet="PositionalArguments" style="display: none;"><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><span class="o"> = </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="PositionalArguments" style="display: none;"><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgumentsDeclaration }
 
@@ -44,13 +44,13 @@
 
 ```
 
-<pre ebnf-snippet="NamedArgumentGroup" style="display: none;"><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedArgumentGroup" style="display: none;"><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><a href="#NamedArguments"><span class="k">NamedArguments</span></a><br /><span class="o">                     </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArguments }
 
 ```
 
-<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgument }
 

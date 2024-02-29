@@ -8,13 +8,13 @@
 
 ```
 
-<pre ebnf-snippet="Block" style="display: none;"><a href="#Block"><span class="k">Block</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">        </span><a href="#Statements"><span class="k">Statements</span></a><span class="o">?</span><br /><span class="o">        </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="Block" style="display: none;"><a href="#Block"><span class="k">Block</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">        </span><a href="#Statements"><span class="k">Statements</span></a><br /><span class="o">        </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #Statements }
 
 ```
 
-<pre ebnf-snippet="Statements" style="display: none;"><a href="#Statements"><span class="k">Statements</span></a><span class="o"> = </span><a href="#Statement"><span class="k">Statement</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Statements" style="display: none;"><a href="#Statements"><span class="k">Statements</span></a><span class="o"> = </span><a href="#Statement"><span class="k">Statement</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Statement }
 

@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "msize()\n" (0..8)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMSizeKeyword): "msize" # (0..5)
       - (open_paren꞉ OpenParen): "(" # (5..6)
+      - (arguments꞉ YulArguments): [] # (6..6)
       - (close_paren꞉ CloseParen): ")" # (6..7)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (7..8)

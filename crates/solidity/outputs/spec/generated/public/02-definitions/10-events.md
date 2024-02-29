@@ -14,13 +14,13 @@
 
 ```
 
-<pre ebnf-snippet="EventParametersDeclaration" style="display: none;"><a href="#EventParametersDeclaration"><span class="k">EventParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                             </span><a href="#EventParameters"><span class="k">EventParameters</span></a><span class="o">?</span><br /><span class="o">                             </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="EventParametersDeclaration" style="display: none;"><a href="#EventParametersDeclaration"><span class="k">EventParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                             </span><a href="#EventParameters"><span class="k">EventParameters</span></a><br /><span class="o">                             </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #EventParameters }
 
 ```
 
-<pre ebnf-snippet="EventParameters" style="display: none;"><a href="#EventParameters"><span class="k">EventParameters</span></a><span class="o"> = </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="EventParameters" style="display: none;"><a href="#EventParameters"><span class="k">EventParameters</span></a><span class="o"> = </span><span class="o">(</span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #EventParameter }
 

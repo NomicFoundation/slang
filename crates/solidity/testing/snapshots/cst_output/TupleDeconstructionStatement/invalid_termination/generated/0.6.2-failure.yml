@@ -45,6 +45,7 @@ Tree:
                       - (MultiLineComment): "/**/" # (20..24)
                       - (EndOfLine): "\n" # (24..25)
                   - (open_brace꞉ OpenBrace): "{" # (25..26)
+                  - (arguments꞉ NamedArguments): [] # (26..26)
       - (LeadingTrivia) ► (Whitespace): " " # (26..27)
       - (SKIPPED): "throw" # (27..32)
       - (semicolon꞉ Semicolon): ";" # (32..33)

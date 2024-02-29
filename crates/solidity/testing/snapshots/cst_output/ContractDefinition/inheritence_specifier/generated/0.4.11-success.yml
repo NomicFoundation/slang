@@ -37,4 +37,5 @@ Tree:
                   - (item꞉ Identifier): "Baz" # (35..38)
       - (LeadingTrivia) ► (Whitespace): " " # (38..39)
       - (open_brace꞉ OpenBrace): "{" # (39..40)
+      - (members꞉ ContractMembers): [] # (40..40)
       - (close_brace꞉ CloseBrace): "}" # (40..41)

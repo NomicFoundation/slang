@@ -6,6 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit) ► (LeadingTrivia): # "/**/\n" (0..5)
-      - (MultiLineComment): "/**/" # (0..4)
-      - (EndOfLine): "\n" # (4..5)
+  - (SourceUnit): # "/**/\n" (0..5)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (LeadingTrivia): # "/**/\n" (0..5)
+          - (MultiLineComment): "/**/" # (0..4)
+          - (EndOfLine): "\n" # (4..5)

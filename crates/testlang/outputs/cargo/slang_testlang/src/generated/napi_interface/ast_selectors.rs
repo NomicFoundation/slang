@@ -250,14 +250,18 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+            {
+                separators.push(separator);
+
+                separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            }
         }
 
         Ok(vec![separated, separators])

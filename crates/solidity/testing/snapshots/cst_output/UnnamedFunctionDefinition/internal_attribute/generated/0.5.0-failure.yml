@@ -19,5 +19,7 @@ Tree:
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
           - (LeadingTrivia) ► (Whitespace): " " # (8..9)
           - (open_paren꞉ OpenParen): "(" # (9..10)
+          - (parameters꞉ Parameters): [] # (10..10)
           - (close_paren꞉ CloseParen): ")" # (10..11)
+      - (attributes꞉ UnnamedFunctionAttributes): [] # (11..11)
       - (SKIPPED): " internal {}\n" # (11..24)

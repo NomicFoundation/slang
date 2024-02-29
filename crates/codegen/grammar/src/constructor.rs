@@ -658,19 +658,29 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
-    ParserDefinitionNode::OneOrMore(Labeled::with_builtin_label(BuiltInLabel::Item, reference))
-        .versioned(item.enabled)
+    let repeated = Labeled::with_builtin_label(BuiltInLabel::Item, reference);
+
+    if item.allow_empty.unwrap_or_default() {
+        ParserDefinitionNode::ZeroOrMore(repeated).versioned(item.enabled)
+    } else {
+        ParserDefinitionNode::OneOrMore(repeated).versioned(item.enabled)
+    }
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let reference = resolve_grammar_element(&item.reference, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
-    ParserDefinitionNode::SeparatedBy(
+    let separated = ParserDefinitionNode::SeparatedBy(
         Labeled::with_builtin_label(BuiltInLabel::Item, Box::new(reference)),
         Labeled::with_builtin_label(BuiltInLabel::Separator, Box::new(separator)),
-    )
-    .versioned(item.enabled)
+    );
+
+    if item.allow_empty.unwrap_or_default() {
+        ParserDefinitionNode::Optional(Box::new(separated)).versioned(item.enabled)
+    } else {
+        separated.versioned(item.enabled)
+    }
 }
 
 fn resolve_precedence(

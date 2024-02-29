@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "gt()\n" (0..5)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGtKeyword): "gt" # (0..2)
       - (open_paren꞉ OpenParen): "(" # (2..3)
+      - (arguments꞉ YulArguments): [] # (3..3)
       - (close_paren꞉ CloseParen): ")" # (3..4)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (4..5)

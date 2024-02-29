@@ -115,6 +115,7 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
     let SpannedRepeatedItem {
         name,
         reference,
+        allow_empty: _,
         enabled,
     } = item;
 
@@ -136,6 +137,7 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablem
         name,
         reference,
         separator,
+        allow_empty: _,
         enabled,
     } = item;
 
