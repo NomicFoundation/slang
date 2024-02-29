@@ -16,7 +16,8 @@ codegen_language_macros::compile!(Language(
                 definitions = [TokenDefinition(scanner = Atom(""))]
             )]
         )]
-    )]
+    )],
+    queries = ()
 ));
 
 fn main() {}

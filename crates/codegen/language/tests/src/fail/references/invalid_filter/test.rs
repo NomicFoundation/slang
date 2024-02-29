@@ -16,7 +16,8 @@ codegen_language_macros::compile!(Language(
                 Fragment(name = Baz, scanner = Atom("baz"))
             ]
         )]
-    )]
+    )],
+    queries = ()
 ));
 
 fn main() {}
