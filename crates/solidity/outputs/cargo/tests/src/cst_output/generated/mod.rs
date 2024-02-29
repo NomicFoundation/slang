@@ -31,6 +31,7 @@ mod receive_function_definition;
 mod return_statement;
 mod source_unit;
 mod statements;
+mod string_literal;
 mod string_literals;
 mod struct_definition;
 mod throw_statement;
