@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "tab:	"                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '"tab:\t"\n' (0..8)
+      - (variant꞉ DoubleQuotedStringLiteral): '"tab:\t"' # (0..7)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (7..8)
