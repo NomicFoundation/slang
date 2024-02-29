@@ -38,6 +38,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_5_0: bool,
     pub(crate) version_is_at_least_0_5_3: bool,
     pub(crate) version_is_at_least_0_5_5: bool,
+    pub(crate) version_is_at_least_0_5_8: bool,
     pub(crate) version_is_at_least_0_5_10: bool,
     pub(crate) version_is_at_least_0_5_12: bool,
     pub(crate) version_is_at_least_0_5_14: bool,
@@ -168,6 +169,7 @@ impl Language {
                 version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
                 version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
                 version_is_at_least_0_5_5: Version::new(0, 5, 5) <= version,
+                version_is_at_least_0_5_8: Version::new(0, 5, 8) <= version,
                 version_is_at_least_0_5_10: Version::new(0, 5, 10) <= version,
                 version_is_at_least_0_5_12: Version::new(0, 5, 12) <= version,
                 version_is_at_least_0_5_14: Version::new(0, 5, 14) <= version,
@@ -7122,7 +7124,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn identifier(&self, input: &mut ParserContext<'_>) -> bool {
-        self.raw_identifier(input)
+        scan_sequence!(
+            self.identifier_start(input),
+            scan_zero_or_more!(input, self.identifier_part(input))
+        )
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7182,14 +7187,6 @@ impl Language {
                 )
             ),
             scan_chars!(input, '*', '/')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn raw_identifier(&self, input: &mut ParserContext<'_>) -> bool {
-        scan_sequence!(
-            self.identifier_start(input),
-            scan_zero_or_more!(input, self.identifier_part(input))
         )
     }
 
@@ -7352,7 +7349,24 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier(&self, input: &mut ParserContext<'_>) -> bool {
-        self.raw_identifier(input)
+        scan_choice!(
+            input,
+            if self.version_is_at_least_0_5_8 && !self.version_is_at_least_0_7_0 {
+                scan_sequence!(
+                    self.identifier_start(input),
+                    scan_zero_or_more!(
+                        input,
+                        scan_choice!(input, scan_chars!(input, '.'), self.identifier_part(input))
+                    )
+                )
+            } else {
+                false
+            },
+            scan_sequence!(
+                self.identifier_start(input),
+                scan_zero_or_more!(input, self.identifier_part(input))
+            )
+        )
     }
 
     // Keyword scanners

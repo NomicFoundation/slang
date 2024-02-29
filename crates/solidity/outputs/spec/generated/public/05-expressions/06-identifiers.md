@@ -14,13 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="Identifier" style="display: none;"><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o"> = </span><a href="#RawIdentifier"><span class="k">«RAW_IDENTIFIER»</span></a><span class="o">;</span></pre>
-
-```{ .ebnf #RawIdentifier }
-
-```
-
-<pre ebnf-snippet="RawIdentifier" style="display: none;"><a href="#RawIdentifier"><span class="k">«RAW_IDENTIFIER»</span></a><span class="o"> = </span><a href="#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><a href="#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Identifier" style="display: none;"><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o"> = </span><a href="#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><a href="#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #IdentifierStart }
 

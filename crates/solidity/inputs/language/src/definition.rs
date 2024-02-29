@@ -3946,14 +3946,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Identifier,
-                            definitions = [TokenDefinition(scanner = Fragment(RawIdentifier))]
-                        ),
-                        Fragment(
-                            name = RawIdentifier,
-                            scanner = Sequence([
-                                Fragment(IdentifierStart),
-                                ZeroOrMore(Fragment(IdentifierPart))
-                            ])
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Fragment(IdentifierStart),
+                                    ZeroOrMore(Fragment(IdentifierPart))
+                                ])
+                            )]
                         ),
                         Fragment(
                             name = IdentifierStart,
@@ -4199,7 +4197,23 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = YulIdentifier,
-                            definitions = [TokenDefinition(scanner = Fragment(RawIdentifier))]
+                            definitions = [
+                                // Dots were allowed specifically between these versions:
+                                TokenDefinition(
+                                    enabled = Range(from = "0.5.8", till = "0.7.0"),
+                                    scanner = Sequence([
+                                        Fragment(IdentifierStart),
+                                        ZeroOrMore(Choice([Fragment(IdentifierPart), Atom(".")]))
+                                    ])
+                                ),
+                                // Otherwise, parse as a regular identifier:
+                                TokenDefinition(
+                                    scanner = Sequence([
+                                        Fragment(IdentifierStart),
+                                        ZeroOrMore(Fragment(IdentifierPart))
+                                    ])
+                                )
+                            ]
                         ),
                         Enum(
                             name = YulBuiltInFunction,
