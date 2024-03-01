@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "tab:	"                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/tabs_double_quote/input.sol:1:1]
+       │
+     1 │ "tab:   "
+       │ ────┬─────  
+       │     ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): '"tab:\t"\n' # (0..8)

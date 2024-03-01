@@ -13,3 +13,13 @@ fn escape_newline_double_quote() -> Result<()> {
 fn escape_newline_single_quote() -> Result<()> {
     run("StringLiteral", "escape_newline_single_quote")
 }
+
+#[test]
+fn tabs_double_quote() -> Result<()> {
+    run("StringLiteral", "tabs_double_quote")
+}
+
+#[test]
+fn tabs_single_quote() -> Result<()> {
+    run("StringLiteral", "tabs_single_quote")
+}
