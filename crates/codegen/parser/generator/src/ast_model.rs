@@ -237,7 +237,7 @@ impl AstModel {
     }
 
     /// Temporary hack to assert that types are consistent.
-    /// TODO(#637): Replace with DSL validation/intellisense afterwards.
+    /// TODO(#872): Replace with DSL validation/intellisense afterwards.
     fn pick_operator<'a>(
         &mut self,
         expression: &'a model::PrecedenceExpression,

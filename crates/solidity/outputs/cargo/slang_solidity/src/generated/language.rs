@@ -10652,7 +10652,7 @@ impl Lexer for Language {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO: Don't allocate a string here
+                        // TODO(#638): Don't allocate a string here
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                         for keyword_compound_scanner in [
@@ -13068,7 +13068,7 @@ impl Lexer for Language {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO: Don't allocate a string here
+                        // TODO(#638): Don't allocate a string here
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                         for keyword_compound_scanner in [

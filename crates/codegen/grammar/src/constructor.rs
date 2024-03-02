@@ -713,7 +713,7 @@ fn resolve_precedence(
     let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
         let name = &expr.name;
-        // TODO: Don't leak
+        // TODO(#638): Don't leak
         let leaked_name = name.to_string().leak() as &_;
 
         precedence_expression_names.push(leaked_name);

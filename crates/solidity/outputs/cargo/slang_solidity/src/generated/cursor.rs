@@ -303,7 +303,7 @@ impl Cursor {
                 self.node = new_child.node;
                 self.child_number = child_number;
                 // Sum up the length of the children before this child
-                // TODO: it might sometimes be quicker to start from the end (like `go_to_last_child`)
+                // TODO(#871): it might sometimes be quicker to start from the end (like `go_to_last_child`)
                 self.text_offset += new_parent.rule_node.children[..child_number]
                     .iter()
                     .map(|node| node.text_len())

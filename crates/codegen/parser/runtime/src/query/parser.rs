@@ -178,7 +178,9 @@ fn kind_token(i: &str) -> IResult<&str, Kind, VerboseError<&str>> {
             TokenKind::try_from(id.as_str())
                 .map(Kind::Token)
                 .or_else(|_| RuleKind::try_from(id.as_str()).map(Kind::Rule))
-                .unwrap() // TODO
+                .unwrap(
+                    // TODO(#554): report these errors to users
+                )
         })
         .parse(i)
 }
