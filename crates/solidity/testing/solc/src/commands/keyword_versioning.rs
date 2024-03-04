@@ -133,7 +133,7 @@ impl KeywordVersioningCommand {
 
                 for variation in variations {
                     assert!(
-                        already_seen.insert((&item.identifier, variation.to_owned())),
+                        already_seen.insert((&item.identifier, variation.clone())),
                         "Duplicate variation: {variation}"
                     );
 

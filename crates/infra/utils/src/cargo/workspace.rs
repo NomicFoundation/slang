@@ -22,7 +22,7 @@ impl CargoWorkspace {
             .get(crate_name)
             .with_context(|| format!("Cannot find dependency '{crate_name}' in workspace."))?
             .version
-            .to_owned()
+            .clone()
             .with_context(|| {
                 format!("Dependency '{crate_name}' did not specify a version in Cargo.toml.")
             })?
@@ -47,7 +47,7 @@ impl CargoWorkspace {
             .get(crate_name)
             .with_context(|| format!("Cannot find dependency '{crate_name}' in workspace."))?
             .path
-            .to_owned()
+            .clone()
             .with_context(|| {
                 format!("Dependency '{crate_name}' did not specify a path in Cargo.toml.")
             })?;

@@ -142,7 +142,6 @@ rest_pat_in_fully_bound_structs = "warn" # Prefer not to use `..` in fully bound
 verbose_file_reads = "warn"              # Prefer simpler and more concise `fs::read_to_string`
 # # Pedantic
 pedantic = "warn"                                                      # Warn about pedantic lints, except...
-implicit_clone = { level = "allow", priority = 1 }                     # A lot of false positives, tuned down in Clippy bundled with Rust 1.73
 match_same_arms = { level = "allow", priority = 1 }                    # It's often clearer to have the same arm twice
 missing_errors_doc = { level = "allow", priority = 1 }                 # Most of our code is internal; let's not clutter the docs until...
 missing_panics_doc = { level = "allow", priority = 1 }                 # ... we care about the public documentation in our shipped crates
