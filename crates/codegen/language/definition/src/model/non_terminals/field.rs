@@ -15,7 +15,6 @@ pub struct FieldsErrorRecovery {
 pub struct FieldDelimiters {
     pub open: Identifier,
     pub close: Identifier,
-    pub disallow_unmatched_body: Option<bool>,
     /// How many tokens have to be matched to trigger the error recovery.
     /// For ambiguous syntaxes this needs to be set to at least N, where N
     /// is the token lookahead required to disambiguate the syntax.
