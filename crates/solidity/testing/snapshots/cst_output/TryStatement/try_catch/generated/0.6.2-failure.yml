@@ -1,35 +1,51 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ try a.b() {} catch {}                                                            │ 0..21
+  1  │ // Make sure that error recovery won't lead to misparsing                        │ 0..57
+  2  │ // ambiguous function call options with the block following the try expression   │ 58..136
+  3  │ try a.b() {ident();} catch {}                                                    │ 137..166
 
-Errors: # 1 total
+Errors: # 2 total
+  - >
+    Error: Expected Colon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch/input.sol:3:17]
+       │
+     3 │ try a.b() {ident();} catch {}
+       │                 ─┬─  
+       │                  ╰─── Error occurred here.
+    ───╯
   - >
     Error: Expected OpenBrace or ReturnsKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch/input.sol:1:13]
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch/input.sol:3:21]
        │
-     1 │ try a.b() {} catch {}
-       │             ────┬────  
-       │                 ╰────── Error occurred here.
+     3 │ try a.b() {ident();} catch {}
+       │                     ─────┬────  
+       │                          ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - (TryStatement): # "try a.b() {} catch {}" (0..21)
-      - (try_keyword꞉ TryKeyword): "try" # (0..3)
-      - (expression꞉ Expression) ► (variant꞉ CallOptionsExpression): # " a.b() {}" (3..12)
-          - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # " a.b()" (3..9)
-              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # " a.b" (3..7)
-                  - (operand꞉ Expression): # " a" (3..5)
-                      - (leading_trivia꞉ Whitespace): " " # (3..4)
-                      - (variant꞉ Identifier): "a" # (4..5)
-                  - (period꞉ Period): "." # (5..6)
-                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "b" # (6..7)
-              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (7..9)
-                  - (open_paren꞉ OpenParen): "(" # (7..8)
-                  - (arguments꞉ PositionalArguments): [] # (8..8)
-                  - (close_paren꞉ CloseParen): ")" # (8..9)
-          - (leading_trivia꞉ Whitespace): " " # (9..10)
-          - (open_brace꞉ OpenBrace): "{" # (10..11)
-          - (arguments꞉ NamedArguments): [] # (11..11)
-          - (close_brace꞉ CloseBrace): "}" # (11..12)
-      - (SKIPPED): " catch {}" # (12..21)
+  - (TryStatement): # "// Make sure that error recovery won't lead to mis..." (0..167)
+      - (leading_trivia꞉ SingleLineComment): "// Make sure that error recovery won't lead to mis..." # (0..57)
+      - (leading_trivia꞉ EndOfLine): "\n" # (57..58)
+      - (leading_trivia꞉ SingleLineComment): "// ambiguous function call options with the block ..." # (58..136)
+      - (leading_trivia꞉ EndOfLine): "\n" # (136..137)
+      - (try_keyword꞉ TryKeyword): "try" # (137..140)
+      - (expression꞉ Expression) ► (variant꞉ CallOptionsExpression): # " a.b() {ident();}" (140..157)
+          - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # " a.b()" (140..146)
+              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # " a.b" (140..144)
+                  - (operand꞉ Expression): # " a" (140..142)
+                      - (leading_trivia꞉ Whitespace): " " # (140..141)
+                      - (variant꞉ Identifier): "a" # (141..142)
+                  - (period꞉ Period): "." # (142..143)
+                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "b" # (143..144)
+              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (144..146)
+                  - (open_paren꞉ OpenParen): "(" # (144..145)
+                  - (arguments꞉ PositionalArguments): [] # (145..145)
+                  - (close_paren꞉ CloseParen): ")" # (145..146)
+          - (leading_trivia꞉ Whitespace): " " # (146..147)
+          - (open_brace꞉ OpenBrace): "{" # (147..148)
+          - (arguments꞉ NamedArguments): # "ident" (148..153)
+              - (item꞉ NamedArgument) ► (name꞉ Identifier): "ident" # (148..153)
+          - (SKIPPED): "();" # (153..156)
+          - (close_brace꞉ CloseBrace): "}" # (156..157)
+      - (SKIPPED): " catch {}\n" # (157..167)
