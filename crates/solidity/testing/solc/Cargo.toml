@@ -22,3 +22,7 @@ serde_json = { workspace = true }
 solidity_language = { workspace = true }
 strum_macros = { workspace = true }
 url = { workspace = true }
+
+[lints]
+workspace = true
+

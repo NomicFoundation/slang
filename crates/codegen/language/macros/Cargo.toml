@@ -10,3 +10,7 @@ proc-macro = true
 
 [dependencies]
 codegen_language_definition = { workspace = true }
+
+[lints]
+workspace = true
+
