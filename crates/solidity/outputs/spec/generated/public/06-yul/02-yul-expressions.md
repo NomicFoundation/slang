@@ -32,7 +32,7 @@
 
 ```
 
-<pre ebnf-snippet="YulIdentifier" style="display: none;"><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#RawIdentifier"><span class="k">«RAW_IDENTIFIER»</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulIdentifier" style="display: none;"><span class="cm">(* Introduced in 0.5.8 and deprecated in 0.7.0. *)</span><br /><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><span class="o">(</span><a href="../../05-expressions/06-identifiers#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o"> | </span><span class="s2">"."</span><span class="o">)</span><span class="o">*</span><span class="o">;</span><br /><br /><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulBuiltInFunction }
 

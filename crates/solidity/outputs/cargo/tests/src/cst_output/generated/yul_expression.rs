@@ -33,3 +33,8 @@ fn hex_trailing_ident_start() -> Result<()> {
 fn identifier_path() -> Result<()> {
     run("YulExpression", "identifier_path")
 }
+
+#[test]
+fn identifier_with_dot() -> Result<()> {
+    run("YulExpression", "identifier_with_dot")
+}

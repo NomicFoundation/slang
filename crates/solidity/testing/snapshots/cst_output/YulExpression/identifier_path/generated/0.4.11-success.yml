@@ -1,12 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ foo.bar                                                                          │ 0..7
+  1  │ foo . bar                                                                        │ 0..9
 
 Errors: []
 
 Tree:
-  - (YulExpression) ► (variant꞉ YulIdentifierPath): # "foo.bar" (0..7)
+  - (YulExpression) ► (variant꞉ YulIdentifierPath): # "foo . bar\n" (0..10)
       - (item꞉ YulIdentifier): "foo" # (0..3)
-      - (separator꞉ Period): "." # (3..4)
-      - (item꞉ YulIdentifier): "bar" # (4..7)
+      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (separator꞉ Period): "." # (4..5)
+      - (LeadingTrivia) ► (Whitespace): " " # (5..6)
+      - (item꞉ YulIdentifier): "bar" # (6..9)
+      - (TrailingTrivia) ► (EndOfLine): "\n" # (9..10)
