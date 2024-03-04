@@ -20,7 +20,7 @@ jobs:
 
       - name: "Restore CI cache"
         if: "${{ github.ref_name != 'main' }}"
-        uses: "actions/cache/restore@13aacd865c20de90d75de3b17ebe84f7a17d57d2"
+        uses: "actions/cache/restore@ab5e6d0c87105b4c9c2047343972218f562e4319"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           restore-keys: |
@@ -47,7 +47,7 @@ jobs:
       #
 
       - name: "Save cache"
-        uses: "actions/cache/save@13aacd865c20de90d75de3b17ebe84f7a17d57d2"
+        uses: "actions/cache/save@ab5e6d0c87105b4c9c2047343972218f562e4319"
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           path: |
