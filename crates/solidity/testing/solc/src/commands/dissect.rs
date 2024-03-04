@@ -30,7 +30,7 @@ impl DissectCommand {
         let language = SolidityDefinition::create();
         let binaries = Binary::fetch_all(&language)?;
 
-        let mut dissector = Dissector::new(self.file.to_owned())?;
+        let mut dissector = Dissector::new(self.file.clone())?;
 
         for binary in binaries {
             dissector.inspect_version(&binary)?;
@@ -96,7 +96,7 @@ impl Dissector {
             sources: [(
                 self.file.unwrap_string(),
                 InputSource {
-                    content: self.source.to_owned(),
+                    content: self.source.clone(),
                 },
             )]
             .into(),

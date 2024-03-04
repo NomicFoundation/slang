@@ -245,7 +245,7 @@ impl TestCase {
             sources: [(
                 "input.sol".into(),
                 InputSource {
-                    content: self.source.to_owned(),
+                    content: self.source.clone(),
                 },
             )]
             .into(),

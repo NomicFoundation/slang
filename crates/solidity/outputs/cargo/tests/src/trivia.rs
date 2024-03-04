@@ -35,7 +35,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
 
             Node::Token(token) => {
                 assert_eq!(token.kind, TokenKind::EndOfLine);
-                Some(token.text.to_owned())
+                Some(token.text.clone())
             }
         })
         .collect::<Vec<_>>();
