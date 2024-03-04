@@ -1,7 +1,5 @@
 # Use LF instead of CRLF everywhere
 * text eol=lf
-# ...except for some snapshot tests
-/crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_newline_single_quote_crlf/input.sol
 
 # Generated Sources
 **/generated/** linguist-generated=true

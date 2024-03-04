@@ -63,6 +63,9 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
                     .or_default()
                     .insert(test_name.to_owned());
             }
+            [.., ".gitattributes"] => {
+                /* Some tests depend on having CRLF being explicitly specified as EOL */
+            }
             _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/PARSER_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
