@@ -119,3 +119,39 @@ thiserror = { version = "1.0.57" }
 trybuild = { version = "1.0.89" }
 toml = { version = "0.7.8" }
 url = { version = "2.3.1" }
+
+[workspace.lints.rust]
+unused_crate_dependencies = "warn"
+unused_lifetimes = "warn"
+unused_macro_rules = "warn"
+unused_tuple_struct_fields = "warn" # Will be uplifed into `dead_code` (warn-by-default) with https://github.com/rust-lang/rust/pull/118297
+meta_variable_misuse = "warn"
+# Rust 2018 idioms that are not yet warn-by-default:
+elided_lifetimes_in_paths = "warn"
+unused_extern_crates = "warn"
+explicit_outlives_requirements = "warn"
+
+[workspace.lints.clippy]
+# Lints that are enabled (warn/deny) by default
+all = "warn"
+# Cargo
+cargo = "warn"                                              # Warn about Cargo.toml issues, except...
+multiple_crate_versions = { level = "allow", priority = 1 } # Not possible to deduplicate, should be done periodically ourselves
+# Restriction (optional, neutral lints)
+exit = "warn"                            # Prefer not `process::exit`ing directly
+rest_pat_in_fully_bound_structs = "warn" # Prefer not to use `..` in fully bound structs
+verbose_file_reads = "warn"              # Prefer simpler and more concise `fs::read_to_string`
+# # Pedantic
+pedantic = "warn"                                                      # Warn about pedantic lints, except...
+implicit_clone = { level = "allow", priority = 1 }                     # A lot of false positives, tuned down in Clippy bundled with Rust 1.73
+match_same_arms = { level = "allow", priority = 1 }                    # It's often clearer to have the same arm twice
+missing_errors_doc = { level = "allow", priority = 1 }                 # Most of our code is internal; let's not clutter the docs until...
+missing_panics_doc = { level = "allow", priority = 1 }                 # ... we care about the public documentation in our shipped crates
+module_name_repetitions = { level = "allow", priority = 1 }            # It seems we prefer it this way; we'd need to discuss that
+must_use_candidate = { level = "allow", priority = 1 }                 # Overzealous, we'd have to `[must_use]` a lot of things
+redundant_closure_for_method_calls = { level = "allow", priority = 1 } # Not always clearer, let's not pepper `allow`s whenever needed
+# # Nursery
+collection_is_never_read = "warn" # Lint against collections not used after creation
+equatable_if_let = "warn"         # Prefer regular `==` checks over Yoda `if let $pat = $value`
+useless_let_if_seq = "warn"       # Use idiomatic direct assignment of `let $val = if $cond { .. } else { .. };`
+redundant_else = "warn"           # Warn about redundant `else` blocks
