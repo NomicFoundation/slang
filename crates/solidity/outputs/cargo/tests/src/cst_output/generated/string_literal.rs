@@ -15,6 +15,11 @@ fn escape_newline_single_quote() -> Result<()> {
 }
 
 #[test]
+fn escape_newline_single_quote_crlf() -> Result<()> {
+    run("StringLiteral", "escape_newline_single_quote_crlf")
+}
+
+#[test]
 fn tabs_double_quote() -> Result<()> {
     run("StringLiteral", "tabs_double_quote")
 }
