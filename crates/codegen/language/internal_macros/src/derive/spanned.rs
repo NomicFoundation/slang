@@ -159,7 +159,7 @@ fn get_spanned_type(input: Type) -> Type {
         }
 
         // External types should also be wrapped in 'Spanned<T>':
-        "bool" | "char" | "PathBuf" | "String" | "Version" => {
+        "bool" | "u8" | "char" | "PathBuf" | "String" | "Version" => {
             parse_quote! {
                 crate::internals::Spanned<#input>
             }

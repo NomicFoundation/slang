@@ -24,7 +24,7 @@ use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -350,7 +350,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -384,7 +384,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBracket,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(

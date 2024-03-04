@@ -2,7 +2,7 @@
 
 use std::ops::ControlFlow;
 
-use crate::cst::{self, LabeledNode};
+use crate::cst::{self, LabeledNode, Node};
 use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
@@ -201,6 +201,33 @@ impl IncompleteMatch {
         Self {
             nodes,
             expected_tokens,
+        }
+    }
+
+    /// Whether this prefix-matched at least `n` (non-skipped) tokens.
+    pub fn matches_at_least_n_tokens(&self, n: u8) -> bool {
+        let result = self
+            .nodes
+            .iter()
+            .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
+            .try_fold(0u8, |mut acc, node| {
+                match node {
+                    Node::Token(tok) if tok.kind != TokenKind::SKIPPED => {
+                        acc += 1;
+                    }
+                    _ => {}
+                }
+
+                // Short-circuit not to walk the whole tree if we've already matched enough
+                if acc >= n {
+                    ControlFlow::Break(acc)
+                } else {
+                    ControlFlow::Continue(acc)
+                }
+            });
+
+        match result {
+            ControlFlow::Continue(value) | ControlFlow::Break(value) => value >= n,
         }
     }
 }

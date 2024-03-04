@@ -191,7 +191,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! { self.#function_name(input) }
             }
 
-            Self::DelimitedBy(open, body, close, opts) => {
+            Self::DelimitedBy(open, body, close, threshold) => {
                 let open_label = format_ident!("{}", open.label.to_pascal_case());
                 let close_label = format_ident!("{}", close.label.to_pascal_case());
                 let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
@@ -201,11 +201,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
-                let recover = if opts.disallow_unmatched_body {
-                    quote! { RecoverFromNoMatch::No }
-                } else {
-                    quote! { RecoverFromNoMatch::Yes }
-                };
+                let threshold = threshold.0;
 
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
@@ -214,7 +210,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#close_delim,
-                                #recover,
+                                TokenAcceptanceThreshold(#threshold),
                             )
                         )?;
                     },
@@ -280,7 +276,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#terminator,
-                                RecoverFromNoMatch::No,
+                                 // Requires at least a partial match not to risk misparsing
+                                TokenAcceptanceThreshold(1u8),
                             )
                         )?;
                     },

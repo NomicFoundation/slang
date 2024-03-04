@@ -24,7 +24,7 @@ use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -329,7 +329,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBracket,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -410,7 +410,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -560,7 +560,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -588,7 +588,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -765,7 +765,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -875,7 +875,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -939,7 +939,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -1049,7 +1049,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -1101,7 +1101,7 @@ impl Language {
                                 input,
                                 self,
                                 TokenKind::CloseParen,
-                                RecoverFromNoMatch::Yes,
+                                TokenAcceptanceThreshold(0u8),
                             ),
                         )?;
                         seq.elem_labeled(
@@ -1119,7 +1119,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -1224,7 +1224,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -1276,7 +1276,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -1364,7 +1364,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -1440,7 +1440,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseParen,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
@@ -1496,7 +1496,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -1569,7 +1569,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -2103,7 +2103,7 @@ impl Language {
                                     TokenKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . named_arguments (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: No ,)) ? ;
+                            seq . elem (self . named_arguments (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
                             seq.elem_labeled(
                                 NodeLabel::CloseBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2166,7 +2166,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseBracket,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
@@ -2319,7 +2319,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -2458,7 +2458,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -2839,7 +2839,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -2918,7 +2918,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
@@ -2996,7 +2996,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -3132,7 +3132,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
@@ -3191,7 +3191,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -3286,7 +3286,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -3497,7 +3497,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -3543,7 +3543,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -3724,7 +3724,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -3811,7 +3811,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -3870,7 +3870,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -3942,7 +3942,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -4072,7 +4072,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -4127,7 +4127,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -4305,7 +4305,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -4519,7 +4519,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -4555,7 +4555,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -4592,7 +4592,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -4691,7 +4691,7 @@ impl Language {
                                     input,
                                     self,
                                     TokenKind::CloseParen,
-                                    RecoverFromNoMatch::Yes,
+                                    TokenAcceptanceThreshold(0u8),
                                 ),
                         )?;
                         seq.elem_labeled(
@@ -4717,7 +4717,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -4751,7 +4751,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -4826,7 +4826,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseParen,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
@@ -4869,7 +4869,7 @@ impl Language {
                                 input,
                                 self,
                                 TokenKind::CloseBracket,
-                                RecoverFromNoMatch::Yes,
+                                TokenAcceptanceThreshold(0u8),
                             ),
                     )?;
                     seq.elem_labeled(
@@ -5143,7 +5143,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::Semicolon,
-                        RecoverFromNoMatch::No,
+                        TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -5216,7 +5216,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
@@ -5310,7 +5310,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -5453,7 +5453,7 @@ impl Language {
                     input,
                     self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
+                    TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
@@ -5776,7 +5776,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
@@ -5852,7 +5852,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
@@ -6352,7 +6352,7 @@ impl Language {
                             input,
                             self,
                             TokenKind::CloseParen,
-                            RecoverFromNoMatch::Yes,
+                            TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
@@ -6629,7 +6629,7 @@ impl Language {
                         input,
                         self,
                         TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
+                        TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(

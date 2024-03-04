@@ -10,7 +10,7 @@ use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, 
 use indexmap::IndexMap;
 
 use crate::{
-    DelimitedRecoveryOpts, Grammar, GrammarElement, KeywordScannerDefinition,
+    DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
     KeywordScannerDefinitionNode, KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition,
     ParserDefinitionNode, PrecedenceOperatorModel, PrecedenceParserDefinition,
     PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
@@ -610,8 +610,8 @@ fn resolve_sequence_like(
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
-            let opts = DelimitedRecoveryOpts::from(delimiters);
-            ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close, opts)
+            let threshold = DelimitedRecoveryTokenThreshold::from(delimiters);
+            ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close, threshold)
         };
         // Replace with a new delimited node
         fields.insert(

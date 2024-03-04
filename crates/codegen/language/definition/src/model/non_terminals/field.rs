@@ -15,12 +15,11 @@ pub struct FieldsErrorRecovery {
 pub struct FieldDelimiters {
     pub open: Identifier,
     pub close: Identifier,
-    /// Whether completely unmatched body between the delimiters should
-    /// prevent the the error recovery from being applied.
-    ///
-    /// This is generally safe but sometimes needs to be disabled if the
-    /// recovery would lead to a misparse in case of ambiguous input.
     pub disallow_unmatched_body: Option<bool>,
+    /// How many tokens have to be matched to trigger the error recovery.
+    /// For ambiguous syntaxes this needs to be set to at least N, where N
+    /// is the token lookahead required to disambiguate the syntax.
+    pub tokens_matched_acceptance_threshold: Option<u8>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

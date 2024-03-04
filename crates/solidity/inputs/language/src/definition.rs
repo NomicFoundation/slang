@@ -3391,10 +3391,10 @@ codegen_language_macros::compile!(Language(
                                                 open = open_brace,
                                                 close = close_brace,
                                                 // NOTE: Despite `NamedArguments` requiring at least one element,
-                                                // we need to disable attempting to recover from empty elements,
-                                                // because this postfix is ambiguous with `try <EXPR> {} catch {}`
-                                                // and could lead to incorrect parsing if we recover past valid syntax.
-                                                disallow_unmatched_body = true
+                                                // we can only recover if we found at least two tokens (`ident:`)
+                                                // in the body, as this may be otherwise ambiguous with
+                                                // `try <EXPR> { func() } catch {}`.
+                                                tokens_matched_acceptance_threshold = 2
                                             )
                                         ),
                                         fields = (

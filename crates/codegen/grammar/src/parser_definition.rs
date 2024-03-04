@@ -55,22 +55,22 @@ impl Visitable for TriviaParserDefinitionRef {
     }
 }
 
+/// How many tokens have to be matched to trigger the error recovery.
+/// For ambiguous syntaxes this needs to be set to at least N, where N
+/// is the token lookahead required to disambiguate the syntax.
+///
+// By default, we assume no lookahead is required to recover from
+// unrecognized body between delimiters.
 #[derive(Clone, Debug, Default)]
-pub struct DelimitedRecoveryOpts {
-    /// Whether completely unmatched body between the delimiters should
-    /// prevent the the error recovery from being applied.
-    /// This is generally safe but sometimes needs to be disabled if the
-    /// recovery would lead to a misparse in case of ambiguous input.
-    pub disallow_unmatched_body: bool,
-}
+pub struct DelimitedRecoveryTokenThreshold(pub u8);
 
-impl From<model::FieldDelimiters> for DelimitedRecoveryOpts {
+impl From<model::FieldDelimiters> for DelimitedRecoveryTokenThreshold {
     fn from(delimiters: model::FieldDelimiters) -> Self {
-        Self {
-            disallow_unmatched_body: delimiters
-                .disallow_unmatched_body
-                .unwrap_or(DelimitedRecoveryOpts::default().disallow_unmatched_body),
-        }
+        Self(
+            delimiters
+                .tokens_matched_acceptance_threshold
+                .unwrap_or(DelimitedRecoveryTokenThreshold::default().0),
+        )
     }
 }
 
@@ -91,7 +91,7 @@ pub enum ParserDefinitionNode {
         Labeled<Box<Self>>,
         Box<Self>,
         Labeled<Box<Self>>,
-        DelimitedRecoveryOpts,
+        DelimitedRecoveryTokenThreshold,
     ),
     SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
     TerminatedBy(Box<Self>, Labeled<Box<Self>>),
