@@ -11,7 +11,8 @@ codegen_language_macros::compile!(Language(
         // title = "Section One"
         topics = []
     )],
-    queries = ()
+    queries = (),
+    binding_actions = ()
 ));
 
 fn main() {}

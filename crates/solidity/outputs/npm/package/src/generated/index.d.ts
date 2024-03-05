@@ -731,6 +731,9 @@ export namespace language {
     parse(kind: kinds.RuleKind, input: string): parse_output.ParseOutput;
   }
 }
+export namespace queries {
+  export enum QueryKind {}
+}
 export namespace ast_internal {
   export function selectSequence(node: cst.RuleNode): Array<cst.Node | null>;
   export function selectChoice(node: cst.RuleNode): cst.Node;

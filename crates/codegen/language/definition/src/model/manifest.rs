@@ -24,6 +24,7 @@ pub struct Language {
     pub sections: Vec<Section>,
 
     pub queries: IndexMap<Identifier, String>,
+    pub binding_actions: IndexMap<Identifier, Identifier>,
 }
 
 impl Language {

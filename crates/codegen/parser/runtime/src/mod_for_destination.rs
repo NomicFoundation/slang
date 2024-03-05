@@ -1,6 +1,7 @@
 #[macro_use]
 pub mod parser_support;
 
+pub mod binding;
 pub mod cst;
 pub mod cursor;
 pub mod kinds;
@@ -8,6 +9,7 @@ pub mod language;
 pub(crate) mod lexer;
 pub mod parse_error;
 pub mod parse_output;
+pub mod queries;
 pub mod query;
 pub mod text_index;
 

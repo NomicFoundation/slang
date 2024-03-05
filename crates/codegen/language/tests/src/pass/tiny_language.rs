@@ -38,7 +38,8 @@ codegen_language_macros::compile!(Language(
             ]
         )]
     )],
-    queries = ()
+    queries = (),
+    binding_actions = ()
 ));
 
 #[test]
@@ -119,7 +120,8 @@ fn definition() {
                     .into()
                 }],
             }],
-            queries: [].into()
+            queries: [].into(),
+            binding_actions: [].into()
         }
         .into(),
     );

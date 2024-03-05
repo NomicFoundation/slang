@@ -13,6 +13,7 @@ napi = { workspace = true, optional = true }
 napi-derive = { workspace = true, optional = true }
 nom = { workspace = true }
 serde = { workspace = true }
+stack-graphs = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 

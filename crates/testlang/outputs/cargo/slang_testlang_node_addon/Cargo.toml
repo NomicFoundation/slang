@@ -43,6 +43,7 @@ napi-derive = { workspace = true }
 nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
+stack-graphs = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
