@@ -8,3 +8,8 @@ use crate::cst_output::runner::run;
 fn try_catch() -> Result<()> {
     run("TryStatement", "try_catch")
 }
+
+#[test]
+fn try_expr_call_options() -> Result<()> {
+    run("TryStatement", "try_expr_call_options")
+}

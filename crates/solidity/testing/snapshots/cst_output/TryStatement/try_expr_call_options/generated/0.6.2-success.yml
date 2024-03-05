@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ try foo() { x: 1 } {                                                             │ 0..20
+  2  │   bar();                                                                         │ 21..29
+  3  │ } catch {                                                                        │ 30..39
+  4  │ }                                                                                │ 40..41
+
+Errors: []
+
+Tree:
+  - (TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+      - (try_keyword꞉ TryKeyword): "try" # (0..3)
+      - (expression꞉ Expression) ► (variant꞉ CallOptionsExpression): # " foo() { x: 1 }" (3..18)
+          - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
+              - (operand꞉ Expression): # " foo" (3..7)
+                  - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+                  - (variant꞉ Identifier): "foo" # (4..7)
+              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (7..9)
+                  - (open_paren꞉ OpenParen): "(" # (7..8)
+                  - (arguments꞉ PositionalArguments): [] # (8..8)
+                  - (close_paren꞉ CloseParen): ")" # (8..9)
+          - (LeadingTrivia) ► (Whitespace): " " # (9..10)
+          - (open_brace꞉ OpenBrace): "{" # (10..11)
+          - (arguments꞉ NamedArguments): # " x: 1" (11..16)
+              - (item꞉ NamedArgument): # " x: 1" (11..16)
+                  - (LeadingTrivia) ► (Whitespace): " " # (11..12)
+                  - (name꞉ Identifier): "x" # (12..13)
+                  - (colon꞉ Colon): ":" # (13..14)
+                  - (value꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 1" (14..16)
+                      - (LeadingTrivia) ► (Whitespace): " " # (14..15)
+                      - (literal꞉ DecimalLiteral): "1" # (15..16)
+          - (LeadingTrivia) ► (Whitespace): " " # (16..17)
+          - (close_brace꞉ CloseBrace): "}" # (17..18)
+      - (body꞉ Block): # " {\n  bar();\n}" (18..31)
+          - (LeadingTrivia) ► (Whitespace): " " # (18..19)
+          - (open_brace꞉ OpenBrace): "{" # (19..20)
+          - (TrailingTrivia) ► (EndOfLine): "\n" # (20..21)
+          - (statements꞉ Statements): # "  bar();\n" (21..30)
+              - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  bar();\n" (21..30)
+                  - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # "  bar()" (21..28)
+                      - (operand꞉ Expression): # "  bar" (21..26)
+                          - (LeadingTrivia) ► (Whitespace): "  " # (21..23)
+                          - (variant꞉ Identifier): "bar" # (23..26)
+                      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (26..28)
+                          - (open_paren꞉ OpenParen): "(" # (26..27)
+                          - (arguments꞉ PositionalArguments): [] # (27..27)
+                          - (close_paren꞉ CloseParen): ")" # (27..28)
+                  - (semicolon꞉ Semicolon): ";" # (28..29)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (29..30)
+          - (close_brace꞉ CloseBrace): "}" # (30..31)
+      - (catch_clauses꞉ CatchClauses): # " catch {\n}\n" (31..42)
+          - (item꞉ CatchClause): # " catch {\n}\n" (31..42)
+              - (LeadingTrivia) ► (Whitespace): " " # (31..32)
+              - (catch_keyword꞉ CatchKeyword): "catch" # (32..37)
+              - (body꞉ Block): # " {\n}\n" (37..42)
+                  - (LeadingTrivia) ► (Whitespace): " " # (37..38)
+                  - (open_brace꞉ OpenBrace): "{" # (38..39)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (39..40)
+                  - (statements꞉ Statements): [] # (40..40)
+                  - (close_brace꞉ CloseBrace): "}" # (40..41)
+                  - (TrailingTrivia) ► (EndOfLine): "\n" # (41..42)
