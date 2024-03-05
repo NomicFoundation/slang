@@ -202,7 +202,7 @@ impl IncompleteMatch {
         }
     }
 
-    /// Whether this prefix-matched at least `n` (non-skipped) tokens.
+    /// Whether this prefix-matched at least `n` (non-skipped) significant tokens.
     pub fn matches_at_least_n_tokens(&self, n: u8) -> bool {
         let result = self
             .nodes
@@ -210,7 +210,7 @@ impl IncompleteMatch {
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
             .try_fold(0u8, |mut acc, node| {
                 match node {
-                    Node::Token(tok) if tok.kind != TokenKind::SKIPPED => {
+                    Node::Token(tok) if tok.kind != TokenKind::SKIPPED && !tok.kind.is_trivia() => {
                         acc += 1;
                     }
                     _ => {}
