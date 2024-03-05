@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /// foo bar                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "/// foo bar\n" (0..12)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (SingleLineNatSpecComment): "/// foo bar" # (0..11)
+      - (EndOfLine): "\n" # (11..12)

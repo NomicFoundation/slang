@@ -9,6 +9,6 @@ Tree:
   - (DecimalNumberExpression): # "10 years\n" (0..9)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (unit꞉ NumberUnit): # " years\n" (2..9)
-          - (LeadingTrivia) ► (Whitespace): " " # (2..3)
+          - (Whitespace): " " # (2..3)
           - (variant꞉ YearsKeyword): "years" # (3..8)
-          - (TrailingTrivia) ► (EndOfLine): "\n" # (8..9)
+          - (EndOfLine): "\n" # (8..9)

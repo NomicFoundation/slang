@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /* multi-line                                                                    │ 0..13
+  2  │    comment */                                                                    │ 14..27
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "/* multi-line\n   comment */\n" (0..28)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (MultiLineComment): "/* multi-line\n   comment */" # (0..27)
+      - (EndOfLine): "\n" # (27..28)

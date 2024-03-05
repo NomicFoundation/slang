@@ -17,7 +17,7 @@ Tree:
   - (UnnamedFunctionDefinition): # "function () internal {}\n" (0..24)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
-          - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+          - (Whitespace): " " # (8..9)
           - (open_paren꞉ OpenParen): "(" # (9..10)
           - (parameters꞉ Parameters): [] # (10..10)
           - (close_paren꞉ CloseParen): ")" # (10..11)

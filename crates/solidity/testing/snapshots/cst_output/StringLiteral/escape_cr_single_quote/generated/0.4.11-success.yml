@@ -9,4 +9,4 @@ Errors: []
 Tree:
   - (StringLiteral): # "'foo\\rbar'\r" (0..11)
       - (variant꞉ SingleQuotedStringLiteral): "'foo\\rbar'" # (0..10)
-      - (TrailingTrivia) ► (EndOfLine): "\r" # (10..11)
+      - (EndOfLine): "\r" # (10..11)

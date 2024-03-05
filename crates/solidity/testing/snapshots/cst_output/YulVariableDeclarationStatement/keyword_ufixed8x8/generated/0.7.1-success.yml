@@ -8,12 +8,11 @@ Errors: []
 
 Tree:
   - (YulVariableDeclarationStatement): # "// This form is always reserved until 0.7.1 in Yul..." (0..66)
-      - (LeadingTrivia): # "// This form is always reserved until 0.7.1 in Yul..." (0..52)
-          - (SingleLineComment): "// This form is always reserved until 0.7.1 in Yul..." # (0..51)
-          - (EndOfLine): "\n" # (51..52)
+      - (SingleLineComment): "// This form is always reserved until 0.7.1 in Yul..." # (0..51)
+      - (EndOfLine): "\n" # (51..52)
       - (let_keyword꞉ YulLetKeyword): "let" # (52..55)
       - (names꞉ YulIdentifierPaths): # " ufixed8x8\n" (55..66)
           - (item꞉ YulIdentifierPath): # " ufixed8x8\n" (55..66)
-              - (LeadingTrivia) ► (Whitespace): " " # (55..56)
+              - (Whitespace): " " # (55..56)
               - (item꞉ YulIdentifier): "ufixed8x8" # (56..65)
-              - (TrailingTrivia) ► (EndOfLine): "\n" # (65..66)
+              - (EndOfLine): "\n" # (65..66)

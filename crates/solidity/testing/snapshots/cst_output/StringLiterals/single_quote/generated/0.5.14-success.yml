@@ -9,4 +9,4 @@ Tree:
   - (StringLiterals): # "'foo'\n" (0..6)
       - (item꞉ StringLiteral): # "'foo'\n" (0..6)
           - (variant꞉ SingleQuotedStringLiteral): "'foo'" # (0..5)
-          - (TrailingTrivia) ► (EndOfLine): "\n" # (5..6)
+          - (EndOfLine): "\n" # (5..6)

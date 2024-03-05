@@ -17,7 +17,7 @@ Tree:
   - (ConstructorDefinition): # "constructor () virtual {}\n" (0..26)
       - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (0..11)
       - (parameters꞉ ParametersDeclaration): # " ()" (11..14)
-          - (LeadingTrivia) ► (Whitespace): " " # (11..12)
+          - (Whitespace): " " # (11..12)
           - (open_paren꞉ OpenParen): "(" # (12..13)
           - (parameters꞉ Parameters): [] # (13..13)
           - (close_paren꞉ CloseParen): ")" # (13..14)

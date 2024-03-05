@@ -9,5 +9,5 @@ Tree:
   - (DecimalNumberExpression): # "10 ether" (0..8)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (unit꞉ NumberUnit): # " ether" (2..8)
-          - (LeadingTrivia) ► (Whitespace): " " # (2..3)
+          - (Whitespace): " " # (2..3)
           - (variant꞉ EtherKeyword): "ether" # (3..8)

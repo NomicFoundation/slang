@@ -328,15 +328,8 @@ impl GrammarVisitor for RustGenerator {
         };
         self.trivia_scanner_names.extend(trivia_scanners);
 
-        self.parser_functions.insert(
-            parser.name(),
-            {
-                let code = parser.to_parser_code();
-                let rule_kind = format_ident!("{}", parser.name());
-                quote! { #code.with_kind(RuleKind::#rule_kind) }
-            }
-            .to_string(),
-        );
+        self.parser_functions
+            .insert(parser.name(), parser.to_parser_code().to_string());
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {

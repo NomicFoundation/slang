@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /**                                                                              │ 0..3
+  2  │  * @foo bar                                                                      │ 4..15
+  3  │  */                                                                              │ 16..19
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "/**\n * @foo bar\n */\n" (0..20)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (MultiLineNatSpecComment): "/**\n * @foo bar\n */" # (0..19)
+      - (EndOfLine): "\n" # (19..20)

@@ -55,6 +55,44 @@ fn everything() -> Result<()> {
 }
 
 #[test]
+fn leading_trivia_multi_line() -> Result<()> {
+    run("SourceUnit", "leading_trivia_multi_line")
+}
+
+#[test]
+fn leading_trivia_multi_line_natspec_comment() -> Result<()> {
+    run("SourceUnit", "leading_trivia_multi_line_natspec_comment")
+}
+
+#[test]
+fn leading_trivia_multi_line_trailing_double_star() -> Result<()> {
+    run(
+        "SourceUnit",
+        "leading_trivia_multi_line_trailing_double_star",
+    )
+}
+
+#[test]
+fn leading_trivia_new_line() -> Result<()> {
+    run("SourceUnit", "leading_trivia_new_line")
+}
+
+#[test]
+fn leading_trivia_single_line_comment() -> Result<()> {
+    run("SourceUnit", "leading_trivia_single_line_comment")
+}
+
+#[test]
+fn leading_trivia_single_line_natspec_comment() -> Result<()> {
+    run("SourceUnit", "leading_trivia_single_line_natspec_comment")
+}
+
+#[test]
+fn leading_trivia_whitespace() -> Result<()> {
+    run("SourceUnit", "leading_trivia_whitespace")
+}
+
+#[test]
 fn partial_definition() -> Result<()> {
     run("SourceUnit", "partial_definition")
 }
@@ -77,6 +115,24 @@ fn top_level_function() -> Result<()> {
 #[test]
 fn trailing_trivia() -> Result<()> {
     run("SourceUnit", "trailing_trivia")
+}
+
+#[test]
+fn trailing_trivia_multi_line_spanning_multiple_lines() -> Result<()> {
+    run(
+        "SourceUnit",
+        "trailing_trivia_multi_line_spanning_multiple_lines",
+    )
+}
+
+#[test]
+fn trailing_trivia_multi_line_without_newline() -> Result<()> {
+    run("SourceUnit", "trailing_trivia_multi_line_without_newline")
+}
+
+#[test]
+fn trailing_trivia_only_until_newline() -> Result<()> {
+    run("SourceUnit", "trailing_trivia_only_until_newline")
 }
 
 #[test]

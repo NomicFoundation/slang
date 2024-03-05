@@ -3160,7 +3160,6 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::LeadingTrivia)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4643,7 +4642,6 @@ impl Language {
             seq.elem(self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine))?;
             seq.finish()
         })
-        .with_kind(RuleKind::TrailingTrivia)
     }
 
     #[allow(unused_assignments, unused_parens)]

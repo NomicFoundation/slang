@@ -9,4 +9,4 @@ Tree:
   - (StringLiterals): # "'Fireworks 🎆'\n" (0..17)
       - (item꞉ StringLiteral): # "'Fireworks 🎆'\n" (0..17)
           - (variant꞉ SingleQuotedStringLiteral): "'Fireworks 🎆'" # (0..16)
-          - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)
+          - (EndOfLine): "\n" # (16..17)

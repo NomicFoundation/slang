@@ -9,5 +9,5 @@ Tree:
   - (HexNumberExpression): # "0x1 wei" (0..7)
       - (literal꞉ HexLiteral): "0x1" # (0..3)
       - (unit꞉ NumberUnit): # " wei" (3..7)
-          - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+          - (Whitespace): " " # (3..4)
           - (variant꞉ WeiKeyword): "wei" # (4..7)

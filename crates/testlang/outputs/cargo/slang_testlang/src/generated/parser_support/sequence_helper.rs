@@ -125,17 +125,27 @@ impl SequenceHelper {
                         return;
                     }
 
-                    let tokens: Vec<_> =
-                        next.nodes.iter().filter_map(|node| node.as_token()).collect();
-                    let mut rules = next.nodes.iter().filter_map(|node| node.as_rule());
-
-                    let is_single_token_with_trivia =
-                        tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
-                    let next_token = tokens.first().map(|token| token.kind);
-
-                    // NOTE: We only support skipping to a single token (optionally with trivia)
-                    debug_assert!(is_single_token_with_trivia);
-                    debug_assert_eq!(next_token, Some(running.found));
+                    // We only support skipping to a single, significant token.
+                    // Sanity check that we are recovering to the expected one.
+                    let next_token = next.nodes.iter().try_fold(None, |acc, node| {
+                        match &**node {
+                            cst::Node::Token(token) if token.kind.is_trivia() => Ok(acc),
+                            cst::Node::Token(token) => {
+                                match acc {
+                                    None => Ok(Some(token.kind)),
+                                    Some(..) => {
+                                        debug_assert!(false, "Recovery skipped to multiple tokens: {acc:?}, {token:?}");
+                                        Err(())
+                                    }
+                                }
+                            }
+                            cst::Node::Rule(rule) => {
+                                debug_assert!(false, "Recovery skipped to a rule: {rule:?}");
+                                Err(())
+                            }
+                        }
+                    });
+                    debug_assert_eq!(next_token, Ok(Some(running.found)));
 
                     running.nodes.push(LabeledNode::anonymous(cst::Node::token(
                         TokenKind::SKIPPED,

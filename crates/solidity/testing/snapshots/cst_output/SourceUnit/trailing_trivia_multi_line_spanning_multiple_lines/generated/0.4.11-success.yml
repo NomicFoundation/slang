@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract A {} /* some                                                            │ 0..21
+  2  │ comment*/                                                                        │ 22..31
+  3  │ contract B {}                                                                    │ 32..45
+
+Errors: []
+
+Tree:
+  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} /* some\ncomment*/\ncontract B {}\n" (0..46)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {}" (0..13)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+          - (Whitespace): " " # (8..9)
+          - (name꞉ Identifier): "A" # (9..10)
+          - (Whitespace): " " # (10..11)
+          - (open_brace꞉ OpenBrace): "{" # (11..12)
+          - (members꞉ ContractMembers): [] # (12..12)
+          - (close_brace꞉ CloseBrace): "}" # (12..13)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # " /* some\ncomment*/\ncontract B {}\n" (13..46)
+          - (Whitespace): " " # (13..14)
+          - (MultiLineComment): "/* some\ncomment*/" # (14..31)
+          - (EndOfLine): "\n" # (31..32)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (32..40)
+          - (Whitespace): " " # (40..41)
+          - (name꞉ Identifier): "B" # (41..42)
+          - (Whitespace): " " # (42..43)
+          - (open_brace꞉ OpenBrace): "{" # (43..44)
+          - (members꞉ ContractMembers): [] # (44..44)
+          - (close_brace꞉ CloseBrace): "}" # (44..45)
+          - (EndOfLine): "\n" # (45..46)

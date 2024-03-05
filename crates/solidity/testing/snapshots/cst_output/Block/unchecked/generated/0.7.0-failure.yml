@@ -17,6 +17,6 @@ Tree:
   - (Block): # "{ unchecked { x = 1; } }" (0..24)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (statements꞉ Statements): [] # (1..1)
-      - (LeadingTrivia) ► (Whitespace): " " # (1..2)
+      - (Whitespace): " " # (1..2)
       - (SKIPPED): "unchecked { x = 1; } " # (2..23)
       - (close_brace꞉ CloseBrace): "}" # (23..24)
