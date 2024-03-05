@@ -14,13 +14,13 @@
 
 ```
 
-<pre ebnf-snippet="ErrorParametersDeclaration" style="display: none;"><span class="cm">(* Introduced in 0.8.4 *)</span><br /><a href="#ErrorParametersDeclaration"><span class="k">ErrorParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                             </span><a href="#ErrorParameters"><span class="k">ErrorParameters</span></a><span class="o">?</span><br /><span class="o">                             </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ErrorParametersDeclaration" style="display: none;"><span class="cm">(* Introduced in 0.8.4 *)</span><br /><a href="#ErrorParametersDeclaration"><span class="k">ErrorParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                             </span><a href="#ErrorParameters"><span class="k">ErrorParameters</span></a><br /><span class="o">                             </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ErrorParameters }
 
 ```
 
-<pre ebnf-snippet="ErrorParameters" style="display: none;"><span class="cm">(* Introduced in 0.8.4 *)</span><br /><a href="#ErrorParameters"><span class="k">ErrorParameters</span></a><span class="o"> = </span><a href="#ErrorParameter"><span class="k">ErrorParameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#ErrorParameter"><span class="k">ErrorParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ErrorParameters" style="display: none;"><span class="cm">(* Introduced in 0.8.4 *)</span><br /><a href="#ErrorParameters"><span class="k">ErrorParameters</span></a><span class="o"> = </span><span class="o">(</span><a href="#ErrorParameter"><span class="k">ErrorParameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#ErrorParameter"><span class="k">ErrorParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ErrorParameter }
 

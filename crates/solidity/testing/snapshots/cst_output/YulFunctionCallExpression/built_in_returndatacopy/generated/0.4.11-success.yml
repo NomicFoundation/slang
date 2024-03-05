@@ -10,5 +10,6 @@ Tree:
       - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "returndatacopy" (0..14)
           - (item꞉ YulIdentifier): "returndatacopy" # (0..14)
       - (open_paren꞉ OpenParen): "(" # (14..15)
+      - (arguments꞉ YulArguments): [] # (15..15)
       - (close_paren꞉ CloseParen): ")" # (15..16)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)

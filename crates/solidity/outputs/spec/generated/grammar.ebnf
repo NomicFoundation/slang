@@ -10,9 +10,9 @@
 
 (* 1.2. Source Unit: *)
 
-SourceUnit = SourceUnitMembers?;
+SourceUnit = SourceUnitMembers;
 
-SourceUnitMembers = SourceUnitMember+;
+SourceUnitMembers = SourceUnitMember*;
 
 SourceUnitMember = PragmaDirective
                  | ImportDirective
@@ -572,7 +572,7 @@ ContractDefinition = ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
                      IDENTIFIER
                      InheritanceSpecifier?
                      OPEN_BRACE
-                     ContractMembers?
+                     ContractMembers
                      CLOSE_BRACE;
 
 InheritanceSpecifier = IS_KEYWORD
@@ -583,7 +583,7 @@ InheritanceTypes = InheritanceType (COMMA InheritanceType)*;
 InheritanceType = IdentifierPath
                   ArgumentsDeclaration?;
 
-ContractMembers = ContractMember+;
+ContractMembers = ContractMember*;
 
 ContractMember = UsingDirective
                | FunctionDefinition
@@ -605,30 +605,30 @@ InterfaceDefinition = INTERFACE_KEYWORD
                       IDENTIFIER
                       InheritanceSpecifier?
                       OPEN_BRACE
-                      InterfaceMembers?
+                      InterfaceMembers
                       CLOSE_BRACE;
 
-InterfaceMembers = ContractMember+;
+InterfaceMembers = ContractMember*;
 
 (* 2.3. Libraries: *)
 
 LibraryDefinition = LIBRARY_KEYWORD
                     IDENTIFIER
                     OPEN_BRACE
-                    LibraryMembers?
+                    LibraryMembers
                     CLOSE_BRACE;
 
-LibraryMembers = ContractMember+;
+LibraryMembers = ContractMember*;
 
 (* 2.4. Structs: *)
 
 StructDefinition = STRUCT_KEYWORD
                    IDENTIFIER
                    OPEN_BRACE
-                   StructMembers?
+                   StructMembers
                    CLOSE_BRACE;
 
-StructMembers = StructMember+;
+StructMembers = StructMember*;
 
 StructMember = TypeName
                IDENTIFIER
@@ -639,10 +639,10 @@ StructMember = TypeName
 EnumDefinition = ENUM_KEYWORD
                  IDENTIFIER
                  OPEN_BRACE
-                 EnumMembers?
+                 EnumMembers
                  CLOSE_BRACE;
 
-EnumMembers = IDENTIFIER (COMMA IDENTIFIER)*;
+EnumMembers = (IDENTIFIER (COMMA IDENTIFIER)*)?;
 
 (* 2.6. Constants: *)
 
@@ -657,7 +657,7 @@ ConstantDefinition = TypeName
 (* 2.7. State Variables: *)
 
 StateVariableDefinition = TypeName
-                          StateVariableAttributes?
+                          StateVariableAttributes
                           IDENTIFIER
                           StateVariableDefinitionValue?
                           SEMICOLON;
@@ -665,7 +665,7 @@ StateVariableDefinition = TypeName
 StateVariableDefinitionValue = EQUAL
                                Expression;
 
-StateVariableAttributes = StateVariableAttribute+;
+StateVariableAttributes = StateVariableAttribute*;
 
 StateVariableAttribute = OverrideSpecifier
                        | CONSTANT_KEYWORD
@@ -679,7 +679,7 @@ StateVariableAttribute = OverrideSpecifier
 FunctionDefinition = FUNCTION_KEYWORD
                      FunctionName
                      ParametersDeclaration
-                     FunctionAttributes?
+                     FunctionAttributes
                      ReturnsDeclaration?
                      FunctionBody;
 
@@ -688,16 +688,16 @@ FunctionName = IDENTIFIER
              | RECEIVE_KEYWORD;
 
 ParametersDeclaration = OPEN_PAREN
-                        Parameters?
+                        Parameters
                         CLOSE_PAREN;
 
-Parameters = Parameter (COMMA Parameter)*;
+Parameters = (Parameter (COMMA Parameter)*)?;
 
 Parameter = TypeName
             StorageLocation?
             IDENTIFIER?;
 
-FunctionAttributes = FunctionAttribute+;
+FunctionAttributes = FunctionAttribute*;
 
 FunctionAttribute = ModifierInvocation
                   | OverrideSpecifier
@@ -729,11 +729,11 @@ FunctionBody = Block
 (* Introduced in 0.4.22 *)
 ConstructorDefinition = CONSTRUCTOR_KEYWORD
                         ParametersDeclaration
-                        ConstructorAttributes?
+                        ConstructorAttributes
                         Block;
 
 (* Introduced in 0.4.22 *)
-ConstructorAttributes = ConstructorAttribute+;
+ConstructorAttributes = ConstructorAttribute*;
 
 (* Introduced in 0.4.22 *)
 ConstructorAttribute = ModifierInvocation
@@ -746,11 +746,11 @@ ConstructorAttribute = ModifierInvocation
 (* Deprecated in 0.6.0 *)
 UnnamedFunctionDefinition = FUNCTION_KEYWORD
                             ParametersDeclaration
-                            UnnamedFunctionAttributes?
+                            UnnamedFunctionAttributes
                             FunctionBody;
 
 (* Deprecated in 0.6.0 *)
-UnnamedFunctionAttributes = UnnamedFunctionAttribute+;
+UnnamedFunctionAttributes = UnnamedFunctionAttribute*;
 
 (* Deprecated in 0.6.0 *)
 UnnamedFunctionAttribute = ModifierInvocation
@@ -766,12 +766,12 @@ UnnamedFunctionAttribute = ModifierInvocation
 (* Introduced in 0.6.0 *)
 FallbackFunctionDefinition = FALLBACK_KEYWORD
                              ParametersDeclaration
-                             FallbackFunctionAttributes?
+                             FallbackFunctionAttributes
                              ReturnsDeclaration?
                              FunctionBody;
 
 (* Introduced in 0.6.0 *)
-FallbackFunctionAttributes = FallbackFunctionAttribute+;
+FallbackFunctionAttributes = FallbackFunctionAttribute*;
 
 (* Introduced in 0.6.0 *)
 FallbackFunctionAttribute = ModifierInvocation
@@ -785,11 +785,11 @@ FallbackFunctionAttribute = ModifierInvocation
 (* Introduced in 0.6.0 *)
 ReceiveFunctionDefinition = RECEIVE_KEYWORD
                             ParametersDeclaration
-                            ReceiveFunctionAttributes?
+                            ReceiveFunctionAttributes
                             FunctionBody;
 
 (* Introduced in 0.6.0 *)
-ReceiveFunctionAttributes = ReceiveFunctionAttribute+;
+ReceiveFunctionAttributes = ReceiveFunctionAttribute*;
 
 (* Introduced in 0.6.0 *)
 ReceiveFunctionAttribute = ModifierInvocation
@@ -803,10 +803,10 @@ ReceiveFunctionAttribute = ModifierInvocation
 ModifierDefinition = MODIFIER_KEYWORD
                      IDENTIFIER
                      ParametersDeclaration?
-                     ModifierAttributes?
+                     ModifierAttributes
                      FunctionBody;
 
-ModifierAttributes = ModifierAttribute+;
+ModifierAttributes = ModifierAttribute*;
 
 ModifierAttribute = OverrideSpecifier
                   | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
@@ -823,10 +823,10 @@ EventDefinition = EVENT_KEYWORD
                   SEMICOLON;
 
 EventParametersDeclaration = OPEN_PAREN
-                             EventParameters?
+                             EventParameters
                              CLOSE_PAREN;
 
-EventParameters = EventParameter (COMMA EventParameter)*;
+EventParameters = (EventParameter (COMMA EventParameter)*)?;
 
 EventParameter = TypeName
                  INDEXED_KEYWORD?
@@ -851,11 +851,11 @@ ErrorDefinition = ERROR_KEYWORD
 
 (* Introduced in 0.8.4 *)
 ErrorParametersDeclaration = OPEN_PAREN
-                             ErrorParameters?
+                             ErrorParameters
                              CLOSE_PAREN;
 
 (* Introduced in 0.8.4 *)
-ErrorParameters = ErrorParameter (COMMA ErrorParameter)*;
+ErrorParameters = (ErrorParameter (COMMA ErrorParameter)*)?;
 
 (* Introduced in 0.8.4 *)
 ErrorParameter = TypeName
@@ -875,10 +875,10 @@ TypeName = ArrayTypeName
 
 FunctionType = FUNCTION_KEYWORD
                ParametersDeclaration
-               FunctionTypeAttributes?
+               FunctionTypeAttributes
                ReturnsDeclaration?;
 
-FunctionTypeAttributes = FunctionTypeAttribute+;
+FunctionTypeAttributes = FunctionTypeAttribute*;
 
 FunctionTypeAttribute = INTERNAL_KEYWORD
                       | EXTERNAL_KEYWORD
@@ -926,10 +926,10 @@ AddressType = ADDRESS_KEYWORD
 (* 4.1. Blocks: *)
 
 Block = OPEN_BRACE
-        Statements?
+        Statements
         CLOSE_BRACE;
 
-Statements = Statement+;
+Statements = Statement*;
 
 Statement = ExpressionStatement
           | VariableDeclarationStatement
@@ -1154,10 +1154,10 @@ ArgumentsDeclaration = PositionalArgumentsDeclaration
                      | NamedArgumentsDeclaration;
 
 PositionalArgumentsDeclaration = OPEN_PAREN
-                                 PositionalArguments?
+                                 PositionalArguments
                                  CLOSE_PAREN;
 
-PositionalArguments = Expression (COMMA Expression)*;
+PositionalArguments = (Expression (COMMA Expression)*)?;
 
 NamedArgumentsDeclaration = OPEN_PAREN
                             NamedArgumentGroup?
@@ -1167,10 +1167,10 @@ NamedArgumentsDeclaration = OPEN_PAREN
 NamedArgumentGroups = NamedArgumentGroup+;
 
 NamedArgumentGroup = OPEN_BRACE
-                     NamedArguments?
+                     NamedArguments
                      CLOSE_BRACE;
 
-NamedArguments = NamedArgument (COMMA NamedArgument)*;
+NamedArguments = (NamedArgument (COMMA NamedArgument)*)?;
 
 NamedArgument = IDENTIFIER
                 COLON
@@ -1315,10 +1315,10 @@ IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 (* 6.1. Yul Statements: *)
 
 YulBlock = OPEN_BRACE
-           YulStatements?
+           YulStatements
            CLOSE_BRACE;
 
-YulStatements = YulStatement+;
+YulStatements = YulStatement*;
 
 YulStatement = YulBlock
              | YulFunctionDefinition
@@ -1340,10 +1340,10 @@ YulFunctionDefinition = YUL_FUNCTION_KEYWORD
                         YulBlock;
 
 YulParametersDeclaration = OPEN_PAREN
-                           YulParameters?
+                           YulParameters
                            CLOSE_PAREN;
 
-YulParameters = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
+YulParameters = (YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*)?;
 
 YulReturnsDeclaration = MINUS_GREATER_THAN
                         YulReturnVariables;
@@ -1412,7 +1412,7 @@ YulExpression = YulFunctionCallExpression
               | YulBuiltInFunction
               | YulIdentifierPath;
 
-YulArguments = YulExpression (COMMA YulExpression)*;
+YulArguments = (YulExpression (COMMA YulExpression)*)?;
 
 YulIdentifierPaths = YulIdentifierPath (COMMA YulIdentifierPath)*;
 

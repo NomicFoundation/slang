@@ -21,5 +21,7 @@ Tree:
           - (variant꞉ Identifier): "a" # (9..10)
       - (parameters꞉ ParametersDeclaration): # "()" (10..12)
           - (open_paren꞉ OpenParen): "(" # (10..11)
+          - (parameters꞉ Parameters): [] # (11..11)
           - (close_paren꞉ CloseParen): ")" # (11..12)
+      - (attributes꞉ FunctionAttributes): [] # (12..12)
       - (SKIPPED): " constant {}" # (12..24)

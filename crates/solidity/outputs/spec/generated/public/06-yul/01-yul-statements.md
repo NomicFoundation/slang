@@ -8,13 +8,13 @@
 
 ```
 
-<pre ebnf-snippet="YulBlock" style="display: none;"><a href="#YulBlock"><span class="k">YulBlock</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">           </span><a href="#YulStatements"><span class="k">YulStatements</span></a><span class="o">?</span><br /><span class="o">           </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulBlock" style="display: none;"><a href="#YulBlock"><span class="k">YulBlock</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">           </span><a href="#YulStatements"><span class="k">YulStatements</span></a><br /><span class="o">           </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #YulStatements }
 
 ```
 
-<pre ebnf-snippet="YulStatements" style="display: none;"><a href="#YulStatements"><span class="k">YulStatements</span></a><span class="o"> = </span><a href="#YulStatement"><span class="k">YulStatement</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulStatements" style="display: none;"><a href="#YulStatements"><span class="k">YulStatements</span></a><span class="o"> = </span><a href="#YulStatement"><span class="k">YulStatement</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulStatement }
 
@@ -32,13 +32,13 @@
 
 ```
 
-<pre ebnf-snippet="YulParametersDeclaration" style="display: none;"><a href="#YulParametersDeclaration"><span class="k">YulParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                           </span><a href="#YulParameters"><span class="k">YulParameters</span></a><span class="o">?</span><br /><span class="o">                           </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulParametersDeclaration" style="display: none;"><a href="#YulParametersDeclaration"><span class="k">YulParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                           </span><a href="#YulParameters"><span class="k">YulParameters</span></a><br /><span class="o">                           </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #YulParameters }
 
 ```
 
-<pre ebnf-snippet="YulParameters" style="display: none;"><a href="#YulParameters"><span class="k">YulParameters</span></a><span class="o"> = </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulParameters" style="display: none;"><a href="#YulParameters"><span class="k">YulParameters</span></a><span class="o"> = </span><span class="o">(</span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulReturnsDeclaration }
 

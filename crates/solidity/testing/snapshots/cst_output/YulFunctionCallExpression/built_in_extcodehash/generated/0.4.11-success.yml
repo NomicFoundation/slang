@@ -10,5 +10,6 @@ Tree:
       - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "extcodehash" (0..11)
           - (item꞉ YulIdentifier): "extcodehash" # (0..11)
       - (open_paren꞉ OpenParen): "(" # (11..12)
+      - (arguments꞉ YulArguments): [] # (12..12)
       - (close_paren꞉ CloseParen): ")" # (12..13)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (13..14)

@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "timestamp()\n" (0..12)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulTimestampKeyword): "timestamp" # (0..9)
       - (open_paren꞉ OpenParen): "(" # (9..10)
+      - (arguments꞉ YulArguments): [] # (10..10)
       - (close_paren꞉ CloseParen): ")" # (10..11)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (11..12)

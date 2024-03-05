@@ -11,4 +11,6 @@ pub struct SeparatedItem {
     pub separator: Identifier,
 
     pub enabled: Option<VersionSpecifier>,
+
+    pub allow_empty: Option<bool>,
 }

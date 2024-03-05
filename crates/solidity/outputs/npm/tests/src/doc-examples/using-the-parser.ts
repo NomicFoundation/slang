@@ -34,15 +34,16 @@ test("using the parser", async () => {
   assert.equal(contract.kind, RuleKind.ContractDefinition);
 
   const contractChildren = contract.children();
-  assert.equal(contractChildren.length, 6);
+  assert.equal(contractChildren.length, 7);
 
-  const [contractKeyword, firstSpace, contractName, secondSpace, openBrace, closeBrace] = contractChildren;
+  const [contractKeyword, firstSpace, contractName, secondSpace, openBrace, members, closeBrace] = contractChildren;
 
   assert.equal(contractKeyword?.kind, TokenKind.ContractKeyword);
   assert.equal(firstSpace?.kind, RuleKind.LeadingTrivia);
   assert.equal(contractName?.kind, TokenKind.Identifier);
   assert.equal(secondSpace?.kind, RuleKind.LeadingTrivia);
   assert.equal(openBrace?.kind, TokenKind.OpenBrace);
+  assert.equal(members?.kind, RuleKind.ContractMembers);
   assert.equal(closeBrace?.kind, TokenKind.CloseBrace);
   // --8<-- [end:inspect-tree]
 

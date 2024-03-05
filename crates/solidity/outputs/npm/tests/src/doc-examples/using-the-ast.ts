@@ -26,7 +26,7 @@ test("using the ast", async () => {
   // --8<-- [end:create-node]
 
   // --8<-- [start:list-parameters]
-  const parameters = $function.parameters.parameters?.items.map((parameter) => {
+  const parameters = $function.parameters.parameters.items.map((parameter) => {
     return parameter.name?.text;
   });
 
@@ -34,7 +34,7 @@ test("using the ast", async () => {
   // --8<-- [end:list-parameters]
 
   // --8<-- [start:list-attributes]
-  const attributes = $function.attributes?.items.map((attribute) => {
+  const attributes = $function.attributes.items.map((attribute) => {
     return attribute.cst.unparse().trim();
   });
 

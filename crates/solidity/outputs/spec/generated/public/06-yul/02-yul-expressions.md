@@ -14,7 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="YulArguments" style="display: none;"><a href="#YulArguments"><span class="k">YulArguments</span></a><span class="o"> = </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulArguments" style="display: none;"><a href="#YulArguments"><span class="k">YulArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulIdentifierPaths }
 

@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "extcodecopy()\n" (0..14)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulExtCodeCopyKeyword): "extcodecopy" # (0..11)
       - (open_paren꞉ OpenParen): "(" # (11..12)
+      - (arguments꞉ YulArguments): [] # (12..12)
       - (close_paren꞉ CloseParen): ")" # (12..13)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (13..14)

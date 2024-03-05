@@ -169,9 +169,9 @@ pub fn select_sequence(
 
 impl Selector {
     fn source_unit(&mut self) -> Result<Vec<Option<JsObject>>> {
-        Ok(vec![self.try_select(|node| {
+        Ok(vec![Some(self.select(|node| {
             node.is_rule_with_kind(RuleKind::SourceUnitMembers)
-        })?])
+        })?)])
     }
 }
 
@@ -352,7 +352,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::InheritanceSpecifier))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::ContractMembers))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::ContractMembers))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -383,7 +383,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::InheritanceSpecifier))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::InterfaceMembers))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::InterfaceMembers))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -395,7 +395,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::LibraryKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::LibraryMembers))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::LibraryMembers))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -407,7 +407,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::StructKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::StructMembers))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::StructMembers))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -429,7 +429,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EnumKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::EnumMembers))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::EnumMembers))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -452,7 +452,7 @@ impl Selector {
     fn state_variable_definition(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::StateVariableAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::StateVariableAttributes))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StateVariableDefinitionValue))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
@@ -475,7 +475,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionName))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::FunctionAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionAttributes))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ReturnsDeclaration))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionBody))?),
         ])
@@ -486,7 +486,7 @@ impl Selector {
     fn parameters_declaration(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::Parameters))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Parameters))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -535,7 +535,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ConstructorKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::ConstructorAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::ConstructorAttributes))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Block))?),
         ])
     }
@@ -546,7 +546,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::UnnamedFunctionAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::UnnamedFunctionAttributes))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionBody))?),
         ])
     }
@@ -557,7 +557,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FallbackKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::FallbackFunctionAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::FallbackFunctionAttributes))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ReturnsDeclaration))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionBody))?),
         ])
@@ -569,7 +569,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ReceiveKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::ReceiveFunctionAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::ReceiveFunctionAttributes))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionBody))?),
         ])
     }
@@ -581,7 +581,7 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ModifierKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?,
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::ModifierAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::ModifierAttributes))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionBody))?),
         ])
     }
@@ -612,7 +612,7 @@ impl Selector {
     fn event_parameters_declaration(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::EventParameters))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::EventParameters))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -655,7 +655,7 @@ impl Selector {
     fn error_parameters_declaration(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::ErrorParameters))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::ErrorParameters))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -686,7 +686,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::FunctionTypeAttributes))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionTypeAttributes))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ReturnsDeclaration))?,
         ])
     }
@@ -736,7 +736,7 @@ impl Selector {
     fn block(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::Statements))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Statements))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -1202,7 +1202,7 @@ impl Selector {
     fn positional_arguments_declaration(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::PositionalArguments))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::PositionalArguments))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -1222,7 +1222,7 @@ impl Selector {
     fn named_argument_group(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArguments))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArguments))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -1308,7 +1308,7 @@ impl Selector {
     fn yul_block(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulStatements))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulStatements))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -1330,7 +1330,7 @@ impl Selector {
     fn yul_parameters_declaration(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulParameters))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulParameters))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -1472,7 +1472,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulArguments))?,
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulArguments))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseParen))?),
         ])
     }
@@ -2619,15 +2619,20 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated
-                .push(self.select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+            {
+                separators.push(separator);
+
+                separated.push(
+                    self.select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?,
+                );
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2639,18 +2644,22 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(
-            self.select(|node| node.is_rule_with_kind(RuleKind::ImportDeconstructionSymbol))?,
-        );
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::ImportDeconstructionSymbol))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(
-                self.select(|node| node.is_rule_with_kind(RuleKind::ImportDeconstructionSymbol))?,
-            );
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated.push(
+                    self.select(|node| {
+                        node.is_rule_with_kind(RuleKind::ImportDeconstructionSymbol)
+                    })?,
+                );
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2662,17 +2671,22 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated
-            .push(self.select(|node| node.is_rule_with_kind(RuleKind::UsingDeconstructionSymbol))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::UsingDeconstructionSymbol))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(
-                self.select(|node| node.is_rule_with_kind(RuleKind::UsingDeconstructionSymbol))?,
-            );
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated.push(
+                    self.select(|node| {
+                        node.is_rule_with_kind(RuleKind::UsingDeconstructionSymbol)
+                    })?,
+                );
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2684,14 +2698,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::InheritanceType))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::InheritanceType))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::InheritanceType))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::InheritanceType))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2703,14 +2722,18 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2722,14 +2745,16 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Parameter))?);
+        if let Some(first) = self.try_select(|node| node.is_rule_with_kind(RuleKind::Parameter))? {
+            separated.push(first);
 
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
-        {
-            separators.push(separator);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Parameter))?);
+                separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Parameter))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2741,14 +2766,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2760,14 +2790,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::EventParameter))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::EventParameter))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::EventParameter))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::EventParameter))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2779,14 +2814,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::ErrorParameter))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::ErrorParameter))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::ErrorParameter))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::ErrorParameter))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2798,14 +2838,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2817,18 +2862,22 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(
-            self.select(|node| node.is_rule_with_kind(RuleKind::TupleDeconstructionElement))?,
-        );
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::TupleDeconstructionElement))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(
-                self.select(|node| node.is_rule_with_kind(RuleKind::TupleDeconstructionElement))?,
-            );
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated.push(
+                    self.select(|node| {
+                        node.is_rule_with_kind(RuleKind::TupleDeconstructionElement)
+                    })?,
+                );
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2840,14 +2889,16 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+        if let Some(first) = self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))? {
+            separated.push(first);
 
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
-        {
-            separators.push(separator);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+                separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2859,14 +2910,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2878,14 +2934,16 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::TupleValue))?);
+        if let Some(first) = self.try_select(|node| node.is_rule_with_kind(RuleKind::TupleValue))? {
+            separated.push(first);
 
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
-        {
-            separators.push(separator);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::TupleValue))?);
+                separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::TupleValue))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2897,14 +2955,16 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+        if let Some(first) = self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))? {
+            separated.push(first);
 
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
-        {
-            separators.push(separator);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+                separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2916,14 +2976,18 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+            {
+                separators.push(separator);
+
+                separated.push(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2935,14 +2999,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2954,14 +3023,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2973,14 +3047,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -2992,15 +3071,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPath))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPath))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated
-                .push(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPath))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPath))?);
+            }
         }
 
         Ok(vec![separated, separators])
@@ -3012,14 +3095,19 @@ impl Selector {
         let mut separated = vec![];
         let mut separators = vec![];
 
-        separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
-
-        while let Some(separator) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?
         {
-            separators.push(separator);
+            separated.push(first);
 
-            separated.push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Period))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+            }
         }
 
         Ok(vec![separated, separators])

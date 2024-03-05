@@ -554,7 +554,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.statements(input))
+                self.statements(input)
                     .with_label(NodeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -807,7 +807,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn constructor_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
-            OneOrMoreHelper::run(input, |input| {
+            ZeroOrMoreHelper::run(input, |input| {
                 self.constructor_attribute(input)
                     .with_label(NodeLabel::Item)
             })
@@ -829,10 +829,7 @@ impl Language {
                     ),
                 )?;
                 seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-                seq.elem_labeled(
-                    NodeLabel::Attributes,
-                    OptionalHelper::transform(self.constructor_attributes(input)),
-                )?;
+                seq.elem_labeled(NodeLabel::Attributes, self.constructor_attributes(input))?;
                 seq.elem_labeled(NodeLabel::Body, self.block(input))?;
                 seq.finish()
             })
@@ -913,14 +910,14 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.contract_members(input))
+                    self.contract_members(input)
                         .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
-                        ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
                 )?;
                 seq.elem_labeled(
                     NodeLabel::CloseBrace,
@@ -985,7 +982,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn contract_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::ContractMembers)
@@ -1250,14 +1247,14 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.enum_members(input))
+                    self.enum_members(input)
                         .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
-                        ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
                 )?;
                 seq.elem_labeled(
                     NodeLabel::CloseBrace,
@@ -1275,7 +1272,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn enum_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| {
@@ -1287,7 +1284,7 @@ impl Language {
             },
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::EnumMembers)
     }
 
@@ -1387,13 +1384,13 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn error_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
-            SeparatedHelper::run::<_, LexicalContextType::Default>(
+            OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
                 |input| self.error_parameter(input).with_label(NodeLabel::Item),
                 TokenKind::Comma,
                 NodeLabel::Separator,
-            )
+            ))
         } else {
             ParserResult::disabled()
         }
@@ -1414,7 +1411,7 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.error_parameters(input))
+                    self.error_parameters(input)
                         .with_label(NodeLabel::Parameters)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -1520,13 +1517,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn event_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.event_parameter(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::EventParameters)
     }
 
@@ -1543,7 +1540,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.event_parameters(input))
+                self.event_parameters(input)
                     .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -2333,7 +2330,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn fallback_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| {
+            ZeroOrMoreHelper::run(input, |input| {
                 self.fallback_function_attribute(input)
                     .with_label(NodeLabel::Item)
             })
@@ -2357,7 +2354,7 @@ impl Language {
                 seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
                     NodeLabel::Attributes,
-                    OptionalHelper::transform(self.fallback_function_attributes(input)),
+                    self.fallback_function_attributes(input),
                 )?;
                 seq.elem_labeled(
                     NodeLabel::Returns,
@@ -2530,7 +2527,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.function_attribute(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::FunctionAttributes)
@@ -2608,10 +2605,7 @@ impl Language {
             )?;
             seq.elem_labeled(NodeLabel::Name, self.function_name(input))?;
             seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-            seq.elem_labeled(
-                NodeLabel::Attributes,
-                OptionalHelper::transform(self.function_attributes(input)),
-            )?;
+            seq.elem_labeled(NodeLabel::Attributes, self.function_attributes(input))?;
             seq.elem_labeled(
                 NodeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
@@ -2657,10 +2651,7 @@ impl Language {
                 ),
             )?;
             seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-            seq.elem_labeled(
-                NodeLabel::Attributes,
-                OptionalHelper::transform(self.function_type_attributes(input)),
-            )?;
+            seq.elem_labeled(NodeLabel::Attributes, self.function_type_attributes(input))?;
             seq.elem_labeled(
                 NodeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
@@ -2716,7 +2707,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn function_type_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.function_type_attribute(input)
                 .with_label(NodeLabel::Item)
         })
@@ -3107,7 +3098,7 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.interface_members(input))
+                    self.interface_members(input)
                         .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -3132,7 +3123,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::InterfaceMembers)
@@ -3200,14 +3191,14 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.library_members(input))
+                    self.library_members(input)
                         .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
-                        ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
                 )?;
                 seq.elem_labeled(
                     NodeLabel::CloseBrace,
@@ -3225,7 +3216,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn library_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.contract_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::LibraryMembers)
@@ -3400,7 +3391,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.modifier_attribute(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::ModifierAttributes)
@@ -3427,10 +3418,7 @@ impl Language {
                 NodeLabel::Parameters,
                 OptionalHelper::transform(self.parameters_declaration(input)),
             )?;
-            seq.elem_labeled(
-                NodeLabel::Attributes,
-                OptionalHelper::transform(self.modifier_attributes(input)),
-            )?;
+            seq.elem_labeled(NodeLabel::Attributes, self.modifier_attributes(input))?;
             seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
             seq.finish()
         })
@@ -3509,7 +3497,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.named_arguments(input))
+                self.named_arguments(input)
                     .with_label(NodeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -3544,13 +3532,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.named_argument(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::NamedArguments)
     }
 
@@ -3812,13 +3800,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.parameter(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::Parameters)
     }
 
@@ -3835,7 +3823,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.parameters(input))
+                self.parameters(input)
                     .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -3871,13 +3859,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn positional_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.expression(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::PositionalArguments)
     }
 
@@ -3894,7 +3882,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.positional_arguments(input))
+                self.positional_arguments(input)
                     .with_label(NodeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -4045,7 +4033,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn receive_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| {
+            ZeroOrMoreHelper::run(input, |input| {
                 self.receive_function_attribute(input)
                     .with_label(NodeLabel::Item)
             })
@@ -4069,7 +4057,7 @@ impl Language {
                 seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
                     NodeLabel::Attributes,
-                    OptionalHelper::transform(self.receive_function_attributes(input)),
+                    self.receive_function_attributes(input),
                 )?;
                 seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
                 seq.finish()
@@ -4200,7 +4188,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OptionalHelper::transform(self.source_unit_members(input))
+        self.source_unit_members(input)
             .with_label(NodeLabel::Members)
             .with_kind(RuleKind::SourceUnit)
     }
@@ -4258,7 +4246,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.source_unit_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::SourceUnitMembers)
@@ -4304,7 +4292,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.state_variable_attribute(input)
                 .with_label(NodeLabel::Item)
         })
@@ -4317,10 +4305,7 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
-                    seq.elem_labeled(
-                        NodeLabel::Attributes,
-                        OptionalHelper::transform(self.state_variable_attributes(input)),
-                    )?;
+                    seq.elem_labeled(NodeLabel::Attributes, self.state_variable_attributes(input))?;
                     seq.elem_labeled(
                         NodeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4426,7 +4411,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.statement(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::Statements)
@@ -4546,14 +4531,14 @@ impl Language {
                     ),
                 )?;
                 seq.elem(
-                    OptionalHelper::transform(self.struct_members(input))
+                    self.struct_members(input)
                         .with_label(NodeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
-                        ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
                 )?;
                 seq.elem_labeled(
                     NodeLabel::CloseBrace,
@@ -4605,7 +4590,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn struct_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.struct_member(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::StructMembers)
@@ -5106,7 +5091,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn unnamed_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| {
+            ZeroOrMoreHelper::run(input, |input| {
                 self.unnamed_function_attribute(input)
                     .with_label(NodeLabel::Item)
             })
@@ -5130,7 +5115,7 @@ impl Language {
                 seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
                     NodeLabel::Attributes,
-                    OptionalHelper::transform(self.unnamed_function_attributes(input)),
+                    self.unnamed_function_attributes(input),
                 )?;
                 seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
                 seq.finish()
@@ -5847,13 +5832,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Yul>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
             |input| self.yul_expression(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::YulArguments)
     }
 
@@ -5897,7 +5882,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_statements(input))
+                self.yul_statements(input)
                     .with_label(NodeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
@@ -6397,14 +6382,14 @@ impl Language {
                         ),
                     )?;
                     seq.elem(
-                        OptionalHelper::transform(self.yul_arguments(input))
+                        self.yul_arguments(input)
                             .with_label(NodeLabel::Arguments)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
-                                input,
-                                self,
-                                TokenKind::CloseParen,
-                                RecoverFromNoMatch::Yes,
-                            ),
+                            input,
+                            self,
+                            TokenKind::CloseParen,
+                            RecoverFromNoMatch::Yes,
+                        ),
                     )?;
                     seq.elem_labeled(
                         NodeLabel::CloseParen,
@@ -6645,7 +6630,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Yul>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
             |input| {
@@ -6657,7 +6642,7 @@ impl Language {
             },
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::YulParameters)
     }
 
@@ -6674,7 +6659,7 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_parameters(input))
+                self.yul_parameters(input)
                     .with_label(NodeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
@@ -6768,7 +6753,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
+        ZeroOrMoreHelper::run(input, |input| {
             self.yul_statement(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::YulStatements)

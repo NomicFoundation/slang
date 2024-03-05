@@ -28,6 +28,7 @@ Tree:
               - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  field" (16..23)
                   - (LeadingTrivia) ► (Whitespace): "  " # (16..18)
                   - (item꞉ Identifier): "field" # (18..23)
+              - (attributes꞉ StateVariableAttributes): [] # (23..23)
               - (SKIPPED): "" # (23..23)
               - (semicolon꞉ Semicolon): ";" # (23..24)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (24..25)

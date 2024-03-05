@@ -19,6 +19,7 @@ Tree:
               - (name꞉ Identifier): "X" # (9..10)
               - (LeadingTrivia) ► (Whitespace): " " # (10..11)
               - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): [] # (12..12)
               - (LeadingTrivia) ► (Whitespace): " " # (12..13)
               - (close_brace꞉ CloseBrace): "}" # (13..14)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (14..15)

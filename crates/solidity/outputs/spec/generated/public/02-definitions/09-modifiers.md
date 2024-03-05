@@ -8,13 +8,13 @@
 
 ```
 
-<pre ebnf-snippet="ModifierDefinition" style="display: none;"><a href="#ModifierDefinition"><span class="k">ModifierDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ModifierKeyword"><span class="k">MODIFIER_KEYWORD</span></a><br /><span class="o">                     </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><a href="../08-functions#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="#ModifierAttributes"><span class="k">ModifierAttributes</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="../08-functions#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ModifierDefinition" style="display: none;"><a href="#ModifierDefinition"><span class="k">ModifierDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ModifierKeyword"><span class="k">MODIFIER_KEYWORD</span></a><br /><span class="o">                     </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><a href="../08-functions#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="#ModifierAttributes"><span class="k">ModifierAttributes</span></a><br /><span class="o">                     </span><a href="../08-functions#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ModifierAttributes }
 
 ```
 
-<pre ebnf-snippet="ModifierAttributes" style="display: none;"><a href="#ModifierAttributes"><span class="k">ModifierAttributes</span></a><span class="o"> = </span><a href="#ModifierAttribute"><span class="k">ModifierAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ModifierAttributes" style="display: none;"><a href="#ModifierAttributes"><span class="k">ModifierAttributes</span></a><span class="o"> = </span><a href="#ModifierAttribute"><span class="k">ModifierAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ModifierAttribute }
 

@@ -28,6 +28,7 @@ Tree:
               - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  error" (18..25)
                   - (LeadingTrivia) ► (Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "error" # (20..25)
+              - (attributes꞉ StateVariableAttributes): [] # (25..25)
               - (LeadingTrivia) ► (Whitespace): " " # (25..26)
               - (name꞉ Identifier): "Error1" # (26..32)
               - (SKIPPED): "()" # (32..34)

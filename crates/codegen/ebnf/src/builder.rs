@@ -145,12 +145,17 @@ impl Builder {
         let RepeatedItem {
             name,
             reference,
+            allow_empty,
             enabled,
         } = repeated_item;
 
         self.add_entry(name, Terminal::No, Inlined::No);
 
-        let expression = Expression::new_one_or_more(Self::build_ref(reference).into());
+        let expression = if allow_empty.unwrap_or_default() {
+            Expression::new_zero_or_more(Self::build_ref(reference).into())
+        } else {
+            Expression::new_one_or_more(Self::build_ref(reference).into())
+        };
 
         self.add_definition(
             name,
@@ -165,12 +170,13 @@ impl Builder {
             name,
             reference,
             separator,
+            allow_empty,
             enabled,
         } = separated_item;
 
         self.add_entry(name, Terminal::No, Inlined::No);
 
-        let expression = Expression::new_sequence(vec![
+        let mut expression = Expression::new_sequence(vec![
             Self::build_ref(reference),
             Expression::new_zero_or_more(
                 Expression::new_sequence(vec![
@@ -180,6 +186,10 @@ impl Builder {
                 .into(),
             ),
         ]);
+
+        if allow_empty.unwrap_or_default() {
+            expression = Expression::new_optional(expression.into());
+        }
 
         self.add_definition(
             name,

@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "sgt()\n" (0..6)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSgtKeyword): "sgt" # (0..3)
       - (open_paren꞉ OpenParen): "(" # (3..4)
+      - (arguments꞉ YulArguments): [] # (4..4)
       - (close_paren꞉ CloseParen): ")" # (4..5)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (5..6)

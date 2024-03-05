@@ -23,6 +23,7 @@ Tree:
               - (name꞉ Identifier): "Error1" # (26..32)
               - (members꞉ ErrorParametersDeclaration): # "()" (32..34)
                   - (open_paren꞉ OpenParen): "(" # (32..33)
+                  - (parameters꞉ ErrorParameters): [] # (33..33)
                   - (close_paren꞉ CloseParen): ")" # (33..34)
               - (semicolon꞉ Semicolon): ";" # (34..35)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (35..36)

@@ -9,5 +9,6 @@ Tree:
   - (YulFunctionCallExpression): # "iszero()\n" (0..9)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulIsZeroKeyword): "iszero" # (0..6)
       - (open_paren꞉ OpenParen): "(" # (6..7)
+      - (arguments꞉ YulArguments): [] # (7..7)
       - (close_paren꞉ CloseParen): ")" # (7..8)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (8..9)

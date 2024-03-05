@@ -8,7 +8,7 @@
 
 ```
 
-<pre ebnf-snippet="FunctionDefinition" style="display: none;"><a href="#FunctionDefinition"><span class="k">FunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">                     </span><a href="#FunctionName"><span class="k">FunctionName</span></a><br /><span class="o">                     </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                     </span><a href="#FunctionAttributes"><span class="k">FunctionAttributes</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="FunctionDefinition" style="display: none;"><a href="#FunctionDefinition"><span class="k">FunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">                     </span><a href="#FunctionName"><span class="k">FunctionName</span></a><br /><span class="o">                     </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                     </span><a href="#FunctionAttributes"><span class="k">FunctionAttributes</span></a><br /><span class="o">                     </span><a href="#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><br /><span class="o">                     </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #FunctionName }
 
@@ -20,13 +20,13 @@
 
 ```
 
-<pre ebnf-snippet="ParametersDeclaration" style="display: none;"><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                        </span><a href="#Parameters"><span class="k">Parameters</span></a><span class="o">?</span><br /><span class="o">                        </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ParametersDeclaration" style="display: none;"><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><span class="o"> = </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                        </span><a href="#Parameters"><span class="k">Parameters</span></a><br /><span class="o">                        </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #Parameters }
 
 ```
 
-<pre ebnf-snippet="Parameters" style="display: none;"><a href="#Parameters"><span class="k">Parameters</span></a><span class="o"> = </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Parameters" style="display: none;"><a href="#Parameters"><span class="k">Parameters</span></a><span class="o"> = </span><span class="o">(</span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Parameter }
 
@@ -38,7 +38,7 @@
 
 ```
 
-<pre ebnf-snippet="FunctionAttributes" style="display: none;"><a href="#FunctionAttributes"><span class="k">FunctionAttributes</span></a><span class="o"> = </span><a href="#FunctionAttribute"><span class="k">FunctionAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="FunctionAttributes" style="display: none;"><a href="#FunctionAttributes"><span class="k">FunctionAttributes</span></a><span class="o"> = </span><a href="#FunctionAttribute"><span class="k">FunctionAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #FunctionAttribute }
 
@@ -80,13 +80,13 @@
 
 ```
 
-<pre ebnf-snippet="ConstructorDefinition" style="display: none;"><span class="cm">(* Introduced in 0.4.22 *)</span><br /><a href="#ConstructorDefinition"><span class="k">ConstructorDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ConstructorKeyword"><span class="k">CONSTRUCTOR_KEYWORD</span></a><br /><span class="o">                        </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                        </span><a href="#ConstructorAttributes"><span class="k">ConstructorAttributes</span></a><span class="o">?</span><br /><span class="o">                        </span><a href="../../04-statements/01-blocks#Block"><span class="k">Block</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ConstructorDefinition" style="display: none;"><span class="cm">(* Introduced in 0.4.22 *)</span><br /><a href="#ConstructorDefinition"><span class="k">ConstructorDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ConstructorKeyword"><span class="k">CONSTRUCTOR_KEYWORD</span></a><br /><span class="o">                        </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                        </span><a href="#ConstructorAttributes"><span class="k">ConstructorAttributes</span></a><br /><span class="o">                        </span><a href="../../04-statements/01-blocks#Block"><span class="k">Block</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ConstructorAttributes }
 
 ```
 
-<pre ebnf-snippet="ConstructorAttributes" style="display: none;"><span class="cm">(* Introduced in 0.4.22 *)</span><br /><a href="#ConstructorAttributes"><span class="k">ConstructorAttributes</span></a><span class="o"> = </span><a href="#ConstructorAttribute"><span class="k">ConstructorAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ConstructorAttributes" style="display: none;"><span class="cm">(* Introduced in 0.4.22 *)</span><br /><a href="#ConstructorAttributes"><span class="k">ConstructorAttributes</span></a><span class="o"> = </span><a href="#ConstructorAttribute"><span class="k">ConstructorAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ConstructorAttribute }
 
@@ -98,13 +98,13 @@
 
 ```
 
-<pre ebnf-snippet="UnnamedFunctionDefinition" style="display: none;"><span class="cm">(* Deprecated in 0.6.0 *)</span><br /><a href="#UnnamedFunctionDefinition"><span class="k">UnnamedFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">                            </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                            </span><a href="#UnnamedFunctionAttributes"><span class="k">UnnamedFunctionAttributes</span></a><span class="o">?</span><br /><span class="o">                            </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="UnnamedFunctionDefinition" style="display: none;"><span class="cm">(* Deprecated in 0.6.0 *)</span><br /><a href="#UnnamedFunctionDefinition"><span class="k">UnnamedFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FunctionKeyword"><span class="k">FUNCTION_KEYWORD</span></a><br /><span class="o">                            </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                            </span><a href="#UnnamedFunctionAttributes"><span class="k">UnnamedFunctionAttributes</span></a><br /><span class="o">                            </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #UnnamedFunctionAttributes }
 
 ```
 
-<pre ebnf-snippet="UnnamedFunctionAttributes" style="display: none;"><span class="cm">(* Deprecated in 0.6.0 *)</span><br /><a href="#UnnamedFunctionAttributes"><span class="k">UnnamedFunctionAttributes</span></a><span class="o"> = </span><a href="#UnnamedFunctionAttribute"><span class="k">UnnamedFunctionAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="UnnamedFunctionAttributes" style="display: none;"><span class="cm">(* Deprecated in 0.6.0 *)</span><br /><a href="#UnnamedFunctionAttributes"><span class="k">UnnamedFunctionAttributes</span></a><span class="o"> = </span><a href="#UnnamedFunctionAttribute"><span class="k">UnnamedFunctionAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #UnnamedFunctionAttribute }
 
@@ -116,13 +116,13 @@
 
 ```
 
-<pre ebnf-snippet="FallbackFunctionDefinition" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#FallbackFunctionDefinition"><span class="k">FallbackFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FallbackKeyword"><span class="k">FALLBACK_KEYWORD</span></a><br /><span class="o">                             </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                             </span><a href="#FallbackFunctionAttributes"><span class="k">FallbackFunctionAttributes</span></a><span class="o">?</span><br /><span class="o">                             </span><a href="#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><br /><span class="o">                             </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="FallbackFunctionDefinition" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#FallbackFunctionDefinition"><span class="k">FallbackFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#FallbackKeyword"><span class="k">FALLBACK_KEYWORD</span></a><br /><span class="o">                             </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                             </span><a href="#FallbackFunctionAttributes"><span class="k">FallbackFunctionAttributes</span></a><br /><span class="o">                             </span><a href="#ReturnsDeclaration"><span class="k">ReturnsDeclaration</span></a><span class="o">?</span><br /><span class="o">                             </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #FallbackFunctionAttributes }
 
 ```
 
-<pre ebnf-snippet="FallbackFunctionAttributes" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#FallbackFunctionAttributes"><span class="k">FallbackFunctionAttributes</span></a><span class="o"> = </span><a href="#FallbackFunctionAttribute"><span class="k">FallbackFunctionAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="FallbackFunctionAttributes" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#FallbackFunctionAttributes"><span class="k">FallbackFunctionAttributes</span></a><span class="o"> = </span><a href="#FallbackFunctionAttribute"><span class="k">FallbackFunctionAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #FallbackFunctionAttribute }
 
@@ -134,13 +134,13 @@
 
 ```
 
-<pre ebnf-snippet="ReceiveFunctionDefinition" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#ReceiveFunctionDefinition"><span class="k">ReceiveFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ReceiveKeyword"><span class="k">RECEIVE_KEYWORD</span></a><br /><span class="o">                            </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                            </span><a href="#ReceiveFunctionAttributes"><span class="k">ReceiveFunctionAttributes</span></a><span class="o">?</span><br /><span class="o">                            </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ReceiveFunctionDefinition" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#ReceiveFunctionDefinition"><span class="k">ReceiveFunctionDefinition</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#ReceiveKeyword"><span class="k">RECEIVE_KEYWORD</span></a><br /><span class="o">                            </span><a href="#ParametersDeclaration"><span class="k">ParametersDeclaration</span></a><br /><span class="o">                            </span><a href="#ReceiveFunctionAttributes"><span class="k">ReceiveFunctionAttributes</span></a><br /><span class="o">                            </span><a href="#FunctionBody"><span class="k">FunctionBody</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ReceiveFunctionAttributes }
 
 ```
 
-<pre ebnf-snippet="ReceiveFunctionAttributes" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#ReceiveFunctionAttributes"><span class="k">ReceiveFunctionAttributes</span></a><span class="o"> = </span><a href="#ReceiveFunctionAttribute"><span class="k">ReceiveFunctionAttribute</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ReceiveFunctionAttributes" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#ReceiveFunctionAttributes"><span class="k">ReceiveFunctionAttributes</span></a><span class="o"> = </span><a href="#ReceiveFunctionAttribute"><span class="k">ReceiveFunctionAttribute</span></a><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ReceiveFunctionAttribute }
 

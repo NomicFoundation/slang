@@ -14,7 +14,7 @@ export class SourceUnit {
     const [$members] = ast_internal.selectSequence(this.cst);
 
     return {
-      members: $members === null ? undefined : new SourceUnitMembers($members as RuleNode),
+      members: new SourceUnitMembers($members as RuleNode),
     };
   });
 
@@ -22,7 +22,7 @@ export class SourceUnit {
     assertKind(this.cst.kind, RuleKind.SourceUnit);
   }
 
-  public get members(): SourceUnitMembers | undefined {
+  public get members(): SourceUnitMembers {
     return this.fetch().members;
   }
 }
@@ -501,7 +501,7 @@ export class ContractDefinition {
       name: $name as TokenNode,
       inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as RuleNode),
       openBrace: $openBrace as TokenNode,
-      members: $members === null ? undefined : new ContractMembers($members as RuleNode),
+      members: new ContractMembers($members as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -530,7 +530,7 @@ export class ContractDefinition {
     return this.fetch().openBrace;
   }
 
-  public get members(): ContractMembers | undefined {
+  public get members(): ContractMembers {
     return this.fetch().members;
   }
 
@@ -596,7 +596,7 @@ export class InterfaceDefinition {
       name: $name as TokenNode,
       inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as RuleNode),
       openBrace: $openBrace as TokenNode,
-      members: $members === null ? undefined : new InterfaceMembers($members as RuleNode),
+      members: new InterfaceMembers($members as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -621,7 +621,7 @@ export class InterfaceDefinition {
     return this.fetch().openBrace;
   }
 
-  public get members(): InterfaceMembers | undefined {
+  public get members(): InterfaceMembers {
     return this.fetch().members;
   }
 
@@ -638,7 +638,7 @@ export class LibraryDefinition {
       libraryKeyword: $libraryKeyword as TokenNode,
       name: $name as TokenNode,
       openBrace: $openBrace as TokenNode,
-      members: $members === null ? undefined : new LibraryMembers($members as RuleNode),
+      members: new LibraryMembers($members as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -659,7 +659,7 @@ export class LibraryDefinition {
     return this.fetch().openBrace;
   }
 
-  public get members(): LibraryMembers | undefined {
+  public get members(): LibraryMembers {
     return this.fetch().members;
   }
 
@@ -676,7 +676,7 @@ export class StructDefinition {
       structKeyword: $structKeyword as TokenNode,
       name: $name as TokenNode,
       openBrace: $openBrace as TokenNode,
-      members: $members === null ? undefined : new StructMembers($members as RuleNode),
+      members: new StructMembers($members as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -697,7 +697,7 @@ export class StructDefinition {
     return this.fetch().openBrace;
   }
 
-  public get members(): StructMembers | undefined {
+  public get members(): StructMembers {
     return this.fetch().members;
   }
 
@@ -742,7 +742,7 @@ export class EnumDefinition {
       enumKeyword: $enumKeyword as TokenNode,
       name: $name as TokenNode,
       openBrace: $openBrace as TokenNode,
-      members: $members === null ? undefined : new EnumMembers($members as RuleNode),
+      members: new EnumMembers($members as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -763,7 +763,7 @@ export class EnumDefinition {
     return this.fetch().openBrace;
   }
 
-  public get members(): EnumMembers | undefined {
+  public get members(): EnumMembers {
     return this.fetch().members;
   }
 
@@ -821,7 +821,7 @@ export class StateVariableDefinition {
 
     return {
       typeName: new TypeName($typeName as RuleNode),
-      attributes: $attributes === null ? undefined : new StateVariableAttributes($attributes as RuleNode),
+      attributes: new StateVariableAttributes($attributes as RuleNode),
       name: $name as TokenNode,
       value: $value === null ? undefined : new StateVariableDefinitionValue($value as RuleNode),
       semicolon: $semicolon as TokenNode,
@@ -836,7 +836,7 @@ export class StateVariableDefinition {
     return this.fetch().typeName;
   }
 
-  public get attributes(): StateVariableAttributes | undefined {
+  public get attributes(): StateVariableAttributes {
     return this.fetch().attributes;
   }
 
@@ -884,7 +884,7 @@ export class FunctionDefinition {
       functionKeyword: $functionKeyword as TokenNode,
       name: new FunctionName($name as RuleNode),
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new FunctionAttributes($attributes as RuleNode),
+      attributes: new FunctionAttributes($attributes as RuleNode),
       returns: $returns === null ? undefined : new ReturnsDeclaration($returns as RuleNode),
       body: new FunctionBody($body as RuleNode),
     };
@@ -906,7 +906,7 @@ export class FunctionDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): FunctionAttributes | undefined {
+  public get attributes(): FunctionAttributes {
     return this.fetch().attributes;
   }
 
@@ -925,7 +925,7 @@ export class ParametersDeclaration {
 
     return {
       openParen: $openParen as TokenNode,
-      parameters: $parameters === null ? undefined : new Parameters($parameters as RuleNode),
+      parameters: new Parameters($parameters as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -938,7 +938,7 @@ export class ParametersDeclaration {
     return this.fetch().openParen;
   }
 
-  public get parameters(): Parameters | undefined {
+  public get parameters(): Parameters {
     return this.fetch().parameters;
   }
 
@@ -1056,7 +1056,7 @@ export class ConstructorDefinition {
     return {
       constructorKeyword: $constructorKeyword as TokenNode,
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new ConstructorAttributes($attributes as RuleNode),
+      attributes: new ConstructorAttributes($attributes as RuleNode),
       body: new Block($body as RuleNode),
     };
   });
@@ -1073,7 +1073,7 @@ export class ConstructorDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): ConstructorAttributes | undefined {
+  public get attributes(): ConstructorAttributes {
     return this.fetch().attributes;
   }
 
@@ -1089,7 +1089,7 @@ export class UnnamedFunctionDefinition {
     return {
       functionKeyword: $functionKeyword as TokenNode,
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new UnnamedFunctionAttributes($attributes as RuleNode),
+      attributes: new UnnamedFunctionAttributes($attributes as RuleNode),
       body: new FunctionBody($body as RuleNode),
     };
   });
@@ -1106,7 +1106,7 @@ export class UnnamedFunctionDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): UnnamedFunctionAttributes | undefined {
+  public get attributes(): UnnamedFunctionAttributes {
     return this.fetch().attributes;
   }
 
@@ -1122,7 +1122,7 @@ export class FallbackFunctionDefinition {
     return {
       fallbackKeyword: $fallbackKeyword as TokenNode,
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new FallbackFunctionAttributes($attributes as RuleNode),
+      attributes: new FallbackFunctionAttributes($attributes as RuleNode),
       returns: $returns === null ? undefined : new ReturnsDeclaration($returns as RuleNode),
       body: new FunctionBody($body as RuleNode),
     };
@@ -1140,7 +1140,7 @@ export class FallbackFunctionDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): FallbackFunctionAttributes | undefined {
+  public get attributes(): FallbackFunctionAttributes {
     return this.fetch().attributes;
   }
 
@@ -1160,7 +1160,7 @@ export class ReceiveFunctionDefinition {
     return {
       receiveKeyword: $receiveKeyword as TokenNode,
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new ReceiveFunctionAttributes($attributes as RuleNode),
+      attributes: new ReceiveFunctionAttributes($attributes as RuleNode),
       body: new FunctionBody($body as RuleNode),
     };
   });
@@ -1177,7 +1177,7 @@ export class ReceiveFunctionDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): ReceiveFunctionAttributes | undefined {
+  public get attributes(): ReceiveFunctionAttributes {
     return this.fetch().attributes;
   }
 
@@ -1194,7 +1194,7 @@ export class ModifierDefinition {
       modifierKeyword: $modifierKeyword as TokenNode,
       name: $name as TokenNode,
       parameters: $parameters === null ? undefined : new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new ModifierAttributes($attributes as RuleNode),
+      attributes: new ModifierAttributes($attributes as RuleNode),
       body: new FunctionBody($body as RuleNode),
     };
   });
@@ -1215,7 +1215,7 @@ export class ModifierDefinition {
     return this.fetch().parameters;
   }
 
-  public get attributes(): ModifierAttributes | undefined {
+  public get attributes(): ModifierAttributes {
     return this.fetch().attributes;
   }
 
@@ -1291,7 +1291,7 @@ export class EventParametersDeclaration {
 
     return {
       openParen: $openParen as TokenNode,
-      parameters: $parameters === null ? undefined : new EventParameters($parameters as RuleNode),
+      parameters: new EventParameters($parameters as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -1304,7 +1304,7 @@ export class EventParametersDeclaration {
     return this.fetch().openParen;
   }
 
-  public get parameters(): EventParameters | undefined {
+  public get parameters(): EventParameters {
     return this.fetch().parameters;
   }
 
@@ -1418,7 +1418,7 @@ export class ErrorParametersDeclaration {
 
     return {
       openParen: $openParen as TokenNode,
-      parameters: $parameters === null ? undefined : new ErrorParameters($parameters as RuleNode),
+      parameters: new ErrorParameters($parameters as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -1431,7 +1431,7 @@ export class ErrorParametersDeclaration {
     return this.fetch().openParen;
   }
 
-  public get parameters(): ErrorParameters | undefined {
+  public get parameters(): ErrorParameters {
     return this.fetch().parameters;
   }
 
@@ -1503,7 +1503,7 @@ export class FunctionType {
     return {
       functionKeyword: $functionKeyword as TokenNode,
       parameters: new ParametersDeclaration($parameters as RuleNode),
-      attributes: $attributes === null ? undefined : new FunctionTypeAttributes($attributes as RuleNode),
+      attributes: new FunctionTypeAttributes($attributes as RuleNode),
       returns: $returns === null ? undefined : new ReturnsDeclaration($returns as RuleNode),
     };
   });
@@ -1520,7 +1520,7 @@ export class FunctionType {
     return this.fetch().parameters;
   }
 
-  public get attributes(): FunctionTypeAttributes | undefined {
+  public get attributes(): FunctionTypeAttributes {
     return this.fetch().attributes;
   }
 
@@ -1648,7 +1648,7 @@ export class Block {
 
     return {
       openBrace: $openBrace as TokenNode,
-      statements: $statements === null ? undefined : new Statements($statements as RuleNode),
+      statements: new Statements($statements as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -1661,7 +1661,7 @@ export class Block {
     return this.fetch().openBrace;
   }
 
-  public get statements(): Statements | undefined {
+  public get statements(): Statements {
     return this.fetch().statements;
   }
 
@@ -2981,7 +2981,7 @@ export class PositionalArgumentsDeclaration {
 
     return {
       openParen: $openParen as TokenNode,
-      arguments: $arguments === null ? undefined : new PositionalArguments($arguments as RuleNode),
+      arguments: new PositionalArguments($arguments as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -2994,7 +2994,7 @@ export class PositionalArgumentsDeclaration {
     return this.fetch().openParen;
   }
 
-  public get arguments(): PositionalArguments | undefined {
+  public get arguments(): PositionalArguments {
     return this.fetch().arguments;
   }
 
@@ -3037,7 +3037,7 @@ export class NamedArgumentGroup {
 
     return {
       openBrace: $openBrace as TokenNode,
-      arguments: $arguments === null ? undefined : new NamedArguments($arguments as RuleNode),
+      arguments: new NamedArguments($arguments as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -3050,7 +3050,7 @@ export class NamedArgumentGroup {
     return this.fetch().openBrace;
   }
 
-  public get arguments(): NamedArguments | undefined {
+  public get arguments(): NamedArguments {
     return this.fetch().arguments;
   }
 
@@ -3269,7 +3269,7 @@ export class YulBlock {
 
     return {
       openBrace: $openBrace as TokenNode,
-      statements: $statements === null ? undefined : new YulStatements($statements as RuleNode),
+      statements: new YulStatements($statements as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -3282,7 +3282,7 @@ export class YulBlock {
     return this.fetch().openBrace;
   }
 
-  public get statements(): YulStatements | undefined {
+  public get statements(): YulStatements {
     return this.fetch().statements;
   }
 
@@ -3335,7 +3335,7 @@ export class YulParametersDeclaration {
 
     return {
       openParen: $openParen as TokenNode,
-      parameters: $parameters === null ? undefined : new YulParameters($parameters as RuleNode),
+      parameters: new YulParameters($parameters as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -3348,7 +3348,7 @@ export class YulParametersDeclaration {
     return this.fetch().openParen;
   }
 
-  public get parameters(): YulParameters | undefined {
+  public get parameters(): YulParameters {
     return this.fetch().parameters;
   }
 
@@ -3711,7 +3711,7 @@ export class YulFunctionCallExpression {
     return {
       operand: new YulExpression($operand as RuleNode),
       openParen: $openParen as TokenNode,
-      arguments: $arguments === null ? undefined : new YulArguments($arguments as RuleNode),
+      arguments: new YulArguments($arguments as RuleNode),
       closeParen: $closeParen as TokenNode,
     };
   });
@@ -3728,7 +3728,7 @@ export class YulFunctionCallExpression {
     return this.fetch().openParen;
   }
 
-  public get arguments(): YulArguments | undefined {
+  public get arguments(): YulArguments {
     return this.fetch().arguments;
   }
 

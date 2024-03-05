@@ -14,4 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit) ► (SKIPPED): "function foo() { }" # (0..18)
+  - (SourceUnit): # "function foo() { }" (0..18)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (SKIPPED): "function foo() { }" # (0..18)

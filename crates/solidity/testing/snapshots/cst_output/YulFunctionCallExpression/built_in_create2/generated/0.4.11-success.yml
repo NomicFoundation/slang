@@ -10,5 +10,6 @@ Tree:
       - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "create2" (0..7)
           - (item꞉ YulIdentifier): "create2" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
+      - (arguments꞉ YulArguments): [] # (8..8)
       - (close_paren꞉ CloseParen): ")" # (8..9)
       - (TrailingTrivia) ► (EndOfLine): "\n" # (9..10)

@@ -40,9 +40,13 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = SourceUnit,
-                            fields = (members = Optional(reference = SourceUnitMembers))
+                            fields = (members = Required(SourceUnitMembers))
                         ),
-                        Repeated(name = SourceUnitMembers, reference = SourceUnitMember),
+                        Repeated(
+                            name = SourceUnitMembers,
+                            reference = SourceUnitMember,
+                            allow_empty = true
+                        ),
                         Enum(
                             name = SourceUnitMember,
                             variants = [
@@ -2036,7 +2040,7 @@ codegen_language_macros::compile!(Language(
                                 name = Required(Identifier),
                                 inheritence = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
-                                members = Optional(reference = ContractMembers),
+                                members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
@@ -2059,7 +2063,11 @@ codegen_language_macros::compile!(Language(
                                 arguments = Optional(reference = ArgumentsDeclaration)
                             )
                         ),
-                        Repeated(name = ContractMembers, reference = ContractMember),
+                        Repeated(
+                            name = ContractMembers,
+                            reference = ContractMember,
+                            allow_empty = true
+                        ),
                         Enum(
                             name = ContractMember,
                             variants = [
@@ -2109,11 +2117,15 @@ codegen_language_macros::compile!(Language(
                                 name = Required(Identifier),
                                 inheritence = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
-                                members = Optional(reference = InterfaceMembers),
+                                members = Required(InterfaceMembers),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = InterfaceMembers, reference = ContractMember)
+                        Repeated(
+                            name = InterfaceMembers,
+                            reference = ContractMember,
+                            allow_empty = true
+                        )
                     ]
                 ),
                 Topic(
@@ -2129,11 +2141,15 @@ codegen_language_macros::compile!(Language(
                                 library_keyword = Required(LibraryKeyword),
                                 name = Required(Identifier),
                                 open_brace = Required(OpenBrace),
-                                members = Optional(reference = LibraryMembers),
+                                members = Required(LibraryMembers),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = LibraryMembers, reference = ContractMember)
+                        Repeated(
+                            name = LibraryMembers,
+                            reference = ContractMember,
+                            allow_empty = true
+                        )
                     ]
                 ),
                 Topic(
@@ -2149,11 +2165,15 @@ codegen_language_macros::compile!(Language(
                                 struct_keyword = Required(StructKeyword),
                                 name = Required(Identifier),
                                 open_brace = Required(OpenBrace),
-                                members = Optional(reference = StructMembers),
+                                members = Required(StructMembers),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = StructMembers, reference = StructMember),
+                        Repeated(
+                            name = StructMembers,
+                            reference = StructMember,
+                            allow_empty = true
+                        ),
                         Struct(
                             name = StructMember,
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
@@ -2178,14 +2198,15 @@ codegen_language_macros::compile!(Language(
                                 enum_keyword = Required(EnumKeyword),
                                 name = Required(Identifier),
                                 open_brace = Required(OpenBrace),
-                                members = Optional(reference = EnumMembers),
+                                members = Required(EnumMembers),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
                         Separated(
                             name = EnumMembers,
                             reference = Identifier,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         )
                     ]
                 ),
@@ -2213,7 +2234,7 @@ codegen_language_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 type_name = Required(TypeName),
-                                attributes = Optional(reference = StateVariableAttributes),
+                                attributes = Required(StateVariableAttributes),
                                 name = Required(Identifier),
                                 value = Optional(reference = StateVariableDefinitionValue),
                                 semicolon = Required(Semicolon)
@@ -2225,7 +2246,8 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = StateVariableAttributes,
-                            reference = StateVariableAttribute
+                            reference = StateVariableAttribute,
+                            allow_empty = true
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2249,7 +2271,7 @@ codegen_language_macros::compile!(Language(
                                 function_keyword = Required(FunctionKeyword),
                                 name = Required(FunctionName),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = FunctionAttributes),
+                                attributes = Required(FunctionAttributes),
                                 returns = Optional(reference = ReturnsDeclaration),
                                 body = Required(FunctionBody)
                             )
@@ -2270,11 +2292,16 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                parameters = Optional(reference = Parameters),
+                                parameters = Required(Parameters),
                                 close_paren = Required(CloseParen)
                             )
                         ),
-                        Separated(name = Parameters, reference = Parameter, separator = Comma),
+                        Separated(
+                            name = Parameters,
+                            reference = Parameter,
+                            separator = Comma,
+                            allow_empty = true
+                        ),
                         Struct(
                             name = Parameter,
                             fields = (
@@ -2283,7 +2310,11 @@ codegen_language_macros::compile!(Language(
                                 name = Optional(reference = Identifier)
                             )
                         ),
-                        Repeated(name = FunctionAttributes, reference = FunctionAttribute),
+                        Repeated(
+                            name = FunctionAttributes,
+                            reference = FunctionAttribute,
+                            allow_empty = true
+                        ),
                         Enum(
                             name = FunctionAttribute,
                             variants = [
@@ -2344,14 +2375,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 constructor_keyword = Required(ConstructorKeyword),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = ConstructorAttributes),
+                                attributes = Required(ConstructorAttributes),
                                 body = Required(Block)
                             )
                         ),
                         Repeated(
                             name = ConstructorAttributes,
                             reference = ConstructorAttribute,
-                            enabled = From("0.4.22")
+                            enabled = From("0.4.22"),
+                            allow_empty = true
                         ),
                         Enum(
                             name = ConstructorAttribute,
@@ -2377,14 +2409,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 function_keyword = Required(FunctionKeyword),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = UnnamedFunctionAttributes),
+                                attributes = Required(UnnamedFunctionAttributes),
                                 body = Required(FunctionBody)
                             )
                         ),
                         Repeated(
                             name = UnnamedFunctionAttributes,
                             reference = UnnamedFunctionAttribute,
-                            enabled = Till("0.6.0")
+                            enabled = Till("0.6.0"),
+                            allow_empty = true
                         ),
                         Enum(
                             name = UnnamedFunctionAttribute,
@@ -2407,7 +2440,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 fallback_keyword = Required(FallbackKeyword),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = FallbackFunctionAttributes),
+                                attributes = Required(FallbackFunctionAttributes),
                                 returns = Optional(reference = ReturnsDeclaration),
                                 body = Required(FunctionBody)
                             )
@@ -2415,7 +2448,8 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = FallbackFunctionAttributes,
                             reference = FallbackFunctionAttribute,
-                            enabled = From("0.6.0")
+                            enabled = From("0.6.0"),
+                            allow_empty = true
                         ),
                         Enum(
                             name = FallbackFunctionAttribute,
@@ -2436,14 +2470,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 receive_keyword = Required(ReceiveKeyword),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = ReceiveFunctionAttributes),
+                                attributes = Required(ReceiveFunctionAttributes),
                                 body = Required(FunctionBody)
                             )
                         ),
                         Repeated(
                             name = ReceiveFunctionAttributes,
                             reference = ReceiveFunctionAttribute,
-                            enabled = From("0.6.0")
+                            enabled = From("0.6.0"),
+                            allow_empty = true
                         ),
                         Enum(
                             name = ReceiveFunctionAttribute,
@@ -2467,11 +2502,15 @@ codegen_language_macros::compile!(Language(
                                 modifier_keyword = Required(ModifierKeyword),
                                 name = Required(Identifier),
                                 parameters = Optional(reference = ParametersDeclaration),
-                                attributes = Optional(reference = ModifierAttributes),
+                                attributes = Required(ModifierAttributes),
                                 body = Required(FunctionBody)
                             )
                         ),
-                        Repeated(name = ModifierAttributes, reference = ModifierAttribute),
+                        Repeated(
+                            name = ModifierAttributes,
+                            reference = ModifierAttribute,
+                            allow_empty = true
+                        ),
                         Enum(
                             name = ModifierAttribute,
                             variants = [
@@ -2510,14 +2549,15 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                parameters = Optional(reference = EventParameters),
+                                parameters = Required(EventParameters),
                                 close_paren = Required(CloseParen)
                             )
                         ),
                         Separated(
                             name = EventParameters,
                             reference = EventParameter,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         ),
                         Struct(
                             name = EventParameter,
@@ -2567,7 +2607,7 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                parameters = Optional(reference = ErrorParameters),
+                                parameters = Required(ErrorParameters),
                                 close_paren = Required(CloseParen)
                             )
                         ),
@@ -2575,7 +2615,8 @@ codegen_language_macros::compile!(Language(
                             name = ErrorParameters,
                             reference = ErrorParameter,
                             separator = Comma,
-                            enabled = From("0.8.4")
+                            enabled = From("0.8.4"),
+                            allow_empty = true
                         ),
                         Struct(
                             name = ErrorParameter,
@@ -2626,13 +2667,14 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 function_keyword = Required(FunctionKeyword),
                                 parameters = Required(ParametersDeclaration),
-                                attributes = Optional(reference = FunctionTypeAttributes),
+                                attributes = Required(FunctionTypeAttributes),
                                 returns = Optional(reference = ReturnsDeclaration)
                             )
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
-                            reference = FunctionTypeAttribute
+                            reference = FunctionTypeAttribute,
+                            allow_empty = true
                         ),
                         Enum(
                             name = FunctionTypeAttribute,
@@ -2726,11 +2768,11 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(OpenBrace),
-                                statements = Optional(reference = Statements),
+                                statements = Required(Statements),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = Statements, reference = Statement),
+                        Repeated(name = Statements, reference = Statement, allow_empty = true),
                         Enum(
                             name = Statement,
                             variants = [
@@ -3443,14 +3485,15 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                arguments = Optional(reference = PositionalArguments),
+                                arguments = Required(PositionalArguments),
                                 close_paren = Required(CloseParen)
                             )
                         ),
                         Separated(
                             name = PositionalArguments,
                             reference = Expression,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         ),
                         Struct(
                             name = NamedArgumentsDeclaration,
@@ -3477,14 +3520,15 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(OpenBrace),
-                                arguments = Optional(reference = NamedArguments),
+                                arguments = Required(NamedArguments),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
                         Separated(
                             name = NamedArguments,
                             reference = NamedArgument,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         ),
                         Struct(
                             name = NamedArgument,
@@ -3988,11 +4032,15 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(OpenBrace),
-                                statements = Optional(reference = YulStatements),
+                                statements = Required(YulStatements),
                                 close_brace = Required(CloseBrace)
                             )
                         ),
-                        Repeated(name = YulStatements, reference = YulStatement),
+                        Repeated(
+                            name = YulStatements,
+                            reference = YulStatement,
+                            allow_empty = true
+                        ),
                         Enum(
                             name = YulStatement,
                             variants = [
@@ -4028,14 +4076,15 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                parameters = Optional(reference = YulParameters),
+                                parameters = Required(YulParameters),
                                 close_paren = Required(CloseParen)
                             )
                         ),
                         Separated(
                             name = YulParameters,
                             reference = YulIdentifier,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         ),
                         Struct(
                             name = YulReturnsDeclaration,
@@ -4169,7 +4218,7 @@ codegen_language_macros::compile!(Language(
                                     ),
                                     fields = (
                                         open_paren = Required(OpenParen),
-                                        arguments = Optional(reference = YulArguments),
+                                        arguments = Required(YulArguments),
                                         close_paren = Required(CloseParen)
                                     )
                                 )]
@@ -4183,7 +4232,8 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = YulArguments,
                             reference = YulExpression,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
                         ),
                         Separated(
                             name = YulIdentifierPaths,

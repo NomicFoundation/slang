@@ -23,6 +23,7 @@ Tree:
           - (LeadingTrivia) ► (Whitespace): " " # (33..34)
           - (open_brace꞉ OpenBrace): "{" # (34..35)
           - (TrailingTrivia) ► (EndOfLine): "\n" # (35..36)
+          - (statements꞉ YulStatements): [] # (36..36)
           - (LeadingTrivia) ► (EndOfLine): "\n" # (36..37)
           - (close_brace꞉ CloseBrace): "}" # (37..38)
           - (TrailingTrivia) ► (EndOfLine): "\n" # (38..39)

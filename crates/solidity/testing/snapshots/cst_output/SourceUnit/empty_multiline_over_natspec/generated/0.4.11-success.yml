@@ -24,6 +24,7 @@ Tree:
               - (LeadingTrivia) ► (Whitespace): " " # (110..111)
               - (open_brace꞉ OpenBrace): "{" # (111..112)
               - (TrailingTrivia) ► (EndOfLine): "\n" # (112..113)
+              - (members꞉ ContractMembers): [] # (113..113)
               - (LeadingTrivia): # "  /**/\n" (113..120)
                   - (Whitespace): "  " # (113..115)
                   - (MultiLineComment): "/**/" # (115..119)
