@@ -24,6 +24,12 @@ pub enum TokenKind {
     Token3,
 }
 
+impl TokenKind {
+    pub fn is_trivia(&self) -> bool {
+        unreachable!("Expanded by the template")
+    }
+}
+
 #[derive(
     Debug,
     Eq,

@@ -114,6 +114,19 @@ pub enum TokenKind {
     Whitespace,
 }
 
+impl TokenKind {
+    pub fn is_trivia(&self) -> bool {
+        #[allow(clippy::match_like_matches_macro)]
+        match self {
+            Self::EndOfLine => true,
+            Self::MultiLineComment => true,
+            Self::SingleLineComment => true,
+            Self::Whitespace => true,
+            _ => false,
+        }
+    }
+}
+
 /// The lexical context of the scanner.
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
