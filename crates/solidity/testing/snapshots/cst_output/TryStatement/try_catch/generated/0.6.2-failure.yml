@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Make sure that error recovery won't lead to misparsing                        │ 0..57
+  2  │ // ambiguous function call options with the block following the try expression   │ 58..136
+  3  │                                                                                  │ 137..137
+  4  │ try foo() {                                                                      │ 138..149
+  5  │   bar();                                                                         │ 150..158
+  6  │ } catch {                                                                        │ 159..168
+  7  │ }                                                                                │ 169..170
+
+Errors: # 2 total
+  - >
+    Error: Expected Colon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch/input.sol:5:6]
+       │
+     5 │   bar();
+       │      ──┬─  
+       │        ╰─── Error occurred here.
+    ───╯
+  - >
+    Error: Expected OpenBrace or ReturnsKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch/input.sol:6:2]
+       │
+     6 │ ╭─▶ } catch {
+     7 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (TryStatement): # "// Make sure that error recovery won't lead to mis..." (0..171)
+      - (leading_trivia꞉ SingleLineComment): "// Make sure that error recovery won't lead to mis..." # (0..57)
+      - (leading_trivia꞉ EndOfLine): "\n" # (57..58)
+      - (leading_trivia꞉ SingleLineComment): "// ambiguous function call options with the block ..." # (58..136)
+      - (leading_trivia꞉ EndOfLine): "\n" # (136..137)
+      - (leading_trivia꞉ EndOfLine): "\n" # (137..138)
+      - (try_keyword꞉ TryKeyword): "try" # (138..141)
+      - (expression꞉ Expression) ► (variant꞉ CallOptionsExpression): # " foo() {\n  bar();\n}" (141..160)
+          - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (141..147)
+              - (operand꞉ Expression): # " foo" (141..145)
+                  - (leading_trivia꞉ Whitespace): " " # (141..142)
+                  - (variant꞉ Identifier): "foo" # (142..145)
+              - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (145..147)
+                  - (open_paren꞉ OpenParen): "(" # (145..146)
+                  - (arguments꞉ PositionalArguments): [] # (146..146)
+                  - (close_paren꞉ CloseParen): ")" # (146..147)
+          - (leading_trivia꞉ Whitespace): " " # (147..148)
+          - (open_brace꞉ OpenBrace): "{" # (148..149)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (149..150)
+          - (arguments꞉ NamedArguments): # "  bar" (150..155)
+              - (item꞉ NamedArgument): # "  bar" (150..155)
+                  - (leading_trivia꞉ Whitespace): "  " # (150..152)
+                  - (name꞉ Identifier): "bar" # (152..155)
+          - (SKIPPED): "();\n" # (155..159)
+          - (close_brace꞉ CloseBrace): "}" # (159..160)
+      - (SKIPPED): " catch {\n}\n" # (160..171)
