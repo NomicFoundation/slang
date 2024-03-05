@@ -3956,8 +3956,9 @@ codegen_language_macros::compile!(Language(
                                 Atom("'"),
                                 Atom("\""),
                                 Atom("\\"),
-                                Atom("\n"),
-                                Atom("\r")
+                                Atom("\r\n"),
+                                Atom("\r"),
+                                Atom("\n")
                             ])
                         ),
                         Fragment(

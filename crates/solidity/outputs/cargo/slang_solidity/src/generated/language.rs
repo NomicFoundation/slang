@@ -6858,6 +6858,7 @@ impl Language {
             scan_chars!(input, '\\'),
             scan_chars!(input, '\''),
             scan_chars!(input, '"'),
+            scan_chars!(input, '\r', '\n'),
             scan_chars!(input, '\r'),
             scan_chars!(input, '\n')
         )

@@ -104,7 +104,7 @@
 
 ```
 
-<pre ebnf-snippet="AsciiEscape" style="display: none;"><a href="#AsciiEscape"><span class="k">«ASCII_ESCAPE»</span></a><span class="o"> = </span><span class="s2">"n"</span><span class="o"> | </span><span class="s2">"r"</span><span class="o"> | </span><span class="s2">"t"</span><span class="o"> | </span><span class="s2">"'"</span><span class="o"> | </span><span class="s2">'"'</span><span class="o"> | </span><span class="s2">"\\"</span><span class="o"> | </span><span class="s2">"\n"</span><span class="o"> | </span><span class="s2">"\r"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AsciiEscape" style="display: none;"><a href="#AsciiEscape"><span class="k">«ASCII_ESCAPE»</span></a><span class="o"> = </span><span class="s2">"n"</span><span class="o"> | </span><span class="s2">"r"</span><span class="o"> | </span><span class="s2">"t"</span><span class="o"> | </span><span class="s2">"'"</span><span class="o"> | </span><span class="s2">'"'</span><span class="o"> | </span><span class="s2">"\\"</span><span class="o"> | </span><span class="s2">"\r\n"</span><span class="o"> | </span><span class="s2">"\r"</span><span class="o"> | </span><span class="s2">"\n"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #HexByteEscape }
 

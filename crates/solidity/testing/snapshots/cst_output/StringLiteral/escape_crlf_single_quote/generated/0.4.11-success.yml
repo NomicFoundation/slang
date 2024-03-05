@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 'foo\                                                                            │ 0..5
+  2  │ bar'                                                                             │ 6..10
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # "'foo\\r\nbar'\r\n" (0..13)
+      - (variant꞉ SingleQuotedStringLiteral): "'foo\\r\nbar'" # (0..11)
+      - (TrailingTrivia) ► (EndOfLine): "\r\n" # (11..13)
