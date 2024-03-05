@@ -6796,29 +6796,35 @@ impl Language {
     fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace);
-                choice.consider(input, result)?;
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
-                choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                );
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
+                    .with_label(NodeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment);
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
+                    .with_label(NodeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineNatSpecComment,
-                );
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::SingleLineComment)
+                    .with_label(NodeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::MultiLineNatSpecComment,
-                );
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment)
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::SingleLineNatSpecComment,
+                    )
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::MultiLineNatSpecComment,
+                    )
+                    .with_label(NodeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -6829,15 +6835,20 @@ impl Language {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace),
+                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
+                    .with_label(NodeLabel::TrailingTrivia),
             ))?;
             seq.elem(OptionalHelper::transform(
                 self.parse_token::<LexicalContextType::Default>(
                     input,
                     TokenKind::SingleLineComment,
-                ),
+                )
+                .with_label(NodeLabel::TrailingTrivia),
             ))?;
-            seq.elem(self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine))?;
+            seq.elem(
+                self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
+                    .with_label(NodeLabel::TrailingTrivia),
+            )?;
             seq.finish()
         })
     }

@@ -84,6 +84,14 @@ impl ParserResult {
         {
             *prev_label = Some(label);
         }
+        // Also allow to name a single trivia token node
+        else if let ParserResult::Match(Match { nodes, .. }) = &mut self {
+            if let [node] = nodes.as_mut_slice() {
+                if node.as_token().is_some_and(|tok| tok.kind.is_trivia()) {
+                    node.label = Some(label);
+                }
+            }
+        }
 
         self
     }

@@ -232,6 +232,8 @@ export namespace kinds {
     Operand = "Operand",
     LeftOperand = "LeftOperand",
     RightOperand = "RightOperand",
+    LeadingTrivia = "LeadingTrivia",
+    TrailingTrivia = "TrailingTrivia",
     AbicoderKeyword = "AbicoderKeyword",
     AbstractKeyword = "AbstractKeyword",
     AddressKeyword = "AddressKeyword",

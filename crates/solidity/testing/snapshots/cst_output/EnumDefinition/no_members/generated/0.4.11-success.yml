@@ -8,10 +8,10 @@ Errors: []
 Tree:
   - (EnumDefinition): # "enum Foo { }" (0..12)
       - (enum_keyword꞉ EnumKeyword): "enum" # (0..4)
-      - (Whitespace): " " # (4..5)
+      - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (name꞉ Identifier): "Foo" # (5..8)
-      - (Whitespace): " " # (8..9)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (open_brace꞉ OpenBrace): "{" # (9..10)
       - (members꞉ EnumMembers): [] # (10..10)
-      - (Whitespace): " " # (10..11)
+      - (leading_trivia꞉ Whitespace): " " # (10..11)
       - (close_brace꞉ CloseBrace): "}" # (11..12)

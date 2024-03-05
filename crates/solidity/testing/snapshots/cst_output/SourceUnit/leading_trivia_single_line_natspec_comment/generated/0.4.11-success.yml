@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - (SourceUnit): # "/// foo bar\n" (0..12)
       - (members꞉ SourceUnitMembers): [] # (0..0)
-      - (SingleLineNatSpecComment): "/// foo bar" # (0..11)
-      - (EndOfLine): "\n" # (11..12)
+      - (leading_trivia꞉ SingleLineNatSpecComment): "/// foo bar" # (0..11)
+      - (leading_trivia꞉ EndOfLine): "\n" # (11..12)

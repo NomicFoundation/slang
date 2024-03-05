@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - (StringLiteral): # "'tab:\t'\n" (0..8)
       - (variant꞉ SingleQuotedStringLiteral): "'tab:\t'" # (0..7)
-      - (EndOfLine): "\n" # (7..8)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)

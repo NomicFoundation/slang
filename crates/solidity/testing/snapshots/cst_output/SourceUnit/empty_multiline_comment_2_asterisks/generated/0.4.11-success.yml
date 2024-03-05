@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - (SourceUnit): # "/**/\n" (0..5)
       - (members꞉ SourceUnitMembers): [] # (0..0)
-      - (MultiLineComment): "/**/" # (0..4)
-      - (EndOfLine): "\n" # (4..5)
+      - (leading_trivia꞉ MultiLineComment): "/**/" # (0..4)
+      - (leading_trivia꞉ EndOfLine): "\n" # (4..5)

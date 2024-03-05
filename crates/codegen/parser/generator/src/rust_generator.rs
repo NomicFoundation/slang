@@ -280,6 +280,8 @@ impl GrammarVisitor for RustGenerator {
         self.labels.remove("operand");
         self.labels.remove("left_operand");
         self.labels.remove("right_operand");
+        self.labels.remove("leading_trivia");
+        self.labels.remove("trailing_trivia");
 
         // Just being anal about tidying up :)
         self.all_scanners.clear();

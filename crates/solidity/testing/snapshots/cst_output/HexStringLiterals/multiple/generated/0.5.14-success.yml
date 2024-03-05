@@ -9,5 +9,5 @@ Tree:
   - (HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
       - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"ab"' # (0..7)
       - (item꞉ HexStringLiteral): # " hex'cd'" (7..15)
-          - (Whitespace): " " # (7..8)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
           - (variant꞉ SingleQuotedHexStringLiteral): "hex'cd'" # (8..15)

@@ -16,4 +16,4 @@ Tree:
                   - (period꞉ Period): "." # (11..12)
                   - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (12..18)
           - (close_paren꞉ CloseParen): ")" # (18..19)
-          - (EndOfLine): "\n" # (19..20)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

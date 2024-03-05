@@ -257,6 +257,8 @@ pub enum NodeLabel {
     Operand,
     LeftOperand,
     RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
     // Generated
     AbicoderKeyword,
     AbstractKeyword,

@@ -76,6 +76,8 @@ pub enum NodeLabel {
     Operand,
     LeftOperand,
     RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
     // Used for testing this crate, this is generated in the client code
     Label1,
     Label2,

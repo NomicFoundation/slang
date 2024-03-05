@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - (SourceUnit): # "\n" (0..1)
       - (members꞉ SourceUnitMembers): [] # (0..0)
-      - (EndOfLine): "\n" # (0..1)
+      - (leading_trivia꞉ EndOfLine): "\n" # (0..1)

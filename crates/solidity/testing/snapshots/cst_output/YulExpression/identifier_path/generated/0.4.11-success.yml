@@ -8,8 +8,8 @@ Errors: []
 Tree:
   - (YulExpression) ► (variant꞉ YulIdentifierPath): # "foo . bar\n" (0..10)
       - (item꞉ YulIdentifier): "foo" # (0..3)
-      - (Whitespace): " " # (3..4)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (separator꞉ Period): "." # (4..5)
-      - (Whitespace): " " # (5..6)
+      - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (item꞉ YulIdentifier): "bar" # (6..9)
-      - (EndOfLine): "\n" # (9..10)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

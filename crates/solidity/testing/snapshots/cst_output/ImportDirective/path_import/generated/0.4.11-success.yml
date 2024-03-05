@@ -9,6 +9,6 @@ Tree:
   - (ImportDirective): # 'import "foo";' (0..13)
       - (import_keyword꞉ ImportKeyword): "import" # (0..6)
       - (clause꞉ ImportClause) ► (variant꞉ PathImport) ► (path꞉ StringLiteral): # ' "foo"' (6..12)
-          - (Whitespace): " " # (6..7)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
           - (variant꞉ DoubleQuotedStringLiteral): '"foo"' # (7..12)
       - (semicolon꞉ Semicolon): ";" # (12..13)

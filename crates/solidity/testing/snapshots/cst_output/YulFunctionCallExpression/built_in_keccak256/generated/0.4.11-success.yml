@@ -12,4 +12,4 @@ Tree:
       - (open_paren꞉ OpenParen): "(" # (9..10)
       - (arguments꞉ YulArguments): [] # (10..10)
       - (close_paren꞉ CloseParen): ")" # (10..11)
-      - (EndOfLine): "\n" # (11..12)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)

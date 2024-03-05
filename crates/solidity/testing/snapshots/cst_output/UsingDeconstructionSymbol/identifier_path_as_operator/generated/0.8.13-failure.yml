@@ -19,5 +19,5 @@ Tree:
           - (item꞉ Identifier): "foo" # (0..3)
           - (separator꞉ Period): "." # (3..4)
           - (item꞉ Identifier): "bar" # (4..7)
-      - (Whitespace): " " # (7..8)
+      - (leading_trivia꞉ Whitespace): " " # (7..8)
       - (SKIPPED): "as /" # (8..12)

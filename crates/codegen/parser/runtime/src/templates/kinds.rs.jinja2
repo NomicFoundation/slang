@@ -46,6 +46,8 @@ pub enum NodeLabel {
     Operand,
     LeftOperand,
     RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
     // Generated
     {% for variant in generator.labels -%}
         {{ variant | pascal_case }},

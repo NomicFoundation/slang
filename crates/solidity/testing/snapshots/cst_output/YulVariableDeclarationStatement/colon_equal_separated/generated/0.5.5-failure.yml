@@ -16,12 +16,12 @@ Errors: # 1 total
 
 Tree:
   - (YulVariableDeclarationStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..68)
-      - (SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)
-      - (EndOfLine): "\n" # (53..54)
+      - (leading_trivia꞉ SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)
+      - (leading_trivia꞉ EndOfLine): "\n" # (53..54)
       - (let_keyword꞉ YulLetKeyword): "let" # (54..57)
       - (names꞉ YulIdentifierPaths): # " foo" (57..61)
           - (item꞉ YulIdentifierPath): # " foo" (57..61)
-              - (Whitespace): " " # (57..58)
+              - (leading_trivia꞉ Whitespace): " " # (57..58)
               - (item꞉ YulIdentifier): "foo" # (58..61)
-      - (Whitespace): " " # (61..62)
+      - (leading_trivia꞉ Whitespace): " " # (61..62)
       - (SKIPPED): ": = 0\n" # (62..68)

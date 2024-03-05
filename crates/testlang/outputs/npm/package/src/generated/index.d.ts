@@ -31,6 +31,8 @@ export namespace kinds {
     Operand = "Operand",
     LeftOperand = "LeftOperand",
     RightOperand = "RightOperand",
+    LeadingTrivia = "LeadingTrivia",
+    TrailingTrivia = "TrailingTrivia",
     CloseBracket = "CloseBracket",
     Keyword = "Keyword",
     Member = "Member",

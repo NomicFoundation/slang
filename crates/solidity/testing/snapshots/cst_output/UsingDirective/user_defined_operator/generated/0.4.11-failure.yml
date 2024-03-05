@@ -16,6 +16,6 @@ Errors: # 1 total
 Tree:
   - (UsingDirective): # "using {div as /} for Int global;" (0..32)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-      - (Whitespace): " " # (5..6)
+      - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (SKIPPED): "{div as /} for Int global" # (6..31)
       - (semicolon꞉ Semicolon): ";" # (31..32)
