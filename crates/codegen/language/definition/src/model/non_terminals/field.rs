@@ -18,6 +18,9 @@ pub struct FieldDelimiters {
     /// How many tokens have to be matched to trigger the error recovery.
     /// For ambiguous syntaxes this needs to be set to at least N, where N
     /// is the token lookahead required to disambiguate the syntax.
+    ///
+    /// By default, we assume no lookahead (0) is required to recover from
+    /// unrecognized body between delimiters, so it's always triggered.
     pub tokens_matched_acceptance_threshold: Option<u8>,
 }
 
