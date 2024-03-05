@@ -641,23 +641,19 @@ impl Language {
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input, true),
-            RuleKind::Expression => Self::expression.parse(self, input, true),
-            RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
-            RuleKind::Literal => Self::literal.parse(self, input, true),
-            RuleKind::MemberAccessExpression => {
-                Self::member_access_expression.parse(self, input, true)
-            }
-            RuleKind::NegationExpression => Self::negation_expression.parse(self, input, true),
-            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input, true),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input, true),
-            RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input, false),
-            RuleKind::Tree => Self::tree.parse(self, input, true),
-            RuleKind::TreeNode => Self::tree_node.parse(self, input, true),
-            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input, true),
-            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input, true),
+            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input),
+            RuleKind::Expression => Self::expression.parse(self, input),
+            RuleKind::Literal => Self::literal.parse(self, input),
+            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
+            RuleKind::NegationExpression => Self::negation_expression.parse(self, input),
+            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
+            RuleKind::SourceUnit => Self::source_unit.parse(self, input),
+            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
+            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            RuleKind::Tree => Self::tree.parse(self, input),
+            RuleKind::TreeNode => Self::tree_node.parse(self, input),
+            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
+            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
         }
     }
 }

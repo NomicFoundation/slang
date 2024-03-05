@@ -32,7 +32,6 @@ pub struct RustGenerator {
 
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
-    trivia_kinds: BTreeSet<&'static str>,
     trivia_scanner_names: BTreeSet<&'static str>,
     labels: BTreeSet<String>,
 
@@ -306,8 +305,6 @@ impl GrammarVisitor for RustGenerator {
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.rule_kinds.insert(parser.name());
-        self.trivia_kinds.insert(parser.name());
         let trivia_scanners = {
             use codegen_grammar::Visitable as _;
             // TODO(#737): This will be cleaned up once we don't emit rule kinds for trivia parsers

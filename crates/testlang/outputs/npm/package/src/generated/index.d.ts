@@ -12,7 +12,6 @@ export namespace kinds {
   export enum RuleKind {
     AdditionExpression = "AdditionExpression",
     Expression = "Expression",
-    LeadingTrivia = "LeadingTrivia",
     Literal = "Literal",
     MemberAccessExpression = "MemberAccessExpression",
     NegationExpression = "NegationExpression",
@@ -20,7 +19,6 @@ export namespace kinds {
     SourceUnit = "SourceUnit",
     SourceUnitMember = "SourceUnitMember",
     SourceUnitMembers = "SourceUnitMembers",
-    TrailingTrivia = "TrailingTrivia",
     Tree = "Tree",
     TreeNode = "TreeNode",
     TreeNodeChild = "TreeNodeChild",

@@ -104,7 +104,6 @@ pub enum RuleKind {
     InheritanceTypes,
     InterfaceDefinition,
     InterfaceMembers,
-    LeadingTrivia,
     LibraryDefinition,
     LibraryMembers,
     MappingKey,
@@ -164,7 +163,6 @@ pub enum RuleKind {
     StructMember,
     StructMembers,
     ThrowStatement,
-    TrailingTrivia,
     TryStatement,
     TupleDeconstructionElement,
     TupleDeconstructionElements,
@@ -234,17 +232,6 @@ pub enum RuleKind {
     YulValueCase,
     YulVariableDeclarationStatement,
     YulVariableDeclarationValue,
-}
-
-impl RuleKind {
-    pub fn is_trivia(&self) -> bool {
-        #[allow(clippy::match_like_matches_macro)]
-        match self {
-            Self::LeadingTrivia => true,
-            Self::TrailingTrivia => true,
-            _ => false,
-        }
-    }
 }
 
 #[derive(

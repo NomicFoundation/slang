@@ -22,18 +22,6 @@ pub enum RuleKind {
     {%- endfor -%}
 }
 
-impl RuleKind {
-    pub fn is_trivia(&self) -> bool {
-        #[allow(clippy::match_like_matches_macro)]
-        match self {
-            {%- for variant in generator.trivia_kinds -%}
-                Self::{{ variant }} => true,
-            {%- endfor -%}
-            _ => false,
-        }
-    }
-}
-
 #[derive(
     Debug,
     Eq,

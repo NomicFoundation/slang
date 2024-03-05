@@ -53,12 +53,6 @@ pub enum RuleKind {
     Rule3,
 }
 
-impl RuleKind {
-    pub fn is_trivia(&self) -> bool {
-        unreachable!("Expanded by the template")
-    }
-}
-
 #[derive(
     Debug,
     Eq,

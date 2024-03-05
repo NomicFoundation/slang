@@ -20,7 +20,6 @@ use napi_derive::napi;
 pub enum RuleKind {
     AdditionExpression,
     Expression,
-    LeadingTrivia,
     Literal,
     MemberAccessExpression,
     NegationExpression,
@@ -28,22 +27,10 @@ pub enum RuleKind {
     SourceUnit,
     SourceUnitMember,
     SourceUnitMembers,
-    TrailingTrivia,
     Tree,
     TreeNode,
     TreeNodeChild,
     TreeNodeChildren,
-}
-
-impl RuleKind {
-    pub fn is_trivia(&self) -> bool {
-        #[allow(clippy::match_like_matches_macro)]
-        match self {
-            Self::LeadingTrivia => true,
-            Self::TrailingTrivia => true,
-            _ => false,
-        }
-    }
 }
 
 #[derive(

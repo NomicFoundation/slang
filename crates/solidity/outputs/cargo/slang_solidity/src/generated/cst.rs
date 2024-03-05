@@ -162,7 +162,7 @@ impl Node {
 
     pub fn is_trivia(&self) -> bool {
         match self {
-            Self::Rule(rule) => rule.kind.is_trivia(),
+            Self::Rule(_) => false,
             Self::Token(token) => token.kind.is_trivia(),
         }
     }
