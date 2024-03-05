@@ -62,7 +62,7 @@ impl Binary {
         progress_bar.finish_and_clear();
         println!();
 
-        binaries.sort_by_key(|binary| binary.version.to_owned());
+        binaries.sort_by_key(|binary| binary.version.clone());
 
         Ok(binaries)
     }

@@ -224,7 +224,7 @@ impl Display for Command {
             parts.push("&&".to_owned());
         }
 
-        parts.push(self.name.to_owned());
+        parts.push(self.name.clone());
 
         for arg in &self.args {
             let delimiter = if arg.contains(' ') {

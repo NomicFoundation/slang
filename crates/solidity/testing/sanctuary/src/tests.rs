@@ -80,7 +80,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/31
         .replace("[email protected]", "[email-protected]");
 
-    let language = Language::new(version.to_owned())?;
+    let language = Language::new(version.clone())?;
     let output = language.parse(RuleKind::SourceUnit, &source);
 
     if output.is_valid() {

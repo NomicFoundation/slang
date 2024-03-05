@@ -14,3 +14,7 @@ Inflector = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 serde = { workspace = true }
+
+[lints]
+workspace = true
+

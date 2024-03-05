@@ -167,7 +167,7 @@ fn list_contracts(repo_dir: &Path, network: &str) -> Result<BTreeMap<String, Vec
             .or_insert_with(Vec::new)
             .push(SourceFile {
                 path,
-                compiler: compiler.to_owned(),
+                compiler: compiler.clone(),
             });
     }
 

@@ -52,3 +52,7 @@ serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
+
+[lints]
+workspace = true
+

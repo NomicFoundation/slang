@@ -8,3 +8,7 @@ publish = false
 [dev-dependencies]
 semver = { workspace = true }
 slang_testlang = { workspace = true }
+
+[lints]
+workspace = true
+

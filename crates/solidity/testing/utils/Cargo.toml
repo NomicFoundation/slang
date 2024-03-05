@@ -13,3 +13,7 @@ once_cell = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true }
 solidity_language = { workspace = true }
+
+[lints]
+workspace = true
+

@@ -24,7 +24,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
         }
 
         analysis.metadata.insert(
-            (**name).to_owned(),
+            (**name).clone(),
             ItemMetadata {
                 name: name.clone(),
                 item: item.clone(),

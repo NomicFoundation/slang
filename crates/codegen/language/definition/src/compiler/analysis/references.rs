@@ -389,7 +389,7 @@ fn check_reference(
     if let Some(source) = source {
         analysis.metadata[source]
             .referenced_items
-            .push((**reference).to_owned());
+            .push((**reference).clone());
     }
 }
 

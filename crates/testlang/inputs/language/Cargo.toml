@@ -10,3 +10,7 @@ publish = false
 codegen_language_definition = { workspace = true }
 codegen_language_macros = { workspace = true }
 semver = { workspace = true }
+
+[lints]
+workspace = true
+
