@@ -1292,7 +1292,7 @@ DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "
 
 «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
-«ASCII_ESCAPE» = "n" | "r" | "t" | "'" | '"' | "\\" | "\n" | "\r" | "\r\n";
+«ASCII_ESCAPE» = "n" | "r" | "t" | "'" | '"' | "\\" | "\r\n" | "\r" | "\n";
 
 «HEX_BYTE_ESCAPE» = "x" «HEX_CHARACTER» «HEX_CHARACTER»;
 
