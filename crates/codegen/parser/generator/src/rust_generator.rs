@@ -40,6 +40,7 @@ pub struct RustGenerator {
     keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
     #[serde(skip)]
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -307,8 +308,7 @@ impl GrammarVisitor for RustGenerator {
         self.set_current_context(parser.context());
         let trivia_scanners = {
             use codegen_grammar::Visitable as _;
-            // TODO(#737): This will be cleaned up once we don't emit rule kinds for trivia parsers
-            // Visit each node and only collect the scanner definition names:
+
             #[derive(Default)]
             struct CollectTriviaScanners {
                 scanner_names: BTreeSet<&'static str>,
@@ -325,7 +325,7 @@ impl GrammarVisitor for RustGenerator {
         };
         self.trivia_scanner_names.extend(trivia_scanners);
 
-        self.parser_functions
+        self.trivia_parser_functions
             .insert(parser.name(), parser.to_parser_code().to_string());
     }
 

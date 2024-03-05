@@ -209,29 +209,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace);
-                choice.consider(input, result)?;
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
-                choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                );
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-        })
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -346,23 +323,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace),
-            ))?;
-            seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                ),
-            ))?;
-            seq.elem(self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine))?;
-            seq.finish()
-        })
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn tree(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -461,6 +421,46 @@ impl Language {
             self.tree_node_child(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::TreeNodeChildren)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        OneOrMoreHelper::run(input, |input| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result =
+                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace);
+                choice.consider(input, result)?;
+                let result =
+                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
+                choice.consider(input, result)?;
+                let result = self.parse_token::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::SingleLineComment,
+                );
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        })
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(OptionalHelper::transform(
+                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace),
+            ))?;
+            seq.elem(OptionalHelper::transform(
+                self.parse_token::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::SingleLineComment,
+                ),
+            ))?;
+            seq.elem(self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine))?;
+            seq.finish()
+        })
     }
 
     /********************************************
