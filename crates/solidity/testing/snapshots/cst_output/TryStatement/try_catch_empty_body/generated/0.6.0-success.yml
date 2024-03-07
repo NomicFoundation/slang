@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ try foo() {                                                                      │ 0..11
+  2  │ } catch {                                                                        │ 12..21
+  3  │ }                                                                                │ 22..23
+
+Errors: []
+
+Tree:
+  - (TryStatement): # "try foo() {\n} catch {\n}\n" (0..24)
+      - (try_keyword꞉ TryKeyword): "try" # (0..3)
+      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
+          - (operand꞉ Expression): # " foo" (3..7)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "foo" # (4..7)
+          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (7..9)
+              - (open_paren꞉ OpenParen): "(" # (7..8)
+              - (arguments꞉ PositionalArguments): [] # (8..8)
+              - (close_paren꞉ CloseParen): ")" # (8..9)
+      - (body꞉ Block): # " {\n}" (9..13)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (open_brace꞉ OpenBrace): "{" # (10..11)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)
+          - (statements꞉ Statements): [] # (12..12)
+          - (close_brace꞉ CloseBrace): "}" # (12..13)
+      - (catch_clauses꞉ CatchClauses): # " catch {\n}\n" (13..24)
+          - (item꞉ CatchClause): # " catch {\n}\n" (13..24)
+              - (leading_trivia꞉ Whitespace): " " # (13..14)
+              - (catch_keyword꞉ CatchKeyword): "catch" # (14..19)
+              - (body꞉ Block): # " {\n}\n" (19..24)
+                  - (leading_trivia꞉ Whitespace): " " # (19..20)
+                  - (open_brace꞉ OpenBrace): "{" # (20..21)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (21..22)
+                  - (statements꞉ Statements): [] # (22..22)
+                  - (close_brace꞉ CloseBrace): "}" # (22..23)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (23..24)

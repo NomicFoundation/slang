@@ -3514,13 +3514,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.named_argument(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        ))
+        )
         .with_kind(RuleKind::NamedArguments)
     }
 

@@ -38,7 +38,7 @@
 
 ```
 
-<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgument }
 

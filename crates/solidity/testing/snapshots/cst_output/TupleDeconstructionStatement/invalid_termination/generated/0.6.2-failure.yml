@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or Identifier.
+    Error: Expected Identifier.
        ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:3]
        │
      3 │ { throw;
@@ -42,7 +42,6 @@ Tree:
           - (leading_trivia꞉ MultiLineComment): "/**/" # (20..24)
           - (leading_trivia꞉ EndOfLine): "\n" # (24..25)
           - (open_brace꞉ OpenBrace): "{" # (25..26)
-          - (arguments꞉ NamedArguments): [] # (26..26)
       - (leading_trivia꞉ Whitespace): " " # (26..27)
       - (SKIPPED): "throw" # (27..32)
       - (semicolon꞉ Semicolon): ";" # (32..33)

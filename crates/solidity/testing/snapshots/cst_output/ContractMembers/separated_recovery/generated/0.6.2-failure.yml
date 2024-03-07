@@ -24,20 +24,20 @@ Errors: # 12 total
        │                                                        ╰───────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:2:19]
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:2:18]
        │
      2 │   msg.sender.call{do: 1, arg: 1 }();
-       │                   ───────┬──────  
-       │                          ╰──────── Error occurred here.
+       │                  ─────────┬────────  
+       │                           ╰────────── Error occurred here.
     ───╯
   - >
-    Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:19]
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:18]
        │
      3 │   msg.sender.call{, empty: 1, parse: 2 }();
-       │                   ──────────┬──────────  
-       │                             ╰──────────── Error occurred here.
+       │                  ────────────┬────────────  
+       │                              ╰────────────── Error occurred here.
     ───╯
   - >
     Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
@@ -146,47 +146,29 @@ Tree:
               - (trailing_trivia꞉ EndOfLine): "\n" # (85..86)
               - (statements꞉ Statements): # "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...." (86..306)
                   - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  msg.sender.call{do: 1, arg: 1 }();\n" (86..123)
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # "  msg.sender.call{do: 1, arg: 1 }()" (86..121)
-                          - (operand꞉ Expression) ► (variant꞉ CallOptionsExpression): # "  msg.sender.call{do: 1, arg: 1 }" (86..119)
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (86..103)
-                                  - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (86..98)
-                                      - (operand꞉ Expression): # "  msg" (86..91)
-                                          - (leading_trivia꞉ Whitespace): "  " # (86..88)
-                                          - (variant꞉ Identifier): "msg" # (88..91)
-                                      - (period꞉ Period): "." # (91..92)
-                                      - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (92..98)
-                                  - (period꞉ Period): "." # (98..99)
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (99..103)
-                              - (open_brace꞉ OpenBrace): "{" # (103..104)
-                              - (arguments꞉ NamedArguments): [] # (104..104)
-                              - (SKIPPED): "do: 1, arg: 1 " # (104..118)
-                              - (close_brace꞉ CloseBrace): "}" # (118..119)
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (119..121)
-                              - (open_paren꞉ OpenParen): "(" # (119..120)
-                              - (arguments꞉ PositionalArguments): [] # (120..120)
-                              - (close_paren꞉ CloseParen): ")" # (120..121)
+                      - (expression꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (86..103)
+                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (86..98)
+                              - (operand꞉ Expression): # "  msg" (86..91)
+                                  - (leading_trivia꞉ Whitespace): "  " # (86..88)
+                                  - (variant꞉ Identifier): "msg" # (88..91)
+                              - (period꞉ Period): "." # (91..92)
+                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (92..98)
+                          - (period꞉ Period): "." # (98..99)
+                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (99..103)
+                      - (SKIPPED): "{do: 1, arg: 1 }()" # (103..121)
                       - (semicolon꞉ Semicolon): ";" # (121..122)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (122..123)
                   - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  msg.sender.call{, empty: 1, parse: 2 }();\n" (123..167)
-                      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # "  msg.sender.call{, empty: 1, parse: 2 }()" (123..165)
-                          - (operand꞉ Expression) ► (variant꞉ CallOptionsExpression): # "  msg.sender.call{, empty: 1, parse: 2 }" (123..163)
-                              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (123..140)
-                                  - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (123..135)
-                                      - (operand꞉ Expression): # "  msg" (123..128)
-                                          - (leading_trivia꞉ Whitespace): "  " # (123..125)
-                                          - (variant꞉ Identifier): "msg" # (125..128)
-                                      - (period꞉ Period): "." # (128..129)
-                                      - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (129..135)
-                                  - (period꞉ Period): "." # (135..136)
-                                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (136..140)
-                              - (open_brace꞉ OpenBrace): "{" # (140..141)
-                              - (arguments꞉ NamedArguments): [] # (141..141)
-                              - (SKIPPED): ", empty: 1, parse: 2 " # (141..162)
-                              - (close_brace꞉ CloseBrace): "}" # (162..163)
-                          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (163..165)
-                              - (open_paren꞉ OpenParen): "(" # (163..164)
-                              - (arguments꞉ PositionalArguments): [] # (164..164)
-                              - (close_paren꞉ CloseParen): ")" # (164..165)
+                      - (expression꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (123..140)
+                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (123..135)
+                              - (operand꞉ Expression): # "  msg" (123..128)
+                                  - (leading_trivia꞉ Whitespace): "  " # (123..125)
+                                  - (variant꞉ Identifier): "msg" # (125..128)
+                              - (period꞉ Period): "." # (128..129)
+                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (129..135)
+                          - (period꞉ Period): "." # (135..136)
+                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (136..140)
+                      - (SKIPPED): "{, empty: 1, parse: 2 }()" # (140..165)
                       - (semicolon꞉ Semicolon): ";" # (165..166)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (166..167)
                   - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  msg.sender.call{arg: 1, missing_expr: , no_semic..." (167..230)

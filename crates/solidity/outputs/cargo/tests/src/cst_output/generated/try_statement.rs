@@ -10,6 +10,11 @@ fn try_catch() -> Result<()> {
 }
 
 #[test]
+fn try_catch_empty_body() -> Result<()> {
+    run("TryStatement", "try_catch_empty_body")
+}
+
+#[test]
 fn try_expr_call_options() -> Result<()> {
     run("TryStatement", "try_expr_call_options")
 }

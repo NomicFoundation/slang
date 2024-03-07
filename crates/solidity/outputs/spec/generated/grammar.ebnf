@@ -1164,7 +1164,7 @@ NamedArgumentGroup = OPEN_BRACE
                      NamedArguments
                      CLOSE_BRACE;
 
-NamedArguments = (NamedArgument (COMMA NamedArgument)*)?;
+NamedArguments = NamedArgument (COMMA NamedArgument)*;
 
 NamedArgument = IDENTIFIER
                 COLON

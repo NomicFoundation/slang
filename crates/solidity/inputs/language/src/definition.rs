@@ -3525,8 +3525,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = NamedArguments,
                             reference = NamedArgument,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = NamedArgument,
