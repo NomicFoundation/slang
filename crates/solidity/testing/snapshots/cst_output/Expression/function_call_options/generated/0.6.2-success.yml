@@ -13,7 +13,7 @@ Tree:
               - (period꞉ Period): "." # (1..2)
               - (member꞉ MemberAccess) ► (variant꞉ Identifier): "b" # (2..3)
           - (open_brace꞉ OpenBrace): "{" # (3..4)
-          - (arguments꞉ NamedArguments): # "value: 0, gas: 1" (4..20)
+          - (arguments꞉ CallOptions): # "value: 0, gas: 1" (4..20)
               - (item꞉ NamedArgument): # "value: 0" (4..12)
                   - (name꞉ Identifier): "value" # (4..9)
                   - (colon꞉ Colon): ":" # (9..10)

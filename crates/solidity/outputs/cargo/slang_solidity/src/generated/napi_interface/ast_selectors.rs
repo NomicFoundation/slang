@@ -1172,7 +1172,7 @@ impl Selector {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArguments))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::CallOptions))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
@@ -2585,6 +2585,7 @@ pub fn select_separated(
         RuleKind::TupleDeconstructionElements => selector.tuple_deconstruction_elements()?,
         RuleKind::PositionalArguments => selector.positional_arguments()?,
         RuleKind::NamedArguments => selector.named_arguments()?,
+        RuleKind::CallOptions => selector.call_options()?,
         RuleKind::TupleValues => selector.tuple_values()?,
         RuleKind::ArrayValues => selector.array_values()?,
         RuleKind::IdentifierPath => selector.identifier_path()?,
@@ -2895,6 +2896,30 @@ impl Selector {
 
 impl Selector {
     fn named_arguments(&mut self) -> Result<Vec<Vec<JsObject>>> {
+        let mut separated = vec![];
+        let mut separators = vec![];
+
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?
+        {
+            separated.push(first);
+
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?);
+            }
+        }
+
+        Ok(vec![separated, separators])
+    }
+}
+
+impl Selector {
+    fn call_options(&mut self) -> Result<Vec<Vec<JsObject>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 

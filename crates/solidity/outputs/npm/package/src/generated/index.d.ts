@@ -27,6 +27,7 @@ export namespace kinds {
     BitwiseXorExpression = "BitwiseXorExpression",
     Block = "Block",
     BreakStatement = "BreakStatement",
+    CallOptions = "CallOptions",
     CallOptionsExpression = "CallOptionsExpression",
     CatchClause = "CatchClause",
     CatchClauseError = "CatchClauseError",

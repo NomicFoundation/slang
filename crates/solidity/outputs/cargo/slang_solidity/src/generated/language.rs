@@ -604,6 +604,22 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn call_options(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_0_6_2 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| self.named_argument(input).with_label(NodeLabel::Item),
+                TokenKind::Comma,
+                NodeLabel::Separator,
+            )
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::CallOptions)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn call_options_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let result = self.expression(input);
         let ParserResult::Match(r#match) = &result else {
@@ -2103,7 +2119,7 @@ impl Language {
                                     TokenKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . named_arguments (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
+                            seq . elem (self . call_options (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
                             seq.elem_labeled(
                                 NodeLabel::CloseBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3514,13 +3530,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
+        OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.named_argument(input).with_label(NodeLabel::Item),
             TokenKind::Comma,
             NodeLabel::Separator,
-        )
+        ))
         .with_kind(RuleKind::NamedArguments)
     }
 
@@ -8946,6 +8962,7 @@ impl Language {
             RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input),
             RuleKind::Block => Self::block.parse(self, input),
             RuleKind::BreakStatement => Self::break_statement.parse(self, input),
+            RuleKind::CallOptions => Self::call_options.parse(self, input),
             RuleKind::CallOptionsExpression => Self::call_options_expression.parse(self, input),
             RuleKind::CatchClause => Self::catch_clause.parse(self, input),
             RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input),

@@ -22,7 +22,7 @@ Tree:
                   - (close_paren꞉ CloseParen): ")" # (8..9)
           - (leading_trivia꞉ Whitespace): " " # (9..10)
           - (open_brace꞉ OpenBrace): "{" # (10..11)
-          - (arguments꞉ NamedArguments): # " x: 1" (11..16)
+          - (arguments꞉ CallOptions): # " x: 1" (11..16)
               - (item꞉ NamedArgument): # " x: 1" (11..16)
                   - (leading_trivia꞉ Whitespace): " " # (11..12)
                   - (name꞉ Identifier): "x" # (12..13)

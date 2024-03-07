@@ -2888,7 +2888,7 @@ export class CallOptionsExpression {
     return {
       operand: new Expression($operand as RuleNode),
       openBrace: $openBrace as TokenNode,
-      arguments: new NamedArguments($arguments as RuleNode),
+      arguments: new CallOptions($arguments as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -2905,7 +2905,7 @@ export class CallOptionsExpression {
     return this.fetch().openBrace;
   }
 
-  public get arguments(): NamedArguments {
+  public get arguments(): CallOptions {
     return this.fetch().arguments;
   }
 
@@ -5884,6 +5884,26 @@ export class NamedArguments {
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.NamedArguments);
+  }
+
+  public get items(): readonly NamedArgument[] {
+    return this.fetch().items;
+  }
+
+  public get separators(): readonly TokenNode[] {
+    return this.fetch().separators;
+  }
+}
+
+export class CallOptions {
+  private readonly fetch = once(() => {
+    const [items, separators] = ast_internal.selectSeparated(this.cst);
+
+    return { items: items.map((item) => new NamedArgument(item as RuleNode)), separators: separators as TokenNode[] };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.CallOptions);
   }
 
   public get items(): readonly NamedArgument[] {

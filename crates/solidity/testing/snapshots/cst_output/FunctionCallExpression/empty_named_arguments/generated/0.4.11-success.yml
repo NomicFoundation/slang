@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Named arguments can be empty                                                  │ 0..31
+  2  │ someFunc({})                                                                     │ 32..44
+
+Errors: []
+
+Tree:
+  - (FunctionCallExpression): # "// Named arguments can be empty\nsomeFunc({})\n" (0..45)
+      - (operand꞉ Expression): # "// Named arguments can be empty\nsomeFunc" (0..40)
+          - (leading_trivia꞉ SingleLineComment): "// Named arguments can be empty" # (0..31)
+          - (leading_trivia꞉ EndOfLine): "\n" # (31..32)
+          - (variant꞉ Identifier): "someFunc" # (32..40)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ NamedArgumentsDeclaration): # "({})\n" (40..45)
+          - (open_paren꞉ OpenParen): "(" # (40..41)
+          - (arguments꞉ NamedArgumentGroup): # "{}" (41..43)
+              - (open_brace꞉ OpenBrace): "{" # (41..42)
+              - (arguments꞉ NamedArguments): [] # (42..42)
+              - (close_brace꞉ CloseBrace): "}" # (42..43)
+          - (close_paren꞉ CloseParen): ")" # (43..44)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (44..45)

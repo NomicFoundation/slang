@@ -35,6 +35,7 @@ pub enum RuleKind {
     BitwiseXorExpression,
     Block,
     BreakStatement,
+    CallOptions,
     CallOptionsExpression,
     CatchClause,
     CatchClauseError,

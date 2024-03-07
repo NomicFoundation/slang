@@ -3390,7 +3390,7 @@ codegen_language_macros::compile!(Language(
                                             delimiters = FieldDelimiters(
                                                 open = open_brace,
                                                 close = close_brace,
-                                                // NOTE: Despite `NamedArguments` requiring at least one element,
+                                                // NOTE: Despite `CallOptions` requiring at least one element,
                                                 // we can only recover if we found at least two tokens (`ident:`)
                                                 // in the body, as this may be otherwise ambiguous with
                                                 // `try <EXPR> { func() } catch {}`.
@@ -3399,7 +3399,7 @@ codegen_language_macros::compile!(Language(
                                         ),
                                         fields = (
                                             open_brace = Required(OpenBrace),
-                                            arguments = Required(NamedArguments),
+                                            arguments = Required(CallOptions),
                                             close_brace = Required(CloseBrace)
                                         )
                                     )]
@@ -3525,7 +3525,16 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = NamedArguments,
                             reference = NamedArgument,
-                            separator = Comma
+                            separator = Comma,
+                            allow_empty = true
+                        ),
+                        Separated(
+                            name = CallOptions,
+                            reference = NamedArgument,
+                            separator = Comma,
+                            enabled = From("0.6.2"),
+                            // These cannot be empty as they're ambiguous with `try <EXPR> {} catch {}`
+                            allow_empty = false
                         ),
                         Struct(
                             name = NamedArgument,
