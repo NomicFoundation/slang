@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract A {} /* TODO: we should support this */                                 │ 0..48
+  2  │ contract B {}                                                                    │ 49..62
+
+Errors: []
+
+Tree:
+  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} /* TODO: we should support this */\nc..." (0..63)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {}" (0..13)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (name꞉ Identifier): "A" # (9..10)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (open_brace꞉ OpenBrace): "{" # (11..12)
+          - (members꞉ ContractMembers): [] # (12..12)
+          - (close_brace꞉ CloseBrace): "}" # (12..13)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # " /* TODO: we should support this */\ncontract B {}\n" (13..63)
+          - (leading_trivia꞉ Whitespace): " " # (13..14)
+          - (leading_trivia꞉ MultiLineComment): "/* TODO: we should support this */" # (14..48)
+          - (leading_trivia꞉ EndOfLine): "\n" # (48..49)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (49..57)
+          - (leading_trivia꞉ Whitespace): " " # (57..58)
+          - (name꞉ Identifier): "B" # (58..59)
+          - (leading_trivia꞉ Whitespace): " " # (59..60)
+          - (open_brace꞉ OpenBrace): "{" # (60..61)
+          - (members꞉ ContractMembers): [] # (61..61)
+          - (close_brace꞉ CloseBrace): "}" # (61..62)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (62..63)

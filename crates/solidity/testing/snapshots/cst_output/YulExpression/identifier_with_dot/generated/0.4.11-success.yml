@@ -8,10 +8,9 @@ Errors: []
 
 Tree:
   - (YulExpression) ► (variant꞉ YulIdentifierPath): # "// identifiers with dots were allowed specifically..." (0..90)
-      - (LeadingTrivia): # "// identifiers with dots were allowed specifically..." (0..82)
-          - (SingleLineComment): "// identifiers with dots were allowed specifically..." # (0..81)
-          - (EndOfLine): "\n" # (81..82)
+      - (leading_trivia꞉ SingleLineComment): "// identifiers with dots were allowed specifically..." # (0..81)
+      - (leading_trivia꞉ EndOfLine): "\n" # (81..82)
       - (item꞉ YulIdentifier): "foo" # (82..85)
       - (separator꞉ Period): "." # (85..86)
       - (item꞉ YulIdentifier): "bar" # (86..89)
-      - (TrailingTrivia) ► (EndOfLine): "\n" # (89..90)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (89..90)

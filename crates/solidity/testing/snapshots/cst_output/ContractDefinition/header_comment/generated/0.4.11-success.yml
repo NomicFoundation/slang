@@ -27,13 +27,12 @@ Errors: []
 
 Tree:
   - (ContractDefinition): # "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." (0..2001)
-      - (LeadingTrivia): # "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." (0..1986)
-          - (MultiLineComment): "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # (0..1985)
-          - (EndOfLine): "\n" # (1985..1986)
+      - (leading_trivia꞉ MultiLineComment): "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # (0..1985)
+      - (leading_trivia꞉ EndOfLine): "\n" # (1985..1986)
       - (contract_keyword꞉ ContractKeyword): "contract" # (1986..1994)
-      - (LeadingTrivia) ► (Whitespace): " " # (1994..1995)
+      - (leading_trivia꞉ Whitespace): " " # (1994..1995)
       - (name꞉ Identifier): "Foo" # (1995..1998)
-      - (LeadingTrivia) ► (Whitespace): " " # (1998..1999)
+      - (leading_trivia꞉ Whitespace): " " # (1998..1999)
       - (open_brace꞉ OpenBrace): "{" # (1999..2000)
       - (members꞉ ContractMembers): [] # (2000..2000)
       - (close_brace꞉ CloseBrace): "}" # (2000..2001)

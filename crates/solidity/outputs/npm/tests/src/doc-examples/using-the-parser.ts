@@ -39,9 +39,9 @@ test("using the parser", async () => {
   const [contractKeyword, firstSpace, contractName, secondSpace, openBrace, members, closeBrace] = contractChildren;
 
   assert.equal(contractKeyword?.kind, TokenKind.ContractKeyword);
-  assert.equal(firstSpace?.kind, RuleKind.LeadingTrivia);
+  assert.equal(firstSpace?.kind, TokenKind.Whitespace);
   assert.equal(contractName?.kind, TokenKind.Identifier);
-  assert.equal(secondSpace?.kind, RuleKind.LeadingTrivia);
+  assert.equal(secondSpace?.kind, TokenKind.Whitespace);
   assert.equal(openBrace?.kind, TokenKind.OpenBrace);
   assert.equal(members?.kind, RuleKind.ContractMembers);
   assert.equal(closeBrace?.kind, TokenKind.CloseBrace);

@@ -9,4 +9,4 @@ Tree:
   - (YulLabel): # "foo:\n" (0..5)
       - (label꞉ YulIdentifier): "foo" # (0..3)
       - (colon꞉ Colon): ":" # (3..4)
-      - (TrailingTrivia) ► (EndOfLine): "\n" # (4..5)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (4..5)

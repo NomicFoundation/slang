@@ -8,12 +8,11 @@ Errors: []
 
 Tree:
   - (YulVariableDeclarationStatement): # "// Unreserved in Yul specifically since 0.7.1:\nlet..." (0..58)
-      - (LeadingTrivia): # "// Unreserved in Yul specifically since 0.7.1:\n" (0..47)
-          - (SingleLineComment): "// Unreserved in Yul specifically since 0.7.1:" # (0..46)
-          - (EndOfLine): "\n" # (46..47)
+      - (leading_trivia꞉ SingleLineComment): "// Unreserved in Yul specifically since 0.7.1:" # (0..46)
+      - (leading_trivia꞉ EndOfLine): "\n" # (46..47)
       - (let_keyword꞉ YulLetKeyword): "let" # (47..50)
       - (names꞉ YulIdentifierPaths): # " bytes1\n" (50..58)
           - (item꞉ YulIdentifierPath): # " bytes1\n" (50..58)
-              - (LeadingTrivia) ► (Whitespace): " " # (50..51)
+              - (leading_trivia꞉ Whitespace): " " # (50..51)
               - (item꞉ YulIdentifier): "bytes1" # (51..57)
-              - (TrailingTrivia) ► (EndOfLine): "\n" # (57..58)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (57..58)

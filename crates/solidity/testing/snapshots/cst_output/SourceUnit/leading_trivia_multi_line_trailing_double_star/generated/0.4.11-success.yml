@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ /* multi-line comment **/                                                        │ 0..25
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "/* multi-line comment **/\n" (0..26)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (leading_trivia꞉ MultiLineComment): "/* multi-line comment **/" # (0..25)
+      - (leading_trivia꞉ EndOfLine): "\n" # (25..26)

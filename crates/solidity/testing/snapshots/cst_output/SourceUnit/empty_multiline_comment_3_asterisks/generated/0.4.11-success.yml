@@ -8,6 +8,5 @@ Errors: []
 Tree:
   - (SourceUnit): # "/***/\n" (0..6)
       - (members꞉ SourceUnitMembers): [] # (0..0)
-      - (LeadingTrivia): # "/***/\n" (0..6)
-          - (MultiLineNatSpecComment): "/***/" # (0..5)
-          - (EndOfLine): "\n" # (5..6)
+      - (leading_trivia꞉ MultiLineNatSpecComment): "/***/" # (0..5)
+      - (leading_trivia꞉ EndOfLine): "\n" # (5..6)

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │                                                                                  │ 0..0
+
+Errors: []
+
+Tree:
+  - (SourceUnit): # "\n" (0..1)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (leading_trivia꞉ EndOfLine): "\n" # (0..1)

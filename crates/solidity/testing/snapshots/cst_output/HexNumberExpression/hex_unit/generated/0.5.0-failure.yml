@@ -16,5 +16,5 @@ Errors: # 1 total
 Tree:
   - (HexNumberExpression): # "0x1 wei" (0..7)
       - (literal꞉ HexLiteral): "0x1" # (0..3)
-      - (LeadingTrivia) ► (Whitespace): " " # (3..4)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (SKIPPED): "wei" # (4..7)

@@ -10,7 +10,7 @@ Tree:
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (expressions꞉ VersionPragmaExpressions): # " =0.8.0" (8..15)
           - (item꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaPrefixExpression): # " =0.8.0" (8..15)
-              - (LeadingTrivia) ► (Whitespace): " " # (8..9)
+              - (leading_trivia꞉ Whitespace): " " # (8..9)
               - (operator꞉ Equal): "=" # (9..10)
               - (operand꞉ VersionPragmaExpression) ► (variant꞉ VersionPragmaSpecifier): # "0.8.0" (10..15)
                   - (item꞉ VersionPragmaValue): "0" # (10..11)

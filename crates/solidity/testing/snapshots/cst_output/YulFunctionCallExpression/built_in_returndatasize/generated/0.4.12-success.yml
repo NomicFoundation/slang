@@ -11,4 +11,4 @@ Tree:
       - (open_paren꞉ OpenParen): "(" # (14..15)
       - (arguments꞉ YulArguments): [] # (15..15)
       - (close_paren꞉ CloseParen): ")" # (15..16)
-      - (TrailingTrivia) ► (EndOfLine): "\n" # (16..17)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (16..17)

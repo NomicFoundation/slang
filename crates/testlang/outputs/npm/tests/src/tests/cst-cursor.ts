@@ -29,9 +29,6 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.TreeNode);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.LeadingTrivia);
-  expect(cursor.goToNext()).toBe(true);
-
   expectToken(cursor.node(), TokenKind.Whitespace, " ");
   expect(cursor.goToNext()).toBe(true);
 
@@ -53,9 +50,6 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.TreeNode);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.LeadingTrivia);
-  expect(cursor.goToNext()).toBe(true);
-
   expectToken(cursor.node(), TokenKind.Whitespace, " ");
   expect(cursor.goToNext()).toBe(true);
 
@@ -74,9 +68,6 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.LeadingTrivia);
-  expect(cursor.goToNext()).toBe(true);
-
   expectToken(cursor.node(), TokenKind.Whitespace, " ");
   expect(cursor.goToNext()).toBe(true);
 
@@ -87,9 +78,6 @@ test("use cursor", () => {
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.TreeNodeChild);
-  expect(cursor.goToNext()).toBe(true);
-
-  expectRule(cursor.node(), RuleKind.LeadingTrivia);
   expect(cursor.goToNext()).toBe(true);
 
   expectToken(cursor.node(), TokenKind.Whitespace, " ");

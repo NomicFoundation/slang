@@ -45,12 +45,12 @@ impl GrammarConstructorDslV2 for Grammar {
 
         let leading_trivia = Rc::new(NamedTriviaParser {
             name: "LeadingTrivia",
-            def: resolve_trivia(lang.leading_trivia.clone(), &mut ctx),
+            def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
         let trailing_trivia = Rc::new(NamedTriviaParser {
             name: "TrailingTrivia",
-            def: resolve_trivia(lang.trailing_trivia.clone(), &mut ctx),
+            def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
         for (_lex_ctx, item) in items.values() {
@@ -507,35 +507,43 @@ fn resolve_keyword_value(value: model::KeywordValue) -> KeywordScannerDefinition
     }
 }
 
-fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_trivia(
+    parser: model::TriviaParser,
+    kind: TriviaKind,
+    ctx: &mut ResolveCtx<'_>,
+) -> ParserDefinitionNode {
     match parser {
         model::TriviaParser::Optional { parser } => {
-            ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
+            ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, kind, ctx)))
         }
         model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(
-            Labeled::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+            Labeled::anonymous(Box::new(resolve_trivia(*parser, kind, ctx))),
         ),
         model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(
-            Labeled::anonymous(Box::new(resolve_trivia(*parser, ctx))),
+            Labeled::anonymous(Box::new(resolve_trivia(*parser, kind, ctx))),
         ),
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| Labeled::anonymous(resolve_trivia(scanner, ctx)))
+                .map(|scanner| Labeled::anonymous(resolve_trivia(scanner, kind, ctx)))
                 .collect(),
         ),
         model::TriviaParser::Choice { parsers } => {
             ParserDefinitionNode::Choice(Labeled::anonymous(
                 parsers
                     .into_iter()
-                    .map(|scanner| resolve_trivia(scanner, ctx))
+                    .map(|scanner| resolve_trivia(scanner, kind, ctx))
                     .collect(),
             ))
         }
         model::TriviaParser::Trivia { reference } => {
             match resolve_grammar_element(&reference, ctx) {
                 GrammarElement::ScannerDefinition(parser) => {
-                    ParserDefinitionNode::ScannerDefinition(parser)
+                    // Hack: This is a sequence of a single scanner in order to emit the names
+                    ParserDefinitionNode::Sequence(vec![Labeled::with_builtin_label(
+                        kind.label(),
+                        ParserDefinitionNode::ScannerDefinition(parser),
+                    )])
                 }
                 _ => panic!("Expected {reference} to be a ScannerDefinition"),
             }
@@ -793,6 +801,21 @@ fn resolve_precedence(
     }
 }
 
+#[derive(Clone, Copy)]
+enum TriviaKind {
+    Leading,
+    Trailing,
+}
+
+impl TriviaKind {
+    fn label(self) -> BuiltInLabel {
+        match self {
+            TriviaKind::Leading => BuiltInLabel::LeadingTrivia,
+            TriviaKind::Trailing => BuiltInLabel::TrailingTrivia,
+        }
+    }
+}
+
 trait IntoParserDefNode {
     fn into_parser_def_node(self) -> ParserDefinitionNode;
 }
@@ -861,6 +884,8 @@ enum BuiltInLabel {
     Operand,
     LeftOperand,
     RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
 }
 
 impl<T> LabeledExt<T> for Labeled<T> {

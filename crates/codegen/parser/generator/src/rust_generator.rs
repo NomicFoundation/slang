@@ -32,7 +32,6 @@ pub struct RustGenerator {
 
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
-    trivia_kinds: BTreeSet<&'static str>,
     trivia_scanner_names: BTreeSet<&'static str>,
     labels: BTreeSet<String>,
 
@@ -41,6 +40,7 @@ pub struct RustGenerator {
     keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
     #[serde(skip)]
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -280,6 +280,8 @@ impl GrammarVisitor for RustGenerator {
         self.labels.remove("operand");
         self.labels.remove("left_operand");
         self.labels.remove("right_operand");
+        self.labels.remove("leading_trivia");
+        self.labels.remove("trailing_trivia");
 
         // Just being anal about tidying up :)
         self.all_scanners.clear();
@@ -306,12 +308,9 @@ impl GrammarVisitor for RustGenerator {
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.rule_kinds.insert(parser.name());
-        self.trivia_kinds.insert(parser.name());
         let trivia_scanners = {
             use codegen_grammar::Visitable as _;
-            // TODO(#737): This will be cleaned up once we don't emit rule kinds for trivia parsers
-            // Visit each node and only collect the scanner definition names:
+
             #[derive(Default)]
             struct CollectTriviaScanners {
                 scanner_names: BTreeSet<&'static str>,
@@ -328,15 +327,8 @@ impl GrammarVisitor for RustGenerator {
         };
         self.trivia_scanner_names.extend(trivia_scanners);
 
-        self.parser_functions.insert(
-            parser.name(),
-            {
-                let code = parser.to_parser_code();
-                let rule_kind = format_ident!("{}", parser.name());
-                quote! { #code.with_kind(RuleKind::#rule_kind) }
-            }
-            .to_string(),
-        );
+        self.trivia_parser_functions
+            .insert(parser.name(), parser.to_parser_code().to_string());
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {

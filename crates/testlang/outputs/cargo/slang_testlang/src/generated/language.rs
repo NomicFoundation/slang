@@ -209,30 +209,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace);
-                choice.consider(input, result)?;
-                let result =
-                    self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine);
-                choice.consider(input, result)?;
-                let result = self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                );
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-        })
-        .with_kind(RuleKind::LeadingTrivia)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -347,24 +323,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace),
-            ))?;
-            seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::SingleLineComment,
-                ),
-            ))?;
-            seq.elem(self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::TrailingTrivia)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn tree(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -463,6 +421,53 @@ impl Language {
             self.tree_node_child(input).with_label(NodeLabel::Item)
         })
         .with_kind(RuleKind::TreeNodeChildren)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        OneOrMoreHelper::run(input, |input| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::SingleLineComment)
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment)
+                    .with_label(NodeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        })
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(OptionalHelper::transform(
+                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
+                    .with_label(NodeLabel::TrailingTrivia),
+            ))?;
+            seq.elem(OptionalHelper::transform(
+                self.parse_token::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::SingleLineComment,
+                )
+                .with_label(NodeLabel::TrailingTrivia),
+            ))?;
+            seq.elem(
+                self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
+                    .with_label(NodeLabel::TrailingTrivia),
+            )?;
+            seq.finish()
+        })
     }
 
     /********************************************
@@ -643,23 +648,19 @@ impl Language {
 
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input, true),
-            RuleKind::Expression => Self::expression.parse(self, input, true),
-            RuleKind::LeadingTrivia => Self::leading_trivia.parse(self, input, false),
-            RuleKind::Literal => Self::literal.parse(self, input, true),
-            RuleKind::MemberAccessExpression => {
-                Self::member_access_expression.parse(self, input, true)
-            }
-            RuleKind::NegationExpression => Self::negation_expression.parse(self, input, true),
-            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input, true),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input, true),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input, true),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input, true),
-            RuleKind::TrailingTrivia => Self::trailing_trivia.parse(self, input, false),
-            RuleKind::Tree => Self::tree.parse(self, input, true),
-            RuleKind::TreeNode => Self::tree_node.parse(self, input, true),
-            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input, true),
-            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input, true),
+            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input),
+            RuleKind::Expression => Self::expression.parse(self, input),
+            RuleKind::Literal => Self::literal.parse(self, input),
+            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
+            RuleKind::NegationExpression => Self::negation_expression.parse(self, input),
+            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
+            RuleKind::SourceUnit => Self::source_unit.parse(self, input),
+            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
+            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            RuleKind::Tree => Self::tree.parse(self, input),
+            RuleKind::TreeNode => Self::tree_node.parse(self, input),
+            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
+            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
         }
     }
 }

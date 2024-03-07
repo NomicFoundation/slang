@@ -9,7 +9,7 @@ Tree:
   - (Expression) ► (variant꞉ FunctionCallExpression): # "address payable(value)" (0..22)
       - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "address payable" (0..15)
           - (address_keyword꞉ AddressKeyword): "address" # (0..7)
-          - (LeadingTrivia) ► (Whitespace): " " # (7..8)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
           - (payable_keyword꞉ PayableKeyword): "payable" # (8..15)
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(value)" (15..22)
           - (open_paren꞉ OpenParen): "(" # (15..16)

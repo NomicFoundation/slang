@@ -53,12 +53,6 @@ pub enum RuleKind {
     Rule3,
 }
 
-impl RuleKind {
-    pub fn is_trivia(&self) -> bool {
-        unreachable!("Expanded by the template")
-    }
-}
-
 #[derive(
     Debug,
     Eq,
@@ -82,6 +76,8 @@ pub enum NodeLabel {
     Operand,
     LeftOperand,
     RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
     // Used for testing this crate, this is generated in the client code
     Label1,
     Label2,
