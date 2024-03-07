@@ -131,8 +131,8 @@ impl Visitable for ParserDefinitionNode {
                 terminator.accept_visitor(visitor);
             }
 
-            Self::ScannerDefinition(_)
-            | Self::KeywordScannerDefinition(_)
+            Self::ScannerDefinition(def) => def.accept_visitor(visitor),
+            Self::KeywordScannerDefinition(_)
             | Self::TriviaParserDefinition(_)
             | Self::ParserDefinition(_)
             | Self::PrecedenceParserDefinition(_) => {}

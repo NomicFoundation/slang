@@ -157,6 +157,13 @@ impl Node {
     pub fn as_token_with_kinds(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
         self.as_token().filter(|token| kinds.contains(&token.kind))
     }
+
+    pub fn is_trivia(&self) -> bool {
+        match self {
+            Self::Rule(rule) => rule.kind.is_trivia(),
+            Self::Token(token) => token.kind.is_trivia(),
+        }
+    }
 }
 
 impl From<Rc<RuleNode>> for Node {
