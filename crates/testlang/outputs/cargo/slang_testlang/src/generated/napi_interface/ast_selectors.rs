@@ -297,10 +297,7 @@ impl Selector {
     fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<JsObject>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
-                RustLabeledNode {
-                    label: _,
-                    node: RustNode::Rule(rule),
-                } if rule.kind.is_trivia() => {
+                node if node.is_trivia() => {
                     // skip trivia, since it's not part of the AST
                     self.index += 1;
                     continue;

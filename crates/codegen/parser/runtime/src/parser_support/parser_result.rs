@@ -88,14 +88,6 @@ impl ParserResult {
 
     /// Returns a significant (non-trivia) node if there is exactly one.
     pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::LabeledNode> {
-        fn is_significant(labeled: &cst::LabeledNode) -> bool {
-            match &labeled.node {
-                cst::Node::Rule(rule) => !rule.kind.is_trivia(),
-                // FIXME: Some tokens are in fact trivia
-                cst::Node::Token(_) => true,
-            }
-        }
-
         let nodes = match self {
             ParserResult::Match(r#match) => &mut r#match.nodes[..],
             ParserResult::IncompleteMatch(incomplete_match) => &mut incomplete_match.nodes[..],
@@ -105,9 +97,9 @@ impl ParserResult {
 
         let result = nodes.iter_mut().try_fold(None, |acc, next| match acc {
             // Two significant nodes, bail
-            Some(_) if is_significant(next) => ControlFlow::Break(None),
+            Some(_) if !next.is_trivia() => ControlFlow::Break(None),
             Some(_) => ControlFlow::Continue(acc),
-            None => ControlFlow::Continue(is_significant(next).then_some(next)),
+            None => ControlFlow::Continue((!next.is_trivia()).then_some(next)),
         });
 
         match result {
