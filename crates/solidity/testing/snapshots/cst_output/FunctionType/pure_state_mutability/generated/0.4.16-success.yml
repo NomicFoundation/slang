@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function () internal pure returns (uint)                                         │ 0..40
+
+Errors: []
+
+Tree:
+  - (FunctionType): # "function () internal pure returns (uint)\n" (0..41)
+      - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+      - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (open_paren꞉ OpenParen): "(" # (9..10)
+          - (parameters꞉ Parameters): [] # (10..10)
+          - (close_paren꞉ CloseParen): ")" # (10..11)
+      - (attributes꞉ FunctionTypeAttributes): # " internal pure" (11..25)
+          - (item꞉ FunctionTypeAttribute): # " internal" (11..20)
+              - (leading_trivia꞉ Whitespace): " " # (11..12)
+              - (variant꞉ InternalKeyword): "internal" # (12..20)
+          - (item꞉ FunctionTypeAttribute): # " pure" (20..25)
+              - (leading_trivia꞉ Whitespace): " " # (20..21)
+              - (variant꞉ PureKeyword): "pure" # (21..25)
+      - (returns꞉ ReturnsDeclaration): # " returns (uint)\n" (25..41)
+          - (leading_trivia꞉ Whitespace): " " # (25..26)
+          - (returns_keyword꞉ ReturnsKeyword): "returns" # (26..33)
+          - (variables꞉ ParametersDeclaration): # " (uint)\n" (33..41)
+              - (leading_trivia꞉ Whitespace): " " # (33..34)
+              - (open_paren꞉ OpenParen): "(" # (34..35)
+              - (parameters꞉ Parameters): # "uint" (35..39)
+                  - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (35..39)
+              - (close_paren꞉ CloseParen): ")" # (39..40)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (40..41)

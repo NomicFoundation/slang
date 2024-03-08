@@ -5,11 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
-fn member_function_pointer() -> Result<()> {
-    run("StructDefinition", "member_function_pointer")
+fn basic() -> Result<()> {
+    run("FunctionType", "basic")
 }
 
 #[test]
-fn no_members() -> Result<()> {
-    run("StructDefinition", "no_members")
+fn pure_state_mutability() -> Result<()> {
+    run("FunctionType", "pure_state_mutability")
 }

@@ -1269,7 +1269,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = PureKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("pure"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                value = Atom("pure")
+                            )]
                         ),
                         Keyword(
                             name = ReceiveKeyword,
@@ -1773,7 +1776,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = ViewKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("view"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                value = Atom("view")
+                            )]
                         ),
                         Keyword(
                             name = VirtualKeyword,
@@ -2326,8 +2332,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = PayableKeyword),
                                 EnumVariant(reference = PrivateKeyword),
                                 EnumVariant(reference = PublicKeyword),
-                                EnumVariant(reference = PureKeyword),
-                                EnumVariant(reference = ViewKeyword),
+                                EnumVariant(reference = PureKeyword, enabled = From("0.4.16")),
+                                EnumVariant(reference = ViewKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = VirtualKeyword, enabled = From("0.6.0"))
                             ]
                         ),
@@ -2430,8 +2436,14 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = PayableKeyword),
                                 EnumVariant(reference = PrivateKeyword, enabled = Till("0.5.0")),
                                 EnumVariant(reference = PublicKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = PureKeyword),
-                                EnumVariant(reference = ViewKeyword)
+                                EnumVariant(
+                                    reference = PureKeyword,
+                                    enabled = Range(from = "0.4.16", till = "0.6.0")
+                                ),
+                                EnumVariant(
+                                    reference = ViewKeyword,
+                                    enabled = Range(from = "0.4.16", till = "0.6.0")
+                                )
                             ]
                         ),
                         Struct(
@@ -2683,8 +2695,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = ExternalKeyword),
                                 EnumVariant(reference = PrivateKeyword),
                                 EnumVariant(reference = PublicKeyword),
-                                EnumVariant(reference = PureKeyword),
-                                EnumVariant(reference = ViewKeyword),
+                                EnumVariant(reference = PureKeyword, enabled = From("0.4.16")),
+                                EnumVariant(reference = ViewKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = PayableKeyword)
                             ]
                         ),

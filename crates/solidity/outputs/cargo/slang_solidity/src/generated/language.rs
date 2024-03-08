@@ -33,6 +33,7 @@ pub struct Language {
     pub(crate) version: Version,
     pub(crate) version_is_at_least_0_4_12: bool,
     pub(crate) version_is_at_least_0_4_14: bool,
+    pub(crate) version_is_at_least_0_4_16: bool,
     pub(crate) version_is_at_least_0_4_21: bool,
     pub(crate) version_is_at_least_0_4_22: bool,
     pub(crate) version_is_at_least_0_5_0: bool,
@@ -164,6 +165,7 @@ impl Language {
             Ok(Self {
                 version_is_at_least_0_4_12: Version::new(0, 4, 12) <= version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
+                version_is_at_least_0_4_16: Version::new(0, 4, 16) <= version,
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
                 version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
@@ -2567,16 +2569,20 @@ impl Language {
                 TokenKind::PublicKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::PureKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::ViewKeyword,
-            );
-            choice.consider(input, result)?;
+            if self.version_is_at_least_0_4_16 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::PureKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_4_16 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::ViewKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             if self.version_is_at_least_0_6_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -2728,16 +2734,20 @@ impl Language {
                 TokenKind::PublicKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::PureKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::ViewKeyword,
-            );
-            choice.consider(input, result)?;
+            if self.version_is_at_least_0_4_16 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::PureKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_4_16 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::ViewKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::PayableKeyword,
@@ -5049,16 +5059,20 @@ impl Language {
                     );
                     choice.consider(input, result)?;
                 }
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::PureKeyword,
-                );
-                choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::ViewKeyword,
-                );
-                choice.consider(input, result)?;
+                if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PureKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::ViewKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 choice.finish(input)
             })
             .with_label(NodeLabel::Variant)
