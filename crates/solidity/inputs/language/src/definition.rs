@@ -3399,7 +3399,7 @@ codegen_language_macros::compile!(Language(
                                         ),
                                         fields = (
                                             open_brace = Required(OpenBrace),
-                                            arguments = Required(CallOptions),
+                                            options = Required(CallOptions),
                                             close_brace = Required(CloseBrace)
                                         )
                                     )]
