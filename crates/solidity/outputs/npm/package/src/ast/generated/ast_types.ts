@@ -4263,6 +4263,7 @@ export class UnnamedFunctionAttribute {
       case RuleKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as RuleNode);
 
+      case TokenKind.ConstantKeyword:
       case TokenKind.ExternalKeyword:
       case TokenKind.InternalKeyword:
       case TokenKind.PayableKeyword:

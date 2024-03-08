@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Split into `view` and `pure` in 0.4.16                                        │ 0..41
+  2  │ function () constant {}                                                          │ 42..65
+
+Errors: []
+
+Tree:
+  - (UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
+      - (leading_trivia꞉ SingleLineComment): "// Split into `view` and `pure` in 0.4.16" # (0..41)
+      - (leading_trivia꞉ EndOfLine): "\n" # (41..42)
+      - (function_keyword꞉ FunctionKeyword): "function" # (42..50)
+      - (parameters꞉ ParametersDeclaration): # " ()" (50..53)
+          - (leading_trivia꞉ Whitespace): " " # (50..51)
+          - (open_paren꞉ OpenParen): "(" # (51..52)
+          - (parameters꞉ Parameters): [] # (52..52)
+          - (close_paren꞉ CloseParen): ")" # (52..53)
+      - (attributes꞉ UnnamedFunctionAttributes): # " constant" (53..62)
+          - (item꞉ UnnamedFunctionAttribute): # " constant" (53..62)
+              - (leading_trivia꞉ Whitespace): " " # (53..54)
+              - (variant꞉ ConstantKeyword): "constant" # (54..62)
+      - (body꞉ FunctionBody) ► (variant꞉ Block): # " {}\n" (62..66)
+          - (leading_trivia꞉ Whitespace): " " # (62..63)
+          - (open_brace꞉ OpenBrace): "{" # (63..64)
+          - (statements꞉ Statements): [] # (64..64)
+          - (close_brace꞉ CloseBrace): "}" # (64..65)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (65..66)

@@ -5028,6 +5028,13 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::ConstantKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ExternalKeyword,

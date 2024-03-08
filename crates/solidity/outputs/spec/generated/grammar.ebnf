@@ -757,6 +757,7 @@ UnnamedFunctionAttributes = UnnamedFunctionAttribute*;
 (* Deprecated in 0.6.0 *)
 UnnamedFunctionAttribute = ModifierInvocation
                          | OverrideSpecifier
+                         | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
                          | EXTERNAL_KEYWORD
                          | INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
                          | PAYABLE_KEYWORD

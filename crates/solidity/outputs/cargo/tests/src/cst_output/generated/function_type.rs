@@ -10,6 +10,11 @@ fn basic() -> Result<()> {
 }
 
 #[test]
+fn constant_state_mutability() -> Result<()> {
+    run("FunctionType", "constant_state_mutability")
+}
+
+#[test]
 fn pure_state_mutability() -> Result<()> {
     run("FunctionType", "pure_state_mutability")
 }

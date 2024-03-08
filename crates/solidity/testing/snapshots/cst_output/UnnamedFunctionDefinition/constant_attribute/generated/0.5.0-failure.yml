@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Split into `view` and `pure` in 0.4.16                                        │ 0..41
+  2  │ function () constant {}                                                          │ 42..65
+
+Errors: # 1 total
+  - >
+    Error: Expected ExternalKeyword or Identifier or OpenBrace or OverrideKeyword or PayableKeyword or PureKeyword or Semicolon or ViewKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:2:12]
+       │
+     2 │ function () constant {}
+       │            ──────┬──────  
+       │                  ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
+      - (leading_trivia꞉ SingleLineComment): "// Split into `view` and `pure` in 0.4.16" # (0..41)
+      - (leading_trivia꞉ EndOfLine): "\n" # (41..42)
+      - (function_keyword꞉ FunctionKeyword): "function" # (42..50)
+      - (parameters꞉ ParametersDeclaration): # " ()" (50..53)
+          - (leading_trivia꞉ Whitespace): " " # (50..51)
+          - (open_paren꞉ OpenParen): "(" # (51..52)
+          - (parameters꞉ Parameters): [] # (52..52)
+          - (close_paren꞉ CloseParen): ")" # (52..53)
+      - (attributes꞉ UnnamedFunctionAttributes): [] # (53..53)
+      - (SKIPPED): " constant {}\n" # (53..66)
