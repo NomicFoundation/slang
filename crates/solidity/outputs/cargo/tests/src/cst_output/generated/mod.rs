@@ -10,7 +10,6 @@ mod constructor_definition;
 mod contract_definition;
 mod contract_members;
 mod decimal_number_expression;
-mod delete_statement;
 mod enum_definition;
 mod error_definition;
 mod event_definition;

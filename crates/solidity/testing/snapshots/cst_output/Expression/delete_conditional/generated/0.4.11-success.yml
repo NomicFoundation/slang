@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ cond ? delete obj[slot1] : delete obj[slot2]                                     │ 0..44
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ ConditionalExpression): # "cond ? delete obj[slot1] : delete obj[slot2]\n" (0..45)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "cond" # (0..4)
+      - (leading_trivia꞉ Whitespace): " " # (4..5)
+      - (question_mark꞉ QuestionMark): "?" # (5..6)
+      - (true_expression꞉ Expression) ► (variant꞉ PrefixExpression): # " delete obj[slot1]" (6..24)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (operator꞉ DeleteKeyword): "delete" # (7..13)
+          - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # " obj[slot1]" (13..24)
+              - (operand꞉ Expression): # " obj" (13..17)
+                  - (leading_trivia꞉ Whitespace): " " # (13..14)
+                  - (variant꞉ Identifier): "obj" # (14..17)
+              - (open_bracket꞉ OpenBracket): "[" # (17..18)
+              - (start꞉ Expression) ► (variant꞉ Identifier): "slot1" # (18..23)
+              - (close_bracket꞉ CloseBracket): "]" # (23..24)
+      - (leading_trivia꞉ Whitespace): " " # (24..25)
+      - (colon꞉ Colon): ":" # (25..26)
+      - (false_expression꞉ Expression) ► (variant꞉ PrefixExpression): # " delete obj[slot2]\n" (26..45)
+          - (leading_trivia꞉ Whitespace): " " # (26..27)
+          - (operator꞉ DeleteKeyword): "delete" # (27..33)
+          - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # " obj[slot2]\n" (33..45)
+              - (operand꞉ Expression): # " obj" (33..37)
+                  - (leading_trivia꞉ Whitespace): " " # (33..34)
+                  - (variant꞉ Identifier): "obj" # (34..37)
+              - (open_bracket꞉ OpenBracket): "[" # (37..38)
+              - (start꞉ Expression) ► (variant꞉ Identifier): "slot2" # (38..43)
+              - (close_bracket꞉ CloseBracket): "]" # (43..44)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (44..45)

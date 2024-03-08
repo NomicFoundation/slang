@@ -2787,7 +2787,6 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = DoWhileStatement),
                                 EnumVariant(reference = ContinueStatement),
                                 EnumVariant(reference = BreakStatement),
-                                EnumVariant(reference = DeleteStatement),
                                 EnumVariant(reference = ReturnStatement),
                                 EnumVariant(reference = ThrowStatement, enabled = Till("0.5.0")),
                                 EnumVariant(reference = EmitStatement, enabled = From("0.4.21")),
@@ -3047,15 +3046,6 @@ codegen_language_macros::compile!(Language(
                                 emit_keyword = Required(EmitKeyword),
                                 event = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
-                                semicolon = Required(Semicolon)
-                            )
-                        ),
-                        Struct(
-                            name = DeleteStatement,
-                            error_recovery = FieldsErrorRecovery(terminator = semicolon),
-                            fields = (
-                                delete_keyword = Required(DeleteKeyword),
-                                expression = Required(Expression),
                                 semicolon = Required(Semicolon)
                             )
                         )
@@ -3371,6 +3361,10 @@ codegen_language_macros::compile!(Language(
                                             model = Prefix,
                                             enabled = Till("0.5.0"),
                                             fields = (operator = Required(Plus))
+                                        ),
+                                        PrecedenceOperator(
+                                            model = Prefix,
+                                            fields = (operator = Required(DeleteKeyword))
                                         )
                                     ]
                                 ),

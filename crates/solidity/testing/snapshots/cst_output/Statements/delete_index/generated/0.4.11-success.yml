@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ delete foo[bar];                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - (Statements): # "delete foo[bar];" (0..16)
+      - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "delete foo[bar];" (0..16)
+          - (expression꞉ Expression) ► (variant꞉ PrefixExpression): # "delete foo[bar]" (0..15)
+              - (operator꞉ DeleteKeyword): "delete" # (0..6)
+              - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # " foo[bar]" (6..15)
+                  - (operand꞉ Expression): # " foo" (6..10)
+                      - (leading_trivia꞉ Whitespace): " " # (6..7)
+                      - (variant꞉ Identifier): "foo" # (7..10)
+                  - (open_bracket꞉ OpenBracket): "[" # (10..11)
+                  - (start꞉ Expression) ► (variant꞉ Identifier): "bar" # (11..14)
+                  - (close_bracket꞉ CloseBracket): "]" # (14..15)
+          - (semicolon꞉ Semicolon): ";" # (15..16)

@@ -940,7 +940,6 @@ Statement = ExpressionStatement
           | DoWhileStatement
           | ContinueStatement
           | BreakStatement
-          | DeleteStatement
           | ReturnStatement
           | ThrowStatement (* Deprecated in 0.5.0 *)
           | EmitStatement (* Introduced in 0.4.21 *)
@@ -1065,10 +1064,6 @@ EmitStatement = EMIT_KEYWORD
                 IdentifierPath
                 ArgumentsDeclaration
                 SEMICOLON;
-
-DeleteStatement = DELETE_KEYWORD
-                  Expression
-                  SEMICOLON;
 
 (* 4.4. Error Handling: *)
 

@@ -15,6 +15,16 @@ fn contextual_keywords() -> Result<()> {
 }
 
 #[test]
+fn delete_identifier() -> Result<()> {
+    run("Statements", "delete_identifier")
+}
+
+#[test]
+fn delete_index() -> Result<()> {
+    run("Statements", "delete_index")
+}
+
+#[test]
 fn invalid_termination() -> Result<()> {
     run("Statements", "invalid_termination")
 }
