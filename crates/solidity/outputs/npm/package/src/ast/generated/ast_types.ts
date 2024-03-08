@@ -2883,12 +2883,12 @@ export class FunctionCallExpression {
 
 export class CallOptionsExpression {
   private readonly fetch = once(() => {
-    const [$operand, $openBrace, $arguments, $closeBrace] = ast_internal.selectSequence(this.cst);
+    const [$operand, $openBrace, $options, $closeBrace] = ast_internal.selectSequence(this.cst);
 
     return {
       operand: new Expression($operand as RuleNode),
       openBrace: $openBrace as TokenNode,
-      arguments: new CallOptions($arguments as RuleNode),
+      options: new CallOptions($options as RuleNode),
       closeBrace: $closeBrace as TokenNode,
     };
   });
@@ -2905,8 +2905,8 @@ export class CallOptionsExpression {
     return this.fetch().openBrace;
   }
 
-  public get arguments(): CallOptions {
-    return this.fetch().arguments;
+  public get options(): CallOptions {
+    return this.fetch().options;
   }
 
   public get closeBrace(): TokenNode {

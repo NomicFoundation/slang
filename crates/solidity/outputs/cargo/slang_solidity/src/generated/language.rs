@@ -2119,7 +2119,7 @@ impl Language {
                                     TokenKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . call_options (input) . with_label (NodeLabel :: Arguments) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
+                            seq . elem (self . call_options (input) . with_label (NodeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
                             seq.elem_labeled(
                                 NodeLabel::CloseBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(

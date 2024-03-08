@@ -343,6 +343,7 @@ pub enum NodeLabel {
     OpenBracket,
     OpenParen,
     Operator,
+    Options,
     Overridden,
     OverrideKeyword,
     Parameters,

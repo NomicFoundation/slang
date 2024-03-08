@@ -19,7 +19,7 @@ Tree:
                           - (item꞉ Identifier): "FooBar" # (6..12)
               - (close_paren꞉ CloseParen): ")" # (12..13)
           - (open_brace꞉ OpenBrace): "{" # (13..14)
-          - (arguments꞉ CallOptions): # "value: 5" (14..22)
+          - (options꞉ CallOptions): # "value: 5" (14..22)
               - (item꞉ NamedArgument): # "value: 5" (14..22)
                   - (name꞉ Identifier): "value" # (14..19)
                   - (colon꞉ Colon): ":" # (19..20)

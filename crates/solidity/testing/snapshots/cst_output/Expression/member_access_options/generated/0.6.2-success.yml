@@ -12,7 +12,7 @@ Tree:
           - (period꞉ Period): "." # (3..4)
           - (member꞉ MemberAccess) ► (variant꞉ Identifier): "deposit" # (4..11)
       - (open_brace꞉ OpenBrace): "{" # (11..12)
-      - (arguments꞉ CallOptions): # "value: 100" (12..22)
+      - (options꞉ CallOptions): # "value: 100" (12..22)
           - (item꞉ NamedArgument): # "value: 100" (12..22)
               - (name꞉ Identifier): "value" # (12..17)
               - (colon꞉ Colon): ":" # (17..18)
