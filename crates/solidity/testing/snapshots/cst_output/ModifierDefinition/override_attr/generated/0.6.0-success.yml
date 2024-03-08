@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ modifier mod(uint a) override { _; }                                             │ 0..36
+
+Errors: []
+
+Tree:
+  - (ModifierDefinition): # "modifier mod(uint a) override { _; }\n" (0..37)
+      - (modifier_keyword꞉ ModifierKeyword): "modifier" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "mod" # (9..12)
+      - (parameters꞉ ParametersDeclaration): # "(uint a)" (12..20)
+          - (open_paren꞉ OpenParen): "(" # (12..13)
+          - (parameters꞉ Parameters): # "uint a" (13..19)
+              - (item꞉ Parameter): # "uint a" (13..19)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (13..17)
+                  - (leading_trivia꞉ Whitespace): " " # (17..18)
+                  - (name꞉ Identifier): "a" # (18..19)
+          - (close_paren꞉ CloseParen): ")" # (19..20)
+      - (attributes꞉ ModifierAttributes): # " override" (20..29)
+          - (item꞉ ModifierAttribute) ► (variant꞉ OverrideSpecifier): # " override" (20..29)
+              - (leading_trivia꞉ Whitespace): " " # (20..21)
+              - (override_keyword꞉ OverrideKeyword): "override" # (21..29)
+      - (body꞉ FunctionBody) ► (variant꞉ Block): # " { _; }\n" (29..37)
+          - (leading_trivia꞉ Whitespace): " " # (29..30)
+          - (open_brace꞉ OpenBrace): "{" # (30..31)
+          - (statements꞉ Statements): # " _;" (31..34)
+              - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # " _;" (31..34)
+                  - (expression꞉ Expression): # " _" (31..33)
+                      - (leading_trivia꞉ Whitespace): " " # (31..32)
+                      - (variant꞉ Identifier): "_" # (32..33)
+                  - (semicolon꞉ Semicolon): ";" # (33..34)
+          - (leading_trivia꞉ Whitespace): " " # (34..35)
+          - (close_brace꞉ CloseBrace): "}" # (35..36)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (36..37)

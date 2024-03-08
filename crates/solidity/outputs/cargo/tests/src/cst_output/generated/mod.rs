@@ -24,6 +24,7 @@ mod hex_string_literals;
 mod import_directive;
 mod interface_definition;
 mod mapping_type;
+mod modifier_definition;
 mod new_expression;
 mod pragma_directive;
 mod receive_function_definition;
