@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
+use codegen_language_definition::model;
+
 use crate::visitor::{GrammarVisitor, Visitable};
 use crate::{
     KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
@@ -53,6 +55,25 @@ impl Visitable for TriviaParserDefinitionRef {
     }
 }
 
+/// How many tokens have to be matched to trigger the error recovery.
+/// For ambiguous syntaxes this needs to be set to at least N, where N
+/// is the token lookahead required to disambiguate the syntax.
+///
+// By default, we assume no lookahead (0) is required to recover from
+// unrecognized body between delimiters, so it's always triggered.
+#[derive(Clone, Debug, Default)]
+pub struct DelimitedRecoveryTokenThreshold(pub u8);
+
+impl From<model::FieldDelimiters> for DelimitedRecoveryTokenThreshold {
+    fn from(delimiters: model::FieldDelimiters) -> Self {
+        Self(
+            delimiters
+                .tokens_matched_acceptance_threshold
+                .unwrap_or(DelimitedRecoveryTokenThreshold::default().0),
+        )
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum ParserDefinitionNode {
     Versioned(Box<Self>, Vec<VersionQualityRange>),
@@ -66,7 +87,12 @@ pub enum ParserDefinitionNode {
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
-    DelimitedBy(Labeled<Box<Self>>, Box<Self>, Labeled<Box<Self>>),
+    DelimitedBy(
+        Labeled<Box<Self>>,
+        Box<Self>,
+        Labeled<Box<Self>>,
+        DelimitedRecoveryTokenThreshold,
+    ),
     SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
     TerminatedBy(Box<Self>, Labeled<Box<Self>>),
 }
@@ -115,7 +141,7 @@ impl Visitable for ParserDefinitionNode {
                 }
             }
 
-            Self::DelimitedBy(open, body, close) => {
+            Self::DelimitedBy(open, body, close, ..) => {
                 open.accept_visitor(visitor);
                 body.accept_visitor(visitor);
                 close.accept_visitor(visitor);

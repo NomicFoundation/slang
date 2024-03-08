@@ -10,11 +10,11 @@ use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, 
 use indexmap::IndexMap;
 
 use crate::{
-    Grammar, GrammarElement, KeywordScannerDefinition, KeywordScannerDefinitionNode,
-    KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition, ParserDefinitionNode,
-    PrecedenceOperatorModel, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
-    ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
-    VersionQualityRange,
+    DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
+    KeywordScannerDefinitionNode, KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition,
+    ParserDefinitionNode, PrecedenceOperatorModel, PrecedenceParserDefinition,
+    PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
+    TriviaParserDefinition, VersionQuality, VersionQualityRange,
 };
 
 /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
@@ -610,7 +610,8 @@ fn resolve_sequence_like(
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
-            ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close)
+            let threshold = DelimitedRecoveryTokenThreshold::from(delimiters);
+            ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close, threshold)
         };
         // Replace with a new delimited node
         fields.insert(

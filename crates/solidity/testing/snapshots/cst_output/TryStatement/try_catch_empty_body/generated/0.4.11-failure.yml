@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ try foo() {                                                                      │ 0..11
+  2  │ } catch {                                                                        │ 12..21
+  3  │ }                                                                                │ 22..23
+
+Errors: # 1 total
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_catch_empty_body/input.sol:1:1]
+       │
+     1 │ ╭─▶ try foo() {
+       ┆ ┆   
+     3 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): "try foo() {\n} catch {\n}\n" # (0..24)

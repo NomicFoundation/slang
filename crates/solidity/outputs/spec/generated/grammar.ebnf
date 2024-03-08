@@ -1123,6 +1123,7 @@ Expression = AssignmentExpression
            | PostfixExpression
            | PrefixExpression
            | FunctionCallExpression
+           | CallOptionsExpression
            | MemberAccessExpression
            | IndexAccessExpression
            | NewExpression
@@ -1146,10 +1147,6 @@ IndexAccessEnd = COLON
 
 (* 5.2. Function Calls: *)
 
-(* Introduced in 0.6.2 *)
-FunctionCallOptions = NamedArgumentGroups (* Introduced in 0.6.2 and deprecated in 0.8.0. *)
-                    | NamedArgumentGroup; (* Introduced in 0.8.0 *)
-
 ArgumentsDeclaration = PositionalArgumentsDeclaration
                      | NamedArgumentsDeclaration;
 
@@ -1163,14 +1160,14 @@ NamedArgumentsDeclaration = OPEN_PAREN
                             NamedArgumentGroup?
                             CLOSE_PAREN;
 
-(* Introduced in 0.6.2 and deprecated in 0.8.0. *)
-NamedArgumentGroups = NamedArgumentGroup+;
-
 NamedArgumentGroup = OPEN_BRACE
                      NamedArguments
                      CLOSE_BRACE;
 
 NamedArguments = (NamedArgument (COMMA NamedArgument)*)?;
+
+(* Introduced in 0.6.2 *)
+CallOptions = NamedArgument (COMMA NamedArgument)*;
 
 NamedArgument = IDENTIFIER
                 COLON

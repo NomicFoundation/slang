@@ -3378,12 +3378,29 @@ codegen_language_macros::compile!(Language(
                                     name = FunctionCallExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
+                                        fields = (arguments = Required(ArgumentsDeclaration))
+                                    )]
+                                ),
+                                PrecedenceExpression(
+                                    name = CallOptionsExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        enabled = From("0.6.2"),
+                                        error_recovery = FieldsErrorRecovery(
+                                            delimiters = FieldDelimiters(
+                                                open = open_brace,
+                                                close = close_brace,
+                                                // NOTE: Despite `CallOptions` requiring at least one element,
+                                                // we can only recover if we found at least two tokens (`ident:`)
+                                                // in the body, as this may be otherwise ambiguous with
+                                                // `try <EXPR> { func() } catch {}`.
+                                                tokens_matched_acceptance_threshold = 2
+                                            )
+                                        ),
                                         fields = (
-                                            options = Optional(
-                                                reference = FunctionCallOptions,
-                                                enabled = From("0.6.2")
-                                            ),
-                                            arguments = Required(ArgumentsDeclaration)
+                                            open_brace = Required(OpenBrace),
+                                            options = Required(CallOptions),
+                                            close_brace = Required(CloseBrace)
                                         )
                                     )]
                                 ),
@@ -3457,20 +3474,6 @@ codegen_language_macros::compile!(Language(
                     title = "Function Calls",
                     items = [
                         Enum(
-                            name = FunctionCallOptions,
-                            enabled = From("0.6.2"),
-                            variants = [
-                                EnumVariant(
-                                    reference = NamedArgumentGroups,
-                                    enabled = Range(from = "0.6.2", till = "0.8.0")
-                                ),
-                                EnumVariant(
-                                    reference = NamedArgumentGroup,
-                                    enabled = From("0.8.0")
-                                )
-                            ]
-                        ),
-                        Enum(
                             name = ArgumentsDeclaration,
                             variants = [
                                 EnumVariant(reference = PositionalArgumentsDeclaration),
@@ -3507,11 +3510,6 @@ codegen_language_macros::compile!(Language(
                                 close_paren = Required(CloseParen)
                             )
                         ),
-                        Repeated(
-                            name = NamedArgumentGroups,
-                            reference = NamedArgumentGroup,
-                            enabled = Range(from = "0.6.2", till = "0.8.0")
-                        ),
                         Struct(
                             name = NamedArgumentGroup,
                             error_recovery = FieldsErrorRecovery(
@@ -3529,6 +3527,14 @@ codegen_language_macros::compile!(Language(
                             reference = NamedArgument,
                             separator = Comma,
                             allow_empty = true
+                        ),
+                        Separated(
+                            name = CallOptions,
+                            reference = NamedArgument,
+                            separator = Comma,
+                            enabled = From("0.6.2"),
+                            // These cannot be empty as they're ambiguous with `try <EXPR> {} catch {}`
+                            allow_empty = false
                         ),
                         Struct(
                             name = NamedArgument,

@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ try foo() { x: 1 } {                                                             │ 0..20
+  2  │   bar();                                                                         │ 21..29
+  3  │ } catch {                                                                        │ 30..39
+  4  │ }                                                                                │ 40..41
+
+Errors: # 2 total
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_expr_call_options/input.sol:1:14]
+       │
+     1 │ try foo() { x: 1 } {
+       │              ──┬─  
+       │                ╰─── Error occurred here.
+    ───╯
+  - >
+    Error: Expected CatchKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_expr_call_options/input.sol:1:19]
+       │
+     1 │ ╭─▶ try foo() { x: 1 } {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+      - (try_keyword꞉ TryKeyword): "try" # (0..3)
+      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
+          - (operand꞉ Expression): # " foo" (3..7)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "foo" # (4..7)
+          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (7..9)
+              - (open_paren꞉ OpenParen): "(" # (7..8)
+              - (arguments꞉ PositionalArguments): [] # (8..8)
+              - (close_paren꞉ CloseParen): ")" # (8..9)
+      - (body꞉ Block): # " { x: 1 }" (9..18)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (open_brace꞉ OpenBrace): "{" # (10..11)
+          - (statements꞉ Statements): # " x" (11..13)
+              - (item꞉ Statement) ► (variant꞉ ExpressionStatement) ► (expression꞉ Expression): # " x" (11..13)
+                  - (leading_trivia꞉ Whitespace): " " # (11..12)
+                  - (variant꞉ Identifier): "x" # (12..13)
+          - (SKIPPED): ": 1 " # (13..17)
+          - (close_brace꞉ CloseBrace): "}" # (17..18)
+      - (SKIPPED): " {\n  bar();\n} catch {\n}\n" # (18..42)

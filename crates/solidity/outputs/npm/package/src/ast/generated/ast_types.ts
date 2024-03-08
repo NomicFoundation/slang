@@ -2860,11 +2860,10 @@ export class PrefixExpression {
 
 export class FunctionCallExpression {
   private readonly fetch = once(() => {
-    const [$operand, $options, $arguments] = ast_internal.selectSequence(this.cst);
+    const [$operand, $arguments] = ast_internal.selectSequence(this.cst);
 
     return {
       operand: new Expression($operand as RuleNode),
-      options: $options === null ? undefined : new FunctionCallOptions($options as RuleNode),
       arguments: new ArgumentsDeclaration($arguments as RuleNode),
     };
   });
@@ -2877,12 +2876,41 @@ export class FunctionCallExpression {
     return this.fetch().operand;
   }
 
-  public get options(): FunctionCallOptions | undefined {
+  public get arguments(): ArgumentsDeclaration {
+    return this.fetch().arguments;
+  }
+}
+
+export class CallOptionsExpression {
+  private readonly fetch = once(() => {
+    const [$operand, $openBrace, $options, $closeBrace] = ast_internal.selectSequence(this.cst);
+
+    return {
+      operand: new Expression($operand as RuleNode),
+      openBrace: $openBrace as TokenNode,
+      options: new CallOptions($options as RuleNode),
+      closeBrace: $closeBrace as TokenNode,
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.CallOptionsExpression);
+  }
+
+  public get operand(): Expression {
+    return this.fetch().operand;
+  }
+
+  public get openBrace(): TokenNode {
+    return this.fetch().openBrace;
+  }
+
+  public get options(): CallOptions {
     return this.fetch().options;
   }
 
-  public get arguments(): ArgumentsDeclaration {
-    return this.fetch().arguments;
+  public get closeBrace(): TokenNode {
+    return this.fetch().closeBrace;
   }
 }
 
@@ -4700,6 +4728,7 @@ export class Expression {
     | PostfixExpression
     | PrefixExpression
     | FunctionCallExpression
+    | CallOptionsExpression
     | MemberAccessExpression
     | IndexAccessExpression
     | NewExpression
@@ -4746,6 +4775,8 @@ export class Expression {
         return new PrefixExpression(variant as RuleNode);
       case RuleKind.FunctionCallExpression:
         return new FunctionCallExpression(variant as RuleNode);
+      case RuleKind.CallOptionsExpression:
+        return new CallOptionsExpression(variant as RuleNode);
       case RuleKind.MemberAccessExpression:
         return new MemberAccessExpression(variant as RuleNode);
       case RuleKind.IndexAccessExpression:
@@ -4799,6 +4830,7 @@ export class Expression {
     | PostfixExpression
     | PrefixExpression
     | FunctionCallExpression
+    | CallOptionsExpression
     | MemberAccessExpression
     | IndexAccessExpression
     | NewExpression
@@ -4833,30 +4865,6 @@ export class MemberAccess {
   }
 
   public get variant(): TokenNode {
-    return this.fetch();
-  }
-}
-
-export class FunctionCallOptions {
-  private readonly fetch: () => NamedArgumentGroups | NamedArgumentGroup = once(() => {
-    const variant = ast_internal.selectChoice(this.cst);
-
-    switch (variant.kind) {
-      case RuleKind.NamedArgumentGroups:
-        return new NamedArgumentGroups(variant as RuleNode);
-      case RuleKind.NamedArgumentGroup:
-        return new NamedArgumentGroup(variant as RuleNode);
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.FunctionCallOptions);
-  }
-
-  public get variant(): NamedArgumentGroups | NamedArgumentGroup {
     return this.fetch();
   }
 }
@@ -5539,21 +5547,6 @@ export class CatchClauses {
   }
 }
 
-export class NamedArgumentGroups {
-  private readonly fetch = once(() => {
-    const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new NamedArgumentGroup(item as RuleNode));
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.NamedArgumentGroups);
-  }
-
-  public get items(): readonly NamedArgumentGroup[] {
-    return this.fetch();
-  }
-}
-
 export class StringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
@@ -5891,6 +5884,26 @@ export class NamedArguments {
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.NamedArguments);
+  }
+
+  public get items(): readonly NamedArgument[] {
+    return this.fetch().items;
+  }
+
+  public get separators(): readonly TokenNode[] {
+    return this.fetch().separators;
+  }
+}
+
+export class CallOptions {
+  private readonly fetch = once(() => {
+    const [items, separators] = ast_internal.selectSeparated(this.cst);
+
+    return { items: items.map((item) => new NamedArgument(item as RuleNode)), separators: separators as TokenNode[] };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.CallOptions);
   }
 
   public get items(): readonly NamedArgument[] {

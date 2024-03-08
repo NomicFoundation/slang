@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ new Foo                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ NewExpression): # "new Foo\n" (0..8)
+      - (new_keyword꞉ NewKeyword): "new" # (0..3)
+      - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo\n" (3..8)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (item꞉ Identifier): "Foo" # (4..7)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)

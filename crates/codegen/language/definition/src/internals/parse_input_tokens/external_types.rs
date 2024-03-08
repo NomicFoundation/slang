@@ -140,6 +140,15 @@ impl ParseInputTokens for usize {
     }
 }
 
+impl ParseInputTokens for u8 {
+    fn parse_value(input: ParseStream<'_>, _: &mut ErrorsCollection) -> Result<Self> {
+        let literal = ParseHelpers::syn::<syn::LitInt>(input)?;
+        let value = literal.base10_parse::<u8>()?;
+
+        Ok(value)
+    }
+}
+
 impl<T: ParseInputTokens> ParseInputTokens for Vec<T> {
     fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         Ok(ParseHelpers::sequence(input, errors))

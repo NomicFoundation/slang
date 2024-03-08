@@ -124,6 +124,7 @@ pub fn select_sequence(
         RuleKind::PostfixExpression => selector.postfix_expression()?,
         RuleKind::PrefixExpression => selector.prefix_expression()?,
         RuleKind::FunctionCallExpression => selector.function_call_expression()?,
+        RuleKind::CallOptionsExpression => selector.call_options_expression()?,
         RuleKind::MemberAccessExpression => selector.member_access_expression()?,
         RuleKind::IndexAccessExpression => selector.index_access_expression()?,
         RuleKind::IndexAccessEnd => selector.index_access_end()?,
@@ -1161,8 +1162,18 @@ impl Selector {
     fn function_call_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::FunctionCallOptions))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?),
+        ])
+    }
+}
+
+impl Selector {
+    fn call_options_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::CallOptions))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::CloseBrace))?),
         ])
     }
 }
@@ -1520,7 +1531,6 @@ pub fn select_choice(
         RuleKind::ForStatementCondition => selector.for_statement_condition()?,
         RuleKind::Expression => selector.expression()?,
         RuleKind::MemberAccess => selector.member_access()?,
-        RuleKind::FunctionCallOptions => selector.function_call_options()?,
         RuleKind::ArgumentsDeclaration => selector.arguments_declaration()?,
         RuleKind::NumberUnit => selector.number_unit()?,
         RuleKind::StringExpression => selector.string_expression()?,
@@ -1949,6 +1959,7 @@ impl Selector {
                 RuleKind::PostfixExpression,
                 RuleKind::PrefixExpression,
                 RuleKind::FunctionCallExpression,
+                RuleKind::CallOptionsExpression,
                 RuleKind::MemberAccessExpression,
                 RuleKind::IndexAccessExpression,
                 RuleKind::NewExpression,
@@ -1973,14 +1984,6 @@ impl Selector {
     fn member_access(&mut self) -> Result<JsObject> {
         self.select(|node| {
             node.is_token_with_kinds(&[TokenKind::Identifier, TokenKind::AddressKeyword])
-        })
-    }
-}
-
-impl Selector {
-    fn function_call_options(&mut self) -> Result<JsObject> {
-        self.select(|node| {
-            node.is_rule_with_kinds(&[RuleKind::NamedArgumentGroups, RuleKind::NamedArgumentGroup])
         })
     }
 }
@@ -2245,7 +2248,6 @@ pub fn select_repeated(
         RuleKind::FunctionTypeAttributes => selector.function_type_attributes()?,
         RuleKind::Statements => selector.statements()?,
         RuleKind::CatchClauses => selector.catch_clauses()?,
-        RuleKind::NamedArgumentGroups => selector.named_argument_groups()?,
         RuleKind::StringLiterals => selector.string_literals()?,
         RuleKind::HexStringLiterals => selector.hex_string_literals()?,
         RuleKind::UnicodeStringLiterals => selector.unicode_string_literals()?,
@@ -2485,20 +2487,6 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_argument_groups(&mut self) -> Result<Vec<JsObject>> {
-        let mut items = vec![];
-
-        while let Some(item) =
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArgumentGroup))?
-        {
-            items.push(item);
-        }
-
-        Ok(items)
-    }
-}
-
-impl Selector {
     fn string_literals(&mut self) -> Result<Vec<JsObject>> {
         let mut items = vec![];
 
@@ -2597,6 +2585,7 @@ pub fn select_separated(
         RuleKind::TupleDeconstructionElements => selector.tuple_deconstruction_elements()?,
         RuleKind::PositionalArguments => selector.positional_arguments()?,
         RuleKind::NamedArguments => selector.named_arguments()?,
+        RuleKind::CallOptions => selector.call_options()?,
         RuleKind::TupleValues => selector.tuple_values()?,
         RuleKind::ArrayValues => selector.array_values()?,
         RuleKind::IdentifierPath => selector.identifier_path()?,
@@ -2907,6 +2896,30 @@ impl Selector {
 
 impl Selector {
     fn named_arguments(&mut self) -> Result<Vec<Vec<JsObject>>> {
+        let mut separated = vec![];
+        let mut separators = vec![];
+
+        if let Some(first) =
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?
+        {
+            separated.push(first);
+
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::Comma))?
+            {
+                separators.push(separator);
+
+                separated
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArgument))?);
+            }
+        }
+
+        Ok(vec![separated, separators])
+    }
+}
+
+impl Selector {
+    fn call_options(&mut self) -> Result<Vec<Vec<JsObject>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 

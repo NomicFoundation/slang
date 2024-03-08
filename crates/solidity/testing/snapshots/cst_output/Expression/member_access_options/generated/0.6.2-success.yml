@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo.deposit{value: 100}                                                          │ 0..23
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ CallOptionsExpression): # "foo.deposit{value: 100}\n" (0..24)
+      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "foo.deposit" (0..11)
+          - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
+          - (period꞉ Period): "." # (3..4)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "deposit" # (4..11)
+      - (open_brace꞉ OpenBrace): "{" # (11..12)
+      - (options꞉ CallOptions): # "value: 100" (12..22)
+          - (item꞉ NamedArgument): # "value: 100" (12..22)
+              - (name꞉ Identifier): "value" # (12..17)
+              - (colon꞉ Colon): ":" # (17..18)
+              - (value꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 100" (18..22)
+                  - (leading_trivia꞉ Whitespace): " " # (18..19)
+                  - (literal꞉ DecimalLiteral): "100" # (19..22)
+      - (close_brace꞉ CloseBrace): "}" # (22..23)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (23..24)

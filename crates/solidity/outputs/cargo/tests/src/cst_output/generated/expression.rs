@@ -263,8 +263,28 @@ fn member_access_index_access() -> Result<()> {
 }
 
 #[test]
+fn member_access_options() -> Result<()> {
+    run("Expression", "member_access_options")
+}
+
+#[test]
+fn new_expression() -> Result<()> {
+    run("Expression", "new_expression")
+}
+
+#[test]
+fn new_expression_options() -> Result<()> {
+    run("Expression", "new_expression_options")
+}
+
+#[test]
 fn overlapping_operators() -> Result<()> {
     run("Expression", "overlapping_operators")
+}
+
+#[test]
+fn paren_expression_options() -> Result<()> {
+    run("Expression", "paren_expression_options")
 }
 
 #[test]

@@ -119,6 +119,16 @@ impl WriteOutputTokens for usize {
     }
 }
 
+impl WriteOutputTokens for u8 {
+    fn write_output_tokens(&self) -> TokenStream {
+        let value = Literal::u8_suffixed(*self);
+
+        quote! {
+            #value.into()
+        }
+    }
+}
+
 impl<T: WriteOutputTokens> WriteOutputTokens for Vec<T> {
     fn write_output_tokens(&self) -> TokenStream {
         let items = self.iter().map(T::write_output_tokens);
