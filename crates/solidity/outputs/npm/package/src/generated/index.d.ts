@@ -317,6 +317,7 @@ export namespace kinds {
     OpenBracket = "OpenBracket",
     OpenParen = "OpenParen",
     Operator = "Operator",
+    Options = "Options",
     Overridden = "Overridden",
     OverrideKeyword = "OverrideKeyword",
     Parameters = "Parameters",
