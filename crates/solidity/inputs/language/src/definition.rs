@@ -2696,6 +2696,7 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = ExternalKeyword),
                                 EnumVariant(reference = PrivateKeyword),
                                 EnumVariant(reference = PublicKeyword),
+                                EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
                                 EnumVariant(reference = PureKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = ViewKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = PayableKeyword)

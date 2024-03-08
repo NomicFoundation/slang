@@ -887,6 +887,7 @@ FunctionTypeAttribute = INTERNAL_KEYWORD
                       | EXTERNAL_KEYWORD
                       | PRIVATE_KEYWORD
                       | PUBLIC_KEYWORD
+                      | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
                       | PURE_KEYWORD (* Introduced in 0.4.16 *)
                       | VIEW_KEYWORD (* Introduced in 0.4.16 *)
                       | PAYABLE_KEYWORD;

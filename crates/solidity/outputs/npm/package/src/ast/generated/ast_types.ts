@@ -4413,6 +4413,7 @@ export class FunctionTypeAttribute {
       case TokenKind.ExternalKeyword:
       case TokenKind.PrivateKeyword:
       case TokenKind.PublicKeyword:
+      case TokenKind.ConstantKeyword:
       case TokenKind.PureKeyword:
       case TokenKind.ViewKeyword:
       case TokenKind.PayableKeyword:
