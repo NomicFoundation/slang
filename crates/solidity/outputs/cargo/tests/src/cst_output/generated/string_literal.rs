@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn double_quote_unicode() -> Result<()> {
+    run("StringLiteral", "double_quote_unicode")
+}
+
+#[test]
 fn escape_cr_double_quote() -> Result<()> {
     run("StringLiteral", "escape_cr_double_quote")
 }
@@ -32,6 +37,11 @@ fn escape_lf_double_quote() -> Result<()> {
 #[test]
 fn escape_lf_single_quote() -> Result<()> {
     run("StringLiteral", "escape_lf_single_quote")
+}
+
+#[test]
+fn single_quote_unicode() -> Result<()> {
+    run("StringLiteral", "single_quote_unicode")
 }
 
 #[test]
