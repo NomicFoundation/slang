@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 5.1.fromUint()                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ FunctionCallExpression): # "5.1.fromUint()\n" (0..15)
+      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "5.1.fromUint" (0..12)
+          - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "5.1" # (0..3)
+          - (period꞉ Period): "." # (3..4)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "fromUint" # (4..12)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (12..15)
+          - (open_paren꞉ OpenParen): "(" # (12..13)
+          - (arguments꞉ PositionalArguments): [] # (13..13)
+          - (close_paren꞉ CloseParen): ")" # (13..14)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (14..15)

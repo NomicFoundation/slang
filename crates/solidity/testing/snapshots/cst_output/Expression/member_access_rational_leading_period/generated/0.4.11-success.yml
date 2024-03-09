@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ .1.fromUint()                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ FunctionCallExpression): # ".1.fromUint()\n" (0..14)
+      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # ".1.fromUint" (0..11)
+          - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): ".1" # (0..2)
+          - (period꞉ Period): "." # (2..3)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "fromUint" # (3..11)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (11..14)
+          - (open_paren꞉ OpenParen): "(" # (11..12)
+          - (arguments꞉ PositionalArguments): [] # (12..12)
+          - (close_paren꞉ CloseParen): ")" # (12..13)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)

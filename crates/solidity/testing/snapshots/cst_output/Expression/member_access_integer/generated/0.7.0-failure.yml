@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 5.fromUint()                                                                     │ 0..12
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/member_access_integer/input.sol:1:1]
+       │
+     1 │ 5.fromUint()
+       │ ──────┬──────  
+       │       ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): "5.fromUint()\n" # (0..13)
