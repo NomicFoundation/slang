@@ -6960,6 +6960,22 @@ impl Language {
             } else {
                 false
             },
+            if self.version_is_at_least_0_5_0 {
+                scan_not_followed_by!(
+                    input,
+                    scan_sequence!(
+                        self.decimal_digits(input),
+                        scan_optional!(
+                            input,
+                            scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input))
+                        ),
+                        scan_optional!(input, self.decimal_exponent(input))
+                    ),
+                    self.identifier_start(input)
+                )
+            } else {
+                false
+            },
             scan_not_followed_by!(
                 input,
                 scan_sequence!(

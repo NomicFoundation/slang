@@ -3692,6 +3692,21 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
+                                // Since 0.5.0, only consume a dot if it's followed by a digit:
+                                TokenDefinition(
+                                    enabled = From("0.5.0"),
+                                    scanner = TrailingContext(
+                                        scanner = Sequence([
+                                            Fragment(DecimalDigits),
+                                            Optional(Sequence([
+                                                Atom("."),
+                                                Fragment(DecimalDigits)
+                                            ])),
+                                            Optional(Fragment(DecimalExponent))
+                                        ]),
+                                        not_followed_by = Fragment(IdentifierStart)
+                                    )
+                                ),
                                 // A dot and a fraction (without an integer) is enabled in all versions:
                                 TokenDefinition(
                                     scanner = TrailingContext(
