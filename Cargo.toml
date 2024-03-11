@@ -79,7 +79,7 @@ anyhow = { version = "1.0.80", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
-clap = { version = "4.5.1", features = ["derive", "wrap_help"] }
+clap = { version = "4.5.2", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.1" }
 console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
@@ -99,7 +99,7 @@ proc-macro2 = { version = "1.0.78" }
 quote = { version = "1.0.35" }
 rayon = { version = "1.9.0" }
 regex = { version = "1.10.3" }
-reqwest = { version = "0.11.24", features = ["blocking"] }
+reqwest = { version = "0.11.25", features = ["blocking"] }
 semver = { version = "1.0.22", features = ["serde"] }
 serde = { version = "1.0.197", features = ["derive", "rc"] }
 serde_json = { version = "1.0.114", features = ["preserve_order"] }
