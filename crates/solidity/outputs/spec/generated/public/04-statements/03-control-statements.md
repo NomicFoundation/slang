@@ -70,10 +70,4 @@
 
 <pre ebnf-snippet="EmitStatement" style="display: none;"><span class="cm">(* Introduced in 0.4.21 *)</span><br /><a href="#EmitStatement"><span class="k">EmitStatement</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#EmitKeyword"><span class="k">EMIT_KEYWORD</span></a><br /><span class="o">                </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><br /><span class="o">                </span><a href="../../05-expressions/02-function-calls#ArgumentsDeclaration"><span class="k">ArgumentsDeclaration</span></a><br /><span class="o">                </span><a href="../../01-file-structure/09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
 
-```{ .ebnf #DeleteStatement }
-
-```
-
-<pre ebnf-snippet="DeleteStatement" style="display: none;"><a href="#DeleteStatement"><span class="k">DeleteStatement</span></a><span class="o"> = </span><a href="../../01-file-structure/08-keywords#DeleteKeyword"><span class="k">DELETE_KEYWORD</span></a><br /><span class="o">                  </span><a href="../../05-expressions/01-base-expressions#Expression"><span class="k">Expression</span></a><br /><span class="o">                  </span><a href="../../01-file-structure/09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
-
 --8<-- "crates/solidity/inputs/language/docs/04-statements/03-control-statements.md"

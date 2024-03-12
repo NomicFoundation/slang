@@ -35,6 +35,16 @@ fn areturn() -> Result<()> {
 }
 
 #[test]
+fn delete() -> Result<()> {
+    run("Expression", "delete")
+}
+
+#[test]
+fn delete_conditional() -> Result<()> {
+    run("Expression", "delete_conditional")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run("Expression", "function_call")
 }

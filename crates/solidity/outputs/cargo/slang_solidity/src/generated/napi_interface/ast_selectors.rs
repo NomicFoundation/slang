@@ -102,7 +102,6 @@ pub fn select_sequence(
         RuleKind::BreakStatement => selector.break_statement()?,
         RuleKind::ReturnStatement => selector.return_statement()?,
         RuleKind::EmitStatement => selector.emit_statement()?,
-        RuleKind::DeleteStatement => selector.delete_statement()?,
         RuleKind::TryStatement => selector.try_statement()?,
         RuleKind::CatchClause => selector.catch_clause()?,
         RuleKind::CatchClauseError => selector.catch_clause_error()?,
@@ -942,16 +941,6 @@ impl Selector {
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EmitKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?),
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
-        ])
-    }
-}
-
-impl Selector {
-    fn delete_statement(&mut self) -> Result<Vec<Option<JsObject>>> {
-        Ok(vec![
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::DeleteKeyword))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
         ])
     }
@@ -1875,7 +1864,6 @@ impl Selector {
                 RuleKind::DoWhileStatement,
                 RuleKind::ContinueStatement,
                 RuleKind::BreakStatement,
-                RuleKind::DeleteStatement,
                 RuleKind::ReturnStatement,
                 RuleKind::ThrowStatement,
                 RuleKind::EmitStatement,
