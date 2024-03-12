@@ -1249,12 +1249,12 @@ StringLiterals = StringLiteral+;
 StringLiteral = SINGLE_QUOTED_STRING_LITERAL
               | DOUBLE_QUOTED_STRING_LITERAL;
 
-(* Introduced in 0.4.12 and deprecated in 0.7.0. *)
+(* Deprecated in 0.7.0 *)
 SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
 
 SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
 
-(* Introduced in 0.4.12 and deprecated in 0.7.0. *)
+(* Deprecated in 0.7.0 *)
 DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
 
 DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';

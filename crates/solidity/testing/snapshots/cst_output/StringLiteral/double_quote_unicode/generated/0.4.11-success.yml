@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "दिल"                                                                            │ 0..11
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '"दिल"\n' (0..12)
+      - (variant꞉ DoubleQuotedStringLiteral): '"दिल"' # (0..11)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)
