@@ -362,6 +362,7 @@ PROMISE_KEYWORD = "promise";
 
 PUBLIC_KEYWORD = "public";
 
+(* Introduced in 0.4.16 *)
 PURE_KEYWORD = "pure";
 
 (* Reserved in 0.6.0 *)
@@ -444,6 +445,7 @@ USING_KEYWORD = "using";
 (* Deprecated in 0.5.0 *)
 VAR_KEYWORD = "var";
 
+(* Introduced in 0.4.16 *)
 VIEW_KEYWORD = "view";
 
 (* Introduced in 0.6.0 *)
@@ -707,8 +709,8 @@ FunctionAttribute = ModifierInvocation
                   | PAYABLE_KEYWORD
                   | PRIVATE_KEYWORD
                   | PUBLIC_KEYWORD
-                  | PURE_KEYWORD
-                  | VIEW_KEYWORD
+                  | PURE_KEYWORD (* Introduced in 0.4.16 *)
+                  | VIEW_KEYWORD (* Introduced in 0.4.16 *)
                   | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
 
 OverrideSpecifier = OVERRIDE_KEYWORD
@@ -755,13 +757,14 @@ UnnamedFunctionAttributes = UnnamedFunctionAttribute*;
 (* Deprecated in 0.6.0 *)
 UnnamedFunctionAttribute = ModifierInvocation
                          | OverrideSpecifier
+                         | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
                          | EXTERNAL_KEYWORD
                          | INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
                          | PAYABLE_KEYWORD
                          | PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
                          | PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
-                         | PURE_KEYWORD
-                         | VIEW_KEYWORD;
+                         | PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+                         | VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
 
 (* Introduced in 0.6.0 *)
 FallbackFunctionDefinition = FALLBACK_KEYWORD
@@ -884,8 +887,9 @@ FunctionTypeAttribute = INTERNAL_KEYWORD
                       | EXTERNAL_KEYWORD
                       | PRIVATE_KEYWORD
                       | PUBLIC_KEYWORD
-                      | PURE_KEYWORD
-                      | VIEW_KEYWORD
+                      | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+                      | PURE_KEYWORD (* Introduced in 0.4.16 *)
+                      | VIEW_KEYWORD (* Introduced in 0.4.16 *)
                       | PAYABLE_KEYWORD;
 
 MappingType = MAPPING_KEYWORD

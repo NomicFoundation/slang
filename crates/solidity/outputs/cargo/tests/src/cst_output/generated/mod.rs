@@ -18,6 +18,7 @@ mod expression;
 mod fallback_function_definition;
 mod function_call_expression;
 mod function_definition;
+mod function_type;
 mod hex_number_expression;
 mod hex_string_literals;
 mod import_directive;
@@ -52,10 +53,11 @@ mod yul_label;
 mod yul_leave_statement;
 mod yul_variable_declaration_statement;
 
-pub const VERSION_BREAKS: [Version; 29] = [
+pub const VERSION_BREAKS: [Version; 30] = [
     Version::new(0, 4, 11),
     Version::new(0, 4, 12),
     Version::new(0, 4, 14),
+    Version::new(0, 4, 16),
     Version::new(0, 4, 21),
     Version::new(0, 4, 22),
     Version::new(0, 5, 0),

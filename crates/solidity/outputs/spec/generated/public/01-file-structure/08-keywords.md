@@ -458,7 +458,7 @@
 
 ```
 
-<pre ebnf-snippet="PureKeyword" style="display: none;"><a href="#PureKeyword"><span class="k">PURE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"pure"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="PureKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><a href="#PureKeyword"><span class="k">PURE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"pure"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ReceiveKeyword }
 
@@ -626,7 +626,7 @@
 
 ```
 
-<pre ebnf-snippet="ViewKeyword" style="display: none;"><a href="#ViewKeyword"><span class="k">VIEW_KEYWORD</span></a><span class="o"> = </span><span class="s2">"view"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ViewKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><a href="#ViewKeyword"><span class="k">VIEW_KEYWORD</span></a><span class="o"> = </span><span class="s2">"view"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VirtualKeyword }
 

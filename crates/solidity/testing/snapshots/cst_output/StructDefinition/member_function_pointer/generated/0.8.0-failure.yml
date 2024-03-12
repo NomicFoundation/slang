@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ struct State {                                                                   │ 0..14
+  2  │   bool accepts;                                                                  │ 15..30
+  3  │   function (byte) internal pure returns (uint) func;                             │ 31..83
+  4  │ }                                                                                │ 84..85
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or CloseParen or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or StringKeyword or UfixedKeyword or UintKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:3:13]
+       │
+     3 │   function (byte) internal pure returns (uint) func;
+       │             ──┬─  
+       │               ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (StructDefinition): # "struct State {\n  bool accepts;\n  function (byte) i..." (0..86)
+      - (struct_keyword꞉ StructKeyword): "struct" # (0..6)
+      - (leading_trivia꞉ Whitespace): " " # (6..7)
+      - (name꞉ Identifier): "State" # (7..12)
+      - (leading_trivia꞉ Whitespace): " " # (12..13)
+      - (open_brace꞉ OpenBrace): "{" # (13..14)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (14..15)
+      - (members꞉ StructMembers): # "  bool accepts;\n  function (byte) internal pure re..." (15..84)
+          - (item꞉ StructMember): # "  bool accepts;\n" (15..31)
+              - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "  bool" (15..21)
+                  - (leading_trivia꞉ Whitespace): "  " # (15..17)
+                  - (variant꞉ BoolKeyword): "bool" # (17..21)
+              - (leading_trivia꞉ Whitespace): " " # (21..22)
+              - (name꞉ Identifier): "accepts" # (22..29)
+              - (semicolon꞉ Semicolon): ";" # (29..30)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (30..31)
+          - (item꞉ StructMember): # "  function (byte) internal pure returns (uint) fun..." (31..84)
+              - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "  function (byte) internal pure returns (uint)" (31..77)
+                  - (leading_trivia꞉ Whitespace): "  " # (31..33)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (33..41)
+                  - (parameters꞉ ParametersDeclaration): # " (byte)" (41..48)
+                      - (leading_trivia꞉ Whitespace): " " # (41..42)
+                      - (open_paren꞉ OpenParen): "(" # (42..43)
+                      - (parameters꞉ Parameters): [] # (43..43)
+                      - (SKIPPED): "byte" # (43..47)
+                      - (close_paren꞉ CloseParen): ")" # (47..48)
+                  - (attributes꞉ FunctionTypeAttributes): # " internal pure" (48..62)
+                      - (item꞉ FunctionTypeAttribute): # " internal" (48..57)
+                          - (leading_trivia꞉ Whitespace): " " # (48..49)
+                          - (variant꞉ InternalKeyword): "internal" # (49..57)
+                      - (item꞉ FunctionTypeAttribute): # " pure" (57..62)
+                          - (leading_trivia꞉ Whitespace): " " # (57..58)
+                          - (variant꞉ PureKeyword): "pure" # (58..62)
+                  - (returns꞉ ReturnsDeclaration): # " returns (uint)" (62..77)
+                      - (leading_trivia꞉ Whitespace): " " # (62..63)
+                      - (returns_keyword꞉ ReturnsKeyword): "returns" # (63..70)
+                      - (variables꞉ ParametersDeclaration): # " (uint)" (70..77)
+                          - (leading_trivia꞉ Whitespace): " " # (70..71)
+                          - (open_paren꞉ OpenParen): "(" # (71..72)
+                          - (parameters꞉ Parameters): # "uint" (72..76)
+                              - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (72..76)
+                          - (close_paren꞉ CloseParen): ")" # (76..77)
+              - (leading_trivia꞉ Whitespace): " " # (77..78)
+              - (name꞉ Identifier): "func" # (78..82)
+              - (semicolon꞉ Semicolon): ";" # (82..83)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (83..84)
+      - (close_brace꞉ CloseBrace): "}" # (84..85)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (85..86)

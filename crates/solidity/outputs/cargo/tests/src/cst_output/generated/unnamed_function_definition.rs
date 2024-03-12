@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn constant_attribute() -> Result<()> {
+    run("UnnamedFunctionDefinition", "constant_attribute")
+}
+
+#[test]
 fn internal_attribute() -> Result<()> {
     run("UnnamedFunctionDefinition", "internal_attribute")
 }

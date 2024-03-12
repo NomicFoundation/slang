@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function (byte) internal pure returns (uint)                                     │ 0..44
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or CloseParen or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or StringKeyword or UfixedKeyword or UintKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol:1:11]
+       │
+     1 │ function (byte) internal pure returns (uint)
+       │           ──┬─  
+       │             ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (FunctionType): # "function (byte) internal pure returns (uint)\n" (0..45)
+      - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+      - (parameters꞉ ParametersDeclaration): # " (byte)" (8..15)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (open_paren꞉ OpenParen): "(" # (9..10)
+          - (parameters꞉ Parameters): [] # (10..10)
+          - (SKIPPED): "byte" # (10..14)
+          - (close_paren꞉ CloseParen): ")" # (14..15)
+      - (attributes꞉ FunctionTypeAttributes): # " internal pure" (15..29)
+          - (item꞉ FunctionTypeAttribute): # " internal" (15..24)
+              - (leading_trivia꞉ Whitespace): " " # (15..16)
+              - (variant꞉ InternalKeyword): "internal" # (16..24)
+          - (item꞉ FunctionTypeAttribute): # " pure" (24..29)
+              - (leading_trivia꞉ Whitespace): " " # (24..25)
+              - (variant꞉ PureKeyword): "pure" # (25..29)
+      - (returns꞉ ReturnsDeclaration): # " returns (uint)\n" (29..45)
+          - (leading_trivia꞉ Whitespace): " " # (29..30)
+          - (returns_keyword꞉ ReturnsKeyword): "returns" # (30..37)
+          - (variables꞉ ParametersDeclaration): # " (uint)\n" (37..45)
+              - (leading_trivia꞉ Whitespace): " " # (37..38)
+              - (open_paren꞉ OpenParen): "(" # (38..39)
+              - (parameters꞉ Parameters): # "uint" (39..43)
+                  - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (39..43)
+              - (close_paren꞉ CloseParen): ")" # (43..44)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (44..45)

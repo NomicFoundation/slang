@@ -18,3 +18,8 @@ fn from_contextual_keyword() -> Result<()> {
 fn overridden() -> Result<()> {
     run("FunctionDefinition", "overridden")
 }
+
+#[test]
+fn pure_state_mutability() -> Result<()> {
+    run("FunctionDefinition", "pure_state_mutability")
+}
