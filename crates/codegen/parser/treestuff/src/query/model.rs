@@ -2,41 +2,41 @@ use std::fmt;
 use std::rc::Rc;
 
 // This crate is copied to another crate, so all imports should be relative
-use super::super::kinds::{NodeLabel, RuleKind, TokenKind};
+use crate::ModuleInputs;
 
 #[derive(Clone)]
-pub struct Query(pub(super) Matcher);
+pub struct Query<T: ModuleInputs>(pub(super) Matcher<T>);
 
-impl Query {
+impl<T: ModuleInputs> Query<T> {
     pub fn parse(text: &str) -> Result<Self, String> {
         Matcher::parse(text).map(Self)
     }
 }
 
-impl fmt::Display for Query {
+impl<T: ModuleInputs> fmt::Display for Query<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
     }
 }
 
 #[derive(Clone)]
-pub(super) enum Matcher {
-    Binding(Rc<BindingMatcher>),
-    Node(Rc<NodeMatcher>),
-    Optional(Rc<OptionalMatcher>),
-    Alternatives(Rc<AlternativesMatcher>),
-    Sequence(Rc<SequenceMatcher>),
-    OneOrMore(Rc<OneOrMoreMatcher>),
+pub(super) enum Matcher<T: ModuleInputs> {
+    Binding(Rc<BindingMatcher<T>>),
+    Node(Rc<NodeMatcher<T>>),
+    Optional(Rc<OptionalMatcher<T>>),
+    Alternatives(Rc<AlternativesMatcher<T>>),
+    Sequence(Rc<SequenceMatcher<T>>),
+    OneOrMore(Rc<OneOrMoreMatcher<T>>),
     Ellipsis,
 }
 
-impl Matcher {
+impl<T: ModuleInputs> Matcher<T> {
     fn parse(text: &str) -> Result<Self, String> {
         super::parser::parse_query(text)
     }
 }
 
-impl fmt::Display for Matcher {
+impl<T: ModuleInputs> fmt::Display for Matcher<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Binding(binding) => {
@@ -87,31 +87,31 @@ impl fmt::Display for Matcher {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub(super) enum Kind {
-    Rule(RuleKind),
-    Token(TokenKind),
+pub(super) enum Kind<T: ModuleInputs> {
+    Rule(T::NonTerminalKind),
+    Token(T::TerminalKind),
 }
 
-impl fmt::Display for Kind {
+impl<T: ModuleInputs> fmt::Display for Kind<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Kind::Rule(rule) => write!(f, "{rule}"),
-            Kind::Token(token) => write!(f, "{token}"),
+            Self::Rule(rule) => write!(f, "{rule}"),
+            Self::Token(token) => write!(f, "{token}"),
         }
     }
 }
 
 #[derive(Clone)]
-pub(super) enum NodeSelector {
+pub(super) enum NodeSelector<T: ModuleInputs> {
     Anonymous,
-    Kind { kind: Kind },
+    Kind { kind: Kind<T> },
     Text { text: String },
-    Label { label: NodeLabel },
-    LabelAndKind { label: NodeLabel, kind: Kind },
-    LabelAndText { label: NodeLabel, text: String },
+    Label { label: T::LabelKind },
+    LabelAndKind { label: T::LabelKind, kind: Kind<T> },
+    LabelAndText { label: T::LabelKind, text: String },
 }
 
-impl fmt::Display for NodeSelector {
+impl<T: ModuleInputs> fmt::Display for NodeSelector<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fn escape_string(string: &str) -> String {
             string
@@ -145,28 +145,28 @@ impl fmt::Display for NodeSelector {
     }
 }
 
-pub(super) struct BindingMatcher {
+pub(super) struct BindingMatcher<T: ModuleInputs> {
     pub name: String,
-    pub child: Matcher,
+    pub child: Matcher<T>,
 }
 
-pub(super) struct NodeMatcher {
-    pub node_selector: NodeSelector,
-    pub child: Option<Matcher>,
+pub(super) struct NodeMatcher<T: ModuleInputs> {
+    pub node_selector: NodeSelector<T>,
+    pub child: Option<Matcher<T>>,
 }
 
-pub(super) struct SequenceMatcher {
-    pub children: Vec<Matcher>,
+pub(super) struct SequenceMatcher<T: ModuleInputs> {
+    pub children: Vec<Matcher<T>>,
 }
 
-pub(super) struct AlternativesMatcher {
-    pub children: Vec<Matcher>,
+pub(super) struct AlternativesMatcher<T: ModuleInputs> {
+    pub children: Vec<Matcher<T>>,
 }
 
-pub(super) struct OptionalMatcher {
-    pub child: Matcher,
+pub(super) struct OptionalMatcher<T: ModuleInputs> {
+    pub child: Matcher<T>,
 }
 
-pub(super) struct OneOrMoreMatcher {
-    pub child: Matcher,
+pub(super) struct OneOrMoreMatcher<T: ModuleInputs> {
+    pub child: Matcher<T>,
 }

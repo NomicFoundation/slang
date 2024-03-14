@@ -15,6 +15,7 @@ members = [
     "crates/codegen/language/tests",
     "crates/codegen/parser/generator",
     "crates/codegen/parser/runtime",
+    "crates/codegen/parser/treestuff",
     "crates/codegen/spec",
     "crates/codegen/testing",
     "crates/infra/cli",
@@ -50,6 +51,7 @@ codegen_language_macros = { path = "crates/codegen/language/macros" }
 codegen_language_tests = { path = "crates/codegen/language/tests" }
 codegen_parser_generator = { path = "crates/codegen/parser/generator" }
 codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
+codegen_parser_treestuff = { path = "crates/codegen/parser/treestuff" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }

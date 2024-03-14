@@ -1,0 +1,13 @@
+[package]
+name = "codegen_parser_treestuff"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+description = "Trees, cursors, queries"
+
+[dependencies]
+nom = { workspace = true }
+serde = { workspace = true }
+strum = { workspace = true }

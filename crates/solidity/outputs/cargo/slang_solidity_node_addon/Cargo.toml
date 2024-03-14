@@ -38,12 +38,11 @@ slang_solidity = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
+codegen_parser_treestuff = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
-nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
-stack-graphs = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }

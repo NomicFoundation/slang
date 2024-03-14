@@ -104,25 +104,6 @@ impl RustGenerator {
         {
             #[derive(Serialize)]
             struct Context {
-                actions: IndexMap<String, String>,
-            }
-
-            let actions = language
-                .binding_actions
-                .iter()
-                .map(|(key, value)| (key.to_string(), value.to_string()))
-                .collect();
-
-            codegen.render(
-                Context { actions },
-                runtime_dir.join("templates/binding.rs.jinja2"),
-                output_dir.join("binding.rs"),
-            )?;
-        }
-
-        {
-            #[derive(Serialize)]
-            struct Context {
                 queries: IndexMap<String, String>,
             }
 
@@ -167,8 +148,6 @@ impl RustGenerator {
         }
 
         for file in &[
-            "cst.rs",
-            "cursor.rs",
             "lexer.rs",
             "napi_interface/cst.rs",
             "napi_interface/cursor.rs",
@@ -191,11 +170,6 @@ impl RustGenerator {
             "parser_support/scanner_macros.rs",
             "parser_support/separated_helper.rs",
             "parser_support/sequence_helper.rs",
-            "query/engine.rs",
-            "query/mod.rs",
-            "query/model.rs",
-            "query/parser.rs",
-            "text_index.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
         }

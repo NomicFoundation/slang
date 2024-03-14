@@ -1,67 +1,65 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 use std::rc::Rc;
 
 use serde::Serialize;
 
 use crate::cursor::Cursor;
-use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::TextIndex;
+use crate::ModuleInputs;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct LabeledNode {
-    pub label: Option<NodeLabel>,
-    pub node: Node,
+pub struct TerminalNode<T: ModuleInputs> {
+    pub kind: T::TerminalKind,
+    pub text: String,
 }
 
-impl LabeledNode {
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NonTerminalNode<T: ModuleInputs> {
+    pub kind: T::NonTerminalKind,
+    pub text_len: TextIndex,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub children: Vec<LabeledNode<T>>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub enum Node<T: ModuleInputs> {
+    Rule(Rc<NonTerminalNode<T>>),
+    Token(Rc<TerminalNode<T>>),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct LabeledNode<T: ModuleInputs> {
+    pub label: Option<T::LabelKind>,
+    pub node: Node<T>,
+}
+
+impl<T: ModuleInputs> LabeledNode<T> {
     /// Creates an anonymous node (without a label).
-    pub fn anonymous(node: Node) -> Self {
+    pub fn anonymous(node: Node<T>) -> Self {
         Self { label: None, node }
     }
 }
 
-impl std::ops::Deref for LabeledNode {
-    type Target = Node;
+impl<T: ModuleInputs> std::ops::Deref for LabeledNode<T> {
+    type Target = Node<T>;
 
     fn deref(&self) -> &Self::Target {
         &self.node
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct RuleNode {
-    pub kind: RuleKind,
-    pub text_len: TextIndex,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<LabeledNode>,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct TokenNode {
-    pub kind: TokenKind,
-    pub text: String,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub enum Node {
-    Rule(Rc<RuleNode>),
-    Token(Rc<TokenNode>),
-}
-
-impl Node {
-    pub fn rule(kind: RuleKind, children: Vec<LabeledNode>) -> Self {
+impl<T: ModuleInputs> Node<T> {
+    pub fn rule(kind: T::NonTerminalKind, children: Vec<LabeledNode<T>>) -> Self {
         let text_len = children.iter().map(|node| node.text_len()).sum();
 
-        Self::Rule(Rc::new(RuleNode {
+        Self::Rule(Rc::new(NonTerminalNode::<T> {
             kind,
             text_len,
             children,
         }))
     }
 
-    pub fn token(kind: TokenKind, text: String) -> Self {
-        Self::Token(Rc::new(TokenNode { kind, text }))
+    pub fn token(kind: T::TerminalKind, text: String) -> Self {
+        Self::Token(Rc::new(TerminalNode::<T> { kind, text }))
     }
 
     pub fn text_len(&self) -> TextIndex {
@@ -72,7 +70,7 @@ impl Node {
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[LabeledNode] {
+    pub fn children(&self) -> &[LabeledNode<T>] {
         match self {
             Self::Rule(node) => &node.children,
             Self::Token(_) => &[],
@@ -80,8 +78,8 @@ impl Node {
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor {
-        Cursor::new(self.clone(), text_offset)
+    pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor<T> {
+        Cursor::<T>::new(self.clone(), text_offset)
     }
 
     /// Reconstructs the original source code from the parse tree.
@@ -92,7 +90,7 @@ impl Node {
         }
     }
 
-    pub fn into_rule(self) -> Option<Rc<RuleNode>> {
+    pub fn into_rule(self) -> Option<Rc<NonTerminalNode<T>>> {
         match self {
             Self::Rule(rule) => Some(rule),
             Self::Token(..) => None,
@@ -103,30 +101,33 @@ impl Node {
         self.as_rule().is_some()
     }
 
-    pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
+    pub fn as_rule(&self) -> Option<&Rc<NonTerminalNode<T>>> {
         match self {
             Self::Rule(rule) => Some(rule),
             Self::Token(..) => None,
         }
     }
 
-    pub fn is_rule_with_kind(&self, kind: RuleKind) -> bool {
+    pub fn is_rule_with_kind(&self, kind: T::NonTerminalKind) -> bool {
         self.as_rule_with_kind(kind).is_some()
     }
 
-    pub fn as_rule_with_kind(&self, kind: RuleKind) -> Option<&Rc<RuleNode>> {
+    pub fn as_rule_with_kind(&self, kind: T::NonTerminalKind) -> Option<&Rc<NonTerminalNode<T>>> {
         self.as_rule().filter(|rule| rule.kind == kind)
     }
 
-    pub fn is_rule_with_kinds(&self, kinds: &[RuleKind]) -> bool {
+    pub fn is_rule_with_kinds(&self, kinds: &[T::NonTerminalKind]) -> bool {
         self.as_rule_with_kinds(kinds).is_some()
     }
 
-    pub fn as_rule_with_kinds(&self, kinds: &[RuleKind]) -> Option<&Rc<RuleNode>> {
+    pub fn as_rule_with_kinds(
+        &self,
+        kinds: &[T::NonTerminalKind],
+    ) -> Option<&Rc<NonTerminalNode<T>>> {
         self.as_rule().filter(|rule| kinds.contains(&rule.kind))
     }
 
-    pub fn into_token(self) -> Option<Rc<TokenNode>> {
+    pub fn into_token(self) -> Option<Rc<TerminalNode<T>>> {
         match self {
             Self::Token(token) => Some(token),
             Self::Rule(..) => None,
@@ -137,46 +138,46 @@ impl Node {
         self.as_token().is_some()
     }
 
-    pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
+    pub fn as_token(&self) -> Option<&Rc<TerminalNode<T>>> {
         match self {
             Self::Token(token) => Some(token),
             Self::Rule(..) => None,
         }
     }
 
-    pub fn is_token_with_kind(&self, kind: TokenKind) -> bool {
+    pub fn is_token_with_kind(&self, kind: T::TerminalKind) -> bool {
         self.as_token_with_kind(kind).is_some()
     }
 
-    pub fn as_token_with_kind(&self, kind: TokenKind) -> Option<&Rc<TokenNode>> {
+    pub fn as_token_with_kind(&self, kind: T::TerminalKind) -> Option<&Rc<TerminalNode<T>>> {
         self.as_token().filter(|token| token.kind == kind)
     }
 
-    pub fn is_token_with_kinds(&self, kinds: &[TokenKind]) -> bool {
+    pub fn is_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> bool {
         self.as_token_with_kinds(kinds).is_some()
     }
 
-    pub fn as_token_with_kinds(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
+    pub fn as_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> Option<&Rc<TerminalNode<T>>> {
         self.as_token().filter(|token| kinds.contains(&token.kind))
     }
 }
 
-impl From<Rc<RuleNode>> for Node {
-    fn from(node: Rc<RuleNode>) -> Self {
+impl<T: ModuleInputs> From<Rc<NonTerminalNode<T>>> for Node<T> {
+    fn from(node: Rc<NonTerminalNode<T>>) -> Self {
         Self::Rule(node)
     }
 }
 
-impl From<Rc<TokenNode>> for Node {
-    fn from(node: Rc<TokenNode>) -> Self {
+impl<T: ModuleInputs> From<Rc<TerminalNode<T>>> for Node<T> {
+    fn from(node: Rc<TerminalNode<T>>) -> Self {
         Self::Token(node)
     }
 }
 
-impl RuleNode {
+impl<T: ModuleInputs> NonTerminalNode<T> {
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor {
-        Cursor::new(Node::Rule(self), text_offset)
+    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
+        Cursor::<T>::new(Node::<T>::Rule(self), text_offset)
     }
 
     /// Reconstructs the original source code from the parse tree.
