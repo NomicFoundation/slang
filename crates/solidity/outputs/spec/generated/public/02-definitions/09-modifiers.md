@@ -20,7 +20,7 @@
 
 ```
 
-<pre ebnf-snippet="ModifierAttribute" style="display: none;"><a href="#ModifierAttribute"><span class="k">ModifierAttribute</span></a><span class="o"> = </span><a href="../08-functions#OverrideSpecifier"><span class="k">OverrideSpecifier</span></a><br /><span class="o">                  | </span><a href="../../01-file-structure/08-keywords#VirtualKeyword"><span class="k">VIRTUAL_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span></pre>
+<pre ebnf-snippet="ModifierAttribute" style="display: none;"><a href="#ModifierAttribute"><span class="k">ModifierAttribute</span></a><span class="o"> = </span><a href="../08-functions#OverrideSpecifier"><span class="k">OverrideSpecifier</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span><br /><span class="o">                  | </span><a href="../../01-file-structure/08-keywords#VirtualKeyword"><span class="k">VIRTUAL_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span></pre>
 
 ```{ .ebnf #ModifierInvocation }
 

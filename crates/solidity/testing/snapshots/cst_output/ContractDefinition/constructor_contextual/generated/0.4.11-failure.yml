@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/constructor_contextual/input.sol:4:13]
        │
      4 │ ╭─▶     constructor() {}

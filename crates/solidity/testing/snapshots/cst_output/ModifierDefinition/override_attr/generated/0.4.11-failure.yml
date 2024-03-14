@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ modifier mod(uint a) override { _; }                                             │ 0..36
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenBrace or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ModifierDefinition/override_attr/input.sol:1:21]
+       │
+     1 │ modifier mod(uint a) override { _; }
+       │                     ────────┬────────  
+       │                             ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (ModifierDefinition): # "modifier mod(uint a) override { _; }\n" (0..37)
+      - (modifier_keyword꞉ ModifierKeyword): "modifier" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "mod" # (9..12)
+      - (parameters꞉ ParametersDeclaration): # "(uint a)" (12..20)
+          - (open_paren꞉ OpenParen): "(" # (12..13)
+          - (parameters꞉ Parameters): # "uint a" (13..19)
+              - (item꞉ Parameter): # "uint a" (13..19)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (13..17)
+                  - (leading_trivia꞉ Whitespace): " " # (17..18)
+                  - (name꞉ Identifier): "a" # (18..19)
+          - (close_paren꞉ CloseParen): ")" # (19..20)
+      - (attributes꞉ ModifierAttributes): [] # (20..20)
+      - (SKIPPED): " override { _; }\n" # (20..37)

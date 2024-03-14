@@ -4226,14 +4226,12 @@ export class ConstructorAttribute {
 }
 
 export class UnnamedFunctionAttribute {
-  private readonly fetch: () => ModifierInvocation | OverrideSpecifier | TokenNode = once(() => {
+  private readonly fetch: () => ModifierInvocation | TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
       case RuleKind.ModifierInvocation:
         return new ModifierInvocation(variant as RuleNode);
-      case RuleKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as RuleNode);
 
       case TokenKind.ConstantKeyword:
       case TokenKind.ExternalKeyword:
@@ -4254,7 +4252,7 @@ export class UnnamedFunctionAttribute {
     assertKind(this.cst.kind, RuleKind.UnnamedFunctionAttribute);
   }
 
-  public get variant(): ModifierInvocation | OverrideSpecifier | TokenNode {
+  public get variant(): ModifierInvocation | TokenNode {
     return this.fetch();
   }
 }

@@ -1744,7 +1744,7 @@ impl Selector {
 impl Selector {
     fn unnamed_function_attribute(&mut self) -> Result<JsObject> {
         self.select(|node| {
-            node.is_rule_with_kinds(&[RuleKind::ModifierInvocation, RuleKind::OverrideSpecifier])
+            node.is_rule_with_kind(RuleKind::ModifierInvocation)
                 || node.is_token_with_kinds(&[
                     TokenKind::ConstantKeyword,
                     TokenKind::ExternalKeyword,

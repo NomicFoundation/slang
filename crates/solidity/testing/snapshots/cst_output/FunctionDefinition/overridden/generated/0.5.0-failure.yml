@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function some() public virtual override returns (uint256) {                      │ 0..59
+  2  │ 	return 1;                                                                       │ 60..70
+  3  │ }                                                                                │ 71..72
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionDefinition/overridden/input.sol:1:31]
+       │
+     1 │ ╭─▶ function some() public virtual override returns (uint256) {
+       ┆ ┆   
+     3 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (FunctionDefinition): # "function some() public virtual override returns (u..." (0..73)
+      - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+      - (name꞉ FunctionName): # " some" (8..13)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (variant꞉ Identifier): "some" # (9..13)
+      - (parameters꞉ ParametersDeclaration): # "()" (13..15)
+          - (open_paren꞉ OpenParen): "(" # (13..14)
+          - (parameters꞉ Parameters): [] # (14..14)
+          - (close_paren꞉ CloseParen): ")" # (14..15)
+      - (attributes꞉ FunctionAttributes): # " public virtual" (15..30)
+          - (item꞉ FunctionAttribute): # " public" (15..22)
+              - (leading_trivia꞉ Whitespace): " " # (15..16)
+              - (variant꞉ PublicKeyword): "public" # (16..22)
+          - (item꞉ FunctionAttribute) ► (variant꞉ ModifierInvocation) ► (name꞉ IdentifierPath): # " virtual" (22..30)
+              - (leading_trivia꞉ Whitespace): " " # (22..23)
+              - (item꞉ Identifier): "virtual" # (23..30)
+      - (SKIPPED): " override returns (uint256) {\n\treturn 1;\n}\n" # (30..73)
