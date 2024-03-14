@@ -7,21 +7,25 @@ use napi_derive::napi;
 
 use crate::generated::query::Query;
 
-#[derive(
-    Debug,
-    Eq,
-    Hash,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    serde::Serialize,
-    strum_macros::AsRefStr,
-    strum_macros::Display,
-    strum_macros::EnumString,
-)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "queries"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum QueryKind {}
+mod __query_kind {
+    #[allow(unreachable_code)]
+    #[derive(
+        Debug,
+        Eq,
+        Hash,
+        Ord,
+        PartialEq,
+        PartialOrd,
+        serde::Serialize,
+        strum_macros::AsRefStr,
+        strum_macros::Display,
+        strum_macros::EnumString,
+    )]
+    #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "queries"))]
+    #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+    pub enum QueryKind {}
+}
+pub use __query_kind::QueryKind;
 
 static mut QUERIES: Vec<Query> = Vec::new();
 static INIT: Once = Once::new();
