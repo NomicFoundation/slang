@@ -70,7 +70,7 @@ bindings are returned as `Cursor`s as well. This allows you to mix and match
 manual traversal, cursors, and queries.
 
 Multiple queries can be executed in a batch, and efficiently traverse the tree
-looking for matches. This mode of operation can replace all visitor pattern.
+looking for matches. This mode of operation can replace all visitor patterns.
 
 ## Abstract Syntax Tree (AST)
 

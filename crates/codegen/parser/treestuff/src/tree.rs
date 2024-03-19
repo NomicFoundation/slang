@@ -1,173 +1,216 @@
+use std::fmt::Debug;
 use std::rc::Rc;
 
+use enum_dispatch::enum_dispatch;
 use serde::Serialize;
 
-use crate::cursor::Cursor;
-use crate::text_index::TextIndex;
-use crate::ModuleInputs;
+pub trait Kind: Sized + Copy + Clone + PartialEq + Eq + Debug + Serialize {}
+impl<T> Kind for T where T: Sized + Copy + Clone + PartialEq + Eq + Debug + Serialize {}
+pub trait Payload: Sized + Clone + Debug {}
+impl<T> Payload for T where T: Sized + Clone + Debug {}
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct TerminalNode<T: ModuleInputs> {
-    pub kind: T::TerminalKind,
-    pub text: String,
-}
+pub trait TreeModel: Clone + PartialEq {
+    type InternalNodeKind: Kind;
+    type InternalNodePayload: Payload;
+    type LeafNodeKind: Kind;
+    type LeafNodePayload: Payload;
+    type EdgeKind: Kind;
+    type EdgePayload: Payload;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct NonTerminalNode<T: ModuleInputs> {
-    pub kind: T::NonTerminalKind,
-    pub text_len: TextIndex,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<LabeledNode<T>>,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub enum Node<T: ModuleInputs> {
-    Rule(Rc<NonTerminalNode<T>>),
-    Token(Rc<TerminalNode<T>>),
-}
-
-impl<T: ModuleInputs> Node<T> {
-    pub fn rule(kind: T::NonTerminalKind, children: Vec<LabeledNode<T>>) -> Self {
-        let text_len = children.iter().map(|node| node.text_len()).sum();
-
-        Self::Rule(Rc::new(NonTerminalNode::<T> {
+    fn new_internal_node(
+        kind: Self::InternalNodeKind,
+        edges: Vec<Edge<Self>>,
+        payload: Self::InternalNodePayload,
+    ) -> Node<Self> {
+        Rc::new(InternalNode::<Self> {
             kind,
-            text_len,
-            children,
-        }))
+            edges,
+            payload,
+        })
+        .into()
     }
 
-    pub fn token(kind: T::TerminalKind, text: String) -> Self {
-        Self::Token(Rc::new(TerminalNode::<T> { kind, text }))
+    fn new_leaf_node(kind: Self::LeafNodeKind, payload: Self::LeafNodePayload) -> Node<Self> {
+        Rc::new(LeafNode::<Self> { kind, payload }).into()
     }
+}
 
-    pub fn text_len(&self) -> TextIndex {
-        match self {
-            Self::Rule(node) => node.text_len,
-            Self::Token(node) => (&node.text).into(),
-        }
-    }
-
+#[enum_dispatch]
+pub trait AbstractNode<T: TreeModel>: Sized {
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[LabeledNode<T>] {
-        match self {
-            Self::Rule(node) => &node.children,
-            Self::Token(_) => &[],
-        }
+    fn edges(&self) -> &[Edge<T>] {
+        &[]
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::<T>::new(self.clone(), text_offset)
+    // pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor<T> {
+    //     Cursor::<T>::new(self.clone(), text_offset)
+    // }
+
+    fn into_internal_node(self) -> Option<Rc<InternalNode<T>>> {
+        None
     }
 
-    /// Reconstructs the original source code from the parse tree.
-    pub fn unparse(self) -> String {
-        match self {
-            Self::Rule(rule) => rule.unparse(),
-            Self::Token(token) => token.text.clone(),
-        }
+    fn is_internal_node(&self) -> bool {
+        self.as_internal_node().is_some()
     }
 
-    pub fn into_rule(self) -> Option<Rc<NonTerminalNode<T>>> {
-        match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
-        }
+    fn as_internal_node(&self) -> Option<&Rc<InternalNode<T>>> {
+        None
     }
 
-    pub fn is_rule(&self) -> bool {
-        self.as_rule().is_some()
+    fn is_internal_node_with_kind(&self, kind: T::InternalNodeKind) -> bool {
+        self.as_internal_node_with_kind(kind).is_some()
     }
 
-    pub fn as_rule(&self) -> Option<&Rc<NonTerminalNode<T>>> {
-        match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
-        }
-    }
-
-    pub fn is_rule_with_kind(&self, kind: T::NonTerminalKind) -> bool {
-        self.as_rule_with_kind(kind).is_some()
-    }
-
-    pub fn as_rule_with_kind(&self, kind: T::NonTerminalKind) -> Option<&Rc<NonTerminalNode<T>>> {
-        self.as_rule().filter(|rule| rule.kind == kind)
-    }
-
-    pub fn is_rule_with_kinds(&self, kinds: &[T::NonTerminalKind]) -> bool {
-        self.as_rule_with_kinds(kinds).is_some()
-    }
-
-    pub fn as_rule_with_kinds(
+    fn as_internal_node_with_kind(
         &self,
-        kinds: &[T::NonTerminalKind],
-    ) -> Option<&Rc<NonTerminalNode<T>>> {
-        self.as_rule().filter(|rule| kinds.contains(&rule.kind))
+        kind: T::InternalNodeKind,
+    ) -> Option<&Rc<InternalNode<T>>> {
+        self.as_internal_node()
+            .filter(|internal_node| internal_node.kind == kind)
     }
 
-    pub fn into_token(self) -> Option<Rc<TerminalNode<T>>> {
-        match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+    fn is_internal_node_with_kinds(&self, kinds: &[T::InternalNodeKind]) -> bool {
+        self.as_internal_node_with_kinds(kinds).is_some()
+    }
+
+    fn as_internal_node_with_kinds(
+        &self,
+        kinds: &[T::InternalNodeKind],
+    ) -> Option<&Rc<InternalNode<T>>> {
+        self.as_internal_node()
+            .filter(|internal_node| kinds.contains(&internal_node.kind))
+    }
+
+    fn into_leaf_node(self) -> Option<Rc<LeafNode<T>>> {
+        None
+    }
+
+    fn is_leaf_node(&self) -> bool {
+        self.as_leaf_node().is_some()
+    }
+
+    fn as_leaf_node(&self) -> Option<&Rc<LeafNode<T>>> {
+        None
+    }
+
+    fn is_leaf_node_with_kind(&self, kind: T::LeafNodeKind) -> bool {
+        self.as_leaf_node_with_kind(kind).is_some()
+    }
+
+    fn as_leaf_node_with_kind(&self, kind: T::LeafNodeKind) -> Option<&Rc<LeafNode<T>>> {
+        self.as_leaf_node()
+            .filter(|leaf_node| leaf_node.kind == kind)
+    }
+
+    fn is_leaf_node_with_kinds(&self, kinds: &[T::LeafNodeKind]) -> bool {
+        self.as_leaf_node_with_kinds(kinds).is_some()
+    }
+
+    fn as_leaf_node_with_kinds(&self, kinds: &[T::LeafNodeKind]) -> Option<&Rc<LeafNode<T>>> {
+        self.as_leaf_node()
+            .filter(|leaf_node| kinds.contains(&leaf_node.kind))
+    }
+}
+
+#[derive(Clone, Debug)]
+#[enum_dispatch(AbstractNode<T>)]
+pub enum Node<T: TreeModel> {
+    Internal(Rc<InternalNode<T>>),
+    Leaf(Rc<LeafNode<T>>),
+}
+
+#[derive(Clone, Debug)]
+pub struct InternalNode<T: TreeModel> {
+    pub kind: T::InternalNodeKind,
+    pub edges: Vec<Edge<T>>,
+    pub payload: T::InternalNodePayload,
+}
+
+#[derive(Clone, Debug)]
+pub struct LeafNode<T: TreeModel> {
+    pub kind: T::LeafNodeKind,
+    pub payload: T::LeafNodePayload,
+}
+
+#[derive(Clone, Debug)]
+pub struct Edge<T: TreeModel> {
+    pub kind: T::EdgeKind,
+    pub target: Node<T>,
+    pub payload: T::EdgePayload,
+}
+
+impl<T: TreeModel> AbstractNode<T> for Rc<InternalNode<T>> {
+    fn edges(&self) -> &[Edge<T>] {
+        &self.edges
+    }
+
+    fn into_internal_node(self) -> Option<Rc<InternalNode<T>>> {
+        Some(self)
+    }
+
+    fn as_internal_node(&self) -> Option<&Rc<InternalNode<T>>> {
+        Some(self)
+    }
+}
+
+impl<T: TreeModel> AbstractNode<T> for Rc<LeafNode<T>> {
+    fn into_leaf_node(self) -> Option<Rc<LeafNode<T>>> {
+        Some(self)
+    }
+
+    fn as_leaf_node(&self) -> Option<&Rc<LeafNode<T>>> {
+        Some(self)
+    }
+}
+
+mod test {
+    #![allow(dead_code)]
+
+    use super::{AbstractNode, TreeModel};
+    use crate::text_index::TextIndex;
+
+    #[derive(Clone, PartialEq)]
+    struct CSTTreeModel;
+    impl TreeModel for CSTTreeModel {
+        type InternalNodeKind = u32;
+        type InternalNodePayload = TextIndex;
+        type LeafNodeKind = u32;
+        type LeafNodePayload = String;
+        type EdgeKind = u32;
+        type EdgePayload = ();
+    }
+
+    type CSTNode = super::Node<CSTTreeModel>;
+    type CSTLeafNode = super::LeafNode<CSTTreeModel>;
+    type CSTInternalNode = super::InternalNode<CSTTreeModel>;
+    type CSTEdge = super::Edge<CSTTreeModel>;
+
+    impl CSTTreeModel {
+        fn internal_node(kind: u32, edges: Vec<CSTEdge>) -> CSTNode {
+            let mut payload = TextIndex::ZERO;
+            for edge in &edges {
+                payload += edge.target.text_len();
+            }
+            Self::new_internal_node(kind, edges, payload)
+        }
+        fn leaf_node(kind: u32, payload: String) -> CSTNode {
+            Self::new_leaf_node(kind, payload)
         }
     }
 
-    pub fn is_token(&self) -> bool {
-        self.as_token().is_some()
-    }
-
-    pub fn as_token(&self) -> Option<&Rc<TerminalNode<T>>> {
-        match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+    impl CSTNode {
+        fn text_len(&self) -> TextIndex {
+            match self {
+                Self::Internal(internal_node) => internal_node.payload,
+                Self::Leaf(leaf_node) => TextIndex::from(&leaf_node.payload),
+            }
         }
     }
 
-    pub fn is_token_with_kind(&self, kind: T::TerminalKind) -> bool {
-        self.as_token_with_kind(kind).is_some()
-    }
-
-    pub fn as_token_with_kind(&self, kind: T::TerminalKind) -> Option<&Rc<TerminalNode<T>>> {
-        self.as_token().filter(|token| token.kind == kind)
-    }
-
-    pub fn is_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> bool {
-        self.as_token_with_kinds(kinds).is_some()
-    }
-
-    pub fn as_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> Option<&Rc<TerminalNode<T>>> {
-        self.as_token().filter(|token| kinds.contains(&token.kind))
-    }
-}
-
-impl<T: ModuleInputs> From<Rc<NonTerminalNode<T>>> for Node<T> {
-    fn from(node: Rc<NonTerminalNode<T>>) -> Self {
-        Self::Rule(node)
-    }
-}
-
-impl<T: ModuleInputs> From<Rc<TerminalNode<T>>> for Node<T> {
-    fn from(node: Rc<TerminalNode<T>>) -> Self {
-        Self::Token(node)
-    }
-}
-
-impl<T: ModuleInputs> NonTerminalNode<T> {
-    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::<T>::new(Node::<T>::Rule(self), text_offset)
-    }
-
-    /// Reconstructs the original source code from the parse tree.
-    pub fn unparse(self: Rc<Self>) -> String {
-        let acc = String::with_capacity(self.text_len.utf8);
-
-        self.cursor_with_offset(TextIndex::ZERO)
-            .filter_map(|node| node.into_token())
-            .fold(acc, |mut acc, token| {
-                acc.push_str(&token.text);
-                acc
-            })
+    fn main() {
+        let node = CSTTreeModel::internal_node(0, vec![]);
+        node.is_internal_node();
     }
 }

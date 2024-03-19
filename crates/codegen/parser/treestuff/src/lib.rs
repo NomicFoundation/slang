@@ -2,6 +2,7 @@ pub mod cst;
 pub mod cursor;
 pub mod query;
 pub mod text_index;
+pub mod tree;
 
 pub trait Kind:
     Sized

@@ -2,61 +2,39 @@
 
 ## Query Syntax
 
-A _query_ consists of one or more _patterns_, where each pattern is an
-[S-expression](https://en.wikipedia.org/wiki/S-expression) that matches a
-certain set of nodes in a syntax tree. The expression to match a given node
-consists of a pair of parentheses containing two things: the node's type, and
-optionally, a series of other S-expressions that match the node's children. For
+A _query_ is a pattern that matches a
+certain set of nodes in a tree. The expression to match a given node
+consists of a pair of brackets (`[]`) containing two things: the node's kind, and
+optionally, a series of other patterns that match the node's children. For
 example, this pattern would match any `binary_expression` node whose children
 are both `number_literal` nodes:
 
 ```scheme
-(binary_expression (number_literal) (number_literal))
+[binary_expression [number_literal] [number_literal]]
 ```
 
-Children can also be omitted. For example, this would match any
-`binary_expression` where at least _one_ of child is a `string_literal` node:
+The children of a node can optionally be named. The name is a property of the edge from
+the node to the child, and is not a property of the child. For example, this pattern will match a `binary_expression`
+node with two `number literal` children, named `left` and `right`:
 
 ```scheme
-(binary_expression (string_literal))
+[binary_expression [left:number_literal] [right:number_literal]]
 ```
 
-### Fields
-
-In general, it's a good idea to make patterns more specific by specifying field names(#node-field-names) associated with child nodes. You do this by prefixing
-a child pattern with a field name followed by a colon. For example, this pattern
-would match an `assignment_expression` node where the `left` child is a
-`member_expression` whose `object` is a `call_expression`.
+If you don't care about the kind of a node, you can use a underscore '\_', which matches any kind.
+For example, this pattern will match a `binary_expression`
+node with two children, one of any kind named`left` and one of any kind:
 
 ```scheme
-(assignment_expression
-  left: (member_expression
-    object: (call_expression)))
+[binary_expression [left:_] [_]]
 ```
 
-### Negated Fields
-
-You can also constrain a pattern so that it only matches nodes that _lack_ a
-certain field. To do this, add a field name prefixed by a `!` within the parent
-pattern. For example, this pattern would match a class declaration with no type
-parameters:
+Children can also be elided. For example, this would produce multiple matches for a
+`binary_expression` where at least _one_ of the children is a `string_literal` node, where each match
+is associated with each of the `string_literal` children:
 
 ```scheme
-(class_declaration
-  name: (identifier) @class_name
-  !type_parameters)
-```
-
-### Anonymous Nodes
-
-The parenthesized syntax for writing nodes only applies to named nodes(#named-vs-anonymous-nodes). To match specific anonymous nodes, you write
-their name between double quotes. For example, this pattern would match any
-`binary_expression` where the operator is `!=` and the right side is `null`:
-
-```scheme
-(binary_expression
-  operator: "!="
-  right: (null))
+[binary_expression ... [string_literal] ...]
 ```
 
 ### Capturing Nodes
@@ -71,9 +49,9 @@ For example, this pattern would match any assignment of a `function` to an
 identifier:
 
 ```scheme
-(assignment_expression
-  left: (identifier) @the-function-name
-  right: (function))
+[assignment_expression
+  @the-function-name [left:identifier]
+  [right:function]]
 ```
 
 And this pattern would match all method definitions, associating the name
@@ -81,11 +59,11 @@ And this pattern would match all method definitions, associating the name
 class name:
 
 ```scheme
-(class_declaration
-  name: (identifier) @the-class-name
-  body: (class_body
-    (method_definition
-      name: (property_identifier) @the-method-name)))
+[class_declaration
+  @the-class-name [name:identifier]
+  [body:class_body
+    [method_definition
+      @the-method-name [name:property_identifier]]]]
 ```
 
 ### Quantification Operators
@@ -100,16 +78,16 @@ operator matches _zero or more_.
 For example, this pattern would match a sequence of one or more comments:
 
 ```scheme
-(comment)+
+([comment])+
 ```
 
 This pattern would match a class declaration, capturing all of the decorators if
 any were present:
 
 ```scheme
-(class_declaration
-  (decorator)* @the-decorator
-  name: (identifier) @the-name)
+[class_declaration
+  (@the-decorator [decorator])*
+  @the-name [name:identifier]]
 ```
 
 You can also mark a node as optional using the `?` operator. For example, this
@@ -117,9 +95,9 @@ pattern would match all function calls, capturing a string argument if one was
 present:
 
 ```scheme
-(call_expression
-  function: (identifier) @the-function
-  arguments: (arguments (string)? @the-string-arg))
+[call_expression
+  @the-function [function:identifier]
+  [arguments:arguments (@the-string-arg [string])?]]
 ```
 
 ### Grouping Sibling Nodes
@@ -129,8 +107,8 @@ example, this pattern would match a comment followed by a function declaration:
 
 ```scheme
 (
-  (comment)
-  (function_declaration)
+  [comment]
+  [function_declaration]
 )
 ```
 
@@ -140,8 +118,8 @@ series of numbers:
 
 ```scheme
 (
-  (number)
-  ("," (number))*
+  [number]
+  ("," [number])*
 )
 ```
 
@@ -154,28 +132,28 @@ For example, this pattern would match a call to either a variable or an object p
 In the case of a variable, capture it as `@function`, and in the case of a property, capture it as `@method`:
 
 ```scheme
-(call_expression
-  function: [
-    (identifier) @function
-    (member_expression
-      property: (property_identifier) @method)
-  ])
+[call_expression
+  function: (
+      [identifier] @function
+    | [member_expression property: [property_identifier] @method]
+  )
+]
 ```
 
 This pattern would match a set of possible keyword tokens, capturing them as `@keyword`:
 
 ```scheme
-[
-  "break"
-  "delete"
-  "else"
-  "for"
-  "function"
-  "if"
-  "return"
-  "try"
-  "while"
-] @keyword
+(
+    "break"
+  | "delete"
+  | "else"
+  | "for"
+  | "function"
+  | "if"
+  | "return"
+  | "try"
+  | "while"
+) @keyword
 ```
 
 ### Wildcard Node
@@ -188,7 +166,7 @@ and `_` will match any named or anonymous node.
 For example, this pattern would match any node inside a call:
 
 ```scheme
-(call (_) @call.inner)
+[call [_] @call.inner]
 ```
 
 ### Anchors
