@@ -3675,7 +3675,18 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DecimalLiteral,
                             definitions = [
-                                // An integer (without a dot or a fraction) is enabled in all versions:
+                                // A dot and a fraction (without an integer) is enabled in all versions:
+                                TokenDefinition(
+                                    scanner = TrailingContext(
+                                        scanner = Sequence([
+                                            Atom("."),
+                                            Fragment(DecimalDigits),
+                                            Optional(Fragment(DecimalExponent))
+                                        ]),
+                                        not_followed_by = Fragment(IdentifierStart)
+                                    )
+                                ),
+                                // A bare integer (without a dot or a fraction) is enabled in all versions:
                                 TokenDefinition(
                                     scanner = TrailingContext(
                                         scanner = Sequence([
@@ -3688,7 +3699,7 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
-                                // An integer and a dot (without a fraction) is disabled in "0.5.0"
+                                // Till 0.5.0, the following lone dot was considered a part of the literal:
                                 TokenDefinition(
                                     enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
@@ -3703,10 +3714,12 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
-                                // A dot and a fraction (without an integer) is enabled in all versions:
+                                // As well as the full form of digits followed by a dot followed by digits...
                                 TokenDefinition(
+                                    enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
+                                            Fragment(DecimalDigits),
                                             Atom("."),
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
@@ -3714,13 +3727,17 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
-                                // An integer, a dot, and a fraction is enabled in all versions:
+                                // ...both of which was subsumed by a more general form that only included
+                                // the dot if it was followed by a fraction:
                                 TokenDefinition(
+                                    enabled = From("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Fragment(DecimalDigits),
-                                            Atom("."),
-                                            Fragment(DecimalDigits),
+                                            Optional(Sequence([
+                                                Atom("."),
+                                                Fragment(DecimalDigits)
+                                            ])),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
                                         not_followed_by = Fragment(IdentifierStart)

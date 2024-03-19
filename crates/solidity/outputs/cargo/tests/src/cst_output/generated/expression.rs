@@ -273,8 +273,23 @@ fn member_access_index_access() -> Result<()> {
 }
 
 #[test]
+fn member_access_integer() -> Result<()> {
+    run("Expression", "member_access_integer")
+}
+
+#[test]
 fn member_access_options() -> Result<()> {
     run("Expression", "member_access_options")
+}
+
+#[test]
+fn member_access_rational() -> Result<()> {
+    run("Expression", "member_access_rational")
+}
+
+#[test]
+fn member_access_rational_leading_period() -> Result<()> {
+    run("Expression", "member_access_rational_leading_period")
 }
 
 #[test]

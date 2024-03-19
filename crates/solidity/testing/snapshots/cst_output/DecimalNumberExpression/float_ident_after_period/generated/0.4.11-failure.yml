@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1.2.a                                                                            │ 0..5
+
+Errors: # 1 total
+  - >
+    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword or YearsKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/float_ident_after_period/input.sol:1:4]
+       │
+     1 │ 1.2.a
+       │    ─┬─  
+       │     ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (DecimalNumberExpression): # "1.2.a\n" (0..6)
+      - (literal꞉ DecimalLiteral): "1.2" # (0..3)
+      - (SKIPPED): ".a\n" # (3..6)

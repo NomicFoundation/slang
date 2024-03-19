@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 5.fromUint()                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ FunctionCallExpression): # "5.fromUint()\n" (0..13)
+      - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "5.fromUint" (0..10)
+          - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "5" # (0..1)
+          - (period꞉ Period): "." # (1..2)
+          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "fromUint" # (2..10)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (10..13)
+          - (open_paren꞉ OpenParen): "(" # (10..11)
+          - (arguments꞉ PositionalArguments): [] # (11..11)
+          - (close_paren꞉ CloseParen): ")" # (11..12)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (12..13)

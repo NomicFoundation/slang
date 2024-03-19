@@ -30,6 +30,11 @@ fn float() -> Result<()> {
 }
 
 #[test]
+fn float_ident_after_period() -> Result<()> {
+    run("DecimalNumberExpression", "float_ident_after_period")
+}
+
+#[test]
 fn float_no_fraction() -> Result<()> {
     run("DecimalNumberExpression", "float_no_fraction")
 }
@@ -45,6 +50,11 @@ fn integer() -> Result<()> {
 }
 
 #[test]
+fn integer_ident_after_period() -> Result<()> {
+    run("DecimalNumberExpression", "integer_ident_after_period")
+}
+
+#[test]
 fn integer_with_exponent() -> Result<()> {
     run("DecimalNumberExpression", "integer_with_exponent")
 }
@@ -52,6 +62,22 @@ fn integer_with_exponent() -> Result<()> {
 #[test]
 fn integer_with_separators() -> Result<()> {
     run("DecimalNumberExpression", "integer_with_separators")
+}
+
+#[test]
+fn leading_period_ident_after_decimal() -> Result<()> {
+    run(
+        "DecimalNumberExpression",
+        "leading_period_ident_after_decimal",
+    )
+}
+
+#[test]
+fn leading_period_ident_after_period() -> Result<()> {
+    run(
+        "DecimalNumberExpression",
+        "leading_period_ident_after_period",
+    )
 }
 
 #[test]
