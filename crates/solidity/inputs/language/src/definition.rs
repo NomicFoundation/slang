@@ -3717,7 +3717,7 @@ codegen_language_macros::compile!(Language(
                                     )
                                 ),
                                 // ...both of which was subsumed by a more general form that only included
-                                // the dot if it was followed by a decimal literal:
+                                // the dot if it was followed by a fraction:
                                 TokenDefinition(
                                     enabled = From("0.5.0"),
                                     scanner = TrailingContext(
