@@ -6935,6 +6935,15 @@ impl Language {
             scan_not_followed_by!(
                 input,
                 scan_sequence!(
+                    scan_chars!(input, '.'),
+                    self.decimal_digits(input),
+                    scan_optional!(input, self.decimal_exponent(input))
+                ),
+                self.identifier_start(input)
+            ),
+            scan_not_followed_by!(
+                input,
+                scan_sequence!(
                     scan_not_followed_by!(
                         input,
                         self.decimal_digits(input),
@@ -6960,6 +6969,20 @@ impl Language {
             } else {
                 false
             },
+            if !self.version_is_at_least_0_5_0 {
+                scan_not_followed_by!(
+                    input,
+                    scan_sequence!(
+                        self.decimal_digits(input),
+                        scan_chars!(input, '.'),
+                        self.decimal_digits(input),
+                        scan_optional!(input, self.decimal_exponent(input))
+                    ),
+                    self.identifier_start(input)
+                )
+            } else {
+                false
+            },
             if self.version_is_at_least_0_5_0 {
                 scan_not_followed_by!(
                     input,
@@ -6975,26 +6998,7 @@ impl Language {
                 )
             } else {
                 false
-            },
-            scan_not_followed_by!(
-                input,
-                scan_sequence!(
-                    scan_chars!(input, '.'),
-                    self.decimal_digits(input),
-                    scan_optional!(input, self.decimal_exponent(input))
-                ),
-                self.identifier_start(input)
-            ),
-            scan_not_followed_by!(
-                input,
-                scan_sequence!(
-                    self.decimal_digits(input),
-                    scan_chars!(input, '.'),
-                    self.decimal_digits(input),
-                    scan_optional!(input, self.decimal_exponent(input))
-                ),
-                self.identifier_start(input)
-            )
+            }
         )
     }
 
