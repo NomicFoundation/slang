@@ -251,6 +251,17 @@ fn test_optional() {
     );
 }
 
+#[test]
+fn test_nested() {
+    run_query_test(
+        &common_test_tree(),
+        "@root [TreeNode ... @z [DelimitedIdentifier] [_] ]",
+        query_results! {
+            {root: ["ABCDE"], z: ["C"]}
+        },
+    );
+}
+
 // #[test]
 // fn test_query_and_apply_actions() {
 //     type Context = String;
