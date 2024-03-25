@@ -74,6 +74,33 @@ impl RuleNode {
     pub fn unparse(&self) -> String {
         self.0.clone().unparse()
     }
+
+    // Expose the children as a hidden (non-enumerable, don't generate type definition)
+    // property that's eagerly evaluated (getter) in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__children", // Needed; otherwise, the property name would shadow `children`.
+        skip_typescript
+    )]
+    pub fn __children(&self, env: Env) -> Vec<JsObject> {
+        Self::children(self, env)
+    }
+
+    // Similarly, expose the eagerly evaluated unparsed text in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__text",
+        skip_typescript
+    )]
+    pub fn __text(&self) -> String {
+        self.unparse()
+    }
 }
 
 #[napi(namespace = "cst")]
