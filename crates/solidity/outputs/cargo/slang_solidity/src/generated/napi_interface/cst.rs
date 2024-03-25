@@ -70,6 +70,14 @@ impl RuleNode {
             .into()
     }
 
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    ///
+    /// This method is intended for debugging purposes and may not be stable.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
+    }
+
     #[napi(catch_unwind)]
     pub fn unparse(&self) -> String {
         self.0.clone().unparse()
@@ -134,6 +142,14 @@ impl TokenNode {
     #[napi(getter, catch_unwind)]
     pub fn text(&self) -> String {
         self.0.text.clone()
+    }
+
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    ///
+    /// This method is intended for debugging purposes and may not be stable.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
     }
 
     #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]

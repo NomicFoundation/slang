@@ -403,6 +403,7 @@ dependencies = [
  "napi-derive",
  "nom",
  "serde",
+ "serde_json",
  "strum",
  "strum_macros",
 ]
@@ -1798,6 +1799,7 @@ dependencies = [
  "nom",
  "semver",
  "serde",
+ "serde_json",
  "slang_solidity",
  "strum",
  "strum_macros",
@@ -1832,6 +1834,7 @@ dependencies = [
  "nom",
  "semver",
  "serde",
+ "serde_json",
  "slang_testlang",
  "strum",
  "strum_macros",

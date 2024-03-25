@@ -13,6 +13,7 @@ napi = { workspace = true, optional = true }
 napi-derive = { workspace = true, optional = true }
 nom = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 
@@ -20,7 +21,7 @@ strum_macros = { workspace = true }
 # i.e `slang_solidity_node_addon`.
 [features]
 default = ["slang_napi_interfaces"]
-slang_napi_interfaces = ["dep:napi", "dep:napi-derive"]
+slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
 
 [lints]
 workspace = true

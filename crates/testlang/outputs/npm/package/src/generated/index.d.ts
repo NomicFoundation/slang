@@ -87,6 +87,12 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
+    /**
+     * Serialize the token node to JSON.
+     *
+     * This method is intended for debugging purposes and may not be stable.
+     */
+    toJSON(): string;
     unparse(): string;
   }
   export class TokenNode {
@@ -94,6 +100,12 @@ export namespace cst {
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
+    /**
+     * Serialize the token node to JSON.
+     *
+     * This method is intended for debugging purposes and may not be stable.
+     */
+    toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
 }
