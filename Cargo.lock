@@ -312,7 +312,7 @@ checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
 name = "codegen_ebnf"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "codegen_language_definition",
@@ -322,7 +322,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_grammar"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "codegen_language_definition",
  "indexmap",
@@ -332,7 +332,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_definition"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "codegen_language_internal_macros",
@@ -350,7 +350,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_internal_macros"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "itertools",
  "proc-macro2",
@@ -360,14 +360,14 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_macros"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "codegen_language_definition",
 ]
 
 [[package]]
 name = "codegen_language_tests"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -379,7 +379,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_parser_generator"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -396,7 +396,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_parser_runtime"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "ariadne",
  "napi",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_spec"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -422,7 +422,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_testing"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -945,7 +945,7 @@ dependencies = [
 
 [[package]]
 name = "infra_cli"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -961,7 +961,7 @@ dependencies = [
 
 [[package]]
 name = "infra_utils"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1770,7 +1770,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -1789,7 +1789,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_node_addon"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "ariadne",
  "napi",
@@ -1806,7 +1806,7 @@ dependencies = [
 
 [[package]]
 name = "slang_testlang"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -1823,7 +1823,7 @@ dependencies = [
 
 [[package]]
 name = "slang_testlang_node_addon"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "ariadne",
  "napi",
@@ -1869,7 +1869,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "codegen_testing",
@@ -1883,7 +1883,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_language"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -1892,7 +1892,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_package"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "codegen_parser_generator",
@@ -1902,7 +1902,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_spec"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "codegen_spec",
@@ -1912,7 +1912,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sanctuary"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1931,11 +1931,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "0.13.1"
+version = "0.14.0"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -1957,7 +1957,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_utils"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2087,7 +2087,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_cargo_tests"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "semver",
  "slang_testlang",
@@ -2095,7 +2095,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_language"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2104,7 +2104,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_npm_package"
-version = "0.13.1"
+version = "0.14.0"
 dependencies = [
  "anyhow",
  "codegen_parser_generator",
