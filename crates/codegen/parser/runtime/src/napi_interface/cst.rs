@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use napi::bindgen_prelude::{Env, ToNapiValue};
-use napi::{JsObject, NapiValue};
+use napi::bindgen_prelude::Env;
+use napi::JsObject;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
@@ -54,7 +54,7 @@ impl RuleNode {
         self.0
             .children
             .iter()
-            .map(|child| child.to_js(&env))
+            .map(|child| child.to_js(env))
             .collect()
     }
 
@@ -119,28 +119,29 @@ impl TokenNode {
 }
 
 pub trait ToJS {
-    fn to_js(&self, env: &Env) -> JsObject;
+    fn to_js(&self, env: Env) -> JsObject;
 }
 
 impl ToJS for Rc<RustRuleNode> {
-    fn to_js(&self, env: &Env) -> JsObject {
-        let obj =
-            unsafe { <RuleNode as ToNapiValue>::to_napi_value(env.raw(), RuleNode(self.clone())) };
-        unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) }
+    fn to_js(&self, env: Env) -> JsObject {
+        RuleNode(self.clone())
+            .into_instance(env)
+            .expect("Class constructor to be defined by #[napi]")
+            .as_object(env)
     }
 }
 
 impl ToJS for Rc<RustTokenNode> {
-    fn to_js(&self, env: &Env) -> JsObject {
-        let obj = unsafe {
-            <TokenNode as ToNapiValue>::to_napi_value(env.raw(), TokenNode(self.clone()))
-        };
-        unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) }
+    fn to_js(&self, env: Env) -> JsObject {
+        TokenNode(self.clone())
+            .into_instance(env)
+            .expect("Class constructor to be defined by #[napi]")
+            .as_object(env)
     }
 }
 
 impl ToJS for RustNode {
-    fn to_js(&self, env: &Env) -> JsObject {
+    fn to_js(&self, env: Env) -> JsObject {
         match self {
             RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
             RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
