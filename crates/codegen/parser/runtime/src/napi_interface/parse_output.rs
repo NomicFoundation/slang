@@ -17,7 +17,7 @@ impl From<RustParseOutput> for ParseOutput {
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn tree(&self, env: Env) -> napi::JsObject {
-        self.0.tree().to_js(&env)
+        self.0.tree().to_js(env)
     }
 
     #[napi(ts_return_type = "Array<parse_error.ParseError>", catch_unwind)]
