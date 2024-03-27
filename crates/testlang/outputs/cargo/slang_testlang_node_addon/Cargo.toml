@@ -29,6 +29,7 @@ crate-type = ["cdylib"]
 default = ["slang_napi_interfaces"]
 slang_napi_interfaces = [
   # This enables '#[napi]' attributes on the Rust types imported via [lib.path] above.
+  "dep:serde_json",
 ]
 
 [build-dependencies]
@@ -43,6 +44,7 @@ napi-derive = { workspace = true }
 nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
