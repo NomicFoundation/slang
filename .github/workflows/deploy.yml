@@ -17,24 +17,24 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  ci:
-    uses: "./.github/workflows/_jobs_ci.yml"
+  # ci:
+  #   uses: "./.github/workflows/_jobs_ci.yml"
 
-  github-pages:
-    uses: "./.github/workflows/_jobs_github_pages.yml"
-    if: "${{ github.repository == 'NomicFoundation/slang' }}" # skip running in forks
-    needs: "ci"
+  # github-pages:
+  #   uses: "./.github/workflows/_jobs_github_pages.yml"
+  #   if: "${{ github.repository == 'NomicFoundation/slang' }}" # skip running in forks
+  #   needs: "ci"
 
-    permissions:
-      pages: "write" # to deploy to Pages
-      id-token: "write" # to verify the deployment originates from an appropriate source
+  #   permissions:
+  #     pages: "write" # to deploy to Pages
+  #     id-token: "write" # to verify the deployment originates from an appropriate source
 
   publish:
     uses: "./.github/workflows/_jobs_publish.yml"
-    if: "${{ github.repository == 'NomicFoundation/slang' }}" # skip running in forks
-    needs: "ci"
+    # if: "${{ github.repository == 'NomicFoundation/slang' }}" # skip running in forks
+    # needs: "ci"
 
-    secrets: "inherit"
-    permissions:
-      contents: "write" # to create new branches and releases
-      pull-requests: "write" # to create new pull requests for changesets
+    # secrets: "inherit"
+    # permissions:
+    #   contents: "write" # to create new branches and releases
+    #   pull-requests: "write" # to create new pull requests for changesets
