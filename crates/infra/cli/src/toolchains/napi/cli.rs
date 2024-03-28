@@ -5,6 +5,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
 use crate::toolchains::napi::resolver::NapiResolver;
+use crate::toolchains::napi::NapiConfig;
 
 pub enum BuildTarget {
     Debug,
@@ -61,6 +62,9 @@ impl NapiCli {
 
         command.run()?;
 
+        #[cfg(target_env = "gnu")]
+        ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
+
         let mut source_files = vec![];
         let mut node_binary = None;
 
@@ -113,4 +117,60 @@ impl NapiCli {
             .env("npm_config_dry_run", "true")
             .run();
     }
+}
+
+#[cfg(target_env = "gnu")]
+/// On a GNU host, cross-compile the native addon to only target the oldest supported GLIBC version by VS Code.
+///
+/// By default, compiling on the host targets the host's GLIBC version, which is usually newer.
+/// To prevent that, we need to explicitly cross-compile for the desired GLIBC version.
+///
+/// This is necessary to retain extension compatibility with as many systems as possible:
+/// <https://code.visualstudio.com/docs/supporting/requirements#_additional-linux-requirements>.
+fn ensure_correct_glibc_for_vscode(
+    resolver: &NapiResolver,
+    output_dir: &Path,
+    target: &BuildTarget,
+) -> Result<()> {
+    let compiling_for_gnu_on_host =
+        |target: &str| target.ends_with("-linux-gnu") && target.starts_with(std::env::consts::ARCH);
+
+    let gnu_host_target = match target {
+        BuildTarget::ReleaseTarget(target) if compiling_for_gnu_on_host(target) => target,
+        _ => return Ok(()),
+    };
+
+    let glibc = NapiConfig::target_glibc(resolver)?;
+    let rust_crate_name = resolver.rust_crate_name();
+
+    // Don't clobber the existing output directory.
+    let zigbuild_output = tempfile::tempdir()?;
+
+    // Until `@napi-rs/cli` v3 is released with a fixed `zig` support and a new `--cross-compile`,
+    // we explicitly compile ourselves again with `cargo-zigbuild` to target the desired GLIBC
+    // version, without having to separately compile on the target platform (e.g. via Docker).
+    Command::new("cargo")
+        .arg("zigbuild")
+        .property("-p", rust_crate_name)
+        .flag("--release")
+        .property("--target", format!("{gnu_host_target}.{glibc}"))
+        .property("--target-dir", zigbuild_output.path().to_string_lossy())
+        .run()?;
+
+    // Overwrite the existing artifact with the cross-compiled one.
+    let zigbuild_output = zigbuild_output.into_path();
+    let artifact_path = zigbuild_output
+        .join(gnu_host_target)
+        .join("release")
+        .join(format!("lib{rust_crate_name}.so"));
+
+    let output_artifact = match gnu_host_target.split('-').next() {
+        Some("x86_64") => "index.linux-x64-gnu.node",
+        Some("aarch64") => "index.linux-arm64-gnu.node",
+        _ => bail!("Unsupported target {gnu_host_target} for `cargo-zigbuild`."),
+    };
+
+    std::fs::copy(artifact_path, output_dir.join(output_artifact))?;
+
+    Ok(())
 }

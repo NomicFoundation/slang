@@ -66,6 +66,8 @@ fn compile_all_targets(resolver: &NapiResolver) -> Result<Vec<PathBuf>> {
 
     // Needed for cross-compiling windows targets:
     CargoWorkspace::install_binary("cargo-xwin")?;
+    // Needed to reliably target older GBLIC on `-linux-gnu` targets when host-compiling:
+    CargoWorkspace::install_binary("cargo-zigbuild")?;
 
     let mut node_binaries = vec![];
 

@@ -24,6 +24,7 @@ struct NapiEntry {
 struct NapiTriples {
     defaults: bool,
     additional: Vec<String>,
+    glibc: String,
 }
 
 pub struct NapiConfig;
@@ -59,6 +60,16 @@ impl NapiConfig {
         );
 
         Ok(triples.additional)
+    }
+
+    pub fn target_glibc(resolver: &NapiResolver) -> Result<String> {
+        let package = load_package(&resolver.main_package_dir())?;
+
+        Ok(package
+            .napi
+            .context("Failed to find NAPI config section")?
+            .triples
+            .glibc)
     }
 }
 
