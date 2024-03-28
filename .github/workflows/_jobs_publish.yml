@@ -5,59 +5,59 @@ on:
   workflow_call: {}
 
 jobs:
-  # changesets:
-  #   runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-  #   permissions:
-  #     contents: "write" # to create new branches and releases
-  #     pull-requests: "write" # to create new pull requests for changesets
-
-  #   steps:
-  #     #
-  #     # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
-  #     # Cache is updated in the "ci" workflow, then reused here.
-  #     #
-
-  #     - name: "Clone repository"
-  #       uses: "actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633"
-
-  #     - name: "Restore CI cache"
-  #       uses: "actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9"
-  #       with:
-  #         key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
-  #         restore-keys: |
-  #           cache-${{ github.ref_name }}-
-  #           cache-main-
-  #           cache-
-  #         path: |
-  #           ~/.cache/hermit/
-  #           ~/.local/share/virtualenvs/
-  #           .hermit/
-
-  #     #
-  #     # Publish Changesets:
-  #     #
-
-  #     - run: "scripts/bin/infra setup npm"
-
-  #     - id: "changesets"
-  #       uses: "changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9"
-  #       with:
-  #         title: "Bump Slang Version"
-  #         commit: "Bump Slang Version"
-  #         createGithubReleases: false
-  #         version: "scripts/bin/infra publish changesets"
-  #       env:
-  #         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-  #   outputs:
-  #     hasChangesets: "${{ steps.changesets.outputs.hasChangesets }}"
-
-  assets:
-    # needs: "changesets"
+  changesets:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
-    # if: "${{ needs.changesets.outputs.hasChangesets == 'false' }}"
+    permissions:
+      contents: "write" # to create new branches and releases
+      pull-requests: "write" # to create new pull requests for changesets
+
+    steps:
+      #
+      # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      # Cache is updated in the "ci" workflow, then reused here.
+      #
+
+      - name: "Clone repository"
+        uses: "actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633"
+
+      - name: "Restore CI cache"
+        uses: "actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9"
+        with:
+          key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
+          restore-keys: |
+            cache-${{ github.ref_name }}-
+            cache-main-
+            cache-
+          path: |
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
+
+      #
+      # Publish Changesets:
+      #
+
+      - run: "scripts/bin/infra setup npm"
+
+      - id: "changesets"
+        uses: "changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9"
+        with:
+          title: "Bump Slang Version"
+          commit: "Bump Slang Version"
+          createGithubReleases: false
+          version: "scripts/bin/infra publish changesets"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    outputs:
+      hasChangesets: "${{ steps.changesets.outputs.hasChangesets }}"
+
+  assets:
+    needs: "changesets"
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    if: "${{ needs.changesets.outputs.hasChangesets == 'false' }}"
 
     steps:
       #
@@ -87,19 +87,14 @@ jobs:
 
       - run: "scripts/bin/infra setup cargo npm"
 
-      - run: "scripts/bin/infra publish npm --dry-run"
-      - uses: "actions/upload-artifact@v4"
-        with:
-          name: "napi"
-          path: "crates/solidity/outputs/npm/package/target/napi/"
+      - run: "scripts/bin/infra publish npm"
+        env:
+          NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
-      #   # env:
-      #     NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
+      - run: "scripts/bin/infra publish cargo"
+        env:
+          CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
 
-      # - run: "scripts/bin/infra publish cargo"
-      #   env:
-      #     CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
-
-      # - run: "scripts/bin/infra publish github-release"
-      #   env:
-      #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - run: "scripts/bin/infra publish github-release"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
