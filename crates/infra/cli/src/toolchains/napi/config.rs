@@ -9,10 +9,12 @@ use serde::Deserialize;
 use crate::toolchains::napi::resolver::NapiResolver;
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct Package {
     name: String,
     version: Version,
     napi: Option<NapiEntry>,
+    slang_metadata: Option<SlangMetadata>,
 }
 
 #[derive(Deserialize)]
@@ -24,7 +26,12 @@ struct NapiEntry {
 struct NapiTriples {
     defaults: bool,
     additional: Vec<String>,
-    glibc: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SlangMetadata {
+    target_glibc: String,
 }
 
 pub struct NapiConfig;
@@ -62,14 +69,14 @@ impl NapiConfig {
         Ok(triples.additional)
     }
 
+    /// Returns the target glibc version for the GNU targets.
     pub fn target_glibc(resolver: &NapiResolver) -> Result<String> {
         let package = load_package(&resolver.main_package_dir())?;
 
         Ok(package
-            .napi
-            .context("Failed to find NAPI config section")?
-            .triples
-            .glibc)
+            .slang_metadata
+            .context("Failed to find NAPI config metadata section")?
+            .target_glibc)
     }
 }
 
