@@ -310,7 +310,7 @@ impl Selector {
                 }
                 node if filter(node) => {
                     self.index += 1;
-                    return Ok(Some(node.to_js(&self.env)));
+                    return Ok(Some(node.to_js(self.env)));
                 }
                 _ => {
                     break;
