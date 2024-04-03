@@ -120,7 +120,7 @@ impl TokenNode {
     }
 }
 
-pub trait ToJS {
+pub(crate) trait ToJS {
     fn to_js(&self, env: Env) -> JsObject;
 }
 
