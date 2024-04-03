@@ -14,9 +14,9 @@ use super::model::{
     OneOrMoreMatcher, OptionalMatcher, SequenceMatcher,
 };
 // This crate is copied to another crate, so all imports should be relative
-use crate::ModuleInputs;
+use crate::KindTypes;
 
-pub(super) fn parse_query<T: ModuleInputs>(input: &str) -> Result<Matcher<T>, String> {
+pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<Matcher<T>, String> {
     all_consuming(preceded(
         multispace0,
         opt(binding_name_token)
@@ -47,7 +47,7 @@ pub(super) fn parse_query<T: ModuleInputs>(input: &str) -> Result<Matcher<T>, St
     .map_err(|e| e.to_string())
 }
 
-fn parse_node<T: ModuleInputs>(i: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
+fn parse_node<T: KindTypes>(i: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
     delimited(
         token('['),
         parse_node_selector.and(many0(parse_match)),
@@ -69,10 +69,10 @@ fn parse_node<T: ModuleInputs>(i: &str) -> IResult<&str, Matcher<T>, VerboseErro
     .parse(i)
 }
 
-fn parse_node_selector<T: ModuleInputs>(
+fn parse_node_selector<T: KindTypes>(
     input: &str,
 ) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
-    enum Tail<T: ModuleInputs> {
+    enum Tail<T: KindTypes> {
         Anonymous,
         Kind(Kind<T>),
         Text(String),
@@ -102,7 +102,7 @@ enum Quantifier {
     OneOrMore,
 }
 
-fn parse_match<T: ModuleInputs>(input: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
+fn parse_match<T: KindTypes>(input: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
     opt(binding_name_token)
         .and(alt((
             parse_node,
@@ -174,7 +174,7 @@ fn binding_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
-fn kind_token<T: ModuleInputs>(i: &str) -> IResult<&str, Kind<T>, VerboseError<&str>> {
+fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, Kind<T>, VerboseError<&str>> {
     terminated(raw_identifier, multispace0)
         .map(|id| {
             T::TerminalKind::try_from(id.as_str())
@@ -185,7 +185,7 @@ fn kind_token<T: ModuleInputs>(i: &str) -> IResult<&str, Kind<T>, VerboseError<&
         .parse(i)
 }
 
-fn label_token<T: ModuleInputs>(i: &str) -> IResult<&str, T::LabelKind, VerboseError<&str>> {
+fn label_token<T: KindTypes>(i: &str) -> IResult<&str, T::LabelKind, VerboseError<&str>> {
     terminated(raw_identifier, token(':'))
         .map(|id| T::LabelKind::try_from(id.as_str()).unwrap())
         .parse(i)

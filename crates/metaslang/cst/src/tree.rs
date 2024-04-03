@@ -42,7 +42,7 @@ pub trait AbstractNode<T: TreeModel>: Sized {
         &[]
     }
 
-    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
+    // /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     // pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor<T> {
     //     Cursor::<T>::new(self.clone(), text_offset)
     // }

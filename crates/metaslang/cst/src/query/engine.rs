@@ -8,9 +8,9 @@ use super::model::{
     AlternativesMatcher, BindingMatcher, Kind, Matcher, NodeMatcher, NodeSelector,
     OneOrMoreMatcher, OptionalMatcher, Query, SequenceMatcher,
 };
-use crate::ModuleInputs;
+use crate::KindTypes;
 
-impl<T: ModuleInputs + 'static> Cursor<T> {
+impl<T: KindTypes + 'static> Cursor<T> {
     pub fn query(self, queries: Vec<Query<T>>) -> QueryResultIterator<T> {
         QueryResultIterator::new(self, queries)
     }
@@ -55,7 +55,7 @@ impl<T: ModuleInputs + 'static> Cursor<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Matcher<T> {
+impl<T: KindTypes + 'static> Matcher<T> {
     // This allows for queries to pre-flight against a cursor without allocating
     fn can_match(&self, cursor: &Cursor<T>) -> bool {
         match self {
@@ -92,19 +92,19 @@ impl<T: ModuleInputs + 'static> Matcher<T> {
     }
 }
 
-pub struct QueryResult<T: ModuleInputs> {
+pub struct QueryResult<T: KindTypes> {
     pub query_number: usize,
     pub bindings: HashMap<String, Vec<Cursor<T>>>,
 }
 
-pub struct QueryResultIterator<T: ModuleInputs> {
+pub struct QueryResultIterator<T: KindTypes> {
     cursor: Cursor<T>,
     queries: Vec<Query<T>>,
     query_number: usize,
     combinator: Option<CombinatorRef<T>>,
 }
 
-impl<T: ModuleInputs + 'static> QueryResultIterator<T> {
+impl<T: KindTypes + 'static> QueryResultIterator<T> {
     fn new(cursor: Cursor<T>, queries: Vec<Query<T>>) -> Self {
         Self {
             cursor,
@@ -130,7 +130,7 @@ impl<T: ModuleInputs + 'static> QueryResultIterator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Iterator for QueryResultIterator<T> {
+impl<T: KindTypes + 'static> Iterator for QueryResultIterator<T> {
     type Item = QueryResult<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -154,7 +154,7 @@ impl<T: ModuleInputs + 'static> Iterator for QueryResultIterator<T> {
     }
 }
 
-trait Combinator<T: ModuleInputs> {
+trait Combinator<T: KindTypes> {
     // None -> failed to match, you must backtrack. DO NOT call again
     // Some(cursor) if cursor.is_complete -> matched, end of input
     // Some(cursor) if !cursor.is_complete -> matched, more input to go
@@ -163,13 +163,13 @@ trait Combinator<T: ModuleInputs> {
 }
 type CombinatorRef<T> = Box<dyn Combinator<T>>;
 
-struct BindingCombinator<T: ModuleInputs> {
+struct BindingCombinator<T: KindTypes> {
     matcher: Rc<BindingMatcher<T>>,
     cursor: Cursor<T>,
     child: CombinatorRef<T>,
 }
 
-impl<T: ModuleInputs + 'static> BindingCombinator<T> {
+impl<T: KindTypes + 'static> BindingCombinator<T> {
     fn new(matcher: Rc<BindingMatcher<T>>, cursor: Cursor<T>) -> Self {
         let child = matcher.child.create_combinator(cursor.clone());
         Self {
@@ -180,7 +180,7 @@ impl<T: ModuleInputs + 'static> BindingCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs> Combinator<T> for BindingCombinator<T> {
+impl<T: KindTypes> Combinator<T> for BindingCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         self.child.next()
     }
@@ -194,14 +194,14 @@ impl<T: ModuleInputs> Combinator<T> for BindingCombinator<T> {
     }
 }
 
-struct NodeCombinator<T: ModuleInputs> {
+struct NodeCombinator<T: KindTypes> {
     matcher: Rc<NodeMatcher<T>>,
     child: Option<CombinatorRef<T>>,
     cursor: Cursor<T>,
     is_initialised: bool,
 }
 
-impl<T: ModuleInputs> NodeCombinator<T> {
+impl<T: KindTypes> NodeCombinator<T> {
     fn new(matcher: Rc<NodeMatcher<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
@@ -212,7 +212,7 @@ impl<T: ModuleInputs> NodeCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for NodeCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for NodeCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if self.cursor.is_completed() {
             return None;
@@ -263,14 +263,14 @@ impl<T: ModuleInputs + 'static> Combinator<T> for NodeCombinator<T> {
     }
 }
 
-struct SequenceCombinator<T: ModuleInputs> {
+struct SequenceCombinator<T: KindTypes> {
     matcher: Rc<SequenceMatcher<T>>,
     children: Vec<CombinatorRef<T>>,
     cursor: Cursor<T>,
     is_initialised: bool,
 }
 
-impl<T: ModuleInputs> SequenceCombinator<T> {
+impl<T: KindTypes> SequenceCombinator<T> {
     fn new(matcher: Rc<SequenceMatcher<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
@@ -281,7 +281,7 @@ impl<T: ModuleInputs> SequenceCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for SequenceCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for SequenceCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if !self.is_initialised {
             self.is_initialised = true;
@@ -315,14 +315,14 @@ impl<T: ModuleInputs + 'static> Combinator<T> for SequenceCombinator<T> {
     }
 }
 
-struct AlternativesCombinator<T: ModuleInputs> {
+struct AlternativesCombinator<T: KindTypes> {
     matcher: Rc<AlternativesMatcher<T>>,
     next_child_number: usize,
     child: Option<CombinatorRef<T>>,
     cursor: Cursor<T>,
 }
 
-impl<T: ModuleInputs> AlternativesCombinator<T> {
+impl<T: KindTypes> AlternativesCombinator<T> {
     fn new(matcher: Rc<AlternativesMatcher<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
@@ -333,7 +333,7 @@ impl<T: ModuleInputs> AlternativesCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for AlternativesCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for AlternativesCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         loop {
             if self.child.is_none() {
@@ -359,14 +359,14 @@ impl<T: ModuleInputs + 'static> Combinator<T> for AlternativesCombinator<T> {
     }
 }
 
-struct OptionalCombinator<T: ModuleInputs> {
+struct OptionalCombinator<T: KindTypes> {
     matcher: Rc<OptionalMatcher<T>>,
     child: Option<CombinatorRef<T>>,
     cursor: Cursor<T>,
     have_nonempty_match: bool,
 }
 
-impl<T: ModuleInputs> OptionalCombinator<T> {
+impl<T: KindTypes> OptionalCombinator<T> {
     fn new(matcher: Rc<OptionalMatcher<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
@@ -377,7 +377,7 @@ impl<T: ModuleInputs> OptionalCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for OptionalCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for OptionalCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if let Some(child) = self.child.as_mut() {
             match child.next() {
@@ -407,13 +407,13 @@ impl<T: ModuleInputs + 'static> Combinator<T> for OptionalCombinator<T> {
     }
 }
 
-struct OneOrMoreCombinator<T: ModuleInputs> {
+struct OneOrMoreCombinator<T: KindTypes> {
     matcher: Rc<OneOrMoreMatcher<T>>,
     children: Vec<CombinatorRef<T>>,
     cursor_for_next_repetition: Option<Cursor<T>>,
 }
 
-impl<T: ModuleInputs> OneOrMoreCombinator<T> {
+impl<T: KindTypes> OneOrMoreCombinator<T> {
     fn new(matcher: Rc<OneOrMoreMatcher<T>>, cursor: Cursor<T>) -> Self {
         let cursor_for_next_repetition = Some(cursor);
         Self {
@@ -424,7 +424,7 @@ impl<T: ModuleInputs> OneOrMoreCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for OneOrMoreCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for OneOrMoreCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         loop {
             if let Some(cursor_for_next_repetition) = self.cursor_for_next_repetition.take() {
@@ -456,12 +456,12 @@ impl<T: ModuleInputs + 'static> Combinator<T> for OneOrMoreCombinator<T> {
     }
 }
 
-struct EllipsisCombinator<T: ModuleInputs> {
+struct EllipsisCombinator<T: KindTypes> {
     cursor: Cursor<T>,
     has_returned_initial_empty_value: bool,
 }
 
-impl<T: ModuleInputs> EllipsisCombinator<T> {
+impl<T: KindTypes> EllipsisCombinator<T> {
     fn new(cursor: Cursor<T>) -> Self {
         Self {
             cursor,
@@ -470,7 +470,7 @@ impl<T: ModuleInputs> EllipsisCombinator<T> {
     }
 }
 
-impl<T: ModuleInputs + 'static> Combinator<T> for EllipsisCombinator<T> {
+impl<T: KindTypes + 'static> Combinator<T> for EllipsisCombinator<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if !self.has_returned_initial_empty_value {
             self.has_returned_initial_empty_value = true;

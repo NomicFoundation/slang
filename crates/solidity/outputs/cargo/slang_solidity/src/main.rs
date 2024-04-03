@@ -14,8 +14,7 @@ use slang_solidity::language::Language;
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
     use {
-        ariadne as _, codegen_parser_treestuff as _, serde as _, strum as _, strum_macros as _,
-        thiserror as _,
+        ariadne as _, metaslang_cst as _, serde as _, strum as _, strum_macros as _, thiserror as _,
     };
 }
 

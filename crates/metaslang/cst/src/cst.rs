@@ -4,16 +4,16 @@ use serde::Serialize;
 
 use crate::cursor::Cursor;
 use crate::text_index::TextIndex;
-use crate::ModuleInputs;
+use crate::KindTypes;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct TerminalNode<T: ModuleInputs> {
+pub struct TerminalNode<T: KindTypes> {
     pub kind: T::TerminalKind,
     pub text: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct NonTerminalNode<T: ModuleInputs> {
+pub struct NonTerminalNode<T: KindTypes> {
     pub kind: T::NonTerminalKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -21,25 +21,25 @@ pub struct NonTerminalNode<T: ModuleInputs> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub enum Node<T: ModuleInputs> {
+pub enum Node<T: KindTypes> {
     Rule(Rc<NonTerminalNode<T>>),
     Token(Rc<TerminalNode<T>>),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct LabeledNode<T: ModuleInputs> {
+pub struct LabeledNode<T: KindTypes> {
     pub label: Option<T::LabelKind>,
     pub node: Node<T>,
 }
 
-impl<T: ModuleInputs> LabeledNode<T> {
+impl<T: KindTypes> LabeledNode<T> {
     /// Creates an anonymous node (without a label).
     pub fn anonymous(node: Node<T>) -> Self {
         Self { label: None, node }
     }
 }
 
-impl<T: ModuleInputs> std::ops::Deref for LabeledNode<T> {
+impl<T: KindTypes> std::ops::Deref for LabeledNode<T> {
     type Target = Node<T>;
 
     fn deref(&self) -> &Self::Target {
@@ -47,7 +47,7 @@ impl<T: ModuleInputs> std::ops::Deref for LabeledNode<T> {
     }
 }
 
-impl<T: ModuleInputs> Node<T> {
+impl<T: KindTypes> Node<T> {
     pub fn rule(kind: T::NonTerminalKind, children: Vec<LabeledNode<T>>) -> Self {
         let text_len = children.iter().map(|node| node.text_len()).sum();
 
@@ -162,19 +162,19 @@ impl<T: ModuleInputs> Node<T> {
     }
 }
 
-impl<T: ModuleInputs> From<Rc<NonTerminalNode<T>>> for Node<T> {
+impl<T: KindTypes> From<Rc<NonTerminalNode<T>>> for Node<T> {
     fn from(node: Rc<NonTerminalNode<T>>) -> Self {
         Self::Rule(node)
     }
 }
 
-impl<T: ModuleInputs> From<Rc<TerminalNode<T>>> for Node<T> {
+impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
     fn from(node: Rc<TerminalNode<T>>) -> Self {
         Self::Token(node)
     }
 }
 
-impl<T: ModuleInputs> NonTerminalNode<T> {
+impl<T: KindTypes> NonTerminalNode<T> {
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
         Cursor::<T>::new(Node::<T>::Rule(self), text_offset)

@@ -15,11 +15,14 @@ members = [
     "crates/codegen/language/tests",
     "crates/codegen/parser/generator",
     "crates/codegen/parser/runtime",
-    "crates/codegen/parser/treestuff",
     "crates/codegen/spec",
     "crates/codegen/testing",
+
     "crates/infra/cli",
     "crates/infra/utils",
+
+    "crates/metaslang/graph_builder",
+    "crates/metaslang/cst",
 
     "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/slang_solidity_node_addon",
@@ -51,11 +54,14 @@ codegen_language_macros = { path = "crates/codegen/language/macros" }
 codegen_language_tests = { path = "crates/codegen/language/tests" }
 codegen_parser_generator = { path = "crates/codegen/parser/generator" }
 codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
-codegen_parser_treestuff = { path = "crates/codegen/parser/treestuff" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
+
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
+
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder" }
+metaslang_cst = { path = "crates/metaslang/cst" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity" }
 slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon" }

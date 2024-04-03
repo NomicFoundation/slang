@@ -30,7 +30,7 @@ impl<T> Kind for T where
 {
 }
 
-pub trait ModuleInputs: Clone + PartialEq {
+pub trait KindTypes: Clone + PartialEq {
     type NonTerminalKind: Kind;
     type TerminalKind: Kind;
     type LabelKind: Kind;

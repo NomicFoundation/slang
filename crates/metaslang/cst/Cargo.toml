@@ -1,5 +1,5 @@
 [package]
-name = "codegen_parser_treestuff"
+name = "metaslang_cst"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

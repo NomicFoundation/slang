@@ -4,11 +4,11 @@ use std::rc::Rc;
 
 use crate::cst::{LabeledNode, Node, NonTerminalNode};
 use crate::text_index::{TextIndex, TextRange};
-use crate::ModuleInputs;
+use crate::KindTypes;
 
 /// A node in the ancestor path of a [`Cursor`].
 #[derive(Clone, Debug, PartialEq, Eq)]
-struct PathAncestor<T: ModuleInputs> {
+struct PathAncestor<T: KindTypes> {
     parent: Option<Rc<PathAncestor<T>>>,
     rule_node: Rc<NonTerminalNode<T>>,
     child_number: usize,
@@ -19,7 +19,7 @@ struct PathAncestor<T: ModuleInputs> {
 ///
 /// Nodes are visited in a DFS pre-order traversal.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Cursor<T: ModuleInputs> {
+pub struct Cursor<T: KindTypes> {
     /// The parent path of this cursor
     parent: Option<Rc<PathAncestor<T>>>,
     /// The node the cursor is currently pointing to.
@@ -34,7 +34,7 @@ pub struct Cursor<T: ModuleInputs> {
     is_completed: bool,
 }
 
-impl<T: ModuleInputs> Cursor<T> {
+impl<T: KindTypes> Cursor<T> {
     fn as_ancestor_node(&self) -> Option<Rc<PathAncestor<T>>> {
         if let Node::<T>::Rule(rule_node) = &self.node {
             Some(Rc::new(PathAncestor {
@@ -56,7 +56,7 @@ impl<T: ModuleInputs> Cursor<T> {
     }
 }
 
-impl<T: ModuleInputs> Iterator for Cursor<T> {
+impl<T: KindTypes> Iterator for Cursor<T> {
     type Item = Node<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -71,7 +71,7 @@ impl<T: ModuleInputs> Iterator for Cursor<T> {
     }
 }
 
-impl<T: ModuleInputs> Cursor<T> {
+impl<T: KindTypes> Cursor<T> {
     pub(crate) fn new(node: Node<T>, text_offset: TextIndex) -> Self {
         Self {
             parent: None,
@@ -161,10 +161,10 @@ impl<T: ModuleInputs> Cursor<T> {
 
     /// Returns an iterator over the current node's ancestors, starting from the parent of the current node.
     pub fn ancestors(&self) -> impl Iterator<Item = Rc<NonTerminalNode<T>>> {
-        struct Iter<T: ModuleInputs> {
+        struct Iter<T: KindTypes> {
             a: Option<Rc<PathAncestor<T>>>,
         }
-        impl<T: ModuleInputs> Iterator for Iter<T> {
+        impl<T: KindTypes> Iterator for Iter<T> {
             type Item = Rc<NonTerminalNode<T>>;
 
             fn next(&mut self) -> Option<Self::Item> {
@@ -414,17 +414,17 @@ impl<T: ModuleInputs> Cursor<T> {
 }
 
 /// A [`Cursor`] that also keeps track of the labels of the nodes it visits.
-pub struct CursorWithLabels<T: ModuleInputs> {
+pub struct CursorWithLabels<T: KindTypes> {
     cursor: Cursor<T>,
 }
 
-impl<T: ModuleInputs> CursorWithLabels<T> {
+impl<T: KindTypes> CursorWithLabels<T> {
     pub fn without_labels(self) -> Cursor<T> {
         self.cursor
     }
 }
 
-impl<T: ModuleInputs> Iterator for CursorWithLabels<T> {
+impl<T: KindTypes> Iterator for CursorWithLabels<T> {
     type Item = LabeledNode<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -434,7 +434,7 @@ impl<T: ModuleInputs> Iterator for CursorWithLabels<T> {
     }
 }
 
-impl<T: ModuleInputs> std::ops::Deref for CursorWithLabels<T> {
+impl<T: KindTypes> std::ops::Deref for CursorWithLabels<T> {
     type Target = Cursor<T>;
 
     fn deref(&self) -> &Self::Target {
@@ -442,20 +442,20 @@ impl<T: ModuleInputs> std::ops::Deref for CursorWithLabels<T> {
     }
 }
 
-impl<T: ModuleInputs> std::ops::DerefMut for CursorWithLabels<T> {
+impl<T: KindTypes> std::ops::DerefMut for CursorWithLabels<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.cursor
     }
 }
 
-impl<T: ModuleInputs> Cursor<T> {
+impl<T: KindTypes> Cursor<T> {
     /// Returns a [`CursorWithLabels`] that wraps this cursor.
     pub fn with_labels(self) -> CursorWithLabels<T> {
         CursorWithLabels::<T>::from(self)
     }
 }
 
-impl<T: ModuleInputs> From<Cursor<T>> for CursorWithLabels<T> {
+impl<T: KindTypes> From<Cursor<T>> for CursorWithLabels<T> {
     fn from(cursor: Cursor<T>) -> Self {
         CursorWithLabels::<T> { cursor }
     }
