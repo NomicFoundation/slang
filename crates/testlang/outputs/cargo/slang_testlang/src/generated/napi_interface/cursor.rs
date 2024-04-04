@@ -81,11 +81,8 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "Array<cst.RuleNode>", catch_unwind)]
-    pub fn ancestors(&self, env: Env) -> Vec<JsObject> {
-        self.0
-            .ancestors()
-            .map(|rust_rule_node| rust_rule_node.to_js(env))
-            .collect()
+    pub fn ancestors(&self) -> Vec<cst::RuleNode> {
+        self.0.ancestors().map(cst::RuleNode).collect()
     }
 
     #[napi(catch_unwind)]
