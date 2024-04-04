@@ -3,6 +3,7 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
+use napi::Either;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
@@ -51,7 +52,7 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn node(&self) -> napi::Either<RuleNode, TokenNode> {
+    pub fn node(&self) -> Either<RuleNode, TokenNode> {
         self.0.node().into_either()
     }
 

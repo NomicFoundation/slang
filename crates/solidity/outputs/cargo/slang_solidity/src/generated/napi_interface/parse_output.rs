@@ -1,8 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::{cst, cursor, parse_error, RustParseOutput};
+use crate::napi_interface::cst::{RuleNode, TokenNode};
+use crate::napi_interface::{cursor, parse_error, RustParseOutput};
 
 #[napi(namespace = "parse_output")]
 pub struct ParseOutput(RustParseOutput);
@@ -16,7 +18,7 @@ impl From<RustParseOutput> for ParseOutput {
 #[napi(namespace = "parse_output")]
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn tree(&self) -> napi::Either<cst::RuleNode, cst::TokenNode> {
+    pub fn tree(&self) -> Either<RuleNode, TokenNode> {
         self.0.tree().into_either()
     }
 

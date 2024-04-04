@@ -4,6 +4,7 @@
 
 use std::rc::Rc;
 
+use napi::Either;
 use napi_derive::napi;
 
 use crate::napi_interface::cst::{RuleNode, TokenNode};
@@ -20,7 +21,7 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
 )]
 pub fn select_sequence(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -40,7 +41,7 @@ pub fn select_sequence(
 }
 
 impl Selector {
-    fn source_unit(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn source_unit(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_rule_with_kind(RuleKind::SourceUnitMembers)
         })?)])
@@ -48,7 +49,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn tree(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::TreeKeyword))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
@@ -59,7 +60,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn tree_node(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TreeNodeChildren))?),
@@ -69,7 +70,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn addition_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn addition_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Plus))?),
@@ -79,7 +80,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn negation_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn negation_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Bang))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -88,9 +89,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn member_access_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn member_access_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Period))?),
@@ -106,7 +105,7 @@ impl Selector {
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<napi::Either<RuleNode, TokenNode>> {
+) -> Result<Either<RuleNode, TokenNode>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -124,7 +123,7 @@ pub fn select_choice(
 }
 
 impl Selector {
-    fn source_unit_member(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn source_unit_member(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::Tree,
@@ -137,7 +136,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node_child(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn tree_node_child(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::TreeNode)
                 || node.is_token_with_kind(TokenKind::DelimitedIdentifier)
@@ -146,7 +145,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn expression(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::AdditionExpression,
@@ -158,7 +157,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn literal(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| node.is_token_with_kind(TokenKind::StringLiteral))
     }
 }
@@ -174,7 +173,7 @@ impl Selector {
 )]
 pub fn select_repeated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+) -> Result<Vec<Either<RuleNode, TokenNode>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -190,7 +189,7 @@ pub fn select_repeated(
 }
 
 impl Selector {
-    fn source_unit_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn source_unit_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -204,7 +203,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node_children(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn tree_node_children(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -228,7 +227,7 @@ impl Selector {
 )]
 pub fn select_separated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -243,7 +242,7 @@ pub fn select_separated(
 }
 
 impl Selector {
-    fn separated_identifiers(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn separated_identifiers(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -285,7 +284,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<napi::Either<RuleNode, TokenNode>> {
+    ) -> Result<Either<RuleNode, TokenNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -295,7 +294,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<napi::Either<RuleNode, TokenNode>>> {
+    ) -> Result<Option<Either<RuleNode, TokenNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {

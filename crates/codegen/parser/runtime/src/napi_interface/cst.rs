@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use napi::Either;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
@@ -16,10 +17,10 @@ pub enum NodeType {
 
 impl RustNode {
     /// Converts a Rust node into a choice of NAPI-exposed wrapper structs.
-    pub fn into_either(self) -> napi::Either<RuleNode, TokenNode> {
+    pub fn into_either(self) -> Either<RuleNode, TokenNode> {
         match self {
-            RustNode::Rule(rule) => napi::Either::A(RuleNode(rule)),
-            RustNode::Token(token) => napi::Either::B(TokenNode(token)),
+            RustNode::Rule(rule) => Either::A(RuleNode(rule)),
+            RustNode::Token(token) => Either::B(TokenNode(token)),
         }
     }
 }
@@ -58,7 +59,7 @@ impl RuleNode {
     }
 
     #[napi(catch_unwind)]
-    pub fn children(&self) -> Vec<napi::Either<RuleNode, TokenNode>> {
+    pub fn children(&self) -> Vec<Either<RuleNode, TokenNode>> {
         self.0
             .children
             .iter()

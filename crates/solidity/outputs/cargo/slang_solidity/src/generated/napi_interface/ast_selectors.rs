@@ -4,6 +4,7 @@
 
 use std::rc::Rc;
 
+use napi::Either;
 use napi_derive::napi;
 
 use crate::napi_interface::cst::{RuleNode, TokenNode};
@@ -20,7 +21,7 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
 )]
 pub fn select_sequence(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -166,7 +167,7 @@ pub fn select_sequence(
 }
 
 impl Selector {
-    fn source_unit(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn source_unit(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_rule_with_kind(RuleKind::SourceUnitMembers)
         })?)])
@@ -174,7 +175,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn pragma_directive(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn pragma_directive(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::PragmaKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Pragma))?),
@@ -184,7 +185,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn abi_coder_pragma(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn abi_coder_pragma(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AbicoderKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -193,7 +194,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn experimental_pragma(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn experimental_pragma(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ExperimentalKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ExperimentalFeature))?),
@@ -202,7 +203,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn version_pragma(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::SolidityKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpressions))?),
@@ -211,9 +212,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma_or_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn version_pragma_or_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::BarBar))?),
@@ -225,7 +224,7 @@ impl Selector {
 impl Selector {
     fn version_pragma_range_expression(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Minus))?),
@@ -237,7 +236,7 @@ impl Selector {
 impl Selector {
     fn version_pragma_prefix_expression(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Caret))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
@@ -246,7 +245,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_directive(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn import_directive(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ImportKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ImportClause))?),
@@ -256,7 +255,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn path_import(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn path_import(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ImportAlias))?,
@@ -265,7 +264,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_import(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn named_import(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Asterisk))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ImportAlias))?),
@@ -276,7 +275,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_deconstruction(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn import_deconstruction(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
             Some(
@@ -290,9 +289,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_deconstruction_symbol(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn import_deconstruction_symbol(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ImportAlias))?,
@@ -301,7 +298,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_alias(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn import_alias(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AsKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -310,7 +307,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_directive(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn using_directive(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::UsingKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::UsingClause))?),
@@ -323,7 +320,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_deconstruction(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn using_deconstruction(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::UsingDeconstructionSymbols))?),
@@ -333,9 +330,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_deconstruction_symbol(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn using_deconstruction_symbol(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::UsingAlias))?,
@@ -344,7 +339,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_alias(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn using_alias(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AsKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::UsingOperator))?),
@@ -353,7 +348,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn contract_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn contract_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_token_with_kind(TokenKind::AbstractKeyword))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ContractKeyword))?),
@@ -367,7 +362,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn inheritance_specifier(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn inheritance_specifier(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::IsKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::InheritanceTypes))?),
@@ -376,7 +371,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn inheritance_type(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn inheritance_type(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?,
@@ -385,7 +380,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn interface_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn interface_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::InterfaceKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -398,7 +393,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn library_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn library_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::LibraryKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -410,7 +405,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn struct_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::StructKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -422,7 +417,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_member(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn struct_member(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -432,7 +427,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn enum_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn enum_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EnumKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -444,7 +439,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn constant_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn constant_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ConstantKeyword))?),
@@ -457,9 +452,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn state_variable_definition(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn state_variable_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::StateVariableAttributes))?),
@@ -473,7 +466,7 @@ impl Selector {
 impl Selector {
     fn state_variable_definition_value(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Equal))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -482,7 +475,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn function_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::FunctionName))?),
@@ -495,7 +488,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn parameters_declaration(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn parameters_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Parameters))?),
@@ -505,7 +498,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn parameter(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn parameter(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StorageLocation))?,
@@ -515,7 +508,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn override_specifier(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn override_specifier(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OverrideKeyword))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::OverridePathsDeclaration))?,
@@ -524,9 +517,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn override_paths_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn override_paths_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::OverridePaths))?),
@@ -536,7 +527,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn returns_declaration(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn returns_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ReturnsKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -545,7 +536,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn constructor_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn constructor_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ConstructorKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -556,9 +547,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unnamed_function_definition(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn unnamed_function_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -569,9 +558,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn fallback_function_definition(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn fallback_function_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FallbackKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -583,9 +570,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn receive_function_definition(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn receive_function_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ReceiveKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -596,7 +581,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn modifier_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ModifierKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -608,7 +593,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_invocation(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn modifier_invocation(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?,
@@ -617,7 +602,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn event_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EventKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -629,9 +614,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_parameters_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn event_parameters_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::EventParameters))?),
@@ -641,7 +624,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_parameter(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn event_parameter(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::IndexedKeyword))?,
@@ -653,7 +636,7 @@ impl Selector {
 impl Selector {
     fn user_defined_value_type_definition(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::TypeKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -665,7 +648,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_definition(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn error_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ErrorKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -676,9 +659,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_parameters_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn error_parameters_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ErrorParameters))?),
@@ -688,7 +669,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_parameter(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn error_parameter(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
@@ -697,7 +678,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn array_type_name(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn array_type_name(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
@@ -708,7 +689,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_type(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn function_type(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::FunctionKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -719,7 +700,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_type(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn mapping_type(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::MappingKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -732,7 +713,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_key(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn mapping_key(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::MappingKeyType))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
@@ -741,7 +722,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_value(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn mapping_value(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
@@ -750,7 +731,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn address_type(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn address_type(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AddressKeyword))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::PayableKeyword))?,
@@ -759,7 +740,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn block(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn block(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Statements))?),
@@ -769,7 +750,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unchecked_block(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn unchecked_block(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::UncheckedKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Block))?),
@@ -778,7 +759,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn expression_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn expression_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
@@ -787,7 +768,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn assembly_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn assembly_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AssemblyKeyword))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StringLiteral))?,
@@ -798,9 +779,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn assembly_flags_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn assembly_flags_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::AssemblyFlags))?),
@@ -812,7 +791,7 @@ impl Selector {
 impl Selector {
     fn tuple_deconstruction_statement(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_token_with_kind(TokenKind::VarKeyword))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -828,9 +807,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_deconstruction_element(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn tuple_deconstruction_element(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![self.try_select(|node| {
             node.is_rule_with_kind(RuleKind::TupleMember)
         })?])
@@ -838,7 +815,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn typed_tuple_member(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn typed_tuple_member(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StorageLocation))?,
@@ -848,7 +825,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn untyped_tuple_member(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn untyped_tuple_member(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StorageLocation))?,
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
@@ -859,7 +836,7 @@ impl Selector {
 impl Selector {
     fn variable_declaration_statement(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::VariableDeclarationType))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::StorageLocation))?,
@@ -871,9 +848,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn variable_declaration_value(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn variable_declaration_value(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Equal))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -882,7 +857,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn if_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn if_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::IfKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -895,7 +870,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn else_branch(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn else_branch(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ElseKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Statement))?),
@@ -904,7 +879,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn for_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn for_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ForKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -918,7 +893,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn while_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn while_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::WhileKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -930,7 +905,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn do_while_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn do_while_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::DoKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Statement))?),
@@ -944,7 +919,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn continue_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn continue_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ContinueKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
@@ -953,7 +928,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn break_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn break_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::BreakKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
@@ -962,7 +937,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn return_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn return_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ReturnKeyword))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))?,
@@ -972,7 +947,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn emit_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn emit_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EmitKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?),
@@ -983,7 +958,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn try_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn try_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::TryKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -995,7 +970,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn catch_clause(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn catch_clause(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::CatchKeyword))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::CatchClauseError))?,
@@ -1005,7 +980,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn catch_clause_error(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn catch_clause_error(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ParametersDeclaration))?),
@@ -1014,7 +989,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn revert_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn revert_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::RevertKeyword))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::IdentifierPath))?,
@@ -1025,7 +1000,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn throw_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn throw_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::ThrowKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Semicolon))?),
@@ -1034,7 +1009,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn assignment_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn assignment_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Equal))?),
@@ -1044,7 +1019,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn conditional_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn conditional_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::QuestionMark))?),
@@ -1056,7 +1031,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn or_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn or_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::BarBar))?),
@@ -1066,7 +1041,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn and_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn and_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AmpersandAmpersand))?),
@@ -1076,7 +1051,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn equality_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn equality_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::EqualEqual))?),
@@ -1086,7 +1061,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn comparison_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn comparison_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::LessThan))?),
@@ -1096,7 +1071,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn bitwise_or_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn bitwise_or_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Bar))?),
@@ -1106,7 +1081,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn bitwise_xor_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn bitwise_xor_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Caret))?),
@@ -1116,7 +1091,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn bitwise_and_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn bitwise_and_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Ampersand))?),
@@ -1126,7 +1101,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn shift_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn shift_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::LessThanLessThan))?),
@@ -1136,7 +1111,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn additive_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn additive_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Plus))?),
@@ -1146,9 +1121,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn multiplicative_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn multiplicative_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Asterisk))?),
@@ -1158,9 +1131,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn exponentiation_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn exponentiation_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::AsteriskAsterisk))?),
@@ -1170,7 +1141,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn postfix_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn postfix_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::PlusPlus))?),
@@ -1179,7 +1150,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn prefix_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn prefix_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::PlusPlus))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -1188,9 +1159,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_call_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn function_call_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ArgumentsDeclaration))?),
@@ -1199,9 +1168,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn call_options_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn call_options_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
@@ -1212,9 +1179,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn member_access_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn member_access_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Period))?),
@@ -1224,9 +1189,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn index_access_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn index_access_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
@@ -1238,7 +1201,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn index_access_end(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn index_access_end(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::Expression))?,
@@ -1249,7 +1212,7 @@ impl Selector {
 impl Selector {
     fn positional_arguments_declaration(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::PositionalArguments))?),
@@ -1259,9 +1222,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_arguments_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn named_arguments_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::NamedArgumentGroup))?,
@@ -1271,7 +1232,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_argument_group(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn named_argument_group(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::NamedArguments))?),
@@ -1281,7 +1242,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_argument(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn named_argument(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Identifier))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
@@ -1291,7 +1252,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn type_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn type_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::TypeKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -1302,7 +1263,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn new_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn new_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::NewKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
@@ -1311,7 +1272,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn tuple_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TupleValues))?),
@@ -1321,7 +1282,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_value(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn tuple_value(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![self.try_select(|node| {
             node.is_rule_with_kind(RuleKind::Expression)
         })?])
@@ -1329,7 +1290,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn array_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn array_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::ArrayValues))?),
@@ -1339,7 +1300,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_number_expression(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn hex_number_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::HexLiteral))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::NumberUnit))?,
@@ -1348,9 +1309,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn decimal_number_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn decimal_number_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::DecimalLiteral))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::NumberUnit))?,
@@ -1359,7 +1318,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_block(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_block(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBrace))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulStatements))?),
@@ -1369,9 +1328,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_function_definition(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_function_definition(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulFunctionKeyword))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?),
@@ -1383,9 +1340,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_parameters_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_parameters_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulParameters))?),
@@ -1395,9 +1350,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_returns_declaration(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_returns_declaration(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::MinusGreaterThan))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulReturnVariables))?),
@@ -1408,7 +1361,7 @@ impl Selector {
 impl Selector {
     fn yul_variable_declaration_statement(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulLetKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPaths))?),
@@ -1420,7 +1373,7 @@ impl Selector {
 impl Selector {
     fn yul_variable_declaration_value(
         &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulAssignmentOperator))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
@@ -1429,9 +1382,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_assignment_statement(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_assignment_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulIdentifierPaths))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulAssignmentOperator))?),
@@ -1441,7 +1392,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_colon_and_equal(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_colon_and_equal(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Equal))?),
@@ -1450,7 +1401,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_if_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_if_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulIfKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
@@ -1460,7 +1411,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_for_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_for_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulForKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulBlock))?),
@@ -1472,7 +1423,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_switch_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_switch_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulSwitchKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
@@ -1482,7 +1433,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_default_case(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_default_case(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulDefaultKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulBlock))?),
@@ -1491,7 +1442,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_value_case(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_value_case(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulCaseKeyword))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulLiteral))?),
@@ -1501,7 +1452,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_leave_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_leave_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_token_with_kind(TokenKind::YulLeaveKeyword)
         })?)])
@@ -1509,7 +1460,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_break_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_break_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_token_with_kind(TokenKind::YulBreakKeyword)
         })?)])
@@ -1517,7 +1468,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_continue_statement(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_continue_statement(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_token_with_kind(TokenKind::YulContinueKeyword)
         })?)])
@@ -1525,7 +1476,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_label(&mut self) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_label(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Colon))?),
@@ -1534,9 +1485,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_function_call_expression(
-        &mut self,
-    ) -> Result<Vec<Option<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_function_call_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenParen))?),
@@ -1553,7 +1502,7 @@ impl Selector {
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<napi::Either<RuleNode, TokenNode>> {
+) -> Result<Either<RuleNode, TokenNode>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -1609,7 +1558,7 @@ pub fn select_choice(
 }
 
 impl Selector {
-    fn source_unit_member(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn source_unit_member(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::PragmaDirective,
@@ -1631,7 +1580,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn pragma(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn pragma(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::ABICoderPragma,
@@ -1643,7 +1592,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn experimental_feature(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn experimental_feature(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::StringLiteral)
                 || node.is_token_with_kind(TokenKind::Identifier)
@@ -1652,7 +1601,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma_expression(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn version_pragma_expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::VersionPragmaOrExpression,
@@ -1665,7 +1614,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_clause(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn import_clause(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::PathImport,
@@ -1677,7 +1626,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_clause(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn using_clause(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::IdentifierPath, RuleKind::UsingDeconstruction])
         })
@@ -1685,7 +1634,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_operator(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn using_operator(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::Ampersand,
@@ -1709,7 +1658,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_target(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn using_target(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::TypeName)
                 || node.is_token_with_kind(TokenKind::Asterisk)
@@ -1718,7 +1667,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn contract_member(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn contract_member(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::UsingDirective,
@@ -1740,7 +1689,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn state_variable_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn state_variable_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::OverrideSpecifier)
                 || node.is_token_with_kinds(&[
@@ -1755,7 +1704,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_name(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn function_name(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::Identifier,
@@ -1767,7 +1716,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn function_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::ModifierInvocation, RuleKind::OverrideSpecifier])
                 || node.is_token_with_kinds(&[
@@ -1786,7 +1735,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_body(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn function_body(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::Block) || node.is_token_with_kind(TokenKind::Semicolon)
         })
@@ -1794,7 +1743,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn constructor_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn constructor_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::ModifierInvocation)
                 || node.is_token_with_kinds(&[
@@ -1809,7 +1758,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unnamed_function_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn unnamed_function_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::ModifierInvocation)
                 || node.is_token_with_kinds(&[
@@ -1827,7 +1776,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn fallback_function_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn fallback_function_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::ModifierInvocation, RuleKind::OverrideSpecifier])
                 || node.is_token_with_kinds(&[
@@ -1842,7 +1791,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn receive_function_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn receive_function_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::ModifierInvocation, RuleKind::OverrideSpecifier])
                 || node.is_token_with_kinds(&[
@@ -1855,7 +1804,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn modifier_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::OverrideSpecifier)
                 || node.is_token_with_kind(TokenKind::VirtualKeyword)
@@ -1864,7 +1813,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn type_name(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn type_name(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::ArrayTypeName,
@@ -1878,7 +1827,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_type_attribute(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn function_type_attribute(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::InternalKeyword,
@@ -1895,7 +1844,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_key_type(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn mapping_key_type(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::ElementaryType, RuleKind::IdentifierPath])
         })
@@ -1903,7 +1852,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn elementary_type(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn elementary_type(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::AddressType)
                 || node.is_token_with_kinds(&[
@@ -1921,7 +1870,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn statement(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn statement(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::ExpressionStatement,
@@ -1947,7 +1896,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_member(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn tuple_member(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::TypedTupleMember, RuleKind::UntypedTupleMember])
         })
@@ -1955,7 +1904,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn variable_declaration_type(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn variable_declaration_type(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::TypeName)
                 || node.is_token_with_kind(TokenKind::VarKeyword)
@@ -1964,7 +1913,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn storage_location(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn storage_location(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::MemoryKeyword,
@@ -1976,7 +1925,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn for_statement_initialization(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn for_statement_initialization(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::ExpressionStatement,
@@ -1988,7 +1937,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn for_statement_condition(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn for_statement_condition(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::ExpressionStatement)
                 || node.is_token_with_kind(TokenKind::Semicolon)
@@ -1997,7 +1946,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn expression(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::AssignmentExpression,
@@ -2038,7 +1987,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn member_access(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn member_access(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[TokenKind::Identifier, TokenKind::AddressKeyword])
         })
@@ -2046,7 +1995,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn arguments_declaration(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn arguments_declaration(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::PositionalArgumentsDeclaration,
@@ -2057,7 +2006,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn number_unit(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn number_unit(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::WeiKeyword,
@@ -2077,7 +2026,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn string_expression(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn string_expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::StringLiteral,
@@ -2091,7 +2040,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn string_literal(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn string_literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::SingleQuotedStringLiteral,
@@ -2102,7 +2051,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_string_literal(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn hex_string_literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::SingleQuotedHexStringLiteral,
@@ -2113,7 +2062,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unicode_string_literal(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn unicode_string_literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::SingleQuotedUnicodeStringLiteral,
@@ -2124,7 +2073,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_statement(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_statement(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::YulBlock,
@@ -2145,7 +2094,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_assignment_operator(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_assignment_operator(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::YulColonAndEqual)
                 || node.is_token_with_kind(TokenKind::ColonEqual)
@@ -2154,7 +2103,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_switch_case(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_switch_case(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::YulDefaultCase, RuleKind::YulValueCase])
         })
@@ -2162,7 +2111,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_expression(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::YulFunctionCallExpression,
@@ -2175,7 +2124,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_built_in_function(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_built_in_function(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_token_with_kinds(&[
                 TokenKind::YulAddKeyword,
@@ -2260,7 +2209,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_literal(&mut self) -> Result<napi::Either<RuleNode, TokenNode>> {
+    fn yul_literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[RuleKind::HexStringLiteral, RuleKind::StringLiteral])
                 || node.is_token_with_kinds(&[
@@ -2284,7 +2233,7 @@ impl Selector {
 )]
 pub fn select_repeated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+) -> Result<Vec<Either<RuleNode, TokenNode>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -2319,7 +2268,7 @@ pub fn select_repeated(
 }
 
 impl Selector {
-    fn source_unit_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn source_unit_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2333,7 +2282,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma_expressions(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn version_pragma_expressions(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2347,7 +2296,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn contract_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn contract_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2361,7 +2310,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn interface_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn interface_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2375,7 +2324,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn library_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn library_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2389,7 +2338,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_members(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn struct_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2403,7 +2352,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn state_variable_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn state_variable_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2417,7 +2366,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn function_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2431,7 +2380,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn constructor_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn constructor_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2445,7 +2394,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unnamed_function_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn unnamed_function_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2459,7 +2408,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn fallback_function_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn fallback_function_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2473,7 +2422,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn receive_function_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn receive_function_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2487,7 +2436,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn modifier_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2501,7 +2450,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_type_attributes(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn function_type_attributes(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2515,7 +2464,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn statements(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn statements(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2529,7 +2478,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn catch_clauses(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn catch_clauses(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2543,7 +2492,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn string_literals(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn string_literals(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2557,7 +2506,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_string_literals(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn hex_string_literals(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2571,7 +2520,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unicode_string_literals(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn unicode_string_literals(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2585,7 +2534,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_statements(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn yul_statements(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2599,7 +2548,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_switch_cases(&mut self) -> Result<Vec<napi::Either<RuleNode, TokenNode>>> {
+    fn yul_switch_cases(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -2623,7 +2572,7 @@ impl Selector {
 )]
 pub fn select_separated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
@@ -2659,7 +2608,7 @@ pub fn select_separated(
 }
 
 impl Selector {
-    fn version_pragma_specifier(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn version_pragma_specifier(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2684,9 +2633,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_deconstruction_symbols(
-        &mut self,
-    ) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn import_deconstruction_symbols(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2713,9 +2660,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_deconstruction_symbols(
-        &mut self,
-    ) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn using_deconstruction_symbols(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2742,7 +2687,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn inheritance_types(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn inheritance_types(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2766,7 +2711,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn enum_members(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn enum_members(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2789,7 +2734,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn parameters(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn parameters(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2810,7 +2755,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn override_paths(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn override_paths(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2834,7 +2779,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_parameters(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn event_parameters(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2858,7 +2803,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_parameters(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn error_parameters(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2882,7 +2827,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn assembly_flags(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn assembly_flags(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2906,9 +2851,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_deconstruction_elements(
-        &mut self,
-    ) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn tuple_deconstruction_elements(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2935,7 +2878,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn positional_arguments(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn positional_arguments(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2956,7 +2899,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_arguments(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn named_arguments(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2980,7 +2923,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn call_options(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn call_options(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3004,7 +2947,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_values(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn tuple_values(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3025,7 +2968,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn array_values(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn array_values(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3046,7 +2989,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn identifier_path(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn identifier_path(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3069,7 +3012,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_parameters(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_parameters(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3093,7 +3036,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_return_variables(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_return_variables(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3117,7 +3060,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_arguments(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_arguments(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3141,7 +3084,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_identifier_paths(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_identifier_paths(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3165,7 +3108,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_identifier_path(&mut self) -> Result<Vec<Vec<napi::Either<RuleNode, TokenNode>>>> {
+    fn yul_identifier_path(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3208,7 +3151,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<napi::Either<RuleNode, TokenNode>> {
+    ) -> Result<Either<RuleNode, TokenNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -3218,7 +3161,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<napi::Either<RuleNode, TokenNode>>> {
+    ) -> Result<Option<Either<RuleNode, TokenNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
