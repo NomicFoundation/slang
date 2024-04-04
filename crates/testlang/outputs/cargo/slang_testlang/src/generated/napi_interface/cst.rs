@@ -2,8 +2,6 @@
 
 use std::rc::Rc;
 
-use napi::bindgen_prelude::Env;
-use napi::JsObject;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
@@ -16,6 +14,16 @@ use crate::napi_interface::{
 pub enum NodeType {
     Rule,
     Token,
+}
+
+impl RustNode {
+    /// Converts a Rust node into a choice of NAPI-exposed wrapper structs.
+    pub fn into_either(self) -> napi::Either<RuleNode, TokenNode> {
+        match self {
+            RustNode::Rule(rule) => napi::Either::A(RuleNode(rule)),
+            RustNode::Token(token) => napi::Either::B(TokenNode(token)),
+        }
+    }
 }
 
 #[napi(namespace = "cst")]
@@ -51,12 +59,12 @@ impl RuleNode {
         (&self.0.text_len).into()
     }
 
-    #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
-    pub fn children(&self, env: Env) -> Vec<JsObject> {
+    #[napi(catch_unwind)]
+    pub fn children(&self) -> Vec<napi::Either<RuleNode, TokenNode>> {
         self.0
             .children
             .iter()
-            .map(|child| child.to_js(env))
+            .map(|child| child.node.clone().into_either())
             .collect()
     }
 
@@ -117,36 +125,5 @@ impl TokenNode {
         RustNode::Token(self.0.clone())
             .cursor_with_offset((&text_offset).into())
             .into()
-    }
-}
-
-pub(crate) trait ToJS {
-    fn to_js(&self, env: Env) -> JsObject;
-}
-
-impl ToJS for Rc<RustRuleNode> {
-    fn to_js(&self, env: Env) -> JsObject {
-        RuleNode(self.clone())
-            .into_instance(env)
-            .expect("Class constructor to be defined by #[napi]")
-            .as_object(env)
-    }
-}
-
-impl ToJS for Rc<RustTokenNode> {
-    fn to_js(&self, env: Env) -> JsObject {
-        TokenNode(self.clone())
-            .into_instance(env)
-            .expect("Class constructor to be defined by #[napi]")
-            .as_object(env)
-    }
-}
-
-impl ToJS for RustNode {
-    fn to_js(&self, env: Env) -> JsObject {
-        match self {
-            RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
-            RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
-        }
     }
 }

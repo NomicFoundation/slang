@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use cst::ToJS;
-use napi::bindgen_prelude::Env;
 use napi_derive::napi;
 
 use crate::napi_interface::{cst, cursor, parse_error, RustParseOutput};
@@ -18,8 +16,8 @@ impl From<RustParseOutput> for ParseOutput {
 #[napi(namespace = "parse_output")]
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn tree(&self, env: Env) -> napi::JsObject {
-        self.0.tree().to_js(env)
+    pub fn tree(&self) -> napi::Either<cst::RuleNode, cst::TokenNode> {
+        self.0.tree().into_either()
     }
 
     #[napi(ts_return_type = "Array<parse_error.ParseError>", catch_unwind)]

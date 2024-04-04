@@ -5,13 +5,11 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
-use cst::ToJS;
-use napi::bindgen_prelude::Env;
-use napi::JsObject;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
-use crate::napi_interface::{cst, text_index, NodeLabel, RuleKind, RustCursor, TokenKind};
+use crate::napi_interface::cst::{self, RuleNode, TokenNode};
+use crate::napi_interface::{text_index, NodeLabel, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(pub(super) RustCursor);
@@ -55,8 +53,8 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn node(&self, env: Env) -> JsObject {
-        self.0.node().to_js(env)
+    pub fn node(&self) -> napi::Either<RuleNode, TokenNode> {
+        self.0.node().into_either()
     }
 
     #[napi(getter, ts_return_type = "kinds.NodeLabel", catch_unwind)]

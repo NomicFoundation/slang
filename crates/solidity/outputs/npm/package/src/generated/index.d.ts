@@ -744,7 +744,7 @@ export namespace cst {
     get type(): NodeType.Rule;
     get kind(): kinds.RuleKind;
     get textLength(): text_index.TextIndex;
-    children(): Array<cst.Node>;
+    children(): Array<RuleNode | TokenNode>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
     unparse(): string;
   }
