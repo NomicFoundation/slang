@@ -3,10 +3,9 @@ use std::path::{Path, PathBuf};
 use anyhow::{bail, Context, Result};
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
-use semver::Version;
 
+use crate::toolchains::napi::glibc;
 use crate::toolchains::napi::resolver::NapiResolver;
-use crate::toolchains::napi::NapiConfig;
 
 pub enum BuildTarget {
     Debug,
@@ -64,7 +63,7 @@ impl NapiCli {
         command.run()?;
 
         #[cfg(target_env = "gnu")]
-        ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
+        glibc::ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
 
         let mut source_files = vec![];
         let mut node_binary = None;
@@ -117,89 +116,5 @@ impl NapiCli {
             .property("--prefix", platforms_dir.unwrap_str())
             .env("npm_config_dry_run", "true")
             .run();
-    }
-}
-
-#[cfg(target_env = "gnu")]
-/// On a GNU host, cross-compile the native addon to only target the oldest supported GLIBC version by VS Code.
-///
-/// By default, compiling on the host targets the host's GLIBC version, which is usually newer.
-/// To prevent that, we need to explicitly cross-compile for the desired GLIBC version.
-///
-/// This is necessary to retain extension compatibility with as many systems as possible:
-/// <https://code.visualstudio.com/docs/supporting/requirements#_additional-linux-requirements>.
-fn ensure_correct_glibc_for_vscode(
-    resolver: &NapiResolver,
-    output_dir: &Path,
-    target: &BuildTarget,
-) -> Result<()> {
-    let target_triple = match target {
-        BuildTarget::ReleaseTarget(target) if target.ends_with("-linux-gnu") => target,
-        _ => return Ok(()),
-    };
-
-    let min_glibc = NapiConfig::target_glibc(resolver)?;
-
-    let output_artifact = match target_triple.split('-').next() {
-        Some("x86_64") => "index.linux-x64-gnu.node",
-        Some("aarch64") => "index.linux-arm64-gnu.node",
-        _ => bail!("Unsupported target {target_triple} for `cargo-zigbuild`."),
-    };
-    let output_artifact_path = output_dir.join(output_artifact);
-
-    let is_host_compiling = target_triple.starts_with(std::env::consts::ARCH);
-    if is_host_compiling {
-        let rust_crate_name = resolver.rust_crate_name();
-
-        // Don't clobber the existing output directory.
-        let zigbuild_output = tempfile::tempdir()?;
-
-        // Until `@napi-rs/cli` v3 is released with a fixed `zig` support and a new `--cross-compile`,
-        // we explicitly compile ourselves again with `cargo-zigbuild` to target the desired GLIBC
-        // version, without having to separately compile on the target platform (e.g. via Docker).
-        Command::new("cargo")
-            .arg("zigbuild")
-            .property("-p", rust_crate_name)
-            .flag("--release")
-            .property("--target", format!("{target_triple}.{min_glibc}"))
-            .property("--target-dir", zigbuild_output.path().to_string_lossy())
-            .run()?;
-
-        // Overwrite the existing artifact with the cross-compiled one.
-        let zigbuild_output = zigbuild_output.into_path();
-        let artifact_path = zigbuild_output
-            .join(target_triple)
-            .join("release")
-            .join(format!("lib{rust_crate_name}.so"));
-
-        std::fs::copy(artifact_path, &output_artifact_path)?;
-    } else {
-        // Already cross-compiled with the correct GLIBC version. Just verify for sanity.
-    }
-
-    // Verify that the artifact is compatible with the desired GLIBC version.
-    let library_glibc_version = Command::new("scripts/min_glibc_version.sh")
-        .arg(output_artifact_path.to_string_lossy())
-        .evaluate()?;
-
-    if lenient_semver(&library_glibc_version)? > lenient_semver(&min_glibc)? {
-        bail!("The compiled artifact {output_artifact_path:?} targets GLIBC {library_glibc_version}, which is higher than the minimum specified version {min_glibc}.");
-    }
-
-    Ok(())
-}
-
-/// Like `Version::parse`, but allows for a missing patch version, defaulting to `0`.
-fn lenient_semver(value: &str) -> Result<Version> {
-    let components: Vec<_> = value
-        .trim()
-        .split('.')
-        .map(|part| part.parse::<u64>().map_err(Into::into))
-        .collect::<Result<_>>()?;
-
-    match &components[..] {
-        [major, minor] => Ok(Version::new(*major, *minor, 0)),
-        [major, minor, patch] => Ok(Version::new(*major, *minor, *patch)),
-        _ => bail!("Invalid semver version components: {components:?}"),
     }
 }

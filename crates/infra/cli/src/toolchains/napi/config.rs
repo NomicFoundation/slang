@@ -6,6 +6,7 @@ use infra_utils::paths::PathExtensions;
 use semver::Version;
 use serde::Deserialize;
 
+use crate::toolchains::napi::glibc::ZigGlibcVersion;
 use crate::toolchains::napi::resolver::NapiResolver;
 
 #[derive(Deserialize)]
@@ -31,7 +32,7 @@ struct NapiTriples {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct SlangMetadata {
-    target_glibc: String,
+    target_glibc: ZigGlibcVersion,
 }
 
 pub struct NapiConfig;
@@ -70,7 +71,7 @@ impl NapiConfig {
     }
 
     /// Returns the target glibc version for the GNU targets.
-    pub fn target_glibc(resolver: &NapiResolver) -> Result<String> {
+    pub fn target_glibc(resolver: &NapiResolver) -> Result<ZigGlibcVersion> {
         let package = load_package(&resolver.main_package_dir())?;
 
         Ok(package
