@@ -58,7 +58,7 @@ impl RuleNode {
         (&self.0.text_len).into()
     }
 
-    #[napi(catch_unwind)]
+    #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
     pub fn children(&self) -> Vec<Either<RuleNode, TokenNode>> {
         self.0
             .children
