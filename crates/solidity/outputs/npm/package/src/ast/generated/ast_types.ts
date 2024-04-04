@@ -1315,11 +1315,12 @@ export class EventParametersDeclaration {
 
 export class EventParameter {
   private readonly fetch = once(() => {
-    const [$typeName, $indexedKeyword, $name] = ast_internal.selectSequence(this.cst);
+    const [$typeName, $indexedAttribute, $name] = ast_internal.selectSequence(this.cst);
 
     return {
       typeName: new TypeName($typeName as RuleNode),
-      indexedKeyword: $indexedKeyword === null ? undefined : ($indexedKeyword as TokenNode),
+      indexedAttribute:
+        $indexedAttribute === null ? undefined : new EventIndexedAttribute($indexedAttribute as RuleNode),
       name: $name === null ? undefined : ($name as TokenNode),
     };
   });
@@ -1332,12 +1333,35 @@ export class EventParameter {
     return this.fetch().typeName;
   }
 
-  public get indexedKeyword(): TokenNode | undefined {
-    return this.fetch().indexedKeyword;
+  public get indexedAttribute(): EventIndexedAttribute | undefined {
+    return this.fetch().indexedAttribute;
   }
 
   public get name(): TokenNode | undefined {
     return this.fetch().name;
+  }
+}
+
+export class EventIndexedAttribute {
+  private readonly fetch = once(() => {
+    const [$indexedKeyword, $repeated] = ast_internal.selectSequence(this.cst);
+
+    return {
+      indexedKeyword: $indexedKeyword as TokenNode,
+      repeated: $repeated === null ? undefined : new RepeatedIndexedKeyword($repeated as RuleNode),
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.EventIndexedAttribute);
+  }
+
+  public get indexedKeyword(): TokenNode {
+    return this.fetch().indexedKeyword;
+  }
+
+  public get repeated(): RepeatedIndexedKeyword | undefined {
+    return this.fetch().repeated;
   }
 }
 
@@ -5466,6 +5490,21 @@ export class ModifierAttributes {
   }
 
   public get items(): readonly ModifierAttribute[] {
+    return this.fetch();
+  }
+}
+
+export class RepeatedIndexedKeyword {
+  private readonly fetch = once(() => {
+    const items = ast_internal.selectRepeated(this.cst);
+    return items as TokenNode[];
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.RepeatedIndexedKeyword);
+  }
+
+  public get items(): readonly TokenNode[] {
     return this.fetch();
   }
 }

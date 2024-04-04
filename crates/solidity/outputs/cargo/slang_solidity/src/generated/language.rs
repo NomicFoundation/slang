@@ -1496,17 +1496,33 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn event_indexed_attribute(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem_labeled(
+                NodeLabel::IndexedKeyword,
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::IndexedKeyword,
+                ),
+            )?;
+            if !self.version_is_at_least_0_8_18 {
+                seq.elem_labeled(
+                    NodeLabel::Repeated,
+                    OptionalHelper::transform(self.repeated_indexed_keyword(input)),
+                )?;
+            }
+            seq.finish()
+        })
+        .with_kind(RuleKind::EventIndexedAttribute)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn event_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
             seq.elem_labeled(
-                NodeLabel::IndexedKeyword,
-                OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::IndexedKeyword,
-                    ),
-                ),
+                NodeLabel::IndexedAttribute,
+                OptionalHelper::transform(self.event_indexed_attribute(input)),
             )?;
             seq.elem_labeled(
                 NodeLabel::Name,
@@ -4070,6 +4086,22 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::ReceiveFunctionDefinition)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn repeated_indexed_keyword(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_8_18 {
+            OneOrMoreHelper::run(input, |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::IndexedKeyword,
+                )
+                .with_label(NodeLabel::Item)
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::RepeatedIndexedKeyword)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9027,6 +9059,7 @@ impl Language {
                 Self::error_parameters_declaration.parse(self, input)
             }
             RuleKind::EventDefinition => Self::event_definition.parse(self, input),
+            RuleKind::EventIndexedAttribute => Self::event_indexed_attribute.parse(self, input),
             RuleKind::EventParameter => Self::event_parameter.parse(self, input),
             RuleKind::EventParameters => Self::event_parameters.parse(self, input),
             RuleKind::EventParametersDeclaration => {
@@ -9135,6 +9168,7 @@ impl Language {
             RuleKind::ReceiveFunctionDefinition => {
                 Self::receive_function_definition.parse(self, input)
             }
+            RuleKind::RepeatedIndexedKeyword => Self::repeated_indexed_keyword.parse(self, input),
             RuleKind::ReturnStatement => Self::return_statement.parse(self, input),
             RuleKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             RuleKind::RevertStatement => Self::revert_statement.parse(self, input),

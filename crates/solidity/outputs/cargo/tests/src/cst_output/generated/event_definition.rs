@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn indexed_indexed() -> Result<()> {
+    run("EventDefinition", "indexed_indexed")
+}
+
+#[test]
 fn no_parens() -> Result<()> {
     run("EventDefinition", "no_parens")
 }

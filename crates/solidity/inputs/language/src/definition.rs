@@ -2579,9 +2579,26 @@ codegen_language_macros::compile!(Language(
                             name = EventParameter,
                             fields = (
                                 type_name = Required(TypeName),
-                                indexed_keyword = Optional(reference = IndexedKeyword),
+                                indexed_attribute = Optional(reference = EventIndexedAttribute),
                                 name = Optional(reference = Identifier)
                             )
+                        ),
+                        Struct(
+                            name = EventIndexedAttribute,
+                            fields = (
+                                indexed_keyword = Required(IndexedKeyword),
+                                // Replicate solc bug: https://github.com/ethereum/solidity/issues/13681
+                                repeated = Optional(
+                                    reference = RepeatedIndexedKeyword,
+                                    enabled = Till("0.8.18")
+                                )
+                            )
+                        ),
+                        Repeated(
+                            name = RepeatedIndexedKeyword,
+                            reference = IndexedKeyword,
+                            enabled = Till("0.8.18"),
+                            allow_empty = false
                         )
                     ]
                 ),

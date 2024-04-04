@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // This replicates a solc's bug, where we could specify indexed multiple times.     │ 0..79
+  2  │ // This was fixed in 0.8.18, see <https://github.com/ethereum/solidity/pull/13816>. │ 80..163
+  3  │ event Updated(uint256 indexed indexed id);                                          │ 164..206
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/indexed_indexed/input.sol:3:31]
+       │
+     3 │ event Updated(uint256 indexed indexed id);
+       │                               ─────┬────  
+       │                                    ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - (EventDefinition): # "// This replicates a solc's bug, where we could sp..." (0..207)
+      - (leading_trivia꞉ SingleLineComment): "// This replicates a solc's bug, where we could sp..." # (0..79)
+      - (leading_trivia꞉ EndOfLine): "\n" # (79..80)
+      - (leading_trivia꞉ SingleLineComment): "// This was fixed in 0.8.18, see <https://github.c..." # (80..163)
+      - (leading_trivia꞉ EndOfLine): "\n" # (163..164)
+      - (event_keyword꞉ EventKeyword): "event" # (164..169)
+      - (leading_trivia꞉ Whitespace): " " # (169..170)
+      - (name꞉ Identifier): "Updated" # (170..177)
+      - (parameters꞉ EventParametersDeclaration): # "(uint256 indexed indexed id)" (177..205)
+          - (open_paren꞉ OpenParen): "(" # (177..178)
+          - (parameters꞉ EventParameters): # "uint256 indexed" (178..193)
+              - (item꞉ EventParameter): # "uint256 indexed" (178..193)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # (178..185)
+                  - (indexed_attribute꞉ EventIndexedAttribute): # " indexed" (185..193)
+                      - (leading_trivia꞉ Whitespace): " " # (185..186)
+                      - (indexed_keyword꞉ IndexedKeyword): "indexed" # (186..193)
+          - (leading_trivia꞉ Whitespace): " " # (193..194)
+          - (SKIPPED): "indexed id" # (194..204)
+          - (close_paren꞉ CloseParen): ")" # (204..205)
+      - (semicolon꞉ Semicolon): ";" # (205..206)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (206..207)

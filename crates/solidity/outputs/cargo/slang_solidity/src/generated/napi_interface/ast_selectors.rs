@@ -70,6 +70,7 @@ pub fn select_sequence(
         RuleKind::EventDefinition => selector.event_definition()?,
         RuleKind::EventParametersDeclaration => selector.event_parameters_declaration()?,
         RuleKind::EventParameter => selector.event_parameter()?,
+        RuleKind::EventIndexedAttribute => selector.event_indexed_attribute()?,
         RuleKind::UserDefinedValueTypeDefinition => {
             selector.user_defined_value_type_definition()?
         }
@@ -622,8 +623,17 @@ impl Selector {
     fn event_parameter(&mut self) -> Result<Vec<Option<JsObject>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TypeName))?),
-            self.try_select(|node| node.is_token_with_kind(TokenKind::IndexedKeyword))?,
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::EventIndexedAttribute))?,
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
+        ])
+    }
+}
+
+impl Selector {
+    fn event_indexed_attribute(&mut self) -> Result<Vec<Option<JsObject>>> {
+        Ok(vec![
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::IndexedKeyword))?),
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::RepeatedIndexedKeyword))?,
         ])
     }
 }
@@ -2235,6 +2245,7 @@ pub fn select_repeated(
         RuleKind::FallbackFunctionAttributes => selector.fallback_function_attributes()?,
         RuleKind::ReceiveFunctionAttributes => selector.receive_function_attributes()?,
         RuleKind::ModifierAttributes => selector.modifier_attributes()?,
+        RuleKind::RepeatedIndexedKeyword => selector.repeated_indexed_keyword()?,
         RuleKind::FunctionTypeAttributes => selector.function_type_attributes()?,
         RuleKind::Statements => selector.statements()?,
         RuleKind::CatchClauses => selector.catch_clauses()?,
@@ -2426,6 +2437,20 @@ impl Selector {
 
         while let Some(item) =
             self.try_select(|node| node.is_rule_with_kind(RuleKind::ModifierAttribute))?
+        {
+            items.push(item);
+        }
+
+        Ok(items)
+    }
+}
+
+impl Selector {
+    fn repeated_indexed_keyword(&mut self) -> Result<Vec<JsObject>> {
+        let mut items = vec![];
+
+        while let Some(item) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::IndexedKeyword))?
         {
             items.push(item);
         }

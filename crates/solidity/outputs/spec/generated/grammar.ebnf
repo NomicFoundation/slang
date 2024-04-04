@@ -835,8 +835,14 @@ EventParametersDeclaration = OPEN_PAREN
 EventParameters = (EventParameter (COMMA EventParameter)*)?;
 
 EventParameter = TypeName
-                 INDEXED_KEYWORD?
+                 EventIndexedAttribute?
                  IDENTIFIER?;
+
+EventIndexedAttribute = INDEXED_KEYWORD
+                        RepeatedIndexedKeyword?; (* Deprecated in 0.8.18 *)
+
+(* Deprecated in 0.8.18 *)
+RepeatedIndexedKeyword = INDEXED_KEYWORD+;
 
 (* 2.11. User Defined Value Types: *)
 
