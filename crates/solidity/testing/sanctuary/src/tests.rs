@@ -149,12 +149,6 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
         // 0.4.18: // Accepts unfinished multi-line comments at the end of the file:
         // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
         "ethereum/contracts/mainnet/7d/7d81c361d6ac60634117dd81ab1b01b8dc795a9d_LILITHCOIN.sol",
-        // 0.8.15: Relies on invalidly accepting `indexed indexed` in the event declaration:
-        // Fixed in 0.8.18: https://github.com/ethereum/solidity/pull/13816
-        "ethereum/contracts/mainnet/d4/d4559E5F507eD935F19208A5D50637898c192Ab3_Factory.sol",
-        // 0.4.24: Relies on silently ignoring invalid `\`-escapes in string literals:
-        // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
-        "ethereum/contracts/mainnet/e0/e0b1bfe763b2cd43c652471bf126f5a577a81567_ExchangeProvider.sol",
     ];
 
     CONTRACTS_WITH_EXOTIC_PARSER_BUGS
