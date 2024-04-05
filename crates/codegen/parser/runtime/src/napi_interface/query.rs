@@ -3,7 +3,10 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
-use napi::{Env, JsObject};
+use std::collections::HashMap;
+
+use napi::bindgen_prelude::ClassInstance;
+use napi::Env;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
@@ -36,22 +39,28 @@ pub struct QueryResultIterator(RustQueryResultIterator);
 pub struct QueryResult {
     pub query_number: u32,
     #[napi(ts_type = "{ [key: string]: cursor.Cursor[] }")]
-    pub bindings: JsObject,
+    pub bindings: HashMap<String, Vec<ClassInstance<Cursor>>>,
 }
 
 impl QueryResult {
     fn new(env: Env, result: RustQueryResult) -> napi::Result<Self> {
         #[allow(clippy::cast_possible_truncation)]
         let query_number = result.query_number as u32;
-        let mut bindings = env.create_object()?;
-        // transer all of the bindings eagerly on the assumption
+        // transfer all of the bindings eagerly on the assumption
         // that they've all been explicitly requested.
-        for (key, value) in result.bindings {
-            bindings.set_named_property(
-                &key,
-                value.into_iter().map(|x| x.into()).collect::<Vec<Cursor>>(),
-            )?;
-        }
+        let bindings = result
+            .bindings
+            .into_iter()
+            .map(|(key, values)| {
+                let instances = values
+                    .into_iter()
+                    .map(|cursor| Cursor(cursor).into_instance(env))
+                    .collect::<napi::Result<_>>()?;
+
+                Ok((key, instances))
+            })
+            .collect::<napi::Result<_>>()?;
+
         Ok(Self {
             query_number,
             bindings,
