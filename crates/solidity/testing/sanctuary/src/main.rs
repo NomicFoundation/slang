@@ -92,8 +92,7 @@ fn main() -> Result<()> {
     if failure_count > 0 {
         println!();
         println!(
-            "Found {failure_count} failure{suffix}. Please check the logs above for more information.",
-            suffix = if failure_count == 1 { "" } else { "s" },
+            "Found {failure_count} failure(s). Please check the logs above for more information.",
         );
         println!();
 
