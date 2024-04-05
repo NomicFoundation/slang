@@ -3820,9 +3820,21 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = SingleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters:
+                                // Allows unicode characters and arbitrary ASCII escape sequences:
                                 TokenDefinition(
-                                    enabled = Till("0.7.0"),
+                                    enabled = Till("0.4.25"),
+                                    scanner = Sequence([
+                                        Atom("'"),
+                                        ZeroOrMore(Choice([
+                                            Fragment(EscapeSequenceArbitraryAscii),
+                                            Not(['\'', '\\', '\r', '\n'])
+                                        ])),
+                                        Atom("'")
+                                    ])
+                                ),
+                                // Allows unicode characters but allows only known ASCII escape sequences:
+                                TokenDefinition(
+                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
                                     scanner = Sequence([
                                         Atom("'"),
                                         ZeroOrMore(Choice([
@@ -3850,9 +3862,21 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DoubleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters:
+                                // Allows unicode characters and arbitrary ASCII escape sequences:
                                 TokenDefinition(
-                                    enabled = Till("0.7.0"),
+                                    enabled = Till("0.4.25"),
+                                    scanner = Sequence([
+                                        Atom("\""),
+                                        ZeroOrMore(Choice([
+                                            Fragment(EscapeSequenceArbitraryAscii),
+                                            Not(['"', '\\', '\r', '\n'])
+                                        ])),
+                                        Atom("\"")
+                                    ])
+                                ),
+                                // Allows unicode characters but allows only known ASCII escape sequences:
+                                TokenDefinition(
+                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
                                     scanner = Sequence([
                                         Atom("\""),
                                         ZeroOrMore(Choice([
@@ -3982,6 +4006,18 @@ codegen_language_macros::compile!(Language(
                             ])
                         ),
                         Fragment(
+                            name = EscapeSequenceArbitraryAscii,
+                            enabled = Till("0.4.25"),
+                            scanner = Sequence([
+                                Atom("\\"),
+                                Choice([
+                                    Fragment(AsciiEscapeArbitrary),
+                                    Fragment(HexByteEscape),
+                                    Fragment(UnicodeEscape)
+                                ])
+                            ])
+                        ),
+                        Fragment(
                             name = AsciiEscape,
                             scanner = Choice([
                                 Atom("n"),
@@ -3994,6 +4030,11 @@ codegen_language_macros::compile!(Language(
                                 Atom("\r"),
                                 Atom("\n")
                             ])
+                        ),
+                        Fragment(
+                            name = AsciiEscapeArbitrary,
+                            enabled = Till("0.4.25"),
+                            scanner = Not(['x', 'u'])
                         ),
                         Fragment(
                             name = HexByteEscape,

@@ -36,6 +36,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_4_16: bool,
     pub(crate) version_is_at_least_0_4_21: bool,
     pub(crate) version_is_at_least_0_4_22: bool,
+    pub(crate) version_is_at_least_0_4_25: bool,
     pub(crate) version_is_at_least_0_5_0: bool,
     pub(crate) version_is_at_least_0_5_3: bool,
     pub(crate) version_is_at_least_0_5_5: bool,
@@ -168,6 +169,7 @@ impl Language {
                 version_is_at_least_0_4_16: Version::new(0, 4, 16) <= version,
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
+                version_is_at_least_0_4_25: Version::new(0, 4, 25) <= version,
                 version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
                 version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
                 version_is_at_least_0_5_5: Version::new(0, 5, 5) <= version,
@@ -6921,6 +6923,15 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn ascii_escape_arbitrary(&self, input: &mut ParserContext<'_>) -> bool {
+        if !self.version_is_at_least_0_4_25 {
+            scan_none_of!(input, 'x', 'u')
+        } else {
+            false
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -7030,7 +7041,23 @@ impl Language {
     fn double_quoted_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
-            if !self.version_is_at_least_0_7_0 {
+            if !self.version_is_at_least_0_4_25 {
+                scan_sequence!(
+                    scan_chars!(input, '"'),
+                    scan_zero_or_more!(
+                        input,
+                        scan_choice!(
+                            input,
+                            self.escape_sequence_arbitrary_ascii(input),
+                            scan_none_of!(input, '"', '\\', '\r', '\n')
+                        )
+                    ),
+                    scan_chars!(input, '"')
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_25 && !self.version_is_at_least_0_7_0 {
                 scan_sequence!(
                     scan_chars!(input, '"'),
                     scan_zero_or_more!(
@@ -7106,6 +7133,23 @@ impl Language {
                 self.unicode_escape(input)
             )
         )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn escape_sequence_arbitrary_ascii(&self, input: &mut ParserContext<'_>) -> bool {
+        if !self.version_is_at_least_0_4_25 {
+            scan_sequence!(
+                scan_chars!(input, '\\'),
+                scan_choice!(
+                    input,
+                    self.ascii_escape_arbitrary(input),
+                    self.hex_byte_escape(input),
+                    self.unicode_escape(input)
+                )
+            )
+        } else {
+            false
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7281,7 +7325,23 @@ impl Language {
     fn single_quoted_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
-            if !self.version_is_at_least_0_7_0 {
+            if !self.version_is_at_least_0_4_25 {
+                scan_sequence!(
+                    scan_chars!(input, '\''),
+                    scan_zero_or_more!(
+                        input,
+                        scan_choice!(
+                            input,
+                            self.escape_sequence_arbitrary_ascii(input),
+                            scan_none_of!(input, '\'', '\\', '\r', '\n')
+                        )
+                    ),
+                    scan_chars!(input, '\'')
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_25 && !self.version_is_at_least_0_7_0 {
                 scan_sequence!(
                     scan_chars!(input, '\''),
                     scan_zero_or_more!(

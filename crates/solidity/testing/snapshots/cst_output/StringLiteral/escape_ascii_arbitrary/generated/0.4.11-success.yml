@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Disallowed post 0.4.25                                                        │ 0..25
+  2  │ "\a"                                                                             │ 26..30
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '// Disallowed post 0.4.25\n"\a"\n' (0..31)
+      - (leading_trivia꞉ SingleLineComment): "// Disallowed post 0.4.25" # (0..25)
+      - (leading_trivia꞉ EndOfLine): "\n" # (25..26)
+      - (variant꞉ DoubleQuotedStringLiteral): '"\a"' # (26..30)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (30..31)
