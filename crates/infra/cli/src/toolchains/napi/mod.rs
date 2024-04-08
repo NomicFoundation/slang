@@ -1,6 +1,7 @@
 mod cli;
 mod compiler;
 mod config;
+mod glibc;
 mod resolver;
 
 pub use cli::*;

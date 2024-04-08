@@ -5,11 +5,12 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 
+use crate::commands::publish::DryRun;
 use crate::toolchains::napi::{
     NapiCompiler, NapiConfig, NapiPackageKind, NapiProfile, NapiResolver,
 };
 
-pub fn publish_npm() -> Result<()> {
+pub fn publish_npm(dry_run: DryRun) -> Result<()> {
     let resolver = NapiResolver::solidity();
 
     NapiCompiler::run(&resolver, NapiProfile::Release)?;
@@ -22,19 +23,21 @@ pub fn publish_npm() -> Result<()> {
             &resolver,
             &platform_dir,
             &NapiPackageKind::Platform(platform),
+            dry_run,
         )?;
     }
 
     //  Then publish the main package, that depends on the previously published platform-specific packages:
 
     let package_dir = resolver.main_package_dir();
-    publish_package(&resolver, &package_dir, &NapiPackageKind::Main)
+    publish_package(&resolver, &package_dir, &NapiPackageKind::Main, dry_run)
 }
 
 fn publish_package(
     resolver: &NapiResolver,
     package_dir: &Path,
     kind: &NapiPackageKind,
+    dry_run: DryRun,
 ) -> Result<()> {
     println!("Publishing: {package_dir:?}");
 
@@ -55,8 +58,8 @@ fn publish_package(
         .args(["publish", output_dir.unwrap_str()])
         .property("--access", "public");
 
-    if !GitHub::is_running_in_ci() {
-        println!("Doing a dry run, since we are not running in CI.");
+    if dry_run.is_yes() || !GitHub::is_running_in_ci() {
+        println!("Doing a dry run, since we are not running in CI or a dry run was requested.");
         command = command.flag("--dry-run");
     }
 

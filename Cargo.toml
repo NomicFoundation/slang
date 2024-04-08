@@ -79,6 +79,7 @@ anyhow = { version = "1.0.81", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
+cargo-zigbuild = { version = "0.18.3" }
 clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.1" }
 console = { version = "0.15.8" }
@@ -114,6 +115,7 @@ syn = { version = "2.0.57", features = [
     "parsing",
     "printing",
 ] }
+tempfile = { version = "3.10.1" }
 tera = { version = "1.19.1" }
 thiserror = { version = "1.0.58" }
 trybuild = { version = "1.0.91" }
