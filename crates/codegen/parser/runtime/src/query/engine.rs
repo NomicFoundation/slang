@@ -181,6 +181,7 @@ impl Combinator for BindingCombinator {
             .entry(self.matcher.name.clone())
             .or_default()
             .push(self.cursor.clone());
+        self.child.accumulate_bindings(bindings);
     }
 }
 
