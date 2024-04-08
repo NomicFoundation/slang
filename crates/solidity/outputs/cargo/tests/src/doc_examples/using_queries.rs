@@ -1,0 +1,176 @@
+use std::path::Path;
+
+use anyhow::Result;
+use infra_utils::paths::PathExtensions;
+use semver::Version;
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
+use slang_solidity::parse_output::ParseOutput;
+use slang_solidity::query::Query;
+
+fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
+    let input_path =
+        Path::repo_path(Path::new("documentation/public/user-guide/inputs").join(path.as_ref()));
+
+    let input_path = input_path.unwrap_str();
+
+    let source = std::fs::read_to_string(input_path)?;
+    let source = source.trim();
+
+    let language = Language::new(Version::new(0, 8, 0))?;
+
+    Ok(language.parse(RuleKind::SourceUnit, source))
+}
+
+#[test]
+fn using_queries() -> Result<()> {
+    #[allow(unused_variables)]
+    {
+        let parse_output = parse_doc_input_file("using-the-cursor.sol")?;
+        // --8<-- [start:creating-a-query]
+        use slang_solidity::query::Query;
+
+        // Any `Cursor` can be used to create a query.
+        let cursor = parse_output.create_tree_cursor();
+
+        let query = Query::parse("[ContractDefinition]").unwrap();
+        let result /* : QueryResultIterator */ = cursor.query(vec![query]);
+        // --8<-- [end:creating-a-query]
+    }
+
+    {
+        let parse_output = parse_doc_input_file("using-the-cursor.sol")?;
+        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:listing-contract-names]
+        let mut names = vec![];
+
+        let query = Query::parse("[ContractDefinition ... @name [Identifier] ...]").unwrap();
+
+        for result in cursor.query(vec![query]) {
+            let bindings = result.bindings;
+            let cursors = bindings.get("name").unwrap();
+
+            let cursor = cursors.first().unwrap();
+
+            names.push(cursor.node().unparse());
+        }
+
+        assert_eq!(names, &["Foo", "Bar", "Baz"]);
+        // --8<-- [end:listing-contract-names]
+    }
+
+    {
+        let parse_output = parse_doc_input_file("multiple-data-types.sol")?;
+        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:multiple-patterns]
+        let mut names = vec![];
+
+        let struct_def = Query::parse("[StructDefinition ... @name [Identifier] ...]").unwrap();
+        let enum_def = Query::parse("[EnumDefinition ... @name [Identifier] ...]").unwrap();
+
+        for result in cursor.query(vec![struct_def, enum_def]) {
+            let index = result.query_number;
+            let bindings = result.bindings;
+            let cursors = bindings.get("name").unwrap();
+
+            let cursor = cursors.first().unwrap();
+
+            names.push((index, cursor.node().unparse()));
+        }
+
+        assert_eq!(
+            names,
+            &[
+                (0, "Foo".to_string()),
+                (1, "Bar".to_string()),
+                (0, "Baz".to_string()),
+                (1, "Qux".to_string())
+            ]
+        );
+        // --8<-- [end:multiple-patterns]
+    }
+
+    {
+        let parse_output = parse_doc_input_file("typed-tuple.sol")?;
+        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:matching-on-label]
+
+        let mut names = vec![];
+
+        let query = Query::parse("[TypedTupleMember ... @type [type_name: _] ...]").unwrap();
+
+        for result in cursor.query(vec![query]) {
+            let bindings = result.bindings;
+            let cursors = bindings.get("type").unwrap();
+
+            let cursor = cursors.first().unwrap();
+
+            names.push(cursor.node().unparse());
+        }
+
+        assert_eq!(names, &["uint", " uint16", " uint64", " uint256"]);
+        // --8<-- [end:matching-on-label]
+    }
+
+    {
+        // Matching on node's literal value
+        let parse_output = parse_doc_input_file("typed-tuple.sol")?;
+        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:matching-on-literal-value]
+
+        let mut names = vec![];
+
+        let query = Query::parse(r#"[ElementaryType @uint_keyword [variant: "uint"]]"#).unwrap();
+
+        for result in cursor.query(vec![query]) {
+            let bindings = result.bindings;
+            let cursors = bindings.get("uint_keyword").unwrap();
+
+            let cursor = cursors.first().unwrap();
+
+            names.push(cursor.node().unparse());
+        }
+
+        assert_eq!(names, &["uint"]);
+        // --8<-- [end:matching-on-literal-value]
+    }
+
+    {
+        let parse_output = parse_doc_input_file("tx-origin.sol")?;
+        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:tx-origin]
+        let query = Query::parse(
+            r#"@txorigin [MemberAccessExpression
+			...
+			[Expression
+				...
+				@start ["tx"]
+				...
+			]
+			...
+			[MemberAccess
+				...
+				["origin"]
+				...
+			]
+		]"#,
+        )
+        .unwrap();
+
+        let mut results = vec![];
+
+        for result in cursor.query(vec![query]) {
+            let bindings = result.bindings;
+            let cursors = bindings.get("txorigin").unwrap();
+
+            let cursor = cursors.first().unwrap();
+
+            results.push((cursor.text_offset().utf8, cursor.node().unparse()));
+        }
+
+        assert_eq!(results, &[(375usize, "tx.origin".to_string())]);
+        // --8<-- [end:tx-origin]
+    }
+
+    Ok(())
+}
