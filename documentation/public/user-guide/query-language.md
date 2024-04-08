@@ -49,7 +49,7 @@ is associated with each of the `string_literal` children:
 When matching patterns, you may want to process specific nodes within the
 pattern. Captures allow you to associate names with specific nodes in a pattern,
 so that you can later refer to those nodes by those names. Capture names are
-written _after_ the nodes that they refer to, and start with an `@` character.
+written _before_ the nodes that they refer to, and start with an `@` character.
 
 For example, this pattern would match any assignment of a `function` to an
 `identifier`, and it would associate the name `the-function-name` with the
@@ -57,20 +57,20 @@ identifier:
 
 ```scheme
 [assignment_expression
-  @the-function-name [left:identifier]
+  @the_function_name [left:identifier]
   [right:function]]
 ```
 
 And this pattern would match all method definitions, associating the name
-`the-method-name` with the method name, `the-class-name` with the containing
+`the_method_name` with the method name, `the_class_name` with the containing
 class name:
 
 ```scheme
 [class_declaration
-  @the-class-name [name:identifier]
+  @the_class_name [name:identifier]
   [body:class_body
     [method_definition
-      @the-method-name [name:property_identifier]]]]
+      @the_method_name [name:property_identifier]]]]
 ```
 
 ### Quantification
@@ -91,8 +91,8 @@ any were present:
 
 ```scheme
 [class_declaration
-  (@the-decorator [decorator])*
-  @the-name [name:identifier]]
+  (@the_decorator [decorator])*
+  @the_name [name:identifier]]
 ```
 
 This pattern would match all function calls, capturing a string argument if one was
@@ -100,8 +100,8 @@ present:
 
 ```scheme
 [call_expression
-  @the-function [function:identifier]
-  [arguments:arguments (@the-string-arg [string])?]]
+  @the_function [function:identifier]
+  [arguments:arguments (@the_string_arg [string])?]]
 ```
 
 ### Alternations
@@ -124,14 +124,14 @@ This pattern would match a set of possible keyword tokens, capturing them as `@k
 
 ```scheme
 @keyword (
-    "break"
-  | "delete"
-  | "else"
-  | "for"
-  | "function"
-  | "if"
-  | "return"
-  | "try"
-  | "while"
+    ["break"]
+  | ["delete"]
+  | ["else"]
+  | ["for"]
+  | ["function"]
+  | ["if"]
+  | ["return"]
+  | ["try"]
+  | ["while"]
 )
 ```
