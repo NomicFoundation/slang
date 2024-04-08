@@ -1,6 +1,8 @@
 # Packages and Dependencies
 .hermit/
 node_modules/
+package-lock.json
+cargo.lock
 
 # Generated Artifacts
 target/
