@@ -25,7 +25,8 @@ Slang is capable of parsing the source code into a Concrete Syntax Tree (CST; al
 which is a tree structure of the program that also includes things like punctuation or whitespace.
 
 This is done by using the (standard) approach of lexical analysis followed by syntax analysis.
-The source text as a sequence of characters is recognized into a sequence of tokens (lexical analysis), which then in turn is _parsed_ into the CST.
+The source text as a sequence of characters is recognized into a sequence of
+tokens (lexical analysis), which then in turn is _parsed_ into the CST.
 
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
@@ -38,8 +39,9 @@ The tree nodes are represented by the `Node` structure, which can be one of two 
 For many code analysis tasks, it is useful to traverse the parse tree and visit each node.
 The `Cursor` object allows callers to traverse the parse tree in an efficient pre-order manner.
 
-It provides several `goTo*()` navigation functions, each returning `true` if the cursor was successfully moved, and `false` otherwise.
-There are three main ways to do it:
+It provides several `goTo*()` navigation functions, each returning `true` if the
+cursor was successfully moved, and `false` otherwise. There are three main ways
+to do it:
 
 -   According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
 -   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendent()`
@@ -48,6 +50,28 @@ There are three main ways to do it:
 As such, the cursor is stateful and keeps track of the path it has taken through the CST.
 It starts at the root it was created at and is completed when it reaches its root when navigating forward.
 
+## CST Queries
+
+The `Cursor` API is a low-level API that allows you to traverse the CST in a
+procedural manner. However, it is often more convenient to use the declarative
+`Query` API. Queries allow you to express your intent more concisely, and also
+allows you to reuse the same query in multiple places. Queries can largely
+replace the need for both internal (cursor), and external (visitor) iterator
+patterns.
+
+The [query language](./query-language.md) is based on pattern matching, and the
+execution semantics are closer to unification than to regular expression
+matching i.e. a query returns all possible matches, not just the
+longest/shortest/first/last match. There is no concept of a 'greedy' operator
+for example.
+
+Query execution is based on `Cursor`s, and the resulting matches and unification
+bindings are returned as `Cursor`s as well. This allows you to mix and match
+manual traversal, cursors, and queries.
+
+Multiple queries can be executed in a batch, and efficiently traverse the tree
+looking for matches. This mode of operation can replace all visitor patterns.
+
 ## Abstract Syntax Tree (AST)
 
 AST types are a set of abstractions that provide a typed view of the untyped CST nodes.
@@ -55,3 +79,6 @@ You can convert any untyped CST node to its corresponding AST type using their c
 
 There is a corresponding type for each `RuleKind` (non-terminal) in the language. AST types are immutable.
 Additionally, their fields are constructed lazily as they are accessed for the first time.
+
+AST nodes can maintain a reference to the CST node they were constructed from,
+and can be used to navigate to the corresponding CST node.
