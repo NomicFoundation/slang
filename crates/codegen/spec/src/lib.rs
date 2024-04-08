@@ -17,7 +17,7 @@ use codegen_language_definition::model::Language;
 use infra_utils::codegen::CodegenWriteOnly;
 
 use crate::generators::grammar_ebnf::generate_grammar_ebnf;
-use crate::generators::navigation::{generate_section_navigation, generate_top_navigation};
+use crate::generators::navigation::{SpecDir, SpecPage};
 use crate::generators::supported_versions::generate_supported_versions;
 use crate::generators::topic_page::generate_topic_page;
 use crate::model::SpecModel;
@@ -30,39 +30,43 @@ impl Spec {
 
         let mut codegen = CodegenWriteOnly::new()?;
 
+        let public_dir = Self::generate_public_dir(&model)?;
+        public_dir.write_to_disk(&mut codegen, output_dir)?;
+
         codegen.write_file(
             output_dir.join("grammar.ebnf"),
             generate_grammar_ebnf(&model)?,
         )?;
 
-        codegen.write_file(
-            output_dir.join("public/NAV.md"),
-            generate_top_navigation(&model)?,
-        )?;
+        Ok(())
+    }
 
-        codegen.write_file(
-            output_dir.join("public/supported-versions.md"),
-            generate_supported_versions(&model)?,
-        )?;
+    fn generate_public_dir(model: &SpecModel) -> Result<SpecDir> {
+        let mut public_dir = SpecDir::new(
+            format!("{name} Specification", name = model.language.name),
+            "public",
+        );
+
+        public_dir.add_page(SpecPage::new(
+            "Supported Versions",
+            "supported-versions",
+            generate_supported_versions(model)?,
+        ));
 
         for (section_index, section) in model.sections.iter().enumerate() {
-            let section_slug = &section.slug;
-
-            codegen.write_file(
-                output_dir.join(format!("public/{section_slug}/NAV.md")),
-                generate_section_navigation(&model, section_index)?,
-            )?;
+            let mut section_dir = SpecDir::new(&section.title, &section.slug);
 
             for (topic_index, topic) in section.topics.iter().enumerate() {
-                let topic_slug = &topic.slug;
-
-                codegen.write_file(
-                    output_dir.join(format!("public/{section_slug}/{topic_slug}.md")),
-                    generate_topic_page(&model, section_index, topic_index)?,
-                )?;
+                section_dir.add_page(SpecPage::new(
+                    &topic.title,
+                    &topic.slug,
+                    generate_topic_page(model, section_index, topic_index)?,
+                ));
             }
+
+            public_dir.add_dir(section_dir);
         }
 
-        Ok(())
+        Ok(public_dir)
     }
 }

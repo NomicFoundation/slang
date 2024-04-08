@@ -1,3 +1,5 @@
+# Rust Crate
+
 -   [Installation](./installation.md)
 -   [Using the CLI](./using-the-cli.md)
 -   [Using the Parser](./using-the-parser.md)
