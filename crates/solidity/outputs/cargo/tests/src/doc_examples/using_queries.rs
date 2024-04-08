@@ -24,7 +24,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
 #[test]
 fn using_queries() -> Result<()> {
-    #[allow(unused_variables)]
+    #[allow(unused_variables, clippy::items_after_statements)]
     {
         let parse_output = parse_doc_input_file("using-the-cursor.sol")?;
         // --8<-- [start:creating-a-query]
