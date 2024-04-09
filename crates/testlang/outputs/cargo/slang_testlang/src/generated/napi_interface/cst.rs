@@ -18,12 +18,18 @@ pub enum NodeType {
 }
 
 impl RustNode {
-    /// Converts a Rust node into a choice of NAPI-exposed wrapper structs.
-    pub fn into_either(self) -> Either<RuleNode, TokenNode> {
+    /// Converts the node into `napi` wrapper for `RuleNode | TokenNode` JS object.
+    pub fn into_js_either_node(self) -> Either<RuleNode, TokenNode> {
         match self {
             RustNode::Rule(rule) => Either::A(RuleNode(rule)),
             RustNode::Token(token) => Either::B(TokenNode(token)),
         }
+    }
+}
+
+impl From<RustNode> for Either<RuleNode, TokenNode> {
+    fn from(value: RustNode) -> Self {
+        value.into_js_either_node()
     }
 }
 
@@ -65,7 +71,7 @@ impl RuleNode {
         self.0
             .children
             .iter()
-            .map(|child| child.node.clone().into_either())
+            .map(|child| child.node.clone().into())
             .collect()
     }
 

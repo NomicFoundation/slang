@@ -53,7 +53,7 @@ impl Cursor {
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn node(&self) -> Either<RuleNode, TokenNode> {
-        self.0.node().into_either()
+        self.0.node().into()
     }
 
     #[napi(getter, ts_return_type = "kinds.NodeLabel", catch_unwind)]

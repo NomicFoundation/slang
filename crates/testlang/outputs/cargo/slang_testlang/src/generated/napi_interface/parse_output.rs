@@ -19,7 +19,7 @@ impl From<RustParseOutput> for ParseOutput {
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn tree(&self) -> Either<RuleNode, TokenNode> {
-        self.0.tree().into_either()
+        self.0.tree().into()
     }
 
     #[napi(ts_return_type = "Array<parse_error.ParseError>", catch_unwind)]

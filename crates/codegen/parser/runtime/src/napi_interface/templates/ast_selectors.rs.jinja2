@@ -284,7 +284,7 @@ impl Selector {
                 }
                 labeled if filter(labeled) => {
                     self.index += 1;
-                    return Ok(Some(labeled.node.clone().into_either()));
+                    return Ok(Some(labeled.node.clone().into_js_either_node()));
                 }
                 _ => {
                     break;
