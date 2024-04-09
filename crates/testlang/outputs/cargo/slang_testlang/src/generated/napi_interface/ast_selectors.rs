@@ -4,10 +4,10 @@
 
 use std::rc::Rc;
 
-use napi::{Env, JsObject};
+use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{RuleNode, ToJS};
+use crate::napi_interface::cst::{RuleNode, TokenNode};
 use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, TokenKind};
 
 //
@@ -21,9 +21,8 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
 )]
 pub fn select_sequence(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-    env: Env,
-) -> Result<Vec<Option<JsObject>>> {
-    let mut selector = Selector::new(node, env);
+) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+    let mut selector = Selector::new(node);
 
     let result = match node.kind() {
         RuleKind::SourceUnit => selector.source_unit()?,
@@ -42,7 +41,7 @@ pub fn select_sequence(
 }
 
 impl Selector {
-    fn source_unit(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn source_unit(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_rule_with_kind(RuleKind::SourceUnitMembers)
         })?)])
@@ -50,7 +49,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn tree(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::TreeKeyword))?),
             self.try_select(|node| node.is_token_with_kind(TokenKind::Identifier))?,
@@ -61,7 +60,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn tree_node(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::OpenBracket))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::TreeNodeChildren))?),
@@ -71,7 +70,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn addition_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn addition_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Plus))?),
@@ -81,7 +80,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn negation_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn negation_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Bang))?),
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
@@ -90,7 +89,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn member_access_expression(&mut self) -> Result<Vec<Option<JsObject>>> {
+    fn member_access_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_rule_with_kind(RuleKind::Expression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Period))?),
@@ -106,9 +105,8 @@ impl Selector {
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-    env: Env,
-) -> Result<JsObject> {
-    let mut selector = Selector::new(node, env);
+) -> Result<Either<RuleNode, TokenNode>> {
+    let mut selector = Selector::new(node);
 
     let result = match node.kind() {
         RuleKind::SourceUnitMember => selector.source_unit_member()?,
@@ -125,7 +123,7 @@ pub fn select_choice(
 }
 
 impl Selector {
-    fn source_unit_member(&mut self) -> Result<JsObject> {
+    fn source_unit_member(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::Tree,
@@ -138,7 +136,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node_child(&mut self) -> Result<JsObject> {
+    fn tree_node_child(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kind(RuleKind::TreeNode)
                 || node.is_token_with_kind(TokenKind::DelimitedIdentifier)
@@ -147,7 +145,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn expression(&mut self) -> Result<JsObject> {
+    fn expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
                 RuleKind::AdditionExpression,
@@ -159,7 +157,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn literal(&mut self) -> Result<JsObject> {
+    fn literal(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| node.is_token_with_kind(TokenKind::StringLiteral))
     }
 }
@@ -175,9 +173,8 @@ impl Selector {
 )]
 pub fn select_repeated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-    env: Env,
-) -> Result<Vec<JsObject>> {
-    let mut selector = Selector::new(node, env);
+) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+    let mut selector = Selector::new(node);
 
     let result = match node.kind() {
         RuleKind::SourceUnitMembers => selector.source_unit_members()?,
@@ -192,7 +189,7 @@ pub fn select_repeated(
 }
 
 impl Selector {
-    fn source_unit_members(&mut self) -> Result<Vec<JsObject>> {
+    fn source_unit_members(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -206,7 +203,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node_children(&mut self) -> Result<Vec<JsObject>> {
+    fn tree_node_children(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
@@ -230,9 +227,8 @@ impl Selector {
 )]
 pub fn select_separated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-    env: Env,
-) -> Result<Vec<Vec<JsObject>>> {
-    let mut selector = Selector::new(node, env);
+) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+    let mut selector = Selector::new(node);
 
     let result = match node.kind() {
         RuleKind::SeparatedIdentifiers => selector.separated_identifiers()?,
@@ -246,7 +242,7 @@ pub fn select_separated(
 }
 
 impl Selector {
-    fn separated_identifiers(&mut self) -> Result<Vec<Vec<JsObject>>> {
+    fn separated_identifiers(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -273,28 +269,32 @@ impl Selector {
 //
 
 struct Selector {
-    env: Env,
     node: Rc<RustRuleNode>,
     index: usize,
 }
 
 impl Selector {
-    fn new(node: &RuleNode, env: Env) -> Self {
+    fn new(node: &RuleNode) -> Self {
         Self {
-            env,
             node: node.0.clone(),
             index: 0,
         }
     }
 
-    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<JsObject> {
+    fn select(
+        &mut self,
+        filter: impl FnOnce(&RustNode) -> bool,
+    ) -> Result<Either<RuleNode, TokenNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
         }
     }
 
-    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<JsObject>> {
+    fn try_select(
+        &mut self,
+        filter: impl FnOnce(&RustNode) -> bool,
+    ) -> Result<Option<Either<RuleNode, TokenNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -308,9 +308,9 @@ impl Selector {
                 } if matches!(token.kind, TokenKind::SKIPPED) => {
                     return Error::SkippedToken(self.index).into();
                 }
-                node if filter(node) => {
+                labeled if filter(labeled) => {
                     self.index += 1;
-                    return Ok(Some(node.to_js(self.env)));
+                    return Ok(Some(labeled.node.clone().into_js_either_node()));
                 }
                 _ => {
                     break;
