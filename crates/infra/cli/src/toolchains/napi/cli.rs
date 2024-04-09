@@ -62,7 +62,6 @@ impl NapiCli {
 
         command.run()?;
 
-        #[cfg(target_env = "gnu")]
         glibc::ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
 
         let mut source_files = vec![];
