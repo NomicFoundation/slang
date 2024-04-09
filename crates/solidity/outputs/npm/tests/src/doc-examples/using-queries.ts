@@ -33,24 +33,24 @@ test("using queries", async () => {
   {
     let parseOutput = await parseDocInputFile("using-the-cursor.sol");
     let cursor = parseOutput.createTreeCursor();
-    // --8<-- [start:listing-contract-names]
-    let names = [];
+    // --8<-- [start:visiting-contracts]
+    let found = [];
 
-    let query = Query.parse("[ContractDefinition ... @name [Identifier] ...]");
+    let query = Query.parse("@contract [ContractDefinition]");
     let results = cursor.query([query]);
 
     let result = null;
     while ((result = results.next())) {
       let bindings = result.bindings;
-      let cursors = bindings["name"];
+      let cursors = bindings["contract"];
 
-      let cursor = cursors?.[0];
+      let cursor = cursors?.[0]?.node() as RuleNode;
 
-      names.push((cursor?.node() as TokenNode).text);
+      found.push(cursor.unparse().trim());
     }
 
-    assert.deepStrictEqual(names, ["Foo", "Bar", "Baz"]);
-    // --8<-- [end:listing-contract-names]
+    assert.deepStrictEqual(found, ["contract Foo {}", "contract Bar {}", "contract Baz {}"]);
+    // --8<-- [end:visiting-contracts]
   }
 
   {

@@ -80,5 +80,5 @@ You can convert any untyped CST node to its corresponding AST type using their c
 There is a corresponding type for each `RuleKind` (non-terminal) in the language. AST types are immutable.
 Additionally, their fields are constructed lazily as they are accessed for the first time.
 
-AST nodes can maintain a reference to the CST node they were constructed from,
+AST nodes maintain a reference to the CST node they were constructed from,
 and can be used to navigate to the corresponding CST node.

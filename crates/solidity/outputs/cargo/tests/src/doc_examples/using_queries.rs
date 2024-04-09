@@ -37,22 +37,25 @@ fn using_queries() -> Result<()> {
     {
         let parse_output = parse_doc_input_file("using-the-cursor.sol")?;
         let cursor = parse_output.create_tree_cursor();
-        // --8<-- [start:listing-contract-names]
-        let mut names = vec![];
+        // --8<-- [start:visiting-contracts]
+        let mut found = vec![];
 
-        let query = Query::parse("[ContractDefinition ... @name [Identifier] ...]").unwrap();
+        let query = Query::parse("@contract [ContractDefinition]").unwrap();
 
         for result in cursor.query(vec![query]) {
             let bindings = result.bindings;
-            let cursors = bindings.get("name").unwrap();
+            let cursors = bindings.get("contract").unwrap();
 
             let cursor = cursors.first().unwrap();
 
-            names.push(cursor.node().unparse());
+            found.push(cursor.node().unparse().trim().to_owned());
         }
 
-        assert_eq!(names, &["Foo", "Bar", "Baz"]);
-        // --8<-- [end:listing-contract-names]
+        assert_eq!(
+            found,
+            ["contract Foo {}", "contract Bar {}", "contract Baz {}"]
+        );
+        // --8<-- [end:visiting-contracts]
     }
 
     {
@@ -131,12 +134,16 @@ fn using_queries() -> Result<()> {
         // --8<-- [end:matching-on-literal-value]
     }
 
-    {
-        let parse_output = parse_doc_input_file("tx-origin.sol")?;
-        let cursor = parse_output.create_tree_cursor();
-        // --8<-- [start:tx-origin]
-        let query = Query::parse(
-            r#"@txorigin [MemberAccessExpression
+    Ok(())
+}
+
+#[test]
+fn tx_origin_query() -> Result<()> {
+    let parse_output = parse_doc_input_file("tx-origin.sol")?;
+    let cursor = parse_output.create_tree_cursor();
+    // --8<-- [start:tx-origin]
+    let query = Query::parse(
+        r#"@txorigin [MemberAccessExpression
                 ...
                 [Expression
                     ...
@@ -150,23 +157,22 @@ fn using_queries() -> Result<()> {
                     ...
                 ]
             ]"#,
-        )
-        .unwrap();
+    )
+    .unwrap();
 
-        let mut results = vec![];
+    let mut results = vec![];
 
-        for result in cursor.query(vec![query]) {
-            let bindings = result.bindings;
-            let cursors = bindings.get("txorigin").unwrap();
+    for result in cursor.query(vec![query]) {
+        let bindings = result.bindings;
+        let cursors = bindings.get("txorigin").unwrap();
 
-            let cursor = cursors.first().unwrap();
+        let cursor = cursors.first().unwrap();
 
-            results.push((cursor.text_offset().utf8, cursor.node().unparse()));
-        }
-
-        assert_eq!(results, &[(375usize, "tx.origin".to_string())]);
-        // --8<-- [end:tx-origin]
+        results.push((cursor.text_offset().utf8, cursor.node().unparse()));
     }
+
+    assert_eq!(results, &[(375usize, "tx.origin".to_string())]);
+    // --8<-- [end:tx-origin]
 
     Ok(())
 }

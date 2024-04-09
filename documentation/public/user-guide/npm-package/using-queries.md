@@ -8,9 +8,11 @@ If not specified otherwise, let's assume we already parsed a Solidity source and
 
 ## Creating and executing queries
 
-You can create a `Query` struct using `Query.parse`, which accepts a string value. These can be then used by `Cursor.query` to execute it. You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches.
+You can create a `Query` object using `Query.parse`, which accepts a string value. These can be then used by `Cursor.query` to execute it.
 
-```{ .rust }
+You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning results in the order they appear in input.
+
+```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:creating-a-query"
 ```
 
@@ -24,15 +26,15 @@ Let's use this to list all the contract definitions in the source file:
 --8<-- "documentation/public/user-guide/inputs/using-the-cursor.sol"
 ```
 
-```{ .rust }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:listing-contract-names"
+```{ .ts }
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:visiting-contracts"
 ```
 
 ### Multiple patterns simultaneously
 
 We can also intersperse multiple patterns in a single query, which will return all the matches for each pattern. This can be useful when you want to match multiple types of nodes in a single pass.
 
-```{ .rust }
+```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:multiple-patterns"
 ```
 
@@ -46,7 +48,7 @@ To do so, we use `[label: _]` syntax. Here, we also use `_` to allow matching an
 --8<-- "documentation/public/user-guide/inputs/typed-tuple.sol"
 ```
 
-```{ .rust }
+```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:matching-on-label"
 ```
 
@@ -60,7 +62,7 @@ Let's say we prefer our code to be explicit and prefer using `uint256` instead o
 --8<-- "documentation/public/user-guide/inputs/typed-tuple.sol"
 ```
 
-```{ .rust }
+```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:matching-on-literal-value"
 ```
 
@@ -76,6 +78,6 @@ Let's use the motivating example from [https://soliditylang.org](https://docs.so
 
 Now, we can above features to write a query that matches all `tx.origin` patterns:
 
-```{ .rust }
+```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.ts:tx-origin"
 ```

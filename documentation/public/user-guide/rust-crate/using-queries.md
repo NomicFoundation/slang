@@ -8,7 +8,9 @@ If not specified otherwise, let's assume we already parsed a Solidity source and
 
 ## Creating and executing queries
 
-You can create a `Query` struct using `Query::parse`, which accepts a `&str`. These can be then used by `Cursor::query` to execute it. You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches.
+You can create a `Query` struct using `Query::parse`, which accepts a `&str`. These can be then used by `Cursor::query` to execute it.
+
+You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning results in the order they appear in input.
 
 ```{ .rust }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_queries.rs:creating-a-query"
@@ -25,7 +27,7 @@ Let's use this to list all the contract definitions in the source file:
 ```
 
 ```{ .rust }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_queries.rs:listing-contract-names"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_queries.rs:visiting-contracts"
 ```
 
 ### Multiple patterns simultaneously
