@@ -6,20 +6,16 @@ use semver::Version;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
-use slang_solidity::query::Query;
+use slang_solidity::query::{Query, QueryResultIterator};
 
 fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
-    let input_path =
-        Path::repo_path(Path::new("documentation/public/user-guide/inputs").join(path.as_ref()));
+    let input_path = Path::repo_path("documentation/public/user-guide/inputs").join(path.as_ref());
 
-    let input_path = input_path.unwrap_str();
-
-    let source = std::fs::read_to_string(input_path)?;
-    let source = source.trim();
+    let source = input_path.read_to_string()?;
 
     let language = Language::new(Version::new(0, 8, 0))?;
 
-    Ok(language.parse(RuleKind::SourceUnit, source))
+    Ok(language.parse(RuleKind::SourceUnit, source.trim()))
 }
 
 #[test]
@@ -34,7 +30,7 @@ fn using_queries() -> Result<()> {
         let cursor = parse_output.create_tree_cursor();
 
         let query = Query::parse("[ContractDefinition]").unwrap();
-        let result /* : QueryResultIterator */ = cursor.query(vec![query]);
+        let result: QueryResultIterator = cursor.query(vec![query]);
         // --8<-- [end:creating-a-query]
     }
 
@@ -141,19 +137,19 @@ fn using_queries() -> Result<()> {
         // --8<-- [start:tx-origin]
         let query = Query::parse(
             r#"@txorigin [MemberAccessExpression
-			...
-			[Expression
-				...
-				@start ["tx"]
-				...
-			]
-			...
-			[MemberAccess
-				...
-				["origin"]
-				...
-			]
-		]"#,
+                ...
+                [Expression
+                    ...
+                    @start ["tx"]
+                    ...
+                ]
+                ...
+                [MemberAccess
+                    ...
+                    ["origin"]
+                    ...
+                ]
+            ]"#,
         )
         .unwrap();
 

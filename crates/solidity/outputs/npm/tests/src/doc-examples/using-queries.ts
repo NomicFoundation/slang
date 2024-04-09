@@ -7,9 +7,10 @@ import { Language } from "@nomicfoundation/slang/language";
 import { RuleKind } from "@nomicfoundation/slang/kinds";
 import { Query } from "@nomicfoundation/slang/query";
 import { RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
+import { query } from "@nomicfoundation/slang/generated";
 
 async function parseDocInputFile(filePath: string) {
-  const inputPath = repoPath(path.join("documentation/public/user-guide/inputs", filePath));
+  const inputPath = path.join(repoPath("documentation/public/user-guide/inputs"), filePath);
   const source = await fs.readFile(inputPath, "utf8").then((source) => source.trim());
   const language = new Language("0.8.0");
   return language.parse(RuleKind.SourceUnit, source);
@@ -24,9 +25,9 @@ test("using queries", async () => {
     let cursor = parse_output.createTreeCursor();
 
     let query = Query.parse("[ContractDefinition]");
-    let result /* : query.QueryResultIterator */ = cursor.query([query]);
+    let results: query.QueryResultIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
-    result; // Silence the unused warning
+    results; // Silence the unused warning
   }
 
   {
@@ -135,22 +136,21 @@ test("using queries", async () => {
     let parse_output = await parseDocInputFile("tx-origin.sol");
     let cursor = parse_output.createTreeCursor();
     // --8<-- [start:tx-origin]
-    let query = Query.parse(
-      `@txorigin [MemberAccessExpression
-		...
-		[Expression
-			...
-			@start ["tx"]
-			...
-		]
-		...
-		[MemberAccess
-			...
-			["origin"]
-			...
-		]
-	]`,
-    );
+    let query = Query.parse(`
+    @txorigin [MemberAccessExpression
+      ...
+      [Expression
+        ...
+        @start ["tx"]
+        ...
+      ]
+      ...
+      [MemberAccess
+        ...
+        ["origin"]
+        ...
+      ]
+    ]`);
     let results = cursor.query([query]);
 
     let found = [];
