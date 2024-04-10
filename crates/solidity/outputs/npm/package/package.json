@@ -58,6 +58,9 @@
       ]
     }
   },
+  "slangMetadata": {
+    "targetGlibc": "2.28"
+  },
   "engines": {
     "node": ">= 10"
   },

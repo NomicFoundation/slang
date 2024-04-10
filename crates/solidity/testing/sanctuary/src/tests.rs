@@ -1,4 +1,5 @@
 use std::cmp::min;
+use std::path::Path;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -59,26 +60,42 @@ pub(crate) fn select_tests<'d>(
 }
 
 pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
-    let Some(version) = extract_compiler_version(&file.compiler) else {
-        events.test(TestOutcome::Incompatible);
-        return Ok(());
-    };
-
     if !file.path.exists() {
         // Index can be out of date:
         events.test(TestOutcome::NotFound);
         return Ok(());
     }
 
-    let source = file
-        .path
-        .read_to_string()?
+    // Ignore contracts that rely on obvious, exotic parser bugs fixed in later versions:
+    if uses_exotic_parser_bug(&file.path) {
+        events.test(TestOutcome::Incompatible);
+        return Ok(());
+    }
+
+    let Some(version) = extract_compiler_version(&file.compiler) else {
+        events.test(TestOutcome::Incompatible);
+        return Ok(());
+    };
+
+    let source = file.path.read_to_string()?;
+    // Heuristic: ignore wrongly scraped sanctuary files that
+    // contain HTML with a Cloudflare email obfuscation attribute:
+    // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
+    if source.contains("data-cfemail=") {
+        events.test(TestOutcome::Incompatible);
+        return Ok(());
+    }
+
+    let source = source
         // Some files are null terminated. Remove the null character:
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/30
         .trim_end_matches('\0')
         // Remove unicode character inserted by sanctuary (illegal in Solidity):
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/31
-        .replace("[email protected]", "[email-protected]");
+        .replace("[email protected]", "[email-protected]")
+        // Select contracts from Sanctuary were probably incorrectly web-scraped:
+        // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
+        .replace("&#39;", "\"");
 
     let language = Language::new(version.clone())?;
     let output = language.parse(RuleKind::SourceUnit, &source);
@@ -122,4 +139,19 @@ fn extract_compiler_version(compiler: &str) -> Option<Version> {
     }
 
     Some(version)
+}
+
+fn uses_exotic_parser_bug(file: &Path) -> bool {
+    static CONTRACTS_WITH_EXOTIC_PARSER_BUGS: &[&str] = &[
+        // 0.4.24: // Accepts malformed `* /` in multi-line comments:
+        // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
+        "ethereum/contracts/mainnet/79/79bb6f4492d5cb13fad8ca0ecfbccd9e2c26ac42_Gateway.sol",
+        // 0.4.18: // Accepts unfinished multi-line comments at the end of the file:
+        // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
+        "ethereum/contracts/mainnet/7d/7d81c361d6ac60634117dd81ab1b01b8dc795a9d_LILITHCOIN.sol",
+    ];
+
+    CONTRACTS_WITH_EXOTIC_PARSER_BUGS
+        .iter()
+        .any(|path| file.ends_with(path))
 }

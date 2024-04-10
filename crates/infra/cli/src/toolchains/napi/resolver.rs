@@ -29,6 +29,10 @@ impl NapiResolver {
         }
     }
 
+    pub fn rust_crate_name(&self) -> &'static str {
+        self.rust_crate
+    }
+
     pub fn crate_dir(&self) -> PathBuf {
         CargoWorkspace::locate_source_crate(self.rust_crate).unwrap()
     }

@@ -8,7 +8,9 @@ use itertools::Itertools;
 use markdown::{Block, Span};
 use semver::Version;
 
-pub fn publish_github_release() -> Result<()> {
+use crate::commands::publish::DryRun;
+
+pub fn publish_github_release(dry_run: DryRun) -> Result<()> {
     let current_version = CargoWorkspace::local_version()?;
     println!("Current version: {current_version}");
 
@@ -28,8 +30,8 @@ pub fn publish_github_release() -> Result<()> {
     println!("{}", notes.lines().map(|l| format!("  │ {l}")).join("\n"));
     println!();
 
-    if !GitHub::is_running_in_ci() {
-        println!("Skipping release, since we are not running in CI.");
+    if dry_run.is_yes() || !GitHub::is_running_in_ci() {
+        println!("Skipping release, since we are not running in CI or a dry run was requested.");
         return Ok(());
     }
 

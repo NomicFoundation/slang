@@ -92,7 +92,7 @@ fn main() -> Result<()> {
     if failure_count > 0 {
         println!();
         println!(
-            "Found '{failure_count}' failures. Please check the logs above for more information."
+            "Found {failure_count} failure(s). Please check the logs above for more information.",
         );
         println!();
 

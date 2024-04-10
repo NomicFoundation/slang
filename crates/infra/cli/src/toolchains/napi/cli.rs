@@ -4,6 +4,7 @@ use anyhow::{bail, Context, Result};
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
+use crate::toolchains::napi::glibc;
 use crate::toolchains::napi::resolver::NapiResolver;
 
 pub enum BuildTarget {
@@ -60,6 +61,9 @@ impl NapiCli {
         };
 
         command.run()?;
+
+        #[cfg(target_env = "gnu")]
+        glibc::ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
 
         let mut source_files = vec![];
         let mut node_binary = None;
