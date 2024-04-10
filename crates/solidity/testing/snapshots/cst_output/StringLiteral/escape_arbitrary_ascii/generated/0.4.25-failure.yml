@@ -7,7 +7,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_ascii_arbitrary/input.sol:1:1]
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_ascii/input.sol:1:1]
        │
      1 │ ╭─▶ // Disallowed post 0.4.25
      2 │ ├─▶ "\a"

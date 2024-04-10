@@ -3820,13 +3820,13 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = SingleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters and arbitrary ASCII escape sequences:
+                                // Allows unicode characters and arbitrary escape sequences:
                                 TokenDefinition(
                                     enabled = Till("0.4.25"),
                                     scanner = Sequence([
                                         Atom("'"),
                                         ZeroOrMore(Choice([
-                                            Fragment(EscapeSequenceArbitraryAscii),
+                                            Fragment(EscapeSequenceArbitrary),
                                             Not(['\'', '\\', '\r', '\n'])
                                         ])),
                                         Atom("'")
@@ -3862,13 +3862,13 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DoubleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters and arbitrary ASCII escape sequences:
+                                // Allows unicode characters and arbitrary escape sequences:
                                 TokenDefinition(
                                     enabled = Till("0.4.25"),
                                     scanner = Sequence([
                                         Atom("\""),
                                         ZeroOrMore(Choice([
-                                            Fragment(EscapeSequenceArbitraryAscii),
+                                            Fragment(EscapeSequenceArbitrary),
                                             Not(['"', '\\', '\r', '\n'])
                                         ])),
                                         Atom("\"")
@@ -4006,12 +4006,14 @@ codegen_language_macros::compile!(Language(
                             ])
                         ),
                         Fragment(
-                            name = EscapeSequenceArbitraryAscii,
+                            name = EscapeSequenceArbitrary,
                             enabled = Till("0.4.25"),
                             scanner = Sequence([
                                 Atom("\\"),
                                 Choice([
-                                    Fragment(AsciiEscapeArbitrary),
+                                    // Prior to 0.4.25, it was legal to "escape" any character (incl. unicode),
+                                    // however only the ones from `AsciiEscape` were escaped in practice.
+                                    Not(['x', 'u']),
                                     Fragment(HexByteEscape),
                                     Fragment(UnicodeEscape)
                                 ])
@@ -4030,11 +4032,6 @@ codegen_language_macros::compile!(Language(
                                 Atom("\r"),
                                 Atom("\n")
                             ])
-                        ),
-                        Fragment(
-                            name = AsciiEscapeArbitrary,
-                            enabled = Till("0.4.25"),
-                            scanner = Not(['x', 'u'])
                         ),
                         Fragment(
                             name = HexByteEscape,

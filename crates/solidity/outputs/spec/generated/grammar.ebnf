@@ -1257,7 +1257,7 @@ StringLiteral = SINGLE_QUOTED_STRING_LITERAL
               | DOUBLE_QUOTED_STRING_LITERAL;
 
 (* Deprecated in 0.4.25 *)
-SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY_ASCII» | !("'" "\\" "\r" "\n"))* "'";
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" "\\" "\r" "\n"))* "'";
 
 (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
 SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
@@ -1265,7 +1265,7 @@ SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))
 SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
 
 (* Deprecated in 0.4.25 *)
-DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY_ASCII» | !('"' "\\" "\r" "\n"))* '"';
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' "\\" "\r" "\n"))* '"';
 
 (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
 DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
@@ -1302,12 +1302,9 @@ DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "
 «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
 (* Deprecated in 0.4.25 *)
-«ESCAPE_SEQUENCE_ARBITRARY_ASCII» = "\\" («ASCII_ESCAPE_ARBITRARY» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
+«ESCAPE_SEQUENCE_ARBITRARY» = "\\" (!("x" "u") | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
 «ASCII_ESCAPE» = "n" | "r" | "t" | "'" | '"' | "\\" | "\r\n" | "\r" | "\n";
-
-(* Deprecated in 0.4.25 *)
-«ASCII_ESCAPE_ARBITRARY» = !("x" "u");
 
 «HEX_BYTE_ESCAPE» = "x" «HEX_CHARACTER» «HEX_CHARACTER»;
 

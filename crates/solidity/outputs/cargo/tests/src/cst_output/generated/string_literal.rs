@@ -10,13 +10,18 @@ fn double_quote_unicode() -> Result<()> {
 }
 
 #[test]
-fn escape_ascii_arbitrary() -> Result<()> {
-    run("StringLiteral", "escape_ascii_arbitrary")
+fn escape_arbitrary_ascii() -> Result<()> {
+    run("StringLiteral", "escape_arbitrary_ascii")
 }
 
 #[test]
-fn escape_ascii_known() -> Result<()> {
-    run("StringLiteral", "escape_ascii_known")
+fn escape_arbitrary_unicode() -> Result<()> {
+    run("StringLiteral", "escape_arbitrary_unicode")
+}
+
+#[test]
+fn escape_ascii() -> Result<()> {
+    run("StringLiteral", "escape_ascii")
 }
 
 #[test]

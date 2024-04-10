@@ -6923,15 +6923,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_escape_arbitrary(&self, input: &mut ParserContext<'_>) -> bool {
-        if !self.version_is_at_least_0_4_25 {
-            scan_none_of!(input, 'x', 'u')
-        } else {
-            false
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
@@ -7048,7 +7039,7 @@ impl Language {
                         input,
                         scan_choice!(
                             input,
-                            self.escape_sequence_arbitrary_ascii(input),
+                            self.escape_sequence_arbitrary(input),
                             scan_none_of!(input, '"', '\\', '\r', '\n')
                         )
                     ),
@@ -7136,13 +7127,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn escape_sequence_arbitrary_ascii(&self, input: &mut ParserContext<'_>) -> bool {
+    fn escape_sequence_arbitrary(&self, input: &mut ParserContext<'_>) -> bool {
         if !self.version_is_at_least_0_4_25 {
             scan_sequence!(
                 scan_chars!(input, '\\'),
                 scan_choice!(
                     input,
-                    self.ascii_escape_arbitrary(input),
+                    scan_none_of!(input, 'x', 'u'),
                     self.hex_byte_escape(input),
                     self.unicode_escape(input)
                 )
@@ -7332,7 +7323,7 @@ impl Language {
                         input,
                         scan_choice!(
                             input,
-                            self.escape_sequence_arbitrary_ascii(input),
+                            self.escape_sequence_arbitrary(input),
                             scan_none_of!(input, '\'', '\\', '\r', '\n')
                         )
                     ),
