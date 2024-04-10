@@ -43,7 +43,7 @@ impl SpecDir {
 
         let mut index = String::new();
         writeln!(index, "# {title}")?;
-        writeln!(index);
+        writeln!(index)?;
 
         let mut navigation = String::new();
         writeln!(navigation, "-   [{title}](./index.md)")?;
