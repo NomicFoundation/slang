@@ -14,6 +14,8 @@ solidity_language = { workspace = true }
 [dev-dependencies]
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
+once_cell = { workspace = true }
+regex = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true }
 solidity_testing_utils = { workspace = true }
@@ -21,4 +23,3 @@ strum_macros = { workspace = true }
 
 [lints]
 workspace = true
-

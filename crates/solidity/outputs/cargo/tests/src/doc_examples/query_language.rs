@@ -1,7 +1,23 @@
+use once_cell::sync::Lazy;
+use regex::Regex;
 use semver::Version;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
 use slang_solidity::query::{Query, QueryResultIterator};
+
+static SNIPPET_MARKER_RE: Lazy<Regex> =
+    Lazy::new(|| Regex::new("// --8<-- \\[(start|end):([a-z0-9-]+)\\]").unwrap());
+
+/// Convenience trait that allows removing inline Mkdoc snippet markers from a string via postfix call.
+trait RemoveMkdocSnippetMarkers {
+    fn remove_mkdoc_snippet_markers(&self) -> String;
+}
+
+impl RemoveMkdocSnippetMarkers for &str {
+    fn remove_mkdoc_snippet_markers(&self) -> String {
+        SNIPPET_MARKER_RE.replace_all(self, "").into_owned()
+    }
+}
 
 fn assert_matches(query: &Query, kind: RuleKind, source: &str) -> QueryResultIterator {
     let language = Language::new(Version::new(0, 8, 12)).unwrap();
@@ -24,8 +40,7 @@ fn query_syntax() {
 	[MultiplicativeExpression [Expression] [Asterisk] [Expression]]
 	// --8<-- [end:query-syntax-1]
 	"
-        .replace("// --8<-- [start:query-syntax-1]", "")
-        .replace("// --8<-- [end:query-syntax-1]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -37,8 +52,7 @@ fn query_syntax() {
 	[MultiplicativeExpression [left_operand:Expression] [Asterisk] [right_operand:Expression]]
     // --8<-- [end:query-syntax-2]
     "
-        .replace("// --8<-- [start:query-syntax-2]", "")
-        .replace("// --8<-- [end:query-syntax-2]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -50,8 +64,7 @@ fn query_syntax() {
 	[MultiplicativeExpression [left_operand: _] [operator: "*"] [right_operand: _]]
     // --8<-- [end:query-syntax-3]
     "#
-        .replace("// --8<-- [start:query-syntax-3]", "")
-        .replace("// --8<-- [end:query-syntax-3]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -63,8 +76,7 @@ fn query_syntax() {
     [MultiplicativeExpression [left_operand:_] [_] ...]
     // --8<-- [end:query-syntax-4]
     "
-        .replace("// --8<-- [start:query-syntax-4]", "")
-        .replace("// --8<-- [end:query-syntax-4]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
     assert_matches(&query, RuleKind::MultiplicativeExpression, "1*2");
@@ -75,8 +87,7 @@ fn query_syntax() {
     [MultiplicativeExpression ... [Expression [StringExpression]] ...]
     // --8<-- [end:query-syntax-5]
     "
-        .replace("// --8<-- [start:query-syntax-5]", "")
-        .replace("// --8<-- [end:query-syntax-5]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
     assert_matches(&query, RuleKind::MultiplicativeExpression, "1 * 'abc'");
@@ -91,8 +102,7 @@ fn capturing_nodes() {
 	[StructDefinition ... @struct_name [name:Identifier] ...]
     // --8<-- [end:capturing-nodes-1]
     "
-        .replace("// --8<-- [start:capturing-nodes-1]", "")
-        .replace("// --8<-- [end:capturing-nodes-1]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -120,8 +130,7 @@ fn capturing_nodes() {
 	]
     // --8<-- [end:capturing-nodes-2]
     "
-        .replace("// --8<-- [start:capturing-nodes-2]", "")
-        .replace("// --8<-- [end:capturing-nodes-2]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -140,8 +149,7 @@ fn quantification() {
 	[SourceUnit ... ([leading_trivia: _])+]
     // --8<-- [end:quantification-1]
     "
-        .replace("// --8<-- [start:quantification-1]", "")
-        .replace("// --8<-- [end:quantification-1]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -163,8 +171,7 @@ fn quantification() {
 	]
     // --8<-- [end:quantification-2]
     "
-        .replace("// --8<-- [start:quantification-2]", "")
-        .replace("// --8<-- [end:quantification-2]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -198,8 +205,7 @@ fn quantification() {
 	]
     // --8<-- [end:quantification-3]
     "
-        .replace("// --8<-- [start:quantification-3]", "")
-        .replace("// --8<-- [end:quantification-3]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -230,8 +236,7 @@ fn alternations() {
 	]
     // --8<-- [end:alternations-1]
     "
-        .replace("// --8<-- [start:alternations-1]", "")
-        .replace("// --8<-- [end:alternations-1]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
@@ -258,8 +263,7 @@ fn alternations() {
 	)
     // --8<-- [end:alternations-2]
     "#
-        .replace("// --8<-- [start:alternations-2]", "")
-        .replace("// --8<-- [end:alternations-2]", ""),
+        .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
 
