@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Disallowed post 0.4.25                                                        │ 0..25
+  2  │ "\✅"                                                                             │ 26..32
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_unicode/input.sol:1:1]
+       │
+     1 │ ╭─▶ // Disallowed post 0.4.25
+     2 │ ├─▶ "\✅"
+       │ │           
+       │ ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): '// Disallowed post 0.4.25\n"\✅"\n' # (0..33)

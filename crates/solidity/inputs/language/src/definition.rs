@@ -3854,9 +3854,21 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = SingleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters:
+                                // Allows unicode characters and arbitrary escape sequences:
                                 TokenDefinition(
-                                    enabled = Till("0.7.0"),
+                                    enabled = Till("0.4.25"),
+                                    scanner = Sequence([
+                                        Atom("'"),
+                                        ZeroOrMore(Choice([
+                                            Fragment(EscapeSequenceArbitrary),
+                                            Not(['\'', '\\', '\r', '\n'])
+                                        ])),
+                                        Atom("'")
+                                    ])
+                                ),
+                                // Allows unicode characters but allows only known ASCII escape sequences:
+                                TokenDefinition(
+                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
                                     scanner = Sequence([
                                         Atom("'"),
                                         ZeroOrMore(Choice([
@@ -3884,9 +3896,21 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DoubleQuotedStringLiteral,
                             definitions = [
-                                // Allows unicode characters:
+                                // Allows unicode characters and arbitrary escape sequences:
                                 TokenDefinition(
-                                    enabled = Till("0.7.0"),
+                                    enabled = Till("0.4.25"),
+                                    scanner = Sequence([
+                                        Atom("\""),
+                                        ZeroOrMore(Choice([
+                                            Fragment(EscapeSequenceArbitrary),
+                                            Not(['"', '\\', '\r', '\n'])
+                                        ])),
+                                        Atom("\"")
+                                    ])
+                                ),
+                                // Allows unicode characters but allows only known ASCII escape sequences:
+                                TokenDefinition(
+                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
                                     scanner = Sequence([
                                         Atom("\""),
                                         ZeroOrMore(Choice([
@@ -4010,6 +4034,20 @@ codegen_language_macros::compile!(Language(
                                 Atom("\\"),
                                 Choice([
                                     Fragment(AsciiEscape),
+                                    Fragment(HexByteEscape),
+                                    Fragment(UnicodeEscape)
+                                ])
+                            ])
+                        ),
+                        Fragment(
+                            name = EscapeSequenceArbitrary,
+                            enabled = Till("0.4.25"),
+                            scanner = Sequence([
+                                Atom("\\"),
+                                Choice([
+                                    // Prior to 0.4.25, it was legal to "escape" any character (incl. unicode),
+                                    // however only the ones from `AsciiEscape` were escaped in practice.
+                                    Not(['x', 'u']),
                                     Fragment(HexByteEscape),
                                     Fragment(UnicodeEscape)
                                 ])

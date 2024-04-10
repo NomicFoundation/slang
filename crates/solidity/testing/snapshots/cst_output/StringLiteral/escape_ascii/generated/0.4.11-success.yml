@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "\n"                                                                             │ 0..4
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '"\n"\n' (0..5)
+      - (variant꞉ DoubleQuotedStringLiteral): '"\n"' # (0..4)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (4..5)

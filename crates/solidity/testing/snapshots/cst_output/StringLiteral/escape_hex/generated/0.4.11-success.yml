@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "\x0a"                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '"\x0a"\n' (0..7)
+      - (variant꞉ DoubleQuotedStringLiteral): '"\x0a"' # (0..6)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (6..7)
