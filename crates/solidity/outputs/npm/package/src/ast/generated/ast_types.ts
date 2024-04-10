@@ -103,11 +103,11 @@ export class ExperimentalPragma {
 
 export class VersionPragma {
   private readonly fetch = once(() => {
-    const [$solidityKeyword, $expressions] = ast_internal.selectSequence(this.cst);
+    const [$solidityKeyword, $sets] = ast_internal.selectSequence(this.cst);
 
     return {
       solidityKeyword: $solidityKeyword as TokenNode,
-      expressions: new VersionPragmaExpressions($expressions as RuleNode),
+      sets: new VersionExpressionSets($sets as RuleNode),
     };
   });
 
@@ -119,27 +119,27 @@ export class VersionPragma {
     return this.fetch().solidityKeyword;
   }
 
-  public get expressions(): VersionPragmaExpressions {
-    return this.fetch().expressions;
+  public get sets(): VersionExpressionSets {
+    return this.fetch().sets;
   }
 }
 
-export class VersionPragmaOrExpression {
+export class VersionRange {
   private readonly fetch = once(() => {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new VersionPragmaExpression($leftOperand as RuleNode),
+      leftOperand: new VersionExpression($leftOperand as RuleNode),
       operator: $operator as TokenNode,
-      rightOperand: new VersionPragmaExpression($rightOperand as RuleNode),
+      rightOperand: new VersionExpression($rightOperand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaOrExpression);
+    assertKind(this.cst.kind, RuleKind.VersionRange);
   }
 
-  public get leftOperand(): VersionPragmaExpression {
+  public get leftOperand(): VersionExpression {
     return this.fetch().leftOperand;
   }
 
@@ -147,58 +147,30 @@ export class VersionPragmaOrExpression {
     return this.fetch().operator;
   }
 
-  public get rightOperand(): VersionPragmaExpression {
+  public get rightOperand(): VersionExpression {
     return this.fetch().rightOperand;
   }
 }
 
-export class VersionPragmaRangeExpression {
-  private readonly fetch = once(() => {
-    const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
-
-    return {
-      leftOperand: new VersionPragmaExpression($leftOperand as RuleNode),
-      operator: $operator as TokenNode,
-      rightOperand: new VersionPragmaExpression($rightOperand as RuleNode),
-    };
-  });
-
-  public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaRangeExpression);
-  }
-
-  public get leftOperand(): VersionPragmaExpression {
-    return this.fetch().leftOperand;
-  }
-
-  public get operator(): TokenNode {
-    return this.fetch().operator;
-  }
-
-  public get rightOperand(): VersionPragmaExpression {
-    return this.fetch().rightOperand;
-  }
-}
-
-export class VersionPragmaPrefixExpression {
+export class VersionComparator {
   private readonly fetch = once(() => {
     const [$operator, $operand] = ast_internal.selectSequence(this.cst);
 
     return {
       operator: $operator as TokenNode,
-      operand: new VersionPragmaExpression($operand as RuleNode),
+      operand: new VersionExpression($operand as RuleNode),
     };
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaPrefixExpression);
+    assertKind(this.cst.kind, RuleKind.VersionComparator);
   }
 
   public get operator(): TokenNode {
     return this.fetch().operator;
   }
 
-  public get operand(): VersionPragmaExpression {
+  public get operand(): VersionExpression {
     return this.fetch().operand;
   }
 }
@@ -3864,23 +3836,21 @@ export class ExperimentalFeature {
   }
 }
 
-export class VersionPragmaExpression {
-  private readonly fetch: () =>
-    | VersionPragmaOrExpression
-    | VersionPragmaRangeExpression
-    | VersionPragmaPrefixExpression
-    | VersionPragmaSpecifier = once(() => {
+export class VersionExpression {
+  private readonly fetch: () => VersionRange | VersionComparator | VersionSpecifiers | TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case RuleKind.VersionPragmaOrExpression:
-        return new VersionPragmaOrExpression(variant as RuleNode);
-      case RuleKind.VersionPragmaRangeExpression:
-        return new VersionPragmaRangeExpression(variant as RuleNode);
-      case RuleKind.VersionPragmaPrefixExpression:
-        return new VersionPragmaPrefixExpression(variant as RuleNode);
-      case RuleKind.VersionPragmaSpecifier:
-        return new VersionPragmaSpecifier(variant as RuleNode);
+      case RuleKind.VersionRange:
+        return new VersionRange(variant as RuleNode);
+      case RuleKind.VersionComparator:
+        return new VersionComparator(variant as RuleNode);
+      case RuleKind.VersionSpecifiers:
+        return new VersionSpecifiers(variant as RuleNode);
+
+      case TokenKind.SingleQuotedVersionLiteral:
+      case TokenKind.DoubleQuotedVersionLiteral:
+        return variant as TokenNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3888,14 +3858,10 @@ export class VersionPragmaExpression {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaExpression);
+    assertKind(this.cst.kind, RuleKind.VersionExpression);
   }
 
-  public get variant():
-    | VersionPragmaOrExpression
-    | VersionPragmaRangeExpression
-    | VersionPragmaPrefixExpression
-    | VersionPragmaSpecifier {
+  public get variant(): VersionRange | VersionComparator | VersionSpecifiers | TokenNode {
     return this.fetch();
   }
 }
@@ -5290,17 +5256,17 @@ export class SourceUnitMembers {
   }
 }
 
-export class VersionPragmaExpressions {
+export class VersionExpressionSet {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new VersionPragmaExpression(item as RuleNode));
+    return items.map((item) => new VersionExpression(item as RuleNode));
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaExpressions);
+    assertKind(this.cst.kind, RuleKind.VersionExpressionSet);
   }
 
-  public get items(): readonly VersionPragmaExpression[] {
+  public get items(): readonly VersionExpression[] {
     return this.fetch();
   }
 }
@@ -5594,7 +5560,30 @@ export class YulSwitchCases {
  * Separated:
  */
 
-export class VersionPragmaSpecifier {
+export class VersionExpressionSets {
+  private readonly fetch = once(() => {
+    const [items, separators] = ast_internal.selectSeparated(this.cst);
+
+    return {
+      items: items.map((item) => new VersionExpressionSet(item as RuleNode)),
+      separators: separators as TokenNode[],
+    };
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.VersionExpressionSets);
+  }
+
+  public get items(): readonly VersionExpressionSet[] {
+    return this.fetch().items;
+  }
+
+  public get separators(): readonly TokenNode[] {
+    return this.fetch().separators;
+  }
+}
+
+export class VersionSpecifiers {
   private readonly fetch = once(() => {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
@@ -5602,7 +5591,7 @@ export class VersionPragmaSpecifier {
   });
 
   public constructor(public readonly cst: RuleNode) {
-    assertKind(this.cst.kind, RuleKind.VersionPragmaSpecifier);
+    assertKind(this.cst.kind, RuleKind.VersionSpecifiers);
   }
 
   public get items(): readonly TokenNode[] {

@@ -5534,51 +5534,43 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                NodeLabel::SolidityKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TokenKind::SolidityKeyword,
-                ),
-            )?;
-            seq.elem_labeled(
-                NodeLabel::Expressions,
-                self.version_pragma_expressions(input),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::VersionPragma)
+    fn version_comparator(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.version_expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::LabeledNode {
+                label: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::VersionExpression => match &node.children[..] {
+                [inner @ cst::LabeledNode {
+                    label: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::VersionComparator => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                }
+                _ => ParserResult::no_match(vec![]),
+            },
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let parse_left_version_pragma_or_expression = |input: &mut ParserContext<'_>| {
+    fn version_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let parse_left_version_range = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::VersionPragmaOrExpression,
+                RuleKind::VersionRange,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TokenKind::BarBar,
-                )
-                .with_label(NodeLabel::Operator),
-            )
-        };
-        let parse_left_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::VersionPragmaRangeExpression,
-                3u8,
-                3u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus)
                     .with_label(NodeLabel::Operator),
             )
         };
-        let parse_prefix_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
+        let parse_prefix_version_comparator = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                5u8,
+                RuleKind::VersionComparator,
+                3u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5635,14 +5627,24 @@ impl Language {
         };
         let prefix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_prefix_version_pragma_prefix_expression(input);
+                let result = parse_prefix_version_comparator(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.version_pragma_specifier(input);
+                let result = self.version_specifiers(input);
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::SingleQuotedVersionLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::DoubleQuotedVersionLiteral,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -5657,9 +5659,7 @@ impl Language {
         };
         let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_left_version_pragma_or_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_left_version_pragma_range_expression(input);
+                let result = parse_left_version_range(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -5678,24 +5678,54 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::VersionPragmaExpression,
+            RuleKind::VersionExpression,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::VersionPragmaExpression)
+        .with_kind(RuleKind::VersionExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expressions(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn version_expression_set(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.version_pragma_expression(input)
-                .with_label(NodeLabel::Item)
+            self.version_expression(input).with_label(NodeLabel::Item)
         })
-        .with_kind(RuleKind::VersionPragmaExpressions)
+        .with_kind(RuleKind::VersionExpressionSet)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_or_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.version_pragma_expression(input);
+    fn version_expression_sets(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Pragma>(
+            input,
+            self,
+            |input| {
+                self.version_expression_set(input)
+                    .with_label(NodeLabel::Item)
+            },
+            TokenKind::BarBar,
+            NodeLabel::Separator,
+        )
+        .with_kind(RuleKind::VersionExpressionSets)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem_labeled(
+                NodeLabel::SolidityKeyword,
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::SolidityKeyword,
+                ),
+            )?;
+            seq.elem_labeled(NodeLabel::Sets, self.version_expression_sets(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::VersionPragma)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_range(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.version_expression(input);
         let ParserResult::Match(r#match) = &result else {
             return result;
         };
@@ -5703,11 +5733,11 @@ impl Language {
             [cst::LabeledNode {
                 label: _,
                 node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
+            }] if node.kind == RuleKind::VersionExpression => match &node.children[..] {
                 [inner @ cst::LabeledNode {
                     label: _,
                     node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::VersionPragmaOrExpression => {
+                }] if rule.kind == RuleKind::VersionRange => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -5717,67 +5747,21 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_prefix_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.version_pragma_expression(input);
-        let ParserResult::Match(r#match) = &result else {
-            return result;
-        };
-        match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::VersionPragmaPrefixExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                }
-                _ => ParserResult::no_match(vec![]),
-            },
-            _ => ParserResult::no_match(vec![]),
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_range_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.version_pragma_expression(input);
-        let ParserResult::Match(r#match) = &result else {
-            return result;
-        };
-        match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::VersionPragmaRangeExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                }
-                _ => ParserResult::no_match(vec![]),
-            },
-            _ => ParserResult::no_match(vec![]),
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn version_specifiers(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Pragma>(
             input,
             self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::VersionPragmaValue,
+                    TokenKind::VersionSpecifier,
                 )
                 .with_label(NodeLabel::Item)
             },
             TokenKind::Period,
             NodeLabel::Separator,
         )
-        .with_kind(RuleKind::VersionPragmaSpecifier)
+        .with_kind(RuleKind::VersionSpecifiers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7084,6 +7068,22 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn double_quoted_version_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_sequence!(
+            scan_chars!(input, '"'),
+            self.version_specifier_fragment(input),
+            scan_zero_or_more!(
+                input,
+                scan_sequence!(
+                    scan_chars!(input, '.'),
+                    self.version_specifier_fragment(input)
+                )
+            ),
+            scan_chars!(input, '"')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn end_of_line(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
@@ -7335,6 +7335,22 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn single_quoted_version_literal(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_sequence!(
+            scan_chars!(input, '\''),
+            self.version_specifier_fragment(input),
+            scan_zero_or_more!(
+                input,
+                scan_sequence!(
+                    scan_chars!(input, '.'),
+                    self.version_specifier_fragment(input)
+                )
+            ),
+            scan_chars!(input, '\'')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn slash(&self, input: &mut ParserContext<'_>) -> bool {
         scan_not_followed_by!(
             input,
@@ -7360,7 +7376,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_value(&self, input: &mut ParserContext<'_>) -> bool {
+    fn version_specifier(&self, input: &mut ParserContext<'_>) -> bool {
+        self.version_specifier_fragment(input)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_specifier_fragment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_one_or_more!(
             input,
             scan_choice!(
@@ -9210,21 +9231,13 @@ impl Language {
             RuleKind::VariableDeclarationValue => {
                 Self::variable_declaration_value.parse(self, input)
             }
+            RuleKind::VersionComparator => Self::version_comparator.parse(self, input),
+            RuleKind::VersionExpression => Self::version_expression.parse(self, input),
+            RuleKind::VersionExpressionSet => Self::version_expression_set.parse(self, input),
+            RuleKind::VersionExpressionSets => Self::version_expression_sets.parse(self, input),
             RuleKind::VersionPragma => Self::version_pragma.parse(self, input),
-            RuleKind::VersionPragmaExpression => Self::version_pragma_expression.parse(self, input),
-            RuleKind::VersionPragmaExpressions => {
-                Self::version_pragma_expressions.parse(self, input)
-            }
-            RuleKind::VersionPragmaOrExpression => {
-                Self::version_pragma_or_expression.parse(self, input)
-            }
-            RuleKind::VersionPragmaPrefixExpression => {
-                Self::version_pragma_prefix_expression.parse(self, input)
-            }
-            RuleKind::VersionPragmaRangeExpression => {
-                Self::version_pragma_range_expression.parse(self, input)
-            }
-            RuleKind::VersionPragmaSpecifier => Self::version_pragma_specifier.parse(self, input),
+            RuleKind::VersionRange => Self::version_range.parse(self, input),
+            RuleKind::VersionSpecifiers => Self::version_specifiers.parse(self, input),
             RuleKind::WhileStatement => Self::while_statement.parse(self, input),
             RuleKind::YulArguments => Self::yul_arguments.parse(self, input),
             RuleKind::YulAssignmentOperator => Self::yul_assignment_operator.parse(self, input),
@@ -10752,7 +10765,9 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                    { VersionPragmaValue = version_pragma_value }
+                    { DoubleQuotedVersionLiteral = double_quoted_version_literal }
+                    { SingleQuotedVersionLiteral = single_quoted_version_literal }
+                    { VersionSpecifier = version_specifier }
                 }
                 // Make sure promotable identifiers are last so they don't grab other things
                 longest_match! {

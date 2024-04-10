@@ -48,18 +48,27 @@ ExperimentalFeature = IDENTIFIER
                     | StringLiteral;
 
 VersionPragma = SOLIDITY_KEYWORD
-                VersionPragmaExpressions;
+                VersionExpressionSets;
 
-VersionPragmaExpressions = VersionPragmaExpression+;
+VersionExpressionSets = VersionExpressionSet (BAR_BAR VersionExpressionSet)*;
 
-VersionPragmaExpression = VersionPragmaOrExpression
-                        | VersionPragmaRangeExpression
-                        | VersionPragmaPrefixExpression
-                        | VersionPragmaSpecifier;
+VersionExpressionSet = VersionExpression+;
 
-VersionPragmaSpecifier = VERSION_PRAGMA_VALUE (PERIOD VERSION_PRAGMA_VALUE)*;
+VersionExpression = VersionRange
+                  | VersionComparator
+                  | VersionSpecifiers
+                  | SINGLE_QUOTED_VERSION_LITERAL
+                  | DOUBLE_QUOTED_VERSION_LITERAL;
 
-VERSION_PRAGMA_VALUE = (("0"…"9") | "x" | "X" | "*")+;
+VersionSpecifiers = VERSION_SPECIFIER (PERIOD VERSION_SPECIFIER)*;
+
+VERSION_SPECIFIER = «VERSION_SPECIFIER_FRAGMENT»;
+
+SINGLE_QUOTED_VERSION_LITERAL = "'" «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* "'";
+
+DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* '"';
+
+«VERSION_SPECIFIER_FRAGMENT» = (("0"…"9") | "x" | "X" | "*")+;
 
 (* Never reserved *)
 ABICODER_KEYWORD = "abicoder";

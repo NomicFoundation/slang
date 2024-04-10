@@ -13,22 +13,18 @@ use slang_solidity::kinds::RuleKind;
 use slang_solidity::text_index::TextRangeExtensions;
 use solidity_language::SolidityDefinition;
 
-pub struct CstSnapshots;
+pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithLabels) -> Result<String> {
+    let mut w = String::new();
 
-impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithLabels) -> Result<String> {
-        let mut w = String::new();
+    write_source(&mut w, source)?;
+    writeln!(&mut w)?;
 
-        write_source(&mut w, source)?;
-        writeln!(&mut w)?;
+    write_errors(&mut w, errors)?;
+    writeln!(&mut w)?;
 
-        write_errors(&mut w, errors)?;
-        writeln!(&mut w)?;
+    write_tree(&mut w, cursor, source)?;
 
-        write_tree(&mut w, cursor, source)?;
-
-        Ok(w)
-    }
+    Ok(w)
 }
 
 fn write_source(w: &mut String, source: &str) -> Result<()> {
