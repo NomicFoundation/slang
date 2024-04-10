@@ -87,11 +87,7 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
-    /**
-     * Serialize the token node to JSON.
-     *
-     * This method is intended for debugging purposes and may not be stable.
-     */
+    /** Serialize the token node to JSON. */
     toJSON(): string;
     unparse(): string;
   }

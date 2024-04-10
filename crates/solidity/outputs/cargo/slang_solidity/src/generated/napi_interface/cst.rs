@@ -106,8 +106,8 @@ impl RuleNode {
         js_name = "__children", // Needed; otherwise, the property name would shadow `children`.
         skip_typescript
     )]
-    pub fn __children(&self, env: Env) -> Vec<JsObject> {
-        Self::children(self, env)
+    pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+        Self::children(self)
     }
 
     // Similarly, expose the eagerly evaluated unparsed text in the debugger context.
