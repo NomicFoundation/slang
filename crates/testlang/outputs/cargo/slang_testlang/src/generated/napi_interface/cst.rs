@@ -72,8 +72,6 @@ impl RuleNode {
 
     #[napi(catch_unwind, js_name = "toJSON")]
     /// Serialize the token node to JSON.
-    ///
-    /// This method is intended for debugging purposes and may not be stable.
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.0).unwrap()
     }
@@ -84,7 +82,7 @@ impl RuleNode {
     }
 
     // Expose the children as a hidden (non-enumerable, don't generate type definition)
-    // property that's eagerly evaluated (getter) in the debugger context.
+    // property that's eagerly evaluated (getter) for an inspected parent object in the debugger context.
     #[napi(
         enumerable = false,
         configurable = false,
