@@ -30,9 +30,8 @@ pub fn select_sequence(
         RuleKind::ABICoderPragma => selector.abi_coder_pragma()?,
         RuleKind::ExperimentalPragma => selector.experimental_pragma()?,
         RuleKind::VersionPragma => selector.version_pragma()?,
-        RuleKind::VersionPragmaOrExpression => selector.version_pragma_or_expression()?,
-        RuleKind::VersionPragmaRangeExpression => selector.version_pragma_range_expression()?,
-        RuleKind::VersionPragmaPrefixExpression => selector.version_pragma_prefix_expression()?,
+        RuleKind::VersionRange => selector.version_range()?,
+        RuleKind::VersionComparator => selector.version_comparator()?,
         RuleKind::ImportDirective => selector.import_directive()?,
         RuleKind::PathImport => selector.path_import()?,
         RuleKind::NamedImport => selector.named_import()?,
@@ -206,40 +205,26 @@ impl Selector {
     fn version_pragma(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::SolidityKeyword))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpressions))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionExpressionSets))?),
         ])
     }
 }
 
 impl Selector {
-    fn version_pragma_or_expression(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+    fn version_range(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
-            Some(self.select(|node| node.is_token_with_kind(TokenKind::BarBar))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
-        ])
-    }
-}
-
-impl Selector {
-    fn version_pragma_range_expression(
-        &mut self,
-    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
-        Ok(vec![
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionExpression))?),
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Minus))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionExpression))?),
         ])
     }
 }
 
 impl Selector {
-    fn version_pragma_prefix_expression(
-        &mut self,
-    ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+    fn version_comparator(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::Caret))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?),
+            Some(self.select(|node| node.is_rule_with_kind(RuleKind::VersionExpression))?),
         ])
     }
 }
@@ -1509,7 +1494,7 @@ pub fn select_choice(
         RuleKind::SourceUnitMember => selector.source_unit_member()?,
         RuleKind::Pragma => selector.pragma()?,
         RuleKind::ExperimentalFeature => selector.experimental_feature()?,
-        RuleKind::VersionPragmaExpression => selector.version_pragma_expression()?,
+        RuleKind::VersionExpression => selector.version_expression()?,
         RuleKind::ImportClause => selector.import_clause()?,
         RuleKind::UsingClause => selector.using_clause()?,
         RuleKind::UsingOperator => selector.using_operator()?,
@@ -1601,13 +1586,15 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma_expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
+    fn version_expression(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
             node.is_rule_with_kinds(&[
-                RuleKind::VersionPragmaOrExpression,
-                RuleKind::VersionPragmaRangeExpression,
-                RuleKind::VersionPragmaPrefixExpression,
-                RuleKind::VersionPragmaSpecifier,
+                RuleKind::VersionRange,
+                RuleKind::VersionComparator,
+                RuleKind::VersionSpecifiers,
+            ]) || node.is_token_with_kinds(&[
+                TokenKind::SingleQuotedVersionLiteral,
+                TokenKind::DoubleQuotedVersionLiteral,
             ])
         })
     }
@@ -2238,7 +2225,7 @@ pub fn select_repeated(
 
     let result = match node.kind() {
         RuleKind::SourceUnitMembers => selector.source_unit_members()?,
-        RuleKind::VersionPragmaExpressions => selector.version_pragma_expressions()?,
+        RuleKind::VersionExpressionSet => selector.version_expression_set()?,
         RuleKind::ContractMembers => selector.contract_members()?,
         RuleKind::InterfaceMembers => selector.interface_members()?,
         RuleKind::LibraryMembers => selector.library_members()?,
@@ -2282,11 +2269,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_pragma_expressions(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+    fn version_expression_set(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_rule_with_kind(RuleKind::VersionPragmaExpression))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::VersionExpression))?
         {
             items.push(item);
         }
@@ -2576,7 +2563,8 @@ pub fn select_separated(
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        RuleKind::VersionPragmaSpecifier => selector.version_pragma_specifier()?,
+        RuleKind::VersionExpressionSets => selector.version_expression_sets()?,
+        RuleKind::VersionSpecifiers => selector.version_specifiers()?,
         RuleKind::ImportDeconstructionSymbols => selector.import_deconstruction_symbols()?,
         RuleKind::UsingDeconstructionSymbols => selector.using_deconstruction_symbols()?,
         RuleKind::InheritanceTypes => selector.inheritance_types()?,
@@ -2608,12 +2596,37 @@ pub fn select_separated(
 }
 
 impl Selector {
-    fn version_pragma_specifier(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+    fn version_expression_sets(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::VersionExpressionSet))?
+        {
+            separated.push(first);
+
+            while let Some(separator) =
+                self.try_select(|node| node.is_token_with_kind(TokenKind::BarBar))?
+            {
+                separators.push(separator);
+
+                separated.push(
+                    self.select(|node| node.is_rule_with_kind(RuleKind::VersionExpressionSet))?,
+                );
+            }
+        }
+
+        Ok(vec![separated, separators])
+    }
+}
+
+impl Selector {
+    fn version_specifiers(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+        let mut separated = vec![];
+        let mut separators = vec![];
+
+        if let Some(first) =
+            self.try_select(|node| node.is_token_with_kind(TokenKind::VersionSpecifier))?
         {
             separated.push(first);
 
@@ -2623,7 +2636,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_token_with_kind(TokenKind::VersionPragmaValue))?,
+                    self.select(|node| node.is_token_with_kind(TokenKind::VersionSpecifier))?,
                 );
             }
         }

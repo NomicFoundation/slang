@@ -122,32 +122,27 @@ codegen_language_macros::compile!(Language(
                             name = VersionPragma,
                             fields = (
                                 solidity_keyword = Required(SolidityKeyword),
-                                expressions = Required(VersionPragmaExpressions)
+                                sets = Required(VersionExpressionSets)
                             )
                         ),
-                        Repeated(
-                            name = VersionPragmaExpressions,
-                            reference = VersionPragmaExpression
+                        Separated(
+                            name = VersionExpressionSets,
+                            reference = VersionExpressionSet,
+                            separator = BarBar
                         ),
+                        Repeated(name = VersionExpressionSet, reference = VersionExpression),
                         Precedence(
-                            name = VersionPragmaExpression,
+                            name = VersionExpression,
                             precedence_expressions = [
                                 PrecedenceExpression(
-                                    name = VersionPragmaOrExpression,
-                                    operators = [PrecedenceOperator(
-                                        model = BinaryLeftAssociative,
-                                        fields = (operator = Required(BarBar))
-                                    )]
-                                ),
-                                PrecedenceExpression(
-                                    name = VersionPragmaRangeExpression,
+                                    name = VersionRange,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Minus))
                                     )]
                                 ),
                                 PrecedenceExpression(
-                                    name = VersionPragmaPrefixExpression,
+                                    name = VersionComparator,
                                     operators = [
                                         PrecedenceOperator(
                                             model = Prefix,
@@ -180,24 +175,63 @@ codegen_language_macros::compile!(Language(
                                     ]
                                 )
                             ],
-                            primary_expressions =
-                                [PrimaryExpression(reference = VersionPragmaSpecifier)]
+                            primary_expressions = [
+                                PrimaryExpression(reference = VersionSpecifiers),
+                                PrimaryExpression(reference = SingleQuotedVersionLiteral),
+                                PrimaryExpression(reference = DoubleQuotedVersionLiteral)
+                            ]
                         ),
                         Separated(
-                            name = VersionPragmaSpecifier,
-                            reference = VersionPragmaValue,
+                            // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
+                            name = VersionSpecifiers,
+                            reference = VersionSpecifier,
                             separator = Period
                         ),
                         Token(
-                            name = VersionPragmaValue,
+                            // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
+                            name = VersionSpecifier,
                             definitions = [TokenDefinition(
-                                scanner = OneOrMore(Choice([
-                                    Range(inclusive_start = '0', inclusive_end = '9'),
-                                    Atom("x"),
-                                    Atom("X"),
-                                    Atom("*")
-                                ]))
+                                scanner = Fragment(VersionSpecifierFragment)
                             )]
+                        ),
+                        Token(
+                            // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
+                            name = SingleQuotedVersionLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("'"),
+                                    Fragment(VersionSpecifierFragment),
+                                    ZeroOrMore(Sequence([
+                                        Atom("."),
+                                        Fragment(VersionSpecifierFragment)
+                                    ])),
+                                    Atom("'")
+                                ])
+                            )]
+                        ),
+                        Token(
+                            // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
+                            name = DoubleQuotedVersionLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("\""),
+                                    Fragment(VersionSpecifierFragment),
+                                    ZeroOrMore(Sequence([
+                                        Atom("."),
+                                        Fragment(VersionSpecifierFragment)
+                                    ])),
+                                    Atom("\"")
+                                ])
+                            )]
+                        ),
+                        Fragment(
+                            name = VersionSpecifierFragment,
+                            scanner = OneOrMore(Choice([
+                                Range(inclusive_start = '0', inclusive_end = '9'),
+                                Atom("x"),
+                                Atom("X"),
+                                Atom("*")
+                            ]))
                         ),
                         Keyword(
                             name = AbicoderKeyword,
