@@ -11,7 +11,7 @@ use crate::napi_interface::{
     RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
 };
 
-#[napi(namespace = "cst")]
+#[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
     Rule,
     Token,
@@ -85,9 +85,44 @@ impl RuleNode {
             .into()
     }
 
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
+    }
+
     #[napi(catch_unwind)]
     pub fn unparse(&self) -> String {
         self.0.clone().unparse()
+    }
+
+    // Expose the children as a hidden (non-enumerable, don't generate type definition)
+    // property that's eagerly evaluated (getter) for an inspected parent object in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__children", // Needed; otherwise, the property name would shadow `children`.
+        skip_typescript,
+        catch_unwind
+    )]
+    pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+        Self::children(self)
+    }
+
+    // Similarly, expose the eagerly evaluated unparsed text in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__text",
+        skip_typescript,
+        catch_unwind
+    )]
+    pub fn __text(&self) -> String {
+        self.unparse()
     }
 }
 
@@ -122,6 +157,14 @@ impl TokenNode {
     #[napi(getter, catch_unwind)]
     pub fn text(&self) -> String {
         self.0.text.clone()
+    }
+
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    ///
+    /// This method is intended for debugging purposes and may not be stable.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
     }
 
     #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]

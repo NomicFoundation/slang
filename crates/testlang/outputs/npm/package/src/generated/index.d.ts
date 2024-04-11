@@ -78,8 +78,8 @@ export namespace ast_internal {
 }
 export namespace cst {
   export enum NodeType {
-    Rule = 0,
-    Token = 1,
+    Rule = "Rule",
+    Token = "Token",
   }
   export class RuleNode {
     get type(): NodeType.Rule;
@@ -87,6 +87,8 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
+    /** Serialize the token node to JSON. */
+    toJSON(): string;
     unparse(): string;
   }
   export class TokenNode {
@@ -94,6 +96,12 @@ export namespace cst {
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
+    /**
+     * Serialize the token node to JSON.
+     *
+     * This method is intended for debugging purposes and may not be stable.
+     */
+    toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
 }
