@@ -59,7 +59,7 @@ allows you to reuse the same query in multiple places. Queries can largely
 replace the need for both internal (cursor), and external (visitor) iterator
 patterns.
 
-The [query language](./query-language.md) is based on pattern matching, and the
+The [query language](./tree-query-language.md) is based on pattern matching, and the
 execution semantics are closer to unification than to regular expression
 matching i.e. a query returns all possible matches, not just the
 longest/shortest/first/last match. There is no concept of a 'greedy' operator

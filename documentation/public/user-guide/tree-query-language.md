@@ -10,7 +10,7 @@ example, this pattern would match any `MultiplicativeExpression` node whose chil
 are exactly two `Expression` nodes, with an `Asterisk` node in between (no whitespace):
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-1"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-1"
 ```
 
 The children of a node can optionally be named. The name is a property of the edge from
@@ -18,14 +18,14 @@ the node to the child, and is not a property of the child. For example, this pat
 a `MultiplicativeExpression` node with the two `Expression` children named `left_operand` and `right_operand`:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-2"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-2"
 ```
 
 You can also match a node's textual content using a string literal. For example, this pattern would match a
 `MultiplicativeExpression` with a `*` operator (for clarity):
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-3"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-3"
 ```
 
 If you don't care about the kind of a node, you can use an underscore `_`, which matches any kind.
@@ -33,7 +33,7 @@ For example, this pattern will match a `MultiplicativeExpression`
 node with two children, one of any kind named `left_operand` and one of any kind:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-4"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-4"
 ```
 
 Children can also be elided. For example, this would produce multiple matches for a
@@ -41,7 +41,7 @@ Children can also be elided. For example, this would produce multiple matches fo
 is associated with each of the `StringExpression` children:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-5"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-5"
 ```
 
 ### Capturing Nodes
@@ -55,14 +55,14 @@ For example, this pattern would match any struct definition and it would associa
 the name `struct_name` with the identifier:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:capturing-nodes-1"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:capturing-nodes-1"
 ```
 
 And this pattern would match all event definitions for a contract, associating the name
 `event_name` with the event name, `contract_name` with the containing contract name:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:capturing-nodes-2"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:capturing-nodes-2"
 ```
 
 ### Quantification
@@ -75,20 +75,20 @@ matches _one or more_.
 For example, this pattern would match a sequence of one or more comments at the top of the file:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:quantification-1"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-1"
 ```
 
 This pattern would match a contract definition with at least one doc comment, capturing them:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:quantification-2"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-2"
 ```
 
 This pattern would match all function calls, capturing a string argument if one was
 present:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:quantification-3"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-3"
 ```
 
 ### Alternations
@@ -99,11 +99,11 @@ For example, this pattern would match a call to either a variable or an object p
 In the case of a variable, capture it as `@function`, and in the case of a property, capture it as `@method`:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:alternations-1"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-1"
 ```
 
 This pattern would match a set of possible keyword tokens, capturing them as `@keyword`:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:alternations-2"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-2"
 ```
