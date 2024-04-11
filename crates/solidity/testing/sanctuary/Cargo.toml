@@ -12,6 +12,7 @@ console = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
+once_cell = { workspace = true }
 rayon = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
@@ -22,4 +23,3 @@ url = { workspace = true }
 
 [lints]
 workspace = true
-
