@@ -1,37 +1,102 @@
 use std::fmt::Write;
+use std::path::Path;
 
 use anyhow::Result;
+use infra_utils::codegen::CodegenWriteOnly;
 
-use crate::model::SpecModel;
-
-pub fn generate_top_navigation(model: &SpecModel) -> Result<String> {
-    let mut buffer = String::new();
-
-    writeln!(buffer, "-   [Supported Versions](./supported-versions.md)")?;
-
-    for section in &model.sections {
-        writeln!(
-            buffer,
-            "-   [{section_title}](./{section_slug}/)",
-            section_title = section.title,
-            section_slug = section.slug,
-        )?;
-    }
-
-    Ok(buffer)
+pub enum SpecEntry {
+    Dir(SpecDir),
+    Page(SpecPage),
 }
 
-pub fn generate_section_navigation(model: &SpecModel, section_index: usize) -> Result<String> {
-    let mut buffer = String::new();
+pub struct SpecDir {
+    title: String,
+    slug: String,
+    entries: Vec<SpecEntry>,
+}
 
-    for topic in &model.sections[section_index].topics {
-        writeln!(
-            buffer,
-            "-   [{topic_title}](./{topic_slug}.md)",
-            topic_title = topic.title,
-            topic_slug = topic.slug,
-        )?;
+impl SpecDir {
+    pub fn new(title: impl Into<String>, slug: impl Into<String>) -> Self {
+        SpecDir {
+            title: title.into(),
+            slug: slug.into(),
+            entries: vec![],
+        }
     }
 
-    Ok(buffer)
+    pub fn add_dir(&mut self, dir: SpecDir) {
+        self.entries.push(SpecEntry::Dir(dir));
+    }
+
+    pub fn add_page(&mut self, page: SpecPage) {
+        self.entries.push(SpecEntry::Page(page));
+    }
+
+    pub fn write_to_disk(&self, codegen: &mut CodegenWriteOnly, parent_dir: &Path) -> Result<()> {
+        let SpecDir {
+            title,
+            slug,
+            entries,
+        } = self;
+
+        let current_dir = parent_dir.join(slug);
+
+        let mut index = String::new();
+        writeln!(index, "# {title}")?;
+        writeln!(index)?;
+
+        let mut navigation = String::new();
+        writeln!(navigation, "-   [{title}](./index.md)")?;
+
+        for entry in entries {
+            match entry {
+                SpecEntry::Dir(
+                    child @ SpecDir {
+                        title: child_title,
+                        slug: child_slug,
+                        entries: _,
+                    },
+                ) => {
+                    writeln!(index, "-   [{child_title}](./{child_slug}/index.md)")?;
+                    writeln!(navigation, "-   [{child_title}](./{child_slug}/)")?;
+
+                    child.write_to_disk(codegen, &current_dir)?;
+                }
+                SpecEntry::Page(SpecPage {
+                    title: child_title,
+                    slug: child_slug,
+                    contents,
+                }) => {
+                    writeln!(index, "-   [{child_title}](./{child_slug}.md)")?;
+                    writeln!(navigation, "-   [{child_title}](./{child_slug}.md)")?;
+
+                    codegen.write_file(current_dir.join(format!("{child_slug}.md")), contents)?;
+                }
+            }
+        }
+
+        codegen.write_file(current_dir.join("index.md"), index)?;
+        codegen.write_file(current_dir.join(".navigation.md"), navigation)?;
+        Ok(())
+    }
+}
+
+pub struct SpecPage {
+    title: String,
+    slug: String,
+    contents: String,
+}
+
+impl SpecPage {
+    pub fn new(
+        title: impl Into<String>,
+        slug: impl Into<String>,
+        contents: impl Into<String>,
+    ) -> Self {
+        SpecPage {
+            title: title.into(),
+            slug: slug.into(),
+            contents: contents.into(),
+        }
+    }
 }

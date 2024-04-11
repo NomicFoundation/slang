@@ -27,6 +27,6 @@ Additionally, there is another type of comment called a NatSpec comment. They ar
 contract MyContract {}
 ```
 
-Please see the [NatSpec Format](../06-nat-spec-format/) section for further information.
+Please see the [NatSpec Format](./07-nat-spec-format.md) section for further information.
 
 --8<-- "crates/solidity/inputs/language/snippets/under-construction.md"

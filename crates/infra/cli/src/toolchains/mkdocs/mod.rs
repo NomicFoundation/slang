@@ -21,6 +21,7 @@ impl Mkdocs {
 
         mkdocs_command()
             .arg("serve")
+            .flag("--clean")
             .flag("--watch-theme")
             .property("--dev-addr", format!("localhost:{PORT}"))
             .run()
