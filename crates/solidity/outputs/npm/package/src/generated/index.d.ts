@@ -737,8 +737,8 @@ export namespace ast_internal {
 }
 export namespace cst {
   export enum NodeType {
-    Rule = 0,
-    Token = 1,
+    Rule = "Rule",
+    Token = "Token",
   }
   export class RuleNode {
     get type(): NodeType.Rule;

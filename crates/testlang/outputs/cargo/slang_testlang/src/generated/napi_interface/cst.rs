@@ -11,7 +11,7 @@ use crate::napi_interface::{
     RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
 };
 
-#[napi(namespace = "cst")]
+#[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
     Rule,
     Token,
