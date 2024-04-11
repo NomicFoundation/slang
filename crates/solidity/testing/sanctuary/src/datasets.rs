@@ -190,6 +190,7 @@ fn patch_possibly_buggy_version_from_etherscan(network: &str, address: &str, ver
 
     #[allow(clippy::items_after_statements)]
     // These all use `pure`/`view`, which was introduced in 0.4.16:
+    // TODO(#934): Remove this once the sanctuary index update is propagated.
     static PURE_VIEW_CONTRACTS: Lazy<HashSet<&str>> = Lazy::new(|| {
         HashSet::from_iter([
             /* 0.4.11 */ "0ff7599a9e2c9eb63ddb42a0e8b475b579a13e08",
