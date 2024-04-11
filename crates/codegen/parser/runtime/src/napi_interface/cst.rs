@@ -102,7 +102,8 @@ impl RuleNode {
         writable = false,
         getter,
         js_name = "__children", // Needed; otherwise, the property name would shadow `children`.
-        skip_typescript
+        skip_typescript,
+        catch_unwind
     )]
     pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
         Self::children(self)
@@ -115,7 +116,8 @@ impl RuleNode {
         writable = false,
         getter,
         js_name = "__text",
-        skip_typescript
+        skip_typescript,
+        catch_unwind
     )]
     pub fn __text(&self) -> String {
         self.unparse()
