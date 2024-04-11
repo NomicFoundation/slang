@@ -1862,6 +1862,7 @@ dependencies = [
  "codegen_testing",
  "infra_utils",
  "once_cell",
+ "regex",
  "semver",
  "slang_solidity",
  "solidity_language",

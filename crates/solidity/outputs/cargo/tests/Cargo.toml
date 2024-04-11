@@ -17,6 +17,7 @@ codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
 once_cell = { workspace = true }
+regex = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true }
 solidity_language = { workspace = true }
@@ -24,4 +25,3 @@ strum_macros = { workspace = true }
 
 [lints]
 workspace = true
-
