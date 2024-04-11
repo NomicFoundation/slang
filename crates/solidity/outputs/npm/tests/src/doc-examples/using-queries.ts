@@ -18,33 +18,33 @@ async function parseDocInputFile(filePath: string) {
 
 test("using queries", async () => {
   {
-    let parse_output = await parseDocInputFile("using-the-cursor.sol");
+    const parse_output = await parseDocInputFile("using-the-cursor.sol");
     // --8<-- [start:creating-a-query]
 
     // Any `Cursor` can be used to create a query.
-    let cursor = parse_output.createTreeCursor();
+    const cursor = parse_output.createTreeCursor();
 
-    let query = Query.parse("[ContractDefinition]");
-    let results: query.QueryResultIterator = cursor.query([query]);
+    const query = Query.parse("[ContractDefinition]");
+    const results: query.QueryResultIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
     results; // Silence the unused warning
   }
 
   {
-    let parseOutput = await parseDocInputFile("using-the-cursor.sol");
-    let cursor = parseOutput.createTreeCursor();
+    const parseOutput = await parseDocInputFile("using-the-cursor.sol");
+    const cursor = parseOutput.createTreeCursor();
     // --8<-- [start:visiting-contracts]
-    let found = [];
+    const found = [];
 
-    let query = Query.parse("@contract [ContractDefinition]");
-    let results = cursor.query([query]);
+    const query = Query.parse("@contract [ContractDefinition]");
+    const results = cursor.query([query]);
 
     let result = null;
     while ((result = results.next())) {
-      let bindings = result.bindings;
-      let cursors = bindings["contract"];
+      const bindings = result.bindings;
+      const cursors = bindings["contract"];
 
-      let cursor = cursors?.[0]?.node() as RuleNode;
+      const cursor = cursors?.[0]?.node() as RuleNode;
 
       found.push(cursor.unparse().trim());
     }
@@ -54,22 +54,22 @@ test("using queries", async () => {
   }
 
   {
-    let parse_output = await parseDocInputFile("multiple-data-types.sol");
-    let cursor = parse_output.createTreeCursor();
+    const parse_output = await parseDocInputFile("multiple-data-types.sol");
+    const cursor = parse_output.createTreeCursor();
     // --8<-- [start:multiple-patterns]
-    let names = [];
+    const names = [];
 
-    let struct_def = Query.parse("[StructDefinition ... @name [Identifier] ...]");
-    let enum_def = Query.parse("[EnumDefinition ... @name [Identifier] ...]");
-    let results = cursor.query([struct_def, enum_def]);
+    const struct_def = Query.parse("[StructDefinition ... @name [Identifier] ...]");
+    const enum_def = Query.parse("[EnumDefinition ... @name [Identifier] ...]");
+    const results = cursor.query([struct_def, enum_def]);
 
     let result = null;
     while ((result = results.next())) {
-      let index = result.queryNumber;
-      let bindings = result.bindings;
-      let cursors = bindings["name"];
+      const index = result.queryNumber;
+      const bindings = result.bindings;
+      const cursors = bindings["name"];
 
-      let cursor = cursors?.[0];
+      const cursor = cursors?.[0];
 
       names.push([index, (cursor?.node() as TokenNode).text]);
     }
@@ -84,21 +84,21 @@ test("using queries", async () => {
   }
 
   {
-    let parse_output = await parseDocInputFile("typed-tuple.sol");
-    let cursor = parse_output.createTreeCursor();
+    const parse_output = await parseDocInputFile("typed-tuple.sol");
+    const cursor = parse_output.createTreeCursor();
     // --8<-- [start:matching-on-label]
 
-    let names = [];
+    const names = [];
 
-    let query = Query.parse("[TypedTupleMember ... @type [type_name: _] ...]");
-    let results = cursor.query([query]);
+    const query = Query.parse("[TypedTupleMember ... @type [type_name: _] ...]");
+    const results = cursor.query([query]);
 
     let result = null;
     while ((result = results.next())) {
-      let bindings = result.bindings;
-      let cursors = bindings["type"];
+      const bindings = result.bindings;
+      const cursors = bindings["type"];
 
-      let cursor = cursors?.[0];
+      const cursor = cursors?.[0];
 
       names.push((cursor?.node() as RuleNode).unparse());
     }
@@ -109,21 +109,21 @@ test("using queries", async () => {
 
   {
     // Matching on node's literal value
-    let parse_output = await parseDocInputFile("typed-tuple.sol");
-    let cursor = parse_output.createTreeCursor();
+    const parse_output = await parseDocInputFile("typed-tuple.sol");
+    const cursor = parse_output.createTreeCursor();
     // --8<-- [start:matching-on-literal-value]
 
-    let names = [];
+    const names = [];
 
-    let query = Query.parse(`[ElementaryType @uint_keyword [variant: "uint"]]`);
-    let results = cursor.query([query]);
+    const query = Query.parse(`[ElementaryType @uint_keyword [variant: "uint"]]`);
+    const results = cursor.query([query]);
 
     let result = null;
     while ((result = results.next())) {
-      let bindings = result.bindings;
-      let cursors = bindings["uint_keyword"];
+      const bindings = result.bindings;
+      const cursors = bindings["uint_keyword"];
 
-      let cursor = cursors?.[0];
+      const cursor = cursors?.[0];
 
       names.push((cursor?.node() as TokenNode).text);
     }
@@ -133,10 +133,10 @@ test("using queries", async () => {
   }
 
   {
-    let parse_output = await parseDocInputFile("tx-origin.sol");
-    let cursor = parse_output.createTreeCursor();
+    const parse_output = await parseDocInputFile("tx-origin.sol");
+    const cursor = parse_output.createTreeCursor();
     // --8<-- [start:tx-origin]
-    let query = Query.parse(`
+    const query = Query.parse(`
     @txorigin [MemberAccessExpression
       ...
       [Expression
@@ -151,16 +151,16 @@ test("using queries", async () => {
         ...
       ]
     ]`);
-    let results = cursor.query([query]);
+    const results = cursor.query([query]);
 
-    let found = [];
+    const found = [];
 
     let result = null;
     while ((result = results.next())) {
-      let bindings = result.bindings;
-      let cursors = bindings["txorigin"];
+      const bindings = result.bindings;
+      const cursors = bindings["txorigin"];
 
-      let cursor = cursors?.[0];
+      const cursor = cursors?.[0];
 
       found.push([cursor?.textOffset.utf8, (cursor?.node() as RuleNode).unparse()]);
     }

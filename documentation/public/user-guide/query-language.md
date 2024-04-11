@@ -7,7 +7,7 @@ certain set of nodes in a tree. The expression to match a given node
 consists of a pair of brackets (`[]`) containing two things: the node's kind, and
 optionally, a series of other patterns that match the node's children. For
 example, this pattern would match any `MultiplicativeExpression` node whose children
-are exactly both `Expression` nodes with an `Asterisk` node in between (no whitespace):
+are exactly two `Expression` nodes, with an `Asterisk` node in between (no whitespace):
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-1"
@@ -15,7 +15,7 @@ are exactly both `Expression` nodes with an `Asterisk` node in between (no white
 
 The children of a node can optionally be named. The name is a property of the edge from
 the node to the child, and is not a property of the child. For example, this pattern will match
-a `MultiplicativeExpression` node with the two `Expression` children named `left` and `right`:
+a `MultiplicativeExpression` node with the two `Expression` children named `left_operand` and `right_operand`:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-2"
@@ -30,7 +30,7 @@ You can also match a node's textual content using a string literal. For example,
 
 If you don't care about the kind of a node, you can use an underscore `_`, which matches any kind.
 For example, this pattern will match a `MultiplicativeExpression`
-node with two children, one of any kind named `left` and one of any kind:
+node with two children, one of any kind named `left_operand` and one of any kind:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/query_language.rs:query-syntax-4"
