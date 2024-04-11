@@ -1,5 +1,0 @@
--   [Introduction](./introduction.md)
--   [Concepts](./concepts.md)
--   [Tree Query Language](./tree-query-language.md)
--   [Rust Crate](./rust-crate/)
--   [NPM Package](./npm-package/)

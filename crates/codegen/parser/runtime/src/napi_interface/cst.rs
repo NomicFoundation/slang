@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
-use napi::bindgen_prelude::Env;
-use napi::JsObject;
+use napi::Either;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
@@ -10,10 +9,26 @@ use crate::napi_interface::{
     RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
 };
 
-#[napi(namespace = "cst")]
+#[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
     Rule,
     Token,
+}
+
+impl RustNode {
+    /// Converts the node into `napi` wrapper for `RuleNode | TokenNode` JS object.
+    pub fn into_js_either_node(self) -> Either<RuleNode, TokenNode> {
+        match self {
+            RustNode::Rule(rule) => Either::A(RuleNode(rule)),
+            RustNode::Token(token) => Either::B(TokenNode(token)),
+        }
+    }
+}
+
+impl From<RustNode> for Either<RuleNode, TokenNode> {
+    fn from(value: RustNode) -> Self {
+        value.into_js_either_node()
+    }
 }
 
 #[napi(namespace = "cst")]
@@ -50,11 +65,11 @@ impl RuleNode {
     }
 
     #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
-    pub fn children(&self, env: Env) -> Vec<JsObject> {
+    pub fn children(&self) -> Vec<Either<RuleNode, TokenNode>> {
         self.0
             .children
             .iter()
-            .map(|child| child.to_js(env))
+            .map(|child| child.node.clone().into())
             .collect()
     }
 
@@ -68,9 +83,44 @@ impl RuleNode {
             .into()
     }
 
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
+    }
+
     #[napi(catch_unwind)]
     pub fn unparse(&self) -> String {
         self.0.clone().unparse()
+    }
+
+    // Expose the children as a hidden (non-enumerable, don't generate type definition)
+    // property that's eagerly evaluated (getter) for an inspected parent object in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__children", // Needed; otherwise, the property name would shadow `children`.
+        skip_typescript,
+        catch_unwind
+    )]
+    pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+        Self::children(self)
+    }
+
+    // Similarly, expose the eagerly evaluated unparsed text in the debugger context.
+    #[napi(
+        enumerable = false,
+        configurable = false,
+        writable = false,
+        getter,
+        js_name = "__text",
+        skip_typescript,
+        catch_unwind
+    )]
+    pub fn __text(&self) -> String {
+        self.unparse()
     }
 }
 
@@ -107,6 +157,14 @@ impl TokenNode {
         self.0.text.clone()
     }
 
+    #[napi(catch_unwind, js_name = "toJSON")]
+    /// Serialize the token node to JSON.
+    ///
+    /// This method is intended for debugging purposes and may not be stable.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&self.0).unwrap()
+    }
+
     #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]
     pub fn create_cursor(
         &self,
@@ -115,36 +173,5 @@ impl TokenNode {
         RustNode::Token(self.0.clone())
             .cursor_with_offset((&text_offset).into())
             .into()
-    }
-}
-
-pub(crate) trait ToJS {
-    fn to_js(&self, env: Env) -> JsObject;
-}
-
-impl ToJS for Rc<RustRuleNode> {
-    fn to_js(&self, env: Env) -> JsObject {
-        RuleNode(self.clone())
-            .into_instance(env)
-            .expect("Class constructor to be defined by #[napi]")
-            .as_object(env)
-    }
-}
-
-impl ToJS for Rc<RustTokenNode> {
-    fn to_js(&self, env: Env) -> JsObject {
-        TokenNode(self.clone())
-            .into_instance(env)
-            .expect("Class constructor to be defined by #[napi]")
-            .as_object(env)
-    }
-}
-
-impl ToJS for RustNode {
-    fn to_js(&self, env: Env) -> JsObject {
-        match self {
-            RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
-            RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
-        }
     }
 }

@@ -62,7 +62,6 @@ impl PartialEq<Version> for ZigGlibcVersion {
     }
 }
 
-#[cfg(target_env = "gnu")]
 /// On a GNU host, cross-compile the native addon to only target the oldest supported GLIBC version by VS Code.
 ///
 /// By default, compiling on the host targets the host's GLIBC version, which is usually newer.
@@ -75,6 +74,11 @@ pub fn ensure_correct_glibc_for_vscode(
     output_dir: &Path,
     target: &BuildTarget,
 ) -> Result<()> {
+    // This is only ever required when host-compiling on a GNU system.
+    if cfg!(not(target_env = "gnu")) {
+        return Ok(());
+    }
+
     let target_triple = match target {
         BuildTarget::ReleaseTarget(target) if target.ends_with("-linux-gnu") => target,
         _ => return Ok(()),
@@ -130,8 +134,12 @@ pub fn ensure_correct_glibc_for_vscode(
     Ok(())
 }
 
-#[cfg(target_env = "gnu")]
 fn fetch_min_supported_glibc_version(lib_path: &str) -> Result<Version> {
+    assert!(
+        cfg!(target_env = "gnu"),
+        "This is only supported and expected to only ever run on a host GNU system."
+    );
+
     // # Note: `ldd` does not work reliably when inspecting cross-compiled ARM binaries on x86_64
     let output = Command::new("objdump")
         .flag("-T")

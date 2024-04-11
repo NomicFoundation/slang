@@ -184,13 +184,13 @@ export namespace kinds {
     VariableDeclarationStatement = "VariableDeclarationStatement",
     VariableDeclarationType = "VariableDeclarationType",
     VariableDeclarationValue = "VariableDeclarationValue",
+    VersionComparator = "VersionComparator",
+    VersionExpression = "VersionExpression",
+    VersionExpressionSet = "VersionExpressionSet",
+    VersionExpressionSets = "VersionExpressionSets",
     VersionPragma = "VersionPragma",
-    VersionPragmaExpression = "VersionPragmaExpression",
-    VersionPragmaExpressions = "VersionPragmaExpressions",
-    VersionPragmaOrExpression = "VersionPragmaOrExpression",
-    VersionPragmaPrefixExpression = "VersionPragmaPrefixExpression",
-    VersionPragmaRangeExpression = "VersionPragmaRangeExpression",
-    VersionPragmaSpecifier = "VersionPragmaSpecifier",
+    VersionRange = "VersionRange",
+    VersionSpecifiers = "VersionSpecifiers",
     WhileStatement = "WhileStatement",
     YulArguments = "YulArguments",
     YulAssignmentOperator = "YulAssignmentOperator",
@@ -277,7 +277,6 @@ export namespace kinds {
     EventKeyword = "EventKeyword",
     ExperimentalKeyword = "ExperimentalKeyword",
     Expression = "Expression",
-    Expressions = "Expressions",
     FallbackKeyword = "FallbackKeyword",
     FalseExpression = "FalseExpression",
     Feature = "Feature",
@@ -332,6 +331,7 @@ export namespace kinds {
     ReturnsKeyword = "ReturnsKeyword",
     RevertKeyword = "RevertKeyword",
     Semicolon = "Semicolon",
+    Sets = "Sets",
     SolidityKeyword = "SolidityKeyword",
     Start = "Start",
     Statements = "Statements",
@@ -409,6 +409,7 @@ export namespace kinds {
     DoubleQuotedHexStringLiteral = "DoubleQuotedHexStringLiteral",
     DoubleQuotedStringLiteral = "DoubleQuotedStringLiteral",
     DoubleQuotedUnicodeStringLiteral = "DoubleQuotedUnicodeStringLiteral",
+    DoubleQuotedVersionLiteral = "DoubleQuotedVersionLiteral",
     ElseKeyword = "ElseKeyword",
     EmitKeyword = "EmitKeyword",
     EndOfLine = "EndOfLine",
@@ -506,6 +507,7 @@ export namespace kinds {
     SingleQuotedHexStringLiteral = "SingleQuotedHexStringLiteral",
     SingleQuotedStringLiteral = "SingleQuotedStringLiteral",
     SingleQuotedUnicodeStringLiteral = "SingleQuotedUnicodeStringLiteral",
+    SingleQuotedVersionLiteral = "SingleQuotedVersionLiteral",
     SizeOfKeyword = "SizeOfKeyword",
     Slash = "Slash",
     SlashEqual = "SlashEqual",
@@ -529,7 +531,7 @@ export namespace kinds {
     UncheckedKeyword = "UncheckedKeyword",
     UsingKeyword = "UsingKeyword",
     VarKeyword = "VarKeyword",
-    VersionPragmaValue = "VersionPragmaValue",
+    VersionSpecifier = "VersionSpecifier",
     ViewKeyword = "ViewKeyword",
     VirtualKeyword = "VirtualKeyword",
     WeeksKeyword = "WeeksKeyword",
@@ -737,8 +739,8 @@ export namespace ast_internal {
 }
 export namespace cst {
   export enum NodeType {
-    Rule = 0,
-    Token = 1,
+    Rule = "Rule",
+    Token = "Token",
   }
   export class RuleNode {
     get type(): NodeType.Rule;
@@ -746,6 +748,8 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
+    /** Serialize the token node to JSON. */
+    toJSON(): string;
     unparse(): string;
   }
   export class TokenNode {
@@ -753,6 +757,12 @@ export namespace cst {
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
+    /**
+     * Serialize the token node to JSON.
+     *
+     * This method is intended for debugging purposes and may not be stable.
+     */
+    toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
 }

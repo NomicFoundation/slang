@@ -403,6 +403,7 @@ dependencies = [
  "napi-derive",
  "nom",
  "serde",
+ "serde_json",
  "strum",
  "strum_macros",
 ]
@@ -1780,6 +1781,7 @@ dependencies = [
  "nom",
  "semver",
  "serde",
+ "serde_json",
  "slang_solidity",
  "strum",
  "strum_macros",
@@ -1814,6 +1816,7 @@ dependencies = [
  "nom",
  "semver",
  "serde",
+ "serde_json",
  "slang_testlang",
  "strum",
  "strum_macros",
@@ -1853,7 +1856,9 @@ dependencies = [
 name = "solidity_cargo_tests"
 version = "0.13.1"
 dependencies = [
+ "Inflector",
  "anyhow",
+ "codegen_language_definition",
  "codegen_testing",
  "infra_utils",
  "once_cell",
@@ -1861,7 +1866,6 @@ dependencies = [
  "semver",
  "slang_solidity",
  "solidity_language",
- "solidity_testing_utils",
  "strum_macros",
 ]
 
@@ -1937,19 +1941,6 @@ dependencies = [
  "solidity_language",
  "strum_macros",
  "url",
-]
-
-[[package]]
-name = "solidity_testing_utils"
-version = "0.13.1"
-dependencies = [
- "Inflector",
- "anyhow",
- "codegen_language_definition",
- "once_cell",
- "semver",
- "slang_solidity",
- "solidity_language",
 ]
 
 [[package]]

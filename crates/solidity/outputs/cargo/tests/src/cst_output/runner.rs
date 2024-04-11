@@ -6,10 +6,10 @@ use infra_utils::codegen::Codegen;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
-use solidity_testing_utils::cst_snapshots::CstSnapshots;
 use strum_macros::Display;
 
 use crate::cst_output::generated::VERSION_BREAKS;
+use crate::cst_output::renderer::render;
 
 #[derive(Display)]
 #[strum(serialize_all = "kebab_case")]
@@ -60,7 +60,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = CstSnapshots::render(&source, &errors, cursor)?;
+        let snapshot = render(&source, &errors, cursor)?;
 
         let snapshot_path = test_dir
             .join("generated")

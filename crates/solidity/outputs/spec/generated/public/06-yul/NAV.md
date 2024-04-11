@@ -1,5 +1,0 @@
-<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
-
--   [6.1. Yul Statements](./01-yul-statements.md)
--   [6.2. Yul Expressions](./02-yul-expressions.md)
--   [6.3. Yul Keywords](./03-yul-keywords.md)

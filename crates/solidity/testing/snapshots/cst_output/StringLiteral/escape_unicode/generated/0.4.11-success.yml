@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "\u263A"                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - (StringLiteral): # '"\u263A"\n' (0..9)
+      - (variant꞉ DoubleQuotedStringLiteral): '"\u263A"' # (0..8)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (8..9)
