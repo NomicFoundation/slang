@@ -1,10 +1,11 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
+use once_cell::sync::Lazy;
 use serde::Deserialize;
 
 use crate::chains::Chain;
@@ -140,13 +141,16 @@ fn list_contracts(repo_dir: &Path, network: &str) -> Result<BTreeMap<String, Vec
         let Contract {
             mut address,
             name,
-            compiler,
+            mut compiler,
         } = serde_json::from_str(line)?;
 
         // Strip the inconsistent prefix if it exists:
         if address.starts_with("0x") || address.starts_with("0X") {
             address = address[2..].to_string();
         }
+
+        // Patch the version for the contract if it's known to be wrong:
+        patch_possibly_buggy_version_from_etherscan(network, &address, &mut compiler);
 
         assert!(
             address.len() == 40 && address.chars().all(|c| c.is_ascii_hexdigit()),
@@ -172,4 +176,37 @@ fn list_contracts(repo_dir: &Path, network: &str) -> Result<BTreeMap<String, Vec
     }
 
     Ok(directories)
+}
+
+// For some contracts, the version of the Solidity compiler used to compile them
+// is wrong, i.e. it declares a version that will not compile the contract.
+//
+// This function patches the version for the contract if it's known to be wrong.
+fn patch_possibly_buggy_version_from_etherscan(network: &str, address: &str, version: &mut String) {
+    // We only know of buggy contracts on the mainnet:
+    if network != "mainnet" {
+        return;
+    }
+
+    #[allow(clippy::items_after_statements)]
+    // These all use `pure`/`view`, which was introduced in 0.4.16:
+    // TODO(#934): Remove this once the sanctuary index update is propagated.
+    static PURE_VIEW_CONTRACTS: Lazy<HashSet<&str>> = Lazy::new(|| {
+        HashSet::from_iter([
+            /* 0.4.11 */ "0ff7599a9e2c9eb63ddb42a0e8b475b579a13e08",
+            /* 0.4.13 */ "123ab195dd38b1b40510d467a6a359b201af056f",
+            /* 0.4.11 */ "18ecc2461dfd84c5ce9da581aca58919a8750ae5",
+            /* 0.4.11 */ "40da24a66f729d0bd0453681c5a6506bdc2a7a6a",
+            /* 0.4.15 */ "49ec146e6385777c41a8b4637fa4416eb667549b",
+            /* 0.4.11 */ "52442275f6cd49bd2ce9a920ea13e2618a19b071",
+            /* 0.4.13 */ "6b9d422cc05029d1324fc5b007aff49e2ab54882",
+            /* 0.4.11 */ "c0c45cbb1dce225cf620c36807a1cdecb85feda5",
+            /* 0.4.15 */ "cabdff9789c92ac0f8a02b820c3148f15b61ea9b",
+            /* 0.4.11 */ "fe70ba4ed491316870a8e6ad1ea095fbe19bc0b2",
+        ])
+    });
+
+    if PURE_VIEW_CONTRACTS.contains(address) {
+        *version = "0.4.16".to_string();
+    }
 }

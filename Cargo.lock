@@ -1908,6 +1908,7 @@ dependencies = [
  "indicatif",
  "infra_utils",
  "itertools",
+ "once_cell",
  "rayon",
  "semver",
  "serde",
