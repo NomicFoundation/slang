@@ -1,5 +1,77 @@
 # changelog
 
+## 0.14.0
+
+### Minor Changes
+
+-   [#753](https://github.com/NomicFoundation/slang/pull/753) [`b35c763`](https://github.com/NomicFoundation/slang/commit/b35c7630ab7240304e67a43734700cf359acde0b) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Add tree query implementation as `Query::parse` and `Cursor::query`
+
+-   [#755](https://github.com/NomicFoundation/slang/pull/755) [`8c260fc`](https://github.com/NomicFoundation/slang/commit/8c260fcb7e3111191cd33dd527817fb51119eac4) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support parsing NatSpec comments
+
+-   [#908](https://github.com/NomicFoundation/slang/pull/908) [`ab3688b`](https://github.com/NomicFoundation/slang/commit/ab3688bb99a60862c506566ac6122cd9c1155c57) Thanks [@Xanewok](https://github.com/Xanewok)! - Changed the cst.NodeType in TS to use more descriptive string values rather than 0/1 integers
+
+-   [#886](https://github.com/NomicFoundation/slang/pull/886) [`0125717`](https://github.com/NomicFoundation/slang/commit/0125717fb0b48a5342a8452f18080db13e68fb6b) Thanks [@Xanewok](https://github.com/Xanewok)! - Add `TokenKind::is_trivia`
+
+-   [#887](https://github.com/NomicFoundation/slang/pull/887) [`dff1201`](https://github.com/NomicFoundation/slang/commit/dff12011c549d68b20ecd54251af764643fb72db) Thanks [@Xanewok](https://github.com/Xanewok)! - Add support for constant function modifier removed in 0.5.0
+
+-   [#885](https://github.com/NomicFoundation/slang/pull/885) [`a9bd8da`](https://github.com/NomicFoundation/slang/commit/a9bd8da018469739832f71e38437caa83087baf0) Thanks [@Xanewok](https://github.com/Xanewok)! - Flatten the trivia syntax nodes into sibling tokens
+
+-   [#908](https://github.com/NomicFoundation/slang/pull/908) [`ab3688b`](https://github.com/NomicFoundation/slang/commit/ab3688bb99a60862c506566ac6122cd9c1155c57) Thanks [@Xanewok](https://github.com/Xanewok)! - Add RuleNode/TokenNode::toJSON() in the TypeScript API
+
+### Patch Changes
+
+-   [#801](https://github.com/NomicFoundation/slang/pull/801) [`ecbba49`](https://github.com/NomicFoundation/slang/commit/ecbba49c7ac25e37b8d317fb60fab7340c0628a5) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - unreserve pragma keywords in all versions
+
+-   [#869](https://github.com/NomicFoundation/slang/pull/869) [`951b58d`](https://github.com/NomicFoundation/slang/commit/951b58ddb3eaea600ddf44427a82649761c6b651) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support dots in yul identifiers from `0.5.8` till `0.7.0`
+
+-   [#890](https://github.com/NomicFoundation/slang/pull/890) [`1ff8599`](https://github.com/NomicFoundation/slang/commit/1ff85993f25d92b38d0a500baa6ee48669a1b62a) Thanks [@Xanewok](https://github.com/Xanewok)! - Mark `override` as being a valid attribute only after 0.6.0
+
+-   [#800](https://github.com/NomicFoundation/slang/pull/800) [`d1827ff`](https://github.com/NomicFoundation/slang/commit/d1827ff7e1010493ff5487532a5ee0c77d355aa2) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support unicode characters in string literals up to `0.7.0`
+
+-   [#797](https://github.com/NomicFoundation/slang/pull/797) [`86f36d7`](https://github.com/NomicFoundation/slang/commit/86f36d71e60a44261ec114339e931dd3d24cd4a4) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix source locations for unicode characters in error reports
+
+-   [#854](https://github.com/NomicFoundation/slang/pull/854) [`4b8970b`](https://github.com/NomicFoundation/slang/commit/4b8970b47ef7a2d1d51339cf5020a3e0f168b9aa) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - parse line breaks without newlines
+
+-   [#844](https://github.com/NomicFoundation/slang/pull/844) [`f62de9e`](https://github.com/NomicFoundation/slang/commit/f62de9ea3fc2049ee11e5dbeff3dc51eb1ca984e) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix parsing empty `/**/` comments
+
+-   [#799](https://github.com/NomicFoundation/slang/pull/799) [`303dda9`](https://github.com/NomicFoundation/slang/commit/303dda95c08b20450d03116765c210ece64a0864) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - prevent parsing multiple literals under `StringExpression` before `0.5.14`
+
+-   [#847](https://github.com/NomicFoundation/slang/pull/847) [`6b6f260`](https://github.com/NomicFoundation/slang/commit/6b6f2603e3ba07c0a7dede0f96082369dc1df940) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - prioritize parsing `MultiLineComment` over `MultiLineNatSpecComment`
+
+-   [#796](https://github.com/NomicFoundation/slang/pull/796) [`59e1e53`](https://github.com/NomicFoundation/slang/commit/59e1e53e7efa52355c273d7cef1a3974de13d88d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `public` and `internal` to `UnnamedFunctionAttribute` till `0.5.0`
+
+-   [#756](https://github.com/NomicFoundation/slang/pull/756) [`e839817`](https://github.com/NomicFoundation/slang/commit/e8398173f62d48596669628afc7c8b3572a15291) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix parsing `payable` primary expressions
+
+-   [#851](https://github.com/NomicFoundation/slang/pull/851) [`67dfde8`](https://github.com/NomicFoundation/slang/commit/67dfde81a6d00101a9ed133104f15da5d46662b6) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix selection order of prefix/postfix AST fields
+
+-   [#857](https://github.com/NomicFoundation/slang/pull/857) [`f677d5e`](https://github.com/NomicFoundation/slang/commit/f677d5eff40c4bfcf1db2fc4e63cdf37457fe467) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `FieldName` to `NodeLabel`
+
+-   [#852](https://github.com/NomicFoundation/slang/pull/852) [`ca79eca`](https://github.com/NomicFoundation/slang/commit/ca79ecaa522e531420b42ffba67da192c1e5fdb2) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - allow parsing `ColonEqual` as two separate tokens before `0.5.5`
+
+-   [#889](https://github.com/NomicFoundation/slang/pull/889) [`ce5050f`](https://github.com/NomicFoundation/slang/commit/ce5050f95195fdd018a38a0351d8525f7d62073a) Thanks [@Xanewok](https://github.com/Xanewok)! - Support `delete` as an expression rather than a statement
+
+-   [#923](https://github.com/NomicFoundation/slang/pull/923) [`bb30fc1`](https://github.com/NomicFoundation/slang/commit/bb30fc1e28a0fe806f8954a0d2779d903f3f4da7) Thanks [@Xanewok](https://github.com/Xanewok)! - Support arbitrary ASCII escape sequences in string literals until 0.4.25
+
+-   [#887](https://github.com/NomicFoundation/slang/pull/887) [`dff1201`](https://github.com/NomicFoundation/slang/commit/dff12011c549d68b20ecd54251af764643fb72db) Thanks [@Xanewok](https://github.com/Xanewok)! - Support view and pure function modifiers only from 0.4.16
+
+-   [#800](https://github.com/NomicFoundation/slang/pull/800) [`d1827ff`](https://github.com/NomicFoundation/slang/commit/d1827ff7e1010493ff5487532a5ee0c77d355aa2) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `AsciiStringLiteral` to `StringLiteral`
+
+-   [#838](https://github.com/NomicFoundation/slang/pull/838) [`ad98d1c`](https://github.com/NomicFoundation/slang/commit/ad98d1c7d9f9f7cb12b4b6184c04c9b680e6d70a) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - upgrade to rust `1.76.0`
+
+-   [#849](https://github.com/NomicFoundation/slang/pull/849) [`5c42e0e`](https://github.com/NomicFoundation/slang/commit/5c42e0ef5f3afe0355614967cb6d2daa31518ccf) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `override` and `virtual` to `ConstructorAttribute`
+
+-   [#862](https://github.com/NomicFoundation/slang/pull/862) [`5e37ea0`](https://github.com/NomicFoundation/slang/commit/5e37ea0c40e929e0888b6297fa6dd92952d9cd73) Thanks [@Xanewok](https://github.com/Xanewok)! - allow call options as a post-fix expression
+
+-   [#786](https://github.com/NomicFoundation/slang/pull/786) [`0bfa6b7`](https://github.com/NomicFoundation/slang/commit/0bfa6b7397cd25aca713b30628c6d06e761b416a) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support Yul label statements before `0.5.0`
+
+-   [#839](https://github.com/NomicFoundation/slang/pull/839) [`2d698eb`](https://github.com/NomicFoundation/slang/commit/2d698ebe469110b85f539d6e0c75b503cd4ce57e) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support string literals in version pragmas
+
+-   [#891](https://github.com/NomicFoundation/slang/pull/891) [`70c9d7d`](https://github.com/NomicFoundation/slang/commit/70c9d7deebddb0f22114b7b05ddc85da6dcceaaf) Thanks [@Xanewok](https://github.com/Xanewok)! - Fix parsing `<NUMBER>.member` member access expression
+
+-   [#842](https://github.com/NomicFoundation/slang/pull/842) [`2069126`](https://github.com/NomicFoundation/slang/commit/20691263fb6967195bee30fba92abdfb06daa6fa) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `private` to `UnnamedFunctionAttribute` till `0.5.0`
+
+-   [#840](https://github.com/NomicFoundation/slang/pull/840) [`7fb0d20`](https://github.com/NomicFoundation/slang/commit/7fb0d20655024daf71c872a6ef95aa30277a1366) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - allow `var` in `TupleDeconstructionStatement` before `0.5.0`
+
 ## 0.13.1
 
 ### Patch Changes
