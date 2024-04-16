@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -52,7 +53,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [end:inspect-tree]
 
     // --8<-- [start:unparse-node]
-    let contract_source = contract.clone().unparse();
+    let contract_source = Rc::clone(contract).unparse();
     assert_eq!(contract_source, "contract Foo {}");
     // --8<-- [end:unparse-node]
 

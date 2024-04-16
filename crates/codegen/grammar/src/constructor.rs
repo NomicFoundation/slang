@@ -106,8 +106,8 @@ impl GrammarConstructorDslV2 for Grammar {
         Grammar {
             name: lang.name.to_string(),
             versions: BTreeSet::from_iter(lang.versions.clone()),
-            leading_trivia_parser: leading_trivia.clone(),
-            trailing_trivia_parser: trailing_trivia.clone(),
+            leading_trivia_parser: Rc::clone(&leading_trivia),
+            trailing_trivia_parser: Rc::clone(&trailing_trivia),
             elements: resolved_items
                 .chain(
                     [leading_trivia, trailing_trivia]
@@ -305,7 +305,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             });
             ctx.resolved.insert(
                 ident.clone(),
-                (thunk.clone() as Rc<dyn ParserDefinition>).into(),
+                (Rc::clone(&thunk) as Rc<dyn ParserDefinition>).into(),
             );
             Some(ParserThunk::Regular(thunk))
         }
@@ -317,7 +317,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             });
             ctx.resolved.insert(
                 ident.clone(),
-                (thunk.clone() as Rc<dyn PrecedenceParserDefinition>).into(),
+                (Rc::clone(&thunk) as Rc<dyn PrecedenceParserDefinition>).into(),
             );
             Some(ParserThunk::Precedence(thunk))
         }
@@ -791,7 +791,7 @@ fn resolve_precedence(
         );
         ctx.resolved.insert(
             name.clone(),
-            GrammarElement::ParserDefinition(thunk.clone()),
+            GrammarElement::ParserDefinition(Rc::clone(&thunk) as Rc<dyn ParserDefinition>),
         );
     }
 

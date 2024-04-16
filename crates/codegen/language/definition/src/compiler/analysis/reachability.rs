@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::rc::Rc;
 
 use crate::compiler::analysis::Analysis;
 use crate::compiler::version_set::VersionSet;
@@ -26,7 +27,7 @@ fn check_unused_versions(analysis: &mut Analysis) {
 }
 
 fn check_unreachabable_items(analysis: &mut Analysis) {
-    let language = analysis.language.clone();
+    let language = Rc::clone(&analysis.language);
 
     let mut queue = vec![&*language.root_item];
 

@@ -137,6 +137,7 @@ all = "warn"
 cargo = "warn"                                              # Warn about Cargo.toml issues, except...
 multiple_crate_versions = { level = "allow", priority = 1 } # Not possible to deduplicate, should be done periodically ourselves
 # Restriction (optional, neutral lints)
+clone_on_ref_ptr = "warn"                # Prefer using 'Arc::clone(x)' instead of 'x.clone()' to make it clear when we are doing an expensive clone
 exit = "warn"                            # Prefer not `process::exit`ing directly
 rest_pat_in_fully_bound_structs = "warn" # Prefer not to use `..` in fully bound structs
 verbose_file_reads = "warn"              # Prefer simpler and more concise `fs::read_to_string`
