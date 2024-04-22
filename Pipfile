@@ -10,7 +10,7 @@ pipenv = "==2023.12.1"
 # Used for the published GitHub pages site:
 mkdocs = "==1.5.3"
 mkdocs-literate-nav = "==0.6.1"
-mkdocs-material = "==9.5.17"
+mkdocs-material = "==9.5.18"
 mkdocs-minify-plugin = "==0.8.0"
 mkdocs-pymdownx-material-extras = "==2.5.6"
 
