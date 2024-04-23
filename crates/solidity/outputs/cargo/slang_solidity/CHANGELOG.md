@@ -1,5 +1,11 @@
 # changelog
 
+## 0.14.1
+
+### Patch Changes
+
+-   [#943](https://github.com/NomicFoundation/slang/pull/943) [`a561fb1`](https://github.com/NomicFoundation/slang/commit/a561fb161eb7c18c838c85f71d132764d1d04050) Thanks [@Xanewok](https://github.com/Xanewok)! - Support Solidity 0.8.25
+
 ## 0.14.0
 
 ### Minor Changes
