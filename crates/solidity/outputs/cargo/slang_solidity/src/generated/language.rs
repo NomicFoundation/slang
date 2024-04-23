@@ -159,6 +159,7 @@ impl Language {
         Version::new(0, 8, 20),
         Version::new(0, 8, 21),
         Version::new(0, 8, 22),
+        Version::new(0, 8, 23),
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
