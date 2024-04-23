@@ -52,6 +52,7 @@ mod yul_expression;
 mod yul_function_call_expression;
 mod yul_label;
 mod yul_leave_statement;
+mod yul_statements;
 mod yul_variable_declaration_statement;
 
 pub const VERSION_BREAKS: [Version; 32] = [
