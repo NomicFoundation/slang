@@ -61,6 +61,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
     pub(crate) version_is_at_least_0_8_22: bool,
+    pub(crate) version_is_at_least_0_8_24: bool,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -160,6 +161,7 @@ impl Language {
         Version::new(0, 8, 21),
         Version::new(0, 8, 22),
         Version::new(0, 8, 23),
+        Version::new(0, 8, 24),
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
@@ -195,6 +197,7 @@ impl Language {
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= version,
+                version_is_at_least_0_8_24: Version::new(0, 8, 24) <= version,
                 version,
             })
         } else {
@@ -6289,6 +6292,41 @@ impl Language {
                 );
                 choice.consider(input, result)?;
             }
+            if self.version_is_at_least_0_8_24 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulBlobBaseFeeKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_8_24 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulBlobHashKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_8_24 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulTLoadKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_8_24 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulTStoreKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_8_24 {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulMCopyKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             choice.finish(input)
         })
         .with_label(NodeLabel::Variant)
@@ -11098,8 +11136,57 @@ impl Lexer for Language {
                                 None => KeywordScan::Absent,
                             },
                             Some('l') => {
-                                if scan_chars!(input, 'o', 'c', 'k', 'h', 'a', 's', 'h') {
-                                    KeywordScan::Reserved(TokenKind::YulBlockHashKeyword)
+                                if scan_chars!(input, 'o') {
+                                    match input.next() {
+                                        Some('b') => match input.next() {
+                                            Some('b') => {
+                                                if scan_chars!(input, 'a', 's', 'e', 'f', 'e', 'e')
+                                                {
+                                                    if self.version_is_at_least_0_8_24 {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::YulBlobBaseFeeKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some('h') => {
+                                                if scan_chars!(input, 'a', 's', 'h') {
+                                                    if self.version_is_at_least_0_8_24 {
+                                                        KeywordScan::Reserved(
+                                                            TokenKind::YulBlobHashKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
+                                                KeywordScan::Absent
+                                            }
+                                            None => KeywordScan::Absent,
+                                        },
+                                        Some('c') => {
+                                            if scan_chars!(input, 'k', 'h', 'a', 's', 'h') {
+                                                KeywordScan::Reserved(
+                                                    TokenKind::YulBlockHashKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
+                                    }
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12100,6 +12187,17 @@ impl Lexer for Language {
                                 }
                                 None => KeywordScan::Absent,
                             },
+                            Some('c') => {
+                                if scan_chars!(input, 'o', 'p', 'y') {
+                                    if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Reserved(TokenKind::YulMCopyKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
@@ -12930,6 +13028,17 @@ impl Lexer for Language {
                                     KeywordScan::Absent
                                 }
                             }
+                            Some('l') => {
+                                if scan_chars!(input, 'o', 'a', 'd') {
+                                    if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Reserved(TokenKind::YulTLoadKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
@@ -12951,6 +13060,17 @@ impl Lexer for Language {
                                 }
                                 None => KeywordScan::Absent,
                             },
+                            Some('s') => {
+                                if scan_chars!(input, 't', 'o', 'r', 'e') {
+                                    if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Reserved(TokenKind::YulTStoreKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('y') => {
                                 if scan_chars!(input, 'p', 'e') {
                                     match input.next() {

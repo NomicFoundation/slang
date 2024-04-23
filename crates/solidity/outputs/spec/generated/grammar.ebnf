@@ -1519,7 +1519,12 @@ YulBuiltInFunction = YUL_ADD_KEYWORD
                    | YUL_SELF_BALANCE_KEYWORD
                    | YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
                    | YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
-                   | YUL_PREV_RANDAO_KEYWORD; (* Introduced in 0.8.18 *)
+                   | YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
+                   | YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
+                   | YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
+                   | YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
+                   | YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
+                   | YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
 
 YulLiteral = YUL_TRUE_KEYWORD
            | YUL_FALSE_KEYWORD
@@ -1571,6 +1576,14 @@ YUL_BALANCE_KEYWORD = "balance";
 (* Introduced in 0.8.7 *)
 (* Reserved in 0.8.7 *)
 YUL_BASE_FEE_KEYWORD = "basefee";
+
+(* Introduced in 0.8.24 *)
+(* Reserved in 0.8.24 *)
+YUL_BLOB_BASE_FEE_KEYWORD = "blobbasefee";
+
+(* Introduced in 0.8.24 *)
+(* Reserved in 0.8.24 *)
+YUL_BLOB_HASH_KEYWORD = "blobhash";
 
 YUL_BLOCK_HASH_KEYWORD = "blockhash";
 
@@ -1804,6 +1817,10 @@ YUL_MEMORY_KEYWORD = "memory";
 (* Reserved until 0.7.1 *)
 YUL_MINUTES_KEYWORD = "minutes";
 
+(* Introduced in 0.8.24 *)
+(* Reserved in 0.8.24 *)
+YUL_M_COPY_KEYWORD = "mcopy";
+
 YUL_M_LOAD_KEYWORD = "mload";
 
 YUL_MOD_KEYWORD = "mod";
@@ -1973,7 +1990,15 @@ YUL_TIMESTAMP_KEYWORD = "timestamp";
 (* Reserved until 0.7.1 *)
 YUL_THROW_KEYWORD = "throw";
 
+(* Introduced in 0.8.24 *)
+(* Reserved in 0.8.24 *)
+YUL_T_LOAD_KEYWORD = "tload";
+
 YUL_TRUE_KEYWORD = "true";
+
+(* Introduced in 0.8.24 *)
+(* Reserved in 0.8.24 *)
+YUL_T_STORE_KEYWORD = "tstore";
 
 (* Reserved until 0.7.1 *)
 YUL_TRY_KEYWORD = "try";

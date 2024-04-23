@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ blobbasefee()                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - (YulFunctionCallExpression): # "blobbasefee()\n" (0..14)
+      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBlobBaseFeeKeyword): "blobbasefee" # (0..11)
+      - (open_paren꞉ OpenParen): "(" # (11..12)
+      - (arguments꞉ YulArguments): [] # (12..12)
+      - (close_paren꞉ CloseParen): ")" # (12..13)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
