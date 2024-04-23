@@ -5191,6 +5191,11 @@ export class YulBuiltInFunction {
       case TokenKind.YulBaseFeeKeyword:
       case TokenKind.YulDifficultyKeyword:
       case TokenKind.YulPrevRandaoKeyword:
+      case TokenKind.YulBlobBaseFeeKeyword:
+      case TokenKind.YulBlobHashKeyword:
+      case TokenKind.YulTLoadKeyword:
+      case TokenKind.YulTStoreKeyword:
+      case TokenKind.YulMCopyKeyword:
         return variant as TokenNode;
 
       default:

@@ -2190,6 +2190,11 @@ impl Selector {
                 TokenKind::YulBaseFeeKeyword,
                 TokenKind::YulDifficultyKeyword,
                 TokenKind::YulPrevRandaoKeyword,
+                TokenKind::YulBlobBaseFeeKeyword,
+                TokenKind::YulBlobHashKeyword,
+                TokenKind::YulTLoadKeyword,
+                TokenKind::YulTStoreKeyword,
+                TokenKind::YulMCopyKeyword,
             ])
         })
     }

@@ -28,7 +28,7 @@ codegen_language_macros::compile!(Language(
         "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
-        "0.8.21", "0.8.22"
+        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25"
     ],
     sections = [
         Section(
@@ -4479,7 +4479,19 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(
                                     reference = YulPrevRandaoKeyword,
                                     enabled = From("0.8.18")
-                                )
+                                ),
+                                // 'Cancun' hard-fork updates:
+                                EnumVariant(
+                                    reference = YulBlobBaseFeeKeyword,
+                                    enabled = From("0.8.24")
+                                ),
+                                EnumVariant(
+                                    reference = YulBlobHashKeyword,
+                                    enabled = From("0.8.24")
+                                ),
+                                EnumVariant(reference = YulTLoadKeyword, enabled = From("0.8.24")),
+                                EnumVariant(reference = YulTStoreKeyword, enabled = From("0.8.24")),
+                                EnumVariant(reference = YulMCopyKeyword, enabled = From("0.8.24"))
                             ]
                         ),
                         Enum(
@@ -4631,6 +4643,24 @@ codegen_language_macros::compile!(Language(
                                 enabled = From("0.8.7"),
                                 reserved = From("0.8.7"),
                                 value = Atom("basefee")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulBlobBaseFeeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.24"),
+                                reserved = From("0.8.24"),
+                                value = Atom("blobbasefee")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulBlobHashKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.24"),
+                                reserved = From("0.8.24"),
+                                value = Atom("blobhash")
                             )]
                         ),
                         Keyword(
@@ -5594,6 +5624,15 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = YulMCopyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.24"),
+                                reserved = From("0.8.24"),
+                                value = Atom("mcopy")
+                            )]
+                        ),
+                        Keyword(
                             name = YulMLoadKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("mload"))]
@@ -6055,9 +6094,27 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = YulTLoadKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.24"),
+                                reserved = From("0.8.24"),
+                                value = Atom("tload")
+                            )]
+                        ),
+                        Keyword(
                             name = YulTrueKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("true"))]
+                        ),
+                        Keyword(
+                            name = YulTStoreKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.24"),
+                                reserved = From("0.8.24"),
+                                value = Atom("tstore")
+                            )]
                         ),
                         Keyword(
                             name = YulTryKeyword,

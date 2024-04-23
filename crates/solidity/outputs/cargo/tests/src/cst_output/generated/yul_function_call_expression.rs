@@ -35,6 +35,16 @@ fn built_in_basefee() -> Result<()> {
 }
 
 #[test]
+fn built_in_blobbasefee() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_blobbasefee")
+}
+
+#[test]
+fn built_in_blobhash() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_blobhash")
+}
+
+#[test]
 fn built_in_blockhash() -> Result<()> {
     run("YulFunctionCallExpression", "built_in_blockhash")
 }
@@ -202,6 +212,11 @@ fn built_in_log4() -> Result<()> {
 #[test]
 fn built_in_lt() -> Result<()> {
     run("YulFunctionCallExpression", "built_in_lt")
+}
+
+#[test]
+fn built_in_mcopy() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_mcopy")
 }
 
 #[test]
@@ -377,6 +392,16 @@ fn built_in_suicide() -> Result<()> {
 #[test]
 fn built_in_timestamp() -> Result<()> {
     run("YulFunctionCallExpression", "built_in_timestamp")
+}
+
+#[test]
+fn built_in_tload() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_tload")
+}
+
+#[test]
+fn built_in_tstore() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_tstore")
 }
 
 #[test]
