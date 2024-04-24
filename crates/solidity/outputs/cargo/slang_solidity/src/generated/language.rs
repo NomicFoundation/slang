@@ -57,6 +57,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_8_4: bool,
     pub(crate) version_is_at_least_0_8_7: bool,
     pub(crate) version_is_at_least_0_8_8: bool,
+    pub(crate) version_is_at_least_0_8_10: bool,
     pub(crate) version_is_at_least_0_8_13: bool,
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
@@ -194,6 +195,7 @@ impl Language {
                 version_is_at_least_0_8_4: Version::new(0, 8, 4) <= version,
                 version_is_at_least_0_8_7: Version::new(0, 8, 7) <= version,
                 version_is_at_least_0_8_8: Version::new(0, 8, 8) <= version,
+                version_is_at_least_0_8_10: Version::new(0, 8, 10) <= version,
                 version_is_at_least_0_8_13: Version::new(0, 8, 13) <= version,
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
@@ -6534,13 +6536,7 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TokenKind::YulIdentifier,
-                )
-                .with_label(NodeLabel::Item)
-            },
+            |input| self.yul_path_component(input).with_label(NodeLabel::Item),
             TokenKind::Period,
             NodeLabel::Separator,
         )
@@ -6699,6 +6695,24 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::YulParametersDeclaration)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_path_component(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulIdentifier,
+            );
+            choice.consider(input, result)?;
+            if self.version_is_at_least_0_8_10 {
+                let result = self.yul_built_in_function(input);
+                choice.consider(input, result)?;
+            }
+            choice.finish(input)
+        })
+        .with_label(NodeLabel::Variant)
+        .with_kind(RuleKind::YulPathComponent)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9355,6 +9369,7 @@ impl Language {
             RuleKind::YulParametersDeclaration => {
                 Self::yul_parameters_declaration.parse(self, input)
             }
+            RuleKind::YulPathComponent => Self::yul_path_component.parse(self, input),
             RuleKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
             RuleKind::YulReturnsDeclaration => Self::yul_returns_declaration.parse(self, input),
             RuleKind::YulStatement => Self::yul_statement.parse(self, input),

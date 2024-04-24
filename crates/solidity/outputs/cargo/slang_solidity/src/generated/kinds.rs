@@ -221,6 +221,7 @@ pub enum RuleKind {
     YulLiteral,
     YulParameters,
     YulParametersDeclaration,
+    YulPathComponent,
     YulReturnVariables,
     YulReturnsDeclaration,
     YulStatement,

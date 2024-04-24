@@ -5110,6 +5110,31 @@ export class YulExpression {
   }
 }
 
+export class YulPathComponent {
+  private readonly fetch: () => YulBuiltInFunction | TokenNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    switch (variant.kind) {
+      case RuleKind.YulBuiltInFunction:
+        return new YulBuiltInFunction(variant as RuleNode);
+
+      case TokenKind.YulIdentifier:
+        return variant as TokenNode;
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: RuleNode) {
+    assertKind(this.cst.kind, RuleKind.YulPathComponent);
+  }
+
+  public get variant(): YulBuiltInFunction | TokenNode {
+    return this.fetch();
+  }
+}
+
 export class YulBuiltInFunction {
   private readonly fetch: () => TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
@@ -6024,14 +6049,17 @@ export class YulIdentifierPath {
   private readonly fetch = once(() => {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
-    return { items: items as TokenNode[], separators: separators as TokenNode[] };
+    return {
+      items: items.map((item) => new YulPathComponent(item as RuleNode)),
+      separators: separators as TokenNode[],
+    };
   });
 
   public constructor(public readonly cst: RuleNode) {
     assertKind(this.cst.kind, RuleKind.YulIdentifierPath);
   }
 
-  public get items(): readonly TokenNode[] {
+  public get items(): readonly YulPathComponent[] {
     return this.fetch().items;
   }
 

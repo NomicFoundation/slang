@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ stop := 0                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "stop := 0\n" (0..10)
+      - (names꞉ YulIdentifierPaths): # "stop" (0..4)
+          - (item꞉ YulIdentifierPath): # "stop" (0..4)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulStopKeyword): "stop" # (0..4)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (4..7)
+          - (leading_trivia꞉ Whitespace): " " # (4..5)
+          - (variant꞉ ColonEqual): ":=" # (5..7)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (7..10)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
+          - (variant꞉ YulDecimalLiteral): "0" # (8..9)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

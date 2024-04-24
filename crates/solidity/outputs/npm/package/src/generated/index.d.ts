@@ -213,6 +213,7 @@ export namespace kinds {
     YulLiteral = "YulLiteral",
     YulParameters = "YulParameters",
     YulParametersDeclaration = "YulParametersDeclaration",
+    YulPathComponent = "YulPathComponent",
     YulReturnVariables = "YulReturnVariables",
     YulReturnsDeclaration = "YulReturnsDeclaration",
     YulStatement = "YulStatement",

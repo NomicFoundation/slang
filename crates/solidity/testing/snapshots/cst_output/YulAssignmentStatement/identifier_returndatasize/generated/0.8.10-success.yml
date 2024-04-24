@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ returndatasize := 0                                                              │ 0..19
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "returndatasize := 0\n" (0..20)
+      - (names꞉ YulIdentifierPaths): # "returndatasize" (0..14)
+          - (item꞉ YulIdentifierPath): # "returndatasize" (0..14)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulReturnDataSizeKeyword): "returndatasize" # (0..14)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (14..17)
+          - (leading_trivia꞉ Whitespace): " " # (14..15)
+          - (variant꞉ ColonEqual): ":=" # (15..17)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (17..20)
+          - (leading_trivia꞉ Whitespace): " " # (17..18)
+          - (variant꞉ YulDecimalLiteral): "0" # (18..19)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

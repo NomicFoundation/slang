@@ -4349,8 +4349,18 @@ codegen_language_macros::compile!(Language(
                         ),
                         Separated(
                             name = YulIdentifierPath,
-                            reference = YulIdentifier,
+                            reference = YulPathComponent,
                             separator = Period
+                        ),
+                        Enum(
+                            name = YulPathComponent,
+                            variants = [
+                                EnumVariant(reference = YulIdentifier),
+                                EnumVariant(
+                                    reference = YulBuiltInFunction,
+                                    enabled = From("0.8.10")
+                                )
+                            ]
                         ),
                         Token(
                             name = YulIdentifier,

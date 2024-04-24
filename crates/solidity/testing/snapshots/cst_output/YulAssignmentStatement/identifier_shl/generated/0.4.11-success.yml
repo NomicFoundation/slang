@@ -9,7 +9,7 @@ Tree:
   - (YulAssignmentStatement): # "shl := 0\n" (0..9)
       - (names꞉ YulIdentifierPaths): # "shl" (0..3)
           - (item꞉ YulIdentifierPath): # "shl" (0..3)
-              - (item꞉ YulIdentifier): "shl" # (0..3)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "shl" # (0..3)
       - (assignment꞉ YulAssignmentOperator): # " :=" (3..6)
           - (leading_trivia꞉ Whitespace): " " # (3..4)
           - (variant꞉ ColonEqual): ":=" # (4..6)

@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ calldataload := 0                                                                │ 0..17
+
+Errors: []
+
+Tree:
+  - (YulAssignmentStatement): # "calldataload := 0\n" (0..18)
+      - (names꞉ YulIdentifierPaths): # "calldataload" (0..12)
+          - (item꞉ YulIdentifierPath): # "calldataload" (0..12)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulCallDataLoadKeyword): "calldataload" # (0..12)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (12..15)
+          - (leading_trivia꞉ Whitespace): " " # (12..13)
+          - (variant꞉ ColonEqual): ":=" # (13..15)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (15..18)
+          - (leading_trivia꞉ Whitespace): " " # (15..16)
+          - (variant꞉ YulDecimalLiteral): "0" # (16..17)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (17..18)

@@ -1531,6 +1531,7 @@ pub fn select_choice(
         RuleKind::YulAssignmentOperator => selector.yul_assignment_operator()?,
         RuleKind::YulSwitchCase => selector.yul_switch_case()?,
         RuleKind::YulExpression => selector.yul_expression()?,
+        RuleKind::YulPathComponent => selector.yul_path_component()?,
         RuleKind::YulBuiltInFunction => selector.yul_built_in_function()?,
         RuleKind::YulLiteral => selector.yul_literal()?,
         _ => {
@@ -2106,6 +2107,15 @@ impl Selector {
                 RuleKind::YulBuiltInFunction,
                 RuleKind::YulIdentifierPath,
             ])
+        })
+    }
+}
+
+impl Selector {
+    fn yul_path_component(&mut self) -> Result<Either<RuleNode, TokenNode>> {
+        self.select(|node| {
+            node.is_rule_with_kind(RuleKind::YulBuiltInFunction)
+                || node.is_token_with_kind(TokenKind::YulIdentifier)
         })
     }
 }
@@ -3131,7 +3141,7 @@ impl Selector {
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?
+            self.try_select(|node| node.is_rule_with_kind(RuleKind::YulPathComponent))?
         {
             separated.push(first);
 
@@ -3141,7 +3151,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated
-                    .push(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?);
+                    .push(self.select(|node| node.is_rule_with_kind(RuleKind::YulPathComponent))?);
             }
         }
 

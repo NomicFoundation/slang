@@ -9,7 +9,7 @@ Tree:
   - (YulAssignmentStatement): # "staticcall := 0\n" (0..16)
       - (names꞉ YulIdentifierPaths): # "staticcall" (0..10)
           - (item꞉ YulIdentifierPath): # "staticcall" (0..10)
-              - (item꞉ YulIdentifier): "staticcall" # (0..10)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "staticcall" # (0..10)
       - (assignment꞉ YulAssignmentOperator): # " :=" (10..13)
           - (leading_trivia꞉ Whitespace): " " # (10..11)
           - (variant꞉ ColonEqual): ":=" # (11..13)

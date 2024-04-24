@@ -26,7 +26,13 @@
 
 ```
 
-<pre ebnf-snippet="YulIdentifierPath" style="display: none;"><a href="#YulIdentifierPath"><span class="k">YulIdentifierPath</span></a><span class="o"> = </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulIdentifierPath" style="display: none;"><a href="#YulIdentifierPath"><span class="k">YulIdentifierPath</span></a><span class="o"> = </span><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+
+```{ .ebnf #YulPathComponent }
+
+```
+
+<pre ebnf-snippet="YulPathComponent" style="display: none;"><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> = </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                 | </span><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.10 *)</span></pre>
 
 ```{ .ebnf #YulIdentifier }
 
