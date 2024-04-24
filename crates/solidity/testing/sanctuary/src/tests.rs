@@ -81,7 +81,8 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     // Heuristic: ignore wrongly scraped sanctuary files that
     // contain HTML with a Cloudflare email obfuscation attribute:
     // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
-    if source.contains("data-cfemail=") {
+    // Also ignore wrongly obfuscated `\r@` that leads to an invalid escape sequence:
+    if source.contains("data-cfemail=") || source.contains("\\[email protected]") {
         events.test(TestOutcome::Incompatible);
         return Ok(());
     }
@@ -149,6 +150,8 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
         // 0.4.18: // Accepts unfinished multi-line comments at the end of the file:
         // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
         "ethereum/contracts/mainnet/7d/7d81c361d6ac60634117dd81ab1b01b8dc795a9d_LILITHCOIN.sol",
+        "bsc/contracts/mainnet/a4/a4c2f6D203f91e58956227a002eF1209f53C27Fd_GBNB.sol",
+        "bsc/contracts/mainnet/e3/e3472842D6a894dc3e5E1Bc6cE4cEFe16a7df749_WBNB.sol",
         // 0.8.15: Relies on invalidly accepting `indexed indexed` in the event declaration:
         // Fixed in 0.8.18: https://github.com/ethereum/solidity/pull/13816
         "ethereum/contracts/mainnet/d4/d4559E5F507eD935F19208A5D50637898c192Ab3_Factory.sol",
