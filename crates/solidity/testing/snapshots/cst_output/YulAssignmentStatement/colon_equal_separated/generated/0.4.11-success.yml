@@ -8,8 +8,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..64)
-      - (names꞉ YulIdentifierPaths): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
-          - (item꞉ YulIdentifierPath): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
+      - (names꞉ YulPaths): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
+          - (item꞉ YulPath): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
               - (item꞉ YulPathComponent): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
                   - (leading_trivia꞉ SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)
                   - (leading_trivia꞉ EndOfLine): "\n" # (53..54)

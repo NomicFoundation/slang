@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "mulmod := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "mulmod" (0..6)
-          - (item꞉ YulIdentifierPath): # "mulmod" (0..6)
+      - (names꞉ YulPaths): # "mulmod" (0..6)
+          - (item꞉ YulPath): # "mulmod" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMulModKeyword): "mulmod" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "eq := 0\n" (0..8)
-      - (names꞉ YulIdentifierPaths): # "eq" (0..2)
-          - (item꞉ YulIdentifierPath): # "eq" (0..2)
+      - (names꞉ YulPaths): # "eq" (0..2)
+          - (item꞉ YulPath): # "eq" (0..2)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulEqKeyword): "eq" # (0..2)
       - (assignment꞉ YulAssignmentOperator): # " :=" (2..5)
           - (leading_trivia꞉ Whitespace): " " # (2..3)

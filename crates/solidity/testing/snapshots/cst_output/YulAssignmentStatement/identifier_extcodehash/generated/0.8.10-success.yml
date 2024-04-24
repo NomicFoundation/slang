@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "extcodehash := 0\n" (0..17)
-      - (names꞉ YulIdentifierPaths): # "extcodehash" (0..11)
-          - (item꞉ YulIdentifierPath): # "extcodehash" (0..11)
+      - (names꞉ YulPaths): # "extcodehash" (0..11)
+          - (item꞉ YulPath): # "extcodehash" (0..11)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulExtCodeHashKeyword): "extcodehash" # (0..11)
       - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)
           - (leading_trivia꞉ Whitespace): " " # (11..12)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "returndatacopy := 0\n" (0..20)
-      - (names꞉ YulIdentifierPaths): # "returndatacopy" (0..14)
-          - (item꞉ YulIdentifierPath): # "returndatacopy" (0..14)
+      - (names꞉ YulPaths): # "returndatacopy" (0..14)
+          - (item꞉ YulPath): # "returndatacopy" (0..14)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "returndatacopy" # (0..14)
       - (assignment꞉ YulAssignmentOperator): # " :=" (14..17)
           - (leading_trivia꞉ Whitespace): " " # (14..15)

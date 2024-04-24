@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "create2 := 0\n" (0..13)
-      - (names꞉ YulIdentifierPaths): # "create2" (0..7)
-          - (item꞉ YulIdentifierPath): # "create2" (0..7)
+      - (names꞉ YulPaths): # "create2" (0..7)
+          - (item꞉ YulPath): # "create2" (0..7)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "create2" # (0..7)
       - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)
           - (leading_trivia꞉ Whitespace): " " # (7..8)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "revert := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "revert" (0..6)
-          - (item꞉ YulIdentifierPath): # "revert" (0..6)
+      - (names꞉ YulPaths): # "revert" (0..6)
+          - (item꞉ YulPath): # "revert" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulRevertKeyword): "revert" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "iszero := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "iszero" (0..6)
-          - (item꞉ YulIdentifierPath): # "iszero" (0..6)
+      - (names꞉ YulPaths): # "iszero" (0..6)
+          - (item꞉ YulPath): # "iszero" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulIsZeroKeyword): "iszero" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

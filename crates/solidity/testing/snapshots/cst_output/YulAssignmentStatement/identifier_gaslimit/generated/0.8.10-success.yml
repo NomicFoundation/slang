@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "gaslimit := 0\n" (0..14)
-      - (names꞉ YulIdentifierPaths): # "gaslimit" (0..8)
-          - (item꞉ YulIdentifierPath): # "gaslimit" (0..8)
+      - (names꞉ YulPaths): # "gaslimit" (0..8)
+          - (item꞉ YulPath): # "gaslimit" (0..8)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGasLimitKeyword): "gaslimit" # (0..8)
       - (assignment꞉ YulAssignmentOperator): # " :=" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

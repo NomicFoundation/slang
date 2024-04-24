@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "origin := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "origin" (0..6)
-          - (item꞉ YulIdentifierPath): # "origin" (0..6)
+      - (names꞉ YulPaths): # "origin" (0..6)
+          - (item꞉ YulPath): # "origin" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulOriginKeyword): "origin" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

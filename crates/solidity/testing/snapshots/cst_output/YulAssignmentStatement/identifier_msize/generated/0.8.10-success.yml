@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "msize := 0\n" (0..11)
-      - (names꞉ YulIdentifierPaths): # "msize" (0..5)
-          - (item꞉ YulIdentifierPath): # "msize" (0..5)
+      - (names꞉ YulPaths): # "msize" (0..5)
+          - (item꞉ YulPath): # "msize" (0..5)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMSizeKeyword): "msize" # (0..5)
       - (assignment꞉ YulAssignmentOperator): # " :=" (5..8)
           - (leading_trivia꞉ Whitespace): " " # (5..6)

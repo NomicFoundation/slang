@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "sub := 0\n" (0..9)
-      - (names꞉ YulIdentifierPaths): # "sub" (0..3)
-          - (item꞉ YulIdentifierPath): # "sub" (0..3)
+      - (names꞉ YulPaths): # "sub" (0..3)
+          - (item꞉ YulPath): # "sub" (0..3)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSubKeyword): "sub" # (0..3)
       - (assignment꞉ YulAssignmentOperator): # " :=" (3..6)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

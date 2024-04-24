@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "selfdestruct := 0\n" (0..18)
-      - (names꞉ YulIdentifierPaths): # "selfdestruct" (0..12)
-          - (item꞉ YulIdentifierPath): # "selfdestruct" (0..12)
+      - (names꞉ YulPaths): # "selfdestruct" (0..12)
+          - (item꞉ YulPath): # "selfdestruct" (0..12)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSelfDestructKeyword): "selfdestruct" # (0..12)
       - (assignment꞉ YulAssignmentOperator): # " :=" (12..15)
           - (leading_trivia꞉ Whitespace): " " # (12..13)

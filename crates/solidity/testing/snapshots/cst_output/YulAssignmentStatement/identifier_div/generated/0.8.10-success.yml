@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "div := 0\n" (0..9)
-      - (names꞉ YulIdentifierPaths): # "div" (0..3)
-          - (item꞉ YulIdentifierPath): # "div" (0..3)
+      - (names꞉ YulPaths): # "div" (0..3)
+          - (item꞉ YulPath): # "div" (0..3)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulDivKeyword): "div" # (0..3)
       - (assignment꞉ YulAssignmentOperator): # " :=" (3..6)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

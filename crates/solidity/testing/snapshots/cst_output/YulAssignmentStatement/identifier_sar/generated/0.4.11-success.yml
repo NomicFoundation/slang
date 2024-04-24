@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "sar := 0\n" (0..9)
-      - (names꞉ YulIdentifierPaths): # "sar" (0..3)
-          - (item꞉ YulIdentifierPath): # "sar" (0..3)
+      - (names꞉ YulPaths): # "sar" (0..3)
+          - (item꞉ YulPath): # "sar" (0..3)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "sar" # (0..3)
       - (assignment꞉ YulAssignmentOperator): # " :=" (3..6)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

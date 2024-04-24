@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "tload()\n" (0..8)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "tload" (0..5)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "tload" (0..5)
           - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "tload" # (0..5)
       - (open_paren꞉ OpenParen): "(" # (5..6)
       - (arguments꞉ YulArguments): [] # (6..6)

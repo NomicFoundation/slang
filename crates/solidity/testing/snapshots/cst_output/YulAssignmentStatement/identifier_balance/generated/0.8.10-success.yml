@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "balance := 0\n" (0..13)
-      - (names꞉ YulIdentifierPaths): # "balance" (0..7)
-          - (item꞉ YulIdentifierPath): # "balance" (0..7)
+      - (names꞉ YulPaths): # "balance" (0..7)
+          - (item꞉ YulPath): # "balance" (0..7)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBalanceKeyword): "balance" # (0..7)
       - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)
           - (leading_trivia꞉ Whitespace): " " # (7..8)

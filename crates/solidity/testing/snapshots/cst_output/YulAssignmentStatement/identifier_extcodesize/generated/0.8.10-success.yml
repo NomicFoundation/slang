@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "extcodesize := 0\n" (0..17)
-      - (names꞉ YulIdentifierPaths): # "extcodesize" (0..11)
-          - (item꞉ YulIdentifierPath): # "extcodesize" (0..11)
+      - (names꞉ YulPaths): # "extcodesize" (0..11)
+          - (item꞉ YulPath): # "extcodesize" (0..11)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulExtCodeSizeKeyword): "extcodesize" # (0..11)
       - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)
           - (leading_trivia꞉ Whitespace): " " # (11..12)

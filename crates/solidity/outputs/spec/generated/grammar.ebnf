@@ -1372,13 +1372,13 @@ YulReturnsDeclaration = MINUS_GREATER_THAN
 YulReturnVariables = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
 
 YulVariableDeclarationStatement = YUL_LET_KEYWORD
-                                  YulIdentifierPaths
+                                  YulPaths
                                   YulVariableDeclarationValue?;
 
 YulVariableDeclarationValue = YulAssignmentOperator
                               YulExpression;
 
-YulAssignmentStatement = YulIdentifierPaths
+YulAssignmentStatement = YulPaths
                          YulAssignmentOperator
                          YulExpression;
 
@@ -1431,13 +1431,13 @@ YulLabel = YUL_IDENTIFIER
 YulExpression = YulFunctionCallExpression
               | YulLiteral
               | YulBuiltInFunction
-              | YulIdentifierPath;
+              | YulPath;
 
 YulArguments = (YulExpression (COMMA YulExpression)*)?;
 
-YulIdentifierPaths = YulIdentifierPath (COMMA YulIdentifierPath)*;
+YulPaths = YulPath (COMMA YulPath)*;
 
-YulIdentifierPath = YulPathComponent (PERIOD YulPathComponent)*;
+YulPath = YulPathComponent (PERIOD YulPathComponent)*;
 
 YulPathComponent = YUL_IDENTIFIER
                  | YulBuiltInFunction; (* Introduced in 0.8.10 *)

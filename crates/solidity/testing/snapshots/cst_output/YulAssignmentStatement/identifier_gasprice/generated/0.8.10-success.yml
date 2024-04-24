@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "gasprice := 0\n" (0..14)
-      - (names꞉ YulIdentifierPaths): # "gasprice" (0..8)
-          - (item꞉ YulIdentifierPath): # "gasprice" (0..8)
+      - (names꞉ YulPaths): # "gasprice" (0..8)
+          - (item꞉ YulPath): # "gasprice" (0..8)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGasPriceKeyword): "gasprice" # (0..8)
       - (assignment꞉ YulAssignmentOperator): # " :=" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

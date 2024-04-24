@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "caller := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "caller" (0..6)
-          - (item꞉ YulIdentifierPath): # "caller" (0..6)
+      - (names꞉ YulPaths): # "caller" (0..6)
+          - (item꞉ YulPath): # "caller" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulCallerKeyword): "caller" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

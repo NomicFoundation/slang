@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "returndatacopy()\n" (0..17)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "returndatacopy" (0..14)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "returndatacopy" (0..14)
           - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "returndatacopy" # (0..14)
       - (open_paren꞉ OpenParen): "(" # (14..15)
       - (arguments꞉ YulArguments): [] # (15..15)

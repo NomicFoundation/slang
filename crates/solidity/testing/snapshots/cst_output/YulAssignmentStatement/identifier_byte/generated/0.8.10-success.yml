@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "byte := 0\n" (0..10)
-      - (names꞉ YulIdentifierPaths): # "byte" (0..4)
-          - (item꞉ YulIdentifierPath): # "byte" (0..4)
+      - (names꞉ YulPaths): # "byte" (0..4)
+          - (item꞉ YulPath): # "byte" (0..4)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulByteKeyword): "byte" # (0..4)
       - (assignment꞉ YulAssignmentOperator): # " :=" (4..7)
           - (leading_trivia꞉ Whitespace): " " # (4..5)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "sstore := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "sstore" (0..6)
-          - (item꞉ YulIdentifierPath): # "sstore" (0..6)
+      - (names꞉ YulPaths): # "sstore" (0..6)
+          - (item꞉ YulPath): # "sstore" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSStoreKeyword): "sstore" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

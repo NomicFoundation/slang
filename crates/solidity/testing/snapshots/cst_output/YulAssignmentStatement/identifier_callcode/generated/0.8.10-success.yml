@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "callcode := 0\n" (0..14)
-      - (names꞉ YulIdentifierPaths): # "callcode" (0..8)
-          - (item꞉ YulIdentifierPath): # "callcode" (0..8)
+      - (names꞉ YulPaths): # "callcode" (0..8)
+          - (item꞉ YulPath): # "callcode" (0..8)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulCallCodeKeyword): "callcode" # (0..8)
       - (assignment꞉ YulAssignmentOperator): # " :=" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

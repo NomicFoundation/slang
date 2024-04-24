@@ -4209,7 +4209,7 @@ codegen_language_macros::compile!(Language(
                             name = YulVariableDeclarationStatement,
                             fields = (
                                 let_keyword = Required(YulLetKeyword),
-                                names = Required(YulIdentifierPaths),
+                                names = Required(YulPaths),
                                 value = Optional(reference = YulVariableDeclarationValue)
                             )
                         ),
@@ -4223,7 +4223,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = YulAssignmentStatement,
                             fields = (
-                                names = Required(YulIdentifierPaths),
+                                names = Required(YulPaths),
                                 assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
@@ -4333,7 +4333,7 @@ codegen_language_macros::compile!(Language(
                             primary_expressions = [
                                 PrimaryExpression(reference = YulLiteral),
                                 PrimaryExpression(reference = YulBuiltInFunction),
-                                PrimaryExpression(reference = YulIdentifierPath)
+                                PrimaryExpression(reference = YulPath)
                             ]
                         ),
                         Separated(
@@ -4342,13 +4342,9 @@ codegen_language_macros::compile!(Language(
                             separator = Comma,
                             allow_empty = true
                         ),
+                        Separated(name = YulPaths, reference = YulPath, separator = Comma),
                         Separated(
-                            name = YulIdentifierPaths,
-                            reference = YulIdentifierPath,
-                            separator = Comma
-                        ),
-                        Separated(
-                            name = YulIdentifierPath,
+                            name = YulPath,
                             reference = YulPathComponent,
                             separator = Period
                         ),

@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "keccak256()\n" (0..12)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "keccak256" (0..9)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "keccak256" (0..9)
           - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "keccak256" # (0..9)
       - (open_paren꞉ OpenParen): "(" # (9..10)
       - (arguments꞉ YulArguments): [] # (10..10)

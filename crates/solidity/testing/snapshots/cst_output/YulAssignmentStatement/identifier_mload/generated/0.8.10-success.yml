@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "mload := 0\n" (0..11)
-      - (names꞉ YulIdentifierPaths): # "mload" (0..5)
-          - (item꞉ YulIdentifierPath): # "mload" (0..5)
+      - (names꞉ YulPaths): # "mload" (0..5)
+          - (item꞉ YulPath): # "mload" (0..5)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMLoadKeyword): "mload" # (0..5)
       - (assignment꞉ YulAssignmentOperator): # " :=" (5..8)
           - (leading_trivia꞉ Whitespace): " " # (5..6)

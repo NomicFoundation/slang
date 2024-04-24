@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "blockhash := 0\n" (0..15)
-      - (names꞉ YulIdentifierPaths): # "blockhash" (0..9)
-          - (item꞉ YulIdentifierPath): # "blockhash" (0..9)
+      - (names꞉ YulPaths): # "blockhash" (0..9)
+          - (item꞉ YulPath): # "blockhash" (0..9)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBlockHashKeyword): "blockhash" # (0..9)
       - (assignment꞉ YulAssignmentOperator): # " :=" (9..12)
           - (leading_trivia꞉ Whitespace): " " # (9..10)

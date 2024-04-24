@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "gt := 0\n" (0..8)
-      - (names꞉ YulIdentifierPaths): # "gt" (0..2)
-          - (item꞉ YulIdentifierPath): # "gt" (0..2)
+      - (names꞉ YulPaths): # "gt" (0..2)
+          - (item꞉ YulPath): # "gt" (0..2)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGtKeyword): "gt" # (0..2)
       - (assignment꞉ YulAssignmentOperator): # " :=" (2..5)
           - (leading_trivia꞉ Whitespace): " " # (2..3)

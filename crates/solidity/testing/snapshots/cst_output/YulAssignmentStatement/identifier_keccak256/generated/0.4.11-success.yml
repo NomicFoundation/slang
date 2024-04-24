@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "keccak256 := 0\n" (0..15)
-      - (names꞉ YulIdentifierPaths): # "keccak256" (0..9)
-          - (item꞉ YulIdentifierPath): # "keccak256" (0..9)
+      - (names꞉ YulPaths): # "keccak256" (0..9)
+          - (item꞉ YulPath): # "keccak256" (0..9)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "keccak256" # (0..9)
       - (assignment꞉ YulAssignmentOperator): # " :=" (9..12)
           - (leading_trivia꞉ Whitespace): " " # (9..10)

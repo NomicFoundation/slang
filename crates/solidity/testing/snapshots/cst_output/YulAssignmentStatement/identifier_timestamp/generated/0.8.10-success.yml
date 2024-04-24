@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "timestamp := 0\n" (0..15)
-      - (names꞉ YulIdentifierPaths): # "timestamp" (0..9)
-          - (item꞉ YulIdentifierPath): # "timestamp" (0..9)
+      - (names꞉ YulPaths): # "timestamp" (0..9)
+          - (item꞉ YulPath): # "timestamp" (0..9)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulTimestampKeyword): "timestamp" # (0..9)
       - (assignment꞉ YulAssignmentOperator): # " :=" (9..12)
           - (leading_trivia꞉ Whitespace): " " # (9..10)

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "return := 0\n" (0..12)
-      - (names꞉ YulIdentifierPaths): # "return" (0..6)
-          - (item꞉ YulIdentifierPath): # "return" (0..6)
+      - (names꞉ YulPaths): # "return" (0..6)
+          - (item꞉ YulPath): # "return" (0..6)
               - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulReturnKeyword): "return" # (0..6)
       - (assignment꞉ YulAssignmentOperator): # " :=" (6..9)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

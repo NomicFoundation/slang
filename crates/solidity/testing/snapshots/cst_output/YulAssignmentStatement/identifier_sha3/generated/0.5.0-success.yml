@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "sha3 := 0\n" (0..10)
-      - (names꞉ YulIdentifierPaths): # "sha3" (0..4)
-          - (item꞉ YulIdentifierPath): # "sha3" (0..4)
+      - (names꞉ YulPaths): # "sha3" (0..4)
+          - (item꞉ YulPath): # "sha3" (0..4)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "sha3" # (0..4)
       - (assignment꞉ YulAssignmentOperator): # " :=" (4..7)
           - (leading_trivia꞉ Whitespace): " " # (4..5)
