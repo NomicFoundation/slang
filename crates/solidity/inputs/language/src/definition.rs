@@ -4353,7 +4353,8 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(reference = YulIdentifier),
                                 EnumVariant(
-                                    reference = YulBuiltInFunction,
+                                    // Upstream grammar accepts built-ins but only `address` is valid:
+                                    reference = YulAddressKeyword,
                                     enabled = From("0.8.10")
                                 )
                             ]

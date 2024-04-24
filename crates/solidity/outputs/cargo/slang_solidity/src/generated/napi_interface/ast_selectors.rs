@@ -2114,8 +2114,7 @@ impl Selector {
 impl Selector {
     fn yul_path_component(&mut self) -> Result<Either<RuleNode, TokenNode>> {
         self.select(|node| {
-            node.is_rule_with_kind(RuleKind::YulBuiltInFunction)
-                || node.is_token_with_kind(TokenKind::YulIdentifier)
+            node.is_token_with_kinds(&[TokenKind::YulIdentifier, TokenKind::YulAddressKeyword])
         })
     }
 }

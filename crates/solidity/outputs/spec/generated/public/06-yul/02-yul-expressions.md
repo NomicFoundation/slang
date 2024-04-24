@@ -32,7 +32,7 @@
 
 ```
 
-<pre ebnf-snippet="YulPathComponent" style="display: none;"><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> = </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                 | </span><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.10 *)</span></pre>
+<pre ebnf-snippet="YulPathComponent" style="display: none;"><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> = </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                 | </span><a href="../03-yul-keywords#YulAddressKeyword"><span class="k">YUL_ADDRESS_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.10 *)</span></pre>
 
 ```{ .ebnf #YulIdentifier }
 

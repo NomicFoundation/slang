@@ -5109,14 +5109,12 @@ export class YulExpression {
 }
 
 export class YulPathComponent {
-  private readonly fetch: () => YulBuiltInFunction | TokenNode = once(() => {
+  private readonly fetch: () => TokenNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case RuleKind.YulBuiltInFunction:
-        return new YulBuiltInFunction(variant as RuleNode);
-
       case TokenKind.YulIdentifier:
+      case TokenKind.YulAddressKeyword:
         return variant as TokenNode;
 
       default:
@@ -5128,7 +5126,7 @@ export class YulPathComponent {
     assertKind(this.cst.kind, RuleKind.YulPathComponent);
   }
 
-  public get variant(): YulBuiltInFunction | TokenNode {
+  public get variant(): TokenNode {
     return this.fetch();
   }
 }

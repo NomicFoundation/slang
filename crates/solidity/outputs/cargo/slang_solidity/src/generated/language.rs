@@ -6694,7 +6694,10 @@ impl Language {
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_10 {
-                let result = self.yul_built_in_function(input);
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulAddressKeyword,
+                );
                 choice.consider(input, result)?;
             }
             choice.finish(input)

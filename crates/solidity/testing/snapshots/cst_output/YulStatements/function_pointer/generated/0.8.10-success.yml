@@ -25,7 +25,7 @@ Tree:
                               - (leading_trivia꞉ Whitespace): "\t" # (160..161)
                               - (variant꞉ YulIdentifier): "f" # (161..162)
                           - (separator꞉ Period): "." # (162..163)
-                          - (item꞉ YulPathComponent) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulAddressKeyword): "address" # (163..170)
+                          - (item꞉ YulPathComponent) ► (variant꞉ YulAddressKeyword): "address" # (163..170)
                   - (assignment꞉ YulAssignmentOperator): # " :=" (170..173)
                       - (leading_trivia꞉ Whitespace): " " # (170..171)
                       - (variant꞉ ColonEqual): ":=" # (171..173)
