@@ -4209,7 +4209,7 @@ codegen_language_macros::compile!(Language(
                             name = YulVariableDeclarationStatement,
                             fields = (
                                 let_keyword = Required(YulLetKeyword),
-                                names = Required(YulPaths),
+                                names = Required(YulIdentifier),
                                 value = Optional(reference = YulVariableDeclarationValue)
                             )
                         ),

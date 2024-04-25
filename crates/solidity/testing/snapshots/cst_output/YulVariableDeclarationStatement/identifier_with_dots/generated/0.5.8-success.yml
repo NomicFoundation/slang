@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let a.b.c := 1                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - (YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
+      - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
+      - (names꞉ YulIdentifier): "a.b.c" # (4..9)
+      - (value꞉ YulVariableDeclarationValue): # " := 1\n" (9..15)
+          - (assignment꞉ YulAssignmentOperator): # " :=" (9..12)
+              - (leading_trivia꞉ Whitespace): " " # (9..10)
+              - (variant꞉ ColonEqual): ":=" # (10..12)
+          - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 1\n" (12..15)
+              - (leading_trivia꞉ Whitespace): " " # (12..13)
+              - (variant꞉ YulDecimalLiteral): "1" # (13..14)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (14..15)

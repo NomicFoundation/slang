@@ -1349,7 +1349,7 @@ impl Selector {
     ) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_token_with_kind(TokenKind::YulLetKeyword))?),
-            Some(self.select(|node| node.is_rule_with_kind(RuleKind::YulPaths))?),
+            Some(self.select(|node| node.is_token_with_kind(TokenKind::YulIdentifier))?),
             self.try_select(|node| node.is_rule_with_kind(RuleKind::YulVariableDeclarationValue))?,
         ])
     }

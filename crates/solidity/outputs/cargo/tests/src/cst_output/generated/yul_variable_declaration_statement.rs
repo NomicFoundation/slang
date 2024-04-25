@@ -10,6 +10,11 @@ fn colon_equal_separated() -> Result<()> {
 }
 
 #[test]
+fn identifier_with_dots() -> Result<()> {
+    run("YulVariableDeclarationStatement", "identifier_with_dots")
+}
+
+#[test]
 fn keyword_bytes() -> Result<()> {
     run("YulVariableDeclarationStatement", "keyword_bytes")
 }

@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let a.b.c := 1                                                                   │ 0..14
+
+Errors: # 1 total
+  - >
+    Error: Expected Colon or ColonEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/identifier_with_dots/input.sol:1:6]
+       │
+     1 │ let a.b.c := 1
+       │      ─────┬────  
+       │           ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
+      - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
+      - (names꞉ YulIdentifier): "a" # (4..5)
+      - (SKIPPED): ".b.c := 1\n" # (5..15)

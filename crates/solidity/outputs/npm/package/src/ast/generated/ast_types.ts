@@ -3358,7 +3358,7 @@ export class YulVariableDeclarationStatement {
 
     return {
       letKeyword: $letKeyword as TokenNode,
-      names: new YulPaths($names as RuleNode),
+      names: $names as TokenNode,
       value: $value === null ? undefined : new YulVariableDeclarationValue($value as RuleNode),
     };
   });
@@ -3371,7 +3371,7 @@ export class YulVariableDeclarationStatement {
     return this.fetch().letKeyword;
   }
 
-  public get names(): YulPaths {
+  public get names(): TokenNode {
     return this.fetch().names;
   }
 
