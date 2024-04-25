@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "tstore()\n" (0..9)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "tstore" (0..6)
-          - (item꞉ YulIdentifier): "tstore" # (0..6)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "tstore" (0..6)
+          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "tstore" # (0..6)
       - (open_paren꞉ OpenParen): "(" # (6..7)
       - (arguments꞉ YulArguments): [] # (7..7)
       - (close_paren꞉ CloseParen): ")" # (7..8)

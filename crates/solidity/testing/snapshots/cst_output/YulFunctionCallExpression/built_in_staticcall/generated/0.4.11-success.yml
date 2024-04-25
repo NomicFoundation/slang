@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "staticcall()\n" (0..13)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "staticcall" (0..10)
-          - (item꞉ YulIdentifier): "staticcall" # (0..10)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "staticcall" (0..10)
+          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "staticcall" # (0..10)
       - (open_paren꞉ OpenParen): "(" # (10..11)
       - (arguments꞉ YulArguments): [] # (11..11)
       - (close_paren꞉ CloseParen): ")" # (11..12)

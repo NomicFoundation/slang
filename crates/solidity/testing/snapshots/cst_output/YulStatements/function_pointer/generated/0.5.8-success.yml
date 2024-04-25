@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ {                                                                                                                                                             │ 0..1
+  2  │ 	// https://github.com/ethereum/solidity/blob/ebdce269005e8f2a6652bad64a000725ff1624fe/docs/assembly.rst#access-to-external-variables-functions-and-libraries │ 2..159
+  3  │ 	f.address := newAddress                                                                                                                                      │ 160..184
+  4  │ 	f.selector := newSelector                                                                                                                                    │ 185..211
+  5  │ }                                                                                                                                                             │ 212..213
+
+Errors: []
+
+Tree:
+  - (YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
+      - (item꞉ YulStatement) ► (variant꞉ YulBlock): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
+          - (open_brace꞉ OpenBrace): "{" # (0..1)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
+          - (statements꞉ YulStatements): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..212)
+              - (item꞉ YulStatement) ► (variant꞉ YulAssignmentStatement): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..185)
+                  - (names꞉ YulPaths): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..170)
+                      - (item꞉ YulPath): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..170)
+                          - (item꞉ YulPathComponent): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..170)
+                              - (leading_trivia꞉ Whitespace): "\t" # (2..3)
+                              - (leading_trivia꞉ SingleLineComment): "// https://github.com/ethereum/solidity/blob/ebdce..." # (3..159)
+                              - (leading_trivia꞉ EndOfLine): "\n" # (159..160)
+                              - (leading_trivia꞉ Whitespace): "\t" # (160..161)
+                              - (variant꞉ YulIdentifier): "f.address" # (161..170)
+                  - (assignment꞉ YulAssignmentOperator): # " :=" (170..173)
+                      - (leading_trivia꞉ Whitespace): " " # (170..171)
+                      - (variant꞉ ColonEqual): ":=" # (171..173)
+                  - (expression꞉ YulExpression) ► (variant꞉ YulPath): # " newAddress\n" (173..185)
+                      - (item꞉ YulPathComponent): # " newAddress\n" (173..185)
+                          - (leading_trivia꞉ Whitespace): " " # (173..174)
+                          - (variant꞉ YulIdentifier): "newAddress" # (174..184)
+                          - (trailing_trivia꞉ EndOfLine): "\n" # (184..185)
+              - (item꞉ YulStatement) ► (variant꞉ YulAssignmentStatement): # "\tf.selector := newSelector\n" (185..212)
+                  - (names꞉ YulPaths): # "\tf.selector" (185..196)
+                      - (item꞉ YulPath): # "\tf.selector" (185..196)
+                          - (item꞉ YulPathComponent): # "\tf.selector" (185..196)
+                              - (leading_trivia꞉ Whitespace): "\t" # (185..186)
+                              - (variant꞉ YulIdentifier): "f.selector" # (186..196)
+                  - (assignment꞉ YulAssignmentOperator): # " :=" (196..199)
+                      - (leading_trivia꞉ Whitespace): " " # (196..197)
+                      - (variant꞉ ColonEqual): ":=" # (197..199)
+                  - (expression꞉ YulExpression) ► (variant꞉ YulPath): # " newSelector\n" (199..212)
+                      - (item꞉ YulPathComponent): # " newSelector\n" (199..212)
+                          - (leading_trivia꞉ Whitespace): " " # (199..200)
+                          - (variant꞉ YulIdentifier): "newSelector" # (200..211)
+                          - (trailing_trivia꞉ EndOfLine): "\n" # (211..212)
+          - (close_brace꞉ CloseBrace): "}" # (212..213)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (213..214)

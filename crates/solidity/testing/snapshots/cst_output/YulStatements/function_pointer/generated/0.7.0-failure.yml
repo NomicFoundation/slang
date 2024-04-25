@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ {                                                                                                                                                             │ 0..1
+  2  │ 	// https://github.com/ethereum/solidity/blob/ebdce269005e8f2a6652bad64a000725ff1624fe/docs/assembly.rst#access-to-external-variables-functions-and-libraries │ 2..159
+  3  │ 	f.address := newAddress                                                                                                                                      │ 160..184
+  4  │ 	f.selector := newSelector                                                                                                                                    │ 185..211
+  5  │ }                                                                                                                                                             │ 212..213
+
+Errors: # 1 total
+  - >
+    Error: Expected YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatements/function_pointer/input.sol:3:4]
+       │
+     3 │ ╭─▶     f.address := newAddress
+     4 │ ├─▶     f.selector := newSelector
+       │ │                                   
+       │ ╰─────────────────────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
+      - (item꞉ YulStatement) ► (variant꞉ YulBlock): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
+          - (open_brace꞉ OpenBrace): "{" # (0..1)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
+          - (statements꞉ YulStatements): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
+              - (item꞉ YulStatement) ► (variant꞉ YulAssignmentStatement) ► (names꞉ YulPaths): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
+                  - (item꞉ YulPath): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
+                      - (item꞉ YulPathComponent): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..162)
+                          - (leading_trivia꞉ Whitespace): "\t" # (2..3)
+                          - (leading_trivia꞉ SingleLineComment): "// https://github.com/ethereum/solidity/blob/ebdce..." # (3..159)
+                          - (leading_trivia꞉ EndOfLine): "\n" # (159..160)
+                          - (leading_trivia꞉ Whitespace): "\t" # (160..161)
+                          - (variant꞉ YulIdentifier): "f" # (161..162)
+                      - (separator꞉ Period): "." # (162..163)
+          - (SKIPPED): "address := newAddress\n\tf.selector := newSelector\n" # (163..212)
+          - (close_brace꞉ CloseBrace): "}" # (212..213)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (213..214)

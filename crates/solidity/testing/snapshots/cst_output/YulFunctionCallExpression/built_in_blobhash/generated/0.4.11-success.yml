@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "blobhash()\n" (0..11)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "blobhash" (0..8)
-          - (item꞉ YulIdentifier): "blobhash" # (0..8)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "blobhash" (0..8)
+          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "blobhash" # (0..8)
       - (open_paren꞉ OpenParen): "(" # (8..9)
       - (arguments꞉ YulArguments): [] # (9..9)
       - (close_paren꞉ CloseParen): ")" # (9..10)

@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "returndatasize := 0\n" (0..20)
-      - (names꞉ YulIdentifierPaths): # "returndatasize" (0..14)
-          - (item꞉ YulIdentifierPath): # "returndatasize" (0..14)
-              - (item꞉ YulIdentifier): "returndatasize" # (0..14)
+      - (names꞉ YulPaths): # "returndatasize" (0..14)
+          - (item꞉ YulPath): # "returndatasize" (0..14)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "returndatasize" # (0..14)
       - (assignment꞉ YulAssignmentOperator): # " :=" (14..17)
           - (leading_trivia꞉ Whitespace): " " # (14..15)
           - (variant꞉ ColonEqual): ":=" # (15..17)

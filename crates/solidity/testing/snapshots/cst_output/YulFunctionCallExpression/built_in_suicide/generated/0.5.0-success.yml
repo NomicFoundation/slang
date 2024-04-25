@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "suicide()\n" (0..10)
-      - (operand꞉ YulExpression) ► (variant꞉ YulIdentifierPath): # "suicide" (0..7)
-          - (item꞉ YulIdentifier): "suicide" # (0..7)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "suicide" (0..7)
+          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "suicide" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (arguments꞉ YulArguments): [] # (8..8)
       - (close_paren꞉ CloseParen): ")" # (8..9)

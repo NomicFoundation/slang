@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - (YulAssignmentStatement): # "suicide := 0\n" (0..13)
-      - (names꞉ YulIdentifierPaths): # "suicide" (0..7)
-          - (item꞉ YulIdentifierPath): # "suicide" (0..7)
-              - (item꞉ YulIdentifier): "suicide" # (0..7)
+      - (names꞉ YulPaths): # "suicide" (0..7)
+          - (item꞉ YulPath): # "suicide" (0..7)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "suicide" # (0..7)
       - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)
           - (leading_trivia꞉ Whitespace): " " # (7..8)
           - (variant꞉ ColonEqual): ":=" # (8..10)
