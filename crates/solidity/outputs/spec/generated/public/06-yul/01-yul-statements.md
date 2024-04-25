@@ -56,7 +56,7 @@
 
 ```
 
-<pre ebnf-snippet="YulVariableDeclarationStatement" style="display: none;"><a href="#YulVariableDeclarationStatement"><span class="k">YulVariableDeclarationStatement</span></a><span class="o"> = </span><a href="../03-yul-keywords#YulLetKeyword"><span class="k">YUL_LET_KEYWORD</span></a><br /><span class="o">                                  </span><a href="../02-yul-expressions#YulPaths"><span class="k">YulPaths</span></a><br /><span class="o">                                  </span><a href="#YulVariableDeclarationValue"><span class="k">YulVariableDeclarationValue</span></a><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulVariableDeclarationStatement" style="display: none;"><a href="#YulVariableDeclarationStatement"><span class="k">YulVariableDeclarationStatement</span></a><span class="o"> = </span><a href="../03-yul-keywords#YulLetKeyword"><span class="k">YUL_LET_KEYWORD</span></a><br /><span class="o">                                  </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                                  </span><a href="#YulVariableDeclarationValue"><span class="k">YulVariableDeclarationValue</span></a><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulVariableDeclarationValue }
 

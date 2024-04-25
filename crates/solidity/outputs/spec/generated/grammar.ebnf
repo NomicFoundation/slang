@@ -1372,7 +1372,7 @@ YulReturnsDeclaration = MINUS_GREATER_THAN
 YulReturnVariables = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
 
 YulVariableDeclarationStatement = YUL_LET_KEYWORD
-                                  YulPaths
+                                  YUL_IDENTIFIER
                                   YulVariableDeclarationValue?;
 
 YulVariableDeclarationValue = YulAssignmentOperator

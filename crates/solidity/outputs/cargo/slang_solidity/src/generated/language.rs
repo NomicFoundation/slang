@@ -6862,7 +6862,13 @@ impl Language {
                     TokenKind::YulLetKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Names, self.yul_paths(input))?;
+            seq.elem_labeled(
+                NodeLabel::Names,
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulIdentifier,
+                ),
+            )?;
             seq.elem_labeled(
                 NodeLabel::Value,
                 OptionalHelper::transform(self.yul_variable_declaration_value(input)),
