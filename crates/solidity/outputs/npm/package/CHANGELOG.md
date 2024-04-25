@@ -1,5 +1,13 @@
 # changelog
 
+## 0.14.2
+
+### Patch Changes
+
+-   [#948](https://github.com/NomicFoundation/slang/pull/948) [`ce88cb7`](https://github.com/NomicFoundation/slang/commit/ce88cb7a6fd945b59ccc967cfd20f423dadc36fc) Thanks [@Xanewok](https://github.com/Xanewok)! - Restrict the grammar to correctly only allow an identifier in Yul variable declaration
+
+-   [#945](https://github.com/NomicFoundation/slang/pull/945) [`e8f80d8`](https://github.com/NomicFoundation/slang/commit/e8f80d867b4b9d02413f42a8ece2630a43bc7494) Thanks [@Xanewok](https://github.com/Xanewok)! - Support `.address` built-in access in Yul paths
+
 ## 0.14.1
 
 ### Patch Changes
