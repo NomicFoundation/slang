@@ -81,7 +81,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     // Heuristic: ignore wrongly scraped sanctuary files that
     // contain HTML with a Cloudflare email obfuscation attribute:
     // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
-    // Also ignore wrongly obfuscated `\r@` that leads to an invalid escape sequence:
+    // Also ignore wrongly obfuscated `r@` in "\r@..." that leads to an invalid escape sequence:
     if source.contains("data-cfemail=") || source.contains("\\[email protected]") {
         events.test(TestOutcome::Incompatible);
         return Ok(());
