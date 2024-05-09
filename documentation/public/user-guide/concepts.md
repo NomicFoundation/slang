@@ -31,7 +31,7 @@ tokens (lexical analysis), which then in turn is _parsed_ into the CST.
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
--   `RuleNode` (aka _non-terminals_) represent sub-trees, containing a a vector of other `Node` children.
+-   `RuleNode` (aka _non-terminals_) represent sub-trees, containing a vector of other `Node` children.
 -   `TokenNode` (aka _terminals_) are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
 
 ## CST Cursors
