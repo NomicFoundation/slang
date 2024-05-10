@@ -32,15 +32,6 @@
     "index.linux-x64-musl.node",
     "README.md"
   ],
-  "os": [
-    "linux"
-  ],
-  "cpu": [
-    "x64"
-  ],
-  "libc": [
-    "musl"
-  ],
   "engines": {
     "node": ">= 10"
   },
