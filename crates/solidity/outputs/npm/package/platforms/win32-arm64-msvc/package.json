@@ -32,12 +32,6 @@
     "index.win32-arm64-msvc.node",
     "README.md"
   ],
-  "os": [
-    "win32"
-  ],
-  "cpu": [
-    "arm64"
-  ],
   "engines": {
     "node": ">= 10"
   },

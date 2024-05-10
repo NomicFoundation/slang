@@ -32,12 +32,6 @@
     "index.darwin-arm64.node",
     "README.md"
   ],
-  "os": [
-    "darwin"
-  ],
-  "cpu": [
-    "arm64"
-  ],
   "engines": {
     "node": ">= 10"
   },

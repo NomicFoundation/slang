@@ -32,15 +32,6 @@
     "index.linux-arm64-musl.node",
     "README.md"
   ],
-  "os": [
-    "linux"
-  ],
-  "cpu": [
-    "arm64"
-  ],
-  "libc": [
-    "musl"
-  ],
   "engines": {
     "node": ">= 10"
   },

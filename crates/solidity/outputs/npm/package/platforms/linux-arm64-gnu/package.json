@@ -32,15 +32,6 @@
     "index.linux-arm64-gnu.node",
     "README.md"
   ],
-  "os": [
-    "linux"
-  ],
-  "cpu": [
-    "arm64"
-  ],
-  "libc": [
-    "glibc"
-  ],
   "engines": {
     "node": ">= 10"
   },

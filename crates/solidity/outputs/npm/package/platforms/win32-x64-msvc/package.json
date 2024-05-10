@@ -32,12 +32,6 @@
     "index.win32-x64-msvc.node",
     "README.md"
   ],
-  "os": [
-    "win32"
-  ],
-  "cpu": [
-    "x64"
-  ],
   "engines": {
     "node": ">= 10"
   },
