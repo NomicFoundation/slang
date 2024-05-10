@@ -3167,7 +3167,7 @@ struct Selector {
 impl Selector {
     fn new(node: &RuleNode) -> Self {
         Self {
-            node: node.0.clone(),
+            node: Rc::clone(&node.0),
             index: 0,
         }
     }

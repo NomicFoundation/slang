@@ -78,7 +78,7 @@ impl RuleNode {
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
-        RustNode::Rule(self.0.clone())
+        RustNode::Rule(Rc::clone(&self.0))
             .cursor_with_offset((&text_offset).into())
             .into()
     }
@@ -91,7 +91,7 @@ impl RuleNode {
 
     #[napi(catch_unwind)]
     pub fn unparse(&self) -> String {
-        self.0.clone().unparse()
+        Rc::clone(&self.0).unparse()
     }
 
     // Expose the children as a hidden (non-enumerable, don't generate type definition)
@@ -170,7 +170,7 @@ impl TokenNode {
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
-        RustNode::Token(self.0.clone())
+        RustNode::Token(Rc::clone(&self.0))
             .cursor_with_offset((&text_offset).into())
             .into()
     }

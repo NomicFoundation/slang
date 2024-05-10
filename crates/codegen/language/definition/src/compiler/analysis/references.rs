@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use std::rc::Rc;
 
 use indexmap::IndexMap;
 use semver::Version;
@@ -19,7 +20,7 @@ use crate::model::{
 };
 
 pub(crate) fn analyze_references(analysis: &mut Analysis) {
-    let language = analysis.language.clone();
+    let language = Rc::clone(&analysis.language);
 
     let mut enablement = VersionSet::new();
     analysis.add_all_versions(&mut enablement);

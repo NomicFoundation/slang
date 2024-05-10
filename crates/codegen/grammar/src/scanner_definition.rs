@@ -131,7 +131,7 @@ impl KeywordScannerAtomic {
             [KeywordScannerDefinitionVersionedNode {
                 value: KeywordScannerDefinitionNode::Atom(_),
                 ..
-            }] => Some(Self(def.clone())),
+            }] => Some(Self(Rc::clone(def))),
             _ => None,
         }
     }

@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -71,7 +72,7 @@ fn using_the_cursor() -> Result<()> {
 
         while cursor.go_to_next_rule_with_kind(RuleKind::ContractDefinition) {
             let range = cursor.text_range().utf8();
-            let text = cursor.node().as_rule().unwrap().clone().unparse();
+            let text = Rc::clone(cursor.node().as_rule().unwrap()).unparse();
 
             contracts.push((range, text.trim().to_owned()));
         }

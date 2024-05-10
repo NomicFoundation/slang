@@ -3,6 +3,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
 use codegen_grammar::{
@@ -230,7 +231,7 @@ impl GrammarVisitor for RustGenerator {
                     context.compound_scanner_names.push(scanner_name);
                 } else {
                     for literal in literals {
-                        literal_trie.insert(&literal, scanner.clone());
+                        literal_trie.insert(&literal, Rc::clone(scanner));
                     }
                 }
             }
@@ -289,7 +290,7 @@ impl GrammarVisitor for RustGenerator {
     }
 
     fn scanner_definition_enter(&mut self, scanner: &ScannerDefinitionRef) {
-        self.all_scanners.insert(scanner.name(), scanner.clone());
+        self.all_scanners.insert(scanner.name(), Rc::clone(scanner));
     }
 
     fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
@@ -400,7 +401,7 @@ impl GrammarVisitor for RustGenerator {
 
                 self.current_context()
                     .keyword_scanner_defs
-                    .insert(scanner.name(), scanner.clone());
+                    .insert(scanner.name(), Rc::clone(scanner));
             }
 
             // Collect labels:

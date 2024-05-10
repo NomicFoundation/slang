@@ -70,14 +70,20 @@ impl Matcher {
 
     fn create_combinator(&self, cursor: Cursor) -> CombinatorRef {
         match self {
-            Self::Binding(matcher) => Box::new(BindingCombinator::new(matcher.clone(), cursor)),
-            Self::Node(matcher) => Box::new(NodeCombinator::new(matcher.clone(), cursor)),
-            Self::Sequence(matcher) => Box::new(SequenceCombinator::new(matcher.clone(), cursor)),
-            Self::Alternatives(matcher) => {
-                Box::new(AlternativesCombinator::new(matcher.clone(), cursor))
+            Self::Binding(matcher) => Box::new(BindingCombinator::new(Rc::clone(matcher), cursor)),
+            Self::Node(matcher) => Box::new(NodeCombinator::new(Rc::clone(matcher), cursor)),
+            Self::Sequence(matcher) => {
+                Box::new(SequenceCombinator::new(Rc::clone(matcher), cursor))
             }
-            Self::Optional(matcher) => Box::new(OptionalCombinator::new(matcher.clone(), cursor)),
-            Self::OneOrMore(matcher) => Box::new(OneOrMoreCombinator::new(matcher.clone(), cursor)),
+            Self::Alternatives(matcher) => {
+                Box::new(AlternativesCombinator::new(Rc::clone(matcher), cursor))
+            }
+            Self::Optional(matcher) => {
+                Box::new(OptionalCombinator::new(Rc::clone(matcher), cursor))
+            }
+            Self::OneOrMore(matcher) => {
+                Box::new(OneOrMoreCombinator::new(Rc::clone(matcher), cursor))
+            }
             Self::Ellipsis => Box::new(EllipsisCombinator::new(cursor)),
         }
     }

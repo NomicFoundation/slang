@@ -41,7 +41,7 @@ impl Cursor {
         if let Node::Rule(rule_node) = &self.node {
             Some(Rc::new(PathAncestor {
                 parent: self.parent.clone(),
-                rule_node: rule_node.clone(),
+                rule_node: Rc::clone(rule_node),
                 child_number: self.child_number,
                 text_offset: self.text_offset,
             }))
@@ -52,7 +52,7 @@ impl Cursor {
 
     fn set_from_ancestor_node(&mut self, ancestor: &Rc<PathAncestor>) {
         self.parent = ancestor.parent.clone();
-        self.node = Node::Rule(ancestor.rule_node.clone());
+        self.node = Node::Rule(Rc::clone(&ancestor.rule_node));
         self.child_number = ancestor.child_number;
         self.text_offset = ancestor.text_offset;
     }
@@ -172,7 +172,7 @@ impl Cursor {
             fn next(&mut self) -> Option<Self::Item> {
                 if let Some(a) = self.a.take() {
                     self.a = a.parent.clone();
-                    Some(a.rule_node.clone())
+                    Some(Rc::clone(&a.rule_node))
                 } else {
                     None
                 }
