@@ -158,11 +158,9 @@ impl SequenceHelper {
                 }
                 // If the sequence is unwinding and and we didn't find a match, then it means
                 // that we recovered past it and we need to push the recovery up.
-                (ParserResult::SkippedUntil(_), ParserResult::NoMatch(next)) => {
-                    assert!(
-                        matches!(next.expected_tokens[..], [_]),
-                        "Only a single token parse can immediately follow SkippedUntil in sequences"
-                    );
+                (ParserResult::SkippedUntil(_), ParserResult::NoMatch(_)) => {
+                    // Skip any possible subsequent expected elements in this sequence until
+                    // we finally encounter the token we were looking for
                 }
                 (ParserResult::SkippedUntil(_), _) => unreachable!(
                     "Only a single token parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
