@@ -29,7 +29,7 @@
   ],
   "type": "commonjs",
   "devDependencies": {
-    "@napi-rs/cli": "2.18.0"
+    "@napi-rs/cli": "2.18.3"
   },
   "dependencies": {
     "@nomicfoundation/slang-darwin-arm64": "0.14.2",

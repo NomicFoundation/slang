@@ -215,15 +215,28 @@ switch (platform) {
         }
         break;
       case "arm":
-        localFileExisted = existsSync(join(__dirname, "index.linux-arm-gnueabihf.node"));
-        try {
-          if (localFileExisted) {
-            nativeBinding = require("./index.linux-arm-gnueabihf.node");
-          } else {
-            nativeBinding = require("@nomicfoundation/slang-linux-arm-gnueabihf");
+        if (isMusl()) {
+          localFileExisted = existsSync(join(__dirname, "index.linux-arm-musleabihf.node"));
+          try {
+            if (localFileExisted) {
+              nativeBinding = require("./index.linux-arm-musleabihf.node");
+            } else {
+              nativeBinding = require("@nomicfoundation/slang-linux-arm-musleabihf");
+            }
+          } catch (e) {
+            loadError = e;
           }
-        } catch (e) {
-          loadError = e;
+        } else {
+          localFileExisted = existsSync(join(__dirname, "index.linux-arm-gnueabihf.node"));
+          try {
+            if (localFileExisted) {
+              nativeBinding = require("./index.linux-arm-gnueabihf.node");
+            } else {
+              nativeBinding = require("@nomicfoundation/slang-linux-arm-gnueabihf");
+            }
+          } catch (e) {
+            loadError = e;
+          }
         }
         break;
       case "riscv64":
