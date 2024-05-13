@@ -28,3 +28,8 @@ fn delete_index() -> Result<()> {
 fn invalid_termination() -> Result<()> {
     run("Statements", "invalid_termination")
 }
+
+#[test]
+fn recovery_ignore_multiple_empty_matches() -> Result<()> {
+    run("Statements", "recovery_ignore_multiple_empty_matches")
+}
