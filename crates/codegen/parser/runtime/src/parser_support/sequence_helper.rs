@@ -1,5 +1,7 @@
 use std::ops::ControlFlow;
 
+use metaslang_cst::TerminalKind as _;
+
 use crate::cst::{self, LabeledNode};
 use crate::kinds::{NodeLabel, TokenKind};
 use crate::parser_support::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};

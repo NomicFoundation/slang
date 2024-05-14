@@ -13,7 +13,9 @@ use slang_solidity::language::Language;
 // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
-    use {ariadne as _, nom as _, serde as _, strum as _, strum_macros as _, thiserror as _};
+    use {
+        ariadne as _, metaslang_cst as _, serde as _, strum as _, strum_macros as _, thiserror as _,
+    };
 }
 
 #[derive(ClapParser, Debug)]

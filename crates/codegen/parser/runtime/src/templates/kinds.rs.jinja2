@@ -22,6 +22,8 @@ pub enum RuleKind {
     {%- endfor -%}
 }
 
+impl metaslang_cst::NonTerminalKind for RuleKind {}
+
 #[derive(
     Debug,
     Eq,
@@ -54,6 +56,8 @@ pub enum NodeLabel {
     {%- endfor -%}
 }
 
+impl metaslang_cst::EdgeKind for NodeLabel {}
+
 #[derive(
     Debug,
     Eq,
@@ -76,8 +80,8 @@ pub enum TokenKind {
     {%- endfor -%}
 }
 
-impl TokenKind {
-    pub fn is_trivia(&self) -> bool {
+impl metaslang_cst::TerminalKind for TokenKind {
+    fn is_trivia(&self) -> bool {
         #[allow(clippy::match_like_matches_macro)]
         match self {
             {%- for variant in generator.trivia_scanner_names -%}

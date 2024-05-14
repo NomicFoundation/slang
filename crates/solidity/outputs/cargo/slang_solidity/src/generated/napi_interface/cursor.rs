@@ -9,7 +9,7 @@ use napi::Either;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
-use crate::napi_interface::cst::{self, RuleNode, TokenNode};
+use crate::napi_interface::cst::{self, NAPINodeExtensions as _, RuleNode, TokenNode};
 use crate::napi_interface::{text_index, NodeLabel, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
@@ -55,7 +55,7 @@ impl Cursor {
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn node(&self) -> Either<RuleNode, TokenNode> {
-        self.0.node().into()
+        self.0.node().into_js_either_node()
     }
 
     #[napi(getter, ts_return_type = "kinds.NodeLabel", catch_unwind)]

@@ -17,15 +17,10 @@ use napi_derive::napi;
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    // Used for testing this crate, this is generated in the client code
-    Identifier,
-    Token1,
-    Token2,
-    Token3,
 }
 
-impl TokenKind {
-    pub fn is_trivia(&self) -> bool {
+impl metaslang_cst::TerminalKind for TokenKind {
+    fn is_trivia(&self) -> bool {
         unreachable!("Expanded by the template")
     }
 }
@@ -45,13 +40,10 @@ impl TokenKind {
 #[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
-    LeadingTrivia,
-    TrailingTrivia,
-    // Used for testing this crate, this is generated in the client code
-    Rule1,
-    Rule2,
-    Rule3,
+    _DUMMY, // a hack to aavoid a linting error
 }
+
+impl metaslang_cst::NonTerminalKind for RuleKind {}
 
 #[derive(
     Debug,
@@ -76,13 +68,9 @@ pub enum NodeLabel {
     Operand,
     LeftOperand,
     RightOperand,
-    LeadingTrivia,
-    TrailingTrivia,
-    // Used for testing this crate, this is generated in the client code
-    Label1,
-    Label2,
-    Label3,
 }
+
+impl metaslang_cst::EdgeKind for NodeLabel {}
 
 /// The lexical context of the scanner.
 #[derive(strum_macros::FromRepr, Clone, Copy)]

@@ -25,8 +25,7 @@ Slang is capable of parsing the source code into a Concrete Syntax Tree (CST; al
 which is a tree structure of the program that also includes things like punctuation or whitespace.
 
 This is done by using the (standard) approach of lexical analysis followed by syntax analysis.
-The source text as a sequence of characters is recognized into a sequence of
-tokens (lexical analysis), which then in turn is _parsed_ into the CST.
+The source text as a sequence of characters is recognized into a sequence of tokens (lexical analysis), which then in turn is _parsed_ into the CST.
 
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
@@ -39,9 +38,8 @@ The tree nodes are represented by the `Node` structure, which can be one of two 
 For many code analysis tasks, it is useful to traverse the parse tree and visit each node.
 The `Cursor` object allows callers to traverse the parse tree in an efficient pre-order manner.
 
-It provides several `goTo*()` navigation functions, each returning `true` if the
-cursor was successfully moved, and `false` otherwise. There are three main ways
-to do it:
+It provides several `goTo*()` navigation functions, each returning `true` if the cursor was successfully moved, and `false` otherwise.
+There are three main ways to do it:
 
 -   According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
 -   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendent()`

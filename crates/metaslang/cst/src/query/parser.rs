@@ -9,14 +9,13 @@ use nom::multi::{fold_many0, many0, many1};
 use nom::sequence::{delimited, pair, preceded, terminated};
 use nom::{Finish, IResult, Parser};
 
-// This crate is copied to another crate, so all imports should be relative
-use super::super::kinds::{NodeLabel, RuleKind, TokenKind};
 use super::model::{
     AlternativesMatcher, BindingMatcher, Kind, Matcher, NodeMatcher, NodeSelector,
     OneOrMoreMatcher, OptionalMatcher, SequenceMatcher,
 };
+use crate::KindTypes;
 
-pub(super) fn parse_query(input: &str) -> Result<Matcher, String> {
+pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<Matcher<T>, String> {
     all_consuming(preceded(
         multispace0,
         opt(binding_name_token)
@@ -47,7 +46,7 @@ pub(super) fn parse_query(input: &str) -> Result<Matcher, String> {
     .map_err(|e| e.to_string())
 }
 
-fn parse_node(i: &str) -> IResult<&str, Matcher, VerboseError<&str>> {
+fn parse_node<T: KindTypes>(i: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
     delimited(
         token('['),
         parse_node_selector.and(many0(parse_match)),
@@ -69,14 +68,16 @@ fn parse_node(i: &str) -> IResult<&str, Matcher, VerboseError<&str>> {
     .parse(i)
 }
 
-fn parse_node_selector(input: &str) -> IResult<&str, NodeSelector, VerboseError<&str>> {
-    enum Tail {
+fn parse_node_selector<T: KindTypes>(
+    input: &str,
+) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
+    enum Tail<T: KindTypes> {
         Anonymous,
-        Kind(Kind),
+        Kind(Kind<T>),
         Text(String),
     }
 
-    opt(label_token)
+    opt(label_token::<T>)
         .and(alt((
             token('_').map(|_| Tail::Anonymous),
             kind_token.map(Tail::Kind),
@@ -100,7 +101,7 @@ enum Quantifier {
     OneOrMore,
 }
 
-fn parse_match(input: &str) -> IResult<&str, Matcher, VerboseError<&str>> {
+fn parse_match<T: KindTypes>(input: &str) -> IResult<&str, Matcher<T>, VerboseError<&str>> {
     opt(binding_name_token)
         .and(alt((
             parse_node,
@@ -172,22 +173,20 @@ fn binding_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
-fn kind_token(i: &str) -> IResult<&str, Kind, VerboseError<&str>> {
+fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, Kind<T>, VerboseError<&str>> {
     terminated(raw_identifier, multispace0)
         .map(|id| {
-            TokenKind::try_from(id.as_str())
+            T::TerminalKind::try_from(id.as_str())
                 .map(Kind::Token)
-                .or_else(|_| RuleKind::try_from(id.as_str()).map(Kind::Rule))
-                .unwrap(
-                    // TODO(#554): report these errors to users
-                )
+                .or_else(|_| T::NonTerminalKind::try_from(id.as_str()).map(Kind::Rule))
+                .unwrap() // TODO
         })
         .parse(i)
 }
 
-fn label_token(i: &str) -> IResult<&str, NodeLabel, VerboseError<&str>> {
+fn label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeKind, VerboseError<&str>> {
     terminated(raw_identifier, token(':'))
-        .map(|id| NodeLabel::try_from(id.as_str()).unwrap())
+        .map(|id| T::EdgeKind::try_from(id.as_str()).unwrap())
         .parse(i)
 }
 

@@ -17,8 +17,11 @@ members = [
     "crates/codegen/parser/runtime",
     "crates/codegen/spec",
     "crates/codegen/testing",
+
     "crates/infra/cli",
     "crates/infra/utils",
+
+    "crates/metaslang/cst",
 
     "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/slang_solidity_node_addon",
@@ -51,8 +54,11 @@ codegen_parser_generator = { path = "crates/codegen/parser/generator" }
 codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
+
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
+
+metaslang_cst = { path = "crates/metaslang/cst" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity" }
 slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon" }
@@ -83,7 +89,8 @@ clap_complete = { version = "4.5.2" }
 console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
 ignore = { version = "0.4.22" }
-indexmap = { version = "2.2.6", features = ["serde"] }
+enum_dispatch = { version = "0.3.12" }
+indexmap = { version = "2.2.3", features = ["serde"] }
 indicatif = { version = "0.17.8", features = ["in_memory"] }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }

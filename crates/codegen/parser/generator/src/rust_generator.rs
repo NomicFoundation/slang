@@ -13,7 +13,6 @@ use codegen_grammar::{
     TriviaParserDefinitionRef,
 };
 use codegen_language_definition::model::Language;
-use indexmap::IndexMap;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::Codegen;
 use quote::{format_ident, quote};
@@ -105,32 +104,6 @@ impl RustGenerator {
 
         {
             #[derive(Serialize)]
-            struct Context {
-                queries: IndexMap<String, Vec<&'static str>>,
-            }
-
-            let queries = language
-                .queries
-                .keys()
-                .enumerate()
-                .map(|(index, key)| {
-                    // TODO(#554): parse the query and extract the real captures:
-                    (
-                        key.to_string(),
-                        ["foo", "bar", "baz"].into_iter().take(index + 1).collect(),
-                    )
-                })
-                .collect();
-
-            codegen.render(
-                Context { queries },
-                runtime_dir.join("templates/user_defined_queries.rs.jinja2"),
-                output_dir.join("query/user_defined_queries.rs"),
-            )?;
-        }
-
-        {
-            #[derive(Serialize)]
             struct Context<'a> {
                 generator: &'a RustGenerator,
                 language_name: String,
@@ -157,8 +130,6 @@ impl RustGenerator {
         }
 
         for file in &[
-            "cst.rs",
-            "cursor.rs",
             "lexer.rs",
             "napi_interface/cst.rs",
             "napi_interface/cursor.rs",
@@ -181,11 +152,6 @@ impl RustGenerator {
             "parser_support/scanner_macros.rs",
             "parser_support/separated_helper.rs",
             "parser_support/sequence_helper.rs",
-            "query/engine.rs",
-            "query/mod.rs",
-            "query/model.rs",
-            "query/parser.rs",
-            "text_index.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
         }

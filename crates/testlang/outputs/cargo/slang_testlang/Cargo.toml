@@ -14,7 +14,7 @@ testlang_language = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
-nom = { workspace = true }
+metaslang_cst = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 strum = { workspace = true }
