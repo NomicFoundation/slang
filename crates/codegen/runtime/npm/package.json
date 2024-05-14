@@ -1,0 +1,17 @@
+{
+  "name": "@slang-private/slang-codegen-runtime",
+  "private": true,
+  "type": "commonjs",
+  "devDependencies": {
+    "@napi-rs/cli": "2.18.3"
+  },
+  "napi": {
+    "triples": {
+      "defaults": false,
+      "additional": []
+    }
+  },
+  "engines": {
+    "node": ">= 10"
+  }
+}

@@ -5,7 +5,7 @@ use std::path::Path;
 use anyhow::{bail, Result};
 use codegen_language_definition::model::Language;
 use inflector::Inflector;
-use infra_utils::codegen::{Codegen, CodegenReadWrite};
+use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 pub fn generate_cst_output_tests(
@@ -15,18 +15,13 @@ pub fn generate_cst_output_tests(
 ) -> Result<()> {
     let parser_tests = collect_parser_tests(data_dir)?;
 
-    let mut codegen = Codegen::read_write(data_dir)?;
+    let mut fs = CodegenFileSystem::new(data_dir)?;
 
-    generate_mod_file(
-        language,
-        &mut codegen,
-        &output_dir.join("mod.rs"),
-        &parser_tests,
-    )?;
+    generate_mod_file(language, &mut fs, &output_dir.join("mod.rs"), &parser_tests)?;
 
     for (parser_name, test_names) in &parser_tests {
         generate_unit_test_file(
-            &mut codegen,
+            &mut fs,
             parser_name,
             test_names,
             &output_dir.join(format!("{0}.rs", parser_name.to_snake_case())),
@@ -77,7 +72,7 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
 
 fn generate_mod_file(
     language: &Language,
-    codegen: &mut CodegenReadWrite,
+    fs: &mut CodegenFileSystem,
     mod_file_path: &Path,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
 ) -> Result<()> {
@@ -114,11 +109,11 @@ fn generate_mod_file(
         ",
     );
 
-    codegen.write_file(mod_file_path, contents)
+    fs.write_file(mod_file_path, contents)
 }
 
 fn generate_unit_test_file(
-    codegen: &mut CodegenReadWrite,
+    fs: &mut CodegenFileSystem,
     parser_name: &str,
     test_names: &BTreeSet<String>,
     unit_test_file_path: &Path,
@@ -149,5 +144,5 @@ fn generate_unit_test_file(
         "
     );
 
-    codegen.write_file(unit_test_file_path, contents)
+    fs.write_file(unit_test_file_path, contents)
 }

@@ -7,10 +7,9 @@ publish = false
 
 [build-dependencies]
 anyhow = { workspace = true }
-codegen_parser_generator = { workspace = true }
+codegen_runtime_generator = { workspace = true }
 infra_utils = { workspace = true }
 solidity_language = { workspace = true }
 
 [lints]
 workspace = true
-

@@ -11,16 +11,16 @@ use crate::toolchains::napi::{
 };
 
 pub fn publish_npm(dry_run: DryRun) -> Result<()> {
-    let resolver = NapiResolver::solidity();
+    let resolver = NapiResolver::Solidity;
 
-    NapiCompiler::run(&resolver, NapiProfile::Release)?;
+    NapiCompiler::run(resolver, NapiProfile::Release)?;
 
     // Publish platform-specific packages first, as the main package now depends on their latest version:
 
     for platform_dir in resolver.platforms_dir().collect_children()? {
         let platform = platform_dir.unwrap_name().to_owned();
         publish_package(
-            &resolver,
+            resolver,
             &platform_dir,
             &NapiPackageKind::Platform(platform),
             dry_run,
@@ -30,11 +30,11 @@ pub fn publish_npm(dry_run: DryRun) -> Result<()> {
     //  Then publish the main package, that depends on the previously published platform-specific packages:
 
     let package_dir = resolver.main_package_dir();
-    publish_package(&resolver, &package_dir, &NapiPackageKind::Main, dry_run)
+    publish_package(resolver, &package_dir, &NapiPackageKind::Main, dry_run)
 }
 
 fn publish_package(
-    resolver: &NapiResolver,
+    resolver: NapiResolver,
     package_dir: &Path,
     kind: &NapiPackageKind,
     dry_run: DryRun,

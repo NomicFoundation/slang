@@ -33,9 +33,11 @@ impl From<RustNode> for Either<RuleNode, TokenNode> {
     }
 }
 
+#[derive(Debug)]
 #[napi(namespace = "cst")]
 pub struct RuleNode(pub(crate) Rc<RustRuleNode>);
 
+#[derive(Debug)]
 #[napi(namespace = "cst")]
 pub struct TokenNode(pub(crate) Rc<RustTokenNode>);
 

@@ -70,7 +70,7 @@ impl PartialEq<Version> for ZigGlibcVersion {
 /// This is necessary to retain extension compatibility with as many systems as possible:
 /// <https://code.visualstudio.com/docs/supporting/requirements#_additional-linux-requirements>.
 pub fn ensure_correct_glibc_for_vscode(
-    resolver: &NapiResolver,
+    resolver: NapiResolver,
     output_dir: &Path,
     target: &BuildTarget,
 ) -> Result<()> {

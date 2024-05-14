@@ -7,7 +7,7 @@
     /* Modules */
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "rootDir": "./src",
+    "rootDir": "./src/generated",
 
     /* Language and Environment */
     "target": "ES2016",

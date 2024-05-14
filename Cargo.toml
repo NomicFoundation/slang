@@ -13,10 +13,13 @@ members = [
     "crates/codegen/language/internal_macros",
     "crates/codegen/language/macros",
     "crates/codegen/language/tests",
-    "crates/codegen/parser/generator",
-    "crates/codegen/parser/runtime",
+    "crates/codegen/runtime/cargo",
+    "crates/codegen/runtime/generator",
+    "crates/codegen/runtime/node_addon",
+    "crates/codegen/runtime/npm",
     "crates/codegen/spec",
     "crates/codegen/testing",
+
     "crates/infra/cli",
     "crates/infra/utils",
 
@@ -47,10 +50,13 @@ codegen_language_definition = { path = "crates/codegen/language/definition" }
 codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros" }
 codegen_language_macros = { path = "crates/codegen/language/macros" }
 codegen_language_tests = { path = "crates/codegen/language/tests" }
-codegen_parser_generator = { path = "crates/codegen/parser/generator" }
-codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
+codegen_runtime_cargo = { path = "crates/codegen/runtime/cargo" }
+codegen_runtime_generator = { path = "crates/codegen/runtime/generator" }
+codegen_runtime_node_addon = { path = "crates/codegen/runtime/node_addon" }
+codegen_runtime_npm = { path = "crates/codegen/runtime/npm" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
+
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
 

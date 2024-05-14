@@ -21,11 +21,11 @@ impl FileWalker {
         }
     }
 
-    pub fn find_all(&self) -> Result<impl IntoIterator<Item = PathBuf>> {
+    pub fn find_all(&self) -> Result<impl Iterator<Item = PathBuf>> {
         self.find(["**/*"])
     }
 
-    pub fn find<G>(&self, globs: impl AsRef<[G]>) -> Result<impl IntoIterator<Item = PathBuf>>
+    pub fn find<G>(&self, globs: impl AsRef<[G]>) -> Result<impl Iterator<Item = PathBuf>>
     where
         G: AsRef<str>,
     {

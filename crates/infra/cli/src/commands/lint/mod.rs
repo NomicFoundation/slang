@@ -87,13 +87,10 @@ fn run_markdown_link_check() -> Result<()> {
 }
 
 fn run_markdown_lint() -> Result<()> {
-    let markdown_files = FileWalker::from_repo_root()
-        .find(["**/*.md"])?
-        .into_iter()
-        .map(|path| {
-            println!("{}", path.display());
-            path
-        });
+    let markdown_files = FileWalker::from_repo_root().find(["**/*.md"])?.map(|path| {
+        println!("{}", path.display());
+        path
+    });
 
     let mut command = Command::new("markdownlint").flag("--dot");
 
@@ -120,7 +117,6 @@ fn run_rustfmt() -> Result<()> {
 fn run_shellcheck() -> Result<()> {
     let bash_files = FileWalker::from_repo_root()
         .find(["scripts/**"])?
-        .into_iter()
         .map(|path| {
             println!("{}", path.display());
             path
@@ -142,7 +138,6 @@ fn run_yamllint() -> Result<()> {
 
     let yaml_files = FileWalker::from_repo_root()
         .find(["**/*.yml"])?
-        .into_iter()
         .map(|path| {
             println!("{}", path.display());
             path

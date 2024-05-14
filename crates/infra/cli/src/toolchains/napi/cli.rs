@@ -23,13 +23,13 @@ pub struct NapiCli;
 
 impl NapiCli {
     pub fn build(
-        resolver: &NapiResolver,
+        resolver: NapiResolver,
         output_dir: impl AsRef<Path>,
         target: &BuildTarget,
     ) -> Result<NapiCliOutput> {
         let output_dir = output_dir.as_ref();
         let package_dir = resolver.main_package_dir();
-        let crate_dir = resolver.crate_dir();
+        let crate_dir = resolver.rust_crate_dir();
 
         let mut command = Command::new("napi");
 
@@ -100,7 +100,7 @@ impl NapiCli {
         })
     }
 
-    pub fn prepublish(resolver: &NapiResolver) -> Result<()> {
+    pub fn prepublish(resolver: NapiResolver) -> Result<()> {
         let package_dir = resolver.main_package_dir();
         let platforms_dir = resolver.platforms_dir();
 

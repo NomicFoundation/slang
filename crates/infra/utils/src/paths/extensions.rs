@@ -1,7 +1,8 @@
 use std::env::var;
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{ensure, Context, Result};
+use itertools::Itertools;
 
 pub trait PathExtensions {
     fn collect_children(&self) -> Result<Vec<PathBuf>>;
@@ -43,23 +44,18 @@ impl PathExtensions for Path {
     }
 
     fn generated_dir(&self) -> Result<PathBuf> {
-        let generated_indexes: Vec<_> = self
-            .iter()
-            .enumerate()
-            .filter(|p| p.1 == "generated")
-            .collect();
+        let mut parts = self.iter().collect_vec();
 
-        let generated_index = match generated_indexes[..] {
-            [] => {
-                bail!("Generated file path should have a 'generated' ancestor dir: {self:?}")
-            }
-            [single] => single.0,
-            _ => bail!("Multiple 'generated' dirs in path: {self:?}"),
-        };
+        while parts.last().is_some_and(|part| *part != "generated") {
+            parts.pop();
+        }
 
-        let generated_dir = self.iter().take(generated_index + 1).collect();
+        ensure!(
+            !parts.is_empty(),
+            "Generated file path should have a 'generated' ancestor dir: {self:?}"
+        );
 
-        Ok(generated_dir)
+        Ok(parts.iter().collect())
     }
 
     fn repo_path(relative_path: impl AsRef<Path>) -> PathBuf {

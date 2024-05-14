@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::Codegen;
+use infra_utils::codegen::CodegenTemplates;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde::Serialize;
@@ -22,7 +22,7 @@ pub enum NapiProfile {
 pub struct NapiCompiler;
 
 impl NapiCompiler {
-    pub fn run(resolver: &NapiResolver, profile: NapiProfile) -> Result<()> {
+    pub fn run(resolver: NapiResolver, profile: NapiProfile) -> Result<()> {
         match profile {
             NapiProfile::Debug => {
                 // Compiles the default target for local development
@@ -50,7 +50,7 @@ impl NapiCompiler {
     }
 }
 
-fn compile_all_targets(resolver: &NapiResolver) -> Result<Vec<PathBuf>> {
+fn compile_all_targets(resolver: NapiResolver) -> Result<Vec<PathBuf>> {
     let targets = NapiConfig::list_all_targets(resolver)?;
 
     assert_ne!(
@@ -80,7 +80,7 @@ fn compile_all_targets(resolver: &NapiResolver) -> Result<Vec<PathBuf>> {
     Ok(node_binaries)
 }
 
-fn compile_target(resolver: &NapiResolver, target: &BuildTarget) -> Result<NapiCliOutput> {
+fn compile_target(resolver: NapiResolver, target: &BuildTarget) -> Result<NapiCliOutput> {
     let output_dir = resolver.napi_output_dir(target);
 
     std::fs::create_dir_all(&output_dir)?;
@@ -89,25 +89,26 @@ fn compile_target(resolver: &NapiResolver, target: &BuildTarget) -> Result<NapiC
 }
 
 #[derive(Serialize)]
-struct LicenseHeaderTemplate {
+struct LicenseHeaderModel {
     contents: String,
 }
 
-fn process_generated_files(resolver: &NapiResolver, napi_output: &NapiCliOutput) -> Result<()> {
-    let templates_dir = resolver.templates_dir();
+fn process_generated_files(resolver: NapiResolver, napi_output: &NapiCliOutput) -> Result<()> {
+    let templates_dir =
+        CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi/bindings");
 
-    let mut codegen = Codegen::read_write(&templates_dir)?;
+    let mut templates = CodegenTemplates::new(&templates_dir)?;
 
     for source in &napi_output.source_files {
         let file_name = source.unwrap_name();
         let contents = source.read_to_string()?;
 
-        let destination_path = resolver.generated_dir().join(file_name);
+        let destination_path = resolver.bindings_dir().join(file_name);
         let template_path = templates_dir.join(format!("{file_name}.jinja2"));
 
-        codegen.render(
-            LicenseHeaderTemplate { contents },
+        templates.render_single(
             &template_path,
+            LicenseHeaderModel { contents },
             destination_path,
         )?;
     }
@@ -115,7 +116,7 @@ fn process_generated_files(resolver: &NapiResolver, napi_output: &NapiCliOutput)
     Ok(())
 }
 
-fn compile_root_package(resolver: &NapiResolver, node_binary: Option<&Path>) -> Result<()> {
+fn compile_root_package(resolver: NapiResolver, node_binary: Option<&Path>) -> Result<()> {
     let package_dir = resolver.main_package_dir();
     let output_dir = resolver.npm_output_dir(&NapiPackageKind::Main);
 
@@ -135,19 +136,19 @@ fn compile_root_package(resolver: &NapiResolver, node_binary: Option<&Path>) -> 
         std::fs::copy(source, destination)?;
     }
 
-    let generated_dir = resolver.generated_dir();
-    let generated_output_dir = resolver.generated_output_dir();
+    let bindings_dir = resolver.bindings_dir();
+    let bindings_output_dir = resolver.bindings_output_dir();
 
-    std::fs::create_dir_all(&generated_output_dir)?;
+    std::fs::create_dir_all(&bindings_output_dir)?;
 
-    for child in generated_dir.collect_children()? {
-        let destination = generated_output_dir.join(child.unwrap_name());
+    for child in bindings_dir.collect_children()? {
+        let destination = bindings_output_dir.join(child.unwrap_name());
 
         std::fs::copy(child, destination)?;
     }
 
     if let Some(node_binary) = node_binary {
-        let destination = generated_output_dir.join(node_binary.unwrap_name());
+        let destination = bindings_output_dir.join(node_binary.unwrap_name());
 
         std::fs::copy(node_binary, destination)?;
     }
@@ -155,7 +156,7 @@ fn compile_root_package(resolver: &NapiResolver, node_binary: Option<&Path>) -> 
     Ok(())
 }
 
-fn compile_platform_packages(resolver: &NapiResolver, node_binaries: &[PathBuf]) -> Result<()> {
+fn compile_platform_packages(resolver: NapiResolver, node_binaries: &[PathBuf]) -> Result<()> {
     for platform_dir in resolver.platforms_dir().collect_children()? {
         let platform = platform_dir.unwrap_name();
         let package_kind = NapiPackageKind::Platform(platform.to_owned());

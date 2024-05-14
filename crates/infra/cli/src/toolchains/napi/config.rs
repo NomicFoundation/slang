@@ -54,7 +54,7 @@ impl NapiConfig {
         Ok(Version::parse(version.trim())?)
     }
 
-    pub fn list_all_targets(resolver: &NapiResolver) -> Result<Vec<String>> {
+    pub fn list_all_targets(resolver: NapiResolver) -> Result<Vec<String>> {
         let package = load_package(&resolver.main_package_dir())?;
 
         let triples = package
@@ -71,7 +71,7 @@ impl NapiConfig {
     }
 
     /// Returns the target glibc version for the GNU targets.
-    pub fn target_glibc(resolver: &NapiResolver) -> Result<ZigGlibcVersion> {
+    pub fn target_glibc(resolver: NapiResolver) -> Result<ZigGlibcVersion> {
         let package = load_package(&resolver.main_package_dir())?;
 
         Ok(package

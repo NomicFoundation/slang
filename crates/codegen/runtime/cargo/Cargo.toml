@@ -1,0 +1,33 @@
+[package]
+name = "codegen_runtime_cargo"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+description = "Cargo runtime copied over by codegen"
+
+[build-dependencies]
+anyhow = { workspace = true }
+codegen_runtime_generator = { workspace = true }
+
+[dependencies]
+ariadne = { workspace = true }
+napi = { workspace = true, optional = true }
+napi-derive = { workspace = true, optional = true }
+nom = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true, optional = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
+thiserror = { workspace = true }
+
+# Since the source code is copied over as-is, we need to retain exact feature set with target crate,
+# i.e `slang_solidity_node_addon`.
+[features]
+default = ["slang_napi_interfaces"]
+slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
+
+[lints]
+workspace = true

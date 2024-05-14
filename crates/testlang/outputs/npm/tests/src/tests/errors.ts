@@ -27,5 +27,5 @@ test("invalid semantic version", () => {
 });
 
 test("unsupported language version", () => {
-  expect(() => new Language("0.0.0")).toThrowError("Unsupported Testlang language version '0.0.0'.");
+  expect(() => new Language("0.0.0")).toThrowError("Unsupported language version '0.0.0'.");
 });

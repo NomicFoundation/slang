@@ -7,6 +7,7 @@ use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
 use crate::text_index::TextIndex;
 
+#[derive(Debug)]
 pub struct ParserContext<'s> {
     source: &'s str,
     position: TextIndex,

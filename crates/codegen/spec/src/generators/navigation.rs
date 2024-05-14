@@ -2,7 +2,7 @@ use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::Result;
-use infra_utils::codegen::CodegenWriteOnly;
+use infra_utils::codegen::CodegenFileSystem;
 
 pub enum SpecEntry {
     Dir(SpecDir),
@@ -32,7 +32,7 @@ impl SpecDir {
         self.entries.push(SpecEntry::Page(page));
     }
 
-    pub fn write_to_disk(&self, codegen: &mut CodegenWriteOnly, parent_dir: &Path) -> Result<()> {
+    pub fn write_to_disk(&self, fs: &mut CodegenFileSystem, parent_dir: &Path) -> Result<()> {
         let SpecDir {
             title,
             slug,
@@ -60,7 +60,7 @@ impl SpecDir {
                     writeln!(index, "-   [{child_title}](./{child_slug}/index.md)")?;
                     writeln!(navigation, "-   [{child_title}](./{child_slug}/)")?;
 
-                    child.write_to_disk(codegen, &current_dir)?;
+                    child.write_to_disk(fs, &current_dir)?;
                 }
                 SpecEntry::Page(SpecPage {
                     title: child_title,
@@ -70,13 +70,13 @@ impl SpecDir {
                     writeln!(index, "-   [{child_title}](./{child_slug}.md)")?;
                     writeln!(navigation, "-   [{child_title}](./{child_slug}.md)")?;
 
-                    codegen.write_file(current_dir.join(format!("{child_slug}.md")), contents)?;
+                    fs.write_file(current_dir.join(format!("{child_slug}.md")), contents)?;
                 }
             }
         }
 
-        codegen.write_file(current_dir.join("index.md"), index)?;
-        codegen.write_file(current_dir.join(".navigation.md"), navigation)?;
+        fs.write_file(current_dir.join("index.md"), index)?;
+        fs.write_file(current_dir.join(".navigation.md"), navigation)?;
         Ok(())
     }
 }
