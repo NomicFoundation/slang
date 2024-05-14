@@ -12,7 +12,7 @@ anyhow = { workspace = true }
 codegen_runtime_generator = { workspace = true }
 
 [dependencies]
-ariadne = { workspace = true }
+ariadne = { workspace = true, optional = true }
 napi = { workspace = true, optional = true }
 napi-derive = { workspace = true, optional = true }
 nom = { workspace = true }
@@ -28,6 +28,8 @@ thiserror = { workspace = true }
 [features]
 default = ["slang_napi_interfaces"]
 slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
+# Only used by the `slang_solidity` CLI
+__private_ariadne = ["dep:ariadne"]
 
 [lints]
 workspace = true

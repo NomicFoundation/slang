@@ -49,7 +49,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let errors = output
             .errors()
             .iter()
-            .map(|error| error.to_error_report(source_id, &source, /* with_color */ false))
+            .map(|error| {
+                const COLOR: bool = false;
+                slang_solidity::diagnostic::render(error, source_id, &source, COLOR)
+            })
             .collect();
 
         let cursor = output.create_tree_cursor().with_labels();

@@ -797,10 +797,29 @@ export namespace cursor {
     query(queries: Array<query.Query>): query.QueryResultIterator;
   }
 }
+export namespace diagnostic {
+  /**
+   * Severity of the compiler diagnostic.
+   *
+   * Explicitly compatible with the LSP protocol.
+   */
+  export enum Severity {
+    Error = 1,
+    Warning = 2,
+    Information = 3,
+    Hint = 4,
+  }
+  export class Diagnostic {
+    severity(): Severity;
+    textRange(): text_index.TextRange;
+    message(): string;
+    code(): string;
+  }
+}
 export namespace parse_error {
   export class ParseError {
     get textRange(): text_index.TextRange;
-    toErrorReport(sourceId: string, source: string, withColor: boolean): string;
+    toDiagnostic(): diagnostic.Diagnostic;
   }
 }
 export namespace parse_output {

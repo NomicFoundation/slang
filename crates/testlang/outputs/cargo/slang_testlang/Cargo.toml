@@ -13,7 +13,6 @@ infra_utils = { workspace = true }
 testlang_language = { workspace = true }
 
 [dependencies]
-ariadne = { workspace = true }
 nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

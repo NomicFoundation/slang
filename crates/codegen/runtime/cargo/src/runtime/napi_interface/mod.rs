@@ -1,5 +1,6 @@
 pub mod cst;
 pub mod cursor;
+pub mod diagnostic;
 pub mod parse_error;
 pub mod parse_output;
 pub mod query;
