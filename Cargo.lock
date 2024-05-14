@@ -378,7 +378,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_parser_generator"
+name = "codegen_runtime_cargo"
+version = "0.14.2"
+dependencies = [
+ "anyhow",
+ "ariadne",
+ "codegen_runtime_generator",
+ "napi",
+ "napi-derive",
+ "nom",
+ "semver",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
+ "thiserror",
+]
+
+[[package]]
+name = "codegen_runtime_generator"
 version = "0.14.2"
 dependencies = [
  "Inflector",
@@ -395,17 +413,29 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_parser_runtime"
+name = "codegen_runtime_node_addon"
 version = "0.14.2"
 dependencies = [
  "ariadne",
  "napi",
+ "napi-build",
  "napi-derive",
  "nom",
+ "semver",
  "serde",
  "serde_json",
  "strum",
  "strum_macros",
+ "thiserror",
+]
+
+[[package]]
+name = "codegen_runtime_npm"
+version = "0.14.2"
+dependencies = [
+ "anyhow",
+ "codegen_runtime_generator",
+ "infra_utils",
 ]
 
 [[package]]
@@ -947,6 +977,8 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
+ "strum",
+ "strum_macros",
  "tempfile",
  "toml",
 ]
@@ -957,6 +989,7 @@ version = "0.14.2"
 dependencies = [
  "Inflector",
  "anyhow",
+ "ariadne",
  "cargo-emit",
  "console",
  "ignore",
@@ -1758,7 +1791,7 @@ dependencies = [
  "anyhow",
  "ariadne",
  "clap",
- "codegen_parser_generator",
+ "codegen_runtime_generator",
  "infra_utils",
  "nom",
  "semver",
@@ -1782,7 +1815,6 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "slang_solidity",
  "strum",
  "strum_macros",
  "thiserror",
@@ -1794,7 +1826,7 @@ version = "0.14.2"
 dependencies = [
  "anyhow",
  "ariadne",
- "codegen_parser_generator",
+ "codegen_runtime_generator",
  "infra_utils",
  "nom",
  "semver",
@@ -1817,7 +1849,6 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "slang_testlang",
  "strum",
  "strum_macros",
  "thiserror",
@@ -1883,7 +1914,7 @@ name = "solidity_npm_package"
 version = "0.14.2"
 dependencies = [
  "anyhow",
- "codegen_parser_generator",
+ "codegen_runtime_generator",
  "infra_utils",
  "solidity_language",
 ]
@@ -2082,7 +2113,7 @@ name = "testlang_npm_package"
 version = "0.14.2"
 dependencies = [
  "anyhow",
- "codegen_parser_generator",
+ "codegen_runtime_generator",
  "infra_utils",
  "testlang_language",
 ]

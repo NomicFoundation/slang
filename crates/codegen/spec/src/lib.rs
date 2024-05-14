@@ -14,7 +14,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use codegen_language_definition::model::Language;
-use infra_utils::codegen::CodegenWriteOnly;
+use infra_utils::codegen::CodegenFileSystem;
 
 use crate::generators::grammar_ebnf::generate_grammar_ebnf;
 use crate::generators::navigation::{SpecDir, SpecPage};
@@ -26,14 +26,14 @@ pub struct Spec;
 
 impl Spec {
     pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
+        let mut fs = CodegenFileSystem::new(&language.documentation_dir)?;
+
         let model = SpecModel::build(language);
-
-        let mut codegen = CodegenWriteOnly::new()?;
-
         let public_dir = Self::generate_public_dir(&model)?;
-        public_dir.write_to_disk(&mut codegen, output_dir)?;
 
-        codegen.write_file(
+        public_dir.write_to_disk(&mut fs, output_dir)?;
+
+        fs.write_file(
             output_dir.join("grammar.ebnf"),
             generate_grammar_ebnf(&model)?,
         )?;

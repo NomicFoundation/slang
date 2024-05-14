@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use infra_utils::cargo::CargoWorkspace;
+use strum_macros::EnumIter;
 
 use crate::toolchains::napi::cli::BuildTarget;
 
@@ -9,51 +10,57 @@ pub enum NapiPackageKind {
     Platform(String),
 }
 
-pub struct NapiResolver {
-    rust_crate: &'static str,
-    npm_package: &'static str,
+#[derive(Clone, Copy, EnumIter)]
+pub enum NapiResolver {
+    Codegen,
+    Solidity,
+    Testlang,
 }
 
 impl NapiResolver {
-    pub fn testlang() -> Self {
-        Self {
-            rust_crate: "slang_testlang_node_addon",
-            npm_package: "testlang_npm_package",
+    pub fn rust_crate_name(self) -> &'static str {
+        match self {
+            Self::Codegen => "codegen_runtime_node_addon",
+            Self::Solidity => "slang_solidity_node_addon",
+            Self::Testlang => "slang_testlang_node_addon",
         }
     }
 
-    pub fn solidity() -> Self {
-        Self {
-            rust_crate: "slang_solidity_node_addon",
-            npm_package: "solidity_npm_package",
+    pub fn main_package_name(self) -> &'static str {
+        match self {
+            Self::Codegen => "codegen_runtime_npm",
+            Self::Solidity => "solidity_npm_package",
+            Self::Testlang => "testlang_npm_package",
         }
     }
 
-    pub fn rust_crate_name(&self) -> &'static str {
-        self.rust_crate
+    pub fn rust_crate_dir(self) -> PathBuf {
+        CargoWorkspace::locate_source_crate(self.rust_crate_name()).unwrap()
     }
 
-    pub fn crate_dir(&self) -> PathBuf {
-        CargoWorkspace::locate_source_crate(self.rust_crate).unwrap()
+    pub fn main_package_dir(self) -> PathBuf {
+        CargoWorkspace::locate_source_crate(self.main_package_name()).unwrap()
     }
 
-    pub fn main_package_dir(&self) -> PathBuf {
-        CargoWorkspace::locate_source_crate(self.npm_package).unwrap()
-    }
-
-    pub fn templates_dir(&self) -> PathBuf {
-        self.main_package_dir().join("templates")
-    }
-
-    pub fn generated_dir(&self) -> PathBuf {
-        self.main_package_dir().join("src/generated")
-    }
-
-    pub fn platforms_dir(&self) -> PathBuf {
+    pub fn platforms_dir(self) -> PathBuf {
         self.main_package_dir().join("platforms")
     }
 
-    pub fn napi_output_dir(&self, target: &BuildTarget) -> PathBuf {
+    pub fn bindings_dir(self) -> PathBuf {
+        self.main_package_dir().join(match self {
+            // Source templates:
+            Self::Codegen => "src/runtime/napi-bindings/generated",
+            // Generated Languages:
+            Self::Solidity | Self::Testlang => "src/generated/napi-bindings/generated",
+        })
+    }
+
+    pub fn bindings_output_dir(self) -> PathBuf {
+        self.npm_output_dir(&NapiPackageKind::Main)
+            .join("napi-bindings/generated")
+    }
+
+    pub fn napi_output_dir(self, target: &BuildTarget) -> PathBuf {
         self.main_package_dir()
             .join("target/napi")
             .join(match target {
@@ -62,7 +69,7 @@ impl NapiResolver {
             })
     }
 
-    pub fn npm_output_dir(&self, kind: &NapiPackageKind) -> PathBuf {
+    pub fn npm_output_dir(self, kind: &NapiPackageKind) -> PathBuf {
         self.main_package_dir().join("target/npm").join(match kind {
             NapiPackageKind::Main => {
                 // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)
@@ -70,10 +77,5 @@ impl NapiResolver {
             }
             NapiPackageKind::Platform(platform) => platform,
         })
-    }
-
-    pub fn generated_output_dir(&self) -> PathBuf {
-        self.npm_output_dir(&NapiPackageKind::Main)
-            .join("generated")
     }
 }

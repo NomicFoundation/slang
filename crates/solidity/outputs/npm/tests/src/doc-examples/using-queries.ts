@@ -5,9 +5,8 @@ import fs from "node:fs/promises";
 
 import { Language } from "@nomicfoundation/slang/language";
 import { RuleKind } from "@nomicfoundation/slang/kinds";
-import { Query } from "@nomicfoundation/slang/query";
+import { Query, QueryResultIterator } from "@nomicfoundation/slang/query";
 import { RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
-import { query } from "@nomicfoundation/slang/generated";
 
 async function parseDocInputFile(filePath: string) {
   const inputPath = path.join(repoPath("documentation/public/user-guide/inputs"), filePath);
@@ -25,7 +24,7 @@ test("using queries", async () => {
     const cursor = parse_output.createTreeCursor();
 
     const query = Query.parse("[ContractDefinition]");
-    const results: query.QueryResultIterator = cursor.query([query]);
+    const results: QueryResultIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
     results; // Silence the unused warning
   }

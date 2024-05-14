@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::Codegen;
+use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
@@ -19,12 +19,12 @@ enum TestStatus {
 }
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
-    let mut codegen = Codegen::write_only()?;
-
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
         .join("cst_output")
         .join(parser_name)
         .join(test_name);
+
+    let mut fs = CodegenFileSystem::new(&test_dir)?;
 
     let input_path = test_dir.join("input.sol");
     let source_id = input_path.strip_repo_root()?.unwrap_str();
@@ -66,7 +66,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join("generated")
             .join(format!("{version}-{status}.yml"));
 
-        codegen.write_file(snapshot_path, &snapshot)?;
+        fs.write_file(snapshot_path, &snapshot)?;
     }
 
     Ok(())

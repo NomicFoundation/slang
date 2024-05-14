@@ -21,7 +21,6 @@ fn run_trybuild() {
     let tests = FileWalker::from_directory(crate_dir)
         .find(["src/fail/**/test.rs"])
         .unwrap()
-        .into_iter()
         .collect::<Vec<_>>();
 
     assert!(!tests.is_empty(), "No tests found.");

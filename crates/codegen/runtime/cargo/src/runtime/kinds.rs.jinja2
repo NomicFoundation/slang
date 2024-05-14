@@ -1,0 +1,149 @@
+#[cfg(feature = "slang_napi_interfaces")]
+use napi_derive::napi;
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum RuleKind {
+    {%- if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for variant in model.rule_kinds -%}
+            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+            {{ variant }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[strum(serialize_all = "snake_case")]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum NodeLabel {
+    // Built-in:
+    {# _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync) #}
+    Item,
+    Variant,
+    Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {% for variant in model.labels -%}
+            {{ variant | pascal_case }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum TokenKind {
+    // Built-in:
+    SKIPPED,
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for variant in model.token_kinds -%}
+            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+            {{ variant }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl TokenKind {
+    pub fn is_trivia(&self) -> bool {
+    {%- if rendering_in_stubs -%}
+        false
+    {%- else -%}
+        matches!(
+            self,
+            {%- for variant in model.trivia_scanner_names -%}
+                | Self::{{ variant }}
+            {%- endfor -%}
+        )
+    {%- endif -%}
+    }
+}
+
+/// The lexical context of the scanner.
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
+    {%- if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for context_name, _ in model.scanner_contexts %}
+            {{ context_name }},
+        {%- endfor %}
+    {%- endif -%}
+}
+
+/// Marker trait for type-level [`LexicalContext`] variants.
+pub(crate) trait IsLexicalContext {
+    /// Returns a run-time [`LexicalContext`] value.
+    fn value() -> LexicalContext;
+}
+
+#[allow(non_snake_case)]
+pub(crate) mod LexicalContextType {
+    {%- if not rendering_in_stubs -%}
+        {%- for context_name, _ in model.scanner_contexts %}
+            pub struct {{ context_name }};
+
+            impl super::IsLexicalContext for {{ context_name }} {
+                fn value() -> super::LexicalContext {
+                    super::LexicalContext::{{ context_name }}
+                }
+            }
+        {%- endfor %}
+    {%- endif -%}
+}

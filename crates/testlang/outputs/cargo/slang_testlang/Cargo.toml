@@ -8,7 +8,7 @@ name = "slang_testlang"
 
 [build-dependencies]
 anyhow = { workspace = true }
-codegen_parser_generator = { workspace = true }
+codegen_runtime_generator = { workspace = true }
 infra_utils = { workspace = true }
 testlang_language = { workspace = true }
 
@@ -23,4 +23,3 @@ thiserror = { workspace = true }
 
 [lints]
 workspace = true
-

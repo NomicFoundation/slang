@@ -1,12 +1,14 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-pub mod ast_selectors;
 pub mod cst;
 pub mod cursor;
 pub mod parse_error;
 pub mod parse_output;
 pub mod query;
 pub mod text_index;
+
+#[path = "generated/ast_selectors.rs"]
+pub mod ast_selectors;
 
 type RustCursor = crate::cursor::Cursor;
 type RustLabeledNode = crate::cst::LabeledNode;

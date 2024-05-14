@@ -7,6 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+ariadne = { workspace = true }
 cargo-emit = { workspace = true }
 console = { workspace = true }
 ignore = { workspace = true }

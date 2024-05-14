@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::terminal::Terminal;
+use strum::IntoEnumIterator;
 
 use crate::toolchains::mkdocs::Mkdocs;
 use crate::toolchains::napi::{NapiCompiler, NapiProfile, NapiResolver};
@@ -62,8 +63,10 @@ fn check_rustdoc() -> Result<()> {
 }
 
 fn check_npm() -> Result<()> {
-    NapiCompiler::run(&NapiResolver::testlang(), NapiProfile::Debug)?;
-    NapiCompiler::run(&NapiResolver::solidity(), NapiProfile::Debug)?;
+    for resolver in NapiResolver::iter() {
+        NapiCompiler::run(resolver, NapiProfile::Debug)?;
+    }
+
     Ok(())
 }
 

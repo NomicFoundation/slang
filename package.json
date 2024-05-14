@@ -2,6 +2,7 @@
   "name": "@slang-private/workspace",
   "private": true,
   "workspaces": [
+    "crates/codegen/runtime/npm",
     "crates/infra/cli",
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/npm/package/platforms/darwin-arm64",

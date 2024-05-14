@@ -6,8 +6,5 @@ fn unsupported_language_version() {
     let version = Version::parse("0.0.0").unwrap();
     let error = Language::new(version).unwrap_err();
 
-    assert_eq!(
-        error.to_string(),
-        "Unsupported Testlang language version '0.0.0'."
-    );
+    assert_eq!(error.to_string(), "Unsupported language version '0.0.0'.");
 }

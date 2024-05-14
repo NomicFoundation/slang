@@ -34,8 +34,6 @@ slang_napi_interfaces = [
 
 [build-dependencies]
 napi-build = { workspace = true }
-# Make sure to always rebuild the cdylib crate when the Rust code changes.
-slang_solidity = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
@@ -51,4 +49,3 @@ thiserror = { workspace = true }
 
 [lints]
 workspace = true
-
