@@ -830,6 +830,7 @@ export namespace diagnostic {
 export namespace parse_error {
   export class ParseError {
     get textRange(): text_index.TextRange;
+    message(): string;
     toDiagnostic(): diagnostic.Diagnostic;
   }
 }

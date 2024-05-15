@@ -26,6 +26,11 @@ impl ParseError {
         self.0.text_range().clone().into()
     }
 
+    #[napi(catch_unwind)]
+    pub fn message(&self) -> String {
+        self.0.message()
+    }
+
     #[napi(ts_return_type = "diagnostic.Diagnostic", catch_unwind)]
     pub fn to_diagnostic(&self) -> Diagnostic {
         // TODO: Figure out if we can auto-gen Diagnostics methods

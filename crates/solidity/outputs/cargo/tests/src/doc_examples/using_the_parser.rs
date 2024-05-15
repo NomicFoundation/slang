@@ -27,11 +27,9 @@ fn using_the_parser() -> Result<()> {
 
     // --8<-- [start:print-errors]
     for error in parse_output.errors() {
-        use slang_solidity::diagnostic::Diagnostic as _;
-
         eprintln!(
             "Error at byte offset {offset}: {message}",
-            offset = error.range().start.utf8,
+            offset = error.text_range().start.utf8,
             message = error.message()
         );
     }
