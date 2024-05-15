@@ -10,8 +10,8 @@ pub struct TextIndex {
     pub char: u32,
 }
 
-impl From<&RustTextIndex> for TextIndex {
-    fn from(value: &RustTextIndex) -> Self {
+impl From<RustTextIndex> for TextIndex {
+    fn from(value: RustTextIndex) -> Self {
         // We only support 32-byte indices on TS side.
         #[allow(clippy::cast_possible_truncation)]
         Self {
@@ -22,8 +22,8 @@ impl From<&RustTextIndex> for TextIndex {
     }
 }
 
-impl From<&TextIndex> for RustTextIndex {
-    fn from(value: &TextIndex) -> Self {
+impl From<TextIndex> for RustTextIndex {
+    fn from(value: TextIndex) -> Self {
         Self {
             utf8: value.utf8 as usize,
             utf16: value.utf16 as usize,
@@ -39,11 +39,11 @@ pub struct TextRange {
     pub end: TextIndex,
 }
 
-impl From<&RustTextRange> for TextRange {
-    fn from(value: &RustTextRange) -> Self {
+impl From<RustTextRange> for TextRange {
+    fn from(value: RustTextRange) -> Self {
         Self {
-            start: (&value.start).into(),
-            end: (&value.end).into(),
+            start: value.start.into(),
+            end: value.end.into(),
         }
     }
 }

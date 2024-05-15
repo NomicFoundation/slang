@@ -20,7 +20,7 @@ impl From<RustParseError> for ParseError {
 impl ParseError {
     #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
     pub fn text_range(&self) -> TextRange {
-        self.0.text_range().into()
+        self.0.text_range().clone().into()
     }
 
     #[napi(catch_unwind)]

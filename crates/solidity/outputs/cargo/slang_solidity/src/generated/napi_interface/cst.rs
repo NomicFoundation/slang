@@ -65,7 +65,7 @@ impl RuleNode {
         catch_unwind
     )]
     pub fn text_len(&self) -> TextIndex {
-        (&self.0.text_len).into()
+        self.0.text_len.into()
     }
 
     #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
@@ -83,7 +83,7 @@ impl RuleNode {
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
         RustNode::Rule(Rc::clone(&self.0))
-            .cursor_with_offset((&text_offset).into())
+            .cursor_with_offset(text_offset.into())
             .into()
     }
 
@@ -153,7 +153,7 @@ impl TokenNode {
     )]
     pub fn text_len(&self) -> TextIndex {
         let text_len: RustTextIndex = (&self.0.text).into();
-        (&text_len).into()
+        text_len.into()
     }
 
     #[napi(getter, catch_unwind)]
@@ -175,7 +175,7 @@ impl TokenNode {
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
         RustNode::Token(Rc::clone(&self.0))
-            .cursor_with_offset((&text_offset).into())
+            .cursor_with_offset(text_offset.into())
             .into()
     }
 }
