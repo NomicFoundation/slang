@@ -8,6 +8,9 @@ use crate::diagnostic::{self, Diagnostic};
 use crate::kinds::TokenKind;
 use crate::text_index::TextRange;
 
+/// Represents an error that occurred during parsing.
+///
+/// This could have been caused by a syntax error, or by reaching the end of the file when more tokens were expected.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
@@ -15,8 +18,14 @@ pub struct ParseError {
 }
 
 impl ParseError {
+    /// The text range at which the error occurred.
     pub fn text_range(&self) -> &TextRange {
         &self.text_range
+    }
+
+    /// Renders the message for this error.
+    pub fn message(&self) -> String {
+        Diagnostic::message(self)
     }
 }
 

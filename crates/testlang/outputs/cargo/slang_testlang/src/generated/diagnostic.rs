@@ -4,6 +4,10 @@ use std::borrow::Cow;
 
 use crate::text_index::TextRange;
 
+/// The severity of a diagnostic.
+///
+/// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
+#[non_exhaustive]
 #[repr(u8)]
 pub enum Severity {
     Error = 1,
@@ -12,12 +16,21 @@ pub enum Severity {
     Hint = 4,
 }
 
+/// A compiler diagnostic that can be rendered to a user.
 pub trait Diagnostic {
+    /// The character range of the source that this diagnostic applies to.
+    ///
+    /// Note that this is not tracking columns, so it is not compatible with LSP's
+    /// [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
+    /// at the moment.
     fn range(&self) -> TextRange;
+    /// The code (i.e. `S0123`), if any, associated with this diagnostic.
     fn code(&self) -> Option<Cow<'_, str>> {
         None
     }
+    /// The severity of this diagnostic.
     fn severity(&self) -> Severity;
+    /// The primary message associated with this diagnostic.
     fn message(&self) -> String;
 }
 
