@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use std::borrow::Cow;
-use std::error::Error;
 
 use crate::text_index::TextRange;
 
@@ -13,7 +12,7 @@ pub enum Severity {
     Hint = 4,
 }
 
-pub trait Diagnostic: Error {
+pub trait Diagnostic {
     fn range(&self) -> TextRange;
     fn code(&self) -> Option<Cow<'_, str>> {
         None

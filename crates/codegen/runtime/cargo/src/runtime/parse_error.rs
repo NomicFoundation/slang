@@ -64,6 +64,7 @@ impl Diagnostic for ParseError {
     }
 
     fn message(&self) -> String {
-        ToString::to_string(&self)
+        // Uses the impl from `Display` above.
+        self.to_string()
     }
 }
