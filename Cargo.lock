@@ -416,7 +416,6 @@ dependencies = [
 name = "codegen_runtime_node_addon"
 version = "0.14.2"
 dependencies = [
- "ariadne",
  "napi",
  "napi-build",
  "napi-derive",
