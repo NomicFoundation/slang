@@ -1,5 +1,4 @@
 mod definitions;
-mod queries;
 mod reachability;
 mod references;
 mod utils;
@@ -10,7 +9,6 @@ use indexmap::IndexMap;
 use proc_macro2::Span;
 
 use crate::compiler::analysis::definitions::analyze_definitions;
-use crate::compiler::analysis::queries::analyze_queries;
 use crate::compiler::analysis::reachability::analyze_reachability;
 use crate::compiler::analysis::references::analyze_references;
 use crate::compiler::version_set::VersionSet;
@@ -64,7 +62,6 @@ impl Analysis {
         }
 
         analyze_reachability(&mut analysis);
-        analyze_queries(&mut analysis);
 
         analysis
     }

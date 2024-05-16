@@ -11,78 +11,111 @@ use itertools::Itertools;
 
 use crate::commands::publish::DryRun;
 
-const USER_FACING_CRATE: &str = "slang_solidity";
+const USER_FACING_CRATES: &[&str] = &[
+    // Sorted by dependency order (from dependencies to dependents):
+    "metaslang_cst",
+    "slang_solidity",
+];
 
 pub fn publish_cargo(dry_run: DryRun) -> Result<()> {
-    let local_version = CargoWorkspace::local_version()?;
-    println!("Local version: {local_version}");
-
-    let published_version = CargoWorkspace::published_version(USER_FACING_CRATE)?;
-    println!("Published version: {published_version}");
-
-    if local_version == published_version {
-        println!("Skipping crate, since the local version is already published.");
-        return Ok(());
-    }
-
-    let crate_dir = &CargoWorkspace::locate_source_crate(USER_FACING_CRATE)?;
-
     let mut changeset = TemporaryChangeset::new(
         "infra/cargo-publish",
         "prepare Cargo packages for publishing",
     )?;
 
-    {
-        let cargo_toml = crate_dir.join("Cargo.toml");
-        strip_publish_markers(&cargo_toml)?;
-        changeset.expect_change(&cargo_toml);
+    let mut changed_crates = vec![];
+
+    for crate_name in USER_FACING_CRATES {
+        if prepare_for_publish(crate_name, &mut changeset)? {
+            changed_crates.push(crate_name);
+        }
     }
 
-    {
-        let build_rs = crate_dir.join("build.rs");
-        std::fs::remove_file(&build_rs)?;
-        changeset.expect_change(&build_rs);
+    if changed_crates.is_empty() {
+        println!("No crates to publish.");
+        return Ok(());
     }
 
-    {
-        update_cargo_lock()?;
-        changeset.expect_change(Path::repo_path("Cargo.lock"));
-    }
+    update_cargo_lock(&mut changeset)?;
 
     changeset.commit_changes()?;
 
-    run_cargo_publish(dry_run)?;
+    for crate_name in &changed_crates {
+        run_cargo_publish(crate_name, dry_run)?;
+    }
 
     changeset.revert_changes()?;
 
     Ok(())
 }
 
-fn strip_publish_markers(cargo_toml: &Path) -> Result<()> {
-    let contents = std::fs::read_to_string(cargo_toml)?;
+fn prepare_for_publish(crate_name: &str, changeset: &mut TemporaryChangeset) -> Result<bool> {
+    if let Ok(published_version) = CargoWorkspace::published_version(crate_name) {
+        println!("Published version of {crate_name}: {published_version}");
 
-    let contents = contents
+        let local_version = CargoWorkspace::local_version()?;
+        println!("Local version: {local_version}");
+
+        if local_version == published_version {
+            println!("Skipping crate {crate_name}, since the local version is already published.");
+            return Ok(false);
+        }
+    } else {
+        println!("No published version found for crate {crate_name}.");
+    }
+
+    let crate_dir = &CargoWorkspace::locate_source_crate(crate_name)?;
+
+    let cargo_toml = crate_dir.join("Cargo.toml");
+    if strip_publish_markers(&cargo_toml)? {
+        changeset.expect_change(&cargo_toml);
+    }
+
+    let build_rs = crate_dir.join("build.rs");
+    if build_rs.exists() {
+        std::fs::remove_file(&build_rs)?;
+        changeset.expect_change(&build_rs);
+    }
+
+    Ok(true)
+}
+
+fn strip_publish_markers(cargo_toml_path: &Path) -> Result<bool> {
+    let old_contents = std::fs::read_to_string(cargo_toml_path)?;
+
+    let new_contents = old_contents
         .lines()
         .filter(|line| !line.contains("__REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__"))
         .chain(once(""))
         .join("\n");
 
-    std::fs::write(cargo_toml, contents)?;
+    let contents_changed = new_contents != old_contents;
+    if contents_changed {
+        std::fs::write(cargo_toml_path, new_contents)?;
+    }
+
+    Ok(contents_changed)
+}
+
+fn update_cargo_lock(changeset: &mut TemporaryChangeset) -> Result<()> {
+    let cargo_lock_path = Path::repo_path("Cargo.lock");
+    let old_contents = std::fs::read_to_string(&cargo_lock_path)?;
+
+    Command::new("cargo").arg("check").run()?;
+
+    let new_contents = std::fs::read_to_string(&cargo_lock_path)?;
+
+    if new_contents != old_contents {
+        changeset.expect_change(&cargo_lock_path);
+    }
 
     Ok(())
 }
 
-fn update_cargo_lock() -> Result<()> {
-    Command::new("cargo")
-        .arg("check")
-        .property("--package", USER_FACING_CRATE)
-        .run()
-}
-
-fn run_cargo_publish(dry_run: DryRun) -> Result<()> {
+fn run_cargo_publish(crate_name: &str, dry_run: DryRun) -> Result<()> {
     let mut command = Command::new("cargo")
         .arg("publish")
-        .property("--package", USER_FACING_CRATE)
+        .property("--package", crate_name)
         .flag("--all-features");
 
     if dry_run.is_yes() || !GitHub::is_running_in_ci() {

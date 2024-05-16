@@ -37,9 +37,9 @@ napi-build = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
+metaslang_cst = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
-nom = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }

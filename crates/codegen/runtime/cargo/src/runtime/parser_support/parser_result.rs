@@ -1,5 +1,7 @@
 use std::ops::ControlFlow;
 
+use metaslang_cst::TerminalKind;
+
 use crate::cst::{self, LabeledNode, Node};
 use crate::kinds::{NodeLabel, RuleKind, TokenKind};
 use crate::text_index::TextIndex;

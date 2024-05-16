@@ -28,6 +28,8 @@ pub enum RuleKind {
     {%- endif -%}
 }
 
+impl metaslang_cst::NonTerminalKind for RuleKind {}
+
 #[derive(
     Debug,
     Eq,
@@ -67,6 +69,8 @@ pub enum NodeLabel {
     {%- endif -%}
 }
 
+impl metaslang_cst::EdgeKind for NodeLabel {}
+
 #[derive(
     Debug,
     Eq,
@@ -98,18 +102,18 @@ pub enum TokenKind {
     {%- endif -%}
 }
 
-impl TokenKind {
-    pub fn is_trivia(&self) -> bool {
-    {%- if rendering_in_stubs -%}
-        false
-    {%- else -%}
-        matches!(
-            self,
-            {%- for variant in model.trivia_scanner_names -%}
-                | Self::{{ variant }}
-            {%- endfor -%}
-        )
-    {%- endif -%}
+impl metaslang_cst::TerminalKind for TokenKind {
+    fn is_trivia(&self) -> bool {
+        {%- if rendering_in_stubs -%}
+            false
+        {%- else -%}
+            matches!(
+                self,
+                {%- for variant in model.trivia_scanner_names -%}
+                    | Self::{{ variant }}
+                {%- endfor -%}
+            )
+        {%- endif -%}
     }
 }
 
