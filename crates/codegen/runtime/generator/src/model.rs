@@ -10,7 +10,6 @@ use codegen_grammar::{
     TriviaParserDefinitionRef,
 };
 use codegen_language_definition::model::Language;
-use indexmap::IndexMap;
 use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
@@ -40,8 +39,6 @@ pub struct RuntimeModel {
     trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
     ast: AstModel,
-
-    queries: IndexMap<String, Vec<&'static str>>,
 
     #[serde(skip)]
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -75,15 +72,6 @@ impl RuntimeModel {
         // TODO(#638): Absorb the relevant fields into the model tree after migration is complete:
         model.all_versions = language.versions.iter().cloned().collect();
         model.ast = AstModel::create(language);
-        model
-            .queries
-            .extend(language.queries.keys().enumerate().map(|(index, key)| {
-                // TODO(#554): parse the query and extract the real captures:
-                (
-                    key.to_string(),
-                    ["foo", "bar", "baz"].into_iter().take(index + 1).collect(),
-                )
-            }));
 
         model
     }
@@ -205,7 +193,7 @@ impl GrammarVisitor for RuntimeModel {
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
         let trivia_scanners = {
-            use codegen_grammar::Visitable as _;
+            use codegen_grammar::Visitable;
 
             #[derive(Default)]
             struct CollectTriviaScanners {

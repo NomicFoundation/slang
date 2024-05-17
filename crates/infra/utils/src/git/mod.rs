@@ -44,6 +44,11 @@ impl TemporaryChangeset {
             self.expected_changes.iter().sorted().collect_vec(),
         );
 
+        if self.expected_changes.is_empty() {
+            println!("No changes to commit, no need to create a branch.");
+            return Ok(());
+        }
+
         Command::new("git")
             .arg("checkout")
             .property("-b", &self.head_branch)
@@ -67,6 +72,10 @@ impl TemporaryChangeset {
     }
 
     pub fn revert_changes(&self) -> Result<()> {
+        if self.expected_changes.is_empty() {
+            return Ok(());
+        }
+
         let current_branch = get_current_branch()?;
         assert_eq!(current_branch, self.head_branch);
 

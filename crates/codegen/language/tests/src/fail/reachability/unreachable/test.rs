@@ -20,8 +20,7 @@ codegen_language_macros::compile!(Language(
                 Struct(name = Baz2, fields = (field = Required(Baz1)))
             ]
         )]
-    )],
-    queries = ()
+    )]
 ));
 
 fn main() {}

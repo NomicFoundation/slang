@@ -1,7 +1,7 @@
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{RuleNode, TokenNode};
+use crate::napi_interface::cst::{NAPINodeExtensions, RuleNode, TokenNode};
 use crate::napi_interface::{cursor, parse_error, RustParseOutput};
 
 #[napi(namespace = "parse_output")]
@@ -17,7 +17,7 @@ impl From<RustParseOutput> for ParseOutput {
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn tree(&self) -> Either<RuleNode, TokenNode> {
-        self.0.tree().into()
+        self.0.tree().into_js_either_node()
     }
 
     #[napi(ts_return_type = "Array<parse_error.ParseError>", catch_unwind)]

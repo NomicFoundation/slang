@@ -1,0 +1,26 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = true
+
+name = "metaslang_cst"
+description = "A generic library for building, navigating and querying concrete syntax trees."
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+    "Nomic Foundation <packages@nomic.foundation>",
+    "Antony Blakey <antony@nomic.foundation>",
+    "Igor Matuszewski <igor@nomic.foundation>",
+    "Omar Tawfik <omar@nomic.foundation>",
+]
+
+readme = "README.md"
+license = "MIT"
+keywords = ["parser"]
+categories = ["compilers", "parsing", "parser-implementations"]
+
+[dependencies]
+nom = { workspace = true }
+serde = { workspace = true }
+strum = { workspace = true }
