@@ -10,8 +10,7 @@ codegen_language_macros::compile!(Language(
     sections = [Section(
         // title = "Section One"
         topics = []
-    )],
-    queries = ()
+    )]
 ));
 
 fn main() {}

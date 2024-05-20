@@ -23,6 +23,8 @@ pub enum RuleKind {
     Stub3,
 }
 
+impl metaslang_cst::NonTerminalKind for RuleKind {}
+
 #[derive(
     Debug,
     Eq,
@@ -55,6 +57,8 @@ pub enum NodeLabel {
     Stub3,
 }
 
+impl metaslang_cst::EdgeKind for NodeLabel {}
+
 #[derive(
     Debug,
     Eq,
@@ -79,8 +83,8 @@ pub enum TokenKind {
     Stub3,
 }
 
-impl TokenKind {
-    pub fn is_trivia(&self) -> bool {
+impl metaslang_cst::TerminalKind for TokenKind {
+    fn is_trivia(&self) -> bool {
         false
     }
 }

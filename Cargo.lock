@@ -384,9 +384,9 @@ dependencies = [
  "anyhow",
  "ariadne",
  "codegen_runtime_generator",
+ "metaslang_cst",
  "napi",
  "napi-derive",
- "nom",
  "semver",
  "serde",
  "serde_json",
@@ -416,10 +416,10 @@ dependencies = [
 name = "codegen_runtime_node_addon"
 version = "0.14.2"
 dependencies = [
+ "metaslang_cst",
  "napi",
  "napi-build",
  "napi-derive",
- "nom",
  "semver",
  "serde",
  "serde_json",
@@ -1110,6 +1110,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "metaslang_cst"
+version = "0.14.2"
+dependencies = [
+ "nom",
+ "serde",
+ "strum",
+]
+
+[[package]]
 name = "mime"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1792,7 +1801,7 @@ dependencies = [
  "clap",
  "codegen_runtime_generator",
  "infra_utils",
- "nom",
+ "metaslang_cst",
  "semver",
  "serde",
  "serde_json",
@@ -1806,10 +1815,10 @@ dependencies = [
 name = "slang_solidity_node_addon"
 version = "0.14.2"
 dependencies = [
+ "metaslang_cst",
  "napi",
  "napi-build",
  "napi-derive",
- "nom",
  "semver",
  "serde",
  "serde_json",
@@ -1825,7 +1834,7 @@ dependencies = [
  "anyhow",
  "codegen_runtime_generator",
  "infra_utils",
- "nom",
+ "metaslang_cst",
  "semver",
  "serde",
  "strum",
@@ -1838,10 +1847,10 @@ dependencies = [
 name = "slang_testlang_node_addon"
 version = "0.14.2"
 dependencies = [
+ "metaslang_cst",
  "napi",
  "napi-build",
  "napi-derive",
- "nom",
  "semver",
  "serde",
  "serde_json",

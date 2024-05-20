@@ -23,6 +23,8 @@ members = [
     "crates/infra/cli",
     "crates/infra/utils",
 
+    "crates/metaslang/cst",
+
     "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/slang_solidity_node_addon",
     "crates/solidity/outputs/cargo/slang_solidity",
@@ -59,6 +61,8 @@ codegen_testing = { path = "crates/codegen/testing" }
 
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
+
+metaslang_cst = { path = "crates/metaslang/cst" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity" }
 slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon" }

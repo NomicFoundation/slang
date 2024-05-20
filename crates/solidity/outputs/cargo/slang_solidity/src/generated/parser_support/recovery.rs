@@ -7,7 +7,7 @@ use crate::parse_error::ParseError;
 use crate::parser_support::context::ParserContext;
 use crate::parser_support::parser_result::SkippedUntil;
 use crate::parser_support::ParserResult;
-use crate::text_index::{TextRange, TextRangeExtensions as _};
+use crate::text_index::{TextRange, TextRangeExtensions};
 
 /// How many tokens have to be matched to trigger the error recovery.
 /// For ambiguous syntaxes this needs to be set to at least N, where N
