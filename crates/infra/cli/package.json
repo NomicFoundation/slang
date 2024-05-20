@@ -4,8 +4,8 @@
   "devDependencies": {
     "@actions/github": "6.0.0",
     "@changesets/changelog-github": "0.5.0",
-    "@changesets/cli": "2.27.1",
-    "@types/node": "20.12.11",
+    "@changesets/cli": "2.27.2",
+    "@types/node": "20.12.12",
     "cspell": "8.8.1",
     "markdown-link-check": "3.12.1",
     "markdownlint-cli": "0.40.0",
