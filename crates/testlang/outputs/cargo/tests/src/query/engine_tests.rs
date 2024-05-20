@@ -1,6 +1,5 @@
 use std::collections::{BTreeMap, HashMap};
 
-// This crate is copied to another crate, so all imports should be relative
 use slang_testlang::cst::{LabeledNode, Node};
 use slang_testlang::cursor::Cursor;
 use slang_testlang::kinds::{NodeLabel, RuleKind, TokenKind};
