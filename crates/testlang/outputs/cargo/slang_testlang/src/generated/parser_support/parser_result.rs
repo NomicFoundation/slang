@@ -140,7 +140,7 @@ impl Match {
         self.nodes
             .iter()
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
-            .all(|node| node.as_token_with_kind(TokenKind::SKIPPED).is_none())
+            .all(|node| !node.is_invalid())
     }
 }
 
@@ -214,7 +214,7 @@ impl IncompleteMatch {
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
             .try_fold(0u8, |mut acc, node| {
                 match node {
-                    Node::Token(tok) if tok.kind != TokenKind::SKIPPED && !tok.kind.is_trivia() => {
+                    Node::Token(tok) if !tok.kind.is_trivia() => {
                         acc += 1;
                     }
                     _ => {}

@@ -20,7 +20,7 @@ Tree:
           - (leading_trivia꞉ Whitespace): " " # (8..9)
           - (open_paren꞉ OpenParen): "(" # (9..10)
           - (parameters꞉ Parameters): [] # (10..10)
-          - (SKIPPED): "byte" # (10..14)
+          - (UNRECOGNIZED): "byte" # (10..14)
           - (close_paren꞉ CloseParen): ")" # (14..15)
       - (attributes꞉ FunctionTypeAttributes): # " internal pure" (15..29)
           - (item꞉ FunctionTypeAttribute): # " internal" (15..24)

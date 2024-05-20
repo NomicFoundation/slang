@@ -44,6 +44,7 @@ pub mod cst {
     pub type Node = cst::Node<KindTypes>;
     pub type RuleNode = cst::NonTerminalNode<KindTypes>;
     pub type TokenNode = cst::TerminalNode<KindTypes>;
+    pub type InvalidNode = cst::InvalidNode<KindTypes>;
     pub type LabeledNode = cst::LabeledNode<KindTypes>;
 }
 

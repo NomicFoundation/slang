@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "number := 0\n" # (0..12)
+  - (UNRECOGNIZED): "number := 0\n" # (0..12)

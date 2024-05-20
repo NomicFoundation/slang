@@ -9,7 +9,7 @@ pub mod text_index;
 pub mod ast_selectors;
 
 type RustCursor = crate::cursor::Cursor;
-type RustLabeledNode = crate::cst::LabeledNode;
+type RustInvalidNode = crate::cst::InvalidNode;
 type RustNode = crate::cst::Node;
 type RustParseError = crate::parse_error::ParseError;
 type RustParseOutput = crate::parse_output::ParseOutput;

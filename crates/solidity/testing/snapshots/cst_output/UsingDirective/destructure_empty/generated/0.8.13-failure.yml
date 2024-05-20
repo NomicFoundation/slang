@@ -22,7 +22,7 @@ Tree:
       - (clause꞉ UsingClause) ► (variant꞉ UsingDeconstruction): # " {}" (46..49)
           - (leading_trivia꞉ Whitespace): " " # (46..47)
           - (open_brace꞉ OpenBrace): "{" # (47..48)
-          - (SKIPPED): "" # (48..48)
+          - (MISSING): "" # (48..48)
           - (close_brace꞉ CloseBrace): "}" # (48..49)
       - (leading_trivia꞉ Whitespace): " " # (49..50)
       - (for_keyword꞉ ForKeyword): "for" # (50..53)

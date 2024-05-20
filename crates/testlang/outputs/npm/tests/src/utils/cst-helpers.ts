@@ -1,4 +1,4 @@
-import { NodeType, RuleNode, TokenNode } from "@slang-private/slang-testlang/cst";
+import { NodeType, RuleNode, TokenNode, InvalidNode } from "@slang-private/slang-testlang/cst";
 import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
 
 export function expectRule(node: unknown, kind: RuleKind): asserts node is RuleNode {
@@ -16,4 +16,8 @@ export function expectToken(node: unknown, kind: TokenKind, text: string): asser
   expect(token.type).toEqual(NodeType.Token);
   expect(token.kind).toEqual(kind);
   expect(token.text).toEqual(text);
+}
+
+export function expectInvalid(node: unknown): asserts node is InvalidNode {
+  expect(node).toBeInstanceOf(InvalidNode);
 }

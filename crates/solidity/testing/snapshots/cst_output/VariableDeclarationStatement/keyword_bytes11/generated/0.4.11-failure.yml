@@ -17,6 +17,6 @@ Tree:
   - (VariableDeclarationStatement): # "uint bytes11;\n" (0..14)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
-      - (SKIPPED): "bytes11" # (5..12)
+      - (UNRECOGNIZED): "bytes11" # (5..12)
       - (semicolon꞉ Semicolon): ";" # (12..13)
       - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)

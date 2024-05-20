@@ -4,11 +4,16 @@
 
 use std::rc::Rc;
 
-use napi::Either;
+use napi::bindgen_prelude::Either3;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, RuleNode, TokenNode};
-use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, TokenKind};
+use crate::napi_interface::cst::{InvalidNode, NAPINodeExtensions, RuleNode, TokenNode};
+#[allow(unused_imports)] // testlang does not use it
+use crate::napi_interface::TokenKind;
+use crate::napi_interface::{RuleKind, RustNode, RustRuleNode};
+
+// NOTE: We cannot use it in `#[napi]`-decorated functions, because it doesn't have type information.
+type EitherNode = Either3<RuleNode, TokenNode, InvalidNode>;
 
 //
 // Sequences:
@@ -21,7 +26,7 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
 )]
 pub fn select_sequence(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Option<Either3<RuleNode, TokenNode, InvalidNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 } //
   // Choices:
@@ -30,7 +35,7 @@ pub fn select_sequence(
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Either<RuleNode, TokenNode>> {
+) -> Result<Either3<RuleNode, TokenNode, InvalidNode>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -45,7 +50,7 @@ pub fn select_choice(
 )]
 pub fn select_repeated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+) -> Result<Vec<Either3<RuleNode, TokenNode, InvalidNode>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -60,7 +65,7 @@ pub fn select_repeated(
 )]
 pub fn select_separated(
     #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+) -> Result<Vec<Vec<Either3<RuleNode, TokenNode, InvalidNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -81,36 +86,27 @@ impl Selector {
         }
     }
 
-    fn select(
-        &mut self,
-        filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Either<RuleNode, TokenNode>> {
+    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<EitherNode> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
         }
     }
 
-    fn try_select(
-        &mut self,
-        filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<Either<RuleNode, TokenNode>>> {
+    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<EitherNode>> {
         while let Some(child) = self.node.children.get(self.index) {
-            match child {
+            match &**child {
                 node if node.is_trivia() => {
                     // skip trivia, since it's not part of the AST
                     self.index += 1;
                     continue;
                 }
-                RustLabeledNode {
-                    label: _,
-                    node: RustNode::Token(token),
-                } if matches!(token.kind, TokenKind::SKIPPED) => {
-                    return Error::SkippedToken(self.index).into();
+                RustNode::Invalid(_) => {
+                    return Error::InvalidNode(self.index).into();
                 }
-                labeled if filter(labeled) => {
+                node if filter(node) => {
                     self.index += 1;
-                    return Ok(Some(labeled.node.clone().into_js_either_node()));
+                    return Ok(Some(node.clone().into_js_either_node()));
                 }
                 _ => {
                     break;
@@ -147,8 +143,8 @@ enum Error {
     MissingChild(usize),
 
     // Can happen if the user decided to use an incorrect/incomplete CST node.
-    #[error("Unexpected SKIPPED token at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
-    SkippedToken(usize),
+    #[error("Unexpected invalid node at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
+    InvalidNode(usize),
 }
 
 impl<T> From<Error> for Result<T> {

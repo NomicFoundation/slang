@@ -28,7 +28,7 @@ export namespace kinds {
     Stub3 = "Stub3",
   }
   export enum TokenKind {
-    SKIPPED = "SKIPPED",
+    INVALID = "INVALID",
     Stub1 = "Stub1",
     Stub2 = "Stub2",
     Stub3 = "Stub3",
@@ -46,6 +46,7 @@ export namespace cst {
   export enum NodeType {
     Rule = "Rule",
     Token = "Token",
+    Invalid = "Invalid",
   }
   export class RuleNode {
     get type(): NodeType.Rule;
@@ -70,6 +71,7 @@ export namespace cst {
     toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
+  export class InvalidNode {}
 }
 export namespace cursor {
   export class Cursor {

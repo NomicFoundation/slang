@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "sha3 := 0\n" # (0..10)
+  - (UNRECOGNIZED): "sha3 := 0\n" # (0..10)

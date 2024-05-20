@@ -260,7 +260,7 @@ impl Lexer for Language {
                 // Skip a character if possible and if we didn't recognize a token
                 None if input.peek().is_some() => {
                     let _ = input.next();
-                    Some(ScannedToken::Single(TokenKind::SKIPPED))
+                    Some(ScannedToken::Single(TokenKind::INVALID))
                 },
                 None => None,
             }

@@ -7,7 +7,7 @@ use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
-use slang_solidity::cst::Node;
+use slang_solidity::cst::{InvalidNode, Node};
 use slang_solidity::cursor::CursorWithLabels;
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::text_index::TextRangeExtensions;
@@ -138,6 +138,10 @@ fn render_key(cursor: &mut CursorWithLabels) -> String {
     let kind = match cursor.node() {
         Node::Rule(rule) => rule.kind.to_string(),
         Node::Token(token) => token.kind.to_string(),
+        Node::Invalid(invalid) => match &*invalid {
+            InvalidNode::Unrecognized(_) => "UNRECOGNIZED".to_string(),
+            InvalidNode::Missing(_) => "MISSING".to_string(),
+        },
     };
 
     if let Some(label) = cursor.label() {
@@ -155,7 +159,7 @@ fn render_value(cursor: &mut CursorWithLabels, source: &str) -> String {
     match cursor.node() {
         Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
         Node::Rule(_) => format!("# {preview} ({utf8_range:?})"),
-        Node::Token(_) => format!("{preview} # ({utf8_range:?})"),
+        Node::Token(_) | Node::Invalid(_) => format!("{preview} # ({utf8_range:?})"),
     }
 }
 

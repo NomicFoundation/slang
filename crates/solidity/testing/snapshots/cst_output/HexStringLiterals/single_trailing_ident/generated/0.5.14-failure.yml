@@ -16,4 +16,4 @@ Errors: # 1 total
 Tree:
   - (HexStringLiterals): # 'hex"12"b\n' (0..9)
       - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"12"' # (0..7)
-      - (SKIPPED): "b\n" # (7..9)
+      - (UNRECOGNIZED): "b\n" # (7..9)

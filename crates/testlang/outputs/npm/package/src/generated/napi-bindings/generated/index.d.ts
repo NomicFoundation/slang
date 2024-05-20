@@ -45,7 +45,7 @@ export namespace kinds {
     Semicolon = "Semicolon",
   }
   export enum TokenKind {
-    SKIPPED = "SKIPPED",
+    INVALID = "INVALID",
     Bang = "Bang",
     CloseBracket = "CloseBracket",
     DelimitedIdentifier = "DelimitedIdentifier",
@@ -74,6 +74,7 @@ export namespace cst {
   export enum NodeType {
     Rule = "Rule",
     Token = "Token",
+    Invalid = "Invalid",
   }
   export class RuleNode {
     get type(): NodeType.Rule;
@@ -98,6 +99,7 @@ export namespace cst {
     toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
+  export class InvalidNode {}
 }
 export namespace cursor {
   export class Cursor {

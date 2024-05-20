@@ -359,7 +359,7 @@ export namespace kinds {
     WhileKeyword = "WhileKeyword",
   }
   export enum TokenKind {
-    SKIPPED = "SKIPPED",
+    INVALID = "INVALID",
     AbicoderKeyword = "AbicoderKeyword",
     AbstractKeyword = "AbstractKeyword",
     AddressKeyword = "AddressKeyword",
@@ -741,6 +741,7 @@ export namespace cst {
   export enum NodeType {
     Rule = "Rule",
     Token = "Token",
+    Invalid = "Invalid",
   }
   export class RuleNode {
     get type(): NodeType.Rule;
@@ -765,6 +766,7 @@ export namespace cst {
     toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
+  export class InvalidNode {}
 }
 export namespace cursor {
   export class Cursor {

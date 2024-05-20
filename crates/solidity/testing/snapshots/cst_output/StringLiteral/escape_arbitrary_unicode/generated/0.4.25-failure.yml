@@ -16,4 +16,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '// Disallowed post 0.4.25\n"\✅"\n' # (0..33)
+  - (UNRECOGNIZED): '// Disallowed post 0.4.25\n"\✅"\n' # (0..33)

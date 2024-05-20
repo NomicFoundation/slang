@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
-use crate::cst::{self, LabeledNode};
-use crate::kinds::TokenKind;
+use crate::cst::{self, InvalidNode, LabeledNode};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::parse_output::ParseOutput;
@@ -54,13 +53,21 @@ where
         match result {
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
-            ParserResult::NoMatch(no_match) => ParseOutput {
-                parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
-                errors: vec![ParseError::new(
-                    TextIndex::ZERO..input.into(),
-                    no_match.expected_tokens,
-                )],
-            },
+            ParserResult::NoMatch(no_match) => {
+                let invalid = if input.is_empty() {
+                    InvalidNode::Missing(no_match.expected_tokens.iter().copied().collect())
+                } else {
+                    InvalidNode::Unrecognized(input.to_string())
+                };
+
+                ParseOutput {
+                    parse_tree: cst::Node::Invalid(Rc::new(invalid)),
+                    errors: vec![ParseError::new(
+                        TextIndex::ZERO..input.into(),
+                        no_match.expected_tokens,
+                    )],
+                }
+            }
             some_match => {
                 let (nodes, expected_tokens) = match some_match {
                     ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
@@ -101,10 +108,14 @@ where
                     } else {
                         start
                     };
-                    let skipped_node =
-                        cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
+
                     let mut new_children = topmost_rule.children.clone();
-                    new_children.push(LabeledNode::anonymous(skipped_node));
+                    let invalid = if input[start.utf8..].is_empty() {
+                        InvalidNode::Missing(expected_tokens.iter().copied().collect())
+                    } else {
+                        InvalidNode::Unrecognized(input[start.utf8..].to_string())
+                    };
+                    new_children.push(LabeledNode::anonymous(cst::Node::Invalid(Rc::new(invalid))));
 
                     let mut errors = stream.into_errors();
                     errors.push(ParseError::new(start..input.into(), expected_tokens));
@@ -117,12 +128,12 @@ where
                     let parse_tree = cst::Node::Rule(topmost_rule);
                     let errors = stream.into_errors();
 
-                    // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
+                    // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes
                     debug_assert_eq!(
                         errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
-                            .all(|node| node.as_token_with_kind(TokenKind::SKIPPED).is_none())
+                            .all(|node| !node.is_invalid())
                     );
 
                     ParseOutput { parse_tree, errors }

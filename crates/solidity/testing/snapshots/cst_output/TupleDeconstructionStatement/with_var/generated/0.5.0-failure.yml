@@ -16,4 +16,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '// "var" should be disabled in "0.5.0":\nvar (foo, ...' # (0..62)
+  - (UNRECOGNIZED): '// "var" should be disabled in "0.5.0":\nvar (foo, ...' # (0..62)

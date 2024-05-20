@@ -16,4 +16,4 @@ Errors: # 1 total
 Tree:
   - (DecimalNumberExpression): # "1." (0..2)
       - (literal꞉ DecimalLiteral): "1" # (0..1)
-      - (SKIPPED): "." # (1..2)
+      - (UNRECOGNIZED): "." # (1..2)

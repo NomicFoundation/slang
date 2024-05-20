@@ -5,11 +5,11 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
-use napi::Either;
+use napi::bindgen_prelude::Either3;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
-use crate::napi_interface::cst::{self, NAPINodeExtensions, RuleNode, TokenNode};
+use crate::napi_interface::cst::{self, InvalidNode, NAPINodeExtensions, RuleNode, TokenNode};
 use crate::napi_interface::{text_index, NodeLabel, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
@@ -54,7 +54,7 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn node(&self) -> Either<RuleNode, TokenNode> {
+    pub fn node(&self) -> Either3<RuleNode, TokenNode, InvalidNode> {
         self.0.node().into_js_either_node()
     }
 

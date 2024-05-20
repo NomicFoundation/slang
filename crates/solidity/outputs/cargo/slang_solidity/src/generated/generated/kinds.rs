@@ -406,7 +406,7 @@ impl metaslang_cst::EdgeKind for NodeLabel {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     // Built-in:
-    SKIPPED,
+    INVALID,
 
     // Generated:
     AbicoderKeyword,

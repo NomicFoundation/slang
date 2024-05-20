@@ -2,7 +2,6 @@ use std::mem;
 use std::ops::ControlFlow;
 
 use crate::cst;
-use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
 use crate::parser_support::context::{Marker, ParserContext};
 use crate::parser_support::ParserResult;
@@ -137,7 +136,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .iter()
         .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
-            cst::Node::Token(token) if token.kind != TokenKind::SKIPPED => Some(token.text.len()),
+            cst::Node::Token(token) => Some(token.text.len()),
             _ => None,
         })
         .sum()

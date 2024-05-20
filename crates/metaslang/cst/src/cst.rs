@@ -1,3 +1,5 @@
+use std::collections::BTreeSet;
+use std::ops::Deref;
 use std::rc::Rc;
 
 use serde::Serialize;
@@ -21,9 +23,16 @@ pub struct NonTerminalNode<T: KindTypes> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub enum InvalidNode<T: KindTypes> {
+    Unrecognized(String),
+    Missing(BTreeSet<T::TerminalKind>),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node<T: KindTypes> {
     Rule(Rc<NonTerminalNode<T>>),
     Token(Rc<TerminalNode<T>>),
+    Invalid(Rc<InvalidNode<T>>),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -66,6 +75,10 @@ impl<T: KindTypes> Node<T> {
         match self {
             Self::Rule(node) => node.text_len,
             Self::Token(node) => (&node.text).into(),
+            Self::Invalid(invalid) => match invalid.deref() {
+                InvalidNode::Unrecognized(text) => text.into(),
+                InvalidNode::Missing(_) => TextIndex::ZERO,
+            },
         }
     }
 
@@ -74,6 +87,7 @@ impl<T: KindTypes> Node<T> {
         match self {
             Self::Rule(node) => &node.children,
             Self::Token(_) => &[],
+            Self::Invalid(_) => &[],
         }
     }
 
@@ -87,6 +101,10 @@ impl<T: KindTypes> Node<T> {
         match self {
             Self::Rule(rule) => rule.unparse(),
             Self::Token(token) => token.text.clone(),
+            Self::Invalid(invalid) => match &*invalid {
+                InvalidNode::Unrecognized(text) => text.clone(),
+                InvalidNode::Missing(_) => "".to_string(),
+            },
         }
     }
 
@@ -94,6 +112,7 @@ impl<T: KindTypes> Node<T> {
         match self {
             Self::Rule(rule) => Some(rule),
             Self::Token(..) => None,
+            Self::Invalid(..) => None,
         }
     }
 
@@ -105,6 +124,7 @@ impl<T: KindTypes> Node<T> {
         match self {
             Self::Rule(rule) => Some(rule),
             Self::Token(..) => None,
+            Self::Invalid(..) => None,
         }
     }
 
@@ -130,7 +150,7 @@ impl<T: KindTypes> Node<T> {
     pub fn into_token(self) -> Option<Rc<TerminalNode<T>>> {
         match self {
             Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            _ => None,
         }
     }
 
@@ -141,7 +161,7 @@ impl<T: KindTypes> Node<T> {
     pub fn as_token(&self) -> Option<&Rc<TerminalNode<T>>> {
         match self {
             Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            _ => None,
         }
     }
 
@@ -163,8 +183,18 @@ impl<T: KindTypes> Node<T> {
 
     pub fn is_trivia(&self) -> bool {
         match self {
-            Self::Rule(_) => false,
             Self::Token(token) => token.kind.is_trivia(),
+            Self::Rule(_) => false,
+            Self::Invalid(_) => false,
+        }
+    }
+
+    pub fn is_invalid(&self) -> bool {
+        match self {
+            Self::Rule(_) => false,
+            // NOTE: `INVALID` tokens are emitted by the lexer but should never end up in the tree
+            Self::Token(_) => false,
+            Self::Invalid(_) => true,
         }
     }
 }

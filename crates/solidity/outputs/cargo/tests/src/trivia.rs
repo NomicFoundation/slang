@@ -32,6 +32,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
         .create_tree_cursor()
         .filter_map(|node| match node {
             Node::Rule(_) => None,
+            Node::Invalid(_) => None,
 
             Node::Token(token) => {
                 assert_eq!(token.kind, TokenKind::EndOfLine);

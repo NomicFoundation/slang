@@ -2,31 +2,33 @@
 
 use std::rc::Rc;
 
-use napi::Either;
+use napi::bindgen_prelude::Either3;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
 use crate::napi_interface::text_index::TextIndex;
 use crate::napi_interface::{
-    RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
+    RuleKind, RustInvalidNode, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
 };
 
 #[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
     Rule,
     Token,
+    Invalid,
 }
 
 pub trait NAPINodeExtensions {
-    fn into_js_either_node(self) -> Either<RuleNode, TokenNode>;
+    fn into_js_either_node(self) -> Either3<RuleNode, TokenNode, InvalidNode>;
 }
 
 impl NAPINodeExtensions for RustNode {
     /// Converts the node into `napi` wrapper for `RuleNode | TokenNode` JS object.
-    fn into_js_either_node(self) -> Either<RuleNode, TokenNode> {
+    fn into_js_either_node(self) -> Either3<RuleNode, TokenNode, InvalidNode> {
         match self {
-            RustNode::Rule(rule) => Either::A(RuleNode(rule)),
-            RustNode::Token(token) => Either::B(TokenNode(token)),
+            RustNode::Rule(rule) => Either3::A(RuleNode(rule)),
+            RustNode::Token(token) => Either3::B(TokenNode(token)),
+            RustNode::Invalid(invalid) => Either3::C(InvalidNode(invalid)),
         }
     }
 }
@@ -38,6 +40,10 @@ pub struct RuleNode(pub(crate) Rc<RustRuleNode>);
 #[derive(Debug)]
 #[napi(namespace = "cst")]
 pub struct TokenNode(pub(crate) Rc<RustTokenNode>);
+
+#[derive(Debug)]
+#[napi(namespace = "cst")]
+pub struct InvalidNode(pub(crate) Rc<RustInvalidNode>);
 
 #[napi(namespace = "cst")]
 impl RuleNode {
@@ -67,7 +73,7 @@ impl RuleNode {
     }
 
     #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
-    pub fn children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+    pub fn children(&self) -> Vec<Either3<RuleNode, TokenNode, InvalidNode>> {
         self.0
             .children
             .iter()
@@ -107,7 +113,7 @@ impl RuleNode {
         skip_typescript,
         catch_unwind
     )]
-    pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+    pub fn __children(&self) -> Vec<Either3<RuleNode, TokenNode, InvalidNode>> {
         Self::children(self)
     }
 

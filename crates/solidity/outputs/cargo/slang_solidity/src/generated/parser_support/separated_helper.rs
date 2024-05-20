@@ -1,6 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, LabeledNode};
+use std::rc::Rc;
+
+use crate::cst::{self, InvalidNode, LabeledNode};
 use crate::kinds::{IsLexicalContext, NodeLabel, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
@@ -55,10 +57,15 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            accum.push(LabeledNode::anonymous(cst::Node::token(
-                                TokenKind::SKIPPED,
-                                input.content(skipped_range.utf8()),
-                            )));
+                            let invalid = if skipped_range.is_empty() {
+                                InvalidNode::Missing(
+                                    incomplete.expected_tokens.iter().copied().collect(),
+                                )
+                            } else {
+                                InvalidNode::Unrecognized(input.content(skipped_range.utf8()))
+                            };
+                            accum
+                                .push(LabeledNode::anonymous(cst::Node::Invalid(Rc::new(invalid))));
                             input.emit(ParseError {
                                 text_range: skipped_range,
                                 tokens_that_would_have_allowed_more_progress: incomplete

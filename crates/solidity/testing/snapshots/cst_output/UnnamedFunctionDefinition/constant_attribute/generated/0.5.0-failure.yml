@@ -25,4 +25,4 @@ Tree:
           - (parameters꞉ Parameters): [] # (52..52)
           - (close_paren꞉ CloseParen): ")" # (52..53)
       - (attributes꞉ UnnamedFunctionAttributes): [] # (53..53)
-      - (SKIPPED): " constant {}\n" # (53..66)
+      - (UNRECOGNIZED): " constant {}\n" # (53..66)

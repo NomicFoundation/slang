@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "payable(msg.sender)\n" # (0..20)
+  - (UNRECOGNIZED): "payable(msg.sender)\n" # (0..20)

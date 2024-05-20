@@ -24,4 +24,4 @@ Tree:
           - (parameters꞉ Parameters): [] # (11..11)
           - (close_paren꞉ CloseParen): ")" # (11..12)
       - (attributes꞉ FunctionAttributes): [] # (12..12)
-      - (SKIPPED): " pure {}\n" # (12..21)
+      - (UNRECOGNIZED): " pure {}\n" # (12..21)

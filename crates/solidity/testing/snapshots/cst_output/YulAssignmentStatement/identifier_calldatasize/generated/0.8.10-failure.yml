@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "calldatasize := 0\n" # (0..18)
+  - (UNRECOGNIZED): "calldatasize := 0\n" # (0..18)

@@ -25,4 +25,4 @@ Tree:
                       - (leading_trivia꞉ Whitespace): " " # (5..6)
                       - (item꞉ Identifier): "FooBar" # (6..12)
           - (close_paren꞉ CloseParen): ")" # (12..13)
-      - (SKIPPED): "{value: 5}()\n" # (13..26)
+      - (UNRECOGNIZED): "{value: 5}()\n" # (13..26)

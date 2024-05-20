@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "emit" # (0..4)
+  - (UNRECOGNIZED): "emit" # (0..4)

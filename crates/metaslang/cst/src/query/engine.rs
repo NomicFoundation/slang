@@ -50,6 +50,8 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     Some(*label) == self.label() && token.text == *text
                 }
             },
+            // We do not allow matching on incomplete/invalid nodes
+            Node::Invalid(_) => false,
         }
     }
 }

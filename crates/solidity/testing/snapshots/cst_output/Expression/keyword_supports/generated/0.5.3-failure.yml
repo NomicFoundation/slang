@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "supports" # (0..8)
+  - (UNRECOGNIZED): "supports" # (0..8)

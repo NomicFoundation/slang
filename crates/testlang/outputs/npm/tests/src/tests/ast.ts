@@ -12,7 +12,7 @@ import {
   TreeNode,
   TreeNodeChild,
 } from "@slang-private/slang-testlang/ast";
-import { expectRule, expectToken } from "../utils/cst-helpers";
+import { expectInvalid, expectRule, expectToken } from "../utils/cst-helpers";
 import { TokenNode } from "@slang-private/slang-testlang/cst";
 
 test("create and use sequence types", () => {
@@ -126,16 +126,16 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   expectRule(cst, RuleKind.Tree);
   expect(cst.children()).toHaveLength(2);
 
-  const [contractKeyword, skippedToken] = cst.children();
+  const [contractKeyword, missingNode] = cst.children();
   expectToken(contractKeyword, TokenKind.TreeKeyword, "tree");
-  expectToken(skippedToken, TokenKind.SKIPPED, "");
+  expectInvalid(missingNode);
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);
   expectRule(tree.cst, RuleKind.Tree);
 
   expect(() => tree.node).toThrowError(
-    "Unexpected SKIPPED token at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
+    "Unexpected invalid node at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
   );
 });
 

@@ -10,3 +10,6 @@ export type RuleNode = generated.cst.RuleNode;
 
 export const TokenNode = generated.cst.TokenNode;
 export type TokenNode = generated.cst.TokenNode;
+
+export const InvalidNode = generated.cst.InvalidNode;
+export type InvalidNode = generated.cst.InvalidNode;

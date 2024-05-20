@@ -33,6 +33,6 @@ Tree:
                           - (leading_trivia꞉ Whitespace): "\t" # (160..161)
                           - (variant꞉ YulIdentifier): "f" # (161..162)
                       - (separator꞉ Period): "." # (162..163)
-          - (SKIPPED): "address := newAddress\n\tf.selector := newSelector\n" # (163..212)
+          - (UNRECOGNIZED): "address := newAddress\n\tf.selector := newSelector\n" # (163..212)
           - (close_brace꞉ CloseBrace): "}" # (212..213)
           - (trailing_trivia꞉ EndOfLine): "\n" # (213..214)

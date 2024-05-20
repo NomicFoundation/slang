@@ -22,5 +22,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): " " # (1..2)
                   - (variant꞉ Identifier): "unchecked" # (2..11)
               - (leading_trivia꞉ Whitespace): " " # (11..12)
-      - (SKIPPED): "{ x = 1; } " # (12..23)
+      - (UNRECOGNIZED): "{ x = 1; } " # (12..23)
       - (close_brace꞉ CloseBrace): "}" # (23..24)

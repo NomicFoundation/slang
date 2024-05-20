@@ -1,11 +1,13 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use std::ops::ControlFlow;
+use std::rc::Rc;
 
+use metaslang_cst::cst::InvalidNode;
 use metaslang_cst::TerminalKind;
 
 use crate::cst::{self, LabeledNode};
-use crate::kinds::{NodeLabel, TokenKind};
+use crate::kinds::NodeLabel;
 use crate::parser_support::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
@@ -145,14 +147,20 @@ impl SequenceHelper {
                                 debug_assert!(false, "Recovery skipped to a rule: {rule:?}");
                                 Err(())
                             }
+                            cst::Node::Invalid(invalid) => {
+                                debug_assert!(false, "Recovery skipped to an invalid node: {invalid:?}");
+                                Err(())
+                            }
                         }
                     });
                     debug_assert_eq!(next_token, Ok(Some(running.found)));
 
-                    running.nodes.push(LabeledNode::anonymous(cst::Node::token(
-                        TokenKind::SKIPPED,
-                        std::mem::take(&mut running.skipped),
-                    )));
+                    let invalid = if running.skipped.is_empty() {
+                        InvalidNode::Missing([running.expected].into_iter().collect())
+                    } else {
+                        InvalidNode::Unrecognized(std::mem::take(&mut running.skipped))
+                    };
+                    running.nodes.push(LabeledNode::anonymous(cst::Node::Invalid(Rc::new(invalid))));
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {
