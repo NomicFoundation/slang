@@ -177,16 +177,16 @@ fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, Kind<T>, VerboseError<&str
     terminated(raw_identifier, multispace0)
         .map(|id| {
             T::TerminalKind::try_from(id.as_str())
-                .map(Kind::Token)
-                .or_else(|_| T::NonTerminalKind::try_from(id.as_str()).map(Kind::Rule))
+                .map(Kind::NonTerminal)
+                .or_else(|_| T::NonTerminalKind::try_from(id.as_str()).map(Kind::Terminal))
                 .unwrap() // TODO
         })
         .parse(i)
 }
 
-fn label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeKind, VerboseError<&str>> {
+fn label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeLabel, VerboseError<&str>> {
     terminated(raw_identifier, token(':'))
-        .map(|id| T::EdgeKind::try_from(id.as_str()).unwrap())
+        .map(|id| T::EdgeLabel::try_from(id.as_str()).unwrap())
         .parse(i)
 }
 

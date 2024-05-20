@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    IsLexicalContext, LexicalContext, LexicalContextType, NodeLabel, RuleKind, TokenKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -65,7 +65,7 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
         unreachable!("Attempting to parse in stubs: {kind}: {input}")
     }
 }
@@ -79,7 +79,7 @@ impl Lexer for Language {
         unreachable!("Invoking trailing_trivia in stubs: {input:#?}")
     }
 
-    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
         unreachable!("Invoking delimiters in stubs.")
     }
 
@@ -123,7 +123,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

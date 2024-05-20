@@ -45,7 +45,7 @@ to do it:
 
 -   According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
 -   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendent()`
--   According to the kind of the next node, i.e. `goToNextTokenWithKind(kind)`, `goToNextRuleWithKind(kind)`
+-   According to the kind of the next node, i.e. `goToNextTerminalWithKind(kind)`, `goToNextNonterminalWithKind(kind)`
 
 As such, the cursor is stateful and keeps track of the path it has taken through the CST.
 It starts at the root it was created at and is completed when it reaches its root when navigating forward.

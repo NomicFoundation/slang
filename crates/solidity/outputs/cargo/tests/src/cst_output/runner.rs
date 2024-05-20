@@ -4,7 +4,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
 use strum_macros::Display;
 
@@ -34,7 +34,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_output = None;
 
     for version in VERSION_BREAKS {
-        let tested_rule_kind = RuleKind::from_str(parser_name)
+        let tested_rule_kind = NonTerminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
         let output = Language::new(version.clone())?.parse(tested_rule_kind, &source);
@@ -52,7 +52,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .map(|error| error.to_error_report(source_id, &source, /* with_color */ false))
             .collect();
 
-        let cursor = output.create_tree_cursor().with_labels();
+        let cursor = output.create_tree_cursor().with_edges();
 
         let status = if output.is_valid() {
             TestStatus::Success

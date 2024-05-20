@@ -1,26 +1,26 @@
 use std::collections::{BTreeMap, HashMap};
 
-use slang_testlang::cst::{LabeledNode, Node};
+use slang_testlang::cst::{Edge, Node};
 use slang_testlang::cursor::Cursor;
-use slang_testlang::kinds::{NodeLabel, RuleKind, TokenKind};
+use slang_testlang::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
 use slang_testlang::query::{Query, QueryResult};
 use slang_testlang::text_index::TextIndex;
 
-fn token(label: Option<NodeLabel>, kind: TokenKind, text: &str) -> LabeledNode {
-    LabeledNode {
+fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
+    Edge {
         label,
-        node: Node::token(kind, text.to_string()),
+        node: Node::terminal(kind, text.to_string()),
     }
 }
 
-fn rule<const N: usize>(
-    label: Option<NodeLabel>,
-    kind: RuleKind,
-    children: [LabeledNode; N],
-) -> LabeledNode {
-    LabeledNode {
+fn nonterminal<const N: usize>(
+    label: Option<EdgeLabel>,
+    kind: NonTerminalKind,
+    children: [Edge; N],
+) -> Edge {
+    Edge {
         label,
-        node: Node::rule(kind, children.into_iter().collect()),
+        node: Node::nonterminal(kind, children.into_iter().collect()),
     }
 }
 
@@ -46,28 +46,28 @@ macro_rules! cst_tree {
     ( @inner [ $($child:expr)* ]) => { [ $($child),* ] };
 
     ( @inner [ $($child:expr)* ] $label:ident : $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* token(Some(NodeLabel::$label), TokenKind::$token_kind, $text) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* terminal(Some(EdgeLabel::$label), TerminalKind::$token_kind, $text) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* token(None, TokenKind::$token_kind, $text) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* terminal(None, TerminalKind::$token_kind, $text) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $label:ident : $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* rule(Some(NodeLabel::$label), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(Some(NodeLabel::$label), NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* rule(None, RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(None, NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
-    // Start with a rule
+    // Start with a nonterminal
     ( $label:ident : $rule_kind:ident [ $($children:tt)* ] ) => {
-        rule(Some(NodeLabel::$label), RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(Some(NodeLabel::$label), NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*))
     };
 
     ( $rule_kind:ident [ $($children:tt)* ] ) => {
-        rule(None, RuleKind::$rule_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(None, NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*))
     };
 
 }
@@ -84,7 +84,7 @@ macro_rules! query_results {
 
 }
 
-fn run_query_test(tree: &LabeledNode, query: &str, results: Vec<BTreeMap<String, Vec<String>>>) {
+fn run_query_test(tree: &Edge, query: &str, results: Vec<BTreeMap<String, Vec<String>>>) {
     let cursor = tree.cursor_with_offset(TextIndex::ZERO);
     let query = vec![Query::parse(query).unwrap()];
     let mut results = results.into_iter();
@@ -101,7 +101,7 @@ fn run_query_test(tree: &LabeledNode, query: &str, results: Vec<BTreeMap<String,
     }
 }
 
-fn common_test_tree() -> LabeledNode {
+fn common_test_tree() -> Edge {
     cst_tree!(
         TreeNode [
             Node: DelimitedIdentifier "A",

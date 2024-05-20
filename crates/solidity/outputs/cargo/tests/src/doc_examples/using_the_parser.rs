@@ -9,7 +9,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
     use slang_solidity::cst::Node;
-    use slang_solidity::kinds::{RuleKind, TokenKind};
+    use slang_solidity::kinds::{NonTerminalKind, TerminalKind};
     use slang_solidity::language::Language;
     // --8<-- [end:imports]
 
@@ -22,7 +22,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:parse-input]
     let language = Language::new(Version::parse("0.8.0")?)?;
 
-    let parse_output = language.parse(RuleKind::ContractDefinition, source);
+    let parse_output = language.parse(NonTerminalKind::ContractDefinition, source);
     // --8<-- [end:parse-input]
 
     // --8<-- [start:print-errors]
@@ -38,18 +38,22 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:inspect-tree]
     let parse_tree = parse_output.tree();
 
-    let contract = parse_tree.as_rule().unwrap();
-    assert_eq!(contract.kind, RuleKind::ContractDefinition);
+    let contract = parse_tree.as_nonterminal().unwrap();
+    assert_eq!(contract.kind, NonTerminalKind::ContractDefinition);
     assert_eq!(contract.children.len(), 7);
 
     let children = &contract.children;
-    assert!(matches!(&children[0].node, Node::Token(t) if t.kind == TokenKind::ContractKeyword));
-    assert!(matches!(&children[1].node, Node::Token(t) if t.kind == TokenKind::Whitespace));
-    assert!(matches!(&children[2].node, Node::Token(t) if t.kind == TokenKind::Identifier));
-    assert!(matches!(&children[3].node, Node::Token(t) if t.kind == TokenKind::Whitespace));
-    assert!(matches!(&children[4].node, Node::Token(t) if t.kind == TokenKind::OpenBrace));
-    assert!(matches!(&children[5].node, Node::Rule(r) if r.kind == RuleKind::ContractMembers));
-    assert!(matches!(&children[6].node, Node::Token(t) if t.kind == TokenKind::CloseBrace));
+    assert!(
+        matches!(&children[0].node, Node::Terminal(t) if t.kind == TerminalKind::ContractKeyword)
+    );
+    assert!(matches!(&children[1].node, Node::Terminal(t) if t.kind == TerminalKind::Whitespace));
+    assert!(matches!(&children[2].node, Node::Terminal(t) if t.kind == TerminalKind::Identifier));
+    assert!(matches!(&children[3].node, Node::Terminal(t) if t.kind == TerminalKind::Whitespace));
+    assert!(matches!(&children[4].node, Node::Terminal(t) if t.kind == TerminalKind::OpenBrace));
+    assert!(
+        matches!(&children[5].node, Node::NonTerminal(r) if r.kind == NonTerminalKind::ContractMembers)
+    );
+    assert!(matches!(&children[6].node, Node::Terminal(t) if t.kind == TerminalKind::CloseBrace));
     // --8<-- [end:inspect-tree]
 
     // --8<-- [start:unparse-node]

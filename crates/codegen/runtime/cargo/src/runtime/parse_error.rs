@@ -1,12 +1,12 @@
 use std::collections::BTreeSet;
 
-use crate::kinds::TokenKind;
+use crate::kinds::TerminalKind;
 use crate::text_index::{TextRange, TextRangeExtensions};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
-    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
+    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
 }
 
 impl ParseError {
@@ -22,7 +22,7 @@ impl ParseError {
 
         tokens_that_would_have_allowed_more_progress
             .into_iter()
-            .map(TokenKind::to_string)
+            .map(TerminalKind::to_string)
             .collect()
     }
 
@@ -34,7 +34,7 @@ impl ParseError {
 impl ParseError {
     pub(crate) fn new(
         text_range: TextRange,
-        tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
+        tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {
         Self {
             text_range,

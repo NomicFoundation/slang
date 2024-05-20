@@ -8,12 +8,12 @@ use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use slang_solidity::cst::Node;
-use slang_solidity::cursor::CursorWithLabels;
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::cursor::CursorWithEdges;
+use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::text_index::TextRangeExtensions;
 use solidity_language::SolidityDefinition;
 
-pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithLabels) -> Result<String> {
+pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithEdges) -> Result<String> {
     let mut w = String::new();
 
     write_source(&mut w, source)?;
@@ -88,7 +88,7 @@ fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree(w: &mut String, mut cursor: CursorWithLabels, source: &str) -> Result<()> {
+fn write_tree(w: &mut String, mut cursor: CursorWithEdges, source: &str) -> Result<()> {
     writeln!(w, "Tree:")?;
     write_node(w, &mut cursor, source, 0)?;
 
@@ -98,7 +98,7 @@ fn write_tree(w: &mut String, mut cursor: CursorWithLabels, source: &str) -> Res
 
 fn write_node(
     w: &mut String,
-    cursor: &mut CursorWithLabels,
+    cursor: &mut CursorWithEdges,
     source: &str,
     depth: usize,
 ) -> Result<()> {
@@ -109,7 +109,7 @@ fn write_node(
         write!(w, "{key}", key = render_key(cursor))?;
 
         // If it is a parent wih a single child, inline them on the same line:
-        if matches!(cursor.node(), Node::Rule(rule) if rule.children.len() == 1 && !NON_INLINABLE.contains(&rule.kind))
+        if matches!(cursor.node(), Node::NonTerminal(rule) if rule.children.len() == 1 && !NON_INLINABLE.contains(&rule.kind))
         {
             let parent_range = cursor.text_range();
             assert!(cursor.go_to_next());
@@ -134,10 +134,10 @@ fn write_node(
     Ok(())
 }
 
-fn render_key(cursor: &mut CursorWithLabels) -> String {
+fn render_key(cursor: &mut CursorWithEdges) -> String {
     let kind = match cursor.node() {
-        Node::Rule(rule) => rule.kind.to_string(),
-        Node::Token(token) => token.kind.to_string(),
+        Node::NonTerminal(nonterminal) => nonterminal.kind.to_string(),
+        Node::Terminal(terminal) => terminal.kind.to_string(),
     };
 
     if let Some(label) = cursor.label() {
@@ -147,15 +147,15 @@ fn render_key(cursor: &mut CursorWithLabels) -> String {
     }
 }
 
-fn render_value(cursor: &mut CursorWithLabels, source: &str) -> String {
+fn render_value(cursor: &mut CursorWithEdges, source: &str) -> String {
     let utf8_range = cursor.text_range().utf8();
     let char_range = cursor.text_range().char();
     let preview = render_preview(source, &char_range);
 
     match cursor.node() {
-        Node::Rule(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
-        Node::Rule(_) => format!("# {preview} ({utf8_range:?})"),
-        Node::Token(_) => format!("{preview} # ({utf8_range:?})"),
+        Node::NonTerminal(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
+        Node::NonTerminal(_) => format!("# {preview} ({utf8_range:?})"),
+        Node::Terminal(_) => format!("{preview} # ({utf8_range:?})"),
     }
 }
 
@@ -191,7 +191,7 @@ fn render_preview(source: &str, char_range: &Range<usize>) -> String {
     }
 }
 
-static NON_INLINABLE: Lazy<HashSet<RuleKind>> = Lazy::new(|| {
+static NON_INLINABLE: Lazy<HashSet<NonTerminalKind>> = Lazy::new(|| {
     let mut kinds = HashSet::new();
 
     for item in SolidityDefinition::create().items() {
