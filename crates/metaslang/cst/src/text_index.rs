@@ -37,26 +37,12 @@ impl Display for TextIndex {
     }
 }
 
-impl From<&str> for TextIndex {
-    fn from(s: &str) -> Self {
+impl<T: AsRef<str>> From<T> for TextIndex {
+    fn from(s: T) -> Self {
         let mut utf8 = 0;
         let mut utf16 = 0;
         let mut char = 0;
-        for c in s.chars() {
-            utf8 += c.len_utf8();
-            utf16 += c.len_utf16();
-            char += 1;
-        }
-        Self { utf8, utf16, char }
-    }
-}
-
-impl From<&String> for TextIndex {
-    fn from(s: &String) -> Self {
-        let mut utf8 = 0;
-        let mut utf16 = 0;
-        let mut char = 0;
-        for c in s.chars() {
+        for c in s.as_ref().chars() {
             utf8 += c.len_utf8();
             utf16 += c.len_utf16();
             char += 1;

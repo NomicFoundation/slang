@@ -65,12 +65,12 @@ impl Cursor {
 
     #[napi(getter, ts_return_type = "text_index.TextIndex", catch_unwind)]
     pub fn text_offset(&self) -> TextIndex {
-        (&self.0.text_offset()).into()
+        self.0.text_offset().into()
     }
 
     #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
     pub fn text_range(&self) -> TextRange {
-        (&self.0.text_range()).into()
+        self.0.text_range().into()
     }
 
     #[allow(clippy::cast_possible_truncation)] // Cursor depth can't reasonably be larger than u32
