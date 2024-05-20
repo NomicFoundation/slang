@@ -5,7 +5,6 @@ use crate::text_index::TextRange;
 /// The severity of a diagnostic.
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
-#[non_exhaustive]
 #[repr(u8)]
 pub enum Severity {
     Error = 1,
