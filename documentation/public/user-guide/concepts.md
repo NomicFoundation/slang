@@ -13,9 +13,9 @@ Providing an accurate language version is important, as it affects the shape of 
 You can use the `Language::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
 
 The `Language::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
-Each `parse()` operation accepts the input source code, and a `RuleKind` variant.
-This allows callers to parse entire source files (`RuleKind::SourceUnit`), individual contracts (`RuleKind::ContractDefinition`),
-methods (`RuleKind::FunctionDefinition`), or any other syntax nodes.
+Each `parse()` operation accepts the input source code, and a `NonTerminalKind` variant.
+This allows callers to parse entire source files (`NonTerminalKind::SourceUnit`), individual contracts (`NonTerminalKind::ContractDefinition`),
+methods (`NonTerminalKind::FunctionDefinition`), or any other syntax nodes.
 
 The resulting `ParseOutput` object will contain syntax errors (if any), and the syntax tree corresponding to the input source code.
 
@@ -31,8 +31,8 @@ tokens (lexical analysis), which then in turn is _parsed_ into the CST.
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
--   `RuleNode` (aka _non-terminals_) represent sub-trees, containing a vector of other `Node` children.
--   `TokenNode` (aka _terminals_) are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
+-   `NonTerminalNode` represent sub-trees, containing a vector of other `Node` children.
+-   `TerminalNode` are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
 
 ## CST Cursors
 
@@ -77,7 +77,7 @@ looking for matches. This mode of operation can replace all visitor patterns.
 AST types are a set of abstractions that provide a typed view of the untyped CST nodes.
 You can convert any untyped CST node to its corresponding AST type using their constructors.
 
-There is a corresponding type for each `RuleKind` (non-terminal) in the language. AST types are immutable.
+There is a corresponding type for each `NonTerminalKind` in the language. AST types are immutable.
 Additionally, their fields are constructed lazily as they are accessed for the first time.
 
 AST nodes maintain a reference to the CST node they were constructed from,
