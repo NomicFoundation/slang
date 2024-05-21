@@ -1,5 +1,4 @@
 use std::collections::BTreeSet;
-use std::error::Error;
 use std::fmt;
 
 use crate::diagnostic::{self, Diagnostic};
@@ -39,7 +38,6 @@ impl ParseError {
     }
 }
 
-impl Error for ParseError {}
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.tokens_that_would_have_allowed_more_progress.is_empty() {
