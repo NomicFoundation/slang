@@ -5,7 +5,9 @@ use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
-use crate::parser_definition::{make_choice, make_sequence, ParserDefinitionNodeExtensions};
+use crate::parser::parser_definition::{
+    make_choice, make_sequence, ParserDefinitionNodeExtensions,
+};
 
 pub trait PrecedenceParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;

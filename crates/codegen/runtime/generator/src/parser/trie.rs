@@ -8,7 +8,7 @@ use codegen_grammar::{
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser_definition::VersionQualityRangeVecExtensions;
+use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<T: Payload> {

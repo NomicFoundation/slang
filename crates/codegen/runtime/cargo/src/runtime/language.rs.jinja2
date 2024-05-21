@@ -29,7 +29,7 @@ use crate::parser_support::{
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     {%- if not rendering_in_stubs -%}
-        {%- for version in model.referenced_versions -%}
+        {%- for version in model.parser.referenced_versions -%}
             pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
         {%- endfor -%}
     {%- endif -%}
@@ -67,7 +67,7 @@ impl Language {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 {%- if not rendering_in_stubs -%}
-                    {%- for version in model.referenced_versions %}
+                    {%- for version in model.parser.referenced_versions %}
                         version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                     {%- endfor -%}
                 {%- endif -%}
@@ -89,12 +89,12 @@ impl Language {
         *         Parser Functions
         ********************************************/
 
-        {% for parser_name, parser_code in model.parser_functions %}
+        {% for parser_name, parser_code in model.parser.parser_functions %}
             #[allow(unused_assignments, unused_parens)]
             fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
         {% endfor %}
 
-        {% for parser_name, parser_code in model.trivia_parser_functions %}
+        {% for parser_name, parser_code in model.parser.trivia_parser_functions %}
             #[allow(unused_assignments, unused_parens)]
             fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
         {% endfor %}
@@ -103,12 +103,12 @@ impl Language {
         *         Scanner Functions
         ********************************************/
 
-        {% for scanner_name, scanner_code in model.scanner_functions %}
+        {% for scanner_name, scanner_code in model.parser.scanner_functions %}
             #[allow(unused_assignments, unused_parens)]
             fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ scanner_code }} }
         {% endfor %}
 
-        {%- for keyword_name, keyword_code in model.keyword_compound_scanners %}
+        {%- for keyword_name, keyword_code in model.parser.keyword_compound_scanners %}
             #[inline]
             fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ keyword_code }} }
         {% endfor %}
@@ -120,7 +120,7 @@ impl Language {
             unreachable!("Attempting to parse in stubs: {kind}: {input}")
         {%- else -%}
             match kind {
-                {%- for parser_name, _ in model.parser_functions -%}
+                {%- for parser_name, _ in model.parser.parser_functions -%}
                     RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
                 {%- endfor -%}
             }
@@ -150,7 +150,7 @@ impl Lexer for Language {
             unreachable!("Invoking delimiters in stubs.")
         {%- else -%}
             match LexCtx::value() {
-                {%- for context_name, context in model.scanner_contexts %}
+                {%- for context_name, context in model.parser.scanner_contexts %}
                     LexicalContext::{{ context_name }} => &[
                         {%- for open, close in context.delimiters %}
                             (TokenKind::{{ open }}, TokenKind::{{ close }}),
@@ -183,7 +183,7 @@ impl Lexer for Language {
             }
 
             match LexCtx::value() {
-                {%- for context_name, context in model.scanner_contexts %}
+                {%- for context_name, context in model.parser.scanner_contexts %}
                     LexicalContext::{{ context_name }} => {
                         if let Some(kind) = {{ context.literal_scanner }} {
                             furthest_position = input.position();

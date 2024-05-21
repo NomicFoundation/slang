@@ -1,5 +1,3 @@
-#![allow(clippy::too_many_lines)]
-
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
@@ -12,12 +10,8 @@ use serde::Serialize;
 use crate::model::RuntimeModel;
 
 mod ast;
-mod keyword_scanner_definition;
 mod model;
-mod parser_definition;
-mod precedence_parser_definition;
-mod scanner_definition;
-mod trie;
+mod parser;
 
 pub enum OutputLanguage {
     Cargo,

@@ -21,7 +21,7 @@ pub enum RuleKind {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.rule_kinds -%}
+        {%- for variant in model.parser.rule_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
@@ -63,7 +63,7 @@ pub enum NodeLabel {
         Stub2,
         Stub3,
     {%- else -%}
-        {% for variant in model.labels -%}
+        {% for variant in model.parser.labels -%}
             {{ variant | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
@@ -95,7 +95,7 @@ pub enum TokenKind {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.token_kinds -%}
+        {%- for variant in model.parser.token_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
@@ -109,7 +109,7 @@ impl metaslang_cst::TerminalKind for TokenKind {
         {%- else -%}
             matches!(
                 self,
-                {%- for variant in model.trivia_scanner_names -%}
+                {%- for variant in model.parser.trivia_scanner_names -%}
                     | Self::{{ variant }}
                 {%- endfor -%}
             )
@@ -125,7 +125,7 @@ pub(crate) enum LexicalContext {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for context_name, _ in model.scanner_contexts %}
+        {%- for context_name, _ in model.parser.scanner_contexts %}
             {{ context_name }},
         {%- endfor %}
     {%- endif -%}
@@ -140,7 +140,7 @@ pub(crate) trait IsLexicalContext {
 #[allow(non_snake_case)]
 pub(crate) mod LexicalContextType {
     {%- if not rendering_in_stubs -%}
-        {%- for context_name, _ in model.scanner_contexts %}
+        {%- for context_name, _ in model.parser.scanner_contexts %}
             pub struct {{ context_name }};
 
             impl super::IsLexicalContext for {{ context_name }} {
