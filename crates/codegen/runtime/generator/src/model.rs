@@ -23,43 +23,66 @@ use crate::trie::Trie;
 
 #[derive(Default, Serialize)]
 pub struct RuntimeModel {
+    /// Defines the `Language::SUPPORTED_VERSIONS` field.
     all_versions: BTreeSet<Version>,
+    /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
+    /// Defines the `RuleKind` enum variants.
     rule_kinds: BTreeSet<&'static str>,
+    /// Defines the `TokenKind`` enum variants.
     token_kinds: BTreeSet<&'static str>,
+    /// Defines `TokenKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<&'static str>,
+    /// Defines `NodeLabel` enum variants.
     labels: BTreeSet<String>,
 
+    /// Defines the top-level scanner functions in `Language`.
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
+    // Defines the `LexicalContext(Type)` enum and type-level variants.
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
+    /// Defines the top-level compound scanners used when lexing in `Language`.
     keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
+    /// Defines the top-level parser functions in `Language`.
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    /// Defines the top-level trivia parser functions in `Language`.
     trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
     ast: AstModel,
 
+    // Internal state:
+    /// Makes sure to codegen the scanner functions that are referenced by other scanners.
     #[serde(skip)]
     top_level_scanner_names: BTreeSet<&'static str>,
+    /// Lookup table for all scanners; used to generate trie scanners.
     #[serde(skip)]
     all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
+    /// The current context of a parent scanner/parser being processed.
     #[serde(skip)]
     current_context_name: &'static str,
 }
 
 #[derive(Default, Serialize)]
 struct ScannerContext {
+    /// Rust code for the trie scanner that matches literals.
+    literal_scanner: String,
+    /// Names of the compound scanners that are keywords.
+    // Values (Rust code) is only used to generate the top-level `keyword_compound_scanners`.
+    keyword_compound_scanners: BTreeMap<&'static str, String>,
+    /// Rust code for the trie scanner that matches keywords
+    keyword_trie_scanner: String,
+    /// Names of the scanners for identifiers that can be promoted to keywords.
+    promotable_identifier_scanners: BTreeSet<&'static str>,
+    /// Names of the scanners that are compound (do not consist of only literals).
+    compound_scanner_names: Vec<&'static str>,
+    /// Set of delimiter pairs for this context that are used in delimited error recovery.
+    delimiters: BTreeMap<&'static str, &'static str>,
+    // Internal state:
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
-    literal_scanner: String,
-    keyword_compound_scanners: BTreeMap<&'static str, String>,
-    keyword_trie_scanner: String,
     #[serde(skip)]
     keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
-    promotable_identifier_scanners: BTreeSet<&'static str>,
-    compound_scanner_names: Vec<&'static str>,
-    delimiters: BTreeMap<&'static str, &'static str>,
 }
 
 impl RuntimeModel {
