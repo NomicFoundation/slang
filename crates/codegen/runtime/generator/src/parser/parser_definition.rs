@@ -1,11 +1,12 @@
-use codegen_grammar::{
-    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
-    VersionQualityRange,
-};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use semver::Version;
+
+use crate::parser::grammar::{
+    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
+    VersionQualityRange,
+};
 
 pub trait ParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;

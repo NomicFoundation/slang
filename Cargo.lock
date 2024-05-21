@@ -321,16 +321,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_grammar"
-version = "0.14.2"
-dependencies = [
- "codegen_language_definition",
- "indexmap",
- "semver",
- "strum_macros",
-]
-
-[[package]]
 name = "codegen_language_definition"
 version = "0.14.2"
 dependencies = [
@@ -401,7 +391,6 @@ version = "0.14.2"
 dependencies = [
  "Inflector",
  "anyhow",
- "codegen_grammar",
  "codegen_language_definition",
  "indexmap",
  "infra_utils",
@@ -410,6 +399,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
+ "strum_macros",
 ]
 
 [[package]]

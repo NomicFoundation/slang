@@ -9,7 +9,7 @@ use std::rc::Rc;
 use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
 use indexmap::IndexMap;
 
-use crate::{
+use crate::parser::grammar::{
     DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
     KeywordScannerDefinitionNode, KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition,
     ParserDefinitionNode, PrecedenceOperatorModel, PrecedenceParserDefinition,

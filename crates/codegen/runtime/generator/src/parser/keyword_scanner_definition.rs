@@ -1,9 +1,9 @@
-use codegen_grammar::{
-    KeywordScannerDefinitionNode, KeywordScannerDefinitionRef, ScannerDefinitionNode,
-};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
+use crate::parser::grammar::{
+    KeywordScannerDefinitionNode, KeywordScannerDefinitionRef, ScannerDefinitionNode,
+};
 use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 use crate::parser::scanner_definition::ScannerDefinitionNodeExtensions;
 

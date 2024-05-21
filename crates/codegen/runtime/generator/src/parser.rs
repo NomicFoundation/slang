@@ -1,23 +1,24 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_grammar::{
-    Grammar, GrammarConstructorDslV2 as _, GrammarVisitor, KeywordScannerAtomic,
-    KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
-};
 use codegen_language_definition::model::Language;
 use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
+mod grammar;
 mod keyword_scanner_definition;
 mod parser_definition;
 mod precedence_parser_definition;
 mod scanner_definition;
 mod trie;
 
+use grammar::{
+    Grammar, GrammarConstructorDslV2 as _, GrammarVisitor, KeywordScannerAtomic,
+    KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
+};
 use keyword_scanner_definition::KeywordScannerDefinitionExtensions as _;
 use parser_definition::ParserDefinitionExtensions as _;
 use precedence_parser_definition::PrecedenceParserDefinitionExtensions as _;
@@ -213,13 +214,13 @@ impl GrammarVisitor for ParserModel {
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
         let trivia_scanners = {
-            use codegen_grammar::Visitable;
+            use crate::parser::grammar::visitor::Visitable;
 
             #[derive(Default)]
             struct CollectTriviaScanners {
                 scanner_names: BTreeSet<&'static str>,
             }
-            impl codegen_grammar::GrammarVisitor for CollectTriviaScanners {
+            impl crate::parser::grammar::visitor::GrammarVisitor for CollectTriviaScanners {
                 fn scanner_definition_enter(&mut self, node: &ScannerDefinitionRef) {
                     self.scanner_names.insert(node.name());
                 }

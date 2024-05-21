@@ -1,10 +1,10 @@
-use codegen_grammar::{
-    PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
-};
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
+use crate::parser::grammar::{
+    PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
+};
 use crate::parser::parser_definition::{
     make_choice, make_sequence, ParserDefinitionNodeExtensions,
 };
