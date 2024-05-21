@@ -1,5 +1,4 @@
-//! Defines [`GrammarConstructorDslV2`], which allows turning the DSL v2 model into [`Grammar`]
-//! (used for generating the parser and the CST).
+//! Defines a translation of DSL v2 model into [`Grammar`], which is used for generating the parser and the CST.
 
 use std::cell::OnceCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -17,13 +16,9 @@ use crate::parser::grammar::{
     TriviaParserDefinition, VersionQuality, VersionQualityRange,
 };
 
-/// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
-pub trait GrammarConstructorDslV2 {
-    fn from_dsl_v2(lang: &model::Language) -> Grammar;
-}
-
-impl GrammarConstructorDslV2 for Grammar {
-    fn from_dsl_v2(lang: &model::Language) -> Grammar {
+impl Grammar {
+    /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
+    pub fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
         let items: HashMap<_, _> = lang
             .topics()

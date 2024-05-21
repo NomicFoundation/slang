@@ -9,7 +9,6 @@ pub mod scanner_definition;
 pub mod version_quality;
 pub mod visitor;
 
-pub use constructor::GrammarConstructorDslV2;
 pub use parser_definition::*;
 pub use precedence_parser_definition::*;
 pub use scanner_definition::*;

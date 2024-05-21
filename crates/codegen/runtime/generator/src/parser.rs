@@ -14,10 +14,9 @@ mod scanner_definition;
 mod trie;
 
 use grammar::{
-    Grammar, GrammarConstructorDslV2 as _, GrammarVisitor, KeywordScannerAtomic,
-    KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
+    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
+    ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 use keyword_scanner_definition::KeywordScannerDefinitionExtensions as _;
 use parser_definition::ParserDefinitionExtensions as _;
