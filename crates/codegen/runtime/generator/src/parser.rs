@@ -1,3 +1,5 @@
+//! Defines parser code generation for the language grammar.
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 

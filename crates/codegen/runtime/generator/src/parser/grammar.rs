@@ -1,3 +1,9 @@
+//! Definitions of the [`GrammarElement`]s and the grammar itself ([`Grammar`]).
+
+// TODO(#638): This is a leftover module from the original DSLv1 implementation.
+// We should remove it and replace the grammar construction in the super `parser`
+// module with the one from the new DSLv2 in the `constructor` module.
+
 use std::collections::{BTreeSet, HashMap};
 
 use semver::Version;
