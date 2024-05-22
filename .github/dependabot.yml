@@ -11,7 +11,7 @@ updates:
       - "dependencies"
     open-pull-requests-limit: 10
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "[cargo] "
     groups:
@@ -26,7 +26,7 @@ updates:
       - "dependencies"
     open-pull-requests-limit: 10
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "[npm] "
     groups:
@@ -41,7 +41,7 @@ updates:
       - "dependencies"
     open-pull-requests-limit: 10
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "[github-actions] "
     groups:
@@ -56,7 +56,7 @@ updates:
       - "dependencies"
     open-pull-requests-limit: 10
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "[pip] "
     groups:
