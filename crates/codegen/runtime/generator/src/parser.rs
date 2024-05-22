@@ -43,7 +43,7 @@ pub struct ParserModel {
     /// Defines the top-level scanner functions in `Language`.
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     // Defines the `LexicalContext(Type)` enum and type-level variants.
-    scanner_contexts: BTreeMap<&'static str, ScannerContext>,
+    scanner_contexts: BTreeMap<&'static str, ScannerContextModel>,
     /// Defines the top-level compound scanners used when lexing in `Language`.
     keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
 
@@ -51,21 +51,10 @@ pub struct ParserModel {
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
     /// Defines the top-level trivia parser functions in `Language`.
     trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
-
-    // Internal state:
-    /// Makes sure to codegen the scanner functions that are referenced by other scanners.
-    #[serde(skip)]
-    top_level_scanner_names: BTreeSet<&'static str>,
-    /// Lookup table for all scanners; used to generate trie scanners.
-    #[serde(skip)]
-    all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
-    /// The current context of a parent scanner/parser being processed.
-    #[serde(skip)]
-    current_context_name: &'static str,
 }
 
 #[derive(Default, Serialize)]
-struct ScannerContext {
+struct ScannerContextModel {
     /// Rust code for the trie scanner that matches literals.
     literal_scanner: String,
     /// Names of the compound scanners that are keywords.
@@ -79,39 +68,122 @@ struct ScannerContext {
     compound_scanner_names: Vec<&'static str>,
     /// Set of delimiter pairs for this context that are used in delimited error recovery.
     delimiters: BTreeMap<&'static str, &'static str>,
-    // Internal state:
-    #[serde(skip)]
+}
+
+#[derive(Default)]
+struct ParserAccumulatorState {
+    /// Constructs inner `Language` the state to evaluate the version-dependent branches.
+    referenced_versions: BTreeSet<Version>,
+
+    /// Defines the `NonTerminalKind` enum variants.
+    nonterminal_kinds: BTreeSet<&'static str>,
+    /// Defines the `TerminalKind` enum variants.
+    terminal_kinds: BTreeSet<&'static str>,
+    /// Defines `TerminalKind::is_trivia` method.
+    trivia_scanner_names: BTreeSet<&'static str>,
+    /// Defines `NodeLabel` enum variants.
+    labels: BTreeSet<String>,
+
+    // Defines the `LexicalContext(Type)` enum and type-level variants.
+    scanner_contexts: BTreeMap<&'static str, ScannerContextAccumulatorState>,
+
+    /// Defines the top-level parser functions in `Language`.
+    parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    /// Defines the top-level trivia parser functions in `Language`.
+    trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+
+    /// Makes sure to codegen the scanner functions that are referenced by other scanners.
+    top_level_scanner_names: BTreeSet<&'static str>,
+    /// Lookup table for all scanners; used to generate trie scanners.
+    all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
+    /// The current context of a parent scanner/parser being processed.
+    current_context_name: &'static str,
+}
+
+#[derive(Default)]
+struct ScannerContextAccumulatorState {
+    /// Set of delimiter pairs for this context that are used in delimited error recovery.
+    delimiters: BTreeMap<&'static str, &'static str>,
     scanner_definitions: BTreeSet<&'static str>,
-    #[serde(skip)]
     keyword_scanner_defs: BTreeMap<&'static str, KeywordScannerDefinitionRef>,
 }
 
 impl ParserModel {
     pub fn from_language(language: &Rc<Language>) -> Self {
+        // First, we construct the DSLv1 model from the DSLv2 definition...
         let grammar = Grammar::from_dsl_v2(language);
+        // ...which we then transform into the parser model
+        let mut acc = ParserAccumulatorState::default();
+        grammar.accept_visitor(&mut acc);
 
-        let mut model = Self::default();
-        grammar.accept_visitor(&mut model);
-
-        model
+        acc.into_model()
     }
+}
 
+impl ParserAccumulatorState {
     fn set_current_context(&mut self, name: &'static str) {
         self.current_context_name = name;
         self.scanner_contexts.entry(name).or_default();
     }
 
-    fn current_context(&mut self) -> &mut ScannerContext {
+    fn current_context(&mut self) -> &mut ScannerContextAccumulatorState {
         self.scanner_contexts
             .get_mut(&self.current_context_name)
             .expect("context must be set with `set_current_context`")
     }
-}
 
-impl GrammarVisitor for ParserModel {
-    fn grammar_leave(&mut self, _grammar: &Grammar) {
+    fn into_model(mut self) -> ParserModel {
+        let contexts = self
+            .scanner_contexts
+            .into_iter()
+            .map(|(name, context)| {
+                let mut acc = ScannerContextModel {
+                    delimiters: context.delimiters,
+                    ..Default::default()
+                };
+
+                // Process literals into trie and compound scanners
+                let mut literal_trie = Trie::new();
+
+                for scanner_name in &context.scanner_definitions {
+                    let scanner = &self.all_scanners[*scanner_name];
+
+                    let literals = scanner.literals();
+                    if literals.is_empty() {
+                        acc.compound_scanner_names.push(scanner_name);
+                    } else {
+                        for literal in literals {
+                            literal_trie.insert(&literal, Rc::clone(scanner));
+                        }
+                    }
+                }
+                acc.literal_scanner = literal_trie.to_scanner_code().to_string();
+
+                acc.promotable_identifier_scanners = context
+                    .keyword_scanner_defs
+                    .values()
+                    .map(|def| def.identifier_scanner())
+                    .collect();
+
+                let mut keyword_trie = Trie::new();
+                for (name, def) in &context.keyword_scanner_defs {
+                    match KeywordScannerAtomic::try_from_def(def) {
+                        Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
+                        None => {
+                            acc.keyword_compound_scanners
+                                .insert(name, def.to_scanner_code().to_string());
+                        }
+                    }
+                }
+
+                acc.keyword_trie_scanner = keyword_trie.to_scanner_code().to_string();
+
+                (name, acc)
+            })
+            .collect::<BTreeMap<_, _>>();
+
         // Expose the scanner functions that...
-        self.scanner_functions = self
+        let scanner_functions = self
             .all_scanners
             .iter()
             .filter(|(name, scanner)| {
@@ -123,48 +195,8 @@ impl GrammarVisitor for ParserModel {
             .map(|(name, scanner)| (*name, scanner.to_scanner_code().to_string()))
             .collect();
 
-        for context in self.scanner_contexts.values_mut() {
-            let mut literal_trie = Trie::new();
-
-            for scanner_name in &context.scanner_definitions {
-                let scanner = &self.all_scanners[*scanner_name];
-
-                let literals = scanner.literals();
-                if literals.is_empty() {
-                    context.compound_scanner_names.push(scanner_name);
-                } else {
-                    for literal in literals {
-                        literal_trie.insert(&literal, Rc::clone(scanner));
-                    }
-                }
-            }
-
-            context.literal_scanner = literal_trie.to_scanner_code().to_string();
-
-            context.promotable_identifier_scanners = context
-                .keyword_scanner_defs
-                .values()
-                .map(|def| def.identifier_scanner())
-                .collect();
-
-            let mut keyword_trie = Trie::new();
-            for (name, def) in &context.keyword_scanner_defs {
-                match KeywordScannerAtomic::try_from_def(def) {
-                    Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
-                    None => {
-                        context
-                            .keyword_compound_scanners
-                            .insert(name, def.to_scanner_code().to_string());
-                    }
-                }
-            }
-
-            context.keyword_trie_scanner = keyword_trie.to_scanner_code().to_string();
-        }
-
         // Collect all of the keyword scanners into a single list to be defined at top-level
-        self.keyword_compound_scanners = self
-            .scanner_contexts
+        let keyword_compound_scanners = contexts
             .values()
             .flat_map(|context| {
                 context
@@ -187,11 +219,23 @@ impl GrammarVisitor for ParserModel {
         self.labels.remove("leading_trivia");
         self.labels.remove("trailing_trivia");
 
-        // Just being anal about tidying up :)
-        self.all_scanners.clear();
-        self.current_context_name = "";
+        ParserModel {
+            referenced_versions: self.referenced_versions,
+            nonterminal_kinds: self.nonterminal_kinds,
+            terminal_kinds: self.terminal_kinds,
+            trivia_scanner_names: self.trivia_scanner_names,
+            labels: self.labels,
+            parser_functions: self.parser_functions,
+            trivia_parser_functions: self.trivia_parser_functions,
+            // These are derived from the accumulated state
+            scanner_contexts: contexts,
+            scanner_functions,
+            keyword_compound_scanners,
+        }
     }
+}
 
+impl GrammarVisitor for ParserAccumulatorState {
     fn scanner_definition_enter(&mut self, scanner: &ScannerDefinitionRef) {
         self.all_scanners.insert(scanner.name(), Rc::clone(scanner));
     }
