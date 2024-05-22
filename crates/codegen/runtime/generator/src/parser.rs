@@ -26,6 +26,10 @@ use precedence_parser_definition::PrecedenceParserDefinitionExtensions as _;
 use scanner_definition::ScannerDefinitionExtensions as _;
 use trie::Trie;
 
+/// Newtype for the already generated Rust code, not to be confused with regular strings.
+#[derive(Serialize, Default, Clone)]
+struct RustCode(String);
+
 #[derive(Default, Serialize)]
 pub struct ParserModel {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
@@ -41,27 +45,27 @@ pub struct ParserModel {
     labels: BTreeSet<String>,
 
     /// Defines the top-level scanner functions in `Language`.
-    scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
+    scanner_functions: BTreeMap<&'static str, RustCode>, // (name of scanner, code)
     // Defines the `LexicalContext(Type)` enum and type-level variants.
     scanner_contexts: BTreeMap<&'static str, ScannerContextModel>,
     /// Defines the top-level compound scanners used when lexing in `Language`.
-    keyword_compound_scanners: BTreeMap<&'static str, String>, // (name of the KW scanner, code)
+    keyword_compound_scanners: BTreeMap<&'static str, RustCode>, // (name of the KW scanner, code)
 
     /// Defines the top-level parser functions in `Language`.
-    parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    parser_functions: BTreeMap<&'static str, RustCode>, // (name of parser, code)
     /// Defines the top-level trivia parser functions in `Language`.
-    trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    trivia_parser_functions: BTreeMap<&'static str, RustCode>, // (name of parser, code)
 }
 
 #[derive(Default, Serialize)]
 struct ScannerContextModel {
     /// Rust code for the trie scanner that matches literals.
-    literal_scanner: String,
+    literal_scanner: RustCode,
     /// Names of the compound scanners that are keywords.
     // Values (Rust code) is only used to generate the top-level `keyword_compound_scanners`.
-    keyword_compound_scanners: BTreeMap<&'static str, String>,
+    keyword_compound_scanners: BTreeMap<&'static str, RustCode>,
     /// Rust code for the trie scanner that matches keywords
-    keyword_trie_scanner: String,
+    keyword_trie_scanner: RustCode,
     /// Names of the scanners for identifiers that can be promoted to keywords.
     promotable_identifier_scanners: BTreeSet<&'static str>,
     /// Names of the scanners that are compound (do not consist of only literals).
@@ -88,9 +92,9 @@ struct ParserAccumulatorState {
     scanner_contexts: BTreeMap<&'static str, ScannerContextAccumulatorState>,
 
     /// Defines the top-level parser functions in `Language`.
-    parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    parser_functions: BTreeMap<&'static str, RustCode>, // (name of parser, code)
     /// Defines the top-level trivia parser functions in `Language`.
-    trivia_parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
+    trivia_parser_functions: BTreeMap<&'static str, RustCode>, // (name of parser, code)
 
     /// Makes sure to codegen the scanner functions that are referenced by other scanners.
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -157,7 +161,7 @@ impl ParserAccumulatorState {
                         }
                     }
                 }
-                acc.literal_scanner = literal_trie.to_scanner_code().to_string();
+                acc.literal_scanner = RustCode(literal_trie.to_scanner_code().to_string());
 
                 acc.promotable_identifier_scanners = context
                     .keyword_scanner_defs
@@ -171,12 +175,12 @@ impl ParserAccumulatorState {
                         Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
                         None => {
                             acc.keyword_compound_scanners
-                                .insert(name, def.to_scanner_code().to_string());
+                                .insert(name, RustCode(def.to_scanner_code().to_string()));
                         }
                     }
                 }
 
-                acc.keyword_trie_scanner = keyword_trie.to_scanner_code().to_string();
+                acc.keyword_trie_scanner = RustCode(keyword_trie.to_scanner_code().to_string());
 
                 (name, acc)
             })
@@ -192,7 +196,7 @@ impl ParserAccumulatorState {
                 // but make sure to also include a scanner that is referenced by other scanners, even if not compound
                 !self.top_level_scanner_names.contains(*name)
             })
-            .map(|(name, scanner)| (*name, scanner.to_scanner_code().to_string()))
+            .map(|(name, scanner)| (*name, RustCode(scanner.to_scanner_code().to_string())))
             .collect();
 
         // Collect all of the keyword scanners into a single list to be defined at top-level
@@ -276,7 +280,7 @@ impl GrammarVisitor for ParserAccumulatorState {
         self.trivia_scanner_names.extend(trivia_scanners);
 
         self.trivia_parser_functions
-            .insert(parser.name(), parser.to_parser_code().to_string());
+            .insert(parser.name(), RustCode(parser.to_parser_code().to_string()));
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
@@ -287,11 +291,13 @@ impl GrammarVisitor for ParserAccumulatorState {
             let code = parser.to_parser_code();
             self.parser_functions.insert(
                 parser.name(),
-                {
-                    let nonterminal_kind = format_ident!("{}", parser.name());
-                    quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
-                }
-                .to_string(),
+                RustCode(
+                    {
+                        let nonterminal_kind = format_ident!("{}", parser.name());
+                        quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
+                    }
+                    .to_string(),
+                ),
             );
         }
     }
@@ -306,17 +312,20 @@ impl GrammarVisitor for ParserAccumulatorState {
         // While it's not common to parse a precedence expression as a standalone rule,
         // we generate a function for completeness.
         for (name, code) in parser.to_precedence_expression_parser_code() {
-            self.parser_functions.insert(name, code.to_string());
+            self.parser_functions
+                .insert(name, RustCode(code.to_string()));
         }
 
         self.parser_functions.insert(
             parser.name(),
-            {
-                let code = parser.to_parser_code();
-                let nonterminal_kind = format_ident!("{}", parser.name());
-                quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
-            }
-            .to_string(),
+            RustCode(
+                {
+                    let code = parser.to_parser_code();
+                    let nonterminal_kind = format_ident!("{}", parser.name());
+                    quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
+                }
+                .to_string(),
+            ),
         );
     }
 
