@@ -28,8 +28,6 @@ use trie::Trie;
 
 #[derive(Default, Serialize)]
 pub struct ParserModel {
-    /// Defines the `Language::SUPPORTED_VERSIONS` field.
-    all_versions: BTreeSet<Version>,
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
