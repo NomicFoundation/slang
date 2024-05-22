@@ -1,10 +1,10 @@
 import * as generated from "../napi-bindings/generated";
 
-export const RuleKind = generated.kinds.RuleKind;
-export type RuleKind = generated.kinds.RuleKind;
+export const NonTerminalKind = generated.kinds.NonTerminalKind;
+export type NonTerminalKind = generated.kinds.NonTerminalKind;
 
-export const TokenKind = generated.kinds.TokenKind;
-export type TokenKind = generated.kinds.TokenKind;
+export const TerminalKind = generated.kinds.TerminalKind;
+export type TerminalKind = generated.kinds.TerminalKind;
 
-export const NodeLabel = generated.kinds.NodeLabel;
-export type NodeLabel = generated.kinds.NodeLabel;
+export const EdgeLabel = generated.kinds.EdgeLabel;
+export type EdgeLabel = generated.kinds.EdgeLabel;

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use crate::cst::{self, LabeledNode};
-use crate::kinds::TokenKind;
+use crate::cst::{self, Edge};
+use crate::kinds::TerminalKind;
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::parse_output::ParseOutput;
@@ -40,11 +40,13 @@ where
                 _ => None,
             };
 
-            if let (cst::Node::Rule(rule), Some(eof_trivia)) = (&mut topmost.node, eof_trivia) {
-                let mut new_children = rule.children.clone();
+            if let (cst::Node::NonTerminal(nonterminal), Some(eof_trivia)) =
+                (&mut topmost.node, eof_trivia)
+            {
+                let mut new_children = nonterminal.children.clone();
                 new_children.extend(eof_trivia);
 
-                topmost.node = cst::Node::rule(rule.kind, new_children);
+                topmost.node = cst::Node::nonterminal(nonterminal.kind, new_children);
             }
         }
 
@@ -55,7 +57,7 @@ where
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
             ParserResult::NoMatch(no_match) => ParseOutput {
-                parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
+                parse_tree: cst::Node::terminal(TerminalKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new(
                     TextIndex::ZERO..input.into(),
                     no_match.expected_tokens,
@@ -80,8 +82,8 @@ where
                     }) => (nodes, vec![expected]),
                 };
 
-                let topmost_rule = match &nodes[..] {
-                    [LabeledNode { node: cst::Node::Rule(rule), ..} ] => Rc::clone(rule),
+                let topmost_node = match &nodes[..] {
+                    [Edge { node: cst::Node::NonTerminal(nonterminal), ..} ] => Rc::clone(nonterminal),
                     [_] => unreachable!(
                         "(Incomplete)Match at the top level of a parser is not a Rule node"
                     ),
@@ -97,24 +99,24 @@ where
                 // so needs a separate check here.
                 if start.utf8 < input.len() || is_incomplete || is_recovering {
                     let start = if is_recovering {
-                        topmost_rule.text_len
+                        topmost_node.text_len
                     } else {
                         start
                     };
                     let skipped_node =
-                        cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
-                    let mut new_children = topmost_rule.children.clone();
-                    new_children.push(LabeledNode::anonymous(skipped_node));
+                        cst::Node::terminal(TerminalKind::SKIPPED, input[start.utf8..].to_string());
+                    let mut new_children = topmost_node.children.clone();
+                    new_children.push(Edge::anonymous(skipped_node));
 
                     let mut errors = stream.into_errors();
                     errors.push(ParseError::new(start..input.into(), expected_tokens));
 
                     ParseOutput {
-                        parse_tree: cst::Node::rule(topmost_rule.kind, new_children),
+                        parse_tree: cst::Node::nonterminal(topmost_node.kind, new_children),
                         errors,
                     }
                 } else {
-                    let parse_tree = cst::Node::Rule(topmost_rule);
+                    let parse_tree = cst::Node::NonTerminal(topmost_node);
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
@@ -122,7 +124,9 @@ where
                         errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
-                            .all(|node| node.as_token_with_kind(TokenKind::SKIPPED).is_none())
+                            .all(|node| node
+                                .as_terminal_with_kind(TerminalKind::SKIPPED)
+                                .is_none())
                     );
 
                     ParseOutput { parse_tree, errors }

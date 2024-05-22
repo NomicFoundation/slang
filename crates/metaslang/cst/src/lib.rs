@@ -35,10 +35,10 @@ pub trait TerminalKind: Kind {
 
 pub trait NonTerminalKind: Kind {}
 
-pub trait EdgeKind: Kind {}
+pub trait EdgeLabel: Kind {}
 
 pub trait KindTypes: Clone + PartialEq {
     type NonTerminalKind: NonTerminalKind;
     type TerminalKind: TerminalKind;
-    type EdgeKind: EdgeKind;
+    type EdgeLabel: EdgeLabel;
 }

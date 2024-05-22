@@ -1,5 +1,5 @@
-use crate::cst::{self, LabeledNode};
-use crate::kinds::{NodeLabel, RuleKind};
+use crate::cst::{self, Edge};
+use crate::kinds::{EdgeLabel, NonTerminalKind};
 use crate::parser_support::parser_result::PrattElement::{
     self, Binary, Expression, Postfix, Prefix,
 };
@@ -8,7 +8,11 @@ use crate::parser_support::parser_result::{ParserResult, PrattOperatorMatch};
 pub struct PrecedenceHelper;
 
 impl PrecedenceHelper {
-    pub fn to_prefix_operator(kind: RuleKind, right: u8, result: ParserResult) -> ParserResult {
+    pub fn to_prefix_operator(
+        kind: NonTerminalKind,
+        right: u8,
+        result: ParserResult,
+    ) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
                 nodes: r#match.nodes,
@@ -22,7 +26,11 @@ impl PrecedenceHelper {
         }
     }
 
-    pub fn to_postfix_operator(kind: RuleKind, left: u8, result: ParserResult) -> ParserResult {
+    pub fn to_postfix_operator(
+        kind: NonTerminalKind,
+        left: u8,
+        result: ParserResult,
+    ) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
                 nodes: r#match.nodes,
@@ -37,7 +45,7 @@ impl PrecedenceHelper {
     }
 
     pub fn to_binary_operator(
-        kind: RuleKind,
+        kind: NonTerminalKind,
         left: u8,
         right: u8,
         result: ParserResult,
@@ -57,7 +65,10 @@ impl PrecedenceHelper {
     }
 
     #[allow(clippy::too_many_lines, clippy::redundant_else)] // Explicit on purpose, see below.
-    pub fn reduce_precedence_result(child_kind: RuleKind, result: ParserResult) -> ParserResult {
+    pub fn reduce_precedence_result(
+        child_kind: NonTerminalKind,
+        result: ParserResult,
+    ) -> ParserResult {
         // This requires some careful thinking. It could be more compact,
         // but I'm favouring obviousness here. That is also why there are
         // so many `unreachable!` - not only should they never be reached,
@@ -149,23 +160,23 @@ impl PrecedenceHelper {
             // 2. Reduce the operator and it's child expressions to a new expression
 
             let make_expression = |left: Option<PrattElement>,
-                                   kind: RuleKind,
-                                   nodes: Vec<cst::LabeledNode>,
+                                   kind: NonTerminalKind,
+                                   nodes: Vec<cst::Edge>,
                                    right: Option<PrattElement>| {
                 assert!(left.is_some() || right.is_some());
 
                 let left_label = right
                     .as_ref()
-                    .map_or(NodeLabel::Operand, |_| NodeLabel::LeftOperand);
+                    .map_or(EdgeLabel::Operand, |_| EdgeLabel::LeftOperand);
                 let right_label = left
                     .as_ref()
-                    .map_or(NodeLabel::Operand, |_| NodeLabel::RightOperand);
+                    .map_or(EdgeLabel::Operand, |_| EdgeLabel::RightOperand);
 
                 let left_nodes = match left {
                     Some(Expression { nodes }) => {
-                        vec![LabeledNode {
+                        vec![Edge {
                             label: Some(left_label),
-                            node: cst::Node::rule(child_kind, nodes),
+                            node: cst::Node::nonterminal(child_kind, nodes),
                         }]
                     }
                     None => vec![],
@@ -174,9 +185,9 @@ impl PrecedenceHelper {
 
                 let right_nodes = match right {
                     Some(Expression { nodes }) => {
-                        vec![LabeledNode {
+                        vec![Edge {
                             label: Some(right_label),
-                            node: cst::Node::rule(child_kind, nodes),
+                            node: cst::Node::nonterminal(child_kind, nodes),
                         }]
                     }
                     None => vec![],
@@ -186,9 +197,9 @@ impl PrecedenceHelper {
                 let children = [left_nodes, nodes, right_nodes].concat();
 
                 Expression {
-                    nodes: vec![LabeledNode {
-                        label: Some(NodeLabel::Variant),
-                        node: cst::Node::rule(kind, children),
+                    nodes: vec![Edge {
+                        label: Some(EdgeLabel::Variant),
+                        node: cst::Node::nonterminal(kind, children),
                     }],
                 }
             };

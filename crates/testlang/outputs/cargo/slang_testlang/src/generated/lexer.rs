@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, LabeledNode};
-use crate::kinds::{IsLexicalContext, TokenKind};
+use crate::cst::{self, Edge};
+use crate::kinds::{IsLexicalContext, TerminalKind};
 use crate::parser_support::{ParserContext, ParserResult};
 
 /// Whether a keyword has been scanned and if so, whether it is reserved (unusable as an identifier)
@@ -12,22 +12,22 @@ pub enum KeywordScan {
     Absent,
     /// The keyword is present, but is not reserved.
     #[allow(unused)]
-    Present(TokenKind),
+    Present(TerminalKind),
     /// The keyword is present and is reserved.
-    Reserved(TokenKind),
+    Reserved(TerminalKind),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ScannedToken {
-    Single(TokenKind),
+    Single(TerminalKind),
     IdentifierOrKeyword {
-        identifier: TokenKind,
+        identifier: TerminalKind,
         kw: KeywordScan,
     },
 }
 
 impl ScannedToken {
-    pub fn accepted_as(self, expected: TokenKind) -> bool {
+    pub fn accepted_as(self, expected: TerminalKind) -> bool {
         match self {
             Self::Single(kind) => kind == expected,
             Self::IdentifierOrKeyword { identifier, kw } => match kw {
@@ -42,7 +42,7 @@ impl ScannedToken {
     ///
     /// If the scanned token is an identifier, returns the specific keyword kind if the keyword is reserved,
     /// otherwise returns the general identifier kind. For other tokens, returns the token kind itself.
-    pub fn unambiguous(self) -> TokenKind {
+    pub fn unambiguous(self) -> TerminalKind {
         match self {
             Self::Single(kind) => kind,
             Self::IdentifierOrKeyword { identifier, kw } => match kw {
@@ -69,7 +69,7 @@ pub(crate) trait Lexer {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult;
     #[doc(hidden)]
     /// Returns valid grouping delimiters in the given lexical context.
-    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)];
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)];
 
     /// Peeks the next token, including trivia. Does not advance the input.
     fn peek_token<LexCtx: IsLexicalContext>(
@@ -100,7 +100,7 @@ pub(crate) trait Lexer {
     fn parse_token<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-        kind: TokenKind,
+        kind: TerminalKind,
     ) -> ParserResult {
         let start = input.position();
         if !self
@@ -113,7 +113,7 @@ pub(crate) trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![LabeledNode::anonymous(cst::Node::token(
+            vec![Edge::anonymous(cst::Node::terminal(
                 kind,
                 input.content(start.utf8..end.utf8),
             ))],
@@ -126,7 +126,7 @@ pub(crate) trait Lexer {
     fn parse_token_with_trivia<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-        kind: TokenKind,
+        kind: TerminalKind,
     ) -> ParserResult {
         let mut children = vec![];
 
@@ -146,7 +146,7 @@ pub(crate) trait Lexer {
             return ParserResult::no_match(vec![kind]);
         }
         let end = input.position();
-        children.push(LabeledNode::anonymous(cst::Node::token(
+        children.push(Edge::anonymous(cst::Node::terminal(
             kind,
             input.content(start.utf8..end.utf8),
         )));

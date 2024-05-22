@@ -14,7 +14,7 @@ pub trait KeywordScannerDefinitionExtensions {
 impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
     fn to_scanner_code(&self) -> TokenStream {
         let name_ident = format_ident!("{}", self.name());
-        let token_kind = quote! { TokenKind::#name_ident };
+        let token_kind = quote! { TerminalKind::#name_ident };
 
         let kw_scanners: Vec<_> = self
             .definitions()

@@ -1,19 +1,19 @@
-import { NodeType, RuleNode, TokenNode } from "@slang-private/slang-testlang/cst";
-import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
+import { NodeType, NonTerminalNode, TerminalNode } from "@slang-private/slang-testlang/cst";
+import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 
-export function expectRule(node: unknown, kind: RuleKind): asserts node is RuleNode {
-  expect(node).toBeInstanceOf(RuleNode);
+export function expectNonTerminal(node: unknown, kind: NonTerminalKind): asserts node is NonTerminalNode {
+  expect(node).toBeInstanceOf(NonTerminalNode);
 
-  const rule = node as RuleNode;
-  expect(rule.type).toEqual(NodeType.Rule);
+  const rule = node as NonTerminalNode;
+  expect(rule.type).toEqual(NodeType.NonTerminal);
   expect(rule.kind).toEqual(kind);
 }
 
-export function expectToken(node: unknown, kind: TokenKind, text: string): asserts node is TokenNode {
-  expect(node).toBeInstanceOf(TokenNode);
+export function expectTerminal(node: unknown, kind: TerminalKind, text: string): asserts node is TerminalNode {
+  expect(node).toBeInstanceOf(TerminalNode);
 
-  const token = node as TokenNode;
-  expect(token.type).toEqual(NodeType.Token);
+  const token = node as TerminalNode;
+  expect(token.type).toEqual(NodeType.Terminal);
   expect(token.kind).toEqual(kind);
   expect(token.text).toEqual(text);
 }

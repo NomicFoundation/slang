@@ -57,7 +57,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     let name = format_ident!("{}", label.to_pascal_case());
 
                     quote! {
-                        #parser.with_label(NodeLabel::#name)
+                        #parser.with_label(EdgeLabel::#name)
                     }
                 };
 
@@ -75,7 +75,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     let name = format_ident!("{}", label.to_pascal_case());
 
                     quote! {
-                        #parser.with_label(NodeLabel::#name)
+                        #parser.with_label(EdgeLabel::#name)
                     }
                 };
 
@@ -94,7 +94,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         let name = format_ident!("{}", label.to_pascal_case());
 
                         quote! {
-                            #parser.with_label(NodeLabel::#name)
+                            #parser.with_label(EdgeLabel::#name)
                         }
                     }
                 }
@@ -121,7 +121,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     let name = format_ident!("{}", label.to_pascal_case());
 
                     quote! {
-                        #parser.with_label(NodeLabel::#name)
+                        #parser.with_label(EdgeLabel::#name)
                     }
                 }
             }
@@ -136,7 +136,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TokenKind::#kind)
+                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
@@ -151,7 +151,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TokenKind::#kind)
+                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
@@ -210,7 +210,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         seq.elem(#parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
-                                TokenKind::#close_delim,
+                                TerminalKind::#close_delim,
                                 TokenAcceptanceThreshold(#threshold),
                             )
                         )?;
@@ -220,17 +220,17 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
                 quote! {
                     SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::#close_delim);
+                        let mut delim_guard = input.open_delim(TerminalKind::#close_delim);
                         let input = delim_guard.ctx();
 
                         seq.elem_labeled(
-                            NodeLabel::#open_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim)
+                            EdgeLabel::#open_label,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#open_delim)
                         )?;
                         #body_parser
                         seq.elem_labeled(
-                            NodeLabel::#close_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim)
+                            EdgeLabel::#close_label,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#close_delim)
                         )?;
                         seq.finish()
                     })
@@ -253,9 +253,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     SeparatedHelper::run::<_, #lex_ctx>(
                         input,
                         self,
-                        |input| #parser.with_label(NodeLabel::#body_label),
-                        TokenKind::#separator,
-                        NodeLabel::#separator_label,
+                        |input| #parser.with_label(EdgeLabel::#body_label),
+                        TerminalKind::#separator,
+                        EdgeLabel::#separator_label,
                     )
                 }
             }
@@ -276,7 +276,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             #parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
-                                TokenKind::#terminator,
+                                TerminalKind::#terminator,
                                  // Requires at least a partial match not to risk misparsing
                                 TokenAcceptanceThreshold(1u8),
                             )
@@ -289,8 +289,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     SequenceHelper::run(|mut seq| {
                         #body_parser
                         seq.elem_labeled(
-                            NodeLabel::#terminator_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator)
+                            EdgeLabel::#terminator_label,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#terminator)
                         )?;
                         seq.finish()
                     })
@@ -382,7 +382,7 @@ pub fn make_sequence_versioned(
             } else {
                 let label = format_ident!("{}", name.to_pascal_case());
 
-                quote! { seq.elem_labeled(NodeLabel::#label, #parser)?; }
+                quote! { seq.elem_labeled(EdgeLabel::#label, #parser)?; }
             };
 
             versions.wrap_code(code, None)

@@ -8,7 +8,7 @@ use infra_utils::paths::PathExtensions;
 fn using_the_cursor() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::kinds::{NodeLabel, RuleKind, TokenKind};
+    use slang_solidity::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
     use slang_solidity::language::Language;
     use slang_solidity::text_index::TextRangeExtensions;
     // --8<-- [end:imports]
@@ -22,7 +22,7 @@ fn using_the_cursor() -> Result<()> {
     // --8<-- [start:parse-input]
     let language = Language::new(Version::parse("0.8.0")?)?;
 
-    let parse_output = language.parse(RuleKind::SourceUnit, source);
+    let parse_output = language.parse(NonTerminalKind::SourceUnit, source);
     // --8<-- [end:parse-input]
 
     {
@@ -31,12 +31,12 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_rule_with_kind(RuleKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
             assert!(cursor.go_to_first_child());
-            assert!(cursor.go_to_next_token_with_kind(TokenKind::Identifier));
+            assert!(cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
             let token_node = cursor.node();
-            contracts.push(token_node.as_token().unwrap().text.clone());
+            contracts.push(token_node.as_terminal().unwrap().text.clone());
 
             // You have to make sure you return the cursor to its original position:
             assert!(cursor.go_to_parent());
@@ -52,12 +52,12 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_rule_with_kind(RuleKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
             let mut child_cursor = cursor.spawn();
-            assert!(child_cursor.go_to_next_token_with_kind(TokenKind::Identifier));
+            assert!(child_cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
             let token_node = child_cursor.node();
-            contracts.push(token_node.as_token().unwrap().text.clone());
+            contracts.push(token_node.as_terminal().unwrap().text.clone());
         }
 
         assert_eq!(contracts, &["Foo", "Bar", "Baz"]);
@@ -70,9 +70,9 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_rule_with_kind(RuleKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
             let range = cursor.text_range().utf8();
-            let text = Rc::clone(cursor.node().as_rule().unwrap()).unparse();
+            let text = Rc::clone(cursor.node().as_nonterminal().unwrap()).unparse();
 
             contracts.push((range, text.trim().to_owned()));
         }
@@ -93,7 +93,10 @@ fn using_the_cursor() -> Result<()> {
         let cursor = parse_output.create_tree_cursor();
 
         let identifiers: Vec<_> = cursor
-            .filter_map(|node| node.as_token_with_kind(TokenKind::Identifier).cloned())
+            .filter_map(|node| {
+                node.as_terminal_with_kind(TerminalKind::Identifier)
+                    .cloned()
+            })
             .map(|identifier| identifier.text.clone())
             .collect();
 
@@ -106,9 +109,12 @@ fn using_the_cursor() -> Result<()> {
         let cursor = parse_output.create_tree_cursor();
 
         let identifiers: Vec<_> = cursor
-            .with_labels()
-            .filter(|node| node.label == Some(NodeLabel::Name))
-            .filter_map(|node| node.as_token_with_kind(TokenKind::Identifier).cloned())
+            .with_edges()
+            .filter(|node| node.label == Some(EdgeLabel::Name))
+            .filter_map(|node| {
+                node.as_terminal_with_kind(TerminalKind::Identifier)
+                    .cloned()
+            })
             .map(|identifier| identifier.text.clone())
             .collect();
 

@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    IsLexicalContext, LexicalContext, LexicalContextType, NodeLabel, RuleKind, TokenKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -218,22 +218,22 @@ impl Language {
     fn abi_coder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::AbicoderKeyword,
+                EdgeLabel::AbicoderKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::AbicoderKeyword,
+                    TerminalKind::AbicoderKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Version,
+                EdgeLabel::Version,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ABICoderPragma)
+        .with_kind(NonTerminalKind::ABICoderPragma)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -243,14 +243,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::AdditiveExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::AdditiveExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -263,24 +263,24 @@ impl Language {
     fn address_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::AddressKeyword,
+                EdgeLabel::AddressKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::AddressKeyword,
+                    TerminalKind::AddressKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::PayableKeyword,
+                EdgeLabel::PayableKeyword,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PayableKeyword,
+                        TerminalKind::PayableKeyword,
                     ),
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::AddressType)
+        .with_kind(NonTerminalKind::AddressType)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -290,14 +290,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::AndExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::AndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -315,42 +315,42 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ArgumentsDeclaration)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ArgumentsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn array_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseBracket);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenBracket,
+                EdgeLabel::OpenBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenBracket,
+                    TerminalKind::OpenBracket,
                 ),
             )?;
             seq.elem(
                 self.array_values(input)
-                    .with_label(NodeLabel::Items)
+                    .with_label(EdgeLabel::Items)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBracket,
+                        TerminalKind::CloseBracket,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseBracket,
+                EdgeLabel::CloseBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseBracket,
+                    TerminalKind::CloseBracket,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ArrayExpression)
+        .with_kind(NonTerminalKind::ArrayExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -360,14 +360,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::TypeName => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::ArrayTypeName => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::TypeName => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::ArrayTypeName => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -381,11 +381,11 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.expression(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::ArrayValues)
+        .with_kind(NonTerminalKind::ArrayValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -393,69 +393,69 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.string_literal(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.string_literal(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::AssemblyFlags)
+        .with_kind(NonTerminalKind::AssemblyFlags)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn assembly_flags_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.assembly_flags(input)
-                    .with_label(NodeLabel::Flags)
+                    .with_label(EdgeLabel::Flags)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::AssemblyFlagsDeclaration)
+        .with_kind(NonTerminalKind::AssemblyFlagsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn assembly_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::AssemblyKeyword,
+                EdgeLabel::AssemblyKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::AssemblyKeyword,
+                    TerminalKind::AssemblyKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Label,
+                EdgeLabel::Label,
                 OptionalHelper::transform(self.string_literal(input)),
             )?;
             seq.elem_labeled(
-                NodeLabel::Flags,
+                EdgeLabel::Flags,
                 OptionalHelper::transform(self.assembly_flags_declaration(input)),
             )?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::AssemblyStatement)
+        .with_kind(NonTerminalKind::AssemblyStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -465,14 +465,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::AssignmentExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::AssignmentExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -488,14 +488,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::BitwiseAndExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::BitwiseAndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -511,14 +511,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::BitwiseOrExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::BitwiseOrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -534,14 +534,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::BitwiseXorExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::BitwiseXorExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -553,35 +553,35 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenBrace,
+                EdgeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenBrace,
+                    TerminalKind::OpenBrace,
                 ),
             )?;
             seq.elem(
                 self.statements(input)
-                    .with_label(NodeLabel::Statements)
+                    .with_label(EdgeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseBrace,
+                EdgeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseBrace,
+                    TerminalKind::CloseBrace,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::Block)
+        .with_kind(NonTerminalKind::Block)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -590,26 +590,26 @@ impl Language {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::BreakKeyword,
+                    TerminalKind::BreakKeyword,
                 )
-                .with_label(NodeLabel::BreakKeyword)
+                .with_label(EdgeLabel::BreakKeyword)
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::BreakStatement)
+        .with_kind(NonTerminalKind::BreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -618,14 +618,14 @@ impl Language {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.named_argument(input).with_label(NodeLabel::Item),
-                TokenKind::Comma,
-                NodeLabel::Separator,
+                |input| self.named_argument(input).with_label(EdgeLabel::Item),
+                TerminalKind::Comma,
+                EdgeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CallOptions)
+        .with_kind(NonTerminalKind::CallOptions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -635,14 +635,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::CallOptionsExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::CallOptionsExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -656,23 +656,23 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::CatchKeyword,
+                    EdgeLabel::CatchKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CatchKeyword,
+                        TerminalKind::CatchKeyword,
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Error,
+                    EdgeLabel::Error,
                     OptionalHelper::transform(self.catch_clause_error(input)),
                 )?;
-                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.block(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CatchClause)
+        .with_kind(NonTerminalKind::CatchClause)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -680,33 +680,33 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::Name,
+                    EdgeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CatchClauseError)
+        .with_kind(NonTerminalKind::CatchClauseError)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn catch_clauses(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
-                self.catch_clause(input).with_label(NodeLabel::Item)
+                self.catch_clause(input).with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CatchClauses)
+        .with_kind(NonTerminalKind::CatchClauses)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -716,14 +716,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::ComparisonExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::ComparisonExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -739,14 +739,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::ConditionalExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::ConditionalExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -761,43 +761,43 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                        seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
                         seq.elem_labeled(
-                            NodeLabel::ConstantKeyword,
+                            EdgeLabel::ConstantKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::ConstantKeyword,
+                                TerminalKind::ConstantKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Name,
+                            EdgeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::Identifier,
+                                TerminalKind::Identifier,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Equal,
+                            EdgeLabel::Equal,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::Equal,
+                                TerminalKind::Equal,
                             ),
                         )?;
-                        seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
+                        seq.elem_labeled(EdgeLabel::Value, self.expression(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -805,7 +805,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstantDefinition)
+        .with_kind(NonTerminalKind::ConstantDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -816,40 +816,40 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::InternalKeyword,
+                    TerminalKind::InternalKeyword,
                 );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OverrideKeyword,
+                        TerminalKind::OverrideKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PayableKeyword,
+                    TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PublicKeyword,
+                    TerminalKind::PublicKeyword,
                 );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::VirtualKeyword,
+                        TerminalKind::VirtualKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstructorAttribute)
+        .with_kind(NonTerminalKind::ConstructorAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -857,12 +857,12 @@ impl Language {
         if self.version_is_at_least_0_4_22 {
             ZeroOrMoreHelper::run(input, |input| {
                 self.constructor_attribute(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstructorAttributes)
+        .with_kind(NonTerminalKind::ConstructorAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -870,21 +870,21 @@ impl Language {
         if self.version_is_at_least_0_4_22 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::ConstructorKeyword,
+                    EdgeLabel::ConstructorKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::ConstructorKeyword,
+                        TerminalKind::ConstructorKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-                seq.elem_labeled(NodeLabel::Attributes, self.constructor_attributes(input))?;
-                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
+                seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(EdgeLabel::Attributes, self.constructor_attributes(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.block(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstructorDefinition)
+        .with_kind(NonTerminalKind::ConstructorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -893,26 +893,26 @@ impl Language {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ContinueKeyword,
+                    TerminalKind::ContinueKeyword,
                 )
-                .with_label(NodeLabel::ContinueKeyword)
+                .with_label(EdgeLabel::ContinueKeyword)
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ContinueStatement)
+        .with_kind(NonTerminalKind::ContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -920,65 +920,65 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             if self.version_is_at_least_0_6_0 {
                 seq.elem_labeled(
-                    NodeLabel::AbstractKeyword,
+                    EdgeLabel::AbstractKeyword,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::AbstractKeyword,
+                            TerminalKind::AbstractKeyword,
                         ),
                     ),
                 )?;
             }
             seq.elem_labeled(
-                NodeLabel::ContractKeyword,
+                EdgeLabel::ContractKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ContractKeyword,
+                    TerminalKind::ContractKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Inheritence,
+                EdgeLabel::Inheritence,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.contract_members(input)
-                        .with_label(NodeLabel::Members)
+                        .with_label(EdgeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ContractDefinition)
+        .with_kind(NonTerminalKind::ContractDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1024,35 +1024,35 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ContractMember)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ContractMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn contract_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_label(NodeLabel::Item)
+            self.contract_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::ContractMembers)
+        .with_kind(NonTerminalKind::ContractMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Literal,
+                EdgeLabel::Literal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::DecimalLiteral,
+                    TerminalKind::DecimalLiteral,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Unit,
+                EdgeLabel::Unit,
                 OptionalHelper::transform(self.number_unit(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::DecimalNumberExpression)
+        .with_kind(NonTerminalKind::DecimalNumberExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1061,45 +1061,45 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::DoKeyword,
+                        EdgeLabel::DoKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::DoKeyword,
+                            TerminalKind::DoKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+                    seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
                     seq.elem_labeled(
-                        NodeLabel::WhileKeyword,
+                        EdgeLabel::WhileKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::WhileKeyword,
+                            TerminalKind::WhileKeyword,
                         ),
                     )?;
                     seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                         let input = delim_guard.ctx();
                         seq.elem_labeled(
-                            NodeLabel::OpenParen,
+                            EdgeLabel::OpenParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::OpenParen,
+                                TerminalKind::OpenParen,
                             ),
                         )?;
                         seq.elem(
                             self.expression(input)
-                                .with_label(NodeLabel::Condition)
+                                .with_label(EdgeLabel::Condition)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
-                                TokenKind::CloseParen,
+                                TerminalKind::CloseParen,
                                 TokenAcceptanceThreshold(0u8),
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::CloseParen,
+                            EdgeLabel::CloseParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::CloseParen,
+                                TerminalKind::CloseParen,
                             ),
                         )?;
                         seq.finish()
@@ -1109,20 +1109,20 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::DoWhileStatement)
+        .with_kind(NonTerminalKind::DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1130,68 +1130,68 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::BoolKeyword,
+                TerminalKind::BoolKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_8_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ByteKeyword,
+                    TerminalKind::ByteKeyword,
                 );
                 choice.consider(input, result)?;
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::StringKeyword,
+                TerminalKind::StringKeyword,
             );
             choice.consider(input, result)?;
             let result = self.address_type(input);
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::BytesKeyword,
+                TerminalKind::BytesKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::IntKeyword,
+                TerminalKind::IntKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::UintKeyword,
+                TerminalKind::UintKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::FixedKeyword,
+                TerminalKind::FixedKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::UfixedKeyword,
+                TerminalKind::UfixedKeyword,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ElementaryType)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ElementaryType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn else_branch(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ElseKeyword,
+                EdgeLabel::ElseKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ElseKeyword,
+                    TerminalKind::ElseKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ElseBranch)
+        .with_kind(NonTerminalKind::ElseBranch)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1201,28 +1201,28 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
-                            NodeLabel::EmitKeyword,
+                            EdgeLabel::EmitKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::EmitKeyword,
+                                TerminalKind::EmitKeyword,
                             ),
                         )?;
-                        seq.elem_labeled(NodeLabel::Event, self.identifier_path(input))?;
-                        seq.elem_labeled(NodeLabel::Arguments, self.arguments_declaration(input))?;
+                        seq.elem_labeled(EdgeLabel::Event, self.identifier_path(input))?;
+                        seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -1230,58 +1230,58 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::EmitStatement)
+        .with_kind(NonTerminalKind::EmitStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn enum_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::EnumKeyword,
+                EdgeLabel::EnumKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::EnumKeyword,
+                    TerminalKind::EnumKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.enum_members(input)
-                        .with_label(NodeLabel::Members)
+                        .with_label(EdgeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::EnumDefinition)
+        .with_kind(NonTerminalKind::EnumDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1292,14 +1292,14 @@ impl Language {
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 )
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
             },
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::EnumMembers)
+        .with_kind(NonTerminalKind::EnumMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1309,14 +1309,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::EqualityExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::EqualityExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -1332,21 +1332,21 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
-                            NodeLabel::ErrorKeyword,
+                            EdgeLabel::ErrorKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::ErrorKeyword,
+                                TerminalKind::ErrorKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Name,
+                            EdgeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::Identifier,
+                                TerminalKind::Identifier,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Members,
+                            EdgeLabel::Members,
                             self.error_parameters_declaration(input),
                         )?;
                         seq.finish()
@@ -1354,15 +1354,15 @@ impl Language {
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -1370,20 +1370,20 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ErrorDefinition)
+        .with_kind(NonTerminalKind::ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn error_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
                 seq.elem_labeled(
-                    NodeLabel::Name,
+                    EdgeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     ),
                 )?;
@@ -1392,7 +1392,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ErrorParameter)
+        .with_kind(NonTerminalKind::ErrorParameter)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1401,44 +1401,44 @@ impl Language {
             OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.error_parameter(input).with_label(NodeLabel::Item),
-                TokenKind::Comma,
-                NodeLabel::Separator,
+                |input| self.error_parameter(input).with_label(EdgeLabel::Item),
+                TerminalKind::Comma,
+                EdgeLabel::Separator,
             ))
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ErrorParameters)
+        .with_kind(NonTerminalKind::ErrorParameters)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn error_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     self.error_parameters(input)
-                        .with_label(NodeLabel::Parameters)
+                        .with_label(EdgeLabel::Parameters)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseParen,
+                            TerminalKind::CloseParen,
                             TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
@@ -1446,7 +1446,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ErrorParametersDeclaration)
+        .with_kind(NonTerminalKind::ErrorParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1455,29 +1455,29 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::EventKeyword,
+                        EdgeLabel::EventKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::EventKeyword,
+                            TerminalKind::EventKeyword,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Name,
+                        EdgeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Parameters,
+                        EdgeLabel::Parameters,
                         self.event_parameters_declaration(input),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::AnonymousKeyword,
+                        EdgeLabel::AnonymousKeyword,
                         OptionalHelper::transform(
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::AnonymousKeyword,
+                                TerminalKind::AnonymousKeyword,
                             ),
                         ),
                     )?;
@@ -1486,47 +1486,47 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::EventDefinition)
+        .with_kind(NonTerminalKind::EventDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn event_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             seq.elem_labeled(
-                NodeLabel::IndexedKeyword,
+                EdgeLabel::IndexedKeyword,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::IndexedKeyword,
+                        TerminalKind::IndexedKeyword,
                     ),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Identifier,
+                        TerminalKind::Identifier,
                     ),
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::EventParameter)
+        .with_kind(NonTerminalKind::EventParameter)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1534,45 +1534,45 @@ impl Language {
         OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.event_parameter(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.event_parameter(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::EventParameters)
+        .with_kind(NonTerminalKind::EventParameters)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn event_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.event_parameters(input)
-                    .with_label(NodeLabel::Parameters)
+                    .with_label(EdgeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::EventParametersDeclaration)
+        .with_kind(NonTerminalKind::EventParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1580,31 +1580,31 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
-                TokenKind::Identifier,
+                TerminalKind::Identifier,
             );
             choice.consider(input, result)?;
             let result = self.string_literal(input);
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ExperimentalFeature)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ExperimentalFeature)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ExperimentalKeyword,
+                EdgeLabel::ExperimentalKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::ExperimentalKeyword,
+                    TerminalKind::ExperimentalKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Feature, self.experimental_feature(input))?;
+            seq.elem_labeled(EdgeLabel::Feature, self.experimental_feature(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ExperimentalPragma)
+        .with_kind(NonTerminalKind::ExperimentalPragma)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1614,14 +1614,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::ExponentiationExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::ExponentiationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -1634,93 +1634,93 @@ impl Language {
     fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_left_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                NonTerminalKind::AssignmentExpression,
                 1u8,
                 1u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Equal,
+                            TerminalKind::Equal,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::BarEqual,
+                            TerminalKind::BarEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::PlusEqual,
+                            TerminalKind::PlusEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::MinusEqual,
+                            TerminalKind::MinusEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CaretEqual,
+                            TerminalKind::CaretEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::SlashEqual,
+                            TerminalKind::SlashEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::PercentEqual,
+                            TerminalKind::PercentEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::AsteriskEqual,
+                            TerminalKind::AsteriskEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::AmpersandEqual,
+                            TerminalKind::AmpersandEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::LessThanLessThanEqual,
+                            TerminalKind::LessThanLessThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThanGreaterThanEqual,
+                            TerminalKind::GreaterThanGreaterThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                            TerminalKind::GreaterThanGreaterThanGreaterThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1728,72 +1728,72 @@ impl Language {
         };
         let parse_postfix_conditional_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::ConditionalExpression,
+                NonTerminalKind::ConditionalExpression,
                 3u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::QuestionMark,
+                        EdgeLabel::QuestionMark,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::QuestionMark,
+                            TerminalKind::QuestionMark,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::TrueExpression, self.expression(input))?;
+                    seq.elem_labeled(EdgeLabel::TrueExpression, self.expression(input))?;
                     seq.elem_labeled(
-                        NodeLabel::Colon,
+                        EdgeLabel::Colon,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Colon,
+                            TerminalKind::Colon,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::FalseExpression, self.expression(input))?;
+                    seq.elem_labeled(EdgeLabel::FalseExpression, self.expression(input))?;
                     seq.finish()
                 }),
             )
         };
         let parse_left_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::OrExpression,
+                NonTerminalKind::OrExpression,
                 5u8,
                 5u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::BarBar,
+                    TerminalKind::BarBar,
                 )
-                .with_label(NodeLabel::Operator),
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_left_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AndExpression,
+                NonTerminalKind::AndExpression,
                 7u8,
                 7u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::AmpersandAmpersand,
+                    TerminalKind::AmpersandAmpersand,
                 )
-                .with_label(NodeLabel::Operator),
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_left_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::EqualityExpression,
+                NonTerminalKind::EqualityExpression,
                 9u8,
                 9u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::EqualEqual,
+                            TerminalKind::EqualEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::BangEqual,
+                            TerminalKind::BangEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1801,37 +1801,37 @@ impl Language {
         };
         let parse_left_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::ComparisonExpression,
+                NonTerminalKind::ComparisonExpression,
                 11u8,
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::LessThan,
+                            TerminalKind::LessThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThan,
+                            TerminalKind::GreaterThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::LessThanEqual,
+                            TerminalKind::LessThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThanEqual,
+                            TerminalKind::GreaterThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1839,63 +1839,66 @@ impl Language {
         };
         let parse_left_bitwise_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseOrExpression,
+                NonTerminalKind::BitwiseOrExpression,
                 13u8,
                 13u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar)
-                    .with_label(NodeLabel::Operator),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Bar,
+                )
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_left_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseXorExpression,
+                NonTerminalKind::BitwiseXorExpression,
                 15u8,
                 15u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Caret,
+                    TerminalKind::Caret,
                 )
-                .with_label(NodeLabel::Operator),
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_left_bitwise_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseAndExpression,
+                NonTerminalKind::BitwiseAndExpression,
                 17u8,
                 17u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Ampersand,
+                    TerminalKind::Ampersand,
                 )
-                .with_label(NodeLabel::Operator),
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_left_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::ShiftExpression,
+                NonTerminalKind::ShiftExpression,
                 19u8,
                 19u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::LessThanLessThan,
+                            TerminalKind::LessThanLessThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThanGreaterThan,
+                            TerminalKind::GreaterThanGreaterThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::GreaterThanGreaterThanGreaterThan,
+                            TerminalKind::GreaterThanGreaterThanGreaterThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1903,23 +1906,23 @@ impl Language {
         };
         let parse_left_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AdditiveExpression,
+                NonTerminalKind::AdditiveExpression,
                 21u8,
                 21u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Plus,
+                            TerminalKind::Plus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Minus,
+                            TerminalKind::Minus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1927,30 +1930,30 @@ impl Language {
         };
         let parse_left_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::MultiplicativeExpression,
+                NonTerminalKind::MultiplicativeExpression,
                 23u8,
                 23u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Asterisk,
+                            TerminalKind::Asterisk,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Slash,
+                            TerminalKind::Slash,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Percent,
+                            TerminalKind::Percent,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1958,7 +1961,7 @@ impl Language {
         };
         let parse_left_exponentiation_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::ExponentiationExpression,
+                NonTerminalKind::ExponentiationExpression,
                 25u8,
                 25u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1966,9 +1969,9 @@ impl Language {
                         let result = self
                             .parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::AsteriskAsterisk,
+                                TerminalKind::AsteriskAsterisk,
                             )
-                            .with_label(NodeLabel::Operator);
+                            .with_label(EdgeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1977,7 +1980,7 @@ impl Language {
         };
         let parse_right_exponentiation_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::ExponentiationExpression,
+                NonTerminalKind::ExponentiationExpression,
                 27u8 + 1,
                 27u8,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1985,9 +1988,9 @@ impl Language {
                         let result = self
                             .parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::AsteriskAsterisk,
+                                TerminalKind::AsteriskAsterisk,
                             )
-                            .with_label(NodeLabel::Operator);
+                            .with_label(EdgeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1996,22 +1999,22 @@ impl Language {
         };
         let parse_postfix_postfix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::PostfixExpression,
+                NonTerminalKind::PostfixExpression,
                 29u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::PlusPlus,
+                            TerminalKind::PlusPlus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::MinusMinus,
+                            TerminalKind::MinusMinus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -2019,59 +2022,59 @@ impl Language {
         };
         let parse_prefix_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
+                NonTerminalKind::PrefixExpression,
                 31u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::PlusPlus,
+                            TerminalKind::PlusPlus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::MinusMinus,
+                            TerminalKind::MinusMinus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Tilde,
+                            TerminalKind::Tilde,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Bang,
+                            TerminalKind::Bang,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Minus,
+                            TerminalKind::Minus,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
                         let result = self
                             .parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::Plus,
+                                TerminalKind::Plus,
                             )
-                            .with_label(NodeLabel::Operator);
+                            .with_label(EdgeLabel::Operator);
                         choice.consider(input, result)?;
                     }
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::DeleteKeyword,
+                            TerminalKind::DeleteKeyword,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -2079,34 +2082,34 @@ impl Language {
         };
         let parse_postfix_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::FunctionCallExpression,
+                NonTerminalKind::FunctionCallExpression,
                 33u8,
                 self.arguments_declaration(input)
-                    .with_label(NodeLabel::Arguments),
+                    .with_label(EdgeLabel::Arguments),
             )
         };
         let parse_postfix_call_options_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::CallOptionsExpression,
+                NonTerminalKind::CallOptionsExpression,
                 35u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     if self.version_is_at_least_0_6_2 {
                         let result = SequenceHelper::run(|mut seq| {
-                            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                            let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                             let input = delim_guard.ctx();
                             seq.elem_labeled(
-                                NodeLabel::OpenBrace,
+                                EdgeLabel::OpenBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::OpenBrace,
+                                    TerminalKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . call_options (input) . with_label (NodeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
+                            seq . elem (self . call_options (input) . with_label (EdgeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
                             seq.elem_labeled(
-                                NodeLabel::CloseBrace,
+                                EdgeLabel::CloseBrace,
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::CloseBrace,
+                                    TerminalKind::CloseBrace,
                                 ),
                             )?;
                             seq.finish()
@@ -2119,43 +2122,43 @@ impl Language {
         };
         let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::MemberAccessExpression,
+                NonTerminalKind::MemberAccessExpression,
                 37u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::Period,
+                        EdgeLabel::Period,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Period,
+                            TerminalKind::Period,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Member, self.member_access(input))?;
+                    seq.elem_labeled(EdgeLabel::Member, self.member_access(input))?;
                     seq.finish()
                 }),
             )
         };
         let parse_postfix_index_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::IndexAccessExpression,
+                NonTerminalKind::IndexAccessExpression,
                 39u8,
                 SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                    let mut delim_guard = input.open_delim(TerminalKind::CloseBracket);
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
-                        NodeLabel::OpenBracket,
+                        EdgeLabel::OpenBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::OpenBracket,
+                            TerminalKind::OpenBracket,
                         ),
                     )?;
                     seq.elem(
                         SequenceHelper::run(|mut seq| {
                             seq.elem_labeled(
-                                NodeLabel::Start,
+                                EdgeLabel::Start,
                                 OptionalHelper::transform(self.expression(input)),
                             )?;
                             seq.elem_labeled(
-                                NodeLabel::End,
+                                EdgeLabel::End,
                                 OptionalHelper::transform(self.index_access_end(input)),
                             )?;
                             seq.finish()
@@ -2163,15 +2166,15 @@ impl Language {
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseBracket,
+                            TerminalKind::CloseBracket,
                             TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::CloseBracket,
+                        EdgeLabel::CloseBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CloseBracket,
+                            TerminalKind::CloseBracket,
                         ),
                     )?;
                     seq.finish()
@@ -2208,28 +2211,28 @@ impl Language {
                 if self.version_is_at_least_0_6_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PayableKeyword,
+                        TerminalKind::PayableKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::TrueKeyword,
+                    TerminalKind::TrueKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FalseKeyword,
+                    TerminalKind::FalseKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -2301,10 +2304,10 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::Expression,
+            NonTerminalKind::Expression,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::Expression)
+        .with_kind(NonTerminalKind::Expression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2312,24 +2315,24 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.expression(input)
-                    .with_label(NodeLabel::Expression)
+                    .with_label(EdgeLabel::Expression)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ExpressionStatement)
+        .with_kind(NonTerminalKind::ExpressionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2342,36 +2345,36 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ExternalKeyword,
+                    TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PayableKeyword,
+                    TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PureKeyword,
+                    TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ViewKeyword,
+                    TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::VirtualKeyword,
+                    TerminalKind::VirtualKeyword,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::FallbackFunctionAttribute)
+        .with_kind(NonTerminalKind::FallbackFunctionAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2379,12 +2382,12 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             ZeroOrMoreHelper::run(input, |input| {
                 self.fallback_function_attribute(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::FallbackFunctionAttributes)
+        .with_kind(NonTerminalKind::FallbackFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2392,62 +2395,62 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::FallbackKeyword,
+                    EdgeLabel::FallbackKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::FallbackKeyword,
+                        TerminalKind::FallbackKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
-                    NodeLabel::Attributes,
+                    EdgeLabel::Attributes,
                     self.fallback_function_attributes(input),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Returns,
+                    EdgeLabel::Returns,
                     OptionalHelper::transform(self.returns_declaration(input)),
                 )?;
-                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::FallbackFunctionDefinition)
+        .with_kind(NonTerminalKind::FallbackFunctionDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ForKeyword,
+                EdgeLabel::ForKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ForKeyword,
+                    TerminalKind::ForKeyword,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
-                            NodeLabel::Initialization,
+                            EdgeLabel::Initialization,
                             self.for_statement_initialization(input),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Condition,
+                            EdgeLabel::Condition,
                             self.for_statement_condition(input),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Iterator,
+                            EdgeLabel::Iterator,
                             OptionalHelper::transform(self.expression(input)),
                         )?;
                         seq.finish()
@@ -2455,23 +2458,23 @@ impl Language {
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ForStatement)
+        .with_kind(NonTerminalKind::ForStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2481,13 +2484,13 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::Semicolon,
+                TerminalKind::Semicolon,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ForStatementCondition)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ForStatementCondition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2501,13 +2504,13 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::Semicolon,
+                TerminalKind::Semicolon,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ForStatementInitialization)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ForStatementInitialization)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2522,68 +2525,68 @@ impl Language {
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ConstantKeyword,
+                    TerminalKind::ConstantKeyword,
                 );
                 choice.consider(input, result)?;
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::ExternalKeyword,
+                TerminalKind::ExternalKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::InternalKeyword,
+                TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PayableKeyword,
+                TerminalKind::PayableKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PrivateKeyword,
+                TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PublicKeyword,
+                TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_4_16 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PureKeyword,
+                    TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ViewKeyword,
+                    TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_6_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::VirtualKeyword,
+                    TerminalKind::VirtualKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::FunctionAttribute)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::FunctionAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.function_attribute(input).with_label(NodeLabel::Item)
+            self.function_attribute(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::FunctionAttributes)
+        .with_kind(NonTerminalKind::FunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2593,13 +2596,13 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::Semicolon,
+                TerminalKind::Semicolon,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::FunctionBody)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::FunctionBody)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2609,14 +2612,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::FunctionCallExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::FunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -2629,23 +2632,23 @@ impl Language {
     fn function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::FunctionKeyword,
+                EdgeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FunctionKeyword,
+                    TerminalKind::FunctionKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Name, self.function_name(input))?;
-            seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-            seq.elem_labeled(NodeLabel::Attributes, self.function_attributes(input))?;
+            seq.elem_labeled(EdgeLabel::Name, self.function_name(input))?;
+            seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
+            seq.elem_labeled(EdgeLabel::Attributes, self.function_attributes(input))?;
             seq.elem_labeled(
-                NodeLabel::Returns,
+                EdgeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
             )?;
-            seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.function_body(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::FunctionDefinition)
+        .with_kind(NonTerminalKind::FunctionDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2653,44 +2656,44 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::Identifier,
+                TerminalKind::Identifier,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::FallbackKeyword,
+                TerminalKind::FallbackKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::ReceiveKeyword,
+                TerminalKind::ReceiveKeyword,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::FunctionName)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::FunctionName)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn function_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::FunctionKeyword,
+                EdgeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FunctionKeyword,
+                    TerminalKind::FunctionKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
-            seq.elem_labeled(NodeLabel::Attributes, self.function_type_attributes(input))?;
+            seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
+            seq.elem_labeled(EdgeLabel::Attributes, self.function_type_attributes(input))?;
             seq.elem_labeled(
-                NodeLabel::Returns,
+                EdgeLabel::Returns,
                 OptionalHelper::transform(self.returns_declaration(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::FunctionType)
+        .with_kind(NonTerminalKind::FunctionType)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2698,84 +2701,84 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::InternalKeyword,
+                TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::ExternalKeyword,
+                TerminalKind::ExternalKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PrivateKeyword,
+                TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PublicKeyword,
+                TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ConstantKeyword,
+                    TerminalKind::ConstantKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PureKeyword,
+                    TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ViewKeyword,
+                    TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PayableKeyword,
+                TerminalKind::PayableKeyword,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::FunctionTypeAttribute)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::FunctionTypeAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn function_type_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
             self.function_type_attribute(input)
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::FunctionTypeAttributes)
+        .with_kind(NonTerminalKind::FunctionTypeAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Literal,
+                EdgeLabel::Literal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::HexLiteral,
+                    TerminalKind::HexLiteral,
                 ),
             )?;
             if !self.version_is_at_least_0_5_0 {
                 seq.elem_labeled(
-                    NodeLabel::Unit,
+                    EdgeLabel::Unit,
                     OptionalHelper::transform(self.number_unit(input)),
                 )?;
             }
             seq.finish()
         })
-        .with_kind(RuleKind::HexNumberExpression)
+        .with_kind(NonTerminalKind::HexNumberExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2783,30 +2786,30 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::SingleQuotedHexStringLiteral,
+                TerminalKind::SingleQuotedHexStringLiteral,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::DoubleQuotedHexStringLiteral,
+                TerminalKind::DoubleQuotedHexStringLiteral,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::HexStringLiteral)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::HexStringLiteral)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_14 {
             OneOrMoreHelper::run(input, |input| {
-                self.hex_string_literal(input).with_label(NodeLabel::Item)
+                self.hex_string_literal(input).with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::HexStringLiterals)
+        .with_kind(NonTerminalKind::HexStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2817,85 +2820,85 @@ impl Language {
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 )
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
             },
-            TokenKind::Period,
-            NodeLabel::Separator,
+            TerminalKind::Period,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::IdentifierPath)
+        .with_kind(NonTerminalKind::IdentifierPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::IfKeyword,
+                EdgeLabel::IfKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::IfKeyword,
+                    TerminalKind::IfKeyword,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     self.expression(input)
-                        .with_label(NodeLabel::Condition)
+                        .with_label(EdgeLabel::Condition)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
             seq.elem_labeled(
-                NodeLabel::ElseBranch,
+                EdgeLabel::ElseBranch,
                 OptionalHelper::transform(self.else_branch(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::IfStatement)
+        .with_kind(NonTerminalKind::IfStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn import_alias(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::AsKeyword,
+                EdgeLabel::AsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::AsKeyword,
+                    TerminalKind::AsKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Identifier,
+                EdgeLabel::Identifier,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ImportAlias)
+        .with_kind(NonTerminalKind::ImportAlias)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2909,72 +2912,72 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ImportClause)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ImportClause)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn import_deconstruction(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.import_deconstruction_symbols(input)
-                        .with_label(NodeLabel::Symbols)
+                        .with_label(EdgeLabel::Symbols)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseBrace,
+                            TerminalKind::CloseBrace,
                             TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.elem_labeled(
-                NodeLabel::FromKeyword,
+                EdgeLabel::FromKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FromKeyword,
+                    TerminalKind::FromKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
+            seq.elem_labeled(EdgeLabel::Path, self.string_literal(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ImportDeconstruction)
+        .with_kind(NonTerminalKind::ImportDeconstruction)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn import_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Alias,
+                EdgeLabel::Alias,
                 OptionalHelper::transform(self.import_alias(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ImportDeconstructionSymbol)
+        .with_kind(NonTerminalKind::ImportDeconstructionSymbol)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2984,12 +2987,12 @@ impl Language {
             self,
             |input| {
                 self.import_deconstruction_symbol(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             },
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::ImportDeconstructionSymbols)
+        .with_kind(NonTerminalKind::ImportDeconstructionSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2998,51 +3001,51 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::ImportKeyword,
+                        EdgeLabel::ImportKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::ImportKeyword,
+                            TerminalKind::ImportKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Clause, self.import_clause(input))?;
+                    seq.elem_labeled(EdgeLabel::Clause, self.import_clause(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ImportDirective)
+        .with_kind(NonTerminalKind::ImportDirective)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn index_access_end(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Colon,
+                EdgeLabel::Colon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Colon,
+                    TerminalKind::Colon,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::End,
+                EdgeLabel::End,
                 OptionalHelper::transform(self.expression(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::IndexAccessEnd)
+        .with_kind(NonTerminalKind::IndexAccessEnd)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3052,14 +3055,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::IndexAccessExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::IndexAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -3072,29 +3075,29 @@ impl Language {
     fn inheritance_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::IsKeyword,
+                EdgeLabel::IsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::IsKeyword,
+                    TerminalKind::IsKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Types, self.inheritance_types(input))?;
+            seq.elem_labeled(EdgeLabel::Types, self.inheritance_types(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::InheritanceSpecifier)
+        .with_kind(NonTerminalKind::InheritanceSpecifier)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::TypeName, self.identifier_path(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.identifier_path(input))?;
             seq.elem_labeled(
-                NodeLabel::Arguments,
+                EdgeLabel::Arguments,
                 OptionalHelper::transform(self.arguments_declaration(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::InheritanceType)
+        .with_kind(NonTerminalKind::InheritanceType)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3102,153 +3105,153 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.inheritance_type(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.inheritance_type(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::InheritanceTypes)
+        .with_kind(NonTerminalKind::InheritanceTypes)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::InterfaceKeyword,
+                EdgeLabel::InterfaceKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::InterfaceKeyword,
+                    TerminalKind::InterfaceKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Inheritence,
+                EdgeLabel::Inheritence,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.interface_members(input)
-                        .with_label(NodeLabel::Members)
+                        .with_label(EdgeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseBrace,
+                            TerminalKind::CloseBrace,
                             TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::InterfaceDefinition)
+        .with_kind(NonTerminalKind::InterfaceDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_label(NodeLabel::Item)
+            self.contract_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::InterfaceMembers)
+        .with_kind(NonTerminalKind::InterfaceMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn library_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::LibraryKeyword,
+                EdgeLabel::LibraryKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::LibraryKeyword,
+                    TerminalKind::LibraryKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.library_members(input)
-                        .with_label(NodeLabel::Members)
+                        .with_label(EdgeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::LibraryDefinition)
+        .with_kind(NonTerminalKind::LibraryDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn library_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.contract_member(input).with_label(NodeLabel::Item)
+            self.contract_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::LibraryMembers)
+        .with_kind(NonTerminalKind::LibraryMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn mapping_key(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::KeyType, self.mapping_key_type(input))?;
+            seq.elem_labeled(EdgeLabel::KeyType, self.mapping_key_type(input))?;
             if self.version_is_at_least_0_8_18 {
                 seq.elem_labeled(
-                    NodeLabel::Name,
+                    EdgeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     ),
                 )?;
             }
             seq.finish()
         })
-        .with_kind(RuleKind::MappingKey)
+        .with_kind(NonTerminalKind::MappingKey)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3260,82 +3263,82 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::MappingKeyType)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::MappingKeyType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn mapping_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::MappingKeyword,
+                EdgeLabel::MappingKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::MappingKeyword,
+                    TerminalKind::MappingKeyword,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(NodeLabel::KeyType, self.mapping_key(input))?;
+                        seq.elem_labeled(EdgeLabel::KeyType, self.mapping_key(input))?;
                         seq.elem_labeled(
-                            NodeLabel::EqualGreaterThan,
+                            EdgeLabel::EqualGreaterThan,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::EqualGreaterThan,
+                                TerminalKind::EqualGreaterThan,
                             ),
                         )?;
-                        seq.elem_labeled(NodeLabel::ValueType, self.mapping_value(input))?;
+                        seq.elem_labeled(EdgeLabel::ValueType, self.mapping_value(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::MappingType)
+        .with_kind(NonTerminalKind::MappingType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn mapping_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             if self.version_is_at_least_0_8_18 {
                 seq.elem_labeled(
-                    NodeLabel::Name,
+                    EdgeLabel::Name,
                     OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     ),
                 )?;
             }
             seq.finish()
         })
-        .with_kind(RuleKind::MappingValue)
+        .with_kind(NonTerminalKind::MappingValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3343,18 +3346,18 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::Identifier,
+                TerminalKind::Identifier,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::AddressKeyword,
+                TerminalKind::AddressKeyword,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::MemberAccess)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::MemberAccess)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3364,14 +3367,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::MemberAccessExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -3390,63 +3393,63 @@ impl Language {
             if self.version_is_at_least_0_6_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::VirtualKeyword,
+                    TerminalKind::VirtualKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::ModifierAttribute)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::ModifierAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.modifier_attribute(input).with_label(NodeLabel::Item)
+            self.modifier_attribute(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::ModifierAttributes)
+        .with_kind(NonTerminalKind::ModifierAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ModifierKeyword,
+                EdgeLabel::ModifierKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ModifierKeyword,
+                    TerminalKind::ModifierKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Parameters,
+                EdgeLabel::Parameters,
                 OptionalHelper::transform(self.parameters_declaration(input)),
             )?;
-            seq.elem_labeled(NodeLabel::Attributes, self.modifier_attributes(input))?;
-            seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
+            seq.elem_labeled(EdgeLabel::Attributes, self.modifier_attributes(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.function_body(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ModifierDefinition)
+        .with_kind(NonTerminalKind::ModifierDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_invocation(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::Name, self.identifier_path(input))?;
+            seq.elem_labeled(EdgeLabel::Name, self.identifier_path(input))?;
             seq.elem_labeled(
-                NodeLabel::Arguments,
+                EdgeLabel::Arguments,
                 OptionalHelper::transform(self.arguments_declaration(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ModifierInvocation)
+        .with_kind(NonTerminalKind::ModifierInvocation)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3456,14 +3459,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::MultiplicativeExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::MultiplicativeExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -3476,57 +3479,57 @@ impl Language {
     fn named_argument(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Colon,
+                EdgeLabel::Colon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Colon,
+                    TerminalKind::Colon,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
+            seq.elem_labeled(EdgeLabel::Value, self.expression(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::NamedArgument)
+        .with_kind(NonTerminalKind::NamedArgument)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn named_argument_group(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenBrace,
+                EdgeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenBrace,
+                    TerminalKind::OpenBrace,
                 ),
             )?;
             seq.elem(
                 self.named_arguments(input)
-                    .with_label(NodeLabel::Arguments)
+                    .with_label(EdgeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseBrace,
+                EdgeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseBrace,
+                    TerminalKind::CloseBrace,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::NamedArgumentGroup)
+        .with_kind(NonTerminalKind::NamedArgumentGroup)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3534,85 +3537,85 @@ impl Language {
         OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.named_argument(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.named_argument(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::NamedArguments)
+        .with_kind(NonTerminalKind::NamedArguments)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 OptionalHelper::transform(self.named_argument_group(input))
-                    .with_label(NodeLabel::Arguments)
+                    .with_label(EdgeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::NamedArgumentsDeclaration)
+        .with_kind(NonTerminalKind::NamedArgumentsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn named_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Asterisk,
+                EdgeLabel::Asterisk,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Asterisk,
+                    TerminalKind::Asterisk,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Alias, self.import_alias(input))?;
+            seq.elem_labeled(EdgeLabel::Alias, self.import_alias(input))?;
             seq.elem_labeled(
-                NodeLabel::FromKeyword,
+                EdgeLabel::FromKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FromKeyword,
+                    TerminalKind::FromKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
+            seq.elem_labeled(EdgeLabel::Path, self.string_literal(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::NamedImport)
+        .with_kind(NonTerminalKind::NamedImport)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn new_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::NewKeyword,
+                EdgeLabel::NewKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::NewKeyword,
+                    TerminalKind::NewKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::NewExpression)
+        .with_kind(NonTerminalKind::NewExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3620,71 +3623,71 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::WeiKeyword,
+                TerminalKind::WeiKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_6_11 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::GweiKeyword,
+                    TerminalKind::GweiKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_7_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::SzaboKeyword,
+                    TerminalKind::SzaboKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_7_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::FinneyKeyword,
+                    TerminalKind::FinneyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::EtherKeyword,
+                TerminalKind::EtherKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::SecondsKeyword,
+                TerminalKind::SecondsKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::MinutesKeyword,
+                TerminalKind::MinutesKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::HoursKeyword,
+                TerminalKind::HoursKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::DaysKeyword,
+                TerminalKind::DaysKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::WeeksKeyword,
+                TerminalKind::WeeksKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::YearsKeyword,
+                    TerminalKind::YearsKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::NumberUnit)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::NumberUnit)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3694,14 +3697,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::OrExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::OrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -3716,44 +3719,44 @@ impl Language {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.identifier_path(input).with_label(NodeLabel::Item),
-                TokenKind::Comma,
-                NodeLabel::Separator,
+                |input| self.identifier_path(input).with_label(EdgeLabel::Item),
+                TerminalKind::Comma,
+                EdgeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::OverridePaths)
+        .with_kind(NonTerminalKind::OverridePaths)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn override_paths_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     self.override_paths(input)
-                        .with_label(NodeLabel::Paths)
+                        .with_label(EdgeLabel::Paths)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
@@ -3761,7 +3764,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::OverridePathsDeclaration)
+        .with_kind(NonTerminalKind::OverridePathsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3769,14 +3772,14 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::OverrideKeyword,
+                    EdgeLabel::OverrideKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OverrideKeyword,
+                        TerminalKind::OverrideKeyword,
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Overridden,
+                    EdgeLabel::Overridden,
                     OptionalHelper::transform(self.override_paths_declaration(input)),
                 )?;
                 seq.finish()
@@ -3784,29 +3787,29 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::OverrideSpecifier)
+        .with_kind(NonTerminalKind::OverrideSpecifier)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             seq.elem_labeled(
-                NodeLabel::StorageLocation,
+                EdgeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 OptionalHelper::transform(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Identifier,
+                        TerminalKind::Identifier,
                     ),
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::Parameter)
+        .with_kind(NonTerminalKind::Parameter)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3814,58 +3817,58 @@ impl Language {
         OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.parameter(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.parameter(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::Parameters)
+        .with_kind(NonTerminalKind::Parameters)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.parameters(input)
-                    .with_label(NodeLabel::Parameters)
+                    .with_label(EdgeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ParametersDeclaration)
+        .with_kind(NonTerminalKind::ParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn path_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::Path, self.string_literal(input))?;
+            seq.elem_labeled(EdgeLabel::Path, self.string_literal(input))?;
             seq.elem_labeled(
-                NodeLabel::Alias,
+                EdgeLabel::Alias,
                 OptionalHelper::transform(self.import_alias(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::PathImport)
+        .with_kind(NonTerminalKind::PathImport)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3873,45 +3876,45 @@ impl Language {
         OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.expression(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::PositionalArguments)
+        .with_kind(NonTerminalKind::PositionalArguments)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn positional_arguments_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.positional_arguments(input)
-                    .with_label(NodeLabel::Arguments)
+                    .with_label(EdgeLabel::Arguments)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::PositionalArgumentsDeclaration)
+        .with_kind(NonTerminalKind::PositionalArgumentsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3921,14 +3924,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::PostfixExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::PostfixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -3948,8 +3951,8 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::Pragma)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::Pragma)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3958,32 +3961,32 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::PragmaKeyword,
+                        EdgeLabel::PragmaKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::PragmaKeyword,
+                            TerminalKind::PragmaKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Pragma, self.pragma(input))?;
+                    seq.elem_labeled(EdgeLabel::Pragma, self.pragma(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Pragma>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::PragmaDirective)
+        .with_kind(NonTerminalKind::PragmaDirective)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3993,14 +3996,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::PrefixExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::PrefixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -4019,26 +4022,26 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ExternalKeyword,
+                    TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PayableKeyword,
+                    TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::VirtualKeyword,
+                    TerminalKind::VirtualKeyword,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ReceiveFunctionAttribute)
+        .with_kind(NonTerminalKind::ReceiveFunctionAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4046,12 +4049,12 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             ZeroOrMoreHelper::run(input, |input| {
                 self.receive_function_attribute(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ReceiveFunctionAttributes)
+        .with_kind(NonTerminalKind::ReceiveFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4059,24 +4062,24 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::ReceiveKeyword,
+                    EdgeLabel::ReceiveKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::ReceiveKeyword,
+                        TerminalKind::ReceiveKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
-                    NodeLabel::Attributes,
+                    EdgeLabel::Attributes,
                     self.receive_function_attributes(input),
                 )?;
-                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ReceiveFunctionDefinition)
+        .with_kind(NonTerminalKind::ReceiveFunctionDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4085,14 +4088,14 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::ReturnKeyword,
+                        EdgeLabel::ReturnKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::ReturnKeyword,
+                            TerminalKind::ReturnKeyword,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Expression,
+                        EdgeLabel::Expression,
                         OptionalHelper::transform(self.expression(input)),
                     )?;
                     seq.finish()
@@ -4100,36 +4103,36 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::ReturnStatement)
+        .with_kind(NonTerminalKind::ReturnStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ReturnsKeyword,
+                EdgeLabel::ReturnsKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ReturnsKeyword,
+                    TerminalKind::ReturnsKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Variables, self.parameters_declaration(input))?;
+            seq.elem_labeled(EdgeLabel::Variables, self.parameters_declaration(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ReturnsDeclaration)
+        .with_kind(NonTerminalKind::ReturnsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4139,31 +4142,31 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
-                            NodeLabel::RevertKeyword,
+                            EdgeLabel::RevertKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::RevertKeyword,
+                                TerminalKind::RevertKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Error,
+                            EdgeLabel::Error,
                             OptionalHelper::transform(self.identifier_path(input)),
                         )?;
-                        seq.elem_labeled(NodeLabel::Arguments, self.arguments_declaration(input))?;
+                        seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -4171,7 +4174,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::RevertStatement)
+        .with_kind(NonTerminalKind::RevertStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4181,14 +4184,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::ShiftExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::ShiftExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -4200,8 +4203,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.source_unit_members(input)
-            .with_label(NodeLabel::Members)
-            .with_kind(RuleKind::SourceUnit)
+            .with_label(EdgeLabel::Members)
+            .with_kind(NonTerminalKind::SourceUnit)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4251,16 +4254,16 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::SourceUnitMember)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::SourceUnitMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.source_unit_member(input).with_label(NodeLabel::Item)
+            self.source_unit_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::SourceUnitMembers)
+        .with_kind(NonTerminalKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4272,44 +4275,44 @@ impl Language {
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::ConstantKeyword,
+                TerminalKind::ConstantKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::InternalKeyword,
+                TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PrivateKeyword,
+                TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::PublicKeyword,
+                TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_6_5 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ImmutableKeyword,
+                    TerminalKind::ImmutableKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::StateVariableAttribute)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::StateVariableAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
             self.state_variable_attribute(input)
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::StateVariableAttributes)
+        .with_kind(NonTerminalKind::StateVariableAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4317,17 +4320,17 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
-                    seq.elem_labeled(NodeLabel::Attributes, self.state_variable_attributes(input))?;
+                    seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
+                    seq.elem_labeled(EdgeLabel::Attributes, self.state_variable_attributes(input))?;
                     seq.elem_labeled(
-                        NodeLabel::Name,
+                        EdgeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Value,
+                        EdgeLabel::Value,
                         OptionalHelper::transform(self.state_variable_definition_value(input)),
                     )?;
                     seq.finish()
@@ -4335,36 +4338,36 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::StateVariableDefinition)
+        .with_kind(NonTerminalKind::StateVariableDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_definition_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Equal,
+                EdgeLabel::Equal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Equal,
+                    TerminalKind::Equal,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Value, self.expression(input))?;
+            seq.elem_labeled(EdgeLabel::Value, self.expression(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::StateVariableDefinitionValue)
+        .with_kind(NonTerminalKind::StateVariableDefinitionValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4416,16 +4419,16 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::Statement)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::Statement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.statement(input).with_label(NodeLabel::Item)
+            self.statement(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::Statements)
+        .with_kind(NonTerminalKind::Statements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4433,25 +4436,25 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::MemoryKeyword,
+                TerminalKind::MemoryKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::StorageKeyword,
+                TerminalKind::StorageKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CallDataKeyword,
+                    TerminalKind::CallDataKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::StorageLocation)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::StorageLocation)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4479,8 +4482,8 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::StringExpression)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::StringExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4488,81 +4491,81 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::SingleQuotedStringLiteral,
+                TerminalKind::SingleQuotedStringLiteral,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::DoubleQuotedStringLiteral,
+                TerminalKind::DoubleQuotedStringLiteral,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::StringLiteral)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::StringLiteral)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_14 {
             OneOrMoreHelper::run(input, |input| {
-                self.string_literal(input).with_label(NodeLabel::Item)
+                self.string_literal(input).with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::StringLiterals)
+        .with_kind(NonTerminalKind::StringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn struct_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::StructKeyword,
+                EdgeLabel::StructKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::StructKeyword,
+                    TerminalKind::StructKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.struct_members(input)
-                        .with_label(NodeLabel::Members)
+                        .with_label(EdgeLabel::Members)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
             }))?;
             seq.finish()
         })
-        .with_kind(RuleKind::StructDefinition)
+        .with_kind(NonTerminalKind::StructDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4570,12 +4573,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+                    seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
                     seq.elem_labeled(
-                        NodeLabel::Name,
+                        EdgeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     )?;
                     seq.finish()
@@ -4583,28 +4586,28 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::StructMember)
+        .with_kind(NonTerminalKind::StructMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn struct_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.struct_member(input).with_label(NodeLabel::Item)
+            self.struct_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::StructMembers)
+        .with_kind(NonTerminalKind::StructMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4614,21 +4617,21 @@ impl Language {
                 seq.elem(
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::ThrowKeyword,
+                        TerminalKind::ThrowKeyword,
                     )
-                    .with_label(NodeLabel::ThrowKeyword)
+                    .with_label(EdgeLabel::ThrowKeyword)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -4636,7 +4639,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ThrowStatement)
+        .with_kind(NonTerminalKind::ThrowStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4644,32 +4647,32 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::TryKeyword,
+                    EdgeLabel::TryKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::TryKeyword,
+                        TerminalKind::TryKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
+                seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
                 seq.elem_labeled(
-                    NodeLabel::Returns,
+                    EdgeLabel::Returns,
                     OptionalHelper::transform(self.returns_declaration(input)),
                 )?;
-                seq.elem_labeled(NodeLabel::Body, self.block(input))?;
-                seq.elem_labeled(NodeLabel::CatchClauses, self.catch_clauses(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.block(input))?;
+                seq.elem_labeled(EdgeLabel::CatchClauses, self.catch_clauses(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::TryStatement)
+        .with_kind(NonTerminalKind::TryStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.tuple_member(input))
-            .with_label(NodeLabel::Member)
-            .with_kind(RuleKind::TupleDeconstructionElement)
+            .with_label(EdgeLabel::Member)
+            .with_kind(NonTerminalKind::TupleDeconstructionElement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4679,12 +4682,12 @@ impl Language {
             self,
             |input| {
                 self.tuple_deconstruction_element(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             },
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::TupleDeconstructionElements)
+        .with_kind(NonTerminalKind::TupleDeconstructionElements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4694,105 +4697,105 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     if !self.version_is_at_least_0_5_0 {
                         seq.elem_labeled(
-                            NodeLabel::VarKeyword,
+                            EdgeLabel::VarKeyword,
                             OptionalHelper::transform(
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::VarKeyword,
+                                    TerminalKind::VarKeyword,
                                 ),
                             ),
                         )?;
                     }
                     seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                         let input = delim_guard.ctx();
                         seq.elem_labeled(
-                            NodeLabel::OpenParen,
+                            EdgeLabel::OpenParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::OpenParen,
+                                TerminalKind::OpenParen,
                             ),
                         )?;
                         seq.elem(
                             self.tuple_deconstruction_elements(input)
-                                .with_label(NodeLabel::Elements)
+                                .with_label(EdgeLabel::Elements)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                     input,
                                     self,
-                                    TokenKind::CloseParen,
+                                    TerminalKind::CloseParen,
                                     TokenAcceptanceThreshold(0u8),
                                 ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::CloseParen,
+                            EdgeLabel::CloseParen,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::CloseParen,
+                                TerminalKind::CloseParen,
                             ),
                         )?;
                         seq.finish()
                     }))?;
                     seq.elem_labeled(
-                        NodeLabel::Equal,
+                        EdgeLabel::Equal,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Equal,
+                            TerminalKind::Equal,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
+                    seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::TupleDeconstructionStatement)
+        .with_kind(NonTerminalKind::TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.tuple_values(input)
-                    .with_label(NodeLabel::Items)
+                    .with_label(EdgeLabel::Items)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::TupleExpression)
+        .with_kind(NonTerminalKind::TupleExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4804,15 +4807,15 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::TupleMember)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::TupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.expression(input))
-            .with_label(NodeLabel::Expression)
-            .with_kind(RuleKind::TupleValue)
+            .with_label(EdgeLabel::Expression)
+            .with_kind(NonTerminalKind::TupleValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4820,11 +4823,11 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.tuple_value(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.tuple_value(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::TupleValues)
+        .with_kind(NonTerminalKind::TupleValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4832,37 +4835,37 @@ impl Language {
         if self.version_is_at_least_0_5_3 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::TypeKeyword,
+                    EdgeLabel::TypeKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::TypeKeyword,
+                        TerminalKind::TypeKeyword,
                     ),
                 )?;
                 seq.elem(SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                    let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
-                        NodeLabel::OpenParen,
+                        EdgeLabel::OpenParen,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::OpenParen,
+                            TerminalKind::OpenParen,
                         ),
                     )?;
                     seq.elem(
                         self.type_name(input)
-                            .with_label(NodeLabel::TypeName)
+                            .with_label(EdgeLabel::TypeName)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseParen,
+                            TerminalKind::CloseParen,
                             TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::CloseParen,
+                        EdgeLabel::CloseParen,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CloseParen,
+                            TerminalKind::CloseParen,
                         ),
                     )?;
                     seq.finish()
@@ -4872,40 +4875,40 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::TypeExpression)
+        .with_kind(NonTerminalKind::TypeExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn type_name(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_postfix_array_type_name = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::ArrayTypeName,
+                NonTerminalKind::ArrayTypeName,
                 1u8,
                 SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                    let mut delim_guard = input.open_delim(TerminalKind::CloseBracket);
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
-                        NodeLabel::OpenBracket,
+                        EdgeLabel::OpenBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::OpenBracket,
+                            TerminalKind::OpenBracket,
                         ),
                     )?;
                     seq.elem(
                         OptionalHelper::transform(self.expression(input))
-                            .with_label(NodeLabel::Index)
+                            .with_label(EdgeLabel::Index)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
-                                TokenKind::CloseBracket,
+                                TerminalKind::CloseBracket,
                                 TokenAcceptanceThreshold(0u8),
                             ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::CloseBracket,
+                        EdgeLabel::CloseBracket,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CloseBracket,
+                            TerminalKind::CloseBracket,
                         ),
                     )?;
                     seq.finish()
@@ -4924,7 +4927,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -4941,30 +4944,30 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::TypeName,
+            NonTerminalKind::TypeName,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::TypeName)
+        .with_kind(NonTerminalKind::TypeName)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn typed_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::TypeName, self.type_name(input))?;
+            seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             seq.elem_labeled(
-                NodeLabel::StorageLocation,
+                EdgeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::TypedTupleMember)
+        .with_kind(NonTerminalKind::TypedTupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4972,19 +4975,19 @@ impl Language {
         if self.version_is_at_least_0_8_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::UncheckedKeyword,
+                    EdgeLabel::UncheckedKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UncheckedKeyword,
+                        TerminalKind::UncheckedKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Block, self.block(input))?;
+                seq.elem_labeled(EdgeLabel::Block, self.block(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UncheckedBlock)
+        .with_kind(NonTerminalKind::UncheckedBlock)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4993,21 +4996,21 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::SingleQuotedUnicodeStringLiteral,
+                    TerminalKind::SingleQuotedUnicodeStringLiteral,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::DoubleQuotedUnicodeStringLiteral,
+                    TerminalKind::DoubleQuotedUnicodeStringLiteral,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnicodeStringLiteral)
+        .with_kind(NonTerminalKind::UnicodeStringLiteral)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5015,12 +5018,12 @@ impl Language {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.unicode_string_literal(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnicodeStringLiterals)
+        .with_kind(NonTerminalKind::UnicodeStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5032,62 +5035,62 @@ impl Language {
                 if !self.version_is_at_least_0_5_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::ConstantKeyword,
+                        TerminalKind::ConstantKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::ExternalKeyword,
+                    TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::InternalKeyword,
+                        TerminalKind::InternalKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::PayableKeyword,
+                    TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PrivateKeyword,
+                        TerminalKind::PrivateKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if !self.version_is_at_least_0_5_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PublicKeyword,
+                        TerminalKind::PublicKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PureKeyword,
+                        TerminalKind::PureKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::ViewKeyword,
+                        TerminalKind::ViewKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnnamedFunctionAttribute)
+        .with_kind(NonTerminalKind::UnnamedFunctionAttribute)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5095,12 +5098,12 @@ impl Language {
         if !self.version_is_at_least_0_6_0 {
             ZeroOrMoreHelper::run(input, |input| {
                 self.unnamed_function_attribute(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnnamedFunctionAttributes)
+        .with_kind(NonTerminalKind::UnnamedFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5108,43 +5111,43 @@ impl Language {
         if !self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::FunctionKeyword,
+                    EdgeLabel::FunctionKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::FunctionKeyword,
+                        TerminalKind::FunctionKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Parameters, self.parameters_declaration(input))?;
+                seq.elem_labeled(EdgeLabel::Parameters, self.parameters_declaration(input))?;
                 seq.elem_labeled(
-                    NodeLabel::Attributes,
+                    EdgeLabel::Attributes,
                     self.unnamed_function_attributes(input),
                 )?;
-                seq.elem_labeled(NodeLabel::Body, self.function_body(input))?;
+                seq.elem_labeled(EdgeLabel::Body, self.function_body(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnnamedFunctionDefinition)
+        .with_kind(NonTerminalKind::UnnamedFunctionDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn untyped_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::StorageLocation,
+                EdgeLabel::StorageLocation,
                 OptionalHelper::transform(self.storage_location(input)),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::UntypedTupleMember)
+        .with_kind(NonTerminalKind::UntypedTupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5154,41 +5157,41 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
-                            NodeLabel::TypeKeyword,
+                            EdgeLabel::TypeKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::TypeKeyword,
+                                TerminalKind::TypeKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::Name,
+                            EdgeLabel::Name,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::Identifier,
+                                TerminalKind::Identifier,
                             ),
                         )?;
                         seq.elem_labeled(
-                            NodeLabel::IsKeyword,
+                            EdgeLabel::IsKeyword,
                             self.parse_token_with_trivia::<LexicalContextType::Default>(
                                 input,
-                                TokenKind::IsKeyword,
+                                TerminalKind::IsKeyword,
                             ),
                         )?;
-                        seq.elem_labeled(NodeLabel::ValueType, self.elementary_type(input))?;
+                        seq.elem_labeled(EdgeLabel::ValueType, self.elementary_type(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                         TokenAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Semicolon,
+                    EdgeLabel::Semicolon,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Semicolon,
+                        TerminalKind::Semicolon,
                     ),
                 )?;
                 seq.finish()
@@ -5196,7 +5199,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UserDefinedValueTypeDefinition)
+        .with_kind(NonTerminalKind::UserDefinedValueTypeDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5204,19 +5207,19 @@ impl Language {
         if self.version_is_at_least_0_8_19 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::AsKeyword,
+                    EdgeLabel::AsKeyword,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::AsKeyword,
+                        TerminalKind::AsKeyword,
                     ),
                 )?;
-                seq.elem_labeled(NodeLabel::Operator, self.using_operator(input))?;
+                seq.elem_labeled(EdgeLabel::Operator, self.using_operator(input))?;
                 seq.finish()
             })
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingAlias)
+        .with_kind(NonTerminalKind::UsingAlias)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5230,38 +5233,38 @@ impl Language {
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::UsingClause)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::UsingClause)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn using_deconstruction(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenBrace,
+                    EdgeLabel::OpenBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenBrace,
+                        TerminalKind::OpenBrace,
                     ),
                 )?;
                 seq.elem(
                     self.using_deconstruction_symbols(input)
-                        .with_label(NodeLabel::Symbols)
+                        .with_label(EdgeLabel::Symbols)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
-                            TokenKind::CloseBrace,
+                            TerminalKind::CloseBrace,
                             TokenAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseBrace,
+                    EdgeLabel::CloseBrace,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                     ),
                 )?;
                 seq.finish()
@@ -5269,17 +5272,17 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingDeconstruction)
+        .with_kind(NonTerminalKind::UsingDeconstruction)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn using_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_labeled(NodeLabel::Name, self.identifier_path(input))?;
+                seq.elem_labeled(EdgeLabel::Name, self.identifier_path(input))?;
                 if self.version_is_at_least_0_8_19 {
                     seq.elem_labeled(
-                        NodeLabel::Alias,
+                        EdgeLabel::Alias,
                         OptionalHelper::transform(self.using_alias(input)),
                     )?;
                 }
@@ -5288,7 +5291,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingDeconstructionSymbol)
+        .with_kind(NonTerminalKind::UsingDeconstructionSymbol)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5299,15 +5302,15 @@ impl Language {
                 self,
                 |input| {
                     self.using_deconstruction_symbol(input)
-                        .with_label(NodeLabel::Item)
+                        .with_label(EdgeLabel::Item)
                 },
-                TokenKind::Comma,
-                NodeLabel::Separator,
+                TerminalKind::Comma,
+                EdgeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingDeconstructionSymbols)
+        .with_kind(NonTerminalKind::UsingDeconstructionSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5316,28 +5319,28 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::UsingKeyword,
+                        EdgeLabel::UsingKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::UsingKeyword,
+                            TerminalKind::UsingKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Clause, self.using_clause(input))?;
+                    seq.elem_labeled(EdgeLabel::Clause, self.using_clause(input))?;
                     seq.elem_labeled(
-                        NodeLabel::ForKeyword,
+                        EdgeLabel::ForKeyword,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::ForKeyword,
+                            TerminalKind::ForKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Target, self.using_target(input))?;
+                    seq.elem_labeled(EdgeLabel::Target, self.using_target(input))?;
                     if self.version_is_at_least_0_8_13 {
                         seq.elem_labeled(
-                            NodeLabel::GlobalKeyword,
+                            EdgeLabel::GlobalKeyword,
                             OptionalHelper::transform(
                                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::GlobalKeyword,
+                                    TerminalKind::GlobalKeyword,
                                 ),
                             ),
                         )?;
@@ -5347,20 +5350,20 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::UsingDirective)
+        .with_kind(NonTerminalKind::UsingDirective)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5369,82 +5372,86 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Ampersand,
+                    TerminalKind::Ampersand,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Asterisk,
+                    TerminalKind::Asterisk,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::BangEqual,
-                );
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar);
-                choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Caret,
+                    TerminalKind::BangEqual,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::EqualEqual,
+                    TerminalKind::Bar,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::GreaterThan,
+                    TerminalKind::Caret,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::GreaterThanEqual,
+                    TerminalKind::EqualEqual,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::LessThan,
+                    TerminalKind::GreaterThan,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::LessThanEqual,
+                    TerminalKind::GreaterThanEqual,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Minus,
+                    TerminalKind::LessThan,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Percent,
-                );
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Plus);
-                choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Slash,
+                    TerminalKind::LessThanEqual,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Tilde,
+                    TerminalKind::Minus,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Percent,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Plus,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Slash,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Tilde,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingOperator)
+        .with_kind(NonTerminalKind::UsingOperator)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5452,13 +5459,15 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.type_name(input);
             choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Asterisk);
+            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TerminalKind::Asterisk,
+            );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::UsingTarget)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::UsingTarget)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5467,22 +5476,22 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::VariableType,
+                        EdgeLabel::VariableType,
                         self.variable_declaration_type(input),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::StorageLocation,
+                        EdgeLabel::StorageLocation,
                         OptionalHelper::transform(self.storage_location(input)),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Name,
+                        EdgeLabel::Name,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Value,
+                        EdgeLabel::Value,
                         OptionalHelper::transform(self.variable_declaration_value(input)),
                     )?;
                     seq.finish()
@@ -5490,20 +5499,20 @@ impl Language {
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::VariableDeclarationStatement)
+        .with_kind(NonTerminalKind::VariableDeclarationStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5514,30 +5523,30 @@ impl Language {
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::VarKeyword,
+                    TerminalKind::VarKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::VariableDeclarationType)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::VariableDeclarationType)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::Equal,
+                EdgeLabel::Equal,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Equal,
+                    TerminalKind::Equal,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Expression, self.expression(input))?;
+            seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::VariableDeclarationValue)
+        .with_kind(NonTerminalKind::VariableDeclarationValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5547,14 +5556,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::VersionExpression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::VersionComparator => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::VersionExpression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::VersionComparator => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -5567,66 +5576,69 @@ impl Language {
     fn version_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_left_version_range = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::VersionRange,
+                NonTerminalKind::VersionRange,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus)
-                    .with_label(NodeLabel::Operator),
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::Minus,
+                )
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_prefix_version_comparator = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionComparator,
+                NonTerminalKind::VersionComparator,
                 3u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::Caret,
+                            TerminalKind::Caret,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::Tilde,
+                            TerminalKind::Tilde,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::Equal,
+                            TerminalKind::Equal,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::LessThan,
+                            TerminalKind::LessThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::GreaterThan,
+                            TerminalKind::GreaterThan,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::LessThanEqual,
+                            TerminalKind::LessThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
                         .parse_token_with_trivia::<LexicalContextType::Pragma>(
                             input,
-                            TokenKind::GreaterThanEqual,
+                            TerminalKind::GreaterThanEqual,
                         )
-                        .with_label(NodeLabel::Operator);
+                        .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -5645,17 +5657,17 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::SingleQuotedVersionLiteral,
+                    TerminalKind::SingleQuotedVersionLiteral,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::DoubleQuotedVersionLiteral,
+                    TerminalKind::DoubleQuotedVersionLiteral,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         };
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
@@ -5685,18 +5697,18 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::VersionExpression,
+            NonTerminalKind::VersionExpression,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::VersionExpression)
+        .with_kind(NonTerminalKind::VersionExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn version_expression_set(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.version_expression(input).with_label(NodeLabel::Item)
+            self.version_expression(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::VersionExpressionSet)
+        .with_kind(NonTerminalKind::VersionExpressionSet)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5706,28 +5718,28 @@ impl Language {
             self,
             |input| {
                 self.version_expression_set(input)
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
             },
-            TokenKind::BarBar,
-            NodeLabel::Separator,
+            TerminalKind::BarBar,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::VersionExpressionSets)
+        .with_kind(NonTerminalKind::VersionExpressionSets)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::SolidityKeyword,
+                EdgeLabel::SolidityKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::SolidityKeyword,
+                    TerminalKind::SolidityKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Sets, self.version_expression_sets(input))?;
+            seq.elem_labeled(EdgeLabel::Sets, self.version_expression_sets(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::VersionPragma)
+        .with_kind(NonTerminalKind::VersionPragma)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5737,14 +5749,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::VersionExpression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::VersionRange => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::VersionExpression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::VersionRange => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -5761,59 +5773,59 @@ impl Language {
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TokenKind::VersionSpecifier,
+                    TerminalKind::VersionSpecifier,
                 )
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
             },
-            TokenKind::Period,
-            NodeLabel::Separator,
+            TerminalKind::Period,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::VersionSpecifiers)
+        .with_kind(NonTerminalKind::VersionSpecifiers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::WhileKeyword,
+                EdgeLabel::WhileKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::WhileKeyword,
+                    TerminalKind::WhileKeyword,
                 ),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
-                    NodeLabel::OpenParen,
+                    EdgeLabel::OpenParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::OpenParen,
+                        TerminalKind::OpenParen,
                     ),
                 )?;
                 seq.elem(
                     self.expression(input)
-                        .with_label(NodeLabel::Condition)
+                        .with_label(EdgeLabel::Condition)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::CloseParen,
+                    EdgeLabel::CloseParen,
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                     ),
                 )?;
                 seq.finish()
             }))?;
-            seq.elem_labeled(NodeLabel::Body, self.statement(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::WhileStatement)
+        .with_kind(NonTerminalKind::WhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5821,11 +5833,11 @@ impl Language {
         OptionalHelper::transform(SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_expression(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.yul_expression(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::YulArguments)
+        .with_kind(NonTerminalKind::YulArguments)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5835,65 +5847,70 @@ impl Language {
                 let result = self.yul_colon_and_equal(input);
                 choice.consider(input, result)?;
             }
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::ColonEqual);
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::ColonEqual,
+            );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulAssignmentOperator)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulAssignmentOperator)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::Names, self.yul_paths(input))?;
-            seq.elem_labeled(NodeLabel::Assignment, self.yul_assignment_operator(input))?;
-            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(EdgeLabel::Names, self.yul_paths(input))?;
+            seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
+            seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulAssignmentStatement)
+        .with_kind(NonTerminalKind::YulAssignmentStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenBrace,
+                EdgeLabel::OpenBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::OpenBrace,
+                    TerminalKind::OpenBrace,
                 ),
             )?;
             seq.elem(
                 self.yul_statements(input)
-                    .with_label(NodeLabel::Statements)
+                    .with_label(EdgeLabel::Statements)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
-                        TokenKind::CloseBrace,
+                        TerminalKind::CloseBrace,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseBrace,
+                EdgeLabel::CloseBrace,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::CloseBrace,
+                    TerminalKind::CloseBrace,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulBlock)
+        .with_kind(NonTerminalKind::YulBlock)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulBreakKeyword)
-            .with_label(NodeLabel::BreakKeyword)
-            .with_kind(RuleKind::YulBreakStatement)
+        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            input,
+            TerminalKind::YulBreakKeyword,
+        )
+        .with_label(EdgeLabel::BreakKeyword)
+        .with_kind(NonTerminalKind::YulBreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5901,437 +5918,445 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulAddKeyword,
+                TerminalKind::YulAddKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulAddModKeyword,
+                TerminalKind::YulAddModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulAddressKeyword,
+                TerminalKind::YulAddressKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulAndKeyword,
+                TerminalKind::YulAndKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulBalanceKeyword,
+                TerminalKind::YulBalanceKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulBlockHashKeyword,
+                TerminalKind::YulBlockHashKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulByteKeyword,
+                TerminalKind::YulByteKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallCodeKeyword,
+                TerminalKind::YulCallCodeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallDataCopyKeyword,
+                TerminalKind::YulCallDataCopyKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallDataLoadKeyword,
+                TerminalKind::YulCallDataLoadKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallDataSizeKeyword,
+                TerminalKind::YulCallDataSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallerKeyword,
+                TerminalKind::YulCallerKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallKeyword,
+                TerminalKind::YulCallKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCallValueKeyword,
+                TerminalKind::YulCallValueKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCoinBaseKeyword,
+                TerminalKind::YulCoinBaseKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulCreateKeyword,
+                TerminalKind::YulCreateKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulDelegateCallKeyword,
+                TerminalKind::YulDelegateCallKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulDivKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulEqKeyword);
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::YulExpKeyword,
+                TerminalKind::YulDivKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulExtCodeCopyKeyword,
+                TerminalKind::YulEqKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulExtCodeSizeKeyword,
+                TerminalKind::YulExpKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulGasKeyword,
+                TerminalKind::YulExtCodeCopyKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulGasLimitKeyword,
+                TerminalKind::YulExtCodeSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulGasPriceKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulGtKeyword);
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::YulInvalidKeyword,
+                TerminalKind::YulGasKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulIsZeroKeyword,
+                TerminalKind::YulGasLimitKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLog0Keyword,
+                TerminalKind::YulGasPriceKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLog1Keyword,
+                TerminalKind::YulGtKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLog2Keyword,
+                TerminalKind::YulInvalidKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLog3Keyword,
+                TerminalKind::YulIsZeroKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLog4Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulLtKeyword);
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::YulMLoadKeyword,
+                TerminalKind::YulLog0Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulModKeyword,
+                TerminalKind::YulLog1Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMSizeKeyword,
+                TerminalKind::YulLog2Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMStore8Keyword,
+                TerminalKind::YulLog3Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMStoreKeyword,
+                TerminalKind::YulLog4Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMulKeyword,
+                TerminalKind::YulLtKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulMulModKeyword,
+                TerminalKind::YulMLoadKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulNotKeyword,
+                TerminalKind::YulModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulNumberKeyword,
+                TerminalKind::YulMSizeKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulOriginKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self
-                .parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulOrKeyword);
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TokenKind::YulPopKeyword,
+                TerminalKind::YulMStore8Keyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulReturnKeyword,
+                TerminalKind::YulMStoreKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulRevertKeyword,
+                TerminalKind::YulMulKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSDivKeyword,
+                TerminalKind::YulMulModKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSelfDestructKeyword,
+                TerminalKind::YulNotKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSgtKeyword,
+                TerminalKind::YulNumberKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSignExtendKeyword,
+                TerminalKind::YulOriginKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSLoadKeyword,
+                TerminalKind::YulOrKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSltKeyword,
+                TerminalKind::YulPopKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSModKeyword,
+                TerminalKind::YulReturnKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSStoreKeyword,
+                TerminalKind::YulRevertKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulStopKeyword,
+                TerminalKind::YulSDivKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSubKeyword,
+                TerminalKind::YulSelfDestructKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulTimestampKeyword,
+                TerminalKind::YulSgtKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulXorKeyword,
+                TerminalKind::YulSignExtendKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulSLoadKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulSltKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulSModKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulSStoreKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulStopKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulSubKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulTimestampKeyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulXorKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulKeccak256Keyword,
+                    TerminalKind::YulKeccak256Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulSha3Keyword,
+                    TerminalKind::YulSha3Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulSuicideKeyword,
+                    TerminalKind::YulSuicideKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulReturnDataCopyKeyword,
+                    TerminalKind::YulReturnDataCopyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulReturnDataSizeKeyword,
+                    TerminalKind::YulReturnDataSizeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulStaticCallKeyword,
+                    TerminalKind::YulStaticCallKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulCreate2Keyword,
+                    TerminalKind::YulCreate2Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_5_0 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulExtCodeHashKeyword,
+                    TerminalKind::YulExtCodeHashKeyword,
                 );
                 choice.consider(input, result)?;
             }
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSarKeyword,
+                TerminalKind::YulSarKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulShlKeyword,
+                TerminalKind::YulShlKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulShrKeyword,
+                TerminalKind::YulShrKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulChainIdKeyword,
+                TerminalKind::YulChainIdKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulSelfBalanceKeyword,
+                TerminalKind::YulSelfBalanceKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_7 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulBaseFeeKeyword,
+                    TerminalKind::YulBaseFeeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_8_18 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulDifficultyKeyword,
+                    TerminalKind::YulDifficultyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_18 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulPrevRandaoKeyword,
+                    TerminalKind::YulPrevRandaoKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulBlobBaseFeeKeyword,
+                    TerminalKind::YulBlobBaseFeeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulBlobHashKeyword,
+                    TerminalKind::YulBlobHashKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulTLoadKeyword,
+                    TerminalKind::YulTLoadKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulTStoreKeyword,
+                    TerminalKind::YulTStoreKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulMCopyKeyword,
+                    TerminalKind::YulMCopyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulBuiltInFunction)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulBuiltInFunction)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6339,17 +6364,17 @@ impl Language {
         if !self.version_is_at_least_0_5_5 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::Colon,
+                    EdgeLabel::Colon,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::Colon,
+                        TerminalKind::Colon,
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Equal,
+                    EdgeLabel::Equal,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::Equal,
+                        TerminalKind::Equal,
                     ),
                 )?;
                 seq.finish()
@@ -6357,66 +6382,66 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::YulColonAndEqual)
+        .with_kind(NonTerminalKind::YulColonAndEqual)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.parse_token_with_trivia::<LexicalContextType::Yul>(
             input,
-            TokenKind::YulContinueKeyword,
+            TerminalKind::YulContinueKeyword,
         )
-        .with_label(NodeLabel::ContinueKeyword)
-        .with_kind(RuleKind::YulContinueStatement)
+        .with_label(EdgeLabel::ContinueKeyword)
+        .with_kind(NonTerminalKind::YulContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_default_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::DefaultKeyword,
+                EdgeLabel::DefaultKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulDefaultKeyword,
+                    TerminalKind::YulDefaultKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulDefaultCase)
+        .with_kind(NonTerminalKind::YulDefaultCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_postfix_yul_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::YulFunctionCallExpression,
+                NonTerminalKind::YulFunctionCallExpression,
                 1u8,
                 SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                    let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
-                        NodeLabel::OpenParen,
+                        EdgeLabel::OpenParen,
                         self.parse_token_with_trivia::<LexicalContextType::Yul>(
                             input,
-                            TokenKind::OpenParen,
+                            TerminalKind::OpenParen,
                         ),
                     )?;
                     seq.elem(
                         self.yul_arguments(input)
-                            .with_label(NodeLabel::Arguments)
+                            .with_label(EdgeLabel::Arguments)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                             input,
                             self,
-                            TokenKind::CloseParen,
+                            TerminalKind::CloseParen,
                             TokenAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::CloseParen,
+                        EdgeLabel::CloseParen,
                         self.parse_token_with_trivia::<LexicalContextType::Yul>(
                             input,
-                            TokenKind::CloseParen,
+                            TerminalKind::CloseParen,
                         ),
                     )?;
                     seq.finish()
@@ -6433,7 +6458,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -6450,29 +6475,29 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::YulExpression,
+            NonTerminalKind::YulExpression,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::YulExpression)
+        .with_kind(NonTerminalKind::YulExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::ForKeyword,
+                EdgeLabel::ForKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulForKeyword,
+                    TerminalKind::YulForKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Initialization, self.yul_block(input))?;
-            seq.elem_labeled(NodeLabel::Condition, self.yul_expression(input))?;
-            seq.elem_labeled(NodeLabel::Iterator, self.yul_block(input))?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Initialization, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Condition, self.yul_expression(input))?;
+            seq.elem_labeled(EdgeLabel::Iterator, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulForStatement)
+        .with_kind(NonTerminalKind::YulForStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6482,14 +6507,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::YulExpression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::YulFunctionCallExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::YulExpression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::YulFunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -6502,48 +6527,48 @@ impl Language {
     fn yul_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::FunctionKeyword,
+                EdgeLabel::FunctionKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulFunctionKeyword,
+                    TerminalKind::YulFunctionKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Name,
+                EdgeLabel::Name,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulIdentifier,
+                    TerminalKind::YulIdentifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Parameters,
+                EdgeLabel::Parameters,
                 self.yul_parameters_declaration(input),
             )?;
             seq.elem_labeled(
-                NodeLabel::Returns,
+                EdgeLabel::Returns,
                 OptionalHelper::transform(self.yul_returns_declaration(input)),
             )?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulFunctionDefinition)
+        .with_kind(NonTerminalKind::YulFunctionDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::IfKeyword,
+                EdgeLabel::IfKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulIfKeyword,
+                    TerminalKind::YulIfKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Condition, self.yul_expression(input))?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Condition, self.yul_expression(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulIfStatement)
+        .with_kind(NonTerminalKind::YulIfStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6551,17 +6576,17 @@ impl Language {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
-                    NodeLabel::Label,
+                    EdgeLabel::Label,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::YulIdentifier,
+                        TerminalKind::YulIdentifier,
                     ),
                 )?;
                 seq.elem_labeled(
-                    NodeLabel::Colon,
+                    EdgeLabel::Colon,
                     self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::Colon,
+                        TerminalKind::Colon,
                     ),
                 )?;
                 seq.finish()
@@ -6569,7 +6594,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::YulLabel)
+        .with_kind(NonTerminalKind::YulLabel)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6577,13 +6602,13 @@ impl Language {
         if self.version_is_at_least_0_6_0 {
             self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulLeaveKeyword,
+                TerminalKind::YulLeaveKeyword,
             )
-            .with_label(NodeLabel::LeaveKeyword)
+            .with_label(EdgeLabel::LeaveKeyword)
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::YulLeaveStatement)
+        .with_kind(NonTerminalKind::YulLeaveStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6591,22 +6616,22 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulTrueKeyword,
+                TerminalKind::YulTrueKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulFalseKeyword,
+                TerminalKind::YulFalseKeyword,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulDecimalLiteral,
+                TerminalKind::YulDecimalLiteral,
             );
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulHexLiteral,
+                TerminalKind::YulHexLiteral,
             );
             choice.consider(input, result)?;
             let result = self.hex_string_literal(input);
@@ -6615,8 +6640,8 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulLiteral)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulLiteral)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6627,48 +6652,48 @@ impl Language {
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulIdentifier,
+                    TerminalKind::YulIdentifier,
                 )
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
             },
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         ))
-        .with_kind(RuleKind::YulParameters)
+        .with_kind(NonTerminalKind::YulParameters)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenParen,
+                EdgeLabel::OpenParen,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::OpenParen,
+                    TerminalKind::OpenParen,
                 ),
             )?;
             seq.elem(
                 self.yul_parameters(input)
-                    .with_label(NodeLabel::Parameters)
+                    .with_label(EdgeLabel::Parameters)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
-                        TokenKind::CloseParen,
+                        TerminalKind::CloseParen,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseParen,
+                EdgeLabel::CloseParen,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::CloseParen,
+                    TerminalKind::CloseParen,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulParametersDeclaration)
+        .with_kind(NonTerminalKind::YulParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6676,11 +6701,11 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_path_component(input).with_label(NodeLabel::Item),
-            TokenKind::Period,
-            NodeLabel::Separator,
+            |input| self.yul_path_component(input).with_label(EdgeLabel::Item),
+            TerminalKind::Period,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::YulPath)
+        .with_kind(NonTerminalKind::YulPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6688,20 +6713,20 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::YulIdentifier,
+                TerminalKind::YulIdentifier,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_10 {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulAddressKeyword,
+                    TerminalKind::YulAddressKeyword,
                 );
                 choice.consider(input, result)?;
             }
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulPathComponent)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulPathComponent)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6709,11 +6734,11 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_path(input).with_label(NodeLabel::Item),
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            |input| self.yul_path(input).with_label(EdgeLabel::Item),
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::YulPaths)
+        .with_kind(NonTerminalKind::YulPaths)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6724,30 +6749,30 @@ impl Language {
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulIdentifier,
+                    TerminalKind::YulIdentifier,
                 )
-                .with_label(NodeLabel::Item)
+                .with_label(EdgeLabel::Item)
             },
-            TokenKind::Comma,
-            NodeLabel::Separator,
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
         )
-        .with_kind(RuleKind::YulReturnVariables)
+        .with_kind(NonTerminalKind::YulReturnVariables)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::MinusGreaterThan,
+                EdgeLabel::MinusGreaterThan,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::MinusGreaterThan,
+                    TerminalKind::MinusGreaterThan,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Variables, self.yul_return_variables(input))?;
+            seq.elem_labeled(EdgeLabel::Variables, self.yul_return_variables(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulReturnsDeclaration)
+        .with_kind(NonTerminalKind::YulReturnsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6783,16 +6808,16 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulStatement)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ZeroOrMoreHelper::run(input, |input| {
-            self.yul_statement(input).with_label(NodeLabel::Item)
+            self.yul_statement(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::YulStatements)
+        .with_kind(NonTerminalKind::YulStatements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6804,86 +6829,86 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::YulSwitchCase)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::YulSwitchCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_cases(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.yul_switch_case(input).with_label(NodeLabel::Item)
+            self.yul_switch_case(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::YulSwitchCases)
+        .with_kind(NonTerminalKind::YulSwitchCases)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::SwitchKeyword,
+                EdgeLabel::SwitchKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulSwitchKeyword,
+                    TerminalKind::YulSwitchKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
-            seq.elem_labeled(NodeLabel::Cases, self.yul_switch_cases(input))?;
+            seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(EdgeLabel::Cases, self.yul_switch_cases(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulSwitchStatement)
+        .with_kind(NonTerminalKind::YulSwitchStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_value_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::CaseKeyword,
+                EdgeLabel::CaseKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulCaseKeyword,
+                    TerminalKind::YulCaseKeyword,
                 ),
             )?;
-            seq.elem_labeled(NodeLabel::Value, self.yul_literal(input))?;
-            seq.elem_labeled(NodeLabel::Body, self.yul_block(input))?;
+            seq.elem_labeled(EdgeLabel::Value, self.yul_literal(input))?;
+            seq.elem_labeled(EdgeLabel::Body, self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulValueCase)
+        .with_kind(NonTerminalKind::YulValueCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
-                NodeLabel::LetKeyword,
+                EdgeLabel::LetKeyword,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulLetKeyword,
+                    TerminalKind::YulLetKeyword,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Names,
+                EdgeLabel::Names,
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
-                    TokenKind::YulIdentifier,
+                    TerminalKind::YulIdentifier,
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Value,
+                EdgeLabel::Value,
                 OptionalHelper::transform(self.yul_variable_declaration_value(input)),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulVariableDeclarationStatement)
+        .with_kind(NonTerminalKind::YulVariableDeclarationStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(NodeLabel::Assignment, self.yul_assignment_operator(input))?;
-            seq.elem_labeled(NodeLabel::Expression, self.yul_expression(input))?;
+            seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
+            seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulVariableDeclarationValue)
+        .with_kind(NonTerminalKind::YulVariableDeclarationValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6891,34 +6916,40 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
-                    .with_label(NodeLabel::LeadingTrivia);
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::SingleLineComment)
-                    .with_label(NodeLabel::LeadingTrivia);
-                choice.consider(input, result)?;
-                let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
                     .parse_token::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SingleLineNatSpecComment,
+                        TerminalKind::SingleLineComment,
                     )
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
                     .parse_token::<LexicalContextType::Default>(
                         input,
-                        TokenKind::MultiLineNatSpecComment,
+                        TerminalKind::MultiLineComment,
                     )
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .with_label(EdgeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::SingleLineNatSpecComment,
+                    )
+                    .with_label(EdgeLabel::LeadingTrivia);
+                choice.consider(input, result)?;
+                let result = self
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::MultiLineNatSpecComment,
+                    )
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -6929,19 +6960,19 @@ impl Language {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
-                    .with_label(NodeLabel::TrailingTrivia),
+                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(OptionalHelper::transform(
                 self.parse_token::<LexicalContextType::Default>(
                     input,
-                    TokenKind::SingleLineComment,
+                    TerminalKind::SingleLineComment,
                 )
-                .with_label(NodeLabel::TrailingTrivia),
+                .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
-                    .with_label(NodeLabel::TrailingTrivia),
+                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .with_label(EdgeLabel::TrailingTrivia),
             )?;
             seq.finish()
         })
@@ -7610,7 +7641,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::BytesKeyword)
+                KeywordScan::Reserved(TerminalKind::BytesKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7623,7 +7654,7 @@ impl Language {
             input,
             ident,
             if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved(TokenKind::FixedKeyword)
+                KeywordScan::Reserved(TerminalKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7669,7 +7700,7 @@ impl Language {
                     scan_chars!(input, '1', '6')
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::FixedKeyword)
+                KeywordScan::Reserved(TerminalKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7724,7 +7755,7 @@ impl Language {
                     scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::FixedKeyword)
+                KeywordScan::Reserved(TerminalKind::FixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -7790,9 +7821,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved(TokenKind::FixedKeyword)
+                    KeywordScan::Reserved(TerminalKind::FixedKeyword)
                 } else {
-                    KeywordScan::Present(TokenKind::FixedKeyword)
+                    KeywordScan::Present(TerminalKind::FixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7911,9 +7942,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved(TokenKind::FixedKeyword)
+                    KeywordScan::Reserved(TerminalKind::FixedKeyword)
                 } else {
-                    KeywordScan::Present(TokenKind::FixedKeyword)
+                    KeywordScan::Present(TerminalKind::FixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -7967,7 +7998,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::IntKeyword)
+                KeywordScan::Reserved(TerminalKind::IntKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -7980,7 +8011,7 @@ impl Language {
             input,
             ident,
             if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8026,7 +8057,7 @@ impl Language {
                     scan_chars!(input, '1', '6')
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8081,7 +8112,7 @@ impl Language {
                     scan_chars!(input, '1', '8', '4', 'x', '1', '6')
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::UfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8147,9 +8178,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                    KeywordScan::Reserved(TerminalKind::UfixedKeyword)
                 } else {
-                    KeywordScan::Present(TokenKind::UfixedKeyword)
+                    KeywordScan::Present(TerminalKind::UfixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -8268,9 +8299,9 @@ impl Language {
                 )
             ) {
                 if self.version_is_at_least_0_4_14 {
-                    KeywordScan::Reserved(TokenKind::UfixedKeyword)
+                    KeywordScan::Reserved(TerminalKind::UfixedKeyword)
                 } else {
-                    KeywordScan::Present(TokenKind::UfixedKeyword)
+                    KeywordScan::Present(TerminalKind::UfixedKeyword)
                 }
             } else {
                 KeywordScan::Absent
@@ -8324,7 +8355,7 @@ impl Language {
                     )
                 )
             ) {
-                KeywordScan::Reserved(TokenKind::UintKeyword)
+                KeywordScan::Reserved(TerminalKind::UintKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8379,7 +8410,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulBytesKeyword)
+                KeywordScan::Reserved(TerminalKind::YulBytesKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8392,7 +8423,7 @@ impl Language {
             input,
             ident,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8440,7 +8471,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8497,7 +8528,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8565,7 +8596,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8685,7 +8716,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulFixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8740,7 +8771,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulIntKeyword)
+                KeywordScan::Reserved(TerminalKind::YulIntKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -8753,7 +8784,7 @@ impl Language {
             input,
             ident,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
-                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8801,7 +8832,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8858,7 +8889,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -8926,7 +8957,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             },
@@ -9046,7 +9077,7 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulUfixedKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
                 KeywordScan::Absent
             }
@@ -9101,293 +9132,347 @@ impl Language {
                     )
                 )
             {
-                KeywordScan::Reserved(TokenKind::YulUintKeyword)
+                KeywordScan::Reserved(TerminalKind::YulUintKeyword)
             } else {
                 KeywordScan::Absent
             }
         )
     }
 
-    pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
-            RuleKind::AdditiveExpression => Self::additive_expression.parse(self, input),
-            RuleKind::AddressType => Self::address_type.parse(self, input),
-            RuleKind::AndExpression => Self::and_expression.parse(self, input),
-            RuleKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
-            RuleKind::ArrayExpression => Self::array_expression.parse(self, input),
-            RuleKind::ArrayTypeName => Self::array_type_name.parse(self, input),
-            RuleKind::ArrayValues => Self::array_values.parse(self, input),
-            RuleKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
-            RuleKind::AssemblyFlagsDeclaration => {
+            NonTerminalKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
+            NonTerminalKind::AdditiveExpression => Self::additive_expression.parse(self, input),
+            NonTerminalKind::AddressType => Self::address_type.parse(self, input),
+            NonTerminalKind::AndExpression => Self::and_expression.parse(self, input),
+            NonTerminalKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
+            NonTerminalKind::ArrayExpression => Self::array_expression.parse(self, input),
+            NonTerminalKind::ArrayTypeName => Self::array_type_name.parse(self, input),
+            NonTerminalKind::ArrayValues => Self::array_values.parse(self, input),
+            NonTerminalKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
+            NonTerminalKind::AssemblyFlagsDeclaration => {
                 Self::assembly_flags_declaration.parse(self, input)
             }
-            RuleKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
-            RuleKind::AssignmentExpression => Self::assignment_expression.parse(self, input),
-            RuleKind::BitwiseAndExpression => Self::bitwise_and_expression.parse(self, input),
-            RuleKind::BitwiseOrExpression => Self::bitwise_or_expression.parse(self, input),
-            RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input),
-            RuleKind::Block => Self::block.parse(self, input),
-            RuleKind::BreakStatement => Self::break_statement.parse(self, input),
-            RuleKind::CallOptions => Self::call_options.parse(self, input),
-            RuleKind::CallOptionsExpression => Self::call_options_expression.parse(self, input),
-            RuleKind::CatchClause => Self::catch_clause.parse(self, input),
-            RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
-            RuleKind::CatchClauses => Self::catch_clauses.parse(self, input),
-            RuleKind::ComparisonExpression => Self::comparison_expression.parse(self, input),
-            RuleKind::ConditionalExpression => Self::conditional_expression.parse(self, input),
-            RuleKind::ConstantDefinition => Self::constant_definition.parse(self, input),
-            RuleKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input),
-            RuleKind::ConstructorAttributes => Self::constructor_attributes.parse(self, input),
-            RuleKind::ConstructorDefinition => Self::constructor_definition.parse(self, input),
-            RuleKind::ContinueStatement => Self::continue_statement.parse(self, input),
-            RuleKind::ContractDefinition => Self::contract_definition.parse(self, input),
-            RuleKind::ContractMember => Self::contract_member.parse(self, input),
-            RuleKind::ContractMembers => Self::contract_members.parse(self, input),
-            RuleKind::DecimalNumberExpression => Self::decimal_number_expression.parse(self, input),
-            RuleKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
-            RuleKind::ElementaryType => Self::elementary_type.parse(self, input),
-            RuleKind::ElseBranch => Self::else_branch.parse(self, input),
-            RuleKind::EmitStatement => Self::emit_statement.parse(self, input),
-            RuleKind::EnumDefinition => Self::enum_definition.parse(self, input),
-            RuleKind::EnumMembers => Self::enum_members.parse(self, input),
-            RuleKind::EqualityExpression => Self::equality_expression.parse(self, input),
-            RuleKind::ErrorDefinition => Self::error_definition.parse(self, input),
-            RuleKind::ErrorParameter => Self::error_parameter.parse(self, input),
-            RuleKind::ErrorParameters => Self::error_parameters.parse(self, input),
-            RuleKind::ErrorParametersDeclaration => {
+            NonTerminalKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
+            NonTerminalKind::AssignmentExpression => Self::assignment_expression.parse(self, input),
+            NonTerminalKind::BitwiseAndExpression => {
+                Self::bitwise_and_expression.parse(self, input)
+            }
+            NonTerminalKind::BitwiseOrExpression => Self::bitwise_or_expression.parse(self, input),
+            NonTerminalKind::BitwiseXorExpression => {
+                Self::bitwise_xor_expression.parse(self, input)
+            }
+            NonTerminalKind::Block => Self::block.parse(self, input),
+            NonTerminalKind::BreakStatement => Self::break_statement.parse(self, input),
+            NonTerminalKind::CallOptions => Self::call_options.parse(self, input),
+            NonTerminalKind::CallOptionsExpression => {
+                Self::call_options_expression.parse(self, input)
+            }
+            NonTerminalKind::CatchClause => Self::catch_clause.parse(self, input),
+            NonTerminalKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
+            NonTerminalKind::CatchClauses => Self::catch_clauses.parse(self, input),
+            NonTerminalKind::ComparisonExpression => Self::comparison_expression.parse(self, input),
+            NonTerminalKind::ConditionalExpression => {
+                Self::conditional_expression.parse(self, input)
+            }
+            NonTerminalKind::ConstantDefinition => Self::constant_definition.parse(self, input),
+            NonTerminalKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input),
+            NonTerminalKind::ConstructorAttributes => {
+                Self::constructor_attributes.parse(self, input)
+            }
+            NonTerminalKind::ConstructorDefinition => {
+                Self::constructor_definition.parse(self, input)
+            }
+            NonTerminalKind::ContinueStatement => Self::continue_statement.parse(self, input),
+            NonTerminalKind::ContractDefinition => Self::contract_definition.parse(self, input),
+            NonTerminalKind::ContractMember => Self::contract_member.parse(self, input),
+            NonTerminalKind::ContractMembers => Self::contract_members.parse(self, input),
+            NonTerminalKind::DecimalNumberExpression => {
+                Self::decimal_number_expression.parse(self, input)
+            }
+            NonTerminalKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
+            NonTerminalKind::ElementaryType => Self::elementary_type.parse(self, input),
+            NonTerminalKind::ElseBranch => Self::else_branch.parse(self, input),
+            NonTerminalKind::EmitStatement => Self::emit_statement.parse(self, input),
+            NonTerminalKind::EnumDefinition => Self::enum_definition.parse(self, input),
+            NonTerminalKind::EnumMembers => Self::enum_members.parse(self, input),
+            NonTerminalKind::EqualityExpression => Self::equality_expression.parse(self, input),
+            NonTerminalKind::ErrorDefinition => Self::error_definition.parse(self, input),
+            NonTerminalKind::ErrorParameter => Self::error_parameter.parse(self, input),
+            NonTerminalKind::ErrorParameters => Self::error_parameters.parse(self, input),
+            NonTerminalKind::ErrorParametersDeclaration => {
                 Self::error_parameters_declaration.parse(self, input)
             }
-            RuleKind::EventDefinition => Self::event_definition.parse(self, input),
-            RuleKind::EventParameter => Self::event_parameter.parse(self, input),
-            RuleKind::EventParameters => Self::event_parameters.parse(self, input),
-            RuleKind::EventParametersDeclaration => {
+            NonTerminalKind::EventDefinition => Self::event_definition.parse(self, input),
+            NonTerminalKind::EventParameter => Self::event_parameter.parse(self, input),
+            NonTerminalKind::EventParameters => Self::event_parameters.parse(self, input),
+            NonTerminalKind::EventParametersDeclaration => {
                 Self::event_parameters_declaration.parse(self, input)
             }
-            RuleKind::ExperimentalFeature => Self::experimental_feature.parse(self, input),
-            RuleKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
-            RuleKind::ExponentiationExpression => {
+            NonTerminalKind::ExperimentalFeature => Self::experimental_feature.parse(self, input),
+            NonTerminalKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
+            NonTerminalKind::ExponentiationExpression => {
                 Self::exponentiation_expression.parse(self, input)
             }
-            RuleKind::Expression => Self::expression.parse(self, input),
-            RuleKind::ExpressionStatement => Self::expression_statement.parse(self, input),
-            RuleKind::FallbackFunctionAttribute => {
+            NonTerminalKind::Expression => Self::expression.parse(self, input),
+            NonTerminalKind::ExpressionStatement => Self::expression_statement.parse(self, input),
+            NonTerminalKind::FallbackFunctionAttribute => {
                 Self::fallback_function_attribute.parse(self, input)
             }
-            RuleKind::FallbackFunctionAttributes => {
+            NonTerminalKind::FallbackFunctionAttributes => {
                 Self::fallback_function_attributes.parse(self, input)
             }
-            RuleKind::FallbackFunctionDefinition => {
+            NonTerminalKind::FallbackFunctionDefinition => {
                 Self::fallback_function_definition.parse(self, input)
             }
-            RuleKind::ForStatement => Self::for_statement.parse(self, input),
-            RuleKind::ForStatementCondition => Self::for_statement_condition.parse(self, input),
-            RuleKind::ForStatementInitialization => {
+            NonTerminalKind::ForStatement => Self::for_statement.parse(self, input),
+            NonTerminalKind::ForStatementCondition => {
+                Self::for_statement_condition.parse(self, input)
+            }
+            NonTerminalKind::ForStatementInitialization => {
                 Self::for_statement_initialization.parse(self, input)
             }
-            RuleKind::FunctionAttribute => Self::function_attribute.parse(self, input),
-            RuleKind::FunctionAttributes => Self::function_attributes.parse(self, input),
-            RuleKind::FunctionBody => Self::function_body.parse(self, input),
-            RuleKind::FunctionCallExpression => Self::function_call_expression.parse(self, input),
-            RuleKind::FunctionDefinition => Self::function_definition.parse(self, input),
-            RuleKind::FunctionName => Self::function_name.parse(self, input),
-            RuleKind::FunctionType => Self::function_type.parse(self, input),
-            RuleKind::FunctionTypeAttribute => Self::function_type_attribute.parse(self, input),
-            RuleKind::FunctionTypeAttributes => Self::function_type_attributes.parse(self, input),
-            RuleKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
-            RuleKind::HexStringLiteral => Self::hex_string_literal.parse(self, input),
-            RuleKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
-            RuleKind::IdentifierPath => Self::identifier_path.parse(self, input),
-            RuleKind::IfStatement => Self::if_statement.parse(self, input),
-            RuleKind::ImportAlias => Self::import_alias.parse(self, input),
-            RuleKind::ImportClause => Self::import_clause.parse(self, input),
-            RuleKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input),
-            RuleKind::ImportDeconstructionSymbol => {
+            NonTerminalKind::FunctionAttribute => Self::function_attribute.parse(self, input),
+            NonTerminalKind::FunctionAttributes => Self::function_attributes.parse(self, input),
+            NonTerminalKind::FunctionBody => Self::function_body.parse(self, input),
+            NonTerminalKind::FunctionCallExpression => {
+                Self::function_call_expression.parse(self, input)
+            }
+            NonTerminalKind::FunctionDefinition => Self::function_definition.parse(self, input),
+            NonTerminalKind::FunctionName => Self::function_name.parse(self, input),
+            NonTerminalKind::FunctionType => Self::function_type.parse(self, input),
+            NonTerminalKind::FunctionTypeAttribute => {
+                Self::function_type_attribute.parse(self, input)
+            }
+            NonTerminalKind::FunctionTypeAttributes => {
+                Self::function_type_attributes.parse(self, input)
+            }
+            NonTerminalKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
+            NonTerminalKind::HexStringLiteral => Self::hex_string_literal.parse(self, input),
+            NonTerminalKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
+            NonTerminalKind::IdentifierPath => Self::identifier_path.parse(self, input),
+            NonTerminalKind::IfStatement => Self::if_statement.parse(self, input),
+            NonTerminalKind::ImportAlias => Self::import_alias.parse(self, input),
+            NonTerminalKind::ImportClause => Self::import_clause.parse(self, input),
+            NonTerminalKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input),
+            NonTerminalKind::ImportDeconstructionSymbol => {
                 Self::import_deconstruction_symbol.parse(self, input)
             }
-            RuleKind::ImportDeconstructionSymbols => {
+            NonTerminalKind::ImportDeconstructionSymbols => {
                 Self::import_deconstruction_symbols.parse(self, input)
             }
-            RuleKind::ImportDirective => Self::import_directive.parse(self, input),
-            RuleKind::IndexAccessEnd => Self::index_access_end.parse(self, input),
-            RuleKind::IndexAccessExpression => Self::index_access_expression.parse(self, input),
-            RuleKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
-            RuleKind::InheritanceType => Self::inheritance_type.parse(self, input),
-            RuleKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
-            RuleKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
-            RuleKind::InterfaceMembers => Self::interface_members.parse(self, input),
-            RuleKind::LibraryDefinition => Self::library_definition.parse(self, input),
-            RuleKind::LibraryMembers => Self::library_members.parse(self, input),
-            RuleKind::MappingKey => Self::mapping_key.parse(self, input),
-            RuleKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
-            RuleKind::MappingType => Self::mapping_type.parse(self, input),
-            RuleKind::MappingValue => Self::mapping_value.parse(self, input),
-            RuleKind::MemberAccess => Self::member_access.parse(self, input),
-            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
-            RuleKind::ModifierAttribute => Self::modifier_attribute.parse(self, input),
-            RuleKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
-            RuleKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
-            RuleKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
-            RuleKind::MultiplicativeExpression => {
+            NonTerminalKind::ImportDirective => Self::import_directive.parse(self, input),
+            NonTerminalKind::IndexAccessEnd => Self::index_access_end.parse(self, input),
+            NonTerminalKind::IndexAccessExpression => {
+                Self::index_access_expression.parse(self, input)
+            }
+            NonTerminalKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
+            NonTerminalKind::InheritanceType => Self::inheritance_type.parse(self, input),
+            NonTerminalKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
+            NonTerminalKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
+            NonTerminalKind::InterfaceMembers => Self::interface_members.parse(self, input),
+            NonTerminalKind::LibraryDefinition => Self::library_definition.parse(self, input),
+            NonTerminalKind::LibraryMembers => Self::library_members.parse(self, input),
+            NonTerminalKind::MappingKey => Self::mapping_key.parse(self, input),
+            NonTerminalKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
+            NonTerminalKind::MappingType => Self::mapping_type.parse(self, input),
+            NonTerminalKind::MappingValue => Self::mapping_value.parse(self, input),
+            NonTerminalKind::MemberAccess => Self::member_access.parse(self, input),
+            NonTerminalKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input)
+            }
+            NonTerminalKind::ModifierAttribute => Self::modifier_attribute.parse(self, input),
+            NonTerminalKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
+            NonTerminalKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
+            NonTerminalKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
+            NonTerminalKind::MultiplicativeExpression => {
                 Self::multiplicative_expression.parse(self, input)
             }
-            RuleKind::NamedArgument => Self::named_argument.parse(self, input),
-            RuleKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input),
-            RuleKind::NamedArguments => Self::named_arguments.parse(self, input),
-            RuleKind::NamedArgumentsDeclaration => {
+            NonTerminalKind::NamedArgument => Self::named_argument.parse(self, input),
+            NonTerminalKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input),
+            NonTerminalKind::NamedArguments => Self::named_arguments.parse(self, input),
+            NonTerminalKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input)
             }
-            RuleKind::NamedImport => Self::named_import.parse(self, input),
-            RuleKind::NewExpression => Self::new_expression.parse(self, input),
-            RuleKind::NumberUnit => Self::number_unit.parse(self, input),
-            RuleKind::OrExpression => Self::or_expression.parse(self, input),
-            RuleKind::OverridePaths => Self::override_paths.parse(self, input),
-            RuleKind::OverridePathsDeclaration => {
+            NonTerminalKind::NamedImport => Self::named_import.parse(self, input),
+            NonTerminalKind::NewExpression => Self::new_expression.parse(self, input),
+            NonTerminalKind::NumberUnit => Self::number_unit.parse(self, input),
+            NonTerminalKind::OrExpression => Self::or_expression.parse(self, input),
+            NonTerminalKind::OverridePaths => Self::override_paths.parse(self, input),
+            NonTerminalKind::OverridePathsDeclaration => {
                 Self::override_paths_declaration.parse(self, input)
             }
-            RuleKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
-            RuleKind::Parameter => Self::parameter.parse(self, input),
-            RuleKind::Parameters => Self::parameters.parse(self, input),
-            RuleKind::ParametersDeclaration => Self::parameters_declaration.parse(self, input),
-            RuleKind::PathImport => Self::path_import.parse(self, input),
-            RuleKind::PositionalArguments => Self::positional_arguments.parse(self, input),
-            RuleKind::PositionalArgumentsDeclaration => {
+            NonTerminalKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
+            NonTerminalKind::Parameter => Self::parameter.parse(self, input),
+            NonTerminalKind::Parameters => Self::parameters.parse(self, input),
+            NonTerminalKind::ParametersDeclaration => {
+                Self::parameters_declaration.parse(self, input)
+            }
+            NonTerminalKind::PathImport => Self::path_import.parse(self, input),
+            NonTerminalKind::PositionalArguments => Self::positional_arguments.parse(self, input),
+            NonTerminalKind::PositionalArgumentsDeclaration => {
                 Self::positional_arguments_declaration.parse(self, input)
             }
-            RuleKind::PostfixExpression => Self::postfix_expression.parse(self, input),
-            RuleKind::Pragma => Self::pragma.parse(self, input),
-            RuleKind::PragmaDirective => Self::pragma_directive.parse(self, input),
-            RuleKind::PrefixExpression => Self::prefix_expression.parse(self, input),
-            RuleKind::ReceiveFunctionAttribute => {
+            NonTerminalKind::PostfixExpression => Self::postfix_expression.parse(self, input),
+            NonTerminalKind::Pragma => Self::pragma.parse(self, input),
+            NonTerminalKind::PragmaDirective => Self::pragma_directive.parse(self, input),
+            NonTerminalKind::PrefixExpression => Self::prefix_expression.parse(self, input),
+            NonTerminalKind::ReceiveFunctionAttribute => {
                 Self::receive_function_attribute.parse(self, input)
             }
-            RuleKind::ReceiveFunctionAttributes => {
+            NonTerminalKind::ReceiveFunctionAttributes => {
                 Self::receive_function_attributes.parse(self, input)
             }
-            RuleKind::ReceiveFunctionDefinition => {
+            NonTerminalKind::ReceiveFunctionDefinition => {
                 Self::receive_function_definition.parse(self, input)
             }
-            RuleKind::ReturnStatement => Self::return_statement.parse(self, input),
-            RuleKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
-            RuleKind::RevertStatement => Self::revert_statement.parse(self, input),
-            RuleKind::ShiftExpression => Self::shift_expression.parse(self, input),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            RuleKind::StateVariableAttribute => Self::state_variable_attribute.parse(self, input),
-            RuleKind::StateVariableAttributes => Self::state_variable_attributes.parse(self, input),
-            RuleKind::StateVariableDefinition => Self::state_variable_definition.parse(self, input),
-            RuleKind::StateVariableDefinitionValue => {
+            NonTerminalKind::ReturnStatement => Self::return_statement.parse(self, input),
+            NonTerminalKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
+            NonTerminalKind::RevertStatement => Self::revert_statement.parse(self, input),
+            NonTerminalKind::ShiftExpression => Self::shift_expression.parse(self, input),
+            NonTerminalKind::SourceUnit => Self::source_unit.parse(self, input),
+            NonTerminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
+            NonTerminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            NonTerminalKind::StateVariableAttribute => {
+                Self::state_variable_attribute.parse(self, input)
+            }
+            NonTerminalKind::StateVariableAttributes => {
+                Self::state_variable_attributes.parse(self, input)
+            }
+            NonTerminalKind::StateVariableDefinition => {
+                Self::state_variable_definition.parse(self, input)
+            }
+            NonTerminalKind::StateVariableDefinitionValue => {
                 Self::state_variable_definition_value.parse(self, input)
             }
-            RuleKind::Statement => Self::statement.parse(self, input),
-            RuleKind::Statements => Self::statements.parse(self, input),
-            RuleKind::StorageLocation => Self::storage_location.parse(self, input),
-            RuleKind::StringExpression => Self::string_expression.parse(self, input),
-            RuleKind::StringLiteral => Self::string_literal.parse(self, input),
-            RuleKind::StringLiterals => Self::string_literals.parse(self, input),
-            RuleKind::StructDefinition => Self::struct_definition.parse(self, input),
-            RuleKind::StructMember => Self::struct_member.parse(self, input),
-            RuleKind::StructMembers => Self::struct_members.parse(self, input),
-            RuleKind::ThrowStatement => Self::throw_statement.parse(self, input),
-            RuleKind::TryStatement => Self::try_statement.parse(self, input),
-            RuleKind::TupleDeconstructionElement => {
+            NonTerminalKind::Statement => Self::statement.parse(self, input),
+            NonTerminalKind::Statements => Self::statements.parse(self, input),
+            NonTerminalKind::StorageLocation => Self::storage_location.parse(self, input),
+            NonTerminalKind::StringExpression => Self::string_expression.parse(self, input),
+            NonTerminalKind::StringLiteral => Self::string_literal.parse(self, input),
+            NonTerminalKind::StringLiterals => Self::string_literals.parse(self, input),
+            NonTerminalKind::StructDefinition => Self::struct_definition.parse(self, input),
+            NonTerminalKind::StructMember => Self::struct_member.parse(self, input),
+            NonTerminalKind::StructMembers => Self::struct_members.parse(self, input),
+            NonTerminalKind::ThrowStatement => Self::throw_statement.parse(self, input),
+            NonTerminalKind::TryStatement => Self::try_statement.parse(self, input),
+            NonTerminalKind::TupleDeconstructionElement => {
                 Self::tuple_deconstruction_element.parse(self, input)
             }
-            RuleKind::TupleDeconstructionElements => {
+            NonTerminalKind::TupleDeconstructionElements => {
                 Self::tuple_deconstruction_elements.parse(self, input)
             }
-            RuleKind::TupleDeconstructionStatement => {
+            NonTerminalKind::TupleDeconstructionStatement => {
                 Self::tuple_deconstruction_statement.parse(self, input)
             }
-            RuleKind::TupleExpression => Self::tuple_expression.parse(self, input),
-            RuleKind::TupleMember => Self::tuple_member.parse(self, input),
-            RuleKind::TupleValue => Self::tuple_value.parse(self, input),
-            RuleKind::TupleValues => Self::tuple_values.parse(self, input),
-            RuleKind::TypeExpression => Self::type_expression.parse(self, input),
-            RuleKind::TypeName => Self::type_name.parse(self, input),
-            RuleKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input),
-            RuleKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
-            RuleKind::UnicodeStringLiteral => Self::unicode_string_literal.parse(self, input),
-            RuleKind::UnicodeStringLiterals => Self::unicode_string_literals.parse(self, input),
-            RuleKind::UnnamedFunctionAttribute => {
+            NonTerminalKind::TupleExpression => Self::tuple_expression.parse(self, input),
+            NonTerminalKind::TupleMember => Self::tuple_member.parse(self, input),
+            NonTerminalKind::TupleValue => Self::tuple_value.parse(self, input),
+            NonTerminalKind::TupleValues => Self::tuple_values.parse(self, input),
+            NonTerminalKind::TypeExpression => Self::type_expression.parse(self, input),
+            NonTerminalKind::TypeName => Self::type_name.parse(self, input),
+            NonTerminalKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input),
+            NonTerminalKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
+            NonTerminalKind::UnicodeStringLiteral => {
+                Self::unicode_string_literal.parse(self, input)
+            }
+            NonTerminalKind::UnicodeStringLiterals => {
+                Self::unicode_string_literals.parse(self, input)
+            }
+            NonTerminalKind::UnnamedFunctionAttribute => {
                 Self::unnamed_function_attribute.parse(self, input)
             }
-            RuleKind::UnnamedFunctionAttributes => {
+            NonTerminalKind::UnnamedFunctionAttributes => {
                 Self::unnamed_function_attributes.parse(self, input)
             }
-            RuleKind::UnnamedFunctionDefinition => {
+            NonTerminalKind::UnnamedFunctionDefinition => {
                 Self::unnamed_function_definition.parse(self, input)
             }
-            RuleKind::UntypedTupleMember => Self::untyped_tuple_member.parse(self, input),
-            RuleKind::UserDefinedValueTypeDefinition => {
+            NonTerminalKind::UntypedTupleMember => Self::untyped_tuple_member.parse(self, input),
+            NonTerminalKind::UserDefinedValueTypeDefinition => {
                 Self::user_defined_value_type_definition.parse(self, input)
             }
-            RuleKind::UsingAlias => Self::using_alias.parse(self, input),
-            RuleKind::UsingClause => Self::using_clause.parse(self, input),
-            RuleKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input),
-            RuleKind::UsingDeconstructionSymbol => {
+            NonTerminalKind::UsingAlias => Self::using_alias.parse(self, input),
+            NonTerminalKind::UsingClause => Self::using_clause.parse(self, input),
+            NonTerminalKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input),
+            NonTerminalKind::UsingDeconstructionSymbol => {
                 Self::using_deconstruction_symbol.parse(self, input)
             }
-            RuleKind::UsingDeconstructionSymbols => {
+            NonTerminalKind::UsingDeconstructionSymbols => {
                 Self::using_deconstruction_symbols.parse(self, input)
             }
-            RuleKind::UsingDirective => Self::using_directive.parse(self, input),
-            RuleKind::UsingOperator => Self::using_operator.parse(self, input),
-            RuleKind::UsingTarget => Self::using_target.parse(self, input),
-            RuleKind::VariableDeclarationStatement => {
+            NonTerminalKind::UsingDirective => Self::using_directive.parse(self, input),
+            NonTerminalKind::UsingOperator => Self::using_operator.parse(self, input),
+            NonTerminalKind::UsingTarget => Self::using_target.parse(self, input),
+            NonTerminalKind::VariableDeclarationStatement => {
                 Self::variable_declaration_statement.parse(self, input)
             }
-            RuleKind::VariableDeclarationType => Self::variable_declaration_type.parse(self, input),
-            RuleKind::VariableDeclarationValue => {
+            NonTerminalKind::VariableDeclarationType => {
+                Self::variable_declaration_type.parse(self, input)
+            }
+            NonTerminalKind::VariableDeclarationValue => {
                 Self::variable_declaration_value.parse(self, input)
             }
-            RuleKind::VersionComparator => Self::version_comparator.parse(self, input),
-            RuleKind::VersionExpression => Self::version_expression.parse(self, input),
-            RuleKind::VersionExpressionSet => Self::version_expression_set.parse(self, input),
-            RuleKind::VersionExpressionSets => Self::version_expression_sets.parse(self, input),
-            RuleKind::VersionPragma => Self::version_pragma.parse(self, input),
-            RuleKind::VersionRange => Self::version_range.parse(self, input),
-            RuleKind::VersionSpecifiers => Self::version_specifiers.parse(self, input),
-            RuleKind::WhileStatement => Self::while_statement.parse(self, input),
-            RuleKind::YulArguments => Self::yul_arguments.parse(self, input),
-            RuleKind::YulAssignmentOperator => Self::yul_assignment_operator.parse(self, input),
-            RuleKind::YulAssignmentStatement => Self::yul_assignment_statement.parse(self, input),
-            RuleKind::YulBlock => Self::yul_block.parse(self, input),
-            RuleKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
-            RuleKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input),
-            RuleKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input),
-            RuleKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input),
-            RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
-            RuleKind::YulExpression => Self::yul_expression.parse(self, input),
-            RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input),
-            RuleKind::YulFunctionCallExpression => {
+            NonTerminalKind::VersionComparator => Self::version_comparator.parse(self, input),
+            NonTerminalKind::VersionExpression => Self::version_expression.parse(self, input),
+            NonTerminalKind::VersionExpressionSet => {
+                Self::version_expression_set.parse(self, input)
+            }
+            NonTerminalKind::VersionExpressionSets => {
+                Self::version_expression_sets.parse(self, input)
+            }
+            NonTerminalKind::VersionPragma => Self::version_pragma.parse(self, input),
+            NonTerminalKind::VersionRange => Self::version_range.parse(self, input),
+            NonTerminalKind::VersionSpecifiers => Self::version_specifiers.parse(self, input),
+            NonTerminalKind::WhileStatement => Self::while_statement.parse(self, input),
+            NonTerminalKind::YulArguments => Self::yul_arguments.parse(self, input),
+            NonTerminalKind::YulAssignmentOperator => {
+                Self::yul_assignment_operator.parse(self, input)
+            }
+            NonTerminalKind::YulAssignmentStatement => {
+                Self::yul_assignment_statement.parse(self, input)
+            }
+            NonTerminalKind::YulBlock => Self::yul_block.parse(self, input),
+            NonTerminalKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
+            NonTerminalKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input),
+            NonTerminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input),
+            NonTerminalKind::YulContinueStatement => {
+                Self::yul_continue_statement.parse(self, input)
+            }
+            NonTerminalKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
+            NonTerminalKind::YulExpression => Self::yul_expression.parse(self, input),
+            NonTerminalKind::YulForStatement => Self::yul_for_statement.parse(self, input),
+            NonTerminalKind::YulFunctionCallExpression => {
                 Self::yul_function_call_expression.parse(self, input)
             }
-            RuleKind::YulFunctionDefinition => Self::yul_function_definition.parse(self, input),
-            RuleKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
-            RuleKind::YulLabel => Self::yul_label.parse(self, input),
-            RuleKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
-            RuleKind::YulLiteral => Self::yul_literal.parse(self, input),
-            RuleKind::YulParameters => Self::yul_parameters.parse(self, input),
-            RuleKind::YulParametersDeclaration => {
+            NonTerminalKind::YulFunctionDefinition => {
+                Self::yul_function_definition.parse(self, input)
+            }
+            NonTerminalKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
+            NonTerminalKind::YulLabel => Self::yul_label.parse(self, input),
+            NonTerminalKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
+            NonTerminalKind::YulLiteral => Self::yul_literal.parse(self, input),
+            NonTerminalKind::YulParameters => Self::yul_parameters.parse(self, input),
+            NonTerminalKind::YulParametersDeclaration => {
                 Self::yul_parameters_declaration.parse(self, input)
             }
-            RuleKind::YulPath => Self::yul_path.parse(self, input),
-            RuleKind::YulPathComponent => Self::yul_path_component.parse(self, input),
-            RuleKind::YulPaths => Self::yul_paths.parse(self, input),
-            RuleKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
-            RuleKind::YulReturnsDeclaration => Self::yul_returns_declaration.parse(self, input),
-            RuleKind::YulStatement => Self::yul_statement.parse(self, input),
-            RuleKind::YulStatements => Self::yul_statements.parse(self, input),
-            RuleKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
-            RuleKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
-            RuleKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
-            RuleKind::YulValueCase => Self::yul_value_case.parse(self, input),
-            RuleKind::YulVariableDeclarationStatement => {
+            NonTerminalKind::YulPath => Self::yul_path.parse(self, input),
+            NonTerminalKind::YulPathComponent => Self::yul_path_component.parse(self, input),
+            NonTerminalKind::YulPaths => Self::yul_paths.parse(self, input),
+            NonTerminalKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
+            NonTerminalKind::YulReturnsDeclaration => {
+                Self::yul_returns_declaration.parse(self, input)
+            }
+            NonTerminalKind::YulStatement => Self::yul_statement.parse(self, input),
+            NonTerminalKind::YulStatements => Self::yul_statements.parse(self, input),
+            NonTerminalKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
+            NonTerminalKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
+            NonTerminalKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
+            NonTerminalKind::YulValueCase => Self::yul_value_case.parse(self, input),
+            NonTerminalKind::YulVariableDeclarationStatement => {
                 Self::yul_variable_declaration_statement.parse(self, input)
             }
-            RuleKind::YulVariableDeclarationValue => {
+            NonTerminalKind::YulVariableDeclarationValue => {
                 Self::yul_variable_declaration_value.parse(self, input)
             }
         }
@@ -9403,17 +9488,17 @@ impl Lexer for Language {
         Language::trailing_trivia(self, input)
     }
 
-    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
         match LexCtx::value() {
             LexicalContext::Default => &[
-                (TokenKind::OpenBrace, TokenKind::CloseBrace),
-                (TokenKind::OpenBracket, TokenKind::CloseBracket),
-                (TokenKind::OpenParen, TokenKind::CloseParen),
+                (TerminalKind::OpenBrace, TerminalKind::CloseBrace),
+                (TerminalKind::OpenBracket, TerminalKind::CloseBracket),
+                (TerminalKind::OpenParen, TerminalKind::CloseParen),
             ],
             LexicalContext::Pragma => &[],
             LexicalContext::Yul => &[
-                (TokenKind::OpenBrace, TokenKind::CloseBrace),
-                (TokenKind::OpenParen, TokenKind::CloseParen),
+                (TerminalKind::OpenBrace, TerminalKind::CloseBrace),
+                (TerminalKind::OpenParen, TerminalKind::CloseParen),
             ],
         }
     }
@@ -9432,7 +9517,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TokenKind::$kind);
+                            longest_token = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -9443,144 +9528,144 @@ impl Lexer for Language {
             LexicalContext::Default => {
                 if let Some(kind) = match input.next() {
                     Some('!') => match input.next() {
-                        Some('=') => Some(TokenKind::BangEqual),
+                        Some('=') => Some(TerminalKind::BangEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Bang)
+                            Some(TerminalKind::Bang)
                         }
-                        None => Some(TokenKind::Bang),
+                        None => Some(TerminalKind::Bang),
                     },
                     Some('%') => match input.next() {
-                        Some('=') => Some(TokenKind::PercentEqual),
+                        Some('=') => Some(TerminalKind::PercentEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Percent)
+                            Some(TerminalKind::Percent)
                         }
-                        None => Some(TokenKind::Percent),
+                        None => Some(TerminalKind::Percent),
                     },
                     Some('&') => match input.next() {
-                        Some('&') => Some(TokenKind::AmpersandAmpersand),
-                        Some('=') => Some(TokenKind::AmpersandEqual),
+                        Some('&') => Some(TerminalKind::AmpersandAmpersand),
+                        Some('=') => Some(TerminalKind::AmpersandEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Ampersand)
+                            Some(TerminalKind::Ampersand)
                         }
-                        None => Some(TokenKind::Ampersand),
+                        None => Some(TerminalKind::Ampersand),
                     },
-                    Some('(') => Some(TokenKind::OpenParen),
-                    Some(')') => Some(TokenKind::CloseParen),
+                    Some('(') => Some(TerminalKind::OpenParen),
+                    Some(')') => Some(TerminalKind::CloseParen),
                     Some('*') => match input.next() {
-                        Some('*') => Some(TokenKind::AsteriskAsterisk),
-                        Some('=') => Some(TokenKind::AsteriskEqual),
+                        Some('*') => Some(TerminalKind::AsteriskAsterisk),
+                        Some('=') => Some(TerminalKind::AsteriskEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Asterisk)
+                            Some(TerminalKind::Asterisk)
                         }
-                        None => Some(TokenKind::Asterisk),
+                        None => Some(TerminalKind::Asterisk),
                     },
                     Some('+') => match input.next() {
-                        Some('+') => Some(TokenKind::PlusPlus),
-                        Some('=') => Some(TokenKind::PlusEqual),
+                        Some('+') => Some(TerminalKind::PlusPlus),
+                        Some('=') => Some(TerminalKind::PlusEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Plus)
+                            Some(TerminalKind::Plus)
                         }
-                        None => Some(TokenKind::Plus),
+                        None => Some(TerminalKind::Plus),
                     },
-                    Some(',') => Some(TokenKind::Comma),
+                    Some(',') => Some(TerminalKind::Comma),
                     Some('-') => match input.next() {
-                        Some('-') => Some(TokenKind::MinusMinus),
-                        Some('=') => Some(TokenKind::MinusEqual),
+                        Some('-') => Some(TerminalKind::MinusMinus),
+                        Some('=') => Some(TerminalKind::MinusEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Minus)
+                            Some(TerminalKind::Minus)
                         }
-                        None => Some(TokenKind::Minus),
+                        None => Some(TerminalKind::Minus),
                     },
-                    Some('.') => Some(TokenKind::Period),
+                    Some('.') => Some(TerminalKind::Period),
                     Some('/') => {
                         if scan_chars!(input, '=') {
-                            Some(TokenKind::SlashEqual)
+                            Some(TerminalKind::SlashEqual)
                         } else {
                             None
                         }
                     }
-                    Some(':') => Some(TokenKind::Colon),
-                    Some(';') => Some(TokenKind::Semicolon),
+                    Some(':') => Some(TerminalKind::Colon),
+                    Some(';') => Some(TerminalKind::Semicolon),
                     Some('<') => match input.next() {
                         Some('<') => match input.next() {
-                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
+                            Some('=') => Some(TerminalKind::LessThanLessThanEqual),
                             Some(_) => {
                                 input.undo();
-                                Some(TokenKind::LessThanLessThan)
+                                Some(TerminalKind::LessThanLessThan)
                             }
-                            None => Some(TokenKind::LessThanLessThan),
+                            None => Some(TerminalKind::LessThanLessThan),
                         },
-                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some('=') => Some(TerminalKind::LessThanEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::LessThan)
+                            Some(TerminalKind::LessThan)
                         }
-                        None => Some(TokenKind::LessThan),
+                        None => Some(TerminalKind::LessThan),
                     },
                     Some('=') => match input.next() {
-                        Some('=') => Some(TokenKind::EqualEqual),
-                        Some('>') => Some(TokenKind::EqualGreaterThan),
+                        Some('=') => Some(TerminalKind::EqualEqual),
+                        Some('>') => Some(TerminalKind::EqualGreaterThan),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Equal)
+                            Some(TerminalKind::Equal)
                         }
-                        None => Some(TokenKind::Equal),
+                        None => Some(TerminalKind::Equal),
                     },
                     Some('>') => match input.next() {
-                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some('=') => Some(TerminalKind::GreaterThanEqual),
                         Some('>') => match input.next() {
-                            Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
+                            Some('=') => Some(TerminalKind::GreaterThanGreaterThanEqual),
                             Some('>') => match input.next() {
                                 Some('=') => {
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
+                                    Some(TerminalKind::GreaterThanGreaterThanGreaterThanEqual)
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
+                                    Some(TerminalKind::GreaterThanGreaterThanGreaterThan)
                                 }
-                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
+                                None => Some(TerminalKind::GreaterThanGreaterThanGreaterThan),
                             },
                             Some(_) => {
                                 input.undo();
-                                Some(TokenKind::GreaterThanGreaterThan)
+                                Some(TerminalKind::GreaterThanGreaterThan)
                             }
-                            None => Some(TokenKind::GreaterThanGreaterThan),
+                            None => Some(TerminalKind::GreaterThanGreaterThan),
                         },
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::GreaterThan)
+                            Some(TerminalKind::GreaterThan)
                         }
-                        None => Some(TokenKind::GreaterThan),
+                        None => Some(TerminalKind::GreaterThan),
                     },
-                    Some('?') => Some(TokenKind::QuestionMark),
-                    Some('[') => Some(TokenKind::OpenBracket),
-                    Some(']') => Some(TokenKind::CloseBracket),
+                    Some('?') => Some(TerminalKind::QuestionMark),
+                    Some('[') => Some(TerminalKind::OpenBracket),
+                    Some(']') => Some(TerminalKind::CloseBracket),
                     Some('^') => match input.next() {
-                        Some('=') => Some(TokenKind::CaretEqual),
+                        Some('=') => Some(TerminalKind::CaretEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Caret)
+                            Some(TerminalKind::Caret)
                         }
-                        None => Some(TokenKind::Caret),
+                        None => Some(TerminalKind::Caret),
                     },
-                    Some('{') => Some(TokenKind::OpenBrace),
+                    Some('{') => Some(TerminalKind::OpenBrace),
                     Some('|') => match input.next() {
-                        Some('=') => Some(TokenKind::BarEqual),
-                        Some('|') => Some(TokenKind::BarBar),
+                        Some('=') => Some(TerminalKind::BarEqual),
+                        Some('|') => Some(TerminalKind::BarBar),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Bar)
+                            Some(TerminalKind::Bar)
                         }
-                        None => Some(TokenKind::Bar),
+                        None => Some(TerminalKind::Bar),
                     },
-                    Some('}') => Some(TokenKind::CloseBrace),
-                    Some('~') => Some(TokenKind::Tilde),
+                    Some('}') => Some(TerminalKind::CloseBrace),
+                    Some('~') => Some(TerminalKind::Tilde),
                     Some(_) => {
                         input.undo();
                         None
@@ -9616,27 +9701,27 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
                                 if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
-                                    KeywordScan::Reserved(TokenKind::AbstractKeyword)
+                                    KeywordScan::Reserved(TerminalKind::AbstractKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
-                                    KeywordScan::Reserved(TokenKind::AddressKeyword)
+                                    KeywordScan::Reserved(TerminalKind::AddressKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
-                                    KeywordScan::Reserved(TokenKind::AfterKeyword)
+                                    KeywordScan::Reserved(TerminalKind::AfterKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9644,7 +9729,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 'i', 'a', 's') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::AliasKeyword)
+                                        KeywordScan::Reserved(TerminalKind::AliasKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9654,7 +9739,7 @@ impl Lexer for Language {
                             }
                             Some('n') => {
                                 if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
-                                    KeywordScan::Reserved(TokenKind::AnonymousKeyword)
+                                    KeywordScan::Reserved(TerminalKind::AnonymousKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9662,7 +9747,7 @@ impl Lexer for Language {
                             Some('p') => {
                                 if scan_chars!(input, 'p', 'l', 'y') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::ApplyKeyword)
+                                        KeywordScan::Reserved(TerminalKind::ApplyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9673,21 +9758,21 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
-                                        KeywordScan::Reserved(TokenKind::AssemblyKeyword)
+                                        KeywordScan::Reserved(TerminalKind::AssemblyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    KeywordScan::Reserved(TokenKind::AsKeyword)
+                                    KeywordScan::Reserved(TerminalKind::AsKeyword)
                                 }
-                                None => KeywordScan::Reserved(TokenKind::AsKeyword),
+                                None => KeywordScan::Reserved(TerminalKind::AsKeyword),
                             },
                             Some('u') => {
                                 if scan_chars!(input, 't', 'o') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::AutoKeyword)
+                                        KeywordScan::Reserved(TerminalKind::AutoKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9704,21 +9789,21 @@ impl Lexer for Language {
                         Some('b') => match input.next() {
                             Some('o') => {
                                 if scan_chars!(input, 'o', 'l') {
-                                    KeywordScan::Reserved(TokenKind::BoolKeyword)
+                                    KeywordScan::Reserved(TerminalKind::BoolKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'e', 'a', 'k') {
-                                    KeywordScan::Reserved(TokenKind::BreakKeyword)
+                                    KeywordScan::Reserved(TerminalKind::BreakKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('y') => {
                                 if scan_chars!(input, 't', 'e') {
-                                    KeywordScan::Reserved(TokenKind::ByteKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ByteKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9734,7 +9819,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::CallDataKeyword)
+                                            KeywordScan::Reserved(TerminalKind::CallDataKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -9744,14 +9829,14 @@ impl Lexer for Language {
                                 }
                                 Some('s') => {
                                     if scan_chars!(input, 'e') {
-                                        KeywordScan::Reserved(TokenKind::CaseKeyword)
+                                        KeywordScan::Reserved(TerminalKind::CaseKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
-                                        KeywordScan::Reserved(TokenKind::CatchKeyword)
+                                        KeywordScan::Reserved(TerminalKind::CatchKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9770,7 +9855,7 @@ impl Lexer for Language {
                                                 Some('a') => {
                                                     if scan_chars!(input, 'n', 't') {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::ConstantKeyword,
+                                                            TerminalKind::ConstantKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -9780,11 +9865,11 @@ impl Lexer for Language {
                                                     if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
                                                         if self.version_is_at_least_0_5_0 {
                                                             KeywordScan::Reserved(
-                                                                TokenKind::ConstructorKeyword,
+                                                                TerminalKind::ConstructorKeyword,
                                                             )
                                                         } else if self.version_is_at_least_0_4_22 {
                                                             KeywordScan::Present(
-                                                                TokenKind::ConstructorKeyword,
+                                                                TerminalKind::ConstructorKeyword,
                                                             )
                                                         } else {
                                                             KeywordScan::Absent
@@ -9806,14 +9891,14 @@ impl Lexer for Language {
                                     Some('t') => match input.next() {
                                         Some('i') => {
                                             if scan_chars!(input, 'n', 'u', 'e') {
-                                                KeywordScan::Reserved(TokenKind::ContinueKeyword)
+                                                KeywordScan::Reserved(TerminalKind::ContinueKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some('r') => {
                                             if scan_chars!(input, 'a', 'c', 't') {
-                                                KeywordScan::Reserved(TokenKind::ContractKeyword)
+                                                KeywordScan::Reserved(TerminalKind::ContractKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -9833,7 +9918,7 @@ impl Lexer for Language {
                                 Some('p') => {
                                     if scan_chars!(input, 'y', 'o', 'f') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::CopyOfKeyword)
+                                            KeywordScan::Reserved(TerminalKind::CopyOfKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -9856,7 +9941,7 @@ impl Lexer for Language {
                         Some('d') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'y', 's') {
-                                    KeywordScan::Reserved(TokenKind::DaysKeyword)
+                                    KeywordScan::Reserved(TerminalKind::DaysKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9865,7 +9950,7 @@ impl Lexer for Language {
                                 Some('f') => match input.next() {
                                     Some('a') => {
                                         if scan_chars!(input, 'u', 'l', 't') {
-                                            KeywordScan::Reserved(TokenKind::DefaultKeyword)
+                                            KeywordScan::Reserved(TerminalKind::DefaultKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -9873,7 +9958,7 @@ impl Lexer for Language {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'e') {
                                             if self.version_is_at_least_0_5_0 {
-                                                KeywordScan::Reserved(TokenKind::DefineKeyword)
+                                                KeywordScan::Reserved(TerminalKind::DefineKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -9889,7 +9974,7 @@ impl Lexer for Language {
                                 },
                                 Some('l') => {
                                     if scan_chars!(input, 'e', 't', 'e') {
-                                        KeywordScan::Reserved(TokenKind::DeleteKeyword)
+                                        KeywordScan::Reserved(TerminalKind::DeleteKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9900,7 +9985,7 @@ impl Lexer for Language {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('o') => KeywordScan::Reserved(TokenKind::DoKeyword),
+                            Some('o') => KeywordScan::Reserved(TerminalKind::DoKeyword),
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -9910,7 +9995,7 @@ impl Lexer for Language {
                         Some('e') => match input.next() {
                             Some('l') => {
                                 if scan_chars!(input, 's', 'e') {
-                                    KeywordScan::Reserved(TokenKind::ElseKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ElseKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9918,9 +10003,9 @@ impl Lexer for Language {
                             Some('m') => {
                                 if scan_chars!(input, 'i', 't') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::EmitKeyword)
+                                        KeywordScan::Reserved(TerminalKind::EmitKeyword)
                                     } else if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Present(TokenKind::EmitKeyword)
+                                        KeywordScan::Present(TerminalKind::EmitKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9930,7 +10015,7 @@ impl Lexer for Language {
                             }
                             Some('n') => {
                                 if scan_chars!(input, 'u', 'm') {
-                                    KeywordScan::Reserved(TokenKind::EnumKeyword)
+                                    KeywordScan::Reserved(TerminalKind::EnumKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9938,7 +10023,7 @@ impl Lexer for Language {
                             Some('r') => {
                                 if scan_chars!(input, 'r', 'o', 'r') {
                                     if self.version_is_at_least_0_8_4 {
-                                        KeywordScan::Present(TokenKind::ErrorKeyword)
+                                        KeywordScan::Present(TerminalKind::ErrorKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -9948,21 +10033,21 @@ impl Lexer for Language {
                             }
                             Some('t') => {
                                 if scan_chars!(input, 'h', 'e', 'r') {
-                                    KeywordScan::Reserved(TokenKind::EtherKeyword)
+                                    KeywordScan::Reserved(TerminalKind::EtherKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'n', 't') {
-                                    KeywordScan::Reserved(TokenKind::EventKeyword)
+                                    KeywordScan::Reserved(TerminalKind::EventKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('x') => {
                                 if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
-                                    KeywordScan::Reserved(TokenKind::ExternalKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ExternalKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9981,10 +10066,12 @@ impl Lexer for Language {
                                             if scan_chars!(input, 'b', 'a', 'c', 'k') {
                                                 if self.version_is_at_least_0_6_0 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::FallbackKeyword,
+                                                        TerminalKind::FallbackKeyword,
                                                     )
                                                 } else {
-                                                    KeywordScan::Present(TokenKind::FallbackKeyword)
+                                                    KeywordScan::Present(
+                                                        TerminalKind::FallbackKeyword,
+                                                    )
                                                 }
                                             } else {
                                                 KeywordScan::Absent
@@ -9992,7 +10079,7 @@ impl Lexer for Language {
                                         }
                                         Some('s') => {
                                             if scan_chars!(input, 'e') {
-                                                KeywordScan::Reserved(TokenKind::FalseKeyword)
+                                                KeywordScan::Reserved(TerminalKind::FalseKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10012,7 +10099,7 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('a') => {
                                             if scan_chars!(input, 'l') {
-                                                KeywordScan::Reserved(TokenKind::FinalKeyword)
+                                                KeywordScan::Reserved(TerminalKind::FinalKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10020,7 +10107,9 @@ impl Lexer for Language {
                                         Some('n') => {
                                             if scan_chars!(input, 'e', 'y') {
                                                 if !self.version_is_at_least_0_7_0 {
-                                                    KeywordScan::Reserved(TokenKind::FinneyKeyword)
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::FinneyKeyword,
+                                                    )
                                                 } else {
                                                     KeywordScan::Absent
                                                 }
@@ -10040,21 +10129,21 @@ impl Lexer for Language {
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'r') {
-                                    KeywordScan::Reserved(TokenKind::ForKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ForKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'o', 'm') {
-                                    KeywordScan::Present(TokenKind::FromKeyword)
+                                    KeywordScan::Present(TerminalKind::FromKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
-                                    KeywordScan::Reserved(TokenKind::FunctionKeyword)
+                                    KeywordScan::Reserved(TerminalKind::FunctionKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10069,7 +10158,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'b', 'a', 'l') {
                                     if self.version_is_at_least_0_8_13 {
-                                        KeywordScan::Present(TokenKind::GlobalKeyword)
+                                        KeywordScan::Present(TerminalKind::GlobalKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10080,9 +10169,9 @@ impl Lexer for Language {
                             Some('w') => {
                                 if scan_chars!(input, 'e', 'i') {
                                     if self.version_is_at_least_0_7_0 {
-                                        KeywordScan::Reserved(TokenKind::GweiKeyword)
+                                        KeywordScan::Reserved(TerminalKind::GweiKeyword)
                                     } else if self.version_is_at_least_0_6_11 {
-                                        KeywordScan::Present(TokenKind::GweiKeyword)
+                                        KeywordScan::Present(TerminalKind::GweiKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10099,14 +10188,14 @@ impl Lexer for Language {
                         Some('h') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'x') {
-                                    KeywordScan::Reserved(TokenKind::HexKeyword)
+                                    KeywordScan::Reserved(TerminalKind::HexKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'u', 'r', 's') {
-                                    KeywordScan::Reserved(TokenKind::HoursKeyword)
+                                    KeywordScan::Reserved(TerminalKind::HoursKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10118,14 +10207,14 @@ impl Lexer for Language {
                             None => KeywordScan::Absent,
                         },
                         Some('i') => match input.next() {
-                            Some('f') => KeywordScan::Reserved(TokenKind::IfKeyword),
+                            Some('f') => KeywordScan::Reserved(TerminalKind::IfKeyword),
                             Some('m') => match input.next() {
                                 Some('m') => {
                                     if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::ImmutableKeyword)
+                                            KeywordScan::Reserved(TerminalKind::ImmutableKeyword)
                                         } else if self.version_is_at_least_0_6_5 {
-                                            KeywordScan::Present(TokenKind::ImmutableKeyword)
+                                            KeywordScan::Present(TerminalKind::ImmutableKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10137,7 +10226,9 @@ impl Lexer for Language {
                                     Some('l') => {
                                         if scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's') {
                                             if self.version_is_at_least_0_5_0 {
-                                                KeywordScan::Reserved(TokenKind::ImplementsKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::ImplementsKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10147,7 +10238,7 @@ impl Lexer for Language {
                                     }
                                     Some('o') => {
                                         if scan_chars!(input, 'r', 't') {
-                                            KeywordScan::Reserved(TokenKind::ImportKeyword)
+                                            KeywordScan::Reserved(TerminalKind::ImportKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10167,14 +10258,14 @@ impl Lexer for Language {
                             Some('n') => match input.next() {
                                 Some('d') => {
                                     if scan_chars!(input, 'e', 'x', 'e', 'd') {
-                                        KeywordScan::Reserved(TokenKind::IndexedKeyword)
+                                        KeywordScan::Reserved(TerminalKind::IndexedKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('l') => {
                                     if scan_chars!(input, 'i', 'n', 'e') {
-                                        KeywordScan::Reserved(TokenKind::InlineKeyword)
+                                        KeywordScan::Reserved(TerminalKind::InlineKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10185,7 +10276,7 @@ impl Lexer for Language {
                                             Some('f') => {
                                                 if scan_chars!(input, 'a', 'c', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::InterfaceKeyword,
+                                                        TerminalKind::InterfaceKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -10194,7 +10285,7 @@ impl Lexer for Language {
                                             Some('n') => {
                                                 if scan_chars!(input, 'a', 'l') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::InternalKeyword,
+                                                        TerminalKind::InternalKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -10212,11 +10303,11 @@ impl Lexer for Language {
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    KeywordScan::Reserved(TokenKind::InKeyword)
+                                    KeywordScan::Reserved(TerminalKind::InKeyword)
                                 }
-                                None => KeywordScan::Reserved(TokenKind::InKeyword),
+                                None => KeywordScan::Reserved(TerminalKind::InKeyword),
                             },
-                            Some('s') => KeywordScan::Reserved(TokenKind::IsKeyword),
+                            Some('s') => KeywordScan::Reserved(TerminalKind::IsKeyword),
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -10226,14 +10317,14 @@ impl Lexer for Language {
                         Some('l') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 't') {
-                                    KeywordScan::Reserved(TokenKind::LetKeyword)
+                                    KeywordScan::Reserved(TerminalKind::LetKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('i') => {
                                 if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
-                                    KeywordScan::Reserved(TokenKind::LibraryKeyword)
+                                    KeywordScan::Reserved(TerminalKind::LibraryKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10249,7 +10340,7 @@ impl Lexer for Language {
                                 Some('c') => {
                                     if scan_chars!(input, 'r', 'o') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::MacroKeyword)
+                                            KeywordScan::Reserved(TerminalKind::MacroKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10259,14 +10350,14 @@ impl Lexer for Language {
                                 }
                                 Some('p') => {
                                     if scan_chars!(input, 'p', 'i', 'n', 'g') {
-                                        KeywordScan::Reserved(TokenKind::MappingKeyword)
+                                        KeywordScan::Reserved(TerminalKind::MappingKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
-                                        KeywordScan::Reserved(TokenKind::MatchKeyword)
+                                        KeywordScan::Reserved(TerminalKind::MatchKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10279,21 +10370,21 @@ impl Lexer for Language {
                             },
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
-                                    KeywordScan::Reserved(TokenKind::MemoryKeyword)
+                                    KeywordScan::Reserved(TerminalKind::MemoryKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('i') => {
                                 if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
-                                    KeywordScan::Reserved(TokenKind::MinutesKeyword)
+                                    KeywordScan::Reserved(TerminalKind::MinutesKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
-                                    KeywordScan::Reserved(TokenKind::ModifierKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ModifierKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10301,7 +10392,7 @@ impl Lexer for Language {
                             Some('u') => {
                                 if scan_chars!(input, 't', 'a', 'b', 'l', 'e') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::MutableKeyword)
+                                        KeywordScan::Reserved(TerminalKind::MutableKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10318,14 +10409,14 @@ impl Lexer for Language {
                         Some('n') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'w') {
-                                    KeywordScan::Reserved(TokenKind::NewKeyword)
+                                    KeywordScan::Reserved(TerminalKind::NewKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'l', 'l') {
-                                    KeywordScan::Reserved(TokenKind::NullKeyword)
+                                    KeywordScan::Reserved(TerminalKind::NullKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10337,13 +10428,13 @@ impl Lexer for Language {
                             None => KeywordScan::Absent,
                         },
                         Some('o') => match input.next() {
-                            Some('f') => KeywordScan::Reserved(TokenKind::OfKeyword),
+                            Some('f') => KeywordScan::Reserved(TerminalKind::OfKeyword),
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::OverrideKeyword)
+                                        KeywordScan::Reserved(TerminalKind::OverrideKeyword)
                                     } else if self.version_is_at_least_0_6_0 {
-                                        KeywordScan::Present(TokenKind::OverrideKeyword)
+                                        KeywordScan::Present(TerminalKind::OverrideKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10362,7 +10453,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 't', 'i', 'a', 'l') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::PartialKeyword)
+                                            KeywordScan::Reserved(TerminalKind::PartialKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10372,7 +10463,7 @@ impl Lexer for Language {
                                 }
                                 Some('y') => {
                                     if scan_chars!(input, 'a', 'b', 'l', 'e') {
-                                        KeywordScan::Reserved(TokenKind::PayableKeyword)
+                                        KeywordScan::Reserved(TerminalKind::PayableKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10386,14 +10477,14 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 'g', 'm', 'a') {
-                                        KeywordScan::Reserved(TokenKind::PragmaKeyword)
+                                        KeywordScan::Reserved(TerminalKind::PragmaKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('i') => {
                                     if scan_chars!(input, 'v', 'a', 't', 'e') {
-                                        KeywordScan::Reserved(TokenKind::PrivateKeyword)
+                                        KeywordScan::Reserved(TerminalKind::PrivateKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10401,7 +10492,7 @@ impl Lexer for Language {
                                 Some('o') => {
                                     if scan_chars!(input, 'm', 'i', 's', 'e') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::PromiseKeyword)
+                                            KeywordScan::Reserved(TerminalKind::PromiseKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10418,14 +10509,14 @@ impl Lexer for Language {
                             Some('u') => match input.next() {
                                 Some('b') => {
                                     if scan_chars!(input, 'l', 'i', 'c') {
-                                        KeywordScan::Reserved(TokenKind::PublicKeyword)
+                                        KeywordScan::Reserved(TerminalKind::PublicKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('r') => {
                                     if scan_chars!(input, 'e') {
-                                        KeywordScan::Reserved(TokenKind::PureKeyword)
+                                        KeywordScan::Reserved(TerminalKind::PureKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10448,9 +10539,9 @@ impl Lexer for Language {
                                     Some('c') => {
                                         if scan_chars!(input, 'e', 'i', 'v', 'e') {
                                             if self.version_is_at_least_0_6_0 {
-                                                KeywordScan::Reserved(TokenKind::ReceiveKeyword)
+                                                KeywordScan::Reserved(TerminalKind::ReceiveKeyword)
                                             } else {
-                                                KeywordScan::Present(TokenKind::ReceiveKeyword)
+                                                KeywordScan::Present(TerminalKind::ReceiveKeyword)
                                             }
                                         } else {
                                             KeywordScan::Absent
@@ -10459,7 +10550,9 @@ impl Lexer for Language {
                                     Some('f') => {
                                         if scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e') {
                                             if self.version_is_at_least_0_5_0 {
-                                                KeywordScan::Reserved(TokenKind::ReferenceKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::ReferenceKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10471,7 +10564,7 @@ impl Lexer for Language {
                                         if scan_chars!(
                                             input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'
                                         ) {
-                                            KeywordScan::Reserved(TokenKind::RelocatableKeyword)
+                                            KeywordScan::Reserved(TerminalKind::RelocatableKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10479,16 +10572,18 @@ impl Lexer for Language {
                                     Some('t') => {
                                         if scan_chars!(input, 'u', 'r', 'n') {
                                             match input.next() {
-                                                Some('s') => {
-                                                    KeywordScan::Reserved(TokenKind::ReturnsKeyword)
-                                                }
+                                                Some('s') => KeywordScan::Reserved(
+                                                    TerminalKind::ReturnsKeyword,
+                                                ),
                                                 Some(_) => {
                                                     input.undo();
-                                                    KeywordScan::Reserved(TokenKind::ReturnKeyword)
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::ReturnKeyword,
+                                                    )
                                                 }
-                                                None => {
-                                                    KeywordScan::Reserved(TokenKind::ReturnKeyword)
-                                                }
+                                                None => KeywordScan::Reserved(
+                                                    TerminalKind::ReturnKeyword,
+                                                ),
                                             }
                                         } else {
                                             KeywordScan::Absent
@@ -10497,7 +10592,7 @@ impl Lexer for Language {
                                     Some('v') => {
                                         if scan_chars!(input, 'e', 'r', 't') {
                                             if self.version_is_at_least_0_8_4 {
-                                                KeywordScan::Present(TokenKind::RevertKeyword)
+                                                KeywordScan::Present(TerminalKind::RevertKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -10520,7 +10615,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'l', 'e', 'd') {
                                         if self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::SealedKeyword)
+                                            KeywordScan::Reserved(TerminalKind::SealedKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10530,7 +10625,7 @@ impl Lexer for Language {
                                 }
                                 Some('c') => {
                                     if scan_chars!(input, 'o', 'n', 'd', 's') {
-                                        KeywordScan::Reserved(TokenKind::SecondsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::SecondsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10544,7 +10639,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'z', 'e', 'o', 'f') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::SizeOfKeyword)
+                                        KeywordScan::Reserved(TerminalKind::SizeOfKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10555,14 +10650,14 @@ impl Lexer for Language {
                             Some('t') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
-                                        KeywordScan::Reserved(TokenKind::StaticKeyword)
+                                        KeywordScan::Reserved(TerminalKind::StaticKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('o') => {
                                     if scan_chars!(input, 'r', 'a', 'g', 'e') {
-                                        KeywordScan::Reserved(TokenKind::StorageKeyword)
+                                        KeywordScan::Reserved(TerminalKind::StorageKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10570,14 +10665,14 @@ impl Lexer for Language {
                                 Some('r') => match input.next() {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'g') {
-                                            KeywordScan::Reserved(TokenKind::StringKeyword)
+                                            KeywordScan::Reserved(TerminalKind::StringKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
                                     }
                                     Some('u') => {
                                         if scan_chars!(input, 'c', 't') {
-                                            KeywordScan::Reserved(TokenKind::StructKeyword)
+                                            KeywordScan::Reserved(TerminalKind::StructKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10597,7 +10692,7 @@ impl Lexer for Language {
                             Some('u') => {
                                 if scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::SupportsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::SupportsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10607,7 +10702,7 @@ impl Lexer for Language {
                             }
                             Some('w') => {
                                 if scan_chars!(input, 'i', 't', 'c', 'h') {
-                                    KeywordScan::Reserved(TokenKind::SwitchKeyword)
+                                    KeywordScan::Reserved(TerminalKind::SwitchKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10615,7 +10710,7 @@ impl Lexer for Language {
                             Some('z') => {
                                 if scan_chars!(input, 'a', 'b', 'o') {
                                     if !self.version_is_at_least_0_7_0 {
-                                        KeywordScan::Reserved(TokenKind::SzaboKeyword)
+                                        KeywordScan::Reserved(TerminalKind::SzaboKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10632,7 +10727,7 @@ impl Lexer for Language {
                         Some('t') => match input.next() {
                             Some('h') => {
                                 if scan_chars!(input, 'r', 'o', 'w') {
-                                    KeywordScan::Reserved(TokenKind::ThrowKeyword)
+                                    KeywordScan::Reserved(TerminalKind::ThrowKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10640,12 +10735,12 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
-                                        KeywordScan::Reserved(TokenKind::TrueKeyword)
+                                        KeywordScan::Reserved(TerminalKind::TrueKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('y') => KeywordScan::Reserved(TokenKind::TryKeyword),
+                                Some('y') => KeywordScan::Reserved(TerminalKind::TryKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -10658,7 +10753,9 @@ impl Lexer for Language {
                                         Some('d') => {
                                             if scan_chars!(input, 'e', 'f') {
                                                 if self.version_is_at_least_0_5_0 {
-                                                    KeywordScan::Reserved(TokenKind::TypeDefKeyword)
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::TypeDefKeyword,
+                                                    )
                                                 } else {
                                                     KeywordScan::Absent
                                                 }
@@ -10668,16 +10765,16 @@ impl Lexer for Language {
                                         }
                                         Some('o') => {
                                             if scan_chars!(input, 'f') {
-                                                KeywordScan::Reserved(TokenKind::TypeOfKeyword)
+                                                KeywordScan::Reserved(TerminalKind::TypeOfKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            KeywordScan::Reserved(TokenKind::TypeKeyword)
+                                            KeywordScan::Reserved(TerminalKind::TypeKeyword)
                                         }
-                                        None => KeywordScan::Reserved(TokenKind::TypeKeyword),
+                                        None => KeywordScan::Reserved(TerminalKind::TypeKeyword),
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -10693,9 +10790,9 @@ impl Lexer for Language {
                             Some('n') => {
                                 if scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
                                     if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TokenKind::UncheckedKeyword)
+                                        KeywordScan::Reserved(TerminalKind::UncheckedKeyword)
                                     } else if self.version_is_at_least_0_8_0 {
-                                        KeywordScan::Present(TokenKind::UncheckedKeyword)
+                                        KeywordScan::Present(TerminalKind::UncheckedKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10705,7 +10802,7 @@ impl Lexer for Language {
                             }
                             Some('s') => {
                                 if scan_chars!(input, 'i', 'n', 'g') {
-                                    KeywordScan::Reserved(TokenKind::UsingKeyword)
+                                    KeywordScan::Reserved(TerminalKind::UsingKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10719,7 +10816,7 @@ impl Lexer for Language {
                         Some('v') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
-                                    KeywordScan::Reserved(TokenKind::VarKeyword)
+                                    KeywordScan::Reserved(TerminalKind::VarKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10727,7 +10824,7 @@ impl Lexer for Language {
                             Some('i') => match input.next() {
                                 Some('e') => {
                                     if scan_chars!(input, 'w') {
-                                        KeywordScan::Reserved(TokenKind::ViewKeyword)
+                                        KeywordScan::Reserved(TerminalKind::ViewKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -10735,7 +10832,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 't', 'u', 'a', 'l') {
                                         if self.version_is_at_least_0_6_0 {
-                                            KeywordScan::Reserved(TokenKind::VirtualKeyword)
+                                            KeywordScan::Reserved(TerminalKind::VirtualKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -10759,12 +10856,12 @@ impl Lexer for Language {
                             Some('e') => match input.next() {
                                 Some('e') => {
                                     if scan_chars!(input, 'k', 's') {
-                                        KeywordScan::Reserved(TokenKind::WeeksKeyword)
+                                        KeywordScan::Reserved(TerminalKind::WeeksKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('i') => KeywordScan::Reserved(TokenKind::WeiKeyword),
+                                Some('i') => KeywordScan::Reserved(TerminalKind::WeiKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -10773,7 +10870,7 @@ impl Lexer for Language {
                             },
                             Some('h') => {
                                 if scan_chars!(input, 'i', 'l', 'e') {
-                                    KeywordScan::Reserved(TokenKind::WhileKeyword)
+                                    KeywordScan::Reserved(TerminalKind::WhileKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10786,7 +10883,7 @@ impl Lexer for Language {
                         },
                         Some('y') => {
                             if scan_chars!(input, 'e', 'a', 'r', 's') {
-                                KeywordScan::Reserved(TokenKind::YearsKeyword)
+                                KeywordScan::Reserved(TerminalKind::YearsKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10836,35 +10933,35 @@ impl Lexer for Language {
             }
             LexicalContext::Pragma => {
                 if let Some(kind) = match input.next() {
-                    Some('-') => Some(TokenKind::Minus),
-                    Some('.') => Some(TokenKind::Period),
-                    Some(';') => Some(TokenKind::Semicolon),
+                    Some('-') => Some(TerminalKind::Minus),
+                    Some('.') => Some(TerminalKind::Period),
+                    Some(';') => Some(TerminalKind::Semicolon),
                     Some('<') => match input.next() {
-                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some('=') => Some(TerminalKind::LessThanEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::LessThan)
+                            Some(TerminalKind::LessThan)
                         }
-                        None => Some(TokenKind::LessThan),
+                        None => Some(TerminalKind::LessThan),
                     },
-                    Some('=') => Some(TokenKind::Equal),
+                    Some('=') => Some(TerminalKind::Equal),
                     Some('>') => match input.next() {
-                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some('=') => Some(TerminalKind::GreaterThanEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::GreaterThan)
+                            Some(TerminalKind::GreaterThan)
                         }
-                        None => Some(TokenKind::GreaterThan),
+                        None => Some(TerminalKind::GreaterThan),
                     },
-                    Some('^') => Some(TokenKind::Caret),
+                    Some('^') => Some(TerminalKind::Caret),
                     Some('|') => {
                         if scan_chars!(input, '|') {
-                            Some(TokenKind::BarBar)
+                            Some(TerminalKind::BarBar)
                         } else {
                             None
                         }
                     }
-                    Some('~') => Some(TokenKind::Tilde),
+                    Some('~') => Some(TerminalKind::Tilde),
                     Some(_) => {
                         input.undo();
                         None
@@ -10888,12 +10985,12 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                KeywordScan::Present(TokenKind::AbicoderKeyword)
+                                KeywordScan::Present(TerminalKind::AbicoderKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10902,21 +10999,21 @@ impl Lexer for Language {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                KeywordScan::Present(TokenKind::ExperimentalKeyword)
+                                KeywordScan::Present(TerminalKind::ExperimentalKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
                         }
                         Some('p') => {
                             if scan_chars!(input, 'r', 'a', 'g', 'm', 'a') {
-                                KeywordScan::Reserved(TokenKind::PragmaKeyword)
+                                KeywordScan::Reserved(TerminalKind::PragmaKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
                         }
                         Some('s') => {
                             if scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y') {
-                                KeywordScan::Present(TokenKind::SolidityKeyword)
+                                KeywordScan::Present(TerminalKind::SolidityKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10942,28 +11039,28 @@ impl Lexer for Language {
             }
             LexicalContext::Yul => {
                 if let Some(kind) = match input.next() {
-                    Some('(') => Some(TokenKind::OpenParen),
-                    Some(')') => Some(TokenKind::CloseParen),
-                    Some(',') => Some(TokenKind::Comma),
+                    Some('(') => Some(TerminalKind::OpenParen),
+                    Some(')') => Some(TerminalKind::CloseParen),
+                    Some(',') => Some(TerminalKind::Comma),
                     Some('-') => {
                         if scan_chars!(input, '>') {
-                            Some(TokenKind::MinusGreaterThan)
+                            Some(TerminalKind::MinusGreaterThan)
                         } else {
                             None
                         }
                     }
-                    Some('.') => Some(TokenKind::Period),
+                    Some('.') => Some(TerminalKind::Period),
                     Some(':') => match input.next() {
-                        Some('=') => Some(TokenKind::ColonEqual),
+                        Some('=') => Some(TerminalKind::ColonEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Colon)
+                            Some(TerminalKind::Colon)
                         }
-                        None => Some(TokenKind::Colon),
+                        None => Some(TerminalKind::Colon),
                     },
-                    Some('=') => Some(TokenKind::Equal),
-                    Some('{') => Some(TokenKind::OpenBrace),
-                    Some('}') => Some(TokenKind::CloseBrace),
+                    Some('=') => Some(TerminalKind::Equal),
+                    Some('{') => Some(TerminalKind::OpenBrace),
+                    Some('}') => Some(TerminalKind::CloseBrace),
                     Some(_) => {
                         input.undo();
                         None
@@ -10986,14 +11083,14 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TokenKind::YulIdentifier].contains(tok))
+                    longest_token.filter(|tok| [TerminalKind::YulIdentifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
                             Some('b') => {
                                 if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulAbstractKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAbstractKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11006,23 +11103,27 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('m') => {
                                             if scan_chars!(input, 'o', 'd') {
-                                                KeywordScan::Reserved(TokenKind::YulAddModKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulAddModKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some('r') => {
                                             if scan_chars!(input, 'e', 's', 's') {
-                                                KeywordScan::Reserved(TokenKind::YulAddressKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulAddressKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            KeywordScan::Reserved(TokenKind::YulAddKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulAddKeyword)
                                         }
-                                        None => KeywordScan::Reserved(TokenKind::YulAddKeyword),
+                                        None => KeywordScan::Reserved(TerminalKind::YulAddKeyword),
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -11031,7 +11132,7 @@ impl Lexer for Language {
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulAfterKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAfterKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11044,7 +11145,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulAliasKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAliasKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11053,11 +11154,11 @@ impl Lexer for Language {
                                 }
                             }
                             Some('n') => match input.next() {
-                                Some('d') => KeywordScan::Reserved(TokenKind::YulAndKeyword),
+                                Some('d') => KeywordScan::Reserved(TerminalKind::YulAndKeyword),
                                 Some('o') => {
                                     if scan_chars!(input, 'n', 'y', 'm', 'o', 'u', 's') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulAnonymousKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulAnonymousKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11076,7 +11177,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulApplyKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulApplyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11088,7 +11189,7 @@ impl Lexer for Language {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'm', 'b', 'l', 'y') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulAssemblyKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulAssemblyKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11099,14 +11200,14 @@ impl Lexer for Language {
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulAsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 None => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulAsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11117,7 +11218,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulAutoKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulAutoKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11135,7 +11236,7 @@ impl Lexer for Language {
                             Some('a') => match input.next() {
                                 Some('l') => {
                                     if scan_chars!(input, 'a', 'n', 'c', 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulBalanceKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulBalanceKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11143,7 +11244,7 @@ impl Lexer for Language {
                                 Some('s') => {
                                     if scan_chars!(input, 'e', 'f', 'e', 'e') {
                                         if self.version_is_at_least_0_8_7 {
-                                            KeywordScan::Reserved(TokenKind::YulBaseFeeKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulBaseFeeKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11166,7 +11267,7 @@ impl Lexer for Language {
                                                 {
                                                     if self.version_is_at_least_0_8_24 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulBlobBaseFeeKeyword,
+                                                            TerminalKind::YulBlobBaseFeeKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -11179,7 +11280,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'a', 's', 'h') {
                                                     if self.version_is_at_least_0_8_24 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulBlobHashKeyword,
+                                                            TerminalKind::YulBlobHashKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -11197,7 +11298,7 @@ impl Lexer for Language {
                                         Some('c') => {
                                             if scan_chars!(input, 'k', 'h', 'a', 's', 'h') {
                                                 KeywordScan::Reserved(
-                                                    TokenKind::YulBlockHashKeyword,
+                                                    TerminalKind::YulBlockHashKeyword,
                                                 )
                                             } else {
                                                 KeywordScan::Absent
@@ -11216,7 +11317,7 @@ impl Lexer for Language {
                             Some('o') => {
                                 if scan_chars!(input, 'o', 'l') {
                                     if !self.version_is_at_least_0_5_10 {
-                                        KeywordScan::Reserved(TokenKind::YulBoolKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulBoolKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11226,14 +11327,14 @@ impl Lexer for Language {
                             }
                             Some('r') => {
                                 if scan_chars!(input, 'e', 'a', 'k') {
-                                    KeywordScan::Reserved(TokenKind::YulBreakKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulBreakKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('y') => {
                                 if scan_chars!(input, 't', 'e') {
-                                    KeywordScan::Reserved(TokenKind::YulByteKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulByteKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -11252,7 +11353,7 @@ impl Lexer for Language {
                                             Some('c') => {
                                                 if scan_chars!(input, 'o', 'd', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulCallCodeKeyword,
+                                                        TerminalKind::YulCallCodeKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11263,21 +11364,21 @@ impl Lexer for Language {
                                                     match input.next() {
                                                         Some('c') => {
                                                             if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataCopyKeyword)
+                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataCopyKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
                                                         }
                                                         Some('l') => {
                                                             if scan_chars!(input, 'o', 'a', 'd') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataLoadKeyword)
+                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataLoadKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
                                                         }
                                                         Some('s') => {
                                                             if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulCallDataSizeKeyword)
+                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataSizeKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11287,9 +11388,7 @@ impl Lexer for Language {
                                                             if self.version_is_at_least_0_5_0
                                                                 && !self.version_is_at_least_0_7_1
                                                             {
-                                                                KeywordScan::Reserved(
-                                                                    TokenKind::YulCallDataKeyword,
-                                                                )
+                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11298,9 +11397,7 @@ impl Lexer for Language {
                                                             if self.version_is_at_least_0_5_0
                                                                 && !self.version_is_at_least_0_7_1
                                                             {
-                                                                KeywordScan::Reserved(
-                                                                    TokenKind::YulCallDataKeyword,
-                                                                )
+                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11313,7 +11410,7 @@ impl Lexer for Language {
                                             Some('e') => {
                                                 if scan_chars!(input, 'r') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulCallerKeyword,
+                                                        TerminalKind::YulCallerKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11322,7 +11419,7 @@ impl Lexer for Language {
                                             Some('v') => {
                                                 if scan_chars!(input, 'a', 'l', 'u', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulCallValueKeyword,
+                                                        TerminalKind::YulCallValueKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11330,10 +11427,10 @@ impl Lexer for Language {
                                             }
                                             Some(_) => {
                                                 input.undo();
-                                                KeywordScan::Reserved(TokenKind::YulCallKeyword)
+                                                KeywordScan::Reserved(TerminalKind::YulCallKeyword)
                                             }
                                             None => {
-                                                KeywordScan::Reserved(TokenKind::YulCallKeyword)
+                                                KeywordScan::Reserved(TerminalKind::YulCallKeyword)
                                             }
                                         }
                                     } else {
@@ -11342,7 +11439,7 @@ impl Lexer for Language {
                                 }
                                 Some('s') => {
                                     if scan_chars!(input, 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulCaseKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulCaseKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11350,7 +11447,7 @@ impl Lexer for Language {
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulCatchKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulCatchKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11367,9 +11464,9 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'a', 'i', 'n', 'i', 'd') {
                                     if self.version_is_at_least_0_5_12 {
-                                        KeywordScan::Reserved(TokenKind::YulChainIdKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulChainIdKeyword)
                                     } else {
-                                        KeywordScan::Present(TokenKind::YulChainIdKeyword)
+                                        KeywordScan::Present(TerminalKind::YulChainIdKeyword)
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -11378,92 +11475,94 @@ impl Lexer for Language {
                             Some('o') => match input.next() {
                                 Some('i') => {
                                     if scan_chars!(input, 'n', 'b', 'a', 's', 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulCoinBaseKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulCoinBaseKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('n') => match input.next() {
-                                    Some('s') => {
-                                        if scan_chars!(input, 't') {
-                                            match input.next() {
-                                                Some('a') => {
-                                                    if scan_chars!(input, 'n', 't') {
-                                                        if !self.version_is_at_least_0_7_1 {
-                                                            KeywordScan::Reserved(
-                                                                TokenKind::YulConstantKeyword,
-                                                            )
+                                Some('n') => {
+                                    match input.next() {
+                                        Some('s') => {
+                                            if scan_chars!(input, 't') {
+                                                match input.next() {
+                                                    Some('a') => {
+                                                        if scan_chars!(input, 'n', 't') {
+                                                            if !self.version_is_at_least_0_7_1 {
+                                                                KeywordScan :: Reserved (TerminalKind :: YulConstantKeyword)
+                                                            } else {
+                                                                KeywordScan::Absent
+                                                            }
                                                         } else {
                                                             KeywordScan::Absent
                                                         }
-                                                    } else {
-                                                        KeywordScan::Absent
                                                     }
-                                                }
-                                                Some('r') => {
-                                                    if scan_chars!(input, 'u', 'c', 't', 'o', 'r') {
-                                                        if self.version_is_at_least_0_5_0
-                                                            && !self.version_is_at_least_0_7_1
-                                                        {
-                                                            KeywordScan::Reserved(
-                                                                TokenKind::YulConstructorKeyword,
-                                                            )
+                                                    Some('r') => {
+                                                        if scan_chars!(
+                                                            input, 'u', 'c', 't', 'o', 'r'
+                                                        ) {
+                                                            if self.version_is_at_least_0_5_0
+                                                                && !self.version_is_at_least_0_7_1
+                                                            {
+                                                                KeywordScan :: Reserved (TerminalKind :: YulConstructorKeyword)
+                                                            } else {
+                                                                KeywordScan::Absent
+                                                            }
                                                         } else {
                                                             KeywordScan::Absent
                                                         }
-                                                    } else {
+                                                    }
+                                                    Some(_) => {
+                                                        input.undo();
                                                         KeywordScan::Absent
                                                     }
+                                                    None => KeywordScan::Absent,
                                                 }
-                                                Some(_) => {
-                                                    input.undo();
-                                                    KeywordScan::Absent
-                                                }
-                                                None => KeywordScan::Absent,
-                                            }
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    }
-                                    Some('t') => match input.next() {
-                                        Some('i') => {
-                                            if scan_chars!(input, 'n', 'u', 'e') {
-                                                KeywordScan::Reserved(TokenKind::YulContinueKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
-                                        Some('r') => {
-                                            if scan_chars!(input, 'a', 'c', 't') {
-                                                if !self.version_is_at_least_0_7_1 {
+                                        Some('t') => match input.next() {
+                                            Some('i') => {
+                                                if scan_chars!(input, 'n', 'u', 'e') {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulContractKeyword,
+                                                        TerminalKind::YulContinueKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
                                                 }
-                                            } else {
+                                            }
+                                            Some('r') => {
+                                                if scan_chars!(input, 'a', 'c', 't') {
+                                                    if !self.version_is_at_least_0_7_1 {
+                                                        KeywordScan::Reserved(
+                                                            TerminalKind::YulContractKeyword,
+                                                        )
+                                                    } else {
+                                                        KeywordScan::Absent
+                                                    }
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
                                                 KeywordScan::Absent
                                             }
-                                        }
+                                            None => KeywordScan::Absent,
+                                        },
                                         Some(_) => {
                                             input.undo();
                                             KeywordScan::Absent
                                         }
                                         None => KeywordScan::Absent,
-                                    },
-                                    Some(_) => {
-                                        input.undo();
-                                        KeywordScan::Absent
                                     }
-                                    None => KeywordScan::Absent,
-                                },
+                                }
                                 Some('p') => {
                                     if scan_chars!(input, 'y', 'o', 'f') {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulCopyOfKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulCopyOfKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11482,16 +11581,20 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('2') => {
                                             if self.version_is_at_least_0_4_12 {
-                                                KeywordScan::Reserved(TokenKind::YulCreate2Keyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulCreate2Keyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            KeywordScan::Reserved(TokenKind::YulCreateKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulCreateKeyword)
                                         }
-                                        None => KeywordScan::Reserved(TokenKind::YulCreateKeyword),
+                                        None => {
+                                            KeywordScan::Reserved(TerminalKind::YulCreateKeyword)
+                                        }
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -11507,7 +11610,7 @@ impl Lexer for Language {
                             Some('a') => {
                                 if scan_chars!(input, 'y', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulDaysKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulDaysKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11519,7 +11622,7 @@ impl Lexer for Language {
                                 Some('f') => match input.next() {
                                     Some('a') => {
                                         if scan_chars!(input, 'u', 'l', 't') {
-                                            KeywordScan::Reserved(TokenKind::YulDefaultKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulDefaultKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11529,7 +11632,9 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_5_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                KeywordScan::Reserved(TokenKind::YulDefineKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulDefineKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -11551,7 +11656,7 @@ impl Lexer for Language {
                                                     input, 'a', 't', 'e', 'c', 'a', 'l', 'l'
                                                 ) {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulDelegateCallKeyword,
+                                                        TerminalKind::YulDelegateCallKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11561,7 +11666,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'e') {
                                                     if !self.version_is_at_least_0_7_1 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulDeleteKeyword,
+                                                            TerminalKind::YulDeleteKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -11589,12 +11694,12 @@ impl Lexer for Language {
                             Some('i') => match input.next() {
                                 Some('f') => {
                                     if scan_chars!(input, 'f', 'i', 'c', 'u', 'l', 't', 'y') {
-                                        KeywordScan::Reserved(TokenKind::YulDifficultyKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulDifficultyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('v') => KeywordScan::Reserved(TokenKind::YulDivKeyword),
+                                Some('v') => KeywordScan::Reserved(TerminalKind::YulDivKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -11603,7 +11708,7 @@ impl Lexer for Language {
                             },
                             Some('o') => {
                                 if !self.version_is_at_least_0_7_1 {
-                                    KeywordScan::Reserved(TokenKind::YulDoKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulDoKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -11619,7 +11724,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 's', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulElseKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulElseKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11632,7 +11737,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulEmitKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulEmitKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11643,7 +11748,7 @@ impl Lexer for Language {
                                 Some('n') => {
                                     if scan_chars!(input, 'u', 'm') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulEnumKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulEnumKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11651,11 +11756,11 @@ impl Lexer for Language {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('q') => KeywordScan::Reserved(TokenKind::YulEqKeyword),
+                                Some('q') => KeywordScan::Reserved(TerminalKind::YulEqKeyword),
                                 Some('t') => {
                                     if scan_chars!(input, 'h', 'e', 'r') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulEtherKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulEtherKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11666,7 +11771,7 @@ impl Lexer for Language {
                                 Some('v') => {
                                     if scan_chars!(input, 'e', 'n', 't') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulEventKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulEventKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11675,7 +11780,7 @@ impl Lexer for Language {
                                     }
                                 }
                                 Some('x') => match input.next() {
-                                    Some('p') => KeywordScan::Reserved(TokenKind::YulExpKeyword),
+                                    Some('p') => KeywordScan::Reserved(TerminalKind::YulExpKeyword),
                                     Some('t') => {
                                         match input.next() {
                                             Some('c') => {
@@ -11683,7 +11788,7 @@ impl Lexer for Language {
                                                     match input.next() {
                                                         Some('c') => {
                                                             if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulExtCodeCopyKeyword)
+                                                                KeywordScan :: Reserved (TerminalKind :: YulExtCodeCopyKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11691,7 +11796,7 @@ impl Lexer for Language {
                                                         Some('h') => {
                                                             if scan_chars!(input, 'a', 's', 'h') {
                                                                 if self.version_is_at_least_0_5_0 {
-                                                                    KeywordScan :: Reserved (TokenKind :: YulExtCodeHashKeyword)
+                                                                    KeywordScan :: Reserved (TerminalKind :: YulExtCodeHashKeyword)
                                                                 } else {
                                                                     KeywordScan::Absent
                                                                 }
@@ -11701,7 +11806,7 @@ impl Lexer for Language {
                                                         }
                                                         Some('s') => {
                                                             if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TokenKind :: YulExtCodeSizeKeyword)
+                                                                KeywordScan :: Reserved (TerminalKind :: YulExtCodeSizeKeyword)
                                                             } else {
                                                                 KeywordScan::Absent
                                                             }
@@ -11720,7 +11825,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'r', 'n', 'a', 'l') {
                                                     if !self.version_is_at_least_0_7_1 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulExternalKeyword,
+                                                            TerminalKind::YulExternalKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -11759,7 +11864,7 @@ impl Lexer for Language {
                                                     && !self.version_is_at_least_0_7_1
                                                 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulFallbackKeyword,
+                                                        TerminalKind::YulFallbackKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11770,7 +11875,7 @@ impl Lexer for Language {
                                         }
                                         Some('s') => {
                                             if scan_chars!(input, 'e') {
-                                                KeywordScan::Reserved(TokenKind::YulFalseKeyword)
+                                                KeywordScan::Reserved(TerminalKind::YulFalseKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -11792,7 +11897,7 @@ impl Lexer for Language {
                                             if scan_chars!(input, 'l') {
                                                 if !self.version_is_at_least_0_7_1 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulFinalKeyword,
+                                                        TerminalKind::YulFinalKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11805,7 +11910,7 @@ impl Lexer for Language {
                                             if scan_chars!(input, 'e', 'y') {
                                                 if !self.version_is_at_least_0_7_0 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulFinneyKeyword,
+                                                        TerminalKind::YulFinneyKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -11826,14 +11931,14 @@ impl Lexer for Language {
                             }
                             Some('o') => {
                                 if scan_chars!(input, 'r') {
-                                    KeywordScan::Reserved(TokenKind::YulForKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulForKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('u') => {
                                 if scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n') {
-                                    KeywordScan::Reserved(TokenKind::YulFunctionKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulFunctionKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -11850,35 +11955,39 @@ impl Lexer for Language {
                                     match input.next() {
                                         Some('l') => {
                                             if scan_chars!(input, 'i', 'm', 'i', 't') {
-                                                KeywordScan::Reserved(TokenKind::YulGasLimitKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulGasLimitKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some('p') => {
                                             if scan_chars!(input, 'r', 'i', 'c', 'e') {
-                                                KeywordScan::Reserved(TokenKind::YulGasPriceKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulGasPriceKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            KeywordScan::Reserved(TokenKind::YulGasKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulGasKeyword)
                                         }
-                                        None => KeywordScan::Reserved(TokenKind::YulGasKeyword),
+                                        None => KeywordScan::Reserved(TerminalKind::YulGasKeyword),
                                     }
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('t') => KeywordScan::Reserved(TokenKind::YulGtKeyword),
+                            Some('t') => KeywordScan::Reserved(TerminalKind::YulGtKeyword),
                             Some('w') => {
                                 if scan_chars!(input, 'e', 'i') {
                                     if self.version_is_at_least_0_7_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulGweiKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulGweiKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11895,7 +12004,7 @@ impl Lexer for Language {
                         Some('h') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'x') {
-                                    KeywordScan::Reserved(TokenKind::YulHexKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulHexKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -11903,7 +12012,7 @@ impl Lexer for Language {
                             Some('o') => {
                                 if scan_chars!(input, 'u', 'r', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulHoursKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulHoursKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -11918,14 +12027,14 @@ impl Lexer for Language {
                             None => KeywordScan::Absent,
                         },
                         Some('i') => match input.next() {
-                            Some('f') => KeywordScan::Reserved(TokenKind::YulIfKeyword),
+                            Some('f') => KeywordScan::Reserved(TerminalKind::YulIfKeyword),
                             Some('m') => match input.next() {
                                 Some('m') => {
                                     if scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e') {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulImmutableKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulImmutableKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11940,7 +12049,7 @@ impl Lexer for Language {
                                                 && !self.version_is_at_least_0_7_1
                                             {
                                                 KeywordScan::Reserved(
-                                                    TokenKind::YulImplementsKeyword,
+                                                    TerminalKind::YulImplementsKeyword,
                                                 )
                                             } else {
                                                 KeywordScan::Absent
@@ -11952,7 +12061,9 @@ impl Lexer for Language {
                                     Some('o') => {
                                         if scan_chars!(input, 'r', 't') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulImportKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulImportKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -11976,7 +12087,7 @@ impl Lexer for Language {
                                 Some('d') => {
                                     if scan_chars!(input, 'e', 'x', 'e', 'd') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulIndexedKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulIndexedKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -11987,7 +12098,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'i', 'n', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulInlineKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulInlineKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12002,7 +12113,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'a', 'c', 'e') {
                                                     if !self.version_is_at_least_0_7_1 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulInterfaceKeyword,
+                                                            TerminalKind::YulInterfaceKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -12015,7 +12126,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'a', 'l') {
                                                     if !self.version_is_at_least_0_7_1 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulInternalKeyword,
+                                                            TerminalKind::YulInternalKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -12036,7 +12147,7 @@ impl Lexer for Language {
                                 }
                                 Some('v') => {
                                     if scan_chars!(input, 'a', 'l', 'i', 'd') {
-                                        KeywordScan::Reserved(TokenKind::YulInvalidKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulInvalidKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12044,14 +12155,14 @@ impl Lexer for Language {
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_6_8 {
-                                        KeywordScan::Reserved(TokenKind::YulInKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulInKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 None => {
                                     if !self.version_is_at_least_0_6_8 {
-                                        KeywordScan::Reserved(TokenKind::YulInKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulInKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12060,7 +12171,7 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('z') => {
                                     if scan_chars!(input, 'e', 'r', 'o') {
-                                        KeywordScan::Reserved(TokenKind::YulIsZeroKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulIsZeroKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12068,14 +12179,14 @@ impl Lexer for Language {
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulIsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulIsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 None => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulIsKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulIsKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12090,7 +12201,7 @@ impl Lexer for Language {
                         Some('k') => {
                             if scan_chars!(input, 'e', 'c', 'c', 'a', 'k', '2', '5', '6') {
                                 if self.version_is_at_least_0_4_12 {
-                                    KeywordScan::Reserved(TokenKind::YulKeccak256Keyword)
+                                    KeywordScan::Reserved(TerminalKind::YulKeccak256Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12103,9 +12214,9 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'v', 'e') {
                                         if self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulLeaveKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLeaveKeyword)
                                         } else if self.version_is_at_least_0_6_0 {
-                                            KeywordScan::Present(TokenKind::YulLeaveKeyword)
+                                            KeywordScan::Present(TerminalKind::YulLeaveKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12113,7 +12224,7 @@ impl Lexer for Language {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('t') => KeywordScan::Reserved(TokenKind::YulLetKeyword),
+                                Some('t') => KeywordScan::Reserved(TerminalKind::YulLetKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -12123,7 +12234,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'b', 'r', 'a', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulLibraryKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulLibraryKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12135,19 +12246,19 @@ impl Lexer for Language {
                                 if scan_chars!(input, 'g') {
                                     match input.next() {
                                         Some('0') => {
-                                            KeywordScan::Reserved(TokenKind::YulLog0Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLog0Keyword)
                                         }
                                         Some('1') => {
-                                            KeywordScan::Reserved(TokenKind::YulLog1Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLog1Keyword)
                                         }
                                         Some('2') => {
-                                            KeywordScan::Reserved(TokenKind::YulLog2Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLog2Keyword)
                                         }
                                         Some('3') => {
-                                            KeywordScan::Reserved(TokenKind::YulLog3Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLog3Keyword)
                                         }
                                         Some('4') => {
-                                            KeywordScan::Reserved(TokenKind::YulLog4Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulLog4Keyword)
                                         }
                                         Some(_) => {
                                             input.undo();
@@ -12159,7 +12270,7 @@ impl Lexer for Language {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('t') => KeywordScan::Reserved(TokenKind::YulLtKeyword),
+                            Some('t') => KeywordScan::Reserved(TerminalKind::YulLtKeyword),
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -12173,7 +12284,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulMacroKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulMacroKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12184,7 +12295,7 @@ impl Lexer for Language {
                                 Some('p') => {
                                     if scan_chars!(input, 'p', 'i', 'n', 'g') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulMappingKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulMappingKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12195,7 +12306,7 @@ impl Lexer for Language {
                                 Some('t') => {
                                     if scan_chars!(input, 'c', 'h') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulMatchKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulMatchKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12212,7 +12323,7 @@ impl Lexer for Language {
                             Some('c') => {
                                 if scan_chars!(input, 'o', 'p', 'y') {
                                     if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Reserved(TokenKind::YulMCopyKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulMCopyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12223,7 +12334,7 @@ impl Lexer for Language {
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulMemoryKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulMemoryKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12234,7 +12345,7 @@ impl Lexer for Language {
                             Some('i') => {
                                 if scan_chars!(input, 'n', 'u', 't', 'e', 's') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulMinutesKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulMinutesKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12244,7 +12355,7 @@ impl Lexer for Language {
                             }
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'a', 'd') {
-                                    KeywordScan::Reserved(TokenKind::YulMLoadKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulMLoadKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12256,7 +12367,7 @@ impl Lexer for Language {
                                             if scan_chars!(input, 'f', 'i', 'e', 'r') {
                                                 if !self.version_is_at_least_0_7_1 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulModifierKeyword,
+                                                        TerminalKind::YulModifierKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -12267,9 +12378,9 @@ impl Lexer for Language {
                                         }
                                         Some(_) => {
                                             input.undo();
-                                            KeywordScan::Reserved(TokenKind::YulModKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulModKeyword)
                                         }
-                                        None => KeywordScan::Reserved(TokenKind::YulModKeyword),
+                                        None => KeywordScan::Reserved(TerminalKind::YulModKeyword),
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -12278,7 +12389,7 @@ impl Lexer for Language {
                             Some('s') => match input.next() {
                                 Some('i') => {
                                     if scan_chars!(input, 'z', 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulMSizeKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulMSizeKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12286,16 +12397,18 @@ impl Lexer for Language {
                                 Some('t') => {
                                     if scan_chars!(input, 'o', 'r', 'e') {
                                         match input.next() {
-                                            Some('8') => {
-                                                KeywordScan::Reserved(TokenKind::YulMStore8Keyword)
-                                            }
+                                            Some('8') => KeywordScan::Reserved(
+                                                TerminalKind::YulMStore8Keyword,
+                                            ),
                                             Some(_) => {
                                                 input.undo();
-                                                KeywordScan::Reserved(TokenKind::YulMStoreKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulMStoreKeyword,
+                                                )
                                             }
-                                            None => {
-                                                KeywordScan::Reserved(TokenKind::YulMStoreKeyword)
-                                            }
+                                            None => KeywordScan::Reserved(
+                                                TerminalKind::YulMStoreKeyword,
+                                            ),
                                         }
                                     } else {
                                         KeywordScan::Absent
@@ -12311,23 +12424,23 @@ impl Lexer for Language {
                                 Some('l') => match input.next() {
                                     Some('m') => {
                                         if scan_chars!(input, 'o', 'd') {
-                                            KeywordScan::Reserved(TokenKind::YulMulModKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulMulModKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
                                     }
                                     Some(_) => {
                                         input.undo();
-                                        KeywordScan::Reserved(TokenKind::YulMulKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulMulKeyword)
                                     }
-                                    None => KeywordScan::Reserved(TokenKind::YulMulKeyword),
+                                    None => KeywordScan::Reserved(TerminalKind::YulMulKeyword),
                                 },
                                 Some('t') => {
                                     if scan_chars!(input, 'a', 'b', 'l', 'e') {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulMutableKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulMutableKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12351,7 +12464,7 @@ impl Lexer for Language {
                             Some('e') => {
                                 if scan_chars!(input, 'w') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulNewKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulNewKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12361,7 +12474,7 @@ impl Lexer for Language {
                             }
                             Some('o') => {
                                 if scan_chars!(input, 't') {
-                                    KeywordScan::Reserved(TokenKind::YulNotKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulNotKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12370,7 +12483,7 @@ impl Lexer for Language {
                                 Some('l') => {
                                     if scan_chars!(input, 'l') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulNullKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulNullKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12380,7 +12493,7 @@ impl Lexer for Language {
                                 }
                                 Some('m') => {
                                     if scan_chars!(input, 'b', 'e', 'r') {
-                                        KeywordScan::Reserved(TokenKind::YulNumberKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulNumberKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12400,7 +12513,7 @@ impl Lexer for Language {
                         Some('o') => match input.next() {
                             Some('f') => {
                                 if !self.version_is_at_least_0_7_1 {
-                                    KeywordScan::Reserved(TokenKind::YulOfKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulOfKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12408,23 +12521,23 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('i') => {
                                     if scan_chars!(input, 'g', 'i', 'n') {
-                                        KeywordScan::Reserved(TokenKind::YulOriginKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulOriginKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some(_) => {
                                     input.undo();
-                                    KeywordScan::Reserved(TokenKind::YulOrKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulOrKeyword)
                                 }
-                                None => KeywordScan::Reserved(TokenKind::YulOrKeyword),
+                                None => KeywordScan::Reserved(TerminalKind::YulOrKeyword),
                             },
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulOverrideKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulOverrideKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12445,7 +12558,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulPartialKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPartialKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12456,7 +12569,7 @@ impl Lexer for Language {
                                 Some('y') => {
                                     if scan_chars!(input, 'a', 'b', 'l', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulPayableKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPayableKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12472,7 +12585,7 @@ impl Lexer for Language {
                             },
                             Some('o') => {
                                 if scan_chars!(input, 'p') {
-                                    KeywordScan::Reserved(TokenKind::YulPopKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulPopKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12481,7 +12594,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, 'g', 'm', 'a') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulPragmaKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPragmaKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12492,7 +12605,9 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'v', 'r', 'a', 'n', 'd', 'a', 'o') {
                                         if self.version_is_at_least_0_8_18 {
-                                            KeywordScan::Reserved(TokenKind::YulPrevRandaoKeyword)
+                                            KeywordScan::Reserved(
+                                                TerminalKind::YulPrevRandaoKeyword,
+                                            )
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12503,7 +12618,7 @@ impl Lexer for Language {
                                 Some('i') => {
                                     if scan_chars!(input, 'v', 'a', 't', 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulPrivateKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPrivateKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12516,7 +12631,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulPromiseKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPromiseKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12534,7 +12649,7 @@ impl Lexer for Language {
                                 Some('b') => {
                                     if scan_chars!(input, 'l', 'i', 'c') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulPublicKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPublicKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12545,7 +12660,7 @@ impl Lexer for Language {
                                 Some('r') => {
                                     if scan_chars!(input, 'e') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulPureKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulPureKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12573,7 +12688,9 @@ impl Lexer for Language {
                                             if self.version_is_at_least_0_6_0
                                                 && !self.version_is_at_least_0_7_1
                                             {
-                                                KeywordScan::Reserved(TokenKind::YulReceiveKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulReceiveKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -12587,7 +12704,7 @@ impl Lexer for Language {
                                                 && !self.version_is_at_least_0_7_1
                                             {
                                                 KeywordScan::Reserved(
-                                                    TokenKind::YulReferenceKeyword,
+                                                    TerminalKind::YulReferenceKeyword,
                                                 )
                                             } else {
                                                 KeywordScan::Absent
@@ -12602,7 +12719,7 @@ impl Lexer for Language {
                                         ) {
                                             if !self.version_is_at_least_0_7_1 {
                                                 KeywordScan::Reserved(
-                                                    TokenKind::YulRelocatableKeyword,
+                                                    TerminalKind::YulRelocatableKeyword,
                                                 )
                                             } else {
                                                 KeywordScan::Absent
@@ -12623,7 +12740,7 @@ impl Lexer for Language {
                                                                     if self
                                                                         .version_is_at_least_0_4_12
                                                                     {
-                                                                        KeywordScan :: Reserved (TokenKind :: YulReturnDataCopyKeyword)
+                                                                        KeywordScan :: Reserved (TerminalKind :: YulReturnDataCopyKeyword)
                                                                     } else {
                                                                         KeywordScan::Absent
                                                                     }
@@ -12637,7 +12754,7 @@ impl Lexer for Language {
                                                                     if self
                                                                         .version_is_at_least_0_4_12
                                                                     {
-                                                                        KeywordScan :: Reserved (TokenKind :: YulReturnDataSizeKeyword)
+                                                                        KeywordScan :: Reserved (TerminalKind :: YulReturnDataSizeKeyword)
                                                                     } else {
                                                                         KeywordScan::Absent
                                                                     }
@@ -12658,7 +12775,7 @@ impl Lexer for Language {
                                                 Some('s') => {
                                                     if !self.version_is_at_least_0_7_1 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulReturnsKeyword,
+                                                            TerminalKind::YulReturnsKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -12667,11 +12784,11 @@ impl Lexer for Language {
                                                 Some(_) => {
                                                     input.undo();
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulReturnKeyword,
+                                                        TerminalKind::YulReturnKeyword,
                                                     )
                                                 }
                                                 None => KeywordScan::Reserved(
-                                                    TokenKind::YulReturnKeyword,
+                                                    TerminalKind::YulReturnKeyword,
                                                 ),
                                             }
                                         } else {
@@ -12680,7 +12797,7 @@ impl Lexer for Language {
                                     }
                                     Some('v') => {
                                         if scan_chars!(input, 'e', 'r', 't') {
-                                            KeywordScan::Reserved(TokenKind::YulRevertKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulRevertKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12699,9 +12816,9 @@ impl Lexer for Language {
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
                                     if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TokenKind::YulSarKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulSarKeyword)
                                     } else {
-                                        KeywordScan::Present(TokenKind::YulSarKeyword)
+                                        KeywordScan::Present(TerminalKind::YulSarKeyword)
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -12709,7 +12826,7 @@ impl Lexer for Language {
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'i', 'v') {
-                                    KeywordScan::Reserved(TokenKind::YulSDivKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulSDivKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12720,7 +12837,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulSealedKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSealedKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12731,7 +12848,7 @@ impl Lexer for Language {
                                 Some('c') => {
                                     if scan_chars!(input, 'o', 'n', 'd', 's') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulSecondsKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSecondsKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12747,11 +12864,11 @@ impl Lexer for Language {
                                                 {
                                                     if self.version_is_at_least_0_5_12 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulSelfBalanceKeyword,
+                                                            TerminalKind::YulSelfBalanceKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Present(
-                                                            TokenKind::YulSelfBalanceKeyword,
+                                                            TerminalKind::YulSelfBalanceKeyword,
                                                         )
                                                     }
                                                 } else {
@@ -12763,7 +12880,7 @@ impl Lexer for Language {
                                                     input, 'e', 's', 't', 'r', 'u', 'c', 't'
                                                 ) {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulSelfDestructKeyword,
+                                                        TerminalKind::YulSelfDestructKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -12787,7 +12904,7 @@ impl Lexer for Language {
                             },
                             Some('g') => {
                                 if scan_chars!(input, 't') {
-                                    KeywordScan::Reserved(TokenKind::YulSgtKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulSgtKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12796,7 +12913,7 @@ impl Lexer for Language {
                                 Some('a') => {
                                     if scan_chars!(input, '3') {
                                         if !self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::YulSha3Keyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSha3Keyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12806,16 +12923,16 @@ impl Lexer for Language {
                                 }
                                 Some('l') => {
                                     if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TokenKind::YulShlKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulShlKeyword)
                                     } else {
-                                        KeywordScan::Present(TokenKind::YulShlKeyword)
+                                        KeywordScan::Present(TerminalKind::YulShlKeyword)
                                     }
                                 }
                                 Some('r') => {
                                     if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TokenKind::YulShrKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulShrKeyword)
                                     } else {
-                                        KeywordScan::Present(TokenKind::YulShrKeyword)
+                                        KeywordScan::Present(TerminalKind::YulShrKeyword)
                                     }
                                 }
                                 Some(_) => {
@@ -12827,7 +12944,7 @@ impl Lexer for Language {
                             Some('i') => match input.next() {
                                 Some('g') => {
                                     if scan_chars!(input, 'n', 'e', 'x', 't', 'e', 'n', 'd') {
-                                        KeywordScan::Reserved(TokenKind::YulSignExtendKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulSignExtendKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -12837,7 +12954,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulSizeOfKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSizeOfKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12854,12 +12971,12 @@ impl Lexer for Language {
                             Some('l') => match input.next() {
                                 Some('o') => {
                                     if scan_chars!(input, 'a', 'd') {
-                                        KeywordScan::Reserved(TokenKind::YulSLoadKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulSLoadKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('t') => KeywordScan::Reserved(TokenKind::YulSltKeyword),
+                                Some('t') => KeywordScan::Reserved(TerminalKind::YulSltKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -12868,14 +12985,14 @@ impl Lexer for Language {
                             },
                             Some('m') => {
                                 if scan_chars!(input, 'o', 'd') {
-                                    KeywordScan::Reserved(TokenKind::YulSModKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulSModKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('s') => {
                                 if scan_chars!(input, 't', 'o', 'r', 'e') {
-                                    KeywordScan::Reserved(TokenKind::YulSStoreKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulSStoreKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -12888,7 +13005,7 @@ impl Lexer for Language {
                                                 if scan_chars!(input, 'a', 'l', 'l') {
                                                     if self.version_is_at_least_0_4_12 {
                                                         KeywordScan::Reserved(
-                                                            TokenKind::YulStaticCallKeyword,
+                                                            TerminalKind::YulStaticCallKeyword,
                                                         )
                                                     } else {
                                                         KeywordScan::Absent
@@ -12901,7 +13018,7 @@ impl Lexer for Language {
                                                 input.undo();
                                                 if !self.version_is_at_least_0_7_1 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulStaticKeyword,
+                                                        TerminalKind::YulStaticKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -12910,7 +13027,7 @@ impl Lexer for Language {
                                             None => {
                                                 if !self.version_is_at_least_0_7_1 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulStaticKeyword,
+                                                        TerminalKind::YulStaticKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -12922,11 +13039,15 @@ impl Lexer for Language {
                                     }
                                 }
                                 Some('o') => match input.next() {
-                                    Some('p') => KeywordScan::Reserved(TokenKind::YulStopKeyword),
+                                    Some('p') => {
+                                        KeywordScan::Reserved(TerminalKind::YulStopKeyword)
+                                    }
                                     Some('r') => {
                                         if scan_chars!(input, 'a', 'g', 'e') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulStorageKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulStorageKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -12944,7 +13065,9 @@ impl Lexer for Language {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'g') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulStringKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulStringKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -12955,7 +13078,9 @@ impl Lexer for Language {
                                     Some('u') => {
                                         if scan_chars!(input, 'c', 't') {
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulStructKeyword)
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulStructKeyword,
+                                                )
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -12976,11 +13101,11 @@ impl Lexer for Language {
                                 None => KeywordScan::Absent,
                             },
                             Some('u') => match input.next() {
-                                Some('b') => KeywordScan::Reserved(TokenKind::YulSubKeyword),
+                                Some('b') => KeywordScan::Reserved(TerminalKind::YulSubKeyword),
                                 Some('i') => {
                                     if scan_chars!(input, 'c', 'i', 'd', 'e') {
                                         if !self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TokenKind::YulSuicideKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSuicideKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12993,7 +13118,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_5_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulSupportsKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulSupportsKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -13009,7 +13134,7 @@ impl Lexer for Language {
                             },
                             Some('w') => {
                                 if scan_chars!(input, 'i', 't', 'c', 'h') {
-                                    KeywordScan::Reserved(TokenKind::YulSwitchKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulSwitchKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -13017,7 +13142,7 @@ impl Lexer for Language {
                             Some('z') => {
                                 if scan_chars!(input, 'a', 'b', 'o') {
                                     if !self.version_is_at_least_0_7_0 {
-                                        KeywordScan::Reserved(TokenKind::YulSzaboKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulSzaboKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13035,7 +13160,7 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'r', 'o', 'w') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulThrowKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulThrowKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13045,7 +13170,7 @@ impl Lexer for Language {
                             }
                             Some('i') => {
                                 if scan_chars!(input, 'm', 'e', 's', 't', 'a', 'm', 'p') {
-                                    KeywordScan::Reserved(TokenKind::YulTimestampKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulTimestampKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -13053,7 +13178,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'a', 'd') {
                                     if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Reserved(TokenKind::YulTLoadKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulTLoadKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13064,14 +13189,14 @@ impl Lexer for Language {
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
-                                        KeywordScan::Reserved(TokenKind::YulTrueKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulTrueKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
                                 Some('y') => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulTryKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulTryKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13085,7 +13210,7 @@ impl Lexer for Language {
                             Some('s') => {
                                 if scan_chars!(input, 't', 'o', 'r', 'e') {
                                     if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Reserved(TokenKind::YulTStoreKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulTStoreKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13102,7 +13227,7 @@ impl Lexer for Language {
                                                     && !self.version_is_at_least_0_7_1
                                                 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulTypeDefKeyword,
+                                                        TerminalKind::YulTypeDefKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -13115,7 +13240,7 @@ impl Lexer for Language {
                                             if scan_chars!(input, 'f') {
                                                 if !self.version_is_at_least_0_7_1 {
                                                     KeywordScan::Reserved(
-                                                        TokenKind::YulTypeOfKeyword,
+                                                        TerminalKind::YulTypeOfKeyword,
                                                     )
                                                 } else {
                                                     KeywordScan::Absent
@@ -13127,14 +13252,14 @@ impl Lexer for Language {
                                         Some(_) => {
                                             input.undo();
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulTypeKeyword)
+                                                KeywordScan::Reserved(TerminalKind::YulTypeKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
                                         }
                                         None => {
                                             if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(TokenKind::YulTypeKeyword)
+                                                KeywordScan::Reserved(TerminalKind::YulTypeKeyword)
                                             } else {
                                                 KeywordScan::Absent
                                             }
@@ -13156,7 +13281,7 @@ impl Lexer for Language {
                                     if self.version_is_at_least_0_5_0
                                         && !self.version_is_at_least_0_7_1
                                     {
-                                        KeywordScan::Reserved(TokenKind::YulUncheckedKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulUncheckedKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13167,7 +13292,7 @@ impl Lexer for Language {
                             Some('s') => {
                                 if scan_chars!(input, 'i', 'n', 'g') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulUsingKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulUsingKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13185,7 +13310,7 @@ impl Lexer for Language {
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
                                     if !self.version_is_at_least_0_6_5 {
-                                        KeywordScan::Reserved(TokenKind::YulVarKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulVarKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13197,7 +13322,7 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'w') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulViewKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulViewKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -13210,7 +13335,7 @@ impl Lexer for Language {
                                         if self.version_is_at_least_0_6_0
                                             && !self.version_is_at_least_0_7_1
                                         {
-                                            KeywordScan::Reserved(TokenKind::YulVirtualKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulVirtualKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -13235,7 +13360,7 @@ impl Lexer for Language {
                                 Some('e') => {
                                     if scan_chars!(input, 'k', 's') {
                                         if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TokenKind::YulWeeksKeyword)
+                                            KeywordScan::Reserved(TerminalKind::YulWeeksKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -13245,7 +13370,7 @@ impl Lexer for Language {
                                 }
                                 Some('i') => {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulWeiKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulWeiKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13259,7 +13384,7 @@ impl Lexer for Language {
                             Some('h') => {
                                 if scan_chars!(input, 'i', 'l', 'e') {
                                     if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TokenKind::YulWhileKeyword)
+                                        KeywordScan::Reserved(TerminalKind::YulWhileKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13275,7 +13400,7 @@ impl Lexer for Language {
                         },
                         Some('x') => {
                             if scan_chars!(input, 'o', 'r') {
-                                KeywordScan::Reserved(TokenKind::YulXorKeyword)
+                                KeywordScan::Reserved(TerminalKind::YulXorKeyword)
                             } else {
                                 KeywordScan::Absent
                             }
@@ -13283,7 +13408,7 @@ impl Lexer for Language {
                         Some('y') => {
                             if scan_chars!(input, 'e', 'a', 'r', 's') {
                                 if !self.version_is_at_least_0_7_1 {
-                                    KeywordScan::Reserved(TokenKind::YulYearsKeyword)
+                                    KeywordScan::Reserved(TerminalKind::YulYearsKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -13344,7 +13469,7 @@ impl Lexer for Language {
             // Skip a character if possible and if we didn't recognize a token
             None if input.peek().is_some() => {
                 let _ = input.next();
-                Some(ScannedToken::Single(TokenKind::SKIPPED))
+                Some(ScannedToken::Single(TerminalKind::SKIPPED))
             }
             None => None,
         }
@@ -13383,7 +13508,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

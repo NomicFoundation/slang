@@ -3,8 +3,8 @@
 {%- else -%}
     import * as assert from "node:assert";
     import { ast_internal } from "../../napi-bindings/generated";
-    import { RuleNode, TokenNode } from "../../cst";
-    import { RuleKind, TokenKind } from "../../kinds";
+    import { NonTerminalNode, TerminalNode } from "../../cst";
+    import { NonTerminalKind, TerminalKind } from "../../kinds";
 
     /*
     * Sequences:
@@ -26,22 +26,22 @@
                 ${{ field.name | camel_case }} === null ? undefined :
               {%- endif -%}
               {%- if field.is_terminal -%}
-                ${{ field.name | camel_case }} as TokenNode,
+                ${{ field.name | camel_case }} as TerminalNode,
               {%- else -%}
-                new {{ field.reference }}(${{ field.name | camel_case }} as RuleNode),
+                new {{ field.reference }}(${{ field.name | camel_case }} as NonTerminalNode),
               {%- endif -%}
             {% endfor -%}
           };
         });
 
-        public constructor(public readonly cst: RuleNode) {
-          assertKind(this.cst.kind, RuleKind.{{ sequence.name }});
+        public constructor(public readonly cst: NonTerminalNode) {
+          assertKind(this.cst.kind, NonTerminalKind.{{ sequence.name }});
         }
 
         {% for field in sequence.fields %}
           public get {{ field.name | camel_case }}() :
             {%- if field.is_terminal -%}
-              TokenNode
+              TerminalNode
             {%- else -%}
               {{ field.reference }}
             {%- endif -%}
@@ -63,7 +63,7 @@
       export class {{ choice.name }} {
         {%- set variant_types = choice.non_terminals -%}
         {%- if choice.terminals | length > 0 -%}
-          {%- set variant_types = variant_types | concat(with = "TokenNode") -%}
+          {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
         {%- endif -%}
         {%- set variant_types = variant_types | join(sep = " | ") -%}
 
@@ -72,15 +72,15 @@
 
           switch (variant.kind) {
             {%- for non_terminal in choice.non_terminals %}
-              case RuleKind.{{ non_terminal }}:
-                return new {{ non_terminal }}(variant as RuleNode);
+              case NonTerminalKind.{{ non_terminal }}:
+                return new {{ non_terminal }}(variant as NonTerminalNode);
             {%- endfor %}
 
             {% if choice.terminals | length > 0 %}
               {%- for terminal in choice.terminals %}
-                case TokenKind.{{ terminal }}:
+                case TerminalKind.{{ terminal }}:
               {%- endfor %}
-                return variant as TokenNode;
+                return variant as TerminalNode;
             {%- endif %}
 
             default:
@@ -88,8 +88,8 @@
           }
         });
 
-        public constructor(public readonly cst: RuleNode) {
-          assertKind(this.cst.kind, RuleKind.{{ choice.name }});
+        public constructor(public readonly cst: NonTerminalNode) {
+          assertKind(this.cst.kind, NonTerminalKind.{{ choice.name }});
         }
 
         public get variant(): {{ variant_types }} {
@@ -108,19 +108,19 @@
           const items = ast_internal.selectRepeated(this.cst);
 
           {%- if repeated.is_terminal -%}
-            return items as TokenNode[];
+            return items as TerminalNode[];
           {%- else -%}
-            return items.map((item) => new {{ repeated.reference }}(item as RuleNode));
+            return items.map((item) => new {{ repeated.reference }}(item as NonTerminalNode));
           {%- endif -%}
         });
           
-        public constructor(public readonly cst: RuleNode) {
-          assertKind(this.cst.kind, RuleKind.{{ repeated.name }});
+        public constructor(public readonly cst: NonTerminalNode) {
+          assertKind(this.cst.kind, NonTerminalKind.{{ repeated.name }});
         }
 
         public get items():
           {%- if repeated.is_terminal -%}
-            readonly TokenNode[]
+            readonly TerminalNode[]
           {%- else -%}
             readonly {{ repeated.reference }}[]
           {%- endif -%}
@@ -141,21 +141,21 @@
 
           return {
             {%- if separated.is_terminal -%}
-              items: items as TokenNode[],
+              items: items as TerminalNode[],
             {%- else -%}
-              items: items.map((item) => new {{ separated.reference }}(item as RuleNode)),
+              items: items.map((item) => new {{ separated.reference }}(item as NonTerminalNode)),
             {%- endif -%}
-            separators: separators as TokenNode[],
+            separators: separators as TerminalNode[],
           };
         });
 
-        public constructor(public readonly cst: RuleNode) {
-          assertKind(this.cst.kind, RuleKind.{{ separated.name }});
+        public constructor(public readonly cst: NonTerminalNode) {
+          assertKind(this.cst.kind, NonTerminalKind.{{ separated.name }});
         }
 
         public get items():
           {%- if separated.is_terminal -%}
-            readonly TokenNode[]
+            readonly TerminalNode[]
           {%- else -%}
             readonly {{ separated.reference }}[]
           {%- endif -%}
@@ -163,7 +163,7 @@
           return this.fetch().items;
         }
 
-        public get separators(): readonly TokenNode[] {
+        public get separators(): readonly TerminalNode[] {
           return this.fetch().separators;
         }
       }
@@ -183,7 +183,7 @@
       };
     }
 
-    function assertKind(actual: RuleKind, expected: RuleKind): void {
+    function assertKind(actual: NonTerminalKind, expected: NonTerminalKind): void {
       assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
     }
 {%- endif %}

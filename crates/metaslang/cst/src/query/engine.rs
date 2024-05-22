@@ -27,27 +27,27 @@ impl<T: KindTypes + 'static> Cursor<T> {
 
     fn matches_node_selector(&self, node_selector: &NodeSelector<T>) -> bool {
         match self.node() {
-            Node::<T>::Rule(rule) => match node_selector {
+            Node::<T>::NonTerminal(nonterminal) => match node_selector {
                 NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::Rule(rule.kind) == *kind,
+                NodeSelector::Kind { kind } => Kind::Terminal(nonterminal.kind) == *kind,
                 NodeSelector::Text { .. } => false,
                 NodeSelector::Label { label } => Some(*label) == self.label(),
                 NodeSelector::LabelAndKind { label, kind } => {
-                    Some(*label) == self.label() && Kind::Rule(rule.kind) == *kind
+                    Some(*label) == self.label() && Kind::Terminal(nonterminal.kind) == *kind
                 }
                 NodeSelector::LabelAndText { .. } => false,
             },
 
-            Node::<T>::Token(token) => match node_selector {
+            Node::<T>::Terminal(terminal) => match node_selector {
                 NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::Token(token.kind) == *kind,
-                NodeSelector::Text { text } => token.text == *text,
+                NodeSelector::Kind { kind } => Kind::NonTerminal(terminal.kind) == *kind,
+                NodeSelector::Text { text } => terminal.text == *text,
                 NodeSelector::Label { label } => Some(*label) == self.label(),
                 NodeSelector::LabelAndKind { label, kind } => {
-                    Some(*label) == self.label() && Kind::Token(token.kind) == *kind
+                    Some(*label) == self.label() && Kind::NonTerminal(terminal.kind) == *kind
                 }
                 NodeSelector::LabelAndText { label, text } => {
-                    Some(*label) == self.label() && token.text == *text
+                    Some(*label) == self.label() && terminal.text == *text
                 }
             },
         }

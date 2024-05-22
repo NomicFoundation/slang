@@ -28,9 +28,9 @@ mod metaslang_cst {
     pub enum KindTypes {}
 
     impl metaslang_cst::KindTypes for KindTypes {
-        type NonTerminalKind = crate::kinds::RuleKind;
-        type TerminalKind = crate::kinds::TokenKind;
-        type EdgeKind = crate::kinds::NodeLabel;
+        type NonTerminalKind = crate::kinds::NonTerminalKind;
+        type TerminalKind = crate::kinds::TerminalKind;
+        type EdgeLabel = crate::kinds::EdgeLabel;
     }
 }
 
@@ -40,9 +40,9 @@ pub mod cst {
     use super::metaslang_cst::KindTypes;
 
     pub type Node = cst::Node<KindTypes>;
-    pub type RuleNode = cst::NonTerminalNode<KindTypes>;
-    pub type TokenNode = cst::TerminalNode<KindTypes>;
-    pub type LabeledNode = cst::LabeledNode<KindTypes>;
+    pub type NonTerminalNode = cst::NonTerminalNode<KindTypes>;
+    pub type TerminalNode = cst::TerminalNode<KindTypes>;
+    pub type Edge = cst::Edge<KindTypes>;
 }
 
 pub mod cursor {
@@ -51,7 +51,7 @@ pub mod cursor {
     use super::metaslang_cst::KindTypes;
 
     pub type Cursor = cursor::Cursor<KindTypes>;
-    pub type CursorWithLabels = cursor::CursorWithLabels<KindTypes>;
+    pub type CursorWithEdges = cursor::CursorWithEdges<KindTypes>;
 }
 
 pub mod query {

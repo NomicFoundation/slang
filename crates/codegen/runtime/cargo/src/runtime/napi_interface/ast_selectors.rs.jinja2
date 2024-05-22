@@ -5,8 +5,8 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, RuleNode, TokenNode};
-use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, TokenKind};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::{NonTerminalKind, RustLabeledNode, RustNode, RustRuleNode, TerminalKind};
 
 //
 // Sequences:
@@ -18,8 +18,8 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
     catch_unwind,
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -27,7 +27,7 @@ pub fn select_sequence(
 
         let result = match node.kind() {
             {%- for sequence in model.ast.sequences -%}
-                RuleKind::{{ sequence.name }} => {
+                NonTerminalKind::{{ sequence.name }} => {
                     selector.{{ sequence.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -44,16 +44,16 @@ pub fn select_sequence(
 {%- if not rendering_in_stubs -%}
     {% for sequence in model.ast.sequences %}
         impl Selector {
-            fn {{ sequence.name | snake_case }}(&mut self) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+            fn {{ sequence.name | snake_case }}(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
                 Ok(vec![
                     {%- for field in sequence.fields -%}
                         {%- if field.is_optional -%}
 
                             self.try_select(|node| {
                                 {%- if field.is_terminal -%}
-                                    node.is_token_with_kind(TokenKind::{{ field.reference }})
+                                    node.is_terminal_with_kind(TerminalKind::{{ field.reference }})
                                 {%- else -%}
-                                    node.is_rule_with_kind(RuleKind::{{ field.reference }})
+                                    node.is_nonterminal_with_kind(NonTerminalKind::{{ field.reference }})
                                 {%- endif -%}
                             })?,
 
@@ -61,9 +61,9 @@ pub fn select_sequence(
 
                             Some(self.select(|node| {
                                 {%- if field.is_terminal -%}
-                                    node.is_token_with_kind(TokenKind::{{ field.reference }})
+                                    node.is_terminal_with_kind(TerminalKind::{{ field.reference }})
                                 {%- else -%}
-                                    node.is_rule_with_kind(RuleKind::{{ field.reference }})
+                                    node.is_nonterminal_with_kind(NonTerminalKind::{{ field.reference }})
                                 {%- endif -%}
                             })?),
 
@@ -85,8 +85,8 @@ pub fn select_sequence(
     catch_unwind,
 )]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Either<RuleNode, TokenNode>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Either<NonTerminalNode, TerminalNode>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -94,7 +94,7 @@ pub fn select_choice(
 
         let result = match node.kind() {
             {%- for choice in model.ast.choices -%}
-                RuleKind::{{ choice.name }} => {
+                NonTerminalKind::{{ choice.name }} => {
                     selector.{{ choice.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -111,17 +111,17 @@ pub fn select_choice(
 {% if not rendering_in_stubs %}
     {% for choice in model.ast.choices %}
         impl Selector {
-            fn {{ choice.name | snake_case }}(&mut self) -> Result<Either<RuleNode, TokenNode>> {
+            fn {{ choice.name | snake_case }}(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
                 self.select(|node| {
                     {%- set non_terminals_len = choice.non_terminals | length -%}
                     {%- set terminals_len = choice.terminals | length -%}
 
                     {%- if non_terminals_len == 1 -%}
-                        node.is_rule_with_kind(RuleKind::{{ choice.non_terminals[0] }})
+                        node.is_nonterminal_with_kind(NonTerminalKind::{{ choice.non_terminals[0] }})
                     {%- elif non_terminals_len > 1 -%}
-                        node.is_rule_with_kinds(&[
+                        node.is_nonterminal_with_kinds(&[
                             {%- for non_terminal in choice.non_terminals -%}
-                                RuleKind::{{ non_terminal }},
+                                NonTerminalKind::{{ non_terminal }},
                             {%- endfor -%}
                         ])
                     {%- endif -%}
@@ -131,11 +131,11 @@ pub fn select_choice(
                     {%- endif -%}
 
                     {%- if terminals_len == 1 -%}
-                        node.is_token_with_kind(TokenKind::{{ choice.terminals[0] }})
+                        node.is_terminal_with_kind(TerminalKind::{{ choice.terminals[0] }})
                     {%- elif terminals_len > 1 -%}
-                        node.is_token_with_kinds(&[
+                        node.is_terminal_with_kinds(&[
                             {%- for terminal in choice.terminals -%}
-                                TokenKind::{{ terminal }},
+                                TerminalKind::{{ terminal }},
                             {%- endfor -%}
                         ])
                     {%- endif -%}
@@ -155,8 +155,8 @@ pub fn select_choice(
     catch_unwind,
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -164,7 +164,7 @@ pub fn select_repeated(
 
         let result = match node.kind() {
             {%- for repeated in model.ast.repeated -%}
-                RuleKind::{{ repeated.name }} => {
+                NonTerminalKind::{{ repeated.name }} => {
                     selector.{{ repeated.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -181,14 +181,14 @@ pub fn select_repeated(
 {% if not rendering_in_stubs %}
     {% for repeated in model.ast.repeated %}
         impl Selector {
-            fn {{ repeated.name | snake_case }}(&mut self) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+            fn {{ repeated.name | snake_case }}(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
                 let mut items = vec![];
 
                 while let Some(item) = self.try_select(|node| {
                     {%- if repeated.is_terminal -%}
-                        node.is_token_with_kind(TokenKind::{{ repeated.reference }})
+                        node.is_terminal_with_kind(TerminalKind::{{ repeated.reference }})
                     {%- else -%}
-                        node.is_rule_with_kind(RuleKind::{{ repeated.reference }})
+                        node.is_nonterminal_with_kind(NonTerminalKind::{{ repeated.reference }})
                     {%- endif -%}
                 })? {
                     items.push(item);
@@ -210,8 +210,8 @@ pub fn select_repeated(
     catch_unwind,
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -219,7 +219,7 @@ pub fn select_separated(
 
         let result = match node.kind() {
             {%- for separated in model.ast.separated -%}
-                RuleKind::{{ separated.name }} => {
+                NonTerminalKind::{{ separated.name }} => {
                     selector.{{ separated.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -236,27 +236,27 @@ pub fn select_separated(
 {% if not rendering_in_stubs %}
     {% for separated in model.ast.separated %}
         impl Selector {
-            fn {{ separated.name | snake_case }}(&mut self) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+            fn {{ separated.name | snake_case }}(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
                 let mut separated = vec![];
                 let mut separators = vec![];
 
                 if let Some(first) = self.try_select(|node| {
                     {%- if separated.is_terminal -%}
-                        node.is_token_with_kind(TokenKind::{{ separated.reference }})
+                        node.is_terminal_with_kind(TerminalKind::{{ separated.reference }})
                     {%- else -%}
-                        node.is_rule_with_kind(RuleKind::{{ separated.reference }})
+                        node.is_nonterminal_with_kind(NonTerminalKind::{{ separated.reference }})
                     {%- endif -%}
                 })? {
                     separated.push(first);
 
-                    while let Some(separator) = self.try_select(|node| node.is_token_with_kind(TokenKind::{{ separated.separator }}))? {
+                    while let Some(separator) = self.try_select(|node| node.is_terminal_with_kind(TerminalKind::{{ separated.separator }}))? {
                         separators.push(separator);
 
                         separated.push(self.select(|node| {
                             {%- if separated.is_terminal -%}
-                                node.is_token_with_kind(TokenKind::{{ separated.reference }})
+                                node.is_terminal_with_kind(TerminalKind::{{ separated.reference }})
                             {%- else -%}
-                                node.is_rule_with_kind(RuleKind::{{ separated.reference }})
+                                node.is_nonterminal_with_kind(NonTerminalKind::{{ separated.reference }})
                             {%- endif -%}
                         })?);
                     }
@@ -278,21 +278,21 @@ struct Selector {
 }
 
 impl Selector {
-    fn new(node: &RuleNode) -> Self {
+    fn new(node: &NonTerminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
         }
     }
 
-    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Either<RuleNode, TokenNode>> {
+    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Either<NonTerminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
         }
     }
 
-    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<Either<RuleNode, TokenNode>>> {
+    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -301,9 +301,9 @@ impl Selector {
                     continue;
                 }
                 RustLabeledNode {
-                    label: _,
-                    node: RustNode::Token(token),
-                } if matches!(token.kind, TokenKind::SKIPPED) => {
+                    node: RustNode::Terminal(terminal),
+                    ..
+                } if matches!(terminal.kind, TerminalKind::SKIPPED) => {
                     return Error::SkippedToken(self.index).into();
                 }
                 labeled if filter(labeled) => {
@@ -333,8 +333,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with RuleKind '{0}'.")]
-    UnexpectedParent(RuleKind),
+    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
+    UnexpectedParent(NonTerminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]

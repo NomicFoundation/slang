@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
-import { RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
+import { NonTerminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonTerminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the cursor", async () => {
@@ -15,7 +15,7 @@ test("using the cursor", async () => {
   // --8<-- [start:parse-input]
   const language = new Language("0.8.0");
 
-  const parseOutput = language.parse(RuleKind.SourceUnit, source);
+  const parseOutput = language.parse(NonTerminalKind.SourceUnit, source);
   // --8<-- [end:parse-input]
 
   {
@@ -24,12 +24,12 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextRuleWithKind(RuleKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
       assert(cursor.goToFirstChild());
-      assert(cursor.goToNextTokenWithKind(TokenKind.Identifier));
+      assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
       const tokenNode = cursor.node();
-      assert(tokenNode instanceof TokenNode);
+      assert(tokenNode instanceof TerminalNode);
       contracts.push(tokenNode.text);
 
       assert(cursor.goToParent());
@@ -45,12 +45,12 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextRuleWithKind(RuleKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
       const childCursor = cursor.spawn();
-      assert(childCursor.goToNextTokenWithKind(TokenKind.Identifier));
+      assert(childCursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
       const tokenNode = childCursor.node();
-      assert(tokenNode instanceof TokenNode);
+      assert(tokenNode instanceof TerminalNode);
       contracts.push(tokenNode.text);
     }
 
@@ -64,11 +64,11 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextRuleWithKind(RuleKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
       const range = cursor.textRange;
 
       const contractNode = cursor.node();
-      assert(contractNode instanceof RuleNode);
+      assert(contractNode instanceof NonTerminalNode);
 
       contracts.push([range.start.char, range.end.char, contractNode.unparse().trim()]);
     }
