@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
-import { RuleNode } from "@nomicfoundation/slang/cst";
+import { NonTerminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonTerminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the parser", async () => {
@@ -15,7 +15,7 @@ test("using the parser", async () => {
   // --8<-- [start:parse-input]
   const language = new Language("0.8.0");
 
-  const parseOutput = language.parse(RuleKind.ContractDefinition, source);
+  const parseOutput = language.parse(NonTerminalKind.ContractDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:print-errors]
@@ -31,21 +31,21 @@ test("using the parser", async () => {
 
   // --8<-- [start:inspect-tree]
   const contract = parseOutput.tree();
-  assert(contract instanceof RuleNode);
-  assert.equal(contract.kind, RuleKind.ContractDefinition);
+  assert(contract instanceof NonTerminalNode);
+  assert.equal(contract.kind, NonTerminalKind.ContractDefinition);
 
   const contractChildren = contract.children();
   assert.equal(contractChildren.length, 7);
 
   const [contractKeyword, firstSpace, contractName, secondSpace, openBrace, members, closeBrace] = contractChildren;
 
-  assert.equal(contractKeyword?.kind, TokenKind.ContractKeyword);
-  assert.equal(firstSpace?.kind, TokenKind.Whitespace);
-  assert.equal(contractName?.kind, TokenKind.Identifier);
-  assert.equal(secondSpace?.kind, TokenKind.Whitespace);
-  assert.equal(openBrace?.kind, TokenKind.OpenBrace);
-  assert.equal(members?.kind, RuleKind.ContractMembers);
-  assert.equal(closeBrace?.kind, TokenKind.CloseBrace);
+  assert.equal(contractKeyword?.kind, TerminalKind.ContractKeyword);
+  assert.equal(firstSpace?.kind, TerminalKind.Whitespace);
+  assert.equal(contractName?.kind, TerminalKind.Identifier);
+  assert.equal(secondSpace?.kind, TerminalKind.Whitespace);
+  assert.equal(openBrace?.kind, TerminalKind.OpenBrace);
+  assert.equal(members?.kind, NonTerminalKind.ContractMembers);
+  assert.equal(closeBrace?.kind, TerminalKind.CloseBrace);
   // --8<-- [end:inspect-tree]
 
   // --8<-- [start:unparse-node]

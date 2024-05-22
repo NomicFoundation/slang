@@ -1,9 +1,9 @@
 use std::ops::ControlFlow;
 
-use metaslang_cst::TerminalKind;
+use metaslang_cst::TerminalKind as _;
 
-use crate::cst::{self, LabeledNode};
-use crate::kinds::{NodeLabel, TokenKind};
+use crate::cst::{self, Edge};
+use crate::kinds::{EdgeLabel, TerminalKind};
 use crate::parser_support::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
@@ -129,8 +129,8 @@ impl SequenceHelper {
                     // Sanity check that we are recovering to the expected one.
                     let next_token = next.nodes.iter().try_fold(None, |acc, node| {
                         match &**node {
-                            cst::Node::Token(token) if token.kind.is_trivia() => Ok(acc),
-                            cst::Node::Token(token) => {
+                            cst::Node::Terminal(token) if token.kind.is_trivia() => Ok(acc),
+                            cst::Node::Terminal(token) => {
                                 match acc {
                                     None => Ok(Some(token.kind)),
                                     Some(..) => {
@@ -139,16 +139,16 @@ impl SequenceHelper {
                                     }
                                 }
                             }
-                            cst::Node::Rule(rule) => {
-                                debug_assert!(false, "Recovery skipped to a rule: {rule:?}");
+                            cst::Node::NonTerminal(node) => {
+                                debug_assert!(false, "Recovery skipped to a nonterminal: {node:?}");
                                 Err(())
                             }
                         }
                     });
                     debug_assert_eq!(next_token, Ok(Some(running.found)));
 
-                    running.nodes.push(LabeledNode::anonymous(cst::Node::token(
-                        TokenKind::SKIPPED,
+                    running.nodes.push(Edge::anonymous(cst::Node::terminal(
+                        TerminalKind::SKIPPED,
                         std::mem::take(&mut running.skipped),
                     )));
                     running.nodes.extend(next.nodes);
@@ -197,7 +197,7 @@ impl SequenceHelper {
     /// Shorthand for `self.elem(value.with_label(label))`.
     pub fn elem_labeled(
         &mut self,
-        label: NodeLabel,
+        label: EdgeLabel,
         value: ParserResult,
     ) -> ControlFlow<ParserResult, &mut Self> {
         self.elem(value.with_label(label))

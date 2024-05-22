@@ -6,51 +6,51 @@ use napi_derive::napi;
 use crate::napi_interface::cursor::Cursor;
 use crate::napi_interface::text_index::TextIndex;
 use crate::napi_interface::{
-    RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TokenKind,
+    NonTerminalKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TerminalKind,
 };
 
 #[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
-    Rule,
-    Token,
+    NonTerminal,
+    Terminal,
 }
 
 pub trait NAPINodeExtensions {
-    fn into_js_either_node(self) -> Either<RuleNode, TokenNode>;
+    fn into_js_either_node(self) -> Either<NonTerminalNode, TerminalNode>;
 }
 
 impl NAPINodeExtensions for RustNode {
-    /// Converts the node into `napi` wrapper for `RuleNode | TokenNode` JS object.
-    fn into_js_either_node(self) -> Either<RuleNode, TokenNode> {
+    /// Converts the node into `napi` wrapper for `NonTerminalNode | TerminalNode` JS object.
+    fn into_js_either_node(self) -> Either<NonTerminalNode, TerminalNode> {
         match self {
-            RustNode::Rule(rule) => Either::A(RuleNode(rule)),
-            RustNode::Token(token) => Either::B(TokenNode(token)),
+            RustNode::NonTerminal(nonterminal) => Either::A(NonTerminalNode(nonterminal)),
+            RustNode::Terminal(terminal) => Either::B(TerminalNode(terminal)),
         }
     }
 }
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
-pub struct RuleNode(pub(crate) Rc<RustRuleNode>);
+pub struct NonTerminalNode(pub(crate) Rc<RustRuleNode>);
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
-pub struct TokenNode(pub(crate) Rc<RustTokenNode>);
+pub struct TerminalNode(pub(crate) Rc<RustTokenNode>);
 
 #[napi(namespace = "cst")]
-impl RuleNode {
+impl NonTerminalNode {
     #[napi(
         getter,
         js_name = "type",
-        ts_return_type = "NodeType.Rule",
+        ts_return_type = "NodeType.NonTerminal",
         catch_unwind
     )]
     pub fn tipe(&self) -> NodeType {
-        NodeType::Rule
+        NodeType::NonTerminal
     }
 
-    #[napi(getter, ts_return_type = "kinds.RuleKind", catch_unwind)]
-    pub fn kind(&self) -> RuleKind {
+    #[napi(getter, ts_return_type = "kinds.NonTerminalKind", catch_unwind)]
+    pub fn kind(&self) -> NonTerminalKind {
         self.0.kind
     }
 
@@ -65,7 +65,7 @@ impl RuleNode {
     }
 
     #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
-    pub fn children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+    pub fn children(&self) -> Vec<Either<NonTerminalNode, TerminalNode>> {
         self.0
             .children
             .iter()
@@ -78,7 +78,7 @@ impl RuleNode {
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
-        RustNode::Rule(Rc::clone(&self.0))
+        RustNode::NonTerminal(Rc::clone(&self.0))
             .cursor_with_offset(text_offset.into())
             .into()
     }
@@ -105,7 +105,7 @@ impl RuleNode {
         skip_typescript,
         catch_unwind
     )]
-    pub fn __children(&self) -> Vec<Either<RuleNode, TokenNode>> {
+    pub fn __children(&self) -> Vec<Either<NonTerminalNode, TerminalNode>> {
         Self::children(self)
     }
 
@@ -125,19 +125,19 @@ impl RuleNode {
 }
 
 #[napi(namespace = "cst")]
-impl TokenNode {
+impl TerminalNode {
     #[napi(
         getter,
         js_name = "type",
-        ts_return_type = "NodeType.Token",
+        ts_return_type = "NodeType.Terminal",
         catch_unwind
     )]
     pub fn tipe(&self) -> NodeType {
-        NodeType::Token
+        NodeType::Terminal
     }
 
-    #[napi(getter, ts_return_type = "kinds.TokenKind", catch_unwind)]
-    pub fn kind(&self) -> TokenKind {
+    #[napi(getter, ts_return_type = "kinds.TerminalKind", catch_unwind)]
+    pub fn kind(&self) -> TerminalKind {
         self.0.kind
     }
 
@@ -158,7 +158,7 @@ impl TokenNode {
     }
 
     #[napi(catch_unwind, js_name = "toJSON")]
-    /// Serialize the token node to JSON.
+    /// Serialize the terminal node to JSON.
     ///
     /// This method is intended for debugging purposes and may not be stable.
     pub fn to_json(&self) -> String {
@@ -170,7 +170,7 @@ impl TokenNode {
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
-        RustNode::Token(Rc::clone(&self.0))
+        RustNode::Terminal(Rc::clone(&self.0))
             .cursor_with_offset(text_offset.into())
             .into()
     }

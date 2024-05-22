@@ -12,18 +12,18 @@ pub mod text_index;
 pub mod ast_selectors;
 
 type RustCursor = crate::cursor::Cursor;
-type RustLabeledNode = crate::cst::LabeledNode;
+type RustLabeledNode = crate::cst::Edge;
 type RustNode = crate::cst::Node;
 type RustParseError = crate::parse_error::ParseError;
 type RustParseOutput = crate::parse_output::ParseOutput;
 type RustQuery = crate::query::Query;
 type RustQueryResult = crate::query::QueryResult;
 type RustQueryResultIterator = crate::query::QueryResultIterator;
-type RustRuleNode = crate::cst::RuleNode;
+type RustRuleNode = crate::cst::NonTerminalNode;
 type RustTextIndex = crate::text_index::TextIndex;
 type RustTextRange = crate::text_index::TextRange;
-type RustTokenNode = crate::cst::TokenNode;
+type RustTokenNode = crate::cst::TerminalNode;
 
-type RuleKind = crate::kinds::RuleKind;
-type TokenKind = crate::kinds::TokenKind;
-type NodeLabel = crate::kinds::NodeLabel;
+type NonTerminalKind = crate::kinds::NonTerminalKind;
+type TerminalKind = crate::kinds::TerminalKind;
+type EdgeLabel = crate::kinds::EdgeLabel;

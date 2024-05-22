@@ -1,5 +1,5 @@
-use crate::cst::{self, LabeledNode};
-use crate::kinds::{IsLexicalContext, NodeLabel, TokenKind};
+use crate::cst::{self, Edge};
+use crate::kinds::{EdgeLabel, IsLexicalContext, TerminalKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::parser_support::parser_result::{ParserResult, SkippedUntil};
@@ -14,8 +14,8 @@ impl SeparatedHelper {
         input: &mut ParserContext<'_>,
         lexer: &L,
         body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
-        separator: TokenKind,
-        separator_label: NodeLabel,
+        separator: TerminalKind,
+        separator_label: EdgeLabel,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {
@@ -53,8 +53,8 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            accum.push(LabeledNode::anonymous(cst::Node::token(
-                                TokenKind::SKIPPED,
+                            accum.push(Edge::anonymous(cst::Node::terminal(
+                                TerminalKind::SKIPPED,
                                 input.content(skipped_range.utf8()),
                             )));
                             input.emit(ParseError {

@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 use std::fmt;
 
 use crate::diagnostic::{self, Diagnostic};
-use crate::kinds::TokenKind;
+use crate::kinds::TerminalKind;
 use crate::text_index::TextRange;
 
 /// Represents an error that occurred during parsing.
@@ -13,7 +13,7 @@ use crate::text_index::TextRange;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
-    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
+    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
 }
 
 impl ParseError {
@@ -31,7 +31,7 @@ impl ParseError {
 impl ParseError {
     pub(crate) fn new(
         text_range: TextRange,
-        tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
+        tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {
         Self {
             text_range,

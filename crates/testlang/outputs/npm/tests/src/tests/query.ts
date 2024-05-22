@@ -1,12 +1,12 @@
-import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
+import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import { Language } from "@slang-private/slang-testlang/language";
 import { Query } from "@slang-private/slang-testlang/query";
-import { expectToken } from "../utils/cst-helpers";
+import { expectTerminal } from "../utils/cst-helpers";
 
 test("simple query", () => {
   const language = new Language("1.0.0");
   const tree_source = `tree [A [B C] D];`;
-  const parse_output = language.parse(RuleKind.Tree, tree_source);
+  const parse_output = language.parse(NonTerminalKind.Tree, tree_source);
 
   const query_source = `[TreeNodeChild ... @id [DelimitedIdentifier]]`;
   const query = Query.parse(query_source);
@@ -19,7 +19,7 @@ test("simple query", () => {
     expect(Object.keys(result!.bindings)).toStrictEqual(["id"]);
     let cursors = result!.bindings["id"]!;
     expect(cursors.length).toEqual(1);
-    expectToken(cursors[0]!.node(), TokenKind.DelimitedIdentifier, name);
+    expectTerminal(cursors[0]!.node(), TerminalKind.DelimitedIdentifier, name);
   };
 
   expectNextResult("A");

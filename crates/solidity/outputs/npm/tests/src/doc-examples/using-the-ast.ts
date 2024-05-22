@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { RuleKind } from "@nomicfoundation/slang/kinds";
-import { RuleNode } from "@nomicfoundation/slang/cst";
+import { NonTerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonTerminalNode } from "@nomicfoundation/slang/cst";
 import { FunctionDefinition } from "@nomicfoundation/slang/ast";
 // --8<-- [end:imports]
 
@@ -16,11 +16,11 @@ test("using the ast", async () => {
   // --8<-- [start:parse-input]
   const language = new Language("0.8.0");
 
-  const parseOutput = language.parse(RuleKind.FunctionDefinition, source);
+  const parseOutput = language.parse(NonTerminalKind.FunctionDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:create-node]
-  const $function = new FunctionDefinition(parseOutput.tree() as RuleNode);
+  const $function = new FunctionDefinition(parseOutput.tree() as NonTerminalNode);
 
   assert.equal($function.name.variant.text, "add");
   // --8<-- [end:create-node]

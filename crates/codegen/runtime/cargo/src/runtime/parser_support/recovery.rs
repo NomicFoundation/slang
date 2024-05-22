@@ -1,5 +1,5 @@
 use crate::cst;
-use crate::kinds::{IsLexicalContext, TokenKind};
+use crate::kinds::{IsLexicalContext, TerminalKind};
 use crate::lexer::{Lexer, ScannedToken};
 use crate::parse_error::ParseError;
 use crate::parser_support::context::ParserContext;
@@ -16,7 +16,7 @@ pub(crate) struct TokenAcceptanceThreshold(pub(crate) u8);
 fn opt_parse(
     input: &mut ParserContext<'_>,
     parse: impl Fn(&mut ParserContext<'_>) -> ParserResult,
-) -> Vec<cst::LabeledNode> {
+) -> Vec<cst::Edge> {
     let start = input.position();
     if let ParserResult::Match(r#match) = parse(input) {
         r#match.nodes
@@ -38,7 +38,7 @@ impl ParserResult {
         self,
         input: &mut ParserContext<'_>,
         lexer: &L,
-        expected: TokenKind,
+        expected: TerminalKind,
         acceptance_threshold: TokenAcceptanceThreshold,
     ) -> ParserResult {
         enum ParseResultKind {
@@ -120,8 +120,8 @@ impl ParserResult {
 pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     input: &mut ParserContext<'_>,
     lexer: &L,
-    until: TokenKind,
-) -> Option<(TokenKind, TextRange)> {
+    until: TerminalKind,
+) -> Option<(TerminalKind, TextRange)> {
     let delims = L::delimiters::<LexCtx>();
 
     let start = input.position();

@@ -1,5 +1,5 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { RuleKind } from "@slang-private/slang-testlang/kinds";
+import { NonTerminalKind } from "@slang-private/slang-testlang/kinds";
 import { TextIndex } from "@slang-private/slang-testlang/text_index";
 import { Severity } from "@slang-private/slang-testlang/diagnostic";
 
@@ -7,7 +7,7 @@ test("render error reports", () => {
   const source = "tree [AB;";
   const language = new Language("1.0.0");
 
-  const errors = language.parse(RuleKind.SourceUnit, source).errors();
+  const errors = language.parse(NonTerminalKind.SourceUnit, source).errors();
   expect(errors).toHaveLength(1);
 
   const diagnostic = errors[0]!.toDiagnostic();

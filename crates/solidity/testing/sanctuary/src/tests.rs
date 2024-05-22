@@ -5,7 +5,7 @@ use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use semver::Version;
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
 
 use crate::datasets::{DataSet, SourceFile};
@@ -99,7 +99,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         .replace("&#39;", "\"");
 
     let language = Language::new(version.clone())?;
-    let output = language.parse(RuleKind::SourceUnit, &source);
+    let output = language.parse(NonTerminalKind::SourceUnit, &source);
 
     if output.is_valid() {
         events.test(TestOutcome::Passed);
