@@ -14,6 +14,7 @@ mod parser_definition;
 mod precedence_parser_definition;
 mod scanner_definition;
 mod trie;
+mod versioned;
 
 use grammar::{
     Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,

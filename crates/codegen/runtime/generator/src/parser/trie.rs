@@ -1,13 +1,12 @@
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
-// use crate::grammar::model::KeywordDefinition;
-use codegen_language_definition::model::{self, VersionSpecifier};
+use codegen_language_definition::model::KeywordDefinition;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::grammar::{KeywordScannerAtomic, ScannerDefinitionNode, ScannerDefinitionRef};
-use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
+use crate::parser::grammar::{KeywordScannerAtomic, ScannerDefinitionRef};
+use crate::parser::versioned::{Versioned as _, VersionedQuote as _};
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<T: Payload> {
@@ -91,26 +90,6 @@ impl<T: Payload> Trie<T> {
     }
 }
 
-trait VersionWrapped {
-    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier>;
-}
-
-impl VersionWrapped for ScannerDefinitionNode {
-    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier> {
-        match self {
-            ScannerDefinitionNode::Versioned(_, version_quality_ranges) => {
-                Some(version_quality_ranges)
-            }
-
-            ScannerDefinitionNode::Optional(node)
-            | ScannerDefinitionNode::ZeroOrMore(node)
-            | ScannerDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
-
-            _ => None,
-        }
-    }
-}
-
 /// Used together with [`Trie`]. Represents the payload of a trie node and can be used to customize
 /// the emitted code.
 ///
@@ -125,7 +104,7 @@ impl Payload for ScannerDefinitionRef {
     fn to_leaf_code(&self) -> TokenStream {
         let kind = format_ident!("{}", self.name());
 
-        self.node().applicable_version_quality_ranges().wrap_code(
+        self.node().version_specifier().to_conditional_code(
             quote! { Some(TerminalKind::#kind) },
             Some(Self::default_case()),
         )
@@ -140,7 +119,7 @@ impl Payload for KeywordScannerAtomic {
     fn to_leaf_code(&self) -> TokenStream {
         let kind = format_ident!("{}", self.name());
 
-        let model::KeywordDefinition {
+        let KeywordDefinition {
             enabled, reserved, ..
         } = self.definition();
 

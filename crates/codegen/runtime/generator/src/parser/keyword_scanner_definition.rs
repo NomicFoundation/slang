@@ -3,8 +3,8 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::parser::grammar::{KeywordScannerDefinitionRef, ScannerDefinitionNode};
-use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 use crate::parser::scanner_definition::ScannerDefinitionNodeExtensions;
+use crate::parser::versioned::VersionedQuote;
 
 pub trait KeywordScannerDefinitionExtensions {
     fn to_scanner_code(&self) -> TokenStream;

@@ -2,11 +2,11 @@ use codegen_language_definition::model::{Identifier, VersionSpecifier};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use semver::Version;
 
 use crate::parser::grammar::{
     Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef,
 };
+use crate::parser::versioned::{Versioned as _, VersionedQuote as _};
 
 pub trait ParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
@@ -14,7 +14,7 @@ pub trait ParserDefinitionExtensions {
 
 impl ParserDefinitionExtensions for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        self.node().applicable_version_quality_ranges().wrap_code(
+        self.node().version_specifier().to_conditional_code(
             self.node().to_parser_code(self.context(), false),
             Some(quote! { ParserResult::disabled() }),
         )
@@ -29,7 +29,6 @@ impl ParserDefinitionExtensions for TriviaParserDefinitionRef {
 
 pub trait ParserDefinitionNodeExtensions {
     fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream;
-    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier>;
 }
 
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
@@ -102,7 +101,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     (
                         value.to_parser_code(context_name, is_trivia),
                         label.clone(),
-                        value.applicable_version_quality_ranges(),
+                        value.version_specifier(),
                     )
                 })),
             },
@@ -111,7 +110,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = make_choice_versioned(value.iter().map(|node| {
                     (
                         node.to_parser_code(context_name, is_trivia),
-                        node.applicable_version_quality_ranges(),
+                        node.version_specifier(),
                     )
                 }));
 
@@ -205,7 +204,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let threshold = threshold.0;
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
                         seq.elem(#parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
@@ -270,7 +269,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
                         seq.elem(
                             #parser
@@ -298,67 +297,6 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
         }
     }
-
-    fn applicable_version_quality_ranges(&self) -> Option<&VersionSpecifier> {
-        match self {
-            ParserDefinitionNode::Versioned(_, version_specifier) => Some(version_specifier),
-
-            ParserDefinitionNode::Optional(value)
-            | ParserDefinitionNode::ZeroOrMore(Labeled { value, .. })
-            | ParserDefinitionNode::OneOrMore(Labeled { value, .. }) => {
-                value.applicable_version_quality_ranges()
-            }
-
-            _ => None,
-        }
-    }
-}
-
-pub trait VersionQualityRangeVecExtensions {
-    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream;
-    // Quotes a boolean expression that is satisfied for the given version quality ranges
-    fn as_bool_expr(&self) -> TokenStream;
-}
-
-impl VersionQualityRangeVecExtensions for Option<&VersionSpecifier> {
-    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream {
-        if self.is_none() {
-            if_true
-        } else {
-            let condition = self.as_bool_expr();
-
-            let else_part = if_false.map(|if_false| quote! { else { #if_false } });
-            quote! { if #condition { #if_true } #else_part }
-        }
-    }
-
-    fn as_bool_expr(&self) -> TokenStream {
-        let to_version_flag_name = |v: &Version| {
-            format_ident!(
-                "version_is_at_least_{v}",
-                v = &v.to_string().replace('.', "_")
-            )
-        };
-
-        match self {
-            // No constraints imposed, so always enabled
-            None => quote!(true),
-            Some(VersionSpecifier::Never) => quote!(false),
-            Some(VersionSpecifier::From { from }) => {
-                let flag = to_version_flag_name(from);
-                quote! { self.#flag }
-            }
-            Some(VersionSpecifier::Till { till }) => {
-                let flag = to_version_flag_name(till);
-                quote! { ! self.#flag }
-            }
-            Some(VersionSpecifier::Range { from, till }) => {
-                let from_flag = to_version_flag_name(from);
-                let till_flag = to_version_flag_name(till);
-                quote! { self.#from_flag && ! self.#till_flag }
-            }
-        }
-    }
 }
 
 pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
@@ -383,7 +321,7 @@ pub fn make_sequence_versioned<'a>(
                 quote! { seq.elem_labeled(EdgeLabel::#label, #parser)?; }
             };
 
-            versions.wrap_code(code, None)
+            versions.to_conditional_code(code, None)
         })
         .collect::<Vec<_>>();
     quote! {
@@ -404,7 +342,7 @@ fn make_choice_versioned<'a>(
     let parsers = parsers
         .into_iter()
         .map(|(parser, versions)| {
-            versions.wrap_code(
+            versions.to_conditional_code(
                 quote! {
                     let result = #parser;
                     choice.consider(input, result)?;
