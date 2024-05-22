@@ -1,10 +1,12 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
+use codegen_language_definition::model::Identifier;
+
 use crate::parser::grammar::{GrammarVisitor, VersionQualityRange, Visitable};
 
 pub trait ScannerDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &ScannerDefinitionNode;
 }
 
@@ -67,8 +69,8 @@ impl Visitable for ScannerDefinitionNode {
 }
 
 pub trait KeywordScannerDefinition: Debug {
-    fn name(&self) -> &'static str;
-    fn identifier_scanner(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
+    fn identifier_scanner(&self) -> &Identifier;
     fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode];
 }
 

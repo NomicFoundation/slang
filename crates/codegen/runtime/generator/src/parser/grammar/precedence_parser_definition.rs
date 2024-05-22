@@ -1,12 +1,14 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
+use codegen_language_definition::model::Identifier;
+
 use crate::parser::grammar::{GrammarVisitor, ParserDefinitionNode, Visitable};
 
 pub trait PrecedenceParserDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &PrecedenceParserDefinitionNode;
-    fn context(&self) -> &'static str;
+    fn context(&self) -> &Identifier;
 }
 
 pub type PrecedenceParserDefinitionRef = Rc<dyn PrecedenceParserDefinition>;
@@ -21,12 +23,8 @@ impl Visitable for PrecedenceParserDefinitionRef {
 #[derive(Clone, Debug)]
 pub struct PrecedenceParserDefinitionNode {
     pub primary_expression: Box<ParserDefinitionNode>,
-    pub operators: Vec<(
-        PrecedenceOperatorModel,
-        &'static str, // name
-        ParserDefinitionNode,
-    )>,
-    pub precedence_expression_names: Vec<&'static str>,
+    pub operators: Vec<(PrecedenceOperatorModel, Identifier, ParserDefinitionNode)>,
+    pub precedence_expression_names: Vec<Identifier>,
 }
 
 impl Visitable for PrecedenceParserDefinitionNode {

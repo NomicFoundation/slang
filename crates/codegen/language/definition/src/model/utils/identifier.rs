@@ -1,3 +1,4 @@
+use std::fmt;
 use std::ops::Deref;
 
 use proc_macro2::{Literal, TokenStream};
@@ -79,5 +80,11 @@ impl WriteOutputTokens for Identifier {
         quote! {
             #value.into()
         }
+    }
+}
+
+impl quote::IdentFragment for Identifier {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.value.fmt(f)
     }
 }

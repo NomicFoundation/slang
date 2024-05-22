@@ -6,6 +6,7 @@
 
 use std::collections::{BTreeSet, HashMap};
 
+use codegen_language_definition::model::Identifier;
 use semver::Version;
 
 pub mod constructor;
@@ -26,7 +27,7 @@ pub struct Grammar {
     pub versions: BTreeSet<Version>,
     pub leading_trivia_parser: TriviaParserDefinitionRef,
     pub trailing_trivia_parser: TriviaParserDefinitionRef,
-    pub elements: HashMap<&'static str, GrammarElement>,
+    pub elements: HashMap<Identifier, GrammarElement>,
 }
 
 impl Grammar {

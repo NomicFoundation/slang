@@ -1,3 +1,4 @@
+use codegen_language_definition::model::Identifier;
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -28,13 +29,13 @@ impl ParserDefinitionExtensions for TriviaParserDefinitionRef {
 }
 
 pub trait ParserDefinitionNodeExtensions {
-    fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream;
+    fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream;
     fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange>;
 }
 
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
     #[allow(clippy::too_many_lines)] // giant switch over parser definition node types
-    fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream {
+    fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream {
         let context = format_ident!("{context_name}");
         let lex_ctx = quote! { LexicalContextType::#context };
 

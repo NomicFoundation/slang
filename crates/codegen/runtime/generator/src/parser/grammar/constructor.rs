@@ -7,6 +7,7 @@ use std::rc::Rc;
 
 use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
 use indexmap::IndexMap;
+use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
     DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
@@ -39,12 +40,12 @@ impl Grammar {
         };
 
         let leading_trivia = Rc::new(NamedTriviaParser {
-            name: "LeadingTrivia",
+            name: Identifier::from("LeadingTrivia"),
             def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
         let trailing_trivia = Rc::new(NamedTriviaParser {
-            name: "TrailingTrivia",
+            name: Identifier::from("TrailingTrivia"),
             def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
@@ -85,8 +86,8 @@ impl Grammar {
             ctx.resolved.insert(
                 parser_name.clone(),
                 GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
-                    name: parser_name.to_string().leak(),
-                    context: lex_ctx.to_string().leak(),
+                    name: parser_name,
+                    context: lex_ctx,
                     is_inline: true,
                     def: OnceCell::from(def),
                 })),
@@ -96,7 +97,7 @@ impl Grammar {
         let resolved_items = ctx
             .resolved
             .iter()
-            .map(|(name, elem)| (name.to_string().leak() as &_, elem.clone()));
+            .map(|(name, elem)| (name.clone(), elem.clone()));
 
         Grammar {
             name: lang.name.to_string(),
@@ -107,7 +108,7 @@ impl Grammar {
                 .chain(
                     [leading_trivia, trailing_trivia]
                         .into_iter()
-                        .map(|elem| (elem.name(), elem.into())),
+                        .map(|elem| (elem.name().clone(), elem.into())),
                 )
                 .collect(),
         }
@@ -116,13 +117,13 @@ impl Grammar {
 
 #[derive(Debug)]
 struct NamedScanner {
-    name: &'static str,
+    name: Identifier,
     def: ScannerDefinitionNode,
 }
 
 impl ScannerDefinition for NamedScanner {
-    fn name(&self) -> &'static str {
-        self.name
+    fn name(&self) -> &Identifier {
+        &self.name
     }
     fn node(&self) -> &ScannerDefinitionNode {
         &self.def
@@ -131,39 +132,39 @@ impl ScannerDefinition for NamedScanner {
 
 #[derive(Debug)]
 struct NamedKeywordScanner {
-    name: &'static str,
-    identifier_scanner_name: &'static str,
+    name: Identifier,
+    identifier_scanner_name: Identifier,
     defs: Vec<KeywordScannerDefinitionVersionedNode>,
 }
 
 impl KeywordScannerDefinition for NamedKeywordScanner {
-    fn name(&self) -> &'static str {
-        self.name
+    fn name(&self) -> &Identifier {
+        &self.name
     }
 
     fn definitions(&self) -> &[KeywordScannerDefinitionVersionedNode] {
         &self.defs
     }
 
-    fn identifier_scanner(&self) -> &'static str {
-        self.identifier_scanner_name
+    fn identifier_scanner(&self) -> &Identifier {
+        &self.identifier_scanner_name
     }
 }
 
 #[derive(Debug)]
 struct NamedTriviaParser {
-    name: &'static str,
+    name: Identifier,
     def: ParserDefinitionNode,
 }
 
 impl TriviaParserDefinition for NamedTriviaParser {
-    fn name(&self) -> &'static str {
-        self.name
+    fn name(&self) -> &Identifier {
+        &self.name
     }
 
-    fn context(&self) -> &'static str {
-        // NOTE:
-        "Default"
+    fn context(&self) -> &Identifier {
+        static DEFAULT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
+        &DEFAULT
     }
 
     fn node(&self) -> &ParserDefinitionNode {
@@ -173,19 +174,19 @@ impl TriviaParserDefinition for NamedTriviaParser {
 
 #[derive(Debug)]
 struct NamedParserThunk {
-    name: &'static str,
-    context: &'static str,
+    name: Identifier,
+    context: Identifier,
     is_inline: bool,
     def: OnceCell<ParserDefinitionNode>,
 }
 
 impl ParserDefinition for NamedParserThunk {
-    fn name(&self) -> &'static str {
-        self.name
+    fn name(&self) -> &Identifier {
+        &self.name
     }
 
-    fn context(&self) -> &'static str {
-        self.context
+    fn context(&self) -> &Identifier {
+        &self.context
     }
 
     fn is_inline(&self) -> bool {
@@ -199,17 +200,17 @@ impl ParserDefinition for NamedParserThunk {
 
 #[derive(Debug)]
 struct NamedPrecedenceParserThunk {
-    name: &'static str,
-    context: &'static str,
+    name: Identifier,
+    context: Identifier,
     def: OnceCell<PrecedenceParserDefinitionNode>,
 }
 impl PrecedenceParserDefinition for NamedPrecedenceParserThunk {
-    fn name(&self) -> &'static str {
-        self.name
+    fn name(&self) -> &Identifier {
+        &self.name
     }
 
-    fn context(&self) -> &'static str {
-        self.context
+    fn context(&self) -> &Identifier {
+        &self.context
     }
 
     fn node(&self) -> &PrecedenceParserDefinitionNode {
@@ -277,10 +278,9 @@ struct ResolveCtx<'a> {
 fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
     let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
 
-    // FIXME: Don't leak
     let lex_ctx = lex_ctx
-        .as_ref()
-        .map_or("Default", |l| l.to_string().leak() as &_);
+        .clone()
+        .unwrap_or_else(|| Identifier::from("Default"));
 
     // The non-terminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
@@ -293,8 +293,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             false,
         ) => {
             let thunk = Rc::new(NamedParserThunk {
-                name: ident.to_string().leak(),
-                context: lex_ctx,
+                name: ident.clone(),
+                context: lex_ctx.clone(),
                 is_inline: false,
                 def: OnceCell::new(),
             });
@@ -306,8 +306,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         }
         (Item::Precedence { .. }, false) => {
             let thunk = Rc::new(NamedPrecedenceParserThunk {
-                name: ident.to_string().leak(),
-                context: lex_ctx,
+                name: ident.clone(),
+                context: lex_ctx.clone(),
                 def: OnceCell::new(),
             });
             ctx.resolved.insert(
@@ -361,7 +361,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                 Item::Precedence { item } => {
                     thunk
                         .as_precedence_def()
-                        .set(resolve_precedence(item.deref().clone(), lex_ctx, ctx))
+                        .set(resolve_precedence(item.deref().clone(), &lex_ctx, ctx))
                         .unwrap();
                 }
                 _ => unreachable!("Only non-terminals can be resolved here"),
@@ -373,15 +373,15 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         (None, None) => {
             let named_scanner = match elem {
                 Item::Trivia { item } => NamedScanner {
-                    name: ident.to_string().leak(),
+                    name: ident.clone(),
                     def: resolve_scanner(item.scanner.clone(), ctx),
                 },
                 Item::Fragment { item } => NamedScanner {
-                    name: ident.to_string().leak(),
+                    name: ident.clone(),
                     def: resolve_fragment(item.deref().clone(), ctx),
                 },
                 Item::Token { item } => NamedScanner {
-                    name: ident.to_string().leak(),
+                    name: ident.clone(),
                     def: resolve_token(item.deref().clone(), ctx),
                 },
                 Item::Keyword { item } => {
@@ -400,8 +400,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         .collect();
 
                     let kw_scanner = NamedKeywordScanner {
-                        name: ident.to_string().leak(),
-                        identifier_scanner_name: item.identifier.to_string().leak(),
+                        name: ident.clone(),
+                        identifier_scanner_name: item.identifier.clone(),
                         defs,
                     };
 
@@ -689,7 +689,7 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
 
 fn resolve_precedence(
     item: model::PrecedenceItem,
-    lex_ctx: &'static str,
+    lex_ctx: &Identifier,
     ctx: &mut ResolveCtx<'_>,
 ) -> PrecedenceParserDefinitionNode {
     let primaries: Vec<_> = item
@@ -727,17 +727,16 @@ fn resolve_precedence(
     let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
         let name = &expr.name;
-        // TODO(#638): Don't leak
-        let leaked_name = name.to_string().leak() as &_;
+        let name = name.clone();
 
-        precedence_expression_names.push(leaked_name);
+        precedence_expression_names.push(name.clone());
         // Register it as a regular parser with a given name, however we need to
         // define it as a choice over the "operator" sequences
         // Then, when returning, we should actually return a node ref pointing to that combined parser
         // And ideally, we shouldn't even use the "enabled" mode of the original DSL
         let thunk = Rc::new(NamedParserThunk {
-            name: leaked_name,
-            context: lex_ctx,
+            name: name.clone(),
+            context: lex_ctx.clone(),
             is_inline: true,
             def: OnceCell::new(),
         });
@@ -769,7 +768,7 @@ fn resolve_precedence(
             };
 
             all_operators.push(def.clone());
-            operators.push((model_to_enum(model), leaked_name, def));
+            operators.push((model_to_enum(model), name.clone(), def));
         }
 
         // Register the combined parser definition to appease the codegen and to mark terminals
@@ -781,7 +780,7 @@ fn resolve_precedence(
             )))
             .unwrap();
         assert!(
-            !ctx.resolved.contains_key(name),
+            !ctx.resolved.contains_key(&name),
             "Encountered a duplicate Precedence Expression named {name} when resolving"
         );
         ctx.resolved.insert(

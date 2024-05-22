@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use codegen_language_definition::model;
+use codegen_language_definition::model::{self, Identifier};
 
 use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
 use crate::parser::grammar::{
@@ -25,9 +25,9 @@ impl<T> std::ops::Deref for Labeled<T> {
 }
 
 pub trait ParserDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &ParserDefinitionNode;
-    fn context(&self) -> &'static str;
+    fn context(&self) -> &Identifier;
     fn is_inline(&self) -> bool;
 }
 
@@ -41,9 +41,9 @@ impl Visitable for ParserDefinitionRef {
 }
 
 pub trait TriviaParserDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &ParserDefinitionNode;
-    fn context(&self) -> &'static str;
+    fn context(&self) -> &Identifier;
 }
 
 pub type TriviaParserDefinitionRef = Rc<dyn TriviaParserDefinition>;

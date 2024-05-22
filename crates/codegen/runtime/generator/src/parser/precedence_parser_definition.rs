@@ -1,3 +1,4 @@
+use codegen_language_definition::model::Identifier;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
@@ -14,7 +15,7 @@ pub trait PrecedenceParserDefinitionExtensions {
     /// Emit a helper parser function for each precedence expression that ensures the main parser
     /// identifies a single node of the expected type, with a child node being the expected
     /// precedence expression.
-    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)>;
+    fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)>;
 }
 
 impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
@@ -25,7 +26,7 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
         )
     }
 
-    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)> {
+    fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)> {
         let mut res = vec![];
         let parser_name = format_ident!("{}", self.name().to_snake_case());
         let nonterminal_name = format_ident!("{}", self.name().to_pascal_case());
@@ -51,14 +52,14 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
                     _ => ParserResult::no_match(vec![]),
                 }
             };
-            res.push((*name, code));
+            res.push((name.clone(), code));
         }
         res
     }
 }
 
 pub trait PrecedenceParserDefinitionNodeExtensions {
-    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream;
+    fn to_parser_code(&self, context_name: &Identifier, expression_kind: Ident) -> TokenStream;
 }
 
 impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode {
@@ -103,7 +104,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     // is independent of the grammar.
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
-    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
+    fn to_parser_code(&self, context_name: &Identifier, expression_kind: Ident) -> TokenStream {
         let mut prefix_operator_parsers: Vec<TokenStream> = Vec::new();
         let mut postfix_operator_parsers: Vec<TokenStream> = Vec::new();
         let mut binary_operator_parsers: Vec<TokenStream> = Vec::new();
