@@ -52,6 +52,7 @@ pub enum DefinitionKind {
 /// ```
 #[derive(derive_new::new)]
 pub struct Value {
+    pub leading_comment: Option<String>,
     pub expression: Expression,
     pub trailing_comment: Option<String>,
 }

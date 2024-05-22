@@ -10,55 +10,88 @@
 
 (* 1.2. Source Unit: *)
 
-SourceUnit = SourceUnitMembers;
+SourceUnit = (* members: *) SourceUnitMembers;
 
-SourceUnitMembers = SourceUnitMember*;
+SourceUnitMembers = (* item: *) SourceUnitMember*;
 
-SourceUnitMember = PragmaDirective
-                 | ImportDirective
-                 | ContractDefinition
-                 | InterfaceDefinition
-                 | LibraryDefinition
-                 | StructDefinition (* Introduced in 0.6.0 *)
-                 | EnumDefinition (* Introduced in 0.6.0 *)
-                 | FunctionDefinition (* Introduced in 0.7.1 *)
-                 | ConstantDefinition (* Introduced in 0.7.4 *)
-                 | ErrorDefinition (* Introduced in 0.8.4 *)
-                 | UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
-                 | UsingDirective (* Introduced in 0.8.13 *)
-                 | EventDefinition; (* Introduced in 0.8.22 *)
+SourceUnitMember = (* variant: *) PragmaDirective
+                 | (* variant: *) ImportDirective
+                 | (* variant: *) ContractDefinition
+                 | (* variant: *) InterfaceDefinition
+                 | (* variant: *) LibraryDefinition
+                 | (* variant: *) StructDefinition (* Introduced in 0.6.0 *)
+                 | (* variant: *) EnumDefinition (* Introduced in 0.6.0 *)
+                 | (* variant: *) FunctionDefinition (* Introduced in 0.7.1 *)
+                 | (* variant: *) ConstantDefinition (* Introduced in 0.7.4 *)
+                 | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+                 | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+                 | (* variant: *) UsingDirective (* Introduced in 0.8.13 *)
+                 | (* variant: *) EventDefinition; (* Introduced in 0.8.22 *)
 
 (* 1.3. Pragma Directives: *)
 
-PragmaDirective = PRAGMA_KEYWORD
-                  Pragma
-                  SEMICOLON;
+PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
+                  (* pragma: *) Pragma
+                  (* semicolon: *) SEMICOLON;
 
-Pragma = ABICoderPragma
-       | ExperimentalPragma
-       | VersionPragma;
+Pragma = (* variant: *) ABICoderPragma
+       | (* variant: *) ExperimentalPragma
+       | (* variant: *) VersionPragma;
 
-ABICoderPragma = ABICODER_KEYWORD
-                 IDENTIFIER;
+ABICoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
+                 (* version: *) IDENTIFIER;
 
-ExperimentalPragma = EXPERIMENTAL_KEYWORD
-                     ExperimentalFeature;
+ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
+                     (* feature: *) ExperimentalFeature;
 
-ExperimentalFeature = IDENTIFIER
-                    | StringLiteral;
+ExperimentalFeature = (* variant: *) IDENTIFIER
+                    | (* variant: *) StringLiteral;
 
-VersionPragma = SOLIDITY_KEYWORD
-                VersionExpressionSets;
+VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
+                (* sets: *) VersionExpressionSets;
 
 VersionExpressionSets = VersionExpressionSet (BAR_BAR VersionExpressionSet)*;
 
-VersionExpressionSet = VersionExpression+;
+VersionExpressionSet = (* item: *) VersionExpression+;
 
 VersionExpression = VersionRange
                   | VersionComparator
                   | VersionSpecifiers
                   | SINGLE_QUOTED_VERSION_LITERAL
                   | DOUBLE_QUOTED_VERSION_LITERAL;
+
+(* Left-associative binary operator *)
+VersionRange = VersionExpression
+               (* operator: *) MINUS
+               VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) CARET
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) TILDE
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) EQUAL
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) LESS_THAN
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) GREATER_THAN
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) LESS_THAN_EQUAL
+                    VersionExpression;
+
+(* Prefix unary operator *)
+VersionComparator = (* operator: *) GREATER_THAN_EQUAL
+                    VersionExpression;
 
 VersionSpecifiers = VERSION_SPECIFIER (PERIOD VERSION_SPECIFIER)*;
 
@@ -81,83 +114,83 @@ SOLIDITY_KEYWORD = "solidity";
 
 (* 1.4. Import Directives: *)
 
-ImportDirective = IMPORT_KEYWORD
-                  ImportClause
-                  SEMICOLON;
+ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
+                  (* clause: *) ImportClause
+                  (* semicolon: *) SEMICOLON;
 
-ImportClause = PathImport
-             | NamedImport
-             | ImportDeconstruction;
+ImportClause = (* variant: *) PathImport
+             | (* variant: *) NamedImport
+             | (* variant: *) ImportDeconstruction;
 
-PathImport = StringLiteral
-             ImportAlias?;
+PathImport = (* path: *) StringLiteral
+             (* alias: *) ImportAlias?;
 
-NamedImport = ASTERISK
-              ImportAlias
-              FROM_KEYWORD
-              StringLiteral;
+NamedImport = (* asterisk: *) ASTERISK
+              (* alias: *) ImportAlias
+              (* from_keyword: *) FROM_KEYWORD
+              (* path: *) StringLiteral;
 
-ImportDeconstruction = OPEN_BRACE
-                       ImportDeconstructionSymbols
-                       CLOSE_BRACE
-                       FROM_KEYWORD
-                       StringLiteral;
+ImportDeconstruction = (* open_brace: *) OPEN_BRACE
+                       (* symbols: *) ImportDeconstructionSymbols
+                       (* close_brace: *) CLOSE_BRACE
+                       (* from_keyword: *) FROM_KEYWORD
+                       (* path: *) StringLiteral;
 
 ImportDeconstructionSymbols = ImportDeconstructionSymbol (COMMA ImportDeconstructionSymbol)*;
 
-ImportDeconstructionSymbol = IDENTIFIER
-                             ImportAlias?;
+ImportDeconstructionSymbol = (* name: *) IDENTIFIER
+                             (* alias: *) ImportAlias?;
 
-ImportAlias = AS_KEYWORD
-              IDENTIFIER;
+ImportAlias = (* as_keyword: *) AS_KEYWORD
+              (* identifier: *) IDENTIFIER;
 
 (* 1.5. Using Directives: *)
 
-UsingDirective = USING_KEYWORD
-                 UsingClause
-                 FOR_KEYWORD
-                 UsingTarget
-                 GLOBAL_KEYWORD? (* Introduced in 0.8.13 *)
-                 SEMICOLON;
+UsingDirective = (* using_keyword: *) USING_KEYWORD
+                 (* clause: *) UsingClause
+                 (* for_keyword: *) FOR_KEYWORD
+                 (* target: *) UsingTarget
+                 (* global_keyword: *) GLOBAL_KEYWORD? (* Introduced in 0.8.13 *)
+                 (* semicolon: *) SEMICOLON;
 
-UsingClause = IdentifierPath
-            | UsingDeconstruction; (* Introduced in 0.8.13 *)
+UsingClause = (* variant: *) IdentifierPath
+            | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
 
 (* Introduced in 0.8.13 *)
-UsingDeconstruction = OPEN_BRACE
-                      UsingDeconstructionSymbols
-                      CLOSE_BRACE;
+UsingDeconstruction = (* open_brace: *) OPEN_BRACE
+                      (* symbols: *) UsingDeconstructionSymbols
+                      (* close_brace: *) CLOSE_BRACE;
 
 (* Introduced in 0.8.13 *)
 UsingDeconstructionSymbols = UsingDeconstructionSymbol (COMMA UsingDeconstructionSymbol)*;
 
 (* Introduced in 0.8.13 *)
-UsingDeconstructionSymbol = IdentifierPath
-                            UsingAlias?; (* Introduced in 0.8.19 *)
+UsingDeconstructionSymbol = (* name: *) IdentifierPath
+                            (* alias: *) UsingAlias?; (* Introduced in 0.8.19 *)
 
 (* Introduced in 0.8.19 *)
-UsingAlias = AS_KEYWORD
-             UsingOperator;
+UsingAlias = (* as_keyword: *) AS_KEYWORD
+             (* operator: *) UsingOperator;
 
 (* Introduced in 0.8.19 *)
-UsingOperator = AMPERSAND
-              | ASTERISK
-              | BANG_EQUAL
-              | BAR
-              | CARET
-              | EQUAL_EQUAL
-              | GREATER_THAN
-              | GREATER_THAN_EQUAL
-              | LESS_THAN
-              | LESS_THAN_EQUAL
-              | MINUS
-              | PERCENT
-              | PLUS
-              | SLASH
-              | TILDE;
+UsingOperator = (* variant: *) AMPERSAND
+              | (* variant: *) ASTERISK
+              | (* variant: *) BANG_EQUAL
+              | (* variant: *) BAR
+              | (* variant: *) CARET
+              | (* variant: *) EQUAL_EQUAL
+              | (* variant: *) GREATER_THAN
+              | (* variant: *) GREATER_THAN_EQUAL
+              | (* variant: *) LESS_THAN
+              | (* variant: *) LESS_THAN_EQUAL
+              | (* variant: *) MINUS
+              | (* variant: *) PERCENT
+              | (* variant: *) PLUS
+              | (* variant: *) SLASH
+              | (* variant: *) TILDE;
 
-UsingTarget = TypeName
-            | ASTERISK;
+UsingTarget = (* variant: *) TypeName
+            | (* variant: *) ASTERISK;
 
 (* 1.6. Trivia: *)
 
@@ -579,302 +612,302 @@ TILDE = "~";
 
 (* 2.1. Contracts: *)
 
-ContractDefinition = ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
-                     CONTRACT_KEYWORD
-                     IDENTIFIER
-                     InheritanceSpecifier?
-                     OPEN_BRACE
-                     ContractMembers
-                     CLOSE_BRACE;
+ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
+                     (* contract_keyword: *) CONTRACT_KEYWORD
+                     (* name: *) IDENTIFIER
+                     (* inheritence: *) InheritanceSpecifier?
+                     (* open_brace: *) OPEN_BRACE
+                     (* members: *) ContractMembers
+                     (* close_brace: *) CLOSE_BRACE;
 
-InheritanceSpecifier = IS_KEYWORD
-                       InheritanceTypes;
+InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
+                       (* types: *) InheritanceTypes;
 
 InheritanceTypes = InheritanceType (COMMA InheritanceType)*;
 
-InheritanceType = IdentifierPath
-                  ArgumentsDeclaration?;
+InheritanceType = (* type_name: *) IdentifierPath
+                  (* arguments: *) ArgumentsDeclaration?;
 
-ContractMembers = ContractMember*;
+ContractMembers = (* item: *) ContractMember*;
 
-ContractMember = UsingDirective
-               | FunctionDefinition
-               | ConstructorDefinition (* Introduced in 0.4.22 *)
-               | ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
-               | FallbackFunctionDefinition (* Introduced in 0.6.0 *)
-               | UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
-               | ModifierDefinition
-               | StructDefinition
-               | EnumDefinition
-               | EventDefinition
-               | StateVariableDefinition
-               | ErrorDefinition (* Introduced in 0.8.4 *)
-               | UserDefinedValueTypeDefinition; (* Introduced in 0.8.8 *)
+ContractMember = (* variant: *) UsingDirective
+               | (* variant: *) FunctionDefinition
+               | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
+               | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
+               | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
+               | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
+               | (* variant: *) ModifierDefinition
+               | (* variant: *) StructDefinition
+               | (* variant: *) EnumDefinition
+               | (* variant: *) EventDefinition
+               | (* variant: *) StateVariableDefinition
+               | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+               | (* variant: *) UserDefinedValueTypeDefinition; (* Introduced in 0.8.8 *)
 
 (* 2.2. Interfaces: *)
 
-InterfaceDefinition = INTERFACE_KEYWORD
-                      IDENTIFIER
-                      InheritanceSpecifier?
-                      OPEN_BRACE
-                      InterfaceMembers
-                      CLOSE_BRACE;
+InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
+                      (* name: *) IDENTIFIER
+                      (* inheritence: *) InheritanceSpecifier?
+                      (* open_brace: *) OPEN_BRACE
+                      (* members: *) InterfaceMembers
+                      (* close_brace: *) CLOSE_BRACE;
 
-InterfaceMembers = ContractMember*;
+InterfaceMembers = (* item: *) ContractMember*;
 
 (* 2.3. Libraries: *)
 
-LibraryDefinition = LIBRARY_KEYWORD
-                    IDENTIFIER
-                    OPEN_BRACE
-                    LibraryMembers
-                    CLOSE_BRACE;
+LibraryDefinition = (* library_keyword: *) LIBRARY_KEYWORD
+                    (* name: *) IDENTIFIER
+                    (* open_brace: *) OPEN_BRACE
+                    (* members: *) LibraryMembers
+                    (* close_brace: *) CLOSE_BRACE;
 
-LibraryMembers = ContractMember*;
+LibraryMembers = (* item: *) ContractMember*;
 
 (* 2.4. Structs: *)
 
-StructDefinition = STRUCT_KEYWORD
-                   IDENTIFIER
-                   OPEN_BRACE
-                   StructMembers
-                   CLOSE_BRACE;
+StructDefinition = (* struct_keyword: *) STRUCT_KEYWORD
+                   (* name: *) IDENTIFIER
+                   (* open_brace: *) OPEN_BRACE
+                   (* members: *) StructMembers
+                   (* close_brace: *) CLOSE_BRACE;
 
-StructMembers = StructMember*;
+StructMembers = (* item: *) StructMember*;
 
-StructMember = TypeName
-               IDENTIFIER
-               SEMICOLON;
+StructMember = (* type_name: *) TypeName
+               (* name: *) IDENTIFIER
+               (* semicolon: *) SEMICOLON;
 
 (* 2.5. Enums: *)
 
-EnumDefinition = ENUM_KEYWORD
-                 IDENTIFIER
-                 OPEN_BRACE
-                 EnumMembers
-                 CLOSE_BRACE;
+EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
+                 (* name: *) IDENTIFIER
+                 (* open_brace: *) OPEN_BRACE
+                 (* members: *) EnumMembers
+                 (* close_brace: *) CLOSE_BRACE;
 
 EnumMembers = (IDENTIFIER (COMMA IDENTIFIER)*)?;
 
 (* 2.6. Constants: *)
 
 (* Introduced in 0.7.4 *)
-ConstantDefinition = TypeName
-                     CONSTANT_KEYWORD
-                     IDENTIFIER
-                     EQUAL
-                     Expression
-                     SEMICOLON;
+ConstantDefinition = (* type_name: *) TypeName
+                     (* constant_keyword: *) CONSTANT_KEYWORD
+                     (* name: *) IDENTIFIER
+                     (* equal: *) EQUAL
+                     (* value: *) Expression
+                     (* semicolon: *) SEMICOLON;
 
 (* 2.7. State Variables: *)
 
-StateVariableDefinition = TypeName
-                          StateVariableAttributes
-                          IDENTIFIER
-                          StateVariableDefinitionValue?
-                          SEMICOLON;
+StateVariableDefinition = (* type_name: *) TypeName
+                          (* attributes: *) StateVariableAttributes
+                          (* name: *) IDENTIFIER
+                          (* value: *) StateVariableDefinitionValue?
+                          (* semicolon: *) SEMICOLON;
 
-StateVariableDefinitionValue = EQUAL
-                               Expression;
+StateVariableDefinitionValue = (* equal: *) EQUAL
+                               (* value: *) Expression;
 
-StateVariableAttributes = StateVariableAttribute*;
+StateVariableAttributes = (* item: *) StateVariableAttribute*;
 
-StateVariableAttribute = OverrideSpecifier (* Introduced in 0.6.0 *)
-                       | CONSTANT_KEYWORD
-                       | INTERNAL_KEYWORD
-                       | PRIVATE_KEYWORD
-                       | PUBLIC_KEYWORD
-                       | IMMUTABLE_KEYWORD; (* Introduced in 0.6.5 *)
+StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+                       | (* variant: *) CONSTANT_KEYWORD
+                       | (* variant: *) INTERNAL_KEYWORD
+                       | (* variant: *) PRIVATE_KEYWORD
+                       | (* variant: *) PUBLIC_KEYWORD
+                       | (* variant: *) IMMUTABLE_KEYWORD; (* Introduced in 0.6.5 *)
 
 (* 2.8. Functions: *)
 
-FunctionDefinition = FUNCTION_KEYWORD
-                     FunctionName
-                     ParametersDeclaration
-                     FunctionAttributes
-                     ReturnsDeclaration?
-                     FunctionBody;
+FunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
+                     (* name: *) FunctionName
+                     (* parameters: *) ParametersDeclaration
+                     (* attributes: *) FunctionAttributes
+                     (* returns: *) ReturnsDeclaration?
+                     (* body: *) FunctionBody;
 
-FunctionName = IDENTIFIER
-             | FALLBACK_KEYWORD
-             | RECEIVE_KEYWORD;
+FunctionName = (* variant: *) IDENTIFIER
+             | (* variant: *) FALLBACK_KEYWORD
+             | (* variant: *) RECEIVE_KEYWORD;
 
-ParametersDeclaration = OPEN_PAREN
-                        Parameters
-                        CLOSE_PAREN;
+ParametersDeclaration = (* open_paren: *) OPEN_PAREN
+                        (* parameters: *) Parameters
+                        (* close_paren: *) CLOSE_PAREN;
 
 Parameters = (Parameter (COMMA Parameter)*)?;
 
-Parameter = TypeName
-            StorageLocation?
-            IDENTIFIER?;
+Parameter = (* type_name: *) TypeName
+            (* storage_location: *) StorageLocation?
+            (* name: *) IDENTIFIER?;
 
-FunctionAttributes = FunctionAttribute*;
+FunctionAttributes = (* item: *) FunctionAttribute*;
 
-FunctionAttribute = ModifierInvocation
-                  | OverrideSpecifier (* Introduced in 0.6.0 *)
-                  | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-                  | EXTERNAL_KEYWORD
-                  | INTERNAL_KEYWORD
-                  | PAYABLE_KEYWORD
-                  | PRIVATE_KEYWORD
-                  | PUBLIC_KEYWORD
-                  | PURE_KEYWORD (* Introduced in 0.4.16 *)
-                  | VIEW_KEYWORD (* Introduced in 0.4.16 *)
-                  | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
-
-(* Introduced in 0.6.0 *)
-OverrideSpecifier = OVERRIDE_KEYWORD
-                    OverridePathsDeclaration?;
+FunctionAttribute = (* variant: *) ModifierInvocation
+                  | (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+                  | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+                  | (* variant: *) EXTERNAL_KEYWORD
+                  | (* variant: *) INTERNAL_KEYWORD
+                  | (* variant: *) PAYABLE_KEYWORD
+                  | (* variant: *) PRIVATE_KEYWORD
+                  | (* variant: *) PUBLIC_KEYWORD
+                  | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+                  | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+                  | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
 
 (* Introduced in 0.6.0 *)
-OverridePathsDeclaration = OPEN_PAREN
-                           OverridePaths
-                           CLOSE_PAREN;
+OverrideSpecifier = (* override_keyword: *) OVERRIDE_KEYWORD
+                    (* overridden: *) OverridePathsDeclaration?;
+
+(* Introduced in 0.6.0 *)
+OverridePathsDeclaration = (* open_paren: *) OPEN_PAREN
+                           (* paths: *) OverridePaths
+                           (* close_paren: *) CLOSE_PAREN;
 
 (* Introduced in 0.6.0 *)
 OverridePaths = IdentifierPath (COMMA IdentifierPath)*;
 
-ReturnsDeclaration = RETURNS_KEYWORD
-                     ParametersDeclaration;
+ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
+                     (* variables: *) ParametersDeclaration;
 
-FunctionBody = Block
-             | SEMICOLON;
-
-(* Introduced in 0.4.22 *)
-ConstructorDefinition = CONSTRUCTOR_KEYWORD
-                        ParametersDeclaration
-                        ConstructorAttributes
-                        Block;
+FunctionBody = (* variant: *) Block
+             | (* variant: *) SEMICOLON;
 
 (* Introduced in 0.4.22 *)
-ConstructorAttributes = ConstructorAttribute*;
+ConstructorDefinition = (* constructor_keyword: *) CONSTRUCTOR_KEYWORD
+                        (* parameters: *) ParametersDeclaration
+                        (* attributes: *) ConstructorAttributes
+                        (* body: *) Block;
 
 (* Introduced in 0.4.22 *)
-ConstructorAttribute = ModifierInvocation
-                     | INTERNAL_KEYWORD
-                     | OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
-                     | PAYABLE_KEYWORD
-                     | PUBLIC_KEYWORD
-                     | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+ConstructorAttributes = (* item: *) ConstructorAttribute*;
+
+(* Introduced in 0.4.22 *)
+ConstructorAttribute = (* variant: *) ModifierInvocation
+                     | (* variant: *) INTERNAL_KEYWORD
+                     | (* variant: *) OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+                     | (* variant: *) PAYABLE_KEYWORD
+                     | (* variant: *) PUBLIC_KEYWORD
+                     | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
 
 (* Deprecated in 0.6.0 *)
-UnnamedFunctionDefinition = FUNCTION_KEYWORD
-                            ParametersDeclaration
-                            UnnamedFunctionAttributes
-                            FunctionBody;
+UnnamedFunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
+                            (* parameters: *) ParametersDeclaration
+                            (* attributes: *) UnnamedFunctionAttributes
+                            (* body: *) FunctionBody;
 
 (* Deprecated in 0.6.0 *)
-UnnamedFunctionAttributes = UnnamedFunctionAttribute*;
+UnnamedFunctionAttributes = (* item: *) UnnamedFunctionAttribute*;
 
 (* Deprecated in 0.6.0 *)
-UnnamedFunctionAttribute = ModifierInvocation
-                         | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-                         | EXTERNAL_KEYWORD
-                         | INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
-                         | PAYABLE_KEYWORD
-                         | PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
-                         | PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
-                         | PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
-                         | VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+UnnamedFunctionAttribute = (* variant: *) ModifierInvocation
+                         | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+                         | (* variant: *) EXTERNAL_KEYWORD
+                         | (* variant: *) INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
+                         | (* variant: *) PAYABLE_KEYWORD
+                         | (* variant: *) PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
+                         | (* variant: *) PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
+                         | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+                         | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
 
 (* Introduced in 0.6.0 *)
-FallbackFunctionDefinition = FALLBACK_KEYWORD
-                             ParametersDeclaration
-                             FallbackFunctionAttributes
-                             ReturnsDeclaration?
-                             FunctionBody;
+FallbackFunctionDefinition = (* fallback_keyword: *) FALLBACK_KEYWORD
+                             (* parameters: *) ParametersDeclaration
+                             (* attributes: *) FallbackFunctionAttributes
+                             (* returns: *) ReturnsDeclaration?
+                             (* body: *) FunctionBody;
 
 (* Introduced in 0.6.0 *)
-FallbackFunctionAttributes = FallbackFunctionAttribute*;
+FallbackFunctionAttributes = (* item: *) FallbackFunctionAttribute*;
 
 (* Introduced in 0.6.0 *)
-FallbackFunctionAttribute = ModifierInvocation
-                          | OverrideSpecifier
-                          | EXTERNAL_KEYWORD
-                          | PAYABLE_KEYWORD
-                          | PURE_KEYWORD
-                          | VIEW_KEYWORD
-                          | VIRTUAL_KEYWORD;
+FallbackFunctionAttribute = (* variant: *) ModifierInvocation
+                          | (* variant: *) OverrideSpecifier
+                          | (* variant: *) EXTERNAL_KEYWORD
+                          | (* variant: *) PAYABLE_KEYWORD
+                          | (* variant: *) PURE_KEYWORD
+                          | (* variant: *) VIEW_KEYWORD
+                          | (* variant: *) VIRTUAL_KEYWORD;
 
 (* Introduced in 0.6.0 *)
-ReceiveFunctionDefinition = RECEIVE_KEYWORD
-                            ParametersDeclaration
-                            ReceiveFunctionAttributes
-                            FunctionBody;
+ReceiveFunctionDefinition = (* receive_keyword: *) RECEIVE_KEYWORD
+                            (* parameters: *) ParametersDeclaration
+                            (* attributes: *) ReceiveFunctionAttributes
+                            (* body: *) FunctionBody;
 
 (* Introduced in 0.6.0 *)
-ReceiveFunctionAttributes = ReceiveFunctionAttribute*;
+ReceiveFunctionAttributes = (* item: *) ReceiveFunctionAttribute*;
 
 (* Introduced in 0.6.0 *)
-ReceiveFunctionAttribute = ModifierInvocation
-                         | OverrideSpecifier
-                         | EXTERNAL_KEYWORD
-                         | PAYABLE_KEYWORD
-                         | VIRTUAL_KEYWORD;
+ReceiveFunctionAttribute = (* variant: *) ModifierInvocation
+                         | (* variant: *) OverrideSpecifier
+                         | (* variant: *) EXTERNAL_KEYWORD
+                         | (* variant: *) PAYABLE_KEYWORD
+                         | (* variant: *) VIRTUAL_KEYWORD;
 
 (* 2.9. Modifiers: *)
 
-ModifierDefinition = MODIFIER_KEYWORD
-                     IDENTIFIER
-                     ParametersDeclaration?
-                     ModifierAttributes
-                     FunctionBody;
+ModifierDefinition = (* modifier_keyword: *) MODIFIER_KEYWORD
+                     (* name: *) IDENTIFIER
+                     (* parameters: *) ParametersDeclaration?
+                     (* attributes: *) ModifierAttributes
+                     (* body: *) FunctionBody;
 
-ModifierAttributes = ModifierAttribute*;
+ModifierAttributes = (* item: *) ModifierAttribute*;
 
-ModifierAttribute = OverrideSpecifier (* Introduced in 0.6.0 *)
-                  | VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
+ModifierAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+                  | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
 
-ModifierInvocation = IdentifierPath
-                     ArgumentsDeclaration?;
+ModifierInvocation = (* name: *) IdentifierPath
+                     (* arguments: *) ArgumentsDeclaration?;
 
 (* 2.10. Events: *)
 
-EventDefinition = EVENT_KEYWORD
-                  IDENTIFIER
-                  EventParametersDeclaration
-                  ANONYMOUS_KEYWORD?
-                  SEMICOLON;
+EventDefinition = (* event_keyword: *) EVENT_KEYWORD
+                  (* name: *) IDENTIFIER
+                  (* parameters: *) EventParametersDeclaration
+                  (* anonymous_keyword: *) ANONYMOUS_KEYWORD?
+                  (* semicolon: *) SEMICOLON;
 
-EventParametersDeclaration = OPEN_PAREN
-                             EventParameters
-                             CLOSE_PAREN;
+EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
+                             (* parameters: *) EventParameters
+                             (* close_paren: *) CLOSE_PAREN;
 
 EventParameters = (EventParameter (COMMA EventParameter)*)?;
 
-EventParameter = TypeName
-                 INDEXED_KEYWORD?
-                 IDENTIFIER?;
+EventParameter = (* type_name: *) TypeName
+                 (* indexed_keyword: *) INDEXED_KEYWORD?
+                 (* name: *) IDENTIFIER?;
 
 (* 2.11. User Defined Value Types: *)
 
 (* Introduced in 0.8.8 *)
-UserDefinedValueTypeDefinition = TYPE_KEYWORD
-                                 IDENTIFIER
-                                 IS_KEYWORD
-                                 ElementaryType
-                                 SEMICOLON;
+UserDefinedValueTypeDefinition = (* type_keyword: *) TYPE_KEYWORD
+                                 (* name: *) IDENTIFIER
+                                 (* is_keyword: *) IS_KEYWORD
+                                 (* value_type: *) ElementaryType
+                                 (* semicolon: *) SEMICOLON;
 
 (* 2.12. Errors: *)
 
 (* Introduced in 0.8.4 *)
-ErrorDefinition = ERROR_KEYWORD
-                  IDENTIFIER
-                  ErrorParametersDeclaration
-                  SEMICOLON;
+ErrorDefinition = (* error_keyword: *) ERROR_KEYWORD
+                  (* name: *) IDENTIFIER
+                  (* members: *) ErrorParametersDeclaration
+                  (* semicolon: *) SEMICOLON;
 
 (* Introduced in 0.8.4 *)
-ErrorParametersDeclaration = OPEN_PAREN
-                             ErrorParameters
-                             CLOSE_PAREN;
+ErrorParametersDeclaration = (* open_paren: *) OPEN_PAREN
+                             (* parameters: *) ErrorParameters
+                             (* close_paren: *) CLOSE_PAREN;
 
 (* Introduced in 0.8.4 *)
 ErrorParameters = (ErrorParameter (COMMA ErrorParameter)*)?;
 
 (* Introduced in 0.8.4 *)
-ErrorParameter = TypeName
-                 IDENTIFIER?;
+ErrorParameter = (* type_name: *) TypeName
+                 (* name: *) IDENTIFIER?;
 
 (*
  * 3. Types:
@@ -888,52 +921,58 @@ TypeName = ArrayTypeName
          | ElementaryType
          | IdentifierPath;
 
-FunctionType = FUNCTION_KEYWORD
-               ParametersDeclaration
-               FunctionTypeAttributes
-               ReturnsDeclaration?;
+(* Postfix unary operator *)
+ArrayTypeName = TypeName
+                (* open_bracket: *) OPEN_BRACKET
+                (* index: *) Expression?
+                (* close_bracket: *) CLOSE_BRACKET;
 
-FunctionTypeAttributes = FunctionTypeAttribute*;
+FunctionType = (* function_keyword: *) FUNCTION_KEYWORD
+               (* parameters: *) ParametersDeclaration
+               (* attributes: *) FunctionTypeAttributes
+               (* returns: *) ReturnsDeclaration?;
 
-FunctionTypeAttribute = INTERNAL_KEYWORD
-                      | EXTERNAL_KEYWORD
-                      | PRIVATE_KEYWORD
-                      | PUBLIC_KEYWORD
-                      | CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-                      | PURE_KEYWORD (* Introduced in 0.4.16 *)
-                      | VIEW_KEYWORD (* Introduced in 0.4.16 *)
-                      | PAYABLE_KEYWORD;
+FunctionTypeAttributes = (* item: *) FunctionTypeAttribute*;
 
-MappingType = MAPPING_KEYWORD
-              OPEN_PAREN
-              MappingKey
-              EQUAL_GREATER_THAN
-              MappingValue
-              CLOSE_PAREN;
+FunctionTypeAttribute = (* variant: *) INTERNAL_KEYWORD
+                      | (* variant: *) EXTERNAL_KEYWORD
+                      | (* variant: *) PRIVATE_KEYWORD
+                      | (* variant: *) PUBLIC_KEYWORD
+                      | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+                      | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+                      | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+                      | (* variant: *) PAYABLE_KEYWORD;
 
-MappingKey = MappingKeyType
-             IDENTIFIER?; (* Introduced in 0.8.18 *)
+MappingType = (* mapping_keyword: *) MAPPING_KEYWORD
+              (* open_paren: *) OPEN_PAREN
+              (* key_type: *) MappingKey
+              (* equal_greater_than: *) EQUAL_GREATER_THAN
+              (* value_type: *) MappingValue
+              (* close_paren: *) CLOSE_PAREN;
 
-MappingKeyType = ElementaryType
-               | IdentifierPath;
+MappingKey = (* key_type: *) MappingKeyType
+             (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
 
-MappingValue = TypeName
-               IDENTIFIER?; (* Introduced in 0.8.18 *)
+MappingKeyType = (* variant: *) ElementaryType
+               | (* variant: *) IdentifierPath;
+
+MappingValue = (* type_name: *) TypeName
+               (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
 
 (* 3.2. Elementary Types: *)
 
-ElementaryType = BOOL_KEYWORD
-               | BYTE_KEYWORD (* Deprecated in 0.8.0 *)
-               | STRING_KEYWORD
-               | AddressType
-               | BYTES_KEYWORD
-               | INT_KEYWORD
-               | UINT_KEYWORD
-               | FIXED_KEYWORD
-               | UFIXED_KEYWORD;
+ElementaryType = (* variant: *) BOOL_KEYWORD
+               | (* variant: *) BYTE_KEYWORD (* Deprecated in 0.8.0 *)
+               | (* variant: *) STRING_KEYWORD
+               | (* variant: *) AddressType
+               | (* variant: *) BYTES_KEYWORD
+               | (* variant: *) INT_KEYWORD
+               | (* variant: *) UINT_KEYWORD
+               | (* variant: *) FIXED_KEYWORD
+               | (* variant: *) UFIXED_KEYWORD;
 
-AddressType = ADDRESS_KEYWORD
-              PAYABLE_KEYWORD?;
+AddressType = (* address_keyword: *) ADDRESS_KEYWORD
+              (* payable_keyword: *) PAYABLE_KEYWORD?;
 
 (*
  * 4. Statements:
@@ -941,176 +980,176 @@ AddressType = ADDRESS_KEYWORD
 
 (* 4.1. Blocks: *)
 
-Block = OPEN_BRACE
-        Statements
-        CLOSE_BRACE;
+Block = (* open_brace: *) OPEN_BRACE
+        (* statements: *) Statements
+        (* close_brace: *) CLOSE_BRACE;
 
-Statements = Statement*;
+Statements = (* item: *) Statement*;
 
-Statement = ExpressionStatement
-          | VariableDeclarationStatement
-          | TupleDeconstructionStatement
-          | IfStatement
-          | ForStatement
-          | WhileStatement
-          | DoWhileStatement
-          | ContinueStatement
-          | BreakStatement
-          | ReturnStatement
-          | ThrowStatement (* Deprecated in 0.5.0 *)
-          | EmitStatement (* Introduced in 0.4.21 *)
-          | TryStatement (* Introduced in 0.6.0 *)
-          | RevertStatement (* Introduced in 0.8.4 *)
-          | AssemblyStatement
-          | Block
-          | UncheckedBlock; (* Introduced in 0.8.0 *)
+Statement = (* variant: *) ExpressionStatement
+          | (* variant: *) VariableDeclarationStatement
+          | (* variant: *) TupleDeconstructionStatement
+          | (* variant: *) IfStatement
+          | (* variant: *) ForStatement
+          | (* variant: *) WhileStatement
+          | (* variant: *) DoWhileStatement
+          | (* variant: *) ContinueStatement
+          | (* variant: *) BreakStatement
+          | (* variant: *) ReturnStatement
+          | (* variant: *) ThrowStatement (* Deprecated in 0.5.0 *)
+          | (* variant: *) EmitStatement (* Introduced in 0.4.21 *)
+          | (* variant: *) TryStatement (* Introduced in 0.6.0 *)
+          | (* variant: *) RevertStatement (* Introduced in 0.8.4 *)
+          | (* variant: *) AssemblyStatement
+          | (* variant: *) Block
+          | (* variant: *) UncheckedBlock; (* Introduced in 0.8.0 *)
 
 (* Introduced in 0.8.0 *)
-UncheckedBlock = UNCHECKED_KEYWORD
-                 Block;
+UncheckedBlock = (* unchecked_keyword: *) UNCHECKED_KEYWORD
+                 (* block: *) Block;
 
-ExpressionStatement = Expression
-                      SEMICOLON;
+ExpressionStatement = (* expression: *) Expression
+                      (* semicolon: *) SEMICOLON;
 
-AssemblyStatement = ASSEMBLY_KEYWORD
-                    StringLiteral?
-                    AssemblyFlagsDeclaration?
-                    YulBlock;
+AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
+                    (* label: *) StringLiteral?
+                    (* flags: *) AssemblyFlagsDeclaration?
+                    (* body: *) YulBlock;
 
-AssemblyFlagsDeclaration = OPEN_PAREN
-                           AssemblyFlags
-                           CLOSE_PAREN;
+AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
+                           (* flags: *) AssemblyFlags
+                           (* close_paren: *) CLOSE_PAREN;
 
 AssemblyFlags = StringLiteral (COMMA StringLiteral)*;
 
 (* 4.2. Declaration Statements: *)
 
-TupleDeconstructionStatement = VAR_KEYWORD? (* Deprecated in 0.5.0 *)
-                               OPEN_PAREN
-                               TupleDeconstructionElements
-                               CLOSE_PAREN
-                               EQUAL
-                               Expression
-                               SEMICOLON;
+TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
+                               (* open_paren: *) OPEN_PAREN
+                               (* elements: *) TupleDeconstructionElements
+                               (* close_paren: *) CLOSE_PAREN
+                               (* equal: *) EQUAL
+                               (* expression: *) Expression
+                               (* semicolon: *) SEMICOLON;
 
 TupleDeconstructionElements = TupleDeconstructionElement (COMMA TupleDeconstructionElement)*;
 
-TupleDeconstructionElement = TupleMember?;
+TupleDeconstructionElement = (* member: *) TupleMember?;
 
-TupleMember = TypedTupleMember
-            | UntypedTupleMember;
+TupleMember = (* variant: *) TypedTupleMember
+            | (* variant: *) UntypedTupleMember;
 
-TypedTupleMember = TypeName
-                   StorageLocation?
-                   IDENTIFIER;
+TypedTupleMember = (* type_name: *) TypeName
+                   (* storage_location: *) StorageLocation?
+                   (* name: *) IDENTIFIER;
 
-UntypedTupleMember = StorageLocation?
-                     IDENTIFIER;
+UntypedTupleMember = (* storage_location: *) StorageLocation?
+                     (* name: *) IDENTIFIER;
 
-VariableDeclarationStatement = VariableDeclarationType
-                               StorageLocation?
-                               IDENTIFIER
-                               VariableDeclarationValue?
-                               SEMICOLON;
+VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
+                               (* storage_location: *) StorageLocation?
+                               (* name: *) IDENTIFIER
+                               (* value: *) VariableDeclarationValue?
+                               (* semicolon: *) SEMICOLON;
 
-VariableDeclarationType = TypeName
-                        | VAR_KEYWORD; (* Deprecated in 0.5.0 *)
+VariableDeclarationType = (* variant: *) TypeName
+                        | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
 
-VariableDeclarationValue = EQUAL
-                           Expression;
+VariableDeclarationValue = (* equal: *) EQUAL
+                           (* expression: *) Expression;
 
-StorageLocation = MEMORY_KEYWORD
-                | STORAGE_KEYWORD
-                | CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
+StorageLocation = (* variant: *) MEMORY_KEYWORD
+                | (* variant: *) STORAGE_KEYWORD
+                | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
 
 (* 4.3. Control Statements: *)
 
-IfStatement = IF_KEYWORD
-              OPEN_PAREN
-              Expression
-              CLOSE_PAREN
-              Statement
-              ElseBranch?;
+IfStatement = (* if_keyword: *) IF_KEYWORD
+              (* open_paren: *) OPEN_PAREN
+              (* condition: *) Expression
+              (* close_paren: *) CLOSE_PAREN
+              (* body: *) Statement
+              (* else_branch: *) ElseBranch?;
 
-ElseBranch = ELSE_KEYWORD
-             Statement;
+ElseBranch = (* else_keyword: *) ELSE_KEYWORD
+             (* body: *) Statement;
 
-ForStatement = FOR_KEYWORD
-               OPEN_PAREN
-               ForStatementInitialization
-               ForStatementCondition
-               Expression?
-               CLOSE_PAREN
-               Statement;
+ForStatement = (* for_keyword: *) FOR_KEYWORD
+               (* open_paren: *) OPEN_PAREN
+               (* initialization: *) ForStatementInitialization
+               (* condition: *) ForStatementCondition
+               (* iterator: *) Expression?
+               (* close_paren: *) CLOSE_PAREN
+               (* body: *) Statement;
 
-ForStatementInitialization = ExpressionStatement
-                           | VariableDeclarationStatement
-                           | TupleDeconstructionStatement
-                           | SEMICOLON;
+ForStatementInitialization = (* variant: *) ExpressionStatement
+                           | (* variant: *) VariableDeclarationStatement
+                           | (* variant: *) TupleDeconstructionStatement
+                           | (* variant: *) SEMICOLON;
 
-ForStatementCondition = ExpressionStatement
-                      | SEMICOLON;
+ForStatementCondition = (* variant: *) ExpressionStatement
+                      | (* variant: *) SEMICOLON;
 
-WhileStatement = WHILE_KEYWORD
-                 OPEN_PAREN
-                 Expression
-                 CLOSE_PAREN
-                 Statement;
+WhileStatement = (* while_keyword: *) WHILE_KEYWORD
+                 (* open_paren: *) OPEN_PAREN
+                 (* condition: *) Expression
+                 (* close_paren: *) CLOSE_PAREN
+                 (* body: *) Statement;
 
-DoWhileStatement = DO_KEYWORD
-                   Statement
-                   WHILE_KEYWORD
-                   OPEN_PAREN
-                   Expression
-                   CLOSE_PAREN
-                   SEMICOLON;
+DoWhileStatement = (* do_keyword: *) DO_KEYWORD
+                   (* body: *) Statement
+                   (* while_keyword: *) WHILE_KEYWORD
+                   (* open_paren: *) OPEN_PAREN
+                   (* condition: *) Expression
+                   (* close_paren: *) CLOSE_PAREN
+                   (* semicolon: *) SEMICOLON;
 
-ContinueStatement = CONTINUE_KEYWORD
-                    SEMICOLON;
+ContinueStatement = (* continue_keyword: *) CONTINUE_KEYWORD
+                    (* semicolon: *) SEMICOLON;
 
-BreakStatement = BREAK_KEYWORD
-                 SEMICOLON;
+BreakStatement = (* break_keyword: *) BREAK_KEYWORD
+                 (* semicolon: *) SEMICOLON;
 
-ReturnStatement = RETURN_KEYWORD
-                  Expression?
-                  SEMICOLON;
+ReturnStatement = (* return_keyword: *) RETURN_KEYWORD
+                  (* expression: *) Expression?
+                  (* semicolon: *) SEMICOLON;
 
 (* Introduced in 0.4.21 *)
-EmitStatement = EMIT_KEYWORD
-                IdentifierPath
-                ArgumentsDeclaration
-                SEMICOLON;
+EmitStatement = (* emit_keyword: *) EMIT_KEYWORD
+                (* event: *) IdentifierPath
+                (* arguments: *) ArgumentsDeclaration
+                (* semicolon: *) SEMICOLON;
 
 (* 4.4. Error Handling: *)
 
 (* Introduced in 0.6.0 *)
-TryStatement = TRY_KEYWORD
-               Expression
-               ReturnsDeclaration?
-               Block
-               CatchClauses;
+TryStatement = (* try_keyword: *) TRY_KEYWORD
+               (* expression: *) Expression
+               (* returns: *) ReturnsDeclaration?
+               (* body: *) Block
+               (* catch_clauses: *) CatchClauses;
 
 (* Introduced in 0.6.0 *)
-CatchClauses = CatchClause+;
+CatchClauses = (* item: *) CatchClause+;
 
 (* Introduced in 0.6.0 *)
-CatchClause = CATCH_KEYWORD
-              CatchClauseError?
-              Block;
+CatchClause = (* catch_keyword: *) CATCH_KEYWORD
+              (* error: *) CatchClauseError?
+              (* body: *) Block;
 
 (* Introduced in 0.6.0 *)
-CatchClauseError = IDENTIFIER?
-                   ParametersDeclaration;
+CatchClauseError = (* name: *) IDENTIFIER?
+                   (* parameters: *) ParametersDeclaration;
 
 (* Introduced in 0.8.4 *)
-RevertStatement = REVERT_KEYWORD
-                  IdentifierPath?
-                  ArgumentsDeclaration
-                  SEMICOLON;
+RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
+                  (* error: *) IdentifierPath?
+                  (* arguments: *) ArgumentsDeclaration
+                  (* semicolon: *) SEMICOLON;
 
 (* Deprecated in 0.5.0 *)
-ThrowStatement = THROW_KEYWORD
-                 SEMICOLON;
+ThrowStatement = (* throw_keyword: *) THROW_KEYWORD
+                 (* semicolon: *) SEMICOLON;
 
 (*
  * 5. Expressions:
@@ -1150,72 +1189,306 @@ Expression = AssignmentExpression
            | FALSE_KEYWORD
            | IDENTIFIER;
 
-MemberAccess = IDENTIFIER
-             | ADDRESS_KEYWORD;
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) EQUAL
+                       Expression;
 
-IndexAccessEnd = COLON
-                 Expression?;
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) BAR_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) PLUS_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) MINUS_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) CARET_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) SLASH_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) PERCENT_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) ASTERISK_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) AMPERSAND_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) LESS_THAN_LESS_THAN_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+AssignmentExpression = Expression
+                       (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
+                       Expression;
+
+(* Postfix unary operator *)
+ConditionalExpression = Expression
+                        (* question_mark: *) QUESTION_MARK
+                        (* true_expression: *) Expression
+                        (* colon: *) COLON
+                        (* false_expression: *) Expression;
+
+(* Left-associative binary operator *)
+OrExpression = Expression
+               (* operator: *) BAR_BAR
+               Expression;
+
+(* Left-associative binary operator *)
+AndExpression = Expression
+                (* operator: *) AMPERSAND_AMPERSAND
+                Expression;
+
+(* Left-associative binary operator *)
+EqualityExpression = Expression
+                     (* operator: *) EQUAL_EQUAL
+                     Expression;
+
+(* Left-associative binary operator *)
+EqualityExpression = Expression
+                     (* operator: *) BANG_EQUAL
+                     Expression;
+
+(* Left-associative binary operator *)
+ComparisonExpression = Expression
+                       (* operator: *) LESS_THAN
+                       Expression;
+
+(* Left-associative binary operator *)
+ComparisonExpression = Expression
+                       (* operator: *) GREATER_THAN
+                       Expression;
+
+(* Left-associative binary operator *)
+ComparisonExpression = Expression
+                       (* operator: *) LESS_THAN_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+ComparisonExpression = Expression
+                       (* operator: *) GREATER_THAN_EQUAL
+                       Expression;
+
+(* Left-associative binary operator *)
+BitwiseOrExpression = Expression
+                      (* operator: *) BAR
+                      Expression;
+
+(* Left-associative binary operator *)
+BitwiseXorExpression = Expression
+                       (* operator: *) CARET
+                       Expression;
+
+(* Left-associative binary operator *)
+BitwiseAndExpression = Expression
+                       (* operator: *) AMPERSAND
+                       Expression;
+
+(* Left-associative binary operator *)
+ShiftExpression = Expression
+                  (* operator: *) LESS_THAN_LESS_THAN
+                  Expression;
+
+(* Left-associative binary operator *)
+ShiftExpression = Expression
+                  (* operator: *) GREATER_THAN_GREATER_THAN
+                  Expression;
+
+(* Left-associative binary operator *)
+ShiftExpression = Expression
+                  (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN
+                  Expression;
+
+(* Left-associative binary operator *)
+AdditiveExpression = Expression
+                     (* operator: *) PLUS
+                     Expression;
+
+(* Left-associative binary operator *)
+AdditiveExpression = Expression
+                     (* operator: *) MINUS
+                     Expression;
+
+(* Left-associative binary operator *)
+MultiplicativeExpression = Expression
+                           (* operator: *) ASTERISK
+                           Expression;
+
+(* Left-associative binary operator *)
+MultiplicativeExpression = Expression
+                           (* operator: *) SLASH
+                           Expression;
+
+(* Left-associative binary operator *)
+MultiplicativeExpression = Expression
+                           (* operator: *) PERCENT
+                           Expression;
+
+(* Left-associative binary operator *)
+(* Deprecated in 0.6.0 *)
+ExponentiationExpression = Expression
+                           (* operator: *) ASTERISK_ASTERISK
+                           Expression;
+
+(* Right-associative binary operator *)
+(* Introduced in 0.6.0 *)
+ExponentiationExpression = Expression
+                           (* operator: *) ASTERISK_ASTERISK
+                           Expression;
+
+(* Postfix unary operator *)
+PostfixExpression = Expression
+                    (* operator: *) PLUS_PLUS;
+
+(* Postfix unary operator *)
+PostfixExpression = Expression
+                    (* operator: *) MINUS_MINUS;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) PLUS_PLUS
+                   Expression;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) MINUS_MINUS
+                   Expression;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) TILDE
+                   Expression;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) BANG
+                   Expression;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) MINUS
+                   Expression;
+
+(* Prefix unary operator *)
+(* Deprecated in 0.5.0 *)
+PrefixExpression = (* operator: *) PLUS
+                   Expression;
+
+(* Prefix unary operator *)
+PrefixExpression = (* operator: *) DELETE_KEYWORD
+                   Expression;
+
+(* Postfix unary operator *)
+FunctionCallExpression = Expression
+                         (* arguments: *) ArgumentsDeclaration;
+
+(* Postfix unary operator *)
+(* Introduced in 0.6.2 *)
+CallOptionsExpression = Expression
+                        (* open_brace: *) OPEN_BRACE
+                        (* options: *) CallOptions
+                        (* close_brace: *) CLOSE_BRACE;
+
+(* Postfix unary operator *)
+MemberAccessExpression = Expression
+                         (* period: *) PERIOD
+                         (* member: *) MemberAccess;
+
+(* Postfix unary operator *)
+IndexAccessExpression = Expression
+                        (* open_bracket: *) OPEN_BRACKET
+                        (* start: *) Expression?
+                        (* end: *) IndexAccessEnd?
+                        (* close_bracket: *) CLOSE_BRACKET;
+
+MemberAccess = (* variant: *) IDENTIFIER
+             | (* variant: *) ADDRESS_KEYWORD;
+
+IndexAccessEnd = (* colon: *) COLON
+                 (* end: *) Expression?;
 
 (* 5.2. Function Calls: *)
 
-ArgumentsDeclaration = PositionalArgumentsDeclaration
-                     | NamedArgumentsDeclaration;
+ArgumentsDeclaration = (* variant: *) PositionalArgumentsDeclaration
+                     | (* variant: *) NamedArgumentsDeclaration;
 
-PositionalArgumentsDeclaration = OPEN_PAREN
-                                 PositionalArguments
-                                 CLOSE_PAREN;
+PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
+                                 (* arguments: *) PositionalArguments
+                                 (* close_paren: *) CLOSE_PAREN;
 
 PositionalArguments = (Expression (COMMA Expression)*)?;
 
-NamedArgumentsDeclaration = OPEN_PAREN
-                            NamedArgumentGroup?
-                            CLOSE_PAREN;
+NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
+                            (* arguments: *) NamedArgumentGroup?
+                            (* close_paren: *) CLOSE_PAREN;
 
-NamedArgumentGroup = OPEN_BRACE
-                     NamedArguments
-                     CLOSE_BRACE;
+NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
+                     (* arguments: *) NamedArguments
+                     (* close_brace: *) CLOSE_BRACE;
 
 NamedArguments = (NamedArgument (COMMA NamedArgument)*)?;
 
 (* Introduced in 0.6.2 *)
 CallOptions = NamedArgument (COMMA NamedArgument)*;
 
-NamedArgument = IDENTIFIER
-                COLON
-                Expression;
+NamedArgument = (* name: *) IDENTIFIER
+                (* colon: *) COLON
+                (* value: *) Expression;
 
 (* 5.3. Primary Expressions: *)
 
 (* Introduced in 0.5.3 *)
-TypeExpression = TYPE_KEYWORD
-                 OPEN_PAREN
-                 TypeName
-                 CLOSE_PAREN;
+TypeExpression = (* type_keyword: *) TYPE_KEYWORD
+                 (* open_paren: *) OPEN_PAREN
+                 (* type_name: *) TypeName
+                 (* close_paren: *) CLOSE_PAREN;
 
-NewExpression = NEW_KEYWORD
-                TypeName;
+NewExpression = (* new_keyword: *) NEW_KEYWORD
+                (* type_name: *) TypeName;
 
-TupleExpression = OPEN_PAREN
-                  TupleValues
-                  CLOSE_PAREN;
+TupleExpression = (* open_paren: *) OPEN_PAREN
+                  (* items: *) TupleValues
+                  (* close_paren: *) CLOSE_PAREN;
 
 TupleValues = TupleValue (COMMA TupleValue)*;
 
-TupleValue = Expression?;
+TupleValue = (* expression: *) Expression?;
 
-ArrayExpression = OPEN_BRACKET
-                  ArrayValues
-                  CLOSE_BRACKET;
+ArrayExpression = (* open_bracket: *) OPEN_BRACKET
+                  (* items: *) ArrayValues
+                  (* close_bracket: *) CLOSE_BRACKET;
 
 ArrayValues = Expression (COMMA Expression)*;
 
 (* 5.4. Numbers: *)
 
-HexNumberExpression = HEX_LITERAL
-                      NumberUnit?; (* Deprecated in 0.5.0 *)
+HexNumberExpression = (* literal: *) HEX_LITERAL
+                      (* unit: *) NumberUnit?; (* Deprecated in 0.5.0 *)
 
-DecimalNumberExpression = DECIMAL_LITERAL
-                          NumberUnit?;
+DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
+                          (* unit: *) NumberUnit?;
 
 HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
 
@@ -1239,31 +1512,31 @@ DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONEN
 
 «DECIMAL_EXPONENT» = ("e" | "E") "-"? «DECIMAL_DIGITS»;
 
-NumberUnit = WEI_KEYWORD
-           | GWEI_KEYWORD (* Introduced in 0.6.11 *)
-           | SZABO_KEYWORD (* Deprecated in 0.7.0 *)
-           | FINNEY_KEYWORD (* Deprecated in 0.7.0 *)
-           | ETHER_KEYWORD
-           | SECONDS_KEYWORD
-           | MINUTES_KEYWORD
-           | HOURS_KEYWORD
-           | DAYS_KEYWORD
-           | WEEKS_KEYWORD
-           | YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
+NumberUnit = (* variant: *) WEI_KEYWORD
+           | (* variant: *) GWEI_KEYWORD (* Introduced in 0.6.11 *)
+           | (* variant: *) SZABO_KEYWORD (* Deprecated in 0.7.0 *)
+           | (* variant: *) FINNEY_KEYWORD (* Deprecated in 0.7.0 *)
+           | (* variant: *) ETHER_KEYWORD
+           | (* variant: *) SECONDS_KEYWORD
+           | (* variant: *) MINUTES_KEYWORD
+           | (* variant: *) HOURS_KEYWORD
+           | (* variant: *) DAYS_KEYWORD
+           | (* variant: *) WEEKS_KEYWORD
+           | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
 
 (* 5.5. Strings: *)
 
-StringExpression = StringLiteral (* Deprecated in 0.5.14 *)
-                 | StringLiterals (* Introduced in 0.5.14 *)
-                 | HexStringLiteral (* Deprecated in 0.5.14 *)
-                 | HexStringLiterals (* Introduced in 0.5.14 *)
-                 | UnicodeStringLiterals; (* Introduced in 0.7.0 *)
+StringExpression = (* variant: *) StringLiteral (* Deprecated in 0.5.14 *)
+                 | (* variant: *) StringLiterals (* Introduced in 0.5.14 *)
+                 | (* variant: *) HexStringLiteral (* Deprecated in 0.5.14 *)
+                 | (* variant: *) HexStringLiterals (* Introduced in 0.5.14 *)
+                 | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
 
 (* Introduced in 0.5.14 *)
-StringLiterals = StringLiteral+;
+StringLiterals = (* item: *) StringLiteral+;
 
-StringLiteral = SINGLE_QUOTED_STRING_LITERAL
-              | DOUBLE_QUOTED_STRING_LITERAL;
+StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
+              | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
 
 (* Deprecated in 0.4.25 *)
 SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" "\\" "\r" "\n"))* "'";
@@ -1282,10 +1555,10 @@ DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))
 DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
 
 (* Introduced in 0.5.14 *)
-HexStringLiterals = HexStringLiteral+;
+HexStringLiterals = (* item: *) HexStringLiteral+;
 
-HexStringLiteral = SINGLE_QUOTED_HEX_STRING_LITERAL
-                 | DOUBLE_QUOTED_HEX_STRING_LITERAL;
+HexStringLiteral = (* variant: *) SINGLE_QUOTED_HEX_STRING_LITERAL
+                 | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
 
 SINGLE_QUOTED_HEX_STRING_LITERAL = "hex'" «HEX_STRING_CONTENTS»? "'";
 
@@ -1296,11 +1569,11 @@ DOUBLE_QUOTED_HEX_STRING_LITERAL = 'hex"' «HEX_STRING_CONTENTS»? '"';
 «HEX_CHARACTER» = ("0"…"9") | ("a"…"f") | ("A"…"F");
 
 (* Introduced in 0.7.0 *)
-UnicodeStringLiterals = UnicodeStringLiteral+;
+UnicodeStringLiterals = (* item: *) UnicodeStringLiteral+;
 
 (* Introduced in 0.7.0 *)
-UnicodeStringLiteral = SINGLE_QUOTED_UNICODE_STRING_LITERAL
-                     | DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
+UnicodeStringLiteral = (* variant: *) SINGLE_QUOTED_UNICODE_STRING_LITERAL
+                     | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
 
 (* Introduced in 0.7.0 *)
 SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
@@ -1335,96 +1608,96 @@ IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
 (* 6.1. Yul Statements: *)
 
-YulBlock = OPEN_BRACE
-           YulStatements
-           CLOSE_BRACE;
+YulBlock = (* open_brace: *) OPEN_BRACE
+           (* statements: *) YulStatements
+           (* close_brace: *) CLOSE_BRACE;
 
-YulStatements = YulStatement*;
+YulStatements = (* item: *) YulStatement*;
 
-YulStatement = YulBlock
-             | YulFunctionDefinition
-             | YulVariableDeclarationStatement
-             | YulAssignmentStatement
-             | YulIfStatement
-             | YulForStatement
-             | YulSwitchStatement
-             | YulLeaveStatement (* Introduced in 0.6.0 *)
-             | YulBreakStatement
-             | YulContinueStatement
-             | YulLabel (* Deprecated in 0.5.0 *)
-             | YulExpression;
+YulStatement = (* variant: *) YulBlock
+             | (* variant: *) YulFunctionDefinition
+             | (* variant: *) YulVariableDeclarationStatement
+             | (* variant: *) YulAssignmentStatement
+             | (* variant: *) YulIfStatement
+             | (* variant: *) YulForStatement
+             | (* variant: *) YulSwitchStatement
+             | (* variant: *) YulLeaveStatement (* Introduced in 0.6.0 *)
+             | (* variant: *) YulBreakStatement
+             | (* variant: *) YulContinueStatement
+             | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
+             | (* variant: *) YulExpression;
 
-YulFunctionDefinition = YUL_FUNCTION_KEYWORD
-                        YUL_IDENTIFIER
-                        YulParametersDeclaration
-                        YulReturnsDeclaration?
-                        YulBlock;
+YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
+                        (* name: *) YUL_IDENTIFIER
+                        (* parameters: *) YulParametersDeclaration
+                        (* returns: *) YulReturnsDeclaration?
+                        (* body: *) YulBlock;
 
-YulParametersDeclaration = OPEN_PAREN
-                           YulParameters
-                           CLOSE_PAREN;
+YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
+                           (* parameters: *) YulParameters
+                           (* close_paren: *) CLOSE_PAREN;
 
 YulParameters = (YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*)?;
 
-YulReturnsDeclaration = MINUS_GREATER_THAN
-                        YulReturnVariables;
+YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
+                        (* variables: *) YulReturnVariables;
 
 YulReturnVariables = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
 
-YulVariableDeclarationStatement = YUL_LET_KEYWORD
-                                  YUL_IDENTIFIER
-                                  YulVariableDeclarationValue?;
+YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
+                                  (* names: *) YUL_IDENTIFIER
+                                  (* value: *) YulVariableDeclarationValue?;
 
-YulVariableDeclarationValue = YulAssignmentOperator
-                              YulExpression;
+YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
+                              (* expression: *) YulExpression;
 
-YulAssignmentStatement = YulPaths
-                         YulAssignmentOperator
-                         YulExpression;
+YulAssignmentStatement = (* names: *) YulPaths
+                         (* assignment: *) YulAssignmentOperator
+                         (* expression: *) YulExpression;
 
-YulAssignmentOperator = YulColonAndEqual (* Deprecated in 0.5.5 *)
-                      | COLON_EQUAL;
+YulAssignmentOperator = (* variant: *) YulColonAndEqual (* Deprecated in 0.5.5 *)
+                      | (* variant: *) COLON_EQUAL;
 
 (* Deprecated in 0.5.5 *)
-YulColonAndEqual = COLON
-                   EQUAL;
+YulColonAndEqual = (* colon: *) COLON
+                   (* equal: *) EQUAL;
 
-YulIfStatement = YUL_IF_KEYWORD
-                 YulExpression
-                 YulBlock;
+YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
+                 (* condition: *) YulExpression
+                 (* body: *) YulBlock;
 
-YulForStatement = YUL_FOR_KEYWORD
-                  YulBlock
-                  YulExpression
-                  YulBlock
-                  YulBlock;
+YulForStatement = (* for_keyword: *) YUL_FOR_KEYWORD
+                  (* initialization: *) YulBlock
+                  (* condition: *) YulExpression
+                  (* iterator: *) YulBlock
+                  (* body: *) YulBlock;
 
-YulSwitchStatement = YUL_SWITCH_KEYWORD
-                     YulExpression
-                     YulSwitchCases;
+YulSwitchStatement = (* switch_keyword: *) YUL_SWITCH_KEYWORD
+                     (* expression: *) YulExpression
+                     (* cases: *) YulSwitchCases;
 
-YulSwitchCases = YulSwitchCase+;
+YulSwitchCases = (* item: *) YulSwitchCase+;
 
-YulSwitchCase = YulDefaultCase
-              | YulValueCase;
+YulSwitchCase = (* variant: *) YulDefaultCase
+              | (* variant: *) YulValueCase;
 
-YulDefaultCase = YUL_DEFAULT_KEYWORD
-                 YulBlock;
+YulDefaultCase = (* default_keyword: *) YUL_DEFAULT_KEYWORD
+                 (* body: *) YulBlock;
 
-YulValueCase = YUL_CASE_KEYWORD
-               YulLiteral
-               YulBlock;
+YulValueCase = (* case_keyword: *) YUL_CASE_KEYWORD
+               (* value: *) YulLiteral
+               (* body: *) YulBlock;
 
 (* Introduced in 0.6.0 *)
-YulLeaveStatement = YUL_LEAVE_KEYWORD;
+YulLeaveStatement = (* leave_keyword: *) YUL_LEAVE_KEYWORD;
 
-YulBreakStatement = YUL_BREAK_KEYWORD;
+YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
 
-YulContinueStatement = YUL_CONTINUE_KEYWORD;
+YulContinueStatement = (* continue_keyword: *) YUL_CONTINUE_KEYWORD;
 
 (* Deprecated in 0.5.0 *)
-YulLabel = YUL_IDENTIFIER
-           COLON;
+YulLabel = (* label: *) YUL_IDENTIFIER
+           (* colon: *) COLON;
 
 (* 6.2. Yul Expressions: *)
 
@@ -1433,108 +1706,114 @@ YulExpression = YulFunctionCallExpression
               | YulBuiltInFunction
               | YulPath;
 
+(* Postfix unary operator *)
+YulFunctionCallExpression = YulExpression
+                            (* open_paren: *) OPEN_PAREN
+                            (* arguments: *) YulArguments
+                            (* close_paren: *) CLOSE_PAREN;
+
 YulArguments = (YulExpression (COMMA YulExpression)*)?;
 
 YulPaths = YulPath (COMMA YulPath)*;
 
 YulPath = YulPathComponent (PERIOD YulPathComponent)*;
 
-YulPathComponent = YUL_IDENTIFIER
-                 | YUL_ADDRESS_KEYWORD; (* Introduced in 0.8.10 *)
+YulPathComponent = (* variant: *) YUL_IDENTIFIER
+                 | (* variant: *) YUL_ADDRESS_KEYWORD; (* Introduced in 0.8.10 *)
 
 (* Introduced in 0.5.8 and deprecated in 0.7.0. *)
 YUL_IDENTIFIER = «IDENTIFIER_START» («IDENTIFIER_PART» | ".")*;
 
 YUL_IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
-YulBuiltInFunction = YUL_ADD_KEYWORD
-                   | YUL_ADD_MOD_KEYWORD
-                   | YUL_ADDRESS_KEYWORD
-                   | YUL_AND_KEYWORD
-                   | YUL_BALANCE_KEYWORD
-                   | YUL_BLOCK_HASH_KEYWORD
-                   | YUL_BYTE_KEYWORD
-                   | YUL_CALL_CODE_KEYWORD
-                   | YUL_CALL_DATA_COPY_KEYWORD
-                   | YUL_CALL_DATA_LOAD_KEYWORD
-                   | YUL_CALL_DATA_SIZE_KEYWORD
-                   | YUL_CALLER_KEYWORD
-                   | YUL_CALL_KEYWORD
-                   | YUL_CALL_VALUE_KEYWORD
-                   | YUL_COIN_BASE_KEYWORD
-                   | YUL_CREATE_KEYWORD
-                   | YUL_DELEGATE_CALL_KEYWORD
-                   | YUL_DIV_KEYWORD
-                   | YUL_EQ_KEYWORD
-                   | YUL_EXP_KEYWORD
-                   | YUL_EXT_CODE_COPY_KEYWORD
-                   | YUL_EXT_CODE_SIZE_KEYWORD
-                   | YUL_GAS_KEYWORD
-                   | YUL_GAS_LIMIT_KEYWORD
-                   | YUL_GAS_PRICE_KEYWORD
-                   | YUL_GT_KEYWORD
-                   | YUL_INVALID_KEYWORD
-                   | YUL_IS_ZERO_KEYWORD
-                   | YUL_LOG_0_KEYWORD
-                   | YUL_LOG_1_KEYWORD
-                   | YUL_LOG_2_KEYWORD
-                   | YUL_LOG_3_KEYWORD
-                   | YUL_LOG_4_KEYWORD
-                   | YUL_LT_KEYWORD
-                   | YUL_M_LOAD_KEYWORD
-                   | YUL_MOD_KEYWORD
-                   | YUL_M_SIZE_KEYWORD
-                   | YUL_M_STORE_8_KEYWORD
-                   | YUL_M_STORE_KEYWORD
-                   | YUL_MUL_KEYWORD
-                   | YUL_MUL_MOD_KEYWORD
-                   | YUL_NOT_KEYWORD
-                   | YUL_NUMBER_KEYWORD
-                   | YUL_ORIGIN_KEYWORD
-                   | YUL_OR_KEYWORD
-                   | YUL_POP_KEYWORD
-                   | YUL_RETURN_KEYWORD
-                   | YUL_REVERT_KEYWORD
-                   | YUL_S_DIV_KEYWORD
-                   | YUL_SELF_DESTRUCT_KEYWORD
-                   | YUL_SGT_KEYWORD
-                   | YUL_SIGN_EXTEND_KEYWORD
-                   | YUL_S_LOAD_KEYWORD
-                   | YUL_SLT_KEYWORD
-                   | YUL_S_MOD_KEYWORD
-                   | YUL_S_STORE_KEYWORD
-                   | YUL_STOP_KEYWORD
-                   | YUL_SUB_KEYWORD
-                   | YUL_TIMESTAMP_KEYWORD
-                   | YUL_XOR_KEYWORD
-                   | YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
-                   | YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
-                   | YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
-                   | YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
-                   | YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
-                   | YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
-                   | YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
-                   | YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
-                   | YUL_SAR_KEYWORD
-                   | YUL_SHL_KEYWORD
-                   | YUL_SHR_KEYWORD
-                   | YUL_CHAIN_ID_KEYWORD
-                   | YUL_SELF_BALANCE_KEYWORD
-                   | YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
-                   | YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
-                   | YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
-                   | YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
-                   | YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
-                   | YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
-                   | YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
-                   | YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
+YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
+                   | (* variant: *) YUL_ADD_MOD_KEYWORD
+                   | (* variant: *) YUL_ADDRESS_KEYWORD
+                   | (* variant: *) YUL_AND_KEYWORD
+                   | (* variant: *) YUL_BALANCE_KEYWORD
+                   | (* variant: *) YUL_BLOCK_HASH_KEYWORD
+                   | (* variant: *) YUL_BYTE_KEYWORD
+                   | (* variant: *) YUL_CALL_CODE_KEYWORD
+                   | (* variant: *) YUL_CALL_DATA_COPY_KEYWORD
+                   | (* variant: *) YUL_CALL_DATA_LOAD_KEYWORD
+                   | (* variant: *) YUL_CALL_DATA_SIZE_KEYWORD
+                   | (* variant: *) YUL_CALLER_KEYWORD
+                   | (* variant: *) YUL_CALL_KEYWORD
+                   | (* variant: *) YUL_CALL_VALUE_KEYWORD
+                   | (* variant: *) YUL_COIN_BASE_KEYWORD
+                   | (* variant: *) YUL_CREATE_KEYWORD
+                   | (* variant: *) YUL_DELEGATE_CALL_KEYWORD
+                   | (* variant: *) YUL_DIV_KEYWORD
+                   | (* variant: *) YUL_EQ_KEYWORD
+                   | (* variant: *) YUL_EXP_KEYWORD
+                   | (* variant: *) YUL_EXT_CODE_COPY_KEYWORD
+                   | (* variant: *) YUL_EXT_CODE_SIZE_KEYWORD
+                   | (* variant: *) YUL_GAS_KEYWORD
+                   | (* variant: *) YUL_GAS_LIMIT_KEYWORD
+                   | (* variant: *) YUL_GAS_PRICE_KEYWORD
+                   | (* variant: *) YUL_GT_KEYWORD
+                   | (* variant: *) YUL_INVALID_KEYWORD
+                   | (* variant: *) YUL_IS_ZERO_KEYWORD
+                   | (* variant: *) YUL_LOG_0_KEYWORD
+                   | (* variant: *) YUL_LOG_1_KEYWORD
+                   | (* variant: *) YUL_LOG_2_KEYWORD
+                   | (* variant: *) YUL_LOG_3_KEYWORD
+                   | (* variant: *) YUL_LOG_4_KEYWORD
+                   | (* variant: *) YUL_LT_KEYWORD
+                   | (* variant: *) YUL_M_LOAD_KEYWORD
+                   | (* variant: *) YUL_MOD_KEYWORD
+                   | (* variant: *) YUL_M_SIZE_KEYWORD
+                   | (* variant: *) YUL_M_STORE_8_KEYWORD
+                   | (* variant: *) YUL_M_STORE_KEYWORD
+                   | (* variant: *) YUL_MUL_KEYWORD
+                   | (* variant: *) YUL_MUL_MOD_KEYWORD
+                   | (* variant: *) YUL_NOT_KEYWORD
+                   | (* variant: *) YUL_NUMBER_KEYWORD
+                   | (* variant: *) YUL_ORIGIN_KEYWORD
+                   | (* variant: *) YUL_OR_KEYWORD
+                   | (* variant: *) YUL_POP_KEYWORD
+                   | (* variant: *) YUL_RETURN_KEYWORD
+                   | (* variant: *) YUL_REVERT_KEYWORD
+                   | (* variant: *) YUL_S_DIV_KEYWORD
+                   | (* variant: *) YUL_SELF_DESTRUCT_KEYWORD
+                   | (* variant: *) YUL_SGT_KEYWORD
+                   | (* variant: *) YUL_SIGN_EXTEND_KEYWORD
+                   | (* variant: *) YUL_S_LOAD_KEYWORD
+                   | (* variant: *) YUL_SLT_KEYWORD
+                   | (* variant: *) YUL_S_MOD_KEYWORD
+                   | (* variant: *) YUL_S_STORE_KEYWORD
+                   | (* variant: *) YUL_STOP_KEYWORD
+                   | (* variant: *) YUL_SUB_KEYWORD
+                   | (* variant: *) YUL_TIMESTAMP_KEYWORD
+                   | (* variant: *) YUL_XOR_KEYWORD
+                   | (* variant: *) YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
+                   | (* variant: *) YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
+                   | (* variant: *) YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
+                   | (* variant: *) YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
+                   | (* variant: *) YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
+                   | (* variant: *) YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
+                   | (* variant: *) YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
+                   | (* variant: *) YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
+                   | (* variant: *) YUL_SAR_KEYWORD
+                   | (* variant: *) YUL_SHL_KEYWORD
+                   | (* variant: *) YUL_SHR_KEYWORD
+                   | (* variant: *) YUL_CHAIN_ID_KEYWORD
+                   | (* variant: *) YUL_SELF_BALANCE_KEYWORD
+                   | (* variant: *) YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
+                   | (* variant: *) YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
+                   | (* variant: *) YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
+                   | (* variant: *) YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
+                   | (* variant: *) YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
+                   | (* variant: *) YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
+                   | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
+                   | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
 
-YulLiteral = YUL_TRUE_KEYWORD
-           | YUL_FALSE_KEYWORD
-           | YUL_DECIMAL_LITERAL
-           | YUL_HEX_LITERAL
-           | HexStringLiteral
-           | StringLiteral;
+YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
+           | (* variant: *) YUL_FALSE_KEYWORD
+           | (* variant: *) YUL_DECIMAL_LITERAL
+           | (* variant: *) YUL_HEX_LITERAL
+           | (* variant: *) HexStringLiteral
+           | (* variant: *) StringLiteral;
 
 YUL_DECIMAL_LITERAL = "0" | (("1"…"9") ("0"…"9")*);
 

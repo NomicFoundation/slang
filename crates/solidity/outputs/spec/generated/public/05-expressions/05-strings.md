@@ -8,19 +8,19 @@
 
 ```
 
-<pre ebnf-snippet="StringExpression" style="display: none;"><a href="#StringExpression"><span class="k">StringExpression</span></a><span class="o"> = </span><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#StringLiterals"><span class="k">StringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.7.0 *)</span></pre>
+<pre ebnf-snippet="StringExpression" style="display: none;"><a href="#StringExpression"><span class="k">StringExpression</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#StringLiterals"><span class="k">StringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.14 *)</span><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.5.14 *)</span><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.7.0 *)</span></pre>
 
 ```{ .ebnf #StringLiterals }
 
 ```
 
-<pre ebnf-snippet="StringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#StringLiterals"><span class="k">StringLiterals</span></a><span class="o"> = </span><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="StringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#StringLiterals"><span class="k">StringLiterals</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #StringLiteral }
 
 ```
 
-<pre ebnf-snippet="StringLiteral" style="display: none;"><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> = </span><a href="#SingleQuotedStringLiteral"><span class="k">SINGLE_QUOTED_STRING_LITERAL</span></a><br /><span class="o">              | </span><a href="#DoubleQuotedStringLiteral"><span class="k">DOUBLE_QUOTED_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="StringLiteral" style="display: none;"><a href="#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#SingleQuotedStringLiteral"><span class="k">SINGLE_QUOTED_STRING_LITERAL</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#DoubleQuotedStringLiteral"><span class="k">DOUBLE_QUOTED_STRING_LITERAL</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #SingleQuotedStringLiteral }
 
@@ -38,13 +38,13 @@
 
 ```
 
-<pre ebnf-snippet="HexStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> = </span><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="HexStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.5.14 *)</span><br /><a href="#HexStringLiterals"><span class="k">HexStringLiterals</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #HexStringLiteral }
 
 ```
 
-<pre ebnf-snippet="HexStringLiteral" style="display: none;"><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o"> = </span><a href="#SingleQuotedHexStringLiteral"><span class="k">SINGLE_QUOTED_HEX_STRING_LITERAL</span></a><br /><span class="o">                 | </span><a href="#DoubleQuotedHexStringLiteral"><span class="k">DOUBLE_QUOTED_HEX_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="HexStringLiteral" style="display: none;"><a href="#HexStringLiteral"><span class="k">HexStringLiteral</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#SingleQuotedHexStringLiteral"><span class="k">SINGLE_QUOTED_HEX_STRING_LITERAL</span></a><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#DoubleQuotedHexStringLiteral"><span class="k">DOUBLE_QUOTED_HEX_STRING_LITERAL</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #SingleQuotedHexStringLiteral }
 
@@ -74,13 +74,13 @@
 
 ```
 
-<pre ebnf-snippet="UnicodeStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.7.0 *)</span><br /><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o"> = </span><a href="#UnicodeStringLiteral"><span class="k">UnicodeStringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="UnicodeStringLiterals" style="display: none;"><span class="cm">(* Introduced in 0.7.0 *)</span><br /><a href="#UnicodeStringLiterals"><span class="k">UnicodeStringLiterals</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#UnicodeStringLiteral"><span class="k">UnicodeStringLiteral</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #UnicodeStringLiteral }
 
 ```
 
-<pre ebnf-snippet="UnicodeStringLiteral" style="display: none;"><span class="cm">(* Introduced in 0.7.0 *)</span><br /><a href="#UnicodeStringLiteral"><span class="k">UnicodeStringLiteral</span></a><span class="o"> = </span><a href="#SingleQuotedUnicodeStringLiteral"><span class="k">SINGLE_QUOTED_UNICODE_STRING_LITERAL</span></a><br /><span class="o">                     | </span><a href="#DoubleQuotedUnicodeStringLiteral"><span class="k">DOUBLE_QUOTED_UNICODE_STRING_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="UnicodeStringLiteral" style="display: none;"><span class="cm">(* Introduced in 0.7.0 *)</span><br /><a href="#UnicodeStringLiteral"><span class="k">UnicodeStringLiteral</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#SingleQuotedUnicodeStringLiteral"><span class="k">SINGLE_QUOTED_UNICODE_STRING_LITERAL</span></a><br /><span class="o">                     | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#DoubleQuotedUnicodeStringLiteral"><span class="k">DOUBLE_QUOTED_UNICODE_STRING_LITERAL</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #SingleQuotedUnicodeStringLiteral }
 

@@ -128,6 +128,7 @@ impl Builder {
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
+                Self::build_label_comment("variant"),
                 Self::build_ref(reference),
                 Self::build_enabled_comment(enabled),
             )
@@ -160,7 +161,7 @@ impl Builder {
         self.add_definition(
             name,
             Self::build_enabled_comment(enabled),
-            Some(Value::new(expression, None)),
+            Some(Value::new(Self::build_label_comment("item"), expression, None)),
             DefinitionKind::Sequence,
         );
     }
@@ -194,7 +195,7 @@ impl Builder {
         self.add_definition(
             name,
             Self::build_enabled_comment(enabled),
-            Some(Value::new(expression, None)),
+            Some(Value::new(None, expression, None)),
             DefinitionKind::Sequence,
         );
     }
@@ -214,7 +215,7 @@ impl Builder {
         for precedence_expression in precedence_expressions {
             let PrecedenceExpression { name, operators } = precedence_expression.as_ref();
 
-            values.push(Value::new(Self::build_ref(name), None));
+            values.push(Value::new(None, Self::build_ref(name), None));
 
             self.add_entry(name, Terminal::No, Inlined::No);
 
@@ -227,6 +228,7 @@ impl Builder {
             let PrimaryExpression { reference, enabled } = primary_expression;
 
             values.push(Value::new(
+                None,
                 Self::build_ref(reference),
                 Self::build_enabled_comment(enabled),
             ));
@@ -260,24 +262,24 @@ impl Builder {
             OperatorModel::Prefix => {
                 leading_comments.push("Prefix unary operator".to_string());
 
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.push(Value::new(None, Self::build_ref(base_name), None));
             }
             OperatorModel::Postfix => {
                 leading_comments.push("Postfix unary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
+                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
             }
             OperatorModel::BinaryLeftAssociative => {
                 leading_comments.push("Left-associative binary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
+                values.push(Value::new(None, Self::build_ref(base_name), None));
             }
             OperatorModel::BinaryRightAssociative => {
                 leading_comments.push("Right-associative binary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
+                values.push(Value::new(None, Self::build_ref(base_name), None));
             }
         };
 
@@ -288,10 +290,15 @@ impl Builder {
 
     fn build_fields(fields: &IndexMap<Identifier, Field>) -> Vec<Value> {
         fields
-            .values()
-            .map(|field| match field {
-                Field::Required { reference } => Value::new(Self::build_ref(reference), None),
+            .iter()
+            .map(|(identifier, field)| match field {
+                Field::Required { reference } => Value::new(
+                    Self::build_label_comment(identifier),
+                    Self::build_ref(reference),
+                    None,
+                ),
                 Field::Optional { reference, enabled } => Value::new(
+                    Self::build_label_comment(identifier),
                     Expression::new_optional(Self::build_ref(reference).into()),
                     Self::build_enabled_comment(enabled),
                 ),
@@ -307,7 +314,7 @@ impl Builder {
         self.add_definition(
             name,
             None,
-            Some(Value::new(Self::build_scanner(scanner), None)),
+            Some(Value::new(None, Self::build_scanner(scanner), None)),
             DefinitionKind::Sequence,
         );
     }
@@ -335,7 +342,7 @@ impl Builder {
             self.add_definition(
                 name,
                 leading_comments,
-                Some(Value::new(Self::build_keyword_value(value), None)),
+                Some(Value::new(None, Self::build_keyword_value(value), None)),
                 DefinitionKind::Sequence,
             );
         }
@@ -350,7 +357,7 @@ impl Builder {
             self.add_definition(
                 name,
                 Self::build_enabled_comment(enabled),
-                Some(Value::new(Self::build_scanner(scanner), None)),
+                Some(Value::new(None, Self::build_scanner(scanner), None)),
                 DefinitionKind::Sequence,
             );
         }
@@ -368,7 +375,7 @@ impl Builder {
         self.add_definition(
             name,
             Self::build_enabled_comment(enabled),
-            Some(Value::new(Self::build_scanner(scanner), None)),
+            Some(Value::new(None, Self::build_scanner(scanner), None)),
             DefinitionKind::Sequence,
         );
     }
@@ -410,6 +417,10 @@ impl Builder {
                 Some(format!("Introduced in {from} and deprecated in {till}."))
             }
         }
+    }
+
+    fn build_label_comment(label: &str) -> Option<String> {
+        Some(format!("{label}:"))
     }
 
     fn build_scanner(scanner: &Scanner) -> Expression {

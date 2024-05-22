@@ -71,6 +71,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
 
         for (index, value) in values.iter().enumerate() {
             let Value {
+                leading_comment,
                 expression,
                 trailing_comment,
             } = value;
@@ -85,6 +86,11 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                     "{padding} {separator} ",
                     padding = " ".repeat(name.len()),
                 ))?;
+            }
+
+            if let Some(comment) = leading_comment {
+                self.serialize_comment(comment)?;
+                self.serialize_punctuation(" ")?;
             }
 
             self.serialize_expr(expression)?;
