@@ -127,7 +127,7 @@ impl Payload for ScannerDefinitionRef {
         let kind = format_ident!("{}", self.name());
 
         self.node().applicable_version_quality_ranges().wrap_code(
-            quote! { Some(TokenKind::#kind) },
+            quote! { Some(TerminalKind::#kind) },
             Some(Self::default_case()),
         )
     }
@@ -150,41 +150,41 @@ impl Payload for KeywordScannerAtomic {
 
         // Simplify the emitted code if we trivially know that reserved or enabled is true
         match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
-            ("true", _) => quote!(KeywordScan::Reserved(TokenKind::#kind)),
-            ("false", "true") => quote!(KeywordScan::Present(TokenKind::#kind)),
+            ("true", _) => quote!(KeywordScan::Reserved(TerminalKind::#kind)),
+            ("false", "true") => quote!(KeywordScan::Present(TerminalKind::#kind)),
             ("false", _) => quote! {
                 if #enabled_cond {
-                    KeywordScan::Present(TokenKind::#kind)
+                    KeywordScan::Present(TerminalKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
             (_, "false") => quote! {
                 if #reserved_cond {
-                    KeywordScan::Reserved(TokenKind::#kind)
+                    KeywordScan::Reserved(TerminalKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
             (_, "true") => quote! {
                 if #reserved_cond {
-                    KeywordScan::Reserved(TokenKind::#kind)
+                    KeywordScan::Reserved(TerminalKind::#kind)
                 } else {
-                    KeywordScan::Present(TokenKind::#kind)
+                    KeywordScan::Present(TerminalKind::#kind)
                 }
             },
             (reserved, enabled) if reserved == enabled => quote! {
                 if #reserved_cond {
-                    KeywordScan::Reserved(TokenKind::#kind)
+                    KeywordScan::Reserved(TerminalKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }
             },
             _ => quote! {
                 if #reserved_cond {
-                    KeywordScan::Reserved(TokenKind::#kind)
+                    KeywordScan::Reserved(TerminalKind::#kind)
                 } else if #enabled_cond {
-                    KeywordScan::Present(TokenKind::#kind)
+                    KeywordScan::Present(TerminalKind::#kind)
                 } else {
                     KeywordScan::Absent
                 }

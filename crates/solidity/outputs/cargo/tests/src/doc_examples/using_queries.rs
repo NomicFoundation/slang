@@ -3,7 +3,7 @@ use std::path::Path;
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
 use slang_solidity::query::{Query, QueryResultIterator};
@@ -15,7 +15,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
     let language = Language::new(Version::new(0, 8, 0))?;
 
-    Ok(language.parse(RuleKind::SourceUnit, source.trim()))
+    Ok(language.parse(NonTerminalKind::SourceUnit, source.trim()))
 }
 
 #[test]

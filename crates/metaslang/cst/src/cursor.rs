@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use crate::cst::{LabeledNode, Node, NonTerminalNode};
+use crate::cst::{Edge, Node, NonTerminalNode};
 use crate::text_index::{TextIndex, TextRange};
 use crate::KindTypes;
 
@@ -10,7 +10,7 @@ use crate::KindTypes;
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct PathAncestor<T: KindTypes> {
     parent: Option<Rc<PathAncestor<T>>>,
-    rule_node: Rc<NonTerminalNode<T>>,
+    nonterminal_node: Rc<NonTerminalNode<T>>,
     child_number: usize,
     text_offset: TextIndex,
 }
@@ -36,10 +36,10 @@ pub struct Cursor<T: KindTypes> {
 
 impl<T: KindTypes> Cursor<T> {
     fn as_ancestor_node(&self) -> Option<Rc<PathAncestor<T>>> {
-        if let Node::<T>::Rule(rule_node) = &self.node {
+        if let Node::<T>::NonTerminal(nonterminal_node) = &self.node {
             Some(Rc::new(PathAncestor {
                 parent: self.parent.clone(),
-                rule_node: rule_node.clone(),
+                nonterminal_node: nonterminal_node.clone(),
                 child_number: self.child_number,
                 text_offset: self.text_offset,
             }))
@@ -50,7 +50,7 @@ impl<T: KindTypes> Cursor<T> {
 
     fn set_from_ancestor_node(&mut self, ancestor: &Rc<PathAncestor<T>>) {
         self.parent = ancestor.parent.clone();
-        self.node = Node::<T>::Rule(ancestor.rule_node.clone());
+        self.node = Node::<T>::NonTerminal(ancestor.nonterminal_node.clone());
         self.child_number = ancestor.child_number;
         self.text_offset = ancestor.text_offset;
     }
@@ -124,9 +124,9 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
-    pub fn label(&self) -> Option<T::EdgeKind> {
+    pub fn label(&self) -> Option<T::EdgeLabel> {
         self.parent.as_ref().and_then(|parent| {
-            let this = &parent.rule_node.children[self.child_number];
+            let this = &parent.nonterminal_node.children[self.child_number];
 
             this.label
         })
@@ -170,7 +170,7 @@ impl<T: KindTypes> Cursor<T> {
             fn next(&mut self) -> Option<Self::Item> {
                 if let Some(a) = self.a.take() {
                     self.a = a.parent.clone();
-                    Some(a.rule_node.clone())
+                    Some(a.nonterminal_node.clone())
                 } else {
                     None
                 }
@@ -253,7 +253,7 @@ impl<T: KindTypes> Cursor<T> {
 
         // If the current cursor is a node and it has children, go to first children
         if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent.rule_node.children.first().cloned() {
+            if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
                 self.parent = Some(new_parent);
                 self.node = new_child.node;
                 self.child_number = 0;
@@ -274,10 +274,10 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent.rule_node.children.last().cloned() {
-                self.child_number = new_parent.rule_node.children.len() - 1;
+            if let Some(new_child) = new_parent.nonterminal_node.children.last().cloned() {
+                self.child_number = new_parent.nonterminal_node.children.len() - 1;
                 // This is cheaper than summing up the length of the children
-                self.text_offset += new_parent.rule_node.text_len - new_child.text_len();
+                self.text_offset += new_parent.nonterminal_node.text_len - new_child.text_len();
                 self.node = new_child.node;
                 self.parent = Some(new_parent);
 
@@ -297,12 +297,17 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent.rule_node.children.get(child_number).cloned() {
+            if let Some(new_child) = new_parent
+                .nonterminal_node
+                .children
+                .get(child_number)
+                .cloned()
+            {
                 self.node = new_child.node;
                 self.child_number = child_number;
                 // Sum up the length of the children before this child
                 // TODO(#871): it might sometimes be quicker to start from the end (like `go_to_last_child`)
-                self.text_offset += new_parent.rule_node.children[..child_number]
+                self.text_offset += new_parent.nonterminal_node.children[..child_number]
                     .iter()
                     .map(|node| node.text_len())
                     .sum();
@@ -325,7 +330,7 @@ impl<T: KindTypes> Cursor<T> {
 
         if let Some(parent) = &self.parent {
             let new_child_number = self.child_number + 1;
-            if let Some(new_child) = parent.rule_node.children.get(new_child_number) {
+            if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
                 self.node = new_child.node.clone();
                 self.child_number = new_child_number;
@@ -348,7 +353,7 @@ impl<T: KindTypes> Cursor<T> {
         if let Some(parent) = &self.parent {
             if self.child_number > 0 {
                 let new_child_number = self.child_number - 1;
-                let new_child = &parent.rule_node.children[new_child_number];
+                let new_child = &parent.nonterminal_node.children[new_child_number];
                 self.text_offset -= new_child.node.text_len();
                 self.node = new_child.node.clone();
                 self.child_number = new_child_number;
@@ -360,46 +365,46 @@ impl<T: KindTypes> Cursor<T> {
         false
     }
 
-    /// Attempts to go to the next token, according to the DFS pre-order traversal.
+    /// Attempts to go to the next terminal node, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_token(&mut self) -> bool {
-        self.go_to_next_matching(|node| node.is_token())
+    pub fn go_to_next_terminal(&mut self) -> bool {
+        self.go_to_next_matching(|node| node.is_terminal())
     }
 
-    /// Attempts to go to the next token with the given kind, according to the DFS pre-order traversal.
+    /// Attempts to go to the next terminal node with the given kind, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_token_with_kind(&mut self, kind: T::TerminalKind) -> bool {
-        self.go_to_next_matching(|node| node.is_token_with_kind(kind))
+    pub fn go_to_next_terminal_with_kind(&mut self, kind: T::TerminalKind) -> bool {
+        self.go_to_next_matching(|node| node.is_terminal_with_kind(kind))
     }
 
-    /// Attempts to go to the next token with any of the given kinds, according to the DFS pre-order traversal.
+    /// Attempts to go to the next terminal node with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_token_with_kinds(&mut self, kinds: &[T::TerminalKind]) -> bool {
-        self.go_to_next_matching(|node| node.is_token_with_kinds(kinds))
+    pub fn go_to_next_terminal_with_kinds(&mut self, kinds: &[T::TerminalKind]) -> bool {
+        self.go_to_next_matching(|node| node.is_terminal_with_kinds(kinds))
     }
 
-    /// Attempts to go to the next rule, according to the DFS pre-order traversal.
+    /// Attempts to go to the next non-terminal node, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_rule(&mut self) -> bool {
-        self.go_to_next_matching(|node| node.is_rule())
+    pub fn go_to_next_nonterminal(&mut self) -> bool {
+        self.go_to_next_matching(|node| node.is_nonterminal())
     }
 
-    /// Attempts to go to the next rule with the given kind, according to the DFS pre-order traversal.
+    /// Attempts to go to the next non-terminal node with the given kind, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_rule_with_kind(&mut self, kind: T::NonTerminalKind) -> bool {
-        self.go_to_next_matching(|node| node.is_rule_with_kind(kind))
+    pub fn go_to_next_nonterminal_with_kind(&mut self, kind: T::NonTerminalKind) -> bool {
+        self.go_to_next_matching(|node| node.is_nonterminal_with_kind(kind))
     }
 
-    /// Attempts to go to the next rule with any of the given kinds, according to the DFS pre-order traversal.
+    /// Attempts to go to the next non-terminal node with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_rule_with_kinds(&mut self, kinds: &[T::NonTerminalKind]) -> bool {
-        self.go_to_next_matching(|node| node.is_rule_with_kinds(kinds))
+    pub fn go_to_next_nonterminal_with_kinds(&mut self, kinds: &[T::NonTerminalKind]) -> bool {
+        self.go_to_next_matching(|node| node.is_nonterminal_with_kinds(kinds))
     }
 
     fn go_to_next_matching(&mut self, pred: impl Fn(&Node<T>) -> bool) -> bool {
@@ -414,18 +419,18 @@ impl<T: KindTypes> Cursor<T> {
 }
 
 /// A [`Cursor`] that also keeps track of the labels of the nodes it visits.
-pub struct CursorWithLabels<T: KindTypes> {
+pub struct CursorWithEdges<T: KindTypes> {
     cursor: Cursor<T>,
 }
 
-impl<T: KindTypes> CursorWithLabels<T> {
-    pub fn without_labels(self) -> Cursor<T> {
+impl<T: KindTypes> CursorWithEdges<T> {
+    pub fn without_edges(self) -> Cursor<T> {
         self.cursor
     }
 }
 
-impl<T: KindTypes> Iterator for CursorWithLabels<T> {
-    type Item = LabeledNode<T>;
+impl<T: KindTypes> Iterator for CursorWithEdges<T> {
+    type Item = Edge<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let label = self.cursor.label();
@@ -434,7 +439,7 @@ impl<T: KindTypes> Iterator for CursorWithLabels<T> {
     }
 }
 
-impl<T: KindTypes> std::ops::Deref for CursorWithLabels<T> {
+impl<T: KindTypes> std::ops::Deref for CursorWithEdges<T> {
     type Target = Cursor<T>;
 
     fn deref(&self) -> &Self::Target {
@@ -442,21 +447,21 @@ impl<T: KindTypes> std::ops::Deref for CursorWithLabels<T> {
     }
 }
 
-impl<T: KindTypes> std::ops::DerefMut for CursorWithLabels<T> {
+impl<T: KindTypes> std::ops::DerefMut for CursorWithEdges<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.cursor
     }
 }
 
 impl<T: KindTypes> Cursor<T> {
-    /// Returns a [`CursorWithLabels`] that wraps this cursor.
-    pub fn with_labels(self) -> CursorWithLabels<T> {
-        CursorWithLabels::<T>::from(self)
+    /// Returns a [`CursorWithEdges`] that wraps this cursor.
+    pub fn with_edges(self) -> CursorWithEdges<T> {
+        CursorWithEdges::<T>::from(self)
     }
 }
 
-impl<T: KindTypes> From<Cursor<T>> for CursorWithLabels<T> {
+impl<T: KindTypes> From<Cursor<T>> for CursorWithEdges<T> {
     fn from(cursor: Cursor<T>) -> Self {
-        CursorWithLabels::<T> { cursor }
+        CursorWithEdges::<T> { cursor }
     }
 }

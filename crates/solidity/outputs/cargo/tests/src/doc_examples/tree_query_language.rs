@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::Version;
-use slang_solidity::kinds::RuleKind;
+use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
 use slang_solidity::query::{Query, QueryResultIterator};
 
@@ -19,7 +19,7 @@ impl RemoveMkdocSnippetMarkers for &str {
     }
 }
 
-fn assert_matches(query: &Query, kind: RuleKind, source: &str) -> QueryResultIterator {
+fn assert_matches(query: &Query, kind: NonTerminalKind, source: &str) -> QueryResultIterator {
     let language = Language::new(Version::new(0, 8, 12)).unwrap();
     let cursor = language.parse(kind, source).create_tree_cursor();
 
@@ -44,7 +44,7 @@ fn query_syntax() {
     )
     .unwrap();
 
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "1*2");
+    assert_matches(&query, NonTerminalKind::MultiplicativeExpression, "1*2");
 
     let query = Query::parse(
         &"
@@ -56,7 +56,7 @@ fn query_syntax() {
     )
     .unwrap();
 
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "1*2");
+    assert_matches(&query, NonTerminalKind::MultiplicativeExpression, "1*2");
 
     let query = Query::parse(
         &r#"
@@ -68,7 +68,7 @@ fn query_syntax() {
     )
     .unwrap();
 
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "1*2");
+    assert_matches(&query, NonTerminalKind::MultiplicativeExpression, "1*2");
 
     let query = Query::parse(
         &"
@@ -79,7 +79,7 @@ fn query_syntax() {
         .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "1*2");
+    assert_matches(&query, NonTerminalKind::MultiplicativeExpression, "1*2");
 
     let query = Query::parse(
         &"
@@ -90,8 +90,16 @@ fn query_syntax() {
         .remove_mkdoc_snippet_markers(),
     )
     .unwrap();
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "1 * 'abc'");
-    assert_matches(&query, RuleKind::MultiplicativeExpression, "'abc' * 1");
+    assert_matches(
+        &query,
+        NonTerminalKind::MultiplicativeExpression,
+        "1 * 'abc'",
+    );
+    assert_matches(
+        &query,
+        NonTerminalKind::MultiplicativeExpression,
+        "'abc' * 1",
+    );
 }
 
 #[test]
@@ -106,7 +114,7 @@ fn capturing_nodes() {
     )
     .unwrap();
 
-    assert_matches(&query, RuleKind::StructDefinition, "struct Abc {}");
+    assert_matches(&query, NonTerminalKind::StructDefinition, "struct Abc {}");
 
     let query = Query::parse(
         &"
@@ -136,7 +144,7 @@ fn capturing_nodes() {
 
     assert_matches(
         &query,
-        RuleKind::ContractDefinition,
+        NonTerminalKind::ContractDefinition,
         "contract A { event A(); }",
     );
 }
@@ -155,7 +163,7 @@ fn quantification() {
 
     assert_matches(
         &query,
-        RuleKind::SourceUnit,
+        NonTerminalKind::SourceUnit,
         "// comment 1\n// comment 2\n/* comment 3 */",
     );
 
@@ -177,7 +185,7 @@ fn quantification() {
 
     assert_matches(
         &query,
-        RuleKind::SourceUnit,
+        NonTerminalKind::SourceUnit,
         "
 		/// A doc comment
 		contract A {}
@@ -211,7 +219,7 @@ fn quantification() {
 
     let iter = assert_matches(
         &query,
-        RuleKind::FunctionCallExpression,
+        NonTerminalKind::FunctionCallExpression,
         "
 		call(1, 'abc', 3)
 		",
@@ -241,10 +249,10 @@ fn alternations() {
     .unwrap();
 
     let results: Vec<_> =
-        assert_matches(&query, RuleKind::FunctionCallExpression, "call(1)").collect();
+        assert_matches(&query, NonTerminalKind::FunctionCallExpression, "call(1)").collect();
     results.first().unwrap().bindings.get("function").unwrap();
     let results: Vec<_> =
-        assert_matches(&query, RuleKind::FunctionCallExpression, "a.call(1)").collect();
+        assert_matches(&query, NonTerminalKind::FunctionCallExpression, "a.call(1)").collect();
     results.first().unwrap().bindings.get("method").unwrap();
 
     let query = Query::parse(
@@ -267,7 +275,7 @@ fn alternations() {
     )
     .unwrap();
 
-    let iter = assert_matches(&query, RuleKind::IfStatement, "if (true) { break; }");
+    let iter = assert_matches(&query, NonTerminalKind::IfStatement, "if (true) { break; }");
 
     let results: Vec<_> = iter.collect();
     assert_eq!(results.len(), 2);

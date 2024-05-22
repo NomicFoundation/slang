@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { Language } from "@slang-private/slang-testlang/language";
-import { RuleKind, TokenKind } from "@slang-private/slang-testlang/kinds";
+import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import {
   AdditionExpression,
   Expression,
@@ -12,22 +12,22 @@ import {
   TreeNode,
   TreeNodeChild,
 } from "@slang-private/slang-testlang/ast";
-import { expectRule, expectToken } from "../utils/cst-helpers";
-import { TokenNode } from "@slang-private/slang-testlang/cst";
+import { expectNonTerminal, expectTerminal } from "../utils/cst-helpers";
+import { TerminalNode } from "@slang-private/slang-testlang/cst";
 
 test("create and use sequence types", () => {
   const source = `tree [A B C];`.trim();
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Tree, source);
+  const parseOutput = language.parse(NonTerminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Tree);
+  expectNonTerminal(cst, NonTerminalKind.Tree);
 
   const tree = new Tree(cst);
-  expectRule(tree.cst, RuleKind.Tree);
+  expectNonTerminal(tree.cst, NonTerminalKind.Tree);
   expect(tree.name).toBeUndefined();
   expect(tree.node.members.items).toHaveLength(3);
 });
@@ -37,21 +37,21 @@ test("create and use choice types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.TreeNodeChild, source);
+  const parseOutput = language.parse(NonTerminalKind.TreeNodeChild, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.TreeNodeChild);
+  expectNonTerminal(cst, NonTerminalKind.TreeNodeChild);
 
   const tree_node_child = new TreeNodeChild(cst);
-  expectRule(tree_node_child.cst, RuleKind.TreeNodeChild);
+  expectNonTerminal(tree_node_child.cst, NonTerminalKind.TreeNodeChild);
   expect(tree_node_child.variant).toBeInstanceOf(TreeNode);
 
   const tree_node = tree_node_child.variant as TreeNode;
-  expectRule(tree_node.cst, RuleKind.TreeNode);
-  expectRule(tree_node.members.cst, RuleKind.TreeNodeChildren);
-  expectToken(tree_node.openBracket, TokenKind.OpenBracket, "[");
-  expectToken(tree_node.closeBracket, TokenKind.CloseBracket, "]");
+  expectNonTerminal(tree_node.cst, NonTerminalKind.TreeNode);
+  expectNonTerminal(tree_node.members.cst, NonTerminalKind.TreeNodeChildren);
+  expectTerminal(tree_node.openBracket, TerminalKind.OpenBracket, "[");
+  expectTerminal(tree_node.closeBracket, TerminalKind.CloseBracket, "]");
 });
 
 test("create and use repeated types", () => {
@@ -59,19 +59,19 @@ test("create and use repeated types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Tree, source);
+  const parseOutput = language.parse(NonTerminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Tree);
+  expectNonTerminal(cst, NonTerminalKind.Tree);
 
   const tree = new Tree(cst);
-  expectRule(tree.node.members.cst, RuleKind.TreeNodeChildren);
+  expectNonTerminal(tree.node.members.cst, NonTerminalKind.TreeNodeChildren);
 
   const names = tree.node.members.items.map((item) => {
-    expect(item.variant).toBeInstanceOf(TokenNode);
+    expect(item.variant).toBeInstanceOf(TerminalNode);
 
-    return (item.variant as TokenNode).text;
+    return (item.variant as TerminalNode).text;
   });
 
   expect(names).toStrictEqual(["A", "B", "C"]);
@@ -82,14 +82,14 @@ test("create and use separated types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.SeparatedIdentifiers, source);
+  const parseOutput = language.parse(NonTerminalKind.SeparatedIdentifiers, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.SeparatedIdentifiers);
+  expectNonTerminal(cst, NonTerminalKind.SeparatedIdentifiers);
 
   const separated_identifiers = new SeparatedIdentifiers(cst);
-  expectRule(separated_identifiers.cst, RuleKind.SeparatedIdentifiers);
+  expectNonTerminal(separated_identifiers.cst, NonTerminalKind.SeparatedIdentifiers);
 
   const identifiers = separated_identifiers.items.map((identifier) => identifier.text);
   expect(identifiers).toStrictEqual(["Foo", "Bar", "Baz"]);
@@ -103,11 +103,11 @@ test("throws an exception on initializing the wrong type", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Tree, source);
+  const parseOutput = language.parse(NonTerminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Tree);
+  expectNonTerminal(cst, NonTerminalKind.Tree);
 
   expect(() => new SourceUnit(cst)).toThrowError(
     "SourceUnit can only be initialized with a CST node of the same kind.",
@@ -119,20 +119,20 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Tree, source);
+  const parseOutput = language.parse(NonTerminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(1);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Tree);
+  expectNonTerminal(cst, NonTerminalKind.Tree);
   expect(cst.children()).toHaveLength(2);
 
   const [contractKeyword, skippedToken] = cst.children();
-  expectToken(contractKeyword, TokenKind.TreeKeyword, "tree");
-  expectToken(skippedToken, TokenKind.SKIPPED, "");
+  expectTerminal(contractKeyword, TerminalKind.TreeKeyword, "tree");
+  expectTerminal(skippedToken, TerminalKind.SKIPPED, "");
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);
-  expectRule(tree.cst, RuleKind.Tree);
+  expectNonTerminal(tree.cst, NonTerminalKind.Tree);
 
   expect(() => tree.node).toThrowError(
     "Unexpected SKIPPED token at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
@@ -144,18 +144,18 @@ test("create and use prefix expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Expression, source);
+  const parseOutput = language.parse(NonTerminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Expression);
+  expectNonTerminal(cst, NonTerminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof NegationExpression);
 
   const { operator, operand } = expression.variant;
-  expectToken(operator, TokenKind.Bang, "!");
-  expectToken(operand.variant, TokenKind.Identifier, "foo");
+  expectTerminal(operator, TerminalKind.Bang, "!");
+  expectTerminal(operand.variant, TerminalKind.Identifier, "foo");
 });
 
 test("create and use postfix expressions", () => {
@@ -163,19 +163,19 @@ test("create and use postfix expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Expression, source);
+  const parseOutput = language.parse(NonTerminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Expression);
+  expectNonTerminal(cst, NonTerminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof MemberAccessExpression);
 
   const { operand, period, member } = expression.variant;
-  expectToken(operand.variant, TokenKind.Identifier, "foo");
-  expectToken(period, TokenKind.Period, ".");
-  expectToken(member, TokenKind.Identifier, "bar");
+  expectTerminal(operand.variant, TerminalKind.Identifier, "foo");
+  expectTerminal(period, TerminalKind.Period, ".");
+  expectTerminal(member, TerminalKind.Identifier, "bar");
 });
 
 test("create and use binary expressions", () => {
@@ -183,17 +183,17 @@ test("create and use binary expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(RuleKind.Expression, source);
+  const parseOutput = language.parse(NonTerminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectRule(cst, RuleKind.Expression);
+  expectNonTerminal(cst, NonTerminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof AdditionExpression);
 
   const { leftOperand, operator, rightOperand } = expression.variant;
-  expectToken(leftOperand.variant, TokenKind.Identifier, "foo");
-  expectToken(operator, TokenKind.Plus, "+");
-  expectToken(rightOperand.variant, TokenKind.Identifier, "bar");
+  expectTerminal(leftOperand.variant, TerminalKind.Identifier, "foo");
+  expectTerminal(operator, TerminalKind.Plus, "+");
+  expectTerminal(rightOperand.variant, TerminalKind.Identifier, "bar");
 });

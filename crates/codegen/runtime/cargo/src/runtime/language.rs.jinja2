@@ -14,7 +14,7 @@ use napi_derive::napi;
 
 use crate::cst;
 use crate::kinds::{
-    NodeLabel, IsLexicalContext, LexicalContext, LexicalContextType, RuleKind, TokenKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -115,13 +115,13 @@ impl Language {
 
     {% endif %}
 
-    pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
         {%- if rendering_in_stubs -%}
             unreachable!("Attempting to parse in stubs: {kind}: {input}")
         {%- else -%}
             match kind {
                 {%- for parser_name, _ in model.parser_functions -%}
-                    RuleKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
+                    NonTerminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
                 {%- endfor -%}
             }
         {%- endif -%}
@@ -145,7 +145,7 @@ impl Lexer for Language {
         {%- endif -%}
     }
 
-    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
         {%- if rendering_in_stubs -%}
             unreachable!("Invoking delimiters in stubs.")
         {%- else -%}
@@ -153,7 +153,7 @@ impl Lexer for Language {
                 {%- for context_name, context in model.scanner_contexts %}
                     LexicalContext::{{ context_name }} => &[
                         {%- for open, close in context.delimiters %}
-                            (TokenKind::{{ open }}, TokenKind::{{ close }}),
+                            (TerminalKind::{{ open }}, TerminalKind::{{ close }}),
                         {%- endfor %}
                     ],
                 {%- endfor %}
@@ -175,7 +175,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TokenKind::$kind);
+                            longest_token = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -209,7 +209,7 @@ impl Lexer for Language {
                         if let Some(identifier) = longest_token.filter(|tok|
                             [
                                 {% for name in context.promotable_identifier_scanners %}
-                                    TokenKind::{{ name }},
+                                    TerminalKind::{{ name }},
                                 {% endfor %}
                             ]
                             .contains(tok)
@@ -260,7 +260,7 @@ impl Lexer for Language {
                 // Skip a character if possible and if we didn't recognize a token
                 None if input.peek().is_some() => {
                     let _ = input.next();
-                    Some(ScannedToken::Single(TokenKind::SKIPPED))
+                    Some(ScannedToken::Single(TerminalKind::SKIPPED))
                 },
                 None => None,
             }
@@ -294,7 +294,7 @@ impl Language {
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
         input: String
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

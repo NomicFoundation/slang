@@ -1,7 +1,7 @@
 use std::mem;
 use std::ops::Range;
 
-use crate::kinds::TokenKind;
+use crate::kinds::TerminalKind;
 use crate::parse_error::ParseError;
 use crate::text_index::TextIndex;
 
@@ -11,7 +11,7 @@ pub struct ParserContext<'s> {
     position: TextIndex,
     undo_position: Option<TextIndex>,
     errors: Vec<ParseError>,
-    closing_delimiters: Vec<TokenKind>,
+    closing_delimiters: Vec<TerminalKind>,
 }
 
 #[derive(Copy, Clone)]
@@ -61,7 +61,10 @@ impl<'s> ParserContext<'s> {
     }
 
     /// Creates a RAII guard that will pop the closing delimiter when dropped.
-    pub(crate) fn open_delim<'a>(&'a mut self, closing_delim: TokenKind) -> DelimiterGuard<'a, 's> {
+    pub(crate) fn open_delim<'a>(
+        &'a mut self,
+        closing_delim: TerminalKind,
+    ) -> DelimiterGuard<'a, 's> {
         self.closing_delimiters.push(closing_delim);
 
         DelimiterGuard {
@@ -70,7 +73,7 @@ impl<'s> ParserContext<'s> {
         }
     }
 
-    pub fn closing_delimiters(&self) -> &[TokenKind] {
+    pub fn closing_delimiters(&self) -> &[TerminalKind] {
         &self.closing_delimiters
     }
 
@@ -112,7 +115,7 @@ impl<'s> ParserContext<'s> {
 
 pub(crate) struct DelimiterGuard<'a, 's> {
     pub(crate) input: &'a mut ParserContext<'s>,
-    closing_delim: TokenKind,
+    closing_delim: TerminalKind,
 }
 
 impl Drop for DelimiterGuard<'_, '_> {

@@ -26,8 +26,8 @@ pub struct RuntimeModel {
     all_versions: BTreeSet<Version>,
     referenced_versions: BTreeSet<Version>,
 
-    rule_kinds: BTreeSet<&'static str>,
-    token_kinds: BTreeSet<&'static str>,
+    nonterminal_kinds: BTreeSet<&'static str>,
+    terminal_kinds: BTreeSet<&'static str>,
     trivia_scanner_names: BTreeSet<&'static str>,
     labels: BTreeSet<String>,
 
@@ -219,13 +219,13 @@ impl GrammarVisitor for RuntimeModel {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context());
         if !parser.is_inline() {
-            self.rule_kinds.insert(parser.name());
+            self.nonterminal_kinds.insert(parser.name());
             let code = parser.to_parser_code();
             self.parser_functions.insert(
                 parser.name(),
                 {
-                    let rule_kind = format_ident!("{}", parser.name());
-                    quote! { #code.with_kind(RuleKind::#rule_kind) }
+                    let nonterminal_kind = format_ident!("{}", parser.name());
+                    quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
                 }
                 .to_string(),
             );
@@ -234,12 +234,12 @@ impl GrammarVisitor for RuntimeModel {
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.rule_kinds.insert(parser.name());
+        self.nonterminal_kinds.insert(parser.name());
         for (_, name, _) in &parser.node().operators {
-            self.rule_kinds.insert(name);
+            self.nonterminal_kinds.insert(name);
         }
 
-        // While it's not common to parse a precedence expression as a standalone rule,
+        // While it's not common to parse a precedence expression as a standalone nonterminal node,
         // we generate a function for completeness.
         for (name, code) in parser.to_precedence_expression_parser_code() {
             self.parser_functions.insert(name, code.to_string());
@@ -249,8 +249,8 @@ impl GrammarVisitor for RuntimeModel {
             parser.name(),
             {
                 let code = parser.to_parser_code();
-                let rule_kind = format_ident!("{}", parser.name());
-                quote! { #code.with_kind(RuleKind::#rule_kind) }
+                let nonterminal_kind = format_ident!("{}", parser.name());
+                quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
             }
             .to_string(),
         );
@@ -273,14 +273,14 @@ impl GrammarVisitor for RuntimeModel {
             }
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
-                self.token_kinds.insert(scanner.name());
+                self.terminal_kinds.insert(scanner.name());
 
                 self.current_context()
                     .scanner_definitions
                     .insert(scanner.name());
             }
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
-                self.token_kinds.insert(scanner.name());
+                self.terminal_kinds.insert(scanner.name());
 
                 self.current_context()
                     .keyword_scanner_defs

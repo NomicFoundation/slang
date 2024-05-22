@@ -87,15 +87,15 @@ impl<T: KindTypes> fmt::Display for Matcher<T> {
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub(super) enum Kind<T: KindTypes> {
-    Rule(T::NonTerminalKind),
-    Token(T::TerminalKind),
+    Terminal(T::NonTerminalKind),
+    NonTerminal(T::TerminalKind),
 }
 
 impl<T: KindTypes> fmt::Display for Kind<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Rule(rule) => write!(f, "{rule}"),
-            Self::Token(token) => write!(f, "{token}"),
+            Self::Terminal(kind) => write!(f, "{kind}"),
+            Self::NonTerminal(kind) => write!(f, "{kind}"),
         }
     }
 }
@@ -105,9 +105,9 @@ pub(super) enum NodeSelector<T: KindTypes> {
     Anonymous,
     Kind { kind: Kind<T> },
     Text { text: String },
-    Label { label: T::EdgeKind },
-    LabelAndKind { label: T::EdgeKind, kind: Kind<T> },
-    LabelAndText { label: T::EdgeKind, text: String },
+    Label { label: T::EdgeLabel },
+    LabelAndKind { label: T::EdgeLabel, kind: Kind<T> },
+    LabelAndText { label: T::EdgeLabel, text: String },
 }
 
 impl<T: KindTypes> fmt::Display for NodeSelector<T> {
@@ -133,12 +133,12 @@ impl<T: KindTypes> fmt::Display for NodeSelector<T> {
             Self::Anonymous => write!(f, "_"),
             Self::Kind { kind } => kind.fmt(f),
             Self::Text { text } => write!(f, "\"{}\"", escape_string(text)),
-            Self::Label { label } => label.fmt(f),
-            Self::LabelAndKind { label, kind } => {
-                write!(f, "{label}; {kind}")
+            Self::Label { label: edge } => edge.fmt(f),
+            Self::LabelAndKind { label: edge, kind } => {
+                write!(f, "{edge}; {kind}")
             }
-            Self::LabelAndText { label, text } => {
-                write!(f, "{label}: \"{}\"", escape_string(text))
+            Self::LabelAndText { label: edge, text } => {
+                write!(f, "{edge}: \"{}\"", escape_string(text))
             }
         }
     }

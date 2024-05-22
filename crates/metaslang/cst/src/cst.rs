@@ -17,29 +17,29 @@ pub struct NonTerminalNode<T: KindTypes> {
     pub kind: T::NonTerminalKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<LabeledNode<T>>,
+    pub children: Vec<Edge<T>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node<T: KindTypes> {
-    Rule(Rc<NonTerminalNode<T>>),
-    Token(Rc<TerminalNode<T>>),
+    NonTerminal(Rc<NonTerminalNode<T>>),
+    Terminal(Rc<TerminalNode<T>>),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct LabeledNode<T: KindTypes> {
-    pub label: Option<T::EdgeKind>,
+pub struct Edge<T: KindTypes> {
+    pub label: Option<T::EdgeLabel>,
     pub node: Node<T>,
 }
 
-impl<T: KindTypes> LabeledNode<T> {
-    /// Creates an anonymous node (without a label).
+impl<T: KindTypes> Edge<T> {
+    /// Creates a anonymous node (without a label).
     pub fn anonymous(node: Node<T>) -> Self {
         Self { label: None, node }
     }
 }
 
-impl<T: KindTypes> std::ops::Deref for LabeledNode<T> {
+impl<T: KindTypes> std::ops::Deref for Edge<T> {
     type Target = Node<T>;
 
     fn deref(&self) -> &Self::Target {
@@ -48,32 +48,32 @@ impl<T: KindTypes> std::ops::Deref for LabeledNode<T> {
 }
 
 impl<T: KindTypes> Node<T> {
-    pub fn rule(kind: T::NonTerminalKind, children: Vec<LabeledNode<T>>) -> Self {
+    pub fn nonterminal(kind: T::NonTerminalKind, children: Vec<Edge<T>>) -> Self {
         let text_len = children.iter().map(|node| node.text_len()).sum();
 
-        Self::Rule(Rc::new(NonTerminalNode {
+        Self::NonTerminal(Rc::new(NonTerminalNode {
             kind,
             text_len,
             children,
         }))
     }
 
-    pub fn token(kind: T::TerminalKind, text: String) -> Self {
-        Self::Token(Rc::new(TerminalNode { kind, text }))
+    pub fn terminal(kind: T::TerminalKind, text: String) -> Self {
+        Self::Terminal(Rc::new(TerminalNode { kind, text }))
     }
 
     pub fn text_len(&self) -> TextIndex {
         match self {
-            Self::Rule(node) => node.text_len,
-            Self::Token(node) => (&node.text).into(),
+            Self::NonTerminal(node) => node.text_len,
+            Self::Terminal(node) => (&node.text).into(),
         }
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[LabeledNode<T>] {
+    pub fn children(&self) -> &[Edge<T>] {
         match self {
-            Self::Rule(node) => &node.children,
-            Self::Token(_) => &[],
+            Self::NonTerminal(node) => &node.children,
+            Self::Terminal(_) => &[],
         }
     }
 
@@ -85,106 +85,114 @@ impl<T: KindTypes> Node<T> {
     /// Reconstructs the original source code from the parse tree.
     pub fn unparse(self) -> String {
         match self {
-            Self::Rule(rule) => rule.unparse(),
-            Self::Token(token) => token.text.clone(),
+            Self::NonTerminal(nonterminal) => nonterminal.unparse(),
+            Self::Terminal(terminal) => terminal.text.clone(),
         }
     }
 
-    pub fn into_rule(self) -> Option<Rc<NonTerminalNode<T>>> {
+    pub fn into_nonterminal(self) -> Option<Rc<NonTerminalNode<T>>> {
         match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
+            Self::NonTerminal(nonterminal) => Some(nonterminal),
+            Self::Terminal(..) => None,
         }
     }
 
-    pub fn is_rule(&self) -> bool {
-        self.as_rule().is_some()
+    pub fn is_nonterminal(&self) -> bool {
+        self.as_nonterminal().is_some()
     }
 
-    pub fn as_rule(&self) -> Option<&Rc<NonTerminalNode<T>>> {
+    pub fn as_nonterminal(&self) -> Option<&Rc<NonTerminalNode<T>>> {
         match self {
-            Self::Rule(rule) => Some(rule),
-            Self::Token(..) => None,
+            Self::NonTerminal(nonterminal) => Some(nonterminal),
+            Self::Terminal(..) => None,
         }
     }
 
-    pub fn is_rule_with_kind(&self, kind: T::NonTerminalKind) -> bool {
-        self.as_rule_with_kind(kind).is_some()
+    pub fn is_nonterminal_with_kind(&self, kind: T::NonTerminalKind) -> bool {
+        self.as_nonterminal_with_kind(kind).is_some()
     }
 
-    pub fn as_rule_with_kind(&self, kind: T::NonTerminalKind) -> Option<&Rc<NonTerminalNode<T>>> {
-        self.as_rule().filter(|rule| rule.kind == kind)
+    pub fn as_nonterminal_with_kind(
+        &self,
+        kind: T::NonTerminalKind,
+    ) -> Option<&Rc<NonTerminalNode<T>>> {
+        self.as_nonterminal().filter(|node| node.kind == kind)
     }
 
-    pub fn is_rule_with_kinds(&self, kinds: &[T::NonTerminalKind]) -> bool {
-        self.as_rule_with_kinds(kinds).is_some()
+    pub fn is_nonterminal_with_kinds(&self, kinds: &[T::NonTerminalKind]) -> bool {
+        self.as_nonterminal_with_kinds(kinds).is_some()
     }
 
-    pub fn as_rule_with_kinds(
+    pub fn as_nonterminal_with_kinds(
         &self,
         kinds: &[T::NonTerminalKind],
     ) -> Option<&Rc<NonTerminalNode<T>>> {
-        self.as_rule().filter(|rule| kinds.contains(&rule.kind))
+        self.as_nonterminal()
+            .filter(|nonterminal| kinds.contains(&nonterminal.kind))
     }
 
-    pub fn into_token(self) -> Option<Rc<TerminalNode<T>>> {
+    pub fn into_terminal(self) -> Option<Rc<TerminalNode<T>>> {
         match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            Self::Terminal(terminal) => Some(terminal),
+            Self::NonTerminal(..) => None,
         }
     }
 
-    pub fn is_token(&self) -> bool {
-        self.as_token().is_some()
+    pub fn is_terminal(&self) -> bool {
+        self.as_terminal().is_some()
     }
 
-    pub fn as_token(&self) -> Option<&Rc<TerminalNode<T>>> {
+    pub fn as_terminal(&self) -> Option<&Rc<TerminalNode<T>>> {
         match self {
-            Self::Token(token) => Some(token),
-            Self::Rule(..) => None,
+            Self::Terminal(terminal) => Some(terminal),
+            Self::NonTerminal(..) => None,
         }
     }
 
-    pub fn is_token_with_kind(&self, kind: T::TerminalKind) -> bool {
-        self.as_token_with_kind(kind).is_some()
+    pub fn is_terminal_with_kind(&self, kind: T::TerminalKind) -> bool {
+        self.as_terminal_with_kind(kind).is_some()
     }
 
-    pub fn as_token_with_kind(&self, kind: T::TerminalKind) -> Option<&Rc<TerminalNode<T>>> {
-        self.as_token().filter(|token| token.kind == kind)
+    pub fn as_terminal_with_kind(&self, kind: T::TerminalKind) -> Option<&Rc<TerminalNode<T>>> {
+        self.as_terminal().filter(|terminal| terminal.kind == kind)
     }
 
-    pub fn is_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> bool {
-        self.as_token_with_kinds(kinds).is_some()
+    pub fn is_terminal_with_kinds(&self, kinds: &[T::TerminalKind]) -> bool {
+        self.as_terminal_with_kinds(kinds).is_some()
     }
 
-    pub fn as_token_with_kinds(&self, kinds: &[T::TerminalKind]) -> Option<&Rc<TerminalNode<T>>> {
-        self.as_token().filter(|token| kinds.contains(&token.kind))
+    pub fn as_terminal_with_kinds(
+        &self,
+        kinds: &[T::TerminalKind],
+    ) -> Option<&Rc<TerminalNode<T>>> {
+        self.as_terminal()
+            .filter(|terminal| kinds.contains(&terminal.kind))
     }
 
     pub fn is_trivia(&self) -> bool {
         match self {
-            Self::Rule(_) => false,
-            Self::Token(token) => token.kind.is_trivia(),
+            Self::NonTerminal(_) => false,
+            Self::Terminal(terminal) => terminal.kind.is_trivia(),
         }
     }
 }
 
 impl<T: KindTypes> From<Rc<NonTerminalNode<T>>> for Node<T> {
-    fn from(node: Rc<NonTerminalNode<T>>) -> Self {
-        Self::Rule(node)
+    fn from(nonterminal: Rc<NonTerminalNode<T>>) -> Self {
+        Self::NonTerminal(nonterminal)
     }
 }
 
 impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
-    fn from(node: Rc<TerminalNode<T>>) -> Self {
-        Self::Token(node)
+    fn from(terminal: Rc<TerminalNode<T>>) -> Self {
+        Self::Terminal(terminal)
     }
 }
 
 impl<T: KindTypes> NonTerminalNode<T> {
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::new(Node::Rule(self), text_offset)
+        Cursor::new(Node::NonTerminal(self), text_offset)
     }
 
     /// Reconstructs the original source code from the parse tree.
@@ -192,9 +200,9 @@ impl<T: KindTypes> NonTerminalNode<T> {
         let acc = String::with_capacity(self.text_len.utf8);
 
         self.cursor_with_offset(TextIndex::ZERO)
-            .filter_map(|node| node.into_token())
-            .fold(acc, |mut acc, token| {
-                acc.push_str(&token.text);
+            .filter_map(|node| node.into_terminal())
+            .fold(acc, |mut acc, terminal| {
+                acc.push_str(&terminal.text);
                 acc
             })
     }

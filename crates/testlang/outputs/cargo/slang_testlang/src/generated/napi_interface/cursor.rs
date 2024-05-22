@@ -9,8 +9,8 @@ use napi::Either;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
-use crate::napi_interface::cst::{self, NAPINodeExtensions, RuleNode, TokenNode};
-use crate::napi_interface::{text_index, NodeLabel, RuleKind, RustCursor, TokenKind};
+use crate::napi_interface::cst::{self, NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::{text_index, EdgeLabel, NonTerminalKind, RustCursor, TerminalKind};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(pub(super) RustCursor);
@@ -54,12 +54,12 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn node(&self) -> Either<RuleNode, TokenNode> {
+    pub fn node(&self) -> Either<NonTerminalNode, TerminalNode> {
         self.0.node().into_js_either_node()
     }
 
-    #[napi(getter, ts_return_type = "kinds.NodeLabel", catch_unwind)]
-    pub fn label(&self) -> Option<NodeLabel> {
+    #[napi(getter, ts_return_type = "kinds.EdgeLabel", catch_unwind)]
+    pub fn label(&self) -> Option<EdgeLabel> {
         self.0.label()
     }
 
@@ -79,9 +79,9 @@ impl Cursor {
         self.0.depth() as u32
     }
 
-    #[napi(ts_return_type = "Array<cst.RuleNode>", catch_unwind)]
-    pub fn ancestors(&self) -> Vec<cst::RuleNode> {
-        self.0.ancestors().map(cst::RuleNode).collect()
+    #[napi(ts_return_type = "Array<cst.NonTerminalNode>", catch_unwind)]
+    pub fn ancestors(&self) -> Vec<cst::NonTerminalNode> {
+        self.0.ancestors().map(cst::NonTerminalNode).collect()
     }
 
     #[napi(catch_unwind)]
@@ -130,44 +130,44 @@ impl Cursor {
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_token(&mut self) -> bool {
-        self.0.go_to_next_token()
+    pub fn go_to_next_terminal(&mut self) -> bool {
+        self.0.go_to_next_terminal()
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_token_with_kind(
+    pub fn go_to_next_terminal_with_kind(
         &mut self,
-        #[napi(ts_arg_type = "kinds.TokenKind")] kind: TokenKind,
+        #[napi(ts_arg_type = "kinds.TerminalKind")] kind: TerminalKind,
     ) -> bool {
-        self.0.go_to_next_token_with_kind(kind)
+        self.0.go_to_next_terminal_with_kind(kind)
     }
 
     #[napi(catch_unwind)]
     pub fn go_to_next_token_with_kinds(
         &mut self,
-        #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
+        #[napi(ts_arg_type = "Array<kinds.TerminalKind>")] kinds: Vec<TerminalKind>,
     ) -> bool {
-        self.0.go_to_next_token_with_kinds(&kinds)
+        self.0.go_to_next_terminal_with_kinds(&kinds)
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_rule(&mut self) -> bool {
-        self.0.go_to_next_rule()
+    pub fn go_to_next_nonterminal(&mut self) -> bool {
+        self.0.go_to_next_nonterminal()
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_rule_with_kind(
+    pub fn go_to_next_nonterminal_with_kind(
         &mut self,
-        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
     ) -> bool {
-        self.0.go_to_next_rule_with_kind(kind)
+        self.0.go_to_next_nonterminal_with_kind(kind)
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_rule_with_kinds(
+    pub fn go_to_next_nonterminal_with_kinds(
         &mut self,
-        #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
+        #[napi(ts_arg_type = "Array<kinds.NonTerminalKind>")] kinds: Vec<NonTerminalKind>,
     ) -> bool {
-        self.0.go_to_next_rule_with_kinds(&kinds)
+        self.0.go_to_next_nonterminal_with_kinds(&kinds)
     }
 }

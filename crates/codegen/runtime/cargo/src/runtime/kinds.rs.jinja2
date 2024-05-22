@@ -15,20 +15,20 @@ use napi_derive::napi;
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum RuleKind {
+pub enum NonTerminalKind {
     {%- if rendering_in_stubs -%}
         Stub1,
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.rule_kinds -%}
+        {%- for variant in model.nonterminal_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
     {%- endif -%}
 }
 
-impl metaslang_cst::NonTerminalKind for RuleKind {}
+impl metaslang_cst::NonTerminalKind for NonTerminalKind {}
 
 #[derive(
     Debug,
@@ -45,7 +45,7 @@ impl metaslang_cst::NonTerminalKind for RuleKind {}
 #[strum(serialize_all = "snake_case")]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum NodeLabel {
+pub enum EdgeLabel {
     // Built-in:
     {# _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync) #}
     Item,
@@ -69,7 +69,7 @@ pub enum NodeLabel {
     {%- endif -%}
 }
 
-impl metaslang_cst::EdgeKind for NodeLabel {}
+impl metaslang_cst::EdgeLabel for EdgeLabel {}
 
 #[derive(
     Debug,
@@ -85,7 +85,7 @@ impl metaslang_cst::EdgeKind for NodeLabel {}
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum TokenKind {
+pub enum TerminalKind {
     // Built-in:
     SKIPPED,
 
@@ -95,14 +95,14 @@ pub enum TokenKind {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.token_kinds -%}
+        {%- for variant in model.terminal_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
     {%- endif -%}
 }
 
-impl metaslang_cst::TerminalKind for TokenKind {
+impl metaslang_cst::TerminalKind for TerminalKind {
     fn is_trivia(&self) -> bool {
         {%- if rendering_in_stubs -%}
             false

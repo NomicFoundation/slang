@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    IsLexicalContext, LexicalContext, LexicalContextType, NodeLabel, RuleKind, TokenKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedToken};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -83,14 +83,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::AdditionExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::AdditionExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -103,38 +103,44 @@ impl Language {
     fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_left_addition_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AdditionExpression,
+                NonTerminalKind::AdditionExpression,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Plus)
-                    .with_label(NodeLabel::Operator),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Plus,
+                )
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_prefix_negation_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::NegationExpression,
+                NonTerminalKind::NegationExpression,
                 3u8,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bang)
-                    .with_label(NodeLabel::Operator),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Bang,
+                )
+                .with_label(EdgeLabel::Operator),
             )
         };
         let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::MemberAccessExpression,
+                NonTerminalKind::MemberAccessExpression,
                 5u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::Period,
+                        EdgeLabel::Period,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Period,
+                            TerminalKind::Period,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Member,
+                        EdgeLabel::Member,
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::Identifier,
+                            TerminalKind::Identifier,
                         ),
                     )?;
                     seq.finish()
@@ -152,17 +158,17 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::StringLiteral,
+                    TerminalKind::StringLiteral,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::Identifier,
+                    TerminalKind::Identifier,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_label(NodeLabel::Variant)
+            .with_label(EdgeLabel::Variant)
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -200,10 +206,10 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            RuleKind::Expression,
+            NonTerminalKind::Expression,
             linear_expression_parser(input),
         )
-        .with_kind(RuleKind::Expression)
+        .with_kind(NonTerminalKind::Expression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -211,13 +217,13 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::StringLiteral,
+                TerminalKind::StringLiteral,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::Literal)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::Literal)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -227,14 +233,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::MemberAccessExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -250,14 +256,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::LabeledNode {
-                label: _,
-                node: cst::Node::Rule(node),
-            }] if node.kind == RuleKind::Expression => match &node.children[..] {
-                [inner @ cst::LabeledNode {
-                    label: _,
-                    node: cst::Node::Rule(rule),
-                }] if rule.kind == RuleKind::NegationExpression => {
+            [cst::Edge {
+                node: cst::Node::NonTerminal(node),
+                ..
+            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::NonTerminal(node),
+                    ..
+                }] if node.kind == NonTerminalKind::NegationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -275,24 +281,24 @@ impl Language {
                 |input| {
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Identifier,
+                        TerminalKind::Identifier,
                     )
-                    .with_label(NodeLabel::Item)
+                    .with_label(EdgeLabel::Item)
                 },
-                TokenKind::Period,
-                NodeLabel::Separator,
+                TerminalKind::Period,
+                EdgeLabel::Separator,
             )
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::SeparatedIdentifiers)
+        .with_kind(NonTerminalKind::SeparatedIdentifiers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.source_unit_members(input)
-            .with_label(NodeLabel::Members)
-            .with_kind(RuleKind::SourceUnit)
+            .with_label(EdgeLabel::Members)
+            .with_kind(NonTerminalKind::SourceUnit)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -308,16 +314,16 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::SourceUnitMember)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::SourceUnitMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.source_unit_member(input).with_label(NodeLabel::Item)
+            self.source_unit_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::SourceUnitMembers)
+        .with_kind(NonTerminalKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -326,75 +332,75 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
-                        NodeLabel::Keyword,
+                        EdgeLabel::Keyword,
                         self.parse_token_with_trivia::<LexicalContextType::Tree>(
                             input,
-                            TokenKind::TreeKeyword,
+                            TerminalKind::TreeKeyword,
                         ),
                     )?;
                     seq.elem_labeled(
-                        NodeLabel::Name,
+                        EdgeLabel::Name,
                         OptionalHelper::transform(
                             self.parse_token_with_trivia::<LexicalContextType::Tree>(
                                 input,
-                                TokenKind::Identifier,
+                                TerminalKind::Identifier,
                             ),
                         ),
                     )?;
-                    seq.elem_labeled(NodeLabel::Node, self.tree_node(input))?;
+                    seq.elem_labeled(EdgeLabel::Node, self.tree_node(input))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
                     input,
                     self,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                     TokenAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
-                NodeLabel::Semicolon,
+                EdgeLabel::Semicolon,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
-                    TokenKind::Semicolon,
+                    TerminalKind::Semicolon,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::Tree)
+        .with_kind(NonTerminalKind::Tree)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tree_node(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+            let mut delim_guard = input.open_delim(TerminalKind::CloseBracket);
             let input = delim_guard.ctx();
             seq.elem_labeled(
-                NodeLabel::OpenBracket,
+                EdgeLabel::OpenBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
-                    TokenKind::OpenBracket,
+                    TerminalKind::OpenBracket,
                 ),
             )?;
             seq.elem(
                 self.tree_node_children(input)
-                    .with_label(NodeLabel::Members)
+                    .with_label(EdgeLabel::Members)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
                         input,
                         self,
-                        TokenKind::CloseBracket,
+                        TerminalKind::CloseBracket,
                         TokenAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
-                NodeLabel::CloseBracket,
+                EdgeLabel::CloseBracket,
                 self.parse_token_with_trivia::<LexicalContextType::Tree>(
                     input,
-                    TokenKind::CloseBracket,
+                    TerminalKind::CloseBracket,
                 ),
             )?;
             seq.finish()
         })
-        .with_kind(RuleKind::TreeNode)
+        .with_kind(NonTerminalKind::TreeNode)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -404,21 +410,21 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.parse_token_with_trivia::<LexicalContextType::Tree>(
                 input,
-                TokenKind::DelimitedIdentifier,
+                TerminalKind::DelimitedIdentifier,
             );
             choice.consider(input, result)?;
             choice.finish(input)
         })
-        .with_label(NodeLabel::Variant)
-        .with_kind(RuleKind::TreeNodeChild)
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonTerminalKind::TreeNodeChild)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tree_node_children(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.tree_node_child(input).with_label(NodeLabel::Item)
+            self.tree_node_child(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(RuleKind::TreeNodeChildren)
+        .with_kind(NonTerminalKind::TreeNodeChildren)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -426,20 +432,26 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::SingleLineComment)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::SingleLineComment,
+                    )
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TokenKind::MultiLineComment)
-                    .with_label(NodeLabel::LeadingTrivia);
+                    .parse_token::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::MultiLineComment,
+                    )
+                    .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -450,19 +462,19 @@ impl Language {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace)
-                    .with_label(NodeLabel::TrailingTrivia),
+                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(OptionalHelper::transform(
                 self.parse_token::<LexicalContextType::Default>(
                     input,
-                    TokenKind::SingleLineComment,
+                    TerminalKind::SingleLineComment,
                 )
-                .with_label(NodeLabel::TrailingTrivia),
+                .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(
-                self.parse_token::<LexicalContextType::Default>(input, TokenKind::EndOfLine)
-                    .with_label(NodeLabel::TrailingTrivia),
+                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .with_label(EdgeLabel::TrailingTrivia),
             )?;
             seq.finish()
         })
@@ -642,21 +654,23 @@ impl Language {
         )
     }
 
-    pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
         match kind {
-            RuleKind::AdditionExpression => Self::addition_expression.parse(self, input),
-            RuleKind::Expression => Self::expression.parse(self, input),
-            RuleKind::Literal => Self::literal.parse(self, input),
-            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
-            RuleKind::NegationExpression => Self::negation_expression.parse(self, input),
-            RuleKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
-            RuleKind::SourceUnit => Self::source_unit.parse(self, input),
-            RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
-            RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            RuleKind::Tree => Self::tree.parse(self, input),
-            RuleKind::TreeNode => Self::tree_node.parse(self, input),
-            RuleKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
-            RuleKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
+            NonTerminalKind::AdditionExpression => Self::addition_expression.parse(self, input),
+            NonTerminalKind::Expression => Self::expression.parse(self, input),
+            NonTerminalKind::Literal => Self::literal.parse(self, input),
+            NonTerminalKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input)
+            }
+            NonTerminalKind::NegationExpression => Self::negation_expression.parse(self, input),
+            NonTerminalKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
+            NonTerminalKind::SourceUnit => Self::source_unit.parse(self, input),
+            NonTerminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
+            NonTerminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            NonTerminalKind::Tree => Self::tree.parse(self, input),
+            NonTerminalKind::TreeNode => Self::tree_node.parse(self, input),
+            NonTerminalKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
+            NonTerminalKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
         }
     }
 }
@@ -670,10 +684,10 @@ impl Lexer for Language {
         Language::trailing_trivia(self, input)
     }
 
-    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
         match LexCtx::value() {
             LexicalContext::Default => &[],
-            LexicalContext::Tree => &[(TokenKind::OpenBracket, TokenKind::CloseBracket)],
+            LexicalContext::Tree => &[(TerminalKind::OpenBracket, TerminalKind::CloseBracket)],
         }
     }
 
@@ -691,7 +705,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TokenKind::$kind);
+                            longest_token = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -701,9 +715,9 @@ impl Lexer for Language {
         match LexCtx::value() {
             LexicalContext::Default => {
                 if let Some(kind) = match input.next() {
-                    Some('!') => Some(TokenKind::Bang),
-                    Some('+') => Some(TokenKind::Plus),
-                    Some('.') => Some(TokenKind::Period),
+                    Some('!') => Some(TerminalKind::Bang),
+                    Some('+') => Some(TerminalKind::Plus),
+                    Some('.') => Some(TerminalKind::Period),
                     Some(_) => {
                         input.undo();
                         None
@@ -744,9 +758,9 @@ impl Lexer for Language {
             }
             LexicalContext::Tree => {
                 if let Some(kind) = match input.next() {
-                    Some(';') => Some(TokenKind::Semicolon),
-                    Some('[') => Some(TokenKind::OpenBracket),
-                    Some(']') => Some(TokenKind::CloseBracket),
+                    Some(';') => Some(TerminalKind::Semicolon),
+                    Some('[') => Some(TerminalKind::OpenBracket),
+                    Some(']') => Some(TerminalKind::CloseBracket),
                     Some(_) => {
                         input.undo();
                         None
@@ -768,10 +782,10 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TokenKind::Identifier].contains(tok))
+                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = if scan_chars!(input, 't', 'r', 'e', 'e') {
-                        KeywordScan::Reserved(TokenKind::TreeKeyword)
+                        KeywordScan::Reserved(TerminalKind::TreeKeyword)
                     } else {
                         KeywordScan::Absent
                     };
@@ -798,7 +812,7 @@ impl Lexer for Language {
             // Skip a character if possible and if we didn't recognize a token
             None if input.peek().is_some() => {
                 let _ = input.next();
-                Some(ScannedToken::Single(TokenKind::SKIPPED))
+                Some(ScannedToken::Single(TerminalKind::SKIPPED))
             }
             None => None,
         }
@@ -837,7 +851,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

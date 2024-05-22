@@ -7,8 +7,10 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, RuleNode, TokenNode};
-use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, TokenKind};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::{
+    NonTerminalKind, RustLabeledNode, RustNode, RustRuleNode, TerminalKind,
+};
 
 //
 // Sequences:
@@ -20,8 +22,8 @@ use crate::napi_interface::{RuleKind, RustLabeledNode, RustNode, RustRuleNode, T
     catch_unwind
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Option<Either<RuleNode, TokenNode>>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 } //
   // Choices:
@@ -29,8 +31,8 @@ pub fn select_sequence(
 
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Either<RuleNode, TokenNode>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Either<NonTerminalNode, TerminalNode>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -44,8 +46,8 @@ pub fn select_choice(
     catch_unwind
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Either<RuleNode, TokenNode>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -59,8 +61,8 @@ pub fn select_repeated(
     catch_unwind
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
-) -> Result<Vec<Vec<Either<RuleNode, TokenNode>>>> {
+    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
+) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -74,7 +76,7 @@ struct Selector {
 }
 
 impl Selector {
-    fn new(node: &RuleNode) -> Self {
+    fn new(node: &NonTerminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
@@ -84,7 +86,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Either<RuleNode, TokenNode>> {
+    ) -> Result<Either<NonTerminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -94,7 +96,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<Either<RuleNode, TokenNode>>> {
+    ) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -103,9 +105,9 @@ impl Selector {
                     continue;
                 }
                 RustLabeledNode {
-                    label: _,
-                    node: RustNode::Token(token),
-                } if matches!(token.kind, TokenKind::SKIPPED) => {
+                    node: RustNode::Terminal(terminal),
+                    ..
+                } if matches!(terminal.kind, TerminalKind::SKIPPED) => {
                     return Error::SkippedToken(self.index).into();
                 }
                 labeled if filter(labeled) => {
@@ -135,8 +137,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with RuleKind '{0}'.")]
-    UnexpectedParent(RuleKind),
+    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
+    UnexpectedParent(NonTerminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]

@@ -17,7 +17,7 @@ use napi_derive::napi;
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum RuleKind {
+pub enum NonTerminalKind {
     ABICoderPragma,
     AdditiveExpression,
     AddressType,
@@ -234,7 +234,7 @@ pub enum RuleKind {
     YulVariableDeclarationValue,
 }
 
-impl metaslang_cst::NonTerminalKind for RuleKind {}
+impl metaslang_cst::NonTerminalKind for NonTerminalKind {}
 
 #[derive(
     Debug,
@@ -251,7 +251,7 @@ impl metaslang_cst::NonTerminalKind for RuleKind {}
 #[strum(serialize_all = "snake_case")]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum NodeLabel {
+pub enum EdgeLabel {
     // Built-in:
     Item,
     Variant,
@@ -388,7 +388,7 @@ pub enum NodeLabel {
     WhileKeyword,
 }
 
-impl metaslang_cst::EdgeKind for NodeLabel {}
+impl metaslang_cst::EdgeLabel for EdgeLabel {}
 
 #[derive(
     Debug,
@@ -404,7 +404,7 @@ impl metaslang_cst::EdgeKind for NodeLabel {}
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum TokenKind {
+pub enum TerminalKind {
     // Built-in:
     SKIPPED,
 
@@ -778,7 +778,7 @@ pub enum TokenKind {
     YulYearsKeyword,
 }
 
-impl metaslang_cst::TerminalKind for TokenKind {
+impl metaslang_cst::TerminalKind for TerminalKind {
     fn is_trivia(&self) -> bool {
         matches!(self, |Self::EndOfLine| Self::MultiLineComment
             | Self::MultiLineNatSpecComment
