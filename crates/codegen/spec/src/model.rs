@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use codegen_ebnf::EbnfModel;
-use codegen_language_definition::model::{Identifier, Language, Section, Topic};
+use codegen_language_definition::model::{Identifier, Language, Section, Topic, Item};
 use inflector::Inflector;
 use serde::Serialize;
 
@@ -91,6 +91,11 @@ impl SpecTopic {
 
         for item in &topic.items {
             items.push(item.name().to_owned());
+            if let Item::Precedence{ item: precedence_item } = item {
+                for precedence_expr in &precedence_item.as_ref().precedence_expressions {
+                    items.push(precedence_expr.as_ref().name.to_owned());
+                }
+            }
         }
 
         Self { title, slug, items }
