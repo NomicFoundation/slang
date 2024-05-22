@@ -12,9 +12,9 @@ use once_cell::sync::Lazy;
 use crate::parser::grammar::{
     DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition,
     KeywordScannerDefinitionNode, KeywordScannerDefinitionVersionedNode, Labeled, ParserDefinition,
-    ParserDefinitionNode, PrecedenceOperatorModel, PrecedenceParserDefinition,
-    PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
-    TriviaParserDefinition, VersionQuality, VersionQualityRange,
+    ParserDefinitionNode, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
+    ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
+    VersionQualityRange,
 };
 
 impl Grammar {
@@ -709,20 +709,6 @@ fn resolve_precedence(
         )),
     });
 
-    #[allow(clippy::items_after_statements)] // simple and specific to this site
-    fn model_to_enum(model: model::OperatorModel) -> PrecedenceOperatorModel {
-        match model {
-            model::OperatorModel::BinaryLeftAssociative => {
-                PrecedenceOperatorModel::BinaryLeftAssociative
-            }
-            model::OperatorModel::BinaryRightAssociative => {
-                PrecedenceOperatorModel::BinaryRightAssociative
-            }
-            model::OperatorModel::Prefix => PrecedenceOperatorModel::Prefix,
-            model::OperatorModel::Postfix => PrecedenceOperatorModel::Postfix,
-        }
-    }
-
     let mut operators = vec![];
     let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
@@ -768,7 +754,7 @@ fn resolve_precedence(
             };
 
             all_operators.push(def.clone());
-            operators.push((model_to_enum(model), name.clone(), def));
+            operators.push((model, name.clone(), def));
         }
 
         // Register the combined parser definition to appease the codegen and to mark terminals
