@@ -8,7 +8,6 @@ publish = false
 resolver = "2"
 members = [
     "crates/codegen/ebnf",
-    "crates/codegen/grammar",
     "crates/codegen/language/definition",
     "crates/codegen/language/internal_macros",
     "crates/codegen/language/macros",
@@ -47,7 +46,6 @@ members = [
 # Internal
 #
 codegen_ebnf = { path = "crates/codegen/ebnf" }
-codegen_grammar = { path = "crates/codegen/grammar" }
 codegen_language_definition = { path = "crates/codegen/language/definition" }
 codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros" }
 codegen_language_macros = { path = "crates/codegen/language/macros" }

@@ -7,7 +7,6 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-codegen_grammar = { workspace = true }
 codegen_language_definition = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
@@ -17,6 +16,7 @@ proc-macro2 = { workspace = true }
 quote = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
+strum_macros = { workspace = true }
 
 [lints]
 workspace = true
