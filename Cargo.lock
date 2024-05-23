@@ -330,6 +330,7 @@ dependencies = [
  "codegen_language_definition",
  "derive-new",
  "indexmap",
+ "strum_macros",
 ]
 
 [[package]]

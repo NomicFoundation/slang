@@ -11,6 +11,7 @@ codegen_language_definition = { workspace = true }
 derive-new = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
+strum_macros = { workspace = true }
 
 [lints]
 workspace = true

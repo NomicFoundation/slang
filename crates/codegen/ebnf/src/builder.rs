@@ -11,6 +11,21 @@ use inflector::Inflector;
 
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 
+#[allow(dead_code)]
+#[derive(strum_macros::AsRefStr)]
+#[strum(serialize_all = "snake_case")]
+enum BuiltInLabel {
+    // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
+    Item,
+    Variant,
+    Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
+}
+
 pub struct Builder {
     section_index: usize,
     topic_index: usize,
@@ -128,7 +143,7 @@ impl Builder {
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
-                Self::build_label_comment("variant"),
+                Self::build_label_comment(BuiltInLabel::Variant.as_ref()),
                 Self::build_ref(reference),
                 Self::build_enabled_comment(enabled),
             )
@@ -162,7 +177,7 @@ impl Builder {
             name,
             Self::build_enabled_comment(enabled),
             Some(Value::new(
-                Self::build_label_comment("item"),
+                Self::build_label_comment(BuiltInLabel::Item.as_ref()),
                 expression,
                 None,
             )),
@@ -220,7 +235,7 @@ impl Builder {
             let PrecedenceExpression { name, operators } = precedence_expression.as_ref();
 
             values.push(Value::new(
-                Self::build_label_comment("variant"),
+                Self::build_label_comment(BuiltInLabel::Variant.as_ref()),
                 Self::build_ref(name),
                 None,
             ));
@@ -236,7 +251,7 @@ impl Builder {
             let PrimaryExpression { reference, enabled } = primary_expression;
 
             values.push(Value::new(
-                Self::build_label_comment("variant"),
+                Self::build_label_comment(BuiltInLabel::Variant.as_ref()),
                 Self::build_ref(reference),
                 Self::build_enabled_comment(enabled),
             ));
@@ -271,7 +286,7 @@ impl Builder {
                 leading_comments.push("Prefix unary operator".to_string());
 
                 values.push(Value::new(
-                    Self::build_label_comment("operand"),
+                    Self::build_label_comment(BuiltInLabel::Operand.as_ref()),
                     Self::build_ref(base_name),
                     None,
                 ));
@@ -282,7 +297,7 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_label_comment("operand"),
+                        Self::build_label_comment(BuiltInLabel::Operand.as_ref()),
                         Self::build_ref(base_name),
                         None,
                     ),
@@ -294,13 +309,13 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_label_comment("left_operand"),
+                        Self::build_label_comment(BuiltInLabel::LeftOperand.as_ref()),
                         Self::build_ref(base_name),
                         None,
                     ),
                 );
                 values.push(Value::new(
-                    Self::build_label_comment("right_operand"),
+                    Self::build_label_comment(BuiltInLabel::RightOperand.as_ref()),
                     Self::build_ref(base_name),
                     None,
                 ));
@@ -311,13 +326,13 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_label_comment("left_operand"),
+                        Self::build_label_comment(BuiltInLabel::LeftOperand.as_ref()),
                         Self::build_ref(base_name),
                         None,
                     ),
                 );
                 values.push(Value::new(
-                    Self::build_label_comment("right_operand"),
+                    Self::build_label_comment(BuiltInLabel::RightOperand.as_ref()),
                     Self::build_ref(base_name),
                     None,
                 ));
