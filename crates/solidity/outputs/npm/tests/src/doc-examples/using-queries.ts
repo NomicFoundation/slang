@@ -5,7 +5,7 @@ import fs from "node:fs/promises";
 
 import { Language } from "@nomicfoundation/slang/language";
 import { NonTerminalKind } from "@nomicfoundation/slang/kinds";
-import { Query, QueryResultIterator } from "@nomicfoundation/slang/query";
+import { Query, QueryMatchIterator } from "@nomicfoundation/slang/query";
 import { NonTerminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(filePath: string) {
@@ -24,7 +24,7 @@ test("using queries", async () => {
     const cursor = parse_output.createTreeCursor();
 
     const query = Query.parse("[ContractDefinition]");
-    const results: QueryResultIterator = cursor.query([query]);
+    const results: QueryMatchIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
     results; // Silence the unused warning
   }
@@ -89,7 +89,7 @@ test("using queries", async () => {
 
     const names = [];
 
-    const query = Query.parse("[TypedTupleMember ... @type [type_name: _] ...]");
+    const query = Query.parse("[TypedTupleMember ... @type type_name:[_] ...]");
     const results = cursor.query([query]);
 
     let result = null;
@@ -114,7 +114,7 @@ test("using queries", async () => {
 
     const names = [];
 
-    const query = Query.parse(`[ElementaryType @uint_keyword [variant: "uint"]]`);
+    const query = Query.parse(`[ElementaryType @uint_keyword variant:["uint"]]`);
     const results = cursor.query([query]);
 
     let result = null;

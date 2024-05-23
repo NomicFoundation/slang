@@ -8,7 +8,7 @@ use napi_derive::napi;
 use crate::napi_interface::cursor::Cursor;
 use crate::napi_interface::text_index::TextIndex;
 use crate::napi_interface::{
-    NonTerminalKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode, TerminalKind,
+    NonTerminalKind, RustNode, RustNonTerminalNode, RustTerminalNode, RustTextIndex, TerminalKind,
 };
 
 #[napi(namespace = "cst", string_enum)]
@@ -33,11 +33,11 @@ impl NAPINodeExtensions for RustNode {
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
-pub struct NonTerminalNode(pub(crate) Rc<RustRuleNode>);
+pub struct NonTerminalNode(pub(crate) Rc<RustNonTerminalNode>);
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
-pub struct TerminalNode(pub(crate) Rc<RustTokenNode>);
+pub struct TerminalNode(pub(crate) Rc<RustTerminalNode>);
 
 #[napi(namespace = "cst")]
 impl NonTerminalNode {

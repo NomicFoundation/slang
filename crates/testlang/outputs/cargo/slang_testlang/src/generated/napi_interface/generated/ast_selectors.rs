@@ -9,7 +9,7 @@ use napi_derive::napi;
 
 use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
 use crate::napi_interface::{
-    NonTerminalKind, RustLabeledNode, RustNode, RustRuleNode, TerminalKind,
+    NonTerminalKind, RustEdge, RustNode, RustNonTerminalNode, TerminalKind,
 };
 
 //
@@ -282,7 +282,7 @@ impl Selector {
 //
 
 struct Selector {
-    node: Rc<RustRuleNode>,
+    node: Rc<RustNonTerminalNode>,
     index: usize,
 }
 
@@ -315,7 +315,7 @@ impl Selector {
                     self.index += 1;
                     continue;
                 }
-                RustLabeledNode {
+                RustEdge {
                     node: RustNode::Terminal(terminal),
                     ..
                 } if matches!(terminal.kind, TerminalKind::SKIPPED) => {

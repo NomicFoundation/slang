@@ -149,7 +149,11 @@ fn render_key(cursor: &mut CursorWithEdges) -> String {
 
 fn render_value(cursor: &mut CursorWithEdges, source: &str) -> String {
     let utf8_range = cursor.text_range().utf8();
-    let char_range = cursor.text_range().char();
+    let char_range = {
+        let start = source[..utf8_range.start].chars().count();
+        let end = source[..utf8_range.end].chars().count();
+        start..end
+    };
     let preview = render_preview(source, &char_range);
 
     match cursor.node() {

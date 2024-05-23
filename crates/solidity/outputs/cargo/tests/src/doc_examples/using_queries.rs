@@ -6,7 +6,7 @@ use semver::Version;
 use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
-use slang_solidity::query::{Query, QueryResultIterator};
+use slang_solidity::query::{Query, QueryMatchIterator};
 
 fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
     let input_path = Path::repo_path("documentation/public/user-guide/inputs").join(path.as_ref());
@@ -30,7 +30,7 @@ fn using_queries() -> Result<()> {
         let cursor = parse_output.create_tree_cursor();
 
         let query = Query::parse("[ContractDefinition]").unwrap();
-        let result: QueryResultIterator = cursor.query(vec![query]);
+        let result: QueryMatchIterator = cursor.query(vec![query]);
         // --8<-- [end:creating-a-query]
     }
 
@@ -43,7 +43,7 @@ fn using_queries() -> Result<()> {
         let query = Query::parse("@contract [ContractDefinition]").unwrap();
 
         for result in cursor.query(vec![query]) {
-            let bindings = result.bindings;
+            let bindings = result.captures;
             let cursors = bindings.get("contract").unwrap();
 
             let cursor = cursors.first().unwrap();
@@ -69,7 +69,7 @@ fn using_queries() -> Result<()> {
 
         for result in cursor.query(vec![struct_def, enum_def]) {
             let index = result.query_number;
-            let bindings = result.bindings;
+            let bindings = result.captures;
             let cursors = bindings.get("name").unwrap();
 
             let cursor = cursors.first().unwrap();
@@ -96,10 +96,10 @@ fn using_queries() -> Result<()> {
 
         let mut names = vec![];
 
-        let query = Query::parse("[TypedTupleMember ... @type [type_name: _] ...]").unwrap();
+        let query = Query::parse("[TypedTupleMember ... @type type_name:[_] ...]").unwrap();
 
         for result in cursor.query(vec![query]) {
-            let bindings = result.bindings;
+            let bindings = result.captures;
             let cursors = bindings.get("type").unwrap();
 
             let cursor = cursors.first().unwrap();
@@ -119,10 +119,10 @@ fn using_queries() -> Result<()> {
 
         let mut names = vec![];
 
-        let query = Query::parse(r#"[ElementaryType @uint_keyword [variant: "uint"]]"#).unwrap();
+        let query = Query::parse(r#"[ElementaryType @uint_keyword variant:["uint"]]"#).unwrap();
 
         for result in cursor.query(vec![query]) {
-            let bindings = result.bindings;
+            let bindings = result.captures;
             let cursors = bindings.get("uint_keyword").unwrap();
 
             let cursor = cursors.first().unwrap();
@@ -163,7 +163,7 @@ fn tx_origin_query() -> Result<()> {
     let mut results = vec![];
 
     for result in cursor.query(vec![query]) {
-        let bindings = result.bindings;
+        let bindings = result.captures;
         let cursors = bindings.get("txorigin").unwrap();
 
         let cursor = cursors.first().unwrap();

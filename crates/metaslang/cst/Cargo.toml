@@ -23,4 +23,4 @@ categories = ["compilers", "parsing", "parser-implementations"]
 [dependencies]
 nom = { workspace = true }
 serde = { workspace = true }
-strum = { workspace = true }
+thiserror = { workspace = true }

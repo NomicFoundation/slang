@@ -60,8 +60,8 @@ pub mod query {
     use super::metaslang_cst::KindTypes;
 
     pub type Query = query::Query<KindTypes>;
-    pub type QueryResult = query::QueryResult<KindTypes>;
-    pub type QueryResultIterator = query::QueryResultIterator<KindTypes>;
+    pub type QueryMatch = query::QueryMatch<KindTypes>;
+    pub type QueryMatchIterator = query::QueryMatchIterator<KindTypes>;
 }
 
 pub mod text_index {

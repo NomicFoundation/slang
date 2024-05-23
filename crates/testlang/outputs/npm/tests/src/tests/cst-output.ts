@@ -48,7 +48,8 @@ test("calculate unicode characters text length", () => {
   expectNonTerminal(parseTree, NonTerminalKind.Literal);
 
   expect(parseTree.textLength).toEqual({
-    char: 14,
+    line: 0,
+    column: 14,
     utf16: 15,
     utf8: 17,
   });
@@ -59,7 +60,8 @@ test("calculate unicode characters text length", () => {
   const token = children[0]!;
   expectTerminal(token, TerminalKind.StringLiteral, `"some 😁 emoji"`);
   expect(token.textLength).toEqual({
-    char: 14,
+    line: 0,
+    column: 14,
     utf16: 15,
     utf8: 17,
   });

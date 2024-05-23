@@ -1,0 +1,45 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = true
+
+name = "metaslang_graph_builder"
+description = "Construct graphs from parsed source code"
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+  "Douglas Creager <dcreager@dcreager.net>",
+  "Nomic Foundation <packages@nomic.foundation>",
+  "Antony Blakey <antony@nomic.foundation>",
+  "Igor Matuszewski <igor@nomic.foundation>",
+  "Omar Tawfik <omar@nomic.foundation>",
+]
+
+readme = "README.md"
+license = "MIT"
+keywords = ["parser"]
+categories = ["compilers", "parsing", "parser-implementations"]
+
+[lib]
+test = false
+
+[dependencies]
+log = { workspace = true }
+metaslang_cst = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+smallvec = { workspace = true, features = ["union"] }
+string-interner = { workspace = true, features = [
+  "std",
+  "inline-more",
+  "backends",
+] }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+indoc = { workspace = true }
+env_logger = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
