@@ -56,8 +56,8 @@ fn test_parsing_error() {
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => assert_eq!(
-            e.to_string(),
-            "Parse error:\nexpected '(' at: [_ ...\nAlt at: [_ ...\n"
+            e.message,
+            "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
         ),
     }
 }

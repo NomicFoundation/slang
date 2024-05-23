@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use crate::kinds::TerminalKind;
-use crate::text_index::{TextRange, TextRangeExtensions};
+use crate::text_index::TextRange;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
@@ -71,7 +71,11 @@ pub(crate) fn render_error_report(
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
-    let range = error.text_range.char();
+    let range = {
+        let start = source[..error.text_range.start.utf8].chars().count();
+        let end = source[..error.text_range.end.utf8].chars().count();
+        start..end
+    };
 
     let mut builder = Report::build(kind, source_id, range.start)
         .with_config(Config::default().with_color(with_color))

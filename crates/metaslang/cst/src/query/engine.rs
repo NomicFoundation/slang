@@ -1,17 +1,19 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::rc::Rc;
 
-use crate::cst::Node;
-use crate::cursor::Cursor;
-use crate::query::model::{
-    AlternativesMatcher, BindingMatcher, Kind, Matcher, NodeMatcher, NodeSelector,
-    OneOrMoreMatcher, OptionalMatcher, Query, SequenceMatcher,
+use super::super::cst::Node;
+use super::super::cursor::Cursor;
+use super::model::{
+    ASTNode, AlternativesASTNode, CaptureASTNode, NodeMatchASTNode, NodeSelector, OneOrMoreASTNode,
+    OptionalASTNode, Query, SequenceASTNode,
 };
+use crate::cst::NodeKind;
+use crate::query::CaptureQuantifier;
 use crate::KindTypes;
 
 impl<T: KindTypes + 'static> Cursor<T> {
-    pub fn query(self, queries: Vec<Query<T>>) -> QueryResultIterator<T> {
-        QueryResultIterator::new(self, queries)
+    pub fn query(self, queries: Vec<Query<T>>) -> QueryMatchIterator<T> {
+        QueryMatchIterator::new(self, queries)
     }
 
     fn irrevocably_go_to_next_sibling(&mut self) -> bool {
@@ -29,37 +31,50 @@ impl<T: KindTypes + 'static> Cursor<T> {
         match self.node() {
             Node::<T>::NonTerminal(nonterminal) => match node_selector {
                 NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::Terminal(nonterminal.kind) == *kind,
-                NodeSelector::Text { .. } => false,
-                NodeSelector::Label { label } => Some(*label) == self.label(),
-                NodeSelector::LabelAndKind { label, kind } => {
-                    Some(*label) == self.label() && Kind::Terminal(nonterminal.kind) == *kind
+                NodeSelector::NodeKind { node_kind } => {
+                    NodeKind::NonTerminal(nonterminal.kind) == *node_kind
                 }
-                NodeSelector::LabelAndText { .. } => false,
+                NodeSelector::NodeText { .. } => false,
+                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabelAndNodeKind {
+                    edge_label,
+                    node_kind,
+                } => {
+                    Some(*edge_label) == self.label()
+                        && NodeKind::NonTerminal(nonterminal.kind) == *node_kind
+                }
+                NodeSelector::EdgeLabelAndNodeText { .. } => false,
             },
 
             Node::<T>::Terminal(terminal) => match node_selector {
                 NodeSelector::Anonymous => true,
-                NodeSelector::Kind { kind } => Kind::NonTerminal(terminal.kind) == *kind,
-                NodeSelector::Text { text } => terminal.text == *text,
-                NodeSelector::Label { label } => Some(*label) == self.label(),
-                NodeSelector::LabelAndKind { label, kind } => {
-                    Some(*label) == self.label() && Kind::NonTerminal(terminal.kind) == *kind
+                NodeSelector::NodeKind { node_kind: kind } => {
+                    NodeKind::Terminal(terminal.kind) == *kind
                 }
-                NodeSelector::LabelAndText { label, text } => {
-                    Some(*label) == self.label() && terminal.text == *text
+                NodeSelector::NodeText { node_text } => terminal.text == *node_text,
+                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabelAndNodeKind {
+                    edge_label,
+                    node_kind,
+                } => {
+                    Some(*edge_label) == self.label()
+                        && NodeKind::Terminal(terminal.kind) == *node_kind
                 }
+                NodeSelector::EdgeLabelAndNodeText {
+                    edge_label,
+                    node_text,
+                } => Some(*edge_label) == self.label() && terminal.text == *node_text,
             },
         }
     }
 }
 
-impl<T: KindTypes + 'static> Matcher<T> {
+impl<T: KindTypes + 'static> ASTNode<T> {
     // This allows for queries to pre-flight against a cursor without allocating
     fn can_match(&self, cursor: &Cursor<T>) -> bool {
         match self {
             Self::Binding(matcher) => matcher.child.can_match(cursor),
-            Self::Node(matcher) => cursor.matches_node_selector(&matcher.node_selector),
+            Self::NodeMatch(matcher) => cursor.matches_node_selector(&matcher.node_selector),
             Self::Alternatives(matcher) => matcher.children.iter().any(|c| c.can_match(cursor)),
             Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
             Self::OneOrMore(matcher) => matcher.child.can_match(cursor),
@@ -68,57 +83,97 @@ impl<T: KindTypes + 'static> Matcher<T> {
         }
     }
 
-    fn create_combinator(&self, cursor: Cursor<T>) -> CombinatorRef<T> {
+    fn create_matcher(&self, cursor: Cursor<T>) -> MatcherRef<T> {
         match self {
-            Self::Binding(matcher) => {
-                Box::new(BindingCombinator::<T>::new(matcher.clone(), cursor))
+            Self::Binding(matcher) => Box::new(CaptureMatcher::<T>::new(matcher.clone(), cursor)),
+            Self::NodeMatch(matcher) => {
+                Box::new(NodeMatchMatcher::<T>::new(matcher.clone(), cursor))
             }
-            Self::Node(matcher) => Box::new(NodeCombinator::<T>::new(matcher.clone(), cursor)),
-            Self::Sequence(matcher) => {
-                Box::new(SequenceCombinator::<T>::new(matcher.clone(), cursor))
-            }
+            Self::Sequence(matcher) => Box::new(SequenceMatcher::<T>::new(matcher.clone(), cursor)),
             Self::Alternatives(matcher) => {
-                Box::new(AlternativesCombinator::<T>::new(matcher.clone(), cursor))
+                Box::new(AlternativesMatcher::<T>::new(matcher.clone(), cursor))
             }
-            Self::Optional(matcher) => {
-                Box::new(OptionalCombinator::<T>::new(matcher.clone(), cursor))
-            }
+            Self::Optional(matcher) => Box::new(OptionalMatcher::<T>::new(matcher.clone(), cursor)),
             Self::OneOrMore(matcher) => {
-                Box::new(OneOrMoreCombinator::<T>::new(matcher.clone(), cursor))
+                Box::new(OneOrMoreMatcher::<T>::new(matcher.clone(), cursor))
             }
-            Self::Ellipsis => Box::new(EllipsisCombinator::<T>::new(cursor)),
+            Self::Ellipsis => Box::new(EllipsisMatcher::<T>::new(cursor)),
         }
     }
 }
 
-pub struct QueryResult<T: KindTypes> {
+pub struct QueryMatch<T: KindTypes> {
+    pub queries: Rc<Vec<Query<T>>>,
     pub query_number: usize,
-    pub bindings: HashMap<String, Vec<Cursor<T>>>,
+    pub root_cursor: Cursor<T>,
+    // These correspond to the capture definitions in tne query
+    pub captures: BTreeMap<String, Vec<Cursor<T>>>,
 }
 
-pub struct QueryResultIterator<T: KindTypes> {
+impl<T: KindTypes> QueryMatch<T> {
+    pub fn query(&self) -> &Query<T> {
+        &self.queries[self.query_number]
+    }
+
+    pub fn capture_names(&self) -> impl Iterator<Item = &String> {
+        self.query().capture_quantifiers.keys()
+    }
+
+    pub fn captures(
+        &self,
+    ) -> impl Iterator<Item = (&String, CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
+        let query = self.query();
+        query.capture_quantifiers.iter().map(|(name, quantifier)| {
+            let captures = self
+                .captures
+                .get(name)
+                .unwrap_or(&vec![])
+                .clone()
+                .into_iter();
+            (name, *quantifier, captures)
+        })
+    }
+
+    pub fn capture(
+        &self,
+        name: &str,
+    ) -> Option<(CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
+        let query = self.query();
+        query.capture_quantifiers.get(name).map(|quantifier| {
+            let captures = self
+                .captures
+                .get(name)
+                .unwrap_or(&vec![])
+                .clone()
+                .into_iter();
+            (*quantifier, captures)
+        })
+    }
+}
+
+pub struct QueryMatchIterator<T: KindTypes> {
+    queries: Rc<Vec<Query<T>>>,
     cursor: Cursor<T>,
-    queries: Vec<Query<T>>,
     query_number: usize,
-    combinator: Option<CombinatorRef<T>>,
+    matcher: Option<MatcherRef<T>>,
 }
 
-impl<T: KindTypes + 'static> QueryResultIterator<T> {
+impl<T: KindTypes + 'static> QueryMatchIterator<T> {
     fn new(cursor: Cursor<T>, queries: Vec<Query<T>>) -> Self {
         Self {
+            queries: Rc::new(queries),
             cursor,
-            queries,
             query_number: 0,
-            combinator: None,
+            matcher: None,
         }
     }
 
     fn advance_to_next_possible_matching_query(&mut self) {
         while !self.cursor.is_completed() {
             while self.query_number < self.queries.len() {
-                let matcher = &self.queries[self.query_number].0;
-                if matcher.can_match(&self.cursor) {
-                    self.combinator = Some(matcher.create_combinator(self.cursor.clone()));
+                let ast_node = &self.queries[self.query_number].ast_node;
+                if ast_node.can_match(&self.cursor) {
+                    self.matcher = Some(ast_node.create_matcher(self.cursor.clone()));
                     return;
                 };
                 self.query_number += 1;
@@ -129,18 +184,20 @@ impl<T: KindTypes + 'static> QueryResultIterator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Iterator for QueryResultIterator<T> {
-    type Item = QueryResult<T>;
+impl<T: KindTypes + 'static> Iterator for QueryMatchIterator<T> {
+    type Item = QueryMatch<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
         while !self.cursor.is_completed() {
-            if let Some(combinator) = self.combinator.as_mut() {
-                if combinator.next().is_some() {
-                    let mut bindings = HashMap::new();
-                    combinator.accumulate_bindings(&mut bindings);
-                    return Some(QueryResult {
+            if let Some(matcher) = self.matcher.as_mut() {
+                if matcher.next().is_some() {
+                    let mut bindings = BTreeMap::new();
+                    matcher.record_captures(&mut bindings);
+                    return Some(QueryMatch {
+                        queries: Rc::clone(&self.queries),
+                        root_cursor: self.cursor.clone(),
                         query_number: self.query_number,
-                        bindings,
+                        captures: bindings,
                     });
                 }
                 self.query_number += 1;
@@ -153,24 +210,24 @@ impl<T: KindTypes + 'static> Iterator for QueryResultIterator<T> {
     }
 }
 
-trait Combinator<T: KindTypes> {
+trait Matcher<T: KindTypes> {
     // None -> failed to match, you must backtrack. DO NOT call again
     // Some(cursor) if cursor.is_complete -> matched, end of input
     // Some(cursor) if !cursor.is_complete -> matched, more input to go
     fn next(&mut self) -> Option<Cursor<T>>;
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>);
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>);
 }
-type CombinatorRef<T> = Box<dyn Combinator<T>>;
+type MatcherRef<T> = Box<dyn Matcher<T>>;
 
-struct BindingCombinator<T: KindTypes> {
-    matcher: Rc<BindingMatcher<T>>,
+struct CaptureMatcher<T: KindTypes> {
+    matcher: Rc<CaptureASTNode<T>>,
     cursor: Cursor<T>,
-    child: CombinatorRef<T>,
+    child: MatcherRef<T>,
 }
 
-impl<T: KindTypes + 'static> BindingCombinator<T> {
-    fn new(matcher: Rc<BindingMatcher<T>>, cursor: Cursor<T>) -> Self {
-        let child = matcher.child.create_combinator(cursor.clone());
+impl<T: KindTypes + 'static> CaptureMatcher<T> {
+    fn new(matcher: Rc<CaptureASTNode<T>>, cursor: Cursor<T>) -> Self {
+        let child = matcher.child.create_matcher(cursor.clone());
         Self {
             matcher,
             cursor,
@@ -179,29 +236,29 @@ impl<T: KindTypes + 'static> BindingCombinator<T> {
     }
 }
 
-impl<T: KindTypes> Combinator<T> for BindingCombinator<T> {
+impl<T: KindTypes> Matcher<T> for CaptureMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         self.child.next()
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         bindings
             .entry(self.matcher.name.clone())
             .or_default()
             .push(self.cursor.clone());
-        self.child.accumulate_bindings(bindings);
+        self.child.record_captures(bindings);
     }
 }
 
-struct NodeCombinator<T: KindTypes> {
-    matcher: Rc<NodeMatcher<T>>,
-    child: Option<CombinatorRef<T>>,
+struct NodeMatchMatcher<T: KindTypes> {
+    matcher: Rc<NodeMatchASTNode<T>>,
+    child: Option<MatcherRef<T>>,
     cursor: Cursor<T>,
     is_initialised: bool,
 }
 
-impl<T: KindTypes> NodeCombinator<T> {
-    fn new(matcher: Rc<NodeMatcher<T>>, cursor: Cursor<T>) -> Self {
+impl<T: KindTypes> NodeMatchMatcher<T> {
+    fn new(matcher: Rc<NodeMatchASTNode<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
             child: None,
@@ -211,7 +268,7 @@ impl<T: KindTypes> NodeCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for NodeCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for NodeMatchMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if self.cursor.is_completed() {
             return None;
@@ -233,7 +290,7 @@ impl<T: KindTypes + 'static> Combinator<T> for NodeCombinator<T> {
                     return None;
                 }
 
-                self.child = Some(child.create_combinator(child_cursor));
+                self.child = Some(child.create_matcher(child_cursor));
             } else {
                 let mut return_cursor = self.cursor.clone();
                 return_cursor.irrevocably_go_to_next_sibling();
@@ -255,22 +312,22 @@ impl<T: KindTypes + 'static> Combinator<T> for NodeCombinator<T> {
         None
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         if let Some(child) = self.child.as_ref() {
-            child.accumulate_bindings(bindings);
+            child.record_captures(bindings);
         }
     }
 }
 
-struct SequenceCombinator<T: KindTypes> {
-    matcher: Rc<SequenceMatcher<T>>,
-    children: Vec<CombinatorRef<T>>,
+struct SequenceMatcher<T: KindTypes> {
+    matcher: Rc<SequenceASTNode<T>>,
+    children: Vec<MatcherRef<T>>,
     cursor: Cursor<T>,
     is_initialised: bool,
 }
 
-impl<T: KindTypes> SequenceCombinator<T> {
-    fn new(matcher: Rc<SequenceMatcher<T>>, cursor: Cursor<T>) -> Self {
+impl<T: KindTypes> SequenceMatcher<T> {
+    fn new(matcher: Rc<SequenceASTNode<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
             children: vec![],
@@ -280,13 +337,13 @@ impl<T: KindTypes> SequenceCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for SequenceCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for SequenceMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if !self.is_initialised {
             self.is_initialised = true;
 
             let child_cursor = self.cursor.clone();
-            let child = self.matcher.children[0].create_combinator(child_cursor);
+            let child = self.matcher.children[0].create_matcher(child_cursor);
             self.children.push(child);
         }
 
@@ -296,8 +353,7 @@ impl<T: KindTypes + 'static> Combinator<T> for SequenceCombinator<T> {
                     return Some(child_cursor);
                 }
 
-                let child =
-                    self.matcher.children[self.children.len()].create_combinator(child_cursor);
+                let child = self.matcher.children[self.children.len()].create_matcher(child_cursor);
                 self.children.push(child);
             } else {
                 self.children.pop();
@@ -307,22 +363,22 @@ impl<T: KindTypes + 'static> Combinator<T> for SequenceCombinator<T> {
         None
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         for child in &self.children {
-            child.accumulate_bindings(bindings);
+            child.record_captures(bindings);
         }
     }
 }
 
-struct AlternativesCombinator<T: KindTypes> {
-    matcher: Rc<AlternativesMatcher<T>>,
+struct AlternativesMatcher<T: KindTypes> {
+    matcher: Rc<AlternativesASTNode<T>>,
     next_child_number: usize,
-    child: Option<CombinatorRef<T>>,
+    child: Option<MatcherRef<T>>,
     cursor: Cursor<T>,
 }
 
-impl<T: KindTypes> AlternativesCombinator<T> {
-    fn new(matcher: Rc<AlternativesMatcher<T>>, cursor: Cursor<T>) -> Self {
+impl<T: KindTypes> AlternativesMatcher<T> {
+    fn new(matcher: Rc<AlternativesASTNode<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
             next_child_number: 0,
@@ -332,13 +388,13 @@ impl<T: KindTypes> AlternativesCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for AlternativesCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         loop {
             if self.child.is_none() {
                 match self.matcher.children.get(self.next_child_number) {
                     Some(child) => {
-                        let child = child.create_combinator(self.cursor.clone());
+                        let child = child.create_matcher(self.cursor.clone());
                         self.child = Some(child);
                         self.next_child_number += 1;
                     }
@@ -353,20 +409,20 @@ impl<T: KindTypes + 'static> Combinator<T> for AlternativesCombinator<T> {
         }
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
-        self.child.as_ref().unwrap().accumulate_bindings(bindings);
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+        self.child.as_ref().unwrap().record_captures(bindings);
     }
 }
 
-struct OptionalCombinator<T: KindTypes> {
-    matcher: Rc<OptionalMatcher<T>>,
-    child: Option<CombinatorRef<T>>,
+struct OptionalMatcher<T: KindTypes> {
+    matcher: Rc<OptionalASTNode<T>>,
+    child: Option<MatcherRef<T>>,
     cursor: Cursor<T>,
     have_nonempty_match: bool,
 }
 
-impl<T: KindTypes> OptionalCombinator<T> {
-    fn new(matcher: Rc<OptionalMatcher<T>>, cursor: Cursor<T>) -> Self {
+impl<T: KindTypes> OptionalMatcher<T> {
+    fn new(matcher: Rc<OptionalASTNode<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
             child: None,
@@ -376,7 +432,7 @@ impl<T: KindTypes> OptionalCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for OptionalCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if let Some(child) = self.child.as_mut() {
             match child.next() {
@@ -391,29 +447,29 @@ impl<T: KindTypes + 'static> Combinator<T> for OptionalCombinator<T> {
             }
         } else {
             let child_cursor = self.cursor.clone();
-            let child = self.matcher.child.create_combinator(child_cursor);
+            let child = self.matcher.child.create_matcher(child_cursor);
             self.child = Some(child);
             Some(self.cursor.clone())
         }
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         if self.have_nonempty_match {
             if let Some(child) = self.child.as_ref() {
-                child.accumulate_bindings(bindings);
+                child.record_captures(bindings);
             }
         }
     }
 }
 
-struct OneOrMoreCombinator<T: KindTypes> {
-    matcher: Rc<OneOrMoreMatcher<T>>,
-    children: Vec<CombinatorRef<T>>,
+struct OneOrMoreMatcher<T: KindTypes> {
+    matcher: Rc<OneOrMoreASTNode<T>>,
+    children: Vec<MatcherRef<T>>,
     cursor_for_next_repetition: Option<Cursor<T>>,
 }
 
-impl<T: KindTypes> OneOrMoreCombinator<T> {
-    fn new(matcher: Rc<OneOrMoreMatcher<T>>, cursor: Cursor<T>) -> Self {
+impl<T: KindTypes> OneOrMoreMatcher<T> {
+    fn new(matcher: Rc<OneOrMoreASTNode<T>>, cursor: Cursor<T>) -> Self {
         let cursor_for_next_repetition = Some(cursor);
         Self {
             matcher,
@@ -423,14 +479,14 @@ impl<T: KindTypes> OneOrMoreCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for OneOrMoreCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         loop {
             if let Some(cursor_for_next_repetition) = self.cursor_for_next_repetition.take() {
                 let next_child = self
                     .matcher
                     .child
-                    .create_combinator(cursor_for_next_repetition);
+                    .create_matcher(cursor_for_next_repetition);
                 self.children.push(next_child);
             } else {
                 let tail = self.children.last_mut().unwrap();
@@ -448,19 +504,19 @@ impl<T: KindTypes + 'static> Combinator<T> for OneOrMoreCombinator<T> {
         }
     }
 
-    fn accumulate_bindings(&self, bindings: &mut HashMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         for child in &self.children {
-            child.accumulate_bindings(bindings);
+            child.record_captures(bindings);
         }
     }
 }
 
-struct EllipsisCombinator<T: KindTypes> {
+struct EllipsisMatcher<T: KindTypes> {
     cursor: Cursor<T>,
     has_returned_initial_empty_value: bool,
 }
 
-impl<T: KindTypes> EllipsisCombinator<T> {
+impl<T: KindTypes> EllipsisMatcher<T> {
     fn new(cursor: Cursor<T>) -> Self {
         Self {
             cursor,
@@ -469,7 +525,7 @@ impl<T: KindTypes> EllipsisCombinator<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Combinator<T> for EllipsisCombinator<T> {
+impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if !self.has_returned_initial_empty_value {
             self.has_returned_initial_empty_value = true;
@@ -483,5 +539,5 @@ impl<T: KindTypes + 'static> Combinator<T> for EllipsisCombinator<T> {
         None
     }
 
-    fn accumulate_bindings(&self, _bindings: &mut HashMap<String, Vec<Cursor<T>>>) {}
+    fn record_captures(&self, _bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
 }

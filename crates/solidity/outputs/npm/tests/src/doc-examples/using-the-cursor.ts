@@ -70,13 +70,19 @@ test("using the cursor", async () => {
       const contractNode = cursor.node();
       assert(contractNode instanceof NonTerminalNode);
 
-      contracts.push([range.start.char, range.end.char, contractNode.unparse().trim()]);
+      contracts.push([
+        range.start.line,
+        range.start.column,
+        range.end.line,
+        range.end.column,
+        contractNode.unparse().trim(),
+      ]);
     }
 
     assert.deepStrictEqual(contracts, [
-      [0, 16, "contract Foo {}"],
-      [16, 32, "contract Bar {}"],
-      [32, 47, "contract Baz {}"],
+      [0, 0, 1, 0, "contract Foo {}"],
+      [1, 0, 2, 0, "contract Bar {}"],
+      [2, 0, 2, 15, "contract Baz {}"],
     ]);
     // --8<-- [end:accessing-node-positions]
   }

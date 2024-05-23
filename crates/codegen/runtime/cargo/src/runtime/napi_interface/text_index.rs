@@ -7,7 +7,8 @@ use crate::napi_interface::{RustTextIndex, RustTextRange};
 pub struct TextIndex {
     pub utf8: u32,
     pub utf16: u32,
-    pub char: u32,
+    pub line: u32,
+    pub column: u32,
 }
 
 impl From<RustTextIndex> for TextIndex {
@@ -17,7 +18,8 @@ impl From<RustTextIndex> for TextIndex {
         Self {
             utf8: value.utf8 as u32,
             utf16: value.utf16 as u32,
-            char: value.char as u32,
+            line: value.line as u32,
+            column: value.column as u32,
         }
     }
 }
@@ -27,7 +29,8 @@ impl From<TextIndex> for RustTextIndex {
         Self {
             utf8: value.utf8 as usize,
             utf16: value.utf16 as usize,
-            char: value.char as usize,
+            line: value.line as usize,
+            column: value.column as usize,
         }
     }
 }

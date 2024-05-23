@@ -276,9 +276,11 @@ impl<T: KindTypes> Cursor<T> {
         if let Some(new_parent) = self.as_ancestor_node() {
             if let Some(new_child) = new_parent.nonterminal_node.children.last().cloned() {
                 self.child_number = new_parent.nonterminal_node.children.len() - 1;
-                // This is cheaper than summing up the length of the children
-                self.text_offset += new_parent.nonterminal_node.text_len - new_child.text_len();
                 self.node = new_child.node;
+                // Remember: range is not inclusive
+                for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
+                    self.text_offset += sibling.text_len();
+                }
                 self.parent = Some(new_parent);
 
                 return true;
@@ -303,14 +305,12 @@ impl<T: KindTypes> Cursor<T> {
                 .get(child_number)
                 .cloned()
             {
-                self.node = new_child.node;
                 self.child_number = child_number;
-                // Sum up the length of the children before this child
-                // TODO(#871): it might sometimes be quicker to start from the end (like `go_to_last_child`)
-                self.text_offset += new_parent.nonterminal_node.children[..child_number]
-                    .iter()
-                    .map(|node| node.text_len())
-                    .sum();
+                self.node = new_child.node;
+                // Remember: range is not inclusive
+                for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
+                    self.text_offset += sibling.text_len();
+                }
                 self.parent = Some(new_parent);
 
                 return true;
@@ -332,8 +332,8 @@ impl<T: KindTypes> Cursor<T> {
             let new_child_number = self.child_number + 1;
             if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
-                self.node = new_child.node.clone();
                 self.child_number = new_child_number;
+                self.node = new_child.node.clone();
 
                 return true;
             }
@@ -354,9 +354,13 @@ impl<T: KindTypes> Cursor<T> {
             if self.child_number > 0 {
                 let new_child_number = self.child_number - 1;
                 let new_child = &parent.nonterminal_node.children[new_child_number];
-                self.text_offset -= new_child.node.text_len();
-                self.node = new_child.node.clone();
                 self.child_number = new_child_number;
+                self.node = new_child.node.clone();
+                // Remember: range is not inclusive
+                self.text_offset = parent.text_offset;
+                for sibling in &parent.nonterminal_node.children[..self.child_number] {
+                    self.text_offset += sibling.text_len();
+                }
 
                 return true;
             }
