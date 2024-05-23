@@ -54,44 +54,44 @@ VersionExpressionSets = VersionExpressionSet (BAR_BAR VersionExpressionSet)*;
 
 VersionExpressionSet = (* item: *) VersionExpression+;
 
-VersionExpression = VersionRange
-                  | VersionComparator
-                  | VersionSpecifiers
-                  | SINGLE_QUOTED_VERSION_LITERAL
-                  | DOUBLE_QUOTED_VERSION_LITERAL;
+VersionExpression = (* variant: *) VersionRange
+                  | (* variant: *) VersionComparator
+                  | (* variant: *) VersionSpecifiers
+                  | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
+                  | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
 
 (* Left-associative binary operator *)
-VersionRange = VersionExpression
+VersionRange = (* left_operand: *) VersionExpression
                (* operator: *) MINUS
-               VersionExpression;
+               (* right_operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) CARET
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) TILDE
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) EQUAL
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) LESS_THAN
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) GREATER_THAN
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) LESS_THAN_EQUAL
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 (* Prefix unary operator *)
 VersionComparator = (* operator: *) GREATER_THAN_EQUAL
-                    VersionExpression;
+                    (* operand: *) VersionExpression;
 
 VersionSpecifiers = VERSION_SPECIFIER (PERIOD VERSION_SPECIFIER)*;
 
@@ -915,14 +915,14 @@ ErrorParameter = (* type_name: *) TypeName
 
 (* 3.1. Advanced Types: *)
 
-TypeName = ArrayTypeName
-         | FunctionType
-         | MappingType
-         | ElementaryType
-         | IdentifierPath;
+TypeName = (* variant: *) ArrayTypeName
+         | (* variant: *) FunctionType
+         | (* variant: *) MappingType
+         | (* variant: *) ElementaryType
+         | (* variant: *) IdentifierPath;
 
 (* Postfix unary operator *)
-ArrayTypeName = TypeName
+ArrayTypeName = (* operand: *) TypeName
                 (* open_bracket: *) OPEN_BRACKET
                 (* index: *) Expression?
                 (* close_bracket: *) CLOSE_BRACKET;
@@ -1157,267 +1157,267 @@ ThrowStatement = (* throw_keyword: *) THROW_KEYWORD
 
 (* 5.1. Base Expressions: *)
 
-Expression = AssignmentExpression
-           | ConditionalExpression
-           | OrExpression
-           | AndExpression
-           | EqualityExpression
-           | ComparisonExpression
-           | BitwiseOrExpression
-           | BitwiseXorExpression
-           | BitwiseAndExpression
-           | ShiftExpression
-           | AdditiveExpression
-           | MultiplicativeExpression
-           | ExponentiationExpression
-           | PostfixExpression
-           | PrefixExpression
-           | FunctionCallExpression
-           | CallOptionsExpression
-           | MemberAccessExpression
-           | IndexAccessExpression
-           | NewExpression
-           | TupleExpression
-           | TypeExpression (* Introduced in 0.5.3 *)
-           | ArrayExpression
-           | HexNumberExpression
-           | DecimalNumberExpression
-           | StringExpression
-           | ElementaryType
-           | PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
-           | TRUE_KEYWORD
-           | FALSE_KEYWORD
-           | IDENTIFIER;
+Expression = (* variant: *) AssignmentExpression
+           | (* variant: *) ConditionalExpression
+           | (* variant: *) OrExpression
+           | (* variant: *) AndExpression
+           | (* variant: *) EqualityExpression
+           | (* variant: *) ComparisonExpression
+           | (* variant: *) BitwiseOrExpression
+           | (* variant: *) BitwiseXorExpression
+           | (* variant: *) BitwiseAndExpression
+           | (* variant: *) ShiftExpression
+           | (* variant: *) AdditiveExpression
+           | (* variant: *) MultiplicativeExpression
+           | (* variant: *) ExponentiationExpression
+           | (* variant: *) PostfixExpression
+           | (* variant: *) PrefixExpression
+           | (* variant: *) FunctionCallExpression
+           | (* variant: *) CallOptionsExpression
+           | (* variant: *) MemberAccessExpression
+           | (* variant: *) IndexAccessExpression
+           | (* variant: *) NewExpression
+           | (* variant: *) TupleExpression
+           | (* variant: *) TypeExpression (* Introduced in 0.5.3 *)
+           | (* variant: *) ArrayExpression
+           | (* variant: *) HexNumberExpression
+           | (* variant: *) DecimalNumberExpression
+           | (* variant: *) StringExpression
+           | (* variant: *) ElementaryType
+           | (* variant: *) PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
+           | (* variant: *) TRUE_KEYWORD
+           | (* variant: *) FALSE_KEYWORD
+           | (* variant: *) IDENTIFIER;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) BAR_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) PLUS_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) MINUS_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) CARET_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) SLASH_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) PERCENT_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) ASTERISK_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) AMPERSAND_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) LESS_THAN_LESS_THAN_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AssignmentExpression = Expression
+AssignmentExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Postfix unary operator *)
-ConditionalExpression = Expression
+ConditionalExpression = (* operand: *) Expression
                         (* question_mark: *) QUESTION_MARK
                         (* true_expression: *) Expression
                         (* colon: *) COLON
                         (* false_expression: *) Expression;
 
 (* Left-associative binary operator *)
-OrExpression = Expression
+OrExpression = (* left_operand: *) Expression
                (* operator: *) BAR_BAR
-               Expression;
+               (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AndExpression = Expression
+AndExpression = (* left_operand: *) Expression
                 (* operator: *) AMPERSAND_AMPERSAND
-                Expression;
+                (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-EqualityExpression = Expression
+EqualityExpression = (* left_operand: *) Expression
                      (* operator: *) EQUAL_EQUAL
-                     Expression;
+                     (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-EqualityExpression = Expression
+EqualityExpression = (* left_operand: *) Expression
                      (* operator: *) BANG_EQUAL
-                     Expression;
+                     (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = Expression
+ComparisonExpression = (* left_operand: *) Expression
                        (* operator: *) LESS_THAN
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = Expression
+ComparisonExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = Expression
+ComparisonExpression = (* left_operand: *) Expression
                        (* operator: *) LESS_THAN_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = Expression
+ComparisonExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN_EQUAL
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-BitwiseOrExpression = Expression
+BitwiseOrExpression = (* left_operand: *) Expression
                       (* operator: *) BAR
-                      Expression;
+                      (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-BitwiseXorExpression = Expression
+BitwiseXorExpression = (* left_operand: *) Expression
                        (* operator: *) CARET
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-BitwiseAndExpression = Expression
+BitwiseAndExpression = (* left_operand: *) Expression
                        (* operator: *) AMPERSAND
-                       Expression;
+                       (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ShiftExpression = Expression
+ShiftExpression = (* left_operand: *) Expression
                   (* operator: *) LESS_THAN_LESS_THAN
-                  Expression;
+                  (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ShiftExpression = Expression
+ShiftExpression = (* left_operand: *) Expression
                   (* operator: *) GREATER_THAN_GREATER_THAN
-                  Expression;
+                  (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ShiftExpression = Expression
+ShiftExpression = (* left_operand: *) Expression
                   (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN
-                  Expression;
+                  (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AdditiveExpression = Expression
+AdditiveExpression = (* left_operand: *) Expression
                      (* operator: *) PLUS
-                     Expression;
+                     (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-AdditiveExpression = Expression
+AdditiveExpression = (* left_operand: *) Expression
                      (* operator: *) MINUS
-                     Expression;
+                     (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-MultiplicativeExpression = Expression
+MultiplicativeExpression = (* left_operand: *) Expression
                            (* operator: *) ASTERISK
-                           Expression;
+                           (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-MultiplicativeExpression = Expression
+MultiplicativeExpression = (* left_operand: *) Expression
                            (* operator: *) SLASH
-                           Expression;
+                           (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-MultiplicativeExpression = Expression
+MultiplicativeExpression = (* left_operand: *) Expression
                            (* operator: *) PERCENT
-                           Expression;
+                           (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
 (* Deprecated in 0.6.0 *)
-ExponentiationExpression = Expression
+ExponentiationExpression = (* left_operand: *) Expression
                            (* operator: *) ASTERISK_ASTERISK
-                           Expression;
+                           (* right_operand: *) Expression;
 
 (* Right-associative binary operator *)
 (* Introduced in 0.6.0 *)
-ExponentiationExpression = Expression
+ExponentiationExpression = (* left_operand: *) Expression
                            (* operator: *) ASTERISK_ASTERISK
-                           Expression;
+                           (* right_operand: *) Expression;
 
 (* Postfix unary operator *)
-PostfixExpression = Expression
+PostfixExpression = (* operand: *) Expression
                     (* operator: *) PLUS_PLUS;
 
 (* Postfix unary operator *)
-PostfixExpression = Expression
+PostfixExpression = (* operand: *) Expression
                     (* operator: *) MINUS_MINUS;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) PLUS_PLUS
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) MINUS_MINUS
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) TILDE
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) BANG
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) MINUS
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 (* Deprecated in 0.5.0 *)
 PrefixExpression = (* operator: *) PLUS
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Prefix unary operator *)
 PrefixExpression = (* operator: *) DELETE_KEYWORD
-                   Expression;
+                   (* operand: *) Expression;
 
 (* Postfix unary operator *)
-FunctionCallExpression = Expression
+FunctionCallExpression = (* operand: *) Expression
                          (* arguments: *) ArgumentsDeclaration;
 
 (* Postfix unary operator *)
 (* Introduced in 0.6.2 *)
-CallOptionsExpression = Expression
+CallOptionsExpression = (* operand: *) Expression
                         (* open_brace: *) OPEN_BRACE
                         (* options: *) CallOptions
                         (* close_brace: *) CLOSE_BRACE;
 
 (* Postfix unary operator *)
-MemberAccessExpression = Expression
+MemberAccessExpression = (* operand: *) Expression
                          (* period: *) PERIOD
                          (* member: *) MemberAccess;
 
 (* Postfix unary operator *)
-IndexAccessExpression = Expression
+IndexAccessExpression = (* operand: *) Expression
                         (* open_bracket: *) OPEN_BRACKET
                         (* start: *) Expression?
                         (* end: *) IndexAccessEnd?
@@ -1701,13 +1701,13 @@ YulLabel = (* label: *) YUL_IDENTIFIER
 
 (* 6.2. Yul Expressions: *)
 
-YulExpression = YulFunctionCallExpression
-              | YulLiteral
-              | YulBuiltInFunction
-              | YulPath;
+YulExpression = (* variant: *) YulFunctionCallExpression
+              | (* variant: *) YulLiteral
+              | (* variant: *) YulBuiltInFunction
+              | (* variant: *) YulPath;
 
 (* Postfix unary operator *)
-YulFunctionCallExpression = YulExpression
+YulFunctionCallExpression = (* operand: *) YulExpression
                             (* open_paren: *) OPEN_PAREN
                             (* arguments: *) YulArguments
                             (* close_paren: *) CLOSE_PAREN;

@@ -91,6 +91,9 @@ impl SpecTopic {
 
         for item in &topic.items {
             items.push(item.name().to_owned());
+
+            // We need to also add any precedence expressions, as they define
+            // items but are not direct children of the topic
             if let Item::Precedence{ item: precedence_item } = item {
                 for precedence_expr in &precedence_item.as_ref().precedence_expressions {
                     items.push(precedence_expr.as_ref().name.to_owned());

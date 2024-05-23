@@ -161,7 +161,11 @@ impl Builder {
         self.add_definition(
             name,
             Self::build_enabled_comment(enabled),
-            Some(Value::new(Self::build_label_comment("item"), expression, None)),
+            Some(Value::new(
+                Self::build_label_comment("item"),
+                expression,
+                None,
+            )),
             DefinitionKind::Sequence,
         );
     }
@@ -215,7 +219,11 @@ impl Builder {
         for precedence_expression in precedence_expressions {
             let PrecedenceExpression { name, operators } = precedence_expression.as_ref();
 
-            values.push(Value::new(None, Self::build_ref(name), None));
+            values.push(Value::new(
+                Self::build_label_comment("variant"),
+                Self::build_ref(name),
+                None,
+            ));
 
             self.add_entry(name, Terminal::No, Inlined::No);
 
@@ -228,7 +236,7 @@ impl Builder {
             let PrimaryExpression { reference, enabled } = primary_expression;
 
             values.push(Value::new(
-                None,
+                Self::build_label_comment("variant"),
                 Self::build_ref(reference),
                 Self::build_enabled_comment(enabled),
             ));
@@ -262,24 +270,57 @@ impl Builder {
             OperatorModel::Prefix => {
                 leading_comments.push("Prefix unary operator".to_string());
 
-                values.push(Value::new(None, Self::build_ref(base_name), None));
+                values.push(Value::new(
+                    Self::build_label_comment("operand"),
+                    Self::build_ref(base_name),
+                    None,
+                ));
             }
             OperatorModel::Postfix => {
                 leading_comments.push("Postfix unary operator".to_string());
 
-                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_label_comment("operand"),
+                        Self::build_ref(base_name),
+                        None,
+                    ),
+                );
             }
             OperatorModel::BinaryLeftAssociative => {
                 leading_comments.push("Left-associative binary operator".to_string());
 
-                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
-                values.push(Value::new(None, Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_label_comment("left_operand"),
+                        Self::build_ref(base_name),
+                        None,
+                    ),
+                );
+                values.push(Value::new(
+                    Self::build_label_comment("right_operand"),
+                    Self::build_ref(base_name),
+                    None,
+                ));
             }
             OperatorModel::BinaryRightAssociative => {
                 leading_comments.push("Right-associative binary operator".to_string());
 
-                values.insert(0, Value::new(None, Self::build_ref(base_name), None));
-                values.push(Value::new(None, Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_label_comment("left_operand"),
+                        Self::build_ref(base_name),
+                        None,
+                    ),
+                );
+                values.push(Value::new(
+                    Self::build_label_comment("right_operand"),
+                    Self::build_ref(base_name),
+                    None,
+                ));
             }
         };
 
