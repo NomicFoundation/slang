@@ -20,7 +20,7 @@
 
 ```
 
-<pre ebnf-snippet="PositionalArguments" style="display: none;"><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="PositionalArguments" style="display: none;"><a href="#PositionalArguments"><span class="k">PositionalArguments</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgumentsDeclaration }
 
@@ -38,13 +38,13 @@
 
 ```
 
-<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><span class="o">(</span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedArguments" style="display: none;"><a href="#NamedArguments"><span class="k">NamedArguments</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #CallOptions }
 
 ```
 
-<pre ebnf-snippet="CallOptions" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#CallOptions"><span class="k">CallOptions</span></a><span class="o"> = </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="CallOptions" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#CallOptions"><span class="k">CallOptions</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#NamedArgument"><span class="k">NamedArgument</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgument }
 

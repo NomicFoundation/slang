@@ -26,7 +26,7 @@
 
 ```
 
-<pre ebnf-snippet="TupleValues" style="display: none;"><a href="#TupleValues"><span class="k">TupleValues</span></a><span class="o"> = </span><a href="#TupleValue"><span class="k">TupleValue</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#TupleValue"><span class="k">TupleValue</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="TupleValues" style="display: none;"><a href="#TupleValues"><span class="k">TupleValues</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#TupleValue"><span class="k">TupleValue</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#TupleValue"><span class="k">TupleValue</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #TupleValue }
 
@@ -44,6 +44,6 @@
 
 ```
 
-<pre ebnf-snippet="ArrayValues" style="display: none;"><a href="#ArrayValues"><span class="k">ArrayValues</span></a><span class="o"> = </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ArrayValues" style="display: none;"><a href="#ArrayValues"><span class="k">ArrayValues</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 --8<-- "crates/solidity/inputs/language/docs/05-expressions/03-primary-expressions.md"

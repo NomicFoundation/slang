@@ -38,7 +38,7 @@
 
 ```
 
-<pre ebnf-snippet="ImportDeconstructionSymbols" style="display: none;"><a href="#ImportDeconstructionSymbols"><span class="k">ImportDeconstructionSymbols</span></a><span class="o"> = </span><a href="#ImportDeconstructionSymbol"><span class="k">ImportDeconstructionSymbol</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#ImportDeconstructionSymbol"><span class="k">ImportDeconstructionSymbol</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ImportDeconstructionSymbols" style="display: none;"><a href="#ImportDeconstructionSymbols"><span class="k">ImportDeconstructionSymbols</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#ImportDeconstructionSymbol"><span class="k">ImportDeconstructionSymbol</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#ImportDeconstructionSymbol"><span class="k">ImportDeconstructionSymbol</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ImportDeconstructionSymbol }
 

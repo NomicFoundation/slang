@@ -14,7 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="TupleDeconstructionElements" style="display: none;"><a href="#TupleDeconstructionElements"><span class="k">TupleDeconstructionElements</span></a><span class="o"> = </span><a href="#TupleDeconstructionElement"><span class="k">TupleDeconstructionElement</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#TupleDeconstructionElement"><span class="k">TupleDeconstructionElement</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="TupleDeconstructionElements" style="display: none;"><a href="#TupleDeconstructionElements"><span class="k">TupleDeconstructionElements</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#TupleDeconstructionElement"><span class="k">TupleDeconstructionElement</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#TupleDeconstructionElement"><span class="k">TupleDeconstructionElement</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #TupleDeconstructionElement }
 

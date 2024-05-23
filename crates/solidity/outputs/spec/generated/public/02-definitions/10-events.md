@@ -20,7 +20,7 @@
 
 ```
 
-<pre ebnf-snippet="EventParameters" style="display: none;"><a href="#EventParameters"><span class="k">EventParameters</span></a><span class="o"> = </span><span class="o">(</span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="EventParameters" style="display: none;"><a href="#EventParameters"><span class="k">EventParameters</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#EventParameter"><span class="k">EventParameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #EventParameter }
 

@@ -26,7 +26,7 @@
 
 ```
 
-<pre ebnf-snippet="UsingDeconstructionSymbols" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#UsingDeconstructionSymbols"><span class="k">UsingDeconstructionSymbols</span></a><span class="o"> = </span><a href="#UsingDeconstructionSymbol"><span class="k">UsingDeconstructionSymbol</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#UsingDeconstructionSymbol"><span class="k">UsingDeconstructionSymbol</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="UsingDeconstructionSymbols" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#UsingDeconstructionSymbols"><span class="k">UsingDeconstructionSymbols</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#UsingDeconstructionSymbol"><span class="k">UsingDeconstructionSymbol</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#UsingDeconstructionSymbol"><span class="k">UsingDeconstructionSymbol</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #UsingDeconstructionSymbol }
 

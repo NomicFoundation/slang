@@ -50,7 +50,7 @@ ExperimentalFeature = (* variant: *) IDENTIFIER
 VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
                 (* sets: *) VersionExpressionSets;
 
-VersionExpressionSets = VersionExpressionSet (BAR_BAR VersionExpressionSet)*;
+VersionExpressionSets = (* item: *) VersionExpressionSet ((* separator: *) BAR_BAR (* item: *) VersionExpressionSet)*;
 
 VersionExpressionSet = (* item: *) VersionExpression+;
 
@@ -93,7 +93,7 @@ VersionComparator = (* operator: *) LESS_THAN_EQUAL
 VersionComparator = (* operator: *) GREATER_THAN_EQUAL
                     (* operand: *) VersionExpression;
 
-VersionSpecifiers = VERSION_SPECIFIER (PERIOD VERSION_SPECIFIER)*;
+VersionSpecifiers = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
 
 VERSION_SPECIFIER = «VERSION_SPECIFIER_FRAGMENT»;
 
@@ -136,7 +136,7 @@ ImportDeconstruction = (* open_brace: *) OPEN_BRACE
                        (* from_keyword: *) FROM_KEYWORD
                        (* path: *) StringLiteral;
 
-ImportDeconstructionSymbols = ImportDeconstructionSymbol (COMMA ImportDeconstructionSymbol)*;
+ImportDeconstructionSymbols = (* item: *) ImportDeconstructionSymbol ((* separator: *) COMMA (* item: *) ImportDeconstructionSymbol)*;
 
 ImportDeconstructionSymbol = (* name: *) IDENTIFIER
                              (* alias: *) ImportAlias?;
@@ -162,7 +162,7 @@ UsingDeconstruction = (* open_brace: *) OPEN_BRACE
                       (* close_brace: *) CLOSE_BRACE;
 
 (* Introduced in 0.8.13 *)
-UsingDeconstructionSymbols = UsingDeconstructionSymbol (COMMA UsingDeconstructionSymbol)*;
+UsingDeconstructionSymbols = (* item: *) UsingDeconstructionSymbol ((* separator: *) COMMA (* item: *) UsingDeconstructionSymbol)*;
 
 (* Introduced in 0.8.13 *)
 UsingDeconstructionSymbol = (* name: *) IdentifierPath
@@ -623,7 +623,7 @@ ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 
 InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
                        (* types: *) InheritanceTypes;
 
-InheritanceTypes = InheritanceType (COMMA InheritanceType)*;
+InheritanceTypes = (* item: *) InheritanceType ((* separator: *) COMMA (* item: *) InheritanceType)*;
 
 InheritanceType = (* type_name: *) IdentifierPath
                   (* arguments: *) ArgumentsDeclaration?;
@@ -687,7 +687,7 @@ EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
                  (* members: *) EnumMembers
                  (* close_brace: *) CLOSE_BRACE;
 
-EnumMembers = (IDENTIFIER (COMMA IDENTIFIER)*)?;
+EnumMembers = ((* item: *) IDENTIFIER ((* separator: *) COMMA (* item: *) IDENTIFIER)*)?;
 
 (* 2.6. Constants: *)
 
@@ -736,7 +736,7 @@ ParametersDeclaration = (* open_paren: *) OPEN_PAREN
                         (* parameters: *) Parameters
                         (* close_paren: *) CLOSE_PAREN;
 
-Parameters = (Parameter (COMMA Parameter)*)?;
+Parameters = ((* item: *) Parameter ((* separator: *) COMMA (* item: *) Parameter)*)?;
 
 Parameter = (* type_name: *) TypeName
             (* storage_location: *) StorageLocation?
@@ -766,7 +766,7 @@ OverridePathsDeclaration = (* open_paren: *) OPEN_PAREN
                            (* close_paren: *) CLOSE_PAREN;
 
 (* Introduced in 0.6.0 *)
-OverridePaths = IdentifierPath (COMMA IdentifierPath)*;
+OverridePaths = (* item: *) IdentifierPath ((* separator: *) COMMA (* item: *) IdentifierPath)*;
 
 ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
                      (* variables: *) ParametersDeclaration;
@@ -874,7 +874,7 @@ EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
                              (* parameters: *) EventParameters
                              (* close_paren: *) CLOSE_PAREN;
 
-EventParameters = (EventParameter (COMMA EventParameter)*)?;
+EventParameters = ((* item: *) EventParameter ((* separator: *) COMMA (* item: *) EventParameter)*)?;
 
 EventParameter = (* type_name: *) TypeName
                  (* indexed_keyword: *) INDEXED_KEYWORD?
@@ -903,7 +903,7 @@ ErrorParametersDeclaration = (* open_paren: *) OPEN_PAREN
                              (* close_paren: *) CLOSE_PAREN;
 
 (* Introduced in 0.8.4 *)
-ErrorParameters = (ErrorParameter (COMMA ErrorParameter)*)?;
+ErrorParameters = ((* item: *) ErrorParameter ((* separator: *) COMMA (* item: *) ErrorParameter)*)?;
 
 (* Introduced in 0.8.4 *)
 ErrorParameter = (* type_name: *) TypeName
@@ -1020,7 +1020,7 @@ AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
                            (* flags: *) AssemblyFlags
                            (* close_paren: *) CLOSE_PAREN;
 
-AssemblyFlags = StringLiteral (COMMA StringLiteral)*;
+AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
 
 (* 4.2. Declaration Statements: *)
 
@@ -1032,7 +1032,7 @@ TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 
                                (* expression: *) Expression
                                (* semicolon: *) SEMICOLON;
 
-TupleDeconstructionElements = TupleDeconstructionElement (COMMA TupleDeconstructionElement)*;
+TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
 
 TupleDeconstructionElement = (* member: *) TupleMember?;
 
@@ -1438,7 +1438,7 @@ PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
                                  (* arguments: *) PositionalArguments
                                  (* close_paren: *) CLOSE_PAREN;
 
-PositionalArguments = (Expression (COMMA Expression)*)?;
+PositionalArguments = ((* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*)?;
 
 NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
                             (* arguments: *) NamedArgumentGroup?
@@ -1448,10 +1448,10 @@ NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
                      (* arguments: *) NamedArguments
                      (* close_brace: *) CLOSE_BRACE;
 
-NamedArguments = (NamedArgument (COMMA NamedArgument)*)?;
+NamedArguments = ((* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*)?;
 
 (* Introduced in 0.6.2 *)
-CallOptions = NamedArgument (COMMA NamedArgument)*;
+CallOptions = (* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*;
 
 NamedArgument = (* name: *) IDENTIFIER
                 (* colon: *) COLON
@@ -1472,7 +1472,7 @@ TupleExpression = (* open_paren: *) OPEN_PAREN
                   (* items: *) TupleValues
                   (* close_paren: *) CLOSE_PAREN;
 
-TupleValues = TupleValue (COMMA TupleValue)*;
+TupleValues = (* item: *) TupleValue ((* separator: *) COMMA (* item: *) TupleValue)*;
 
 TupleValue = (* expression: *) Expression?;
 
@@ -1480,7 +1480,7 @@ ArrayExpression = (* open_bracket: *) OPEN_BRACKET
                   (* items: *) ArrayValues
                   (* close_bracket: *) CLOSE_BRACKET;
 
-ArrayValues = Expression (COMMA Expression)*;
+ArrayValues = (* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*;
 
 (* 5.4. Numbers: *)
 
@@ -1594,7 +1594,7 @@ DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "
 
 (* 5.6. Identifiers: *)
 
-IdentifierPath = IDENTIFIER (PERIOD IDENTIFIER)*;
+IdentifierPath = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
 
 IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
@@ -1637,12 +1637,12 @@ YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
                            (* parameters: *) YulParameters
                            (* close_paren: *) CLOSE_PAREN;
 
-YulParameters = (YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*)?;
+YulParameters = ((* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*)?;
 
 YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
                         (* variables: *) YulReturnVariables;
 
-YulReturnVariables = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
+YulReturnVariables = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
 
 YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
                                   (* names: *) YUL_IDENTIFIER
@@ -1712,11 +1712,11 @@ YulFunctionCallExpression = (* operand: *) YulExpression
                             (* arguments: *) YulArguments
                             (* close_paren: *) CLOSE_PAREN;
 
-YulArguments = (YulExpression (COMMA YulExpression)*)?;
+YulArguments = ((* item: *) YulExpression ((* separator: *) COMMA (* item: *) YulExpression)*)?;
 
-YulPaths = YulPath (COMMA YulPath)*;
+YulPaths = (* item: *) YulPath ((* separator: *) COMMA (* item: *) YulPath)*;
 
-YulPath = YulPathComponent (PERIOD YulPathComponent)*;
+YulPath = (* item: *) YulPathComponent ((* separator: *) PERIOD (* item: *) YulPathComponent)*;
 
 YulPathComponent = (* variant: *) YUL_IDENTIFIER
                  | (* variant: *) YUL_ADDRESS_KEYWORD; (* Introduced in 0.8.10 *)

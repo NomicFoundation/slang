@@ -52,7 +52,6 @@ pub enum DefinitionKind {
 /// ```
 #[derive(derive_new::new)]
 pub struct Value {
-    pub leading_comment: Option<String>,
     pub expression: Expression,
     pub trailing_comment: Option<String>,
 }
@@ -91,6 +90,7 @@ pub enum Expression {
         atom: String,
     },
     Reference {
+        leading_comment: Option<String>,
         reference: Identifier,
     },
 }

@@ -50,6 +50,6 @@
 
 ```
 
-<pre ebnf-snippet="AssemblyFlags" style="display: none;"><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AssemblyFlags" style="display: none;"><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 --8<-- "crates/solidity/inputs/language/docs/04-statements/01-blocks.md"

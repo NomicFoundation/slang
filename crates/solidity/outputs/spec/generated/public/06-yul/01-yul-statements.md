@@ -38,7 +38,7 @@
 
 ```
 
-<pre ebnf-snippet="YulParameters" style="display: none;"><a href="#YulParameters"><span class="k">YulParameters</span></a><span class="o"> = </span><span class="o">(</span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulParameters" style="display: none;"><a href="#YulParameters"><span class="k">YulParameters</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulReturnsDeclaration }
 
@@ -50,7 +50,7 @@
 
 ```
 
-<pre ebnf-snippet="YulReturnVariables" style="display: none;"><a href="#YulReturnVariables"><span class="k">YulReturnVariables</span></a><span class="o"> = </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulReturnVariables" style="display: none;"><a href="#YulReturnVariables"><span class="k">YulReturnVariables</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulVariableDeclarationStatement }
 

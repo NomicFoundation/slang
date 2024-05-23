@@ -44,7 +44,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionExpressionSet }
 
@@ -74,7 +74,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionSpecifiers" style="display: none;"><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><span class="o"> = </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionSpecifiers" style="display: none;"><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionSpecifier }
 

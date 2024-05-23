@@ -8,7 +8,7 @@
 
 ```
 
-<pre ebnf-snippet="IdentifierPath" style="display: none;"><a href="#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o"> = </span><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="IdentifierPath" style="display: none;"><a href="#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Identifier }
 

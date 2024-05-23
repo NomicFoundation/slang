@@ -26,7 +26,7 @@
 
 ```
 
-<pre ebnf-snippet="Parameters" style="display: none;"><a href="#Parameters"><span class="k">Parameters</span></a><span class="o"> = </span><span class="o">(</span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Parameters" style="display: none;"><a href="#Parameters"><span class="k">Parameters</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#Parameter"><span class="k">Parameter</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Parameter }
 
@@ -62,7 +62,7 @@
 
 ```
 
-<pre ebnf-snippet="OverridePaths" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#OverridePaths"><span class="k">OverridePaths</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o"> </span><span class="o">(</span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="OverridePaths" style="display: none;"><span class="cm">(* Introduced in 0.6.0 *)</span><br /><a href="#OverridePaths"><span class="k">OverridePaths</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ReturnsDeclaration }
 
