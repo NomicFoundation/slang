@@ -2,15 +2,15 @@ use codegen_language_definition::model;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
+use crate::parser::codegen::scanner_definition::ScannerDefinitionNodeCodegen as _;
+use crate::parser::codegen::versioned::VersionedQuote;
 use crate::parser::grammar::{KeywordScannerDefinitionRef, ScannerDefinitionNode};
-use crate::parser::scanner_definition::ScannerDefinitionNodeExtensions;
-use crate::parser::versioned::VersionedQuote;
 
-pub trait KeywordScannerDefinitionExtensions {
+pub trait KeywordScannerDefinitionCodegen {
     fn to_scanner_code(&self) -> TokenStream;
 }
 
-impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
+impl KeywordScannerDefinitionCodegen for KeywordScannerDefinitionRef {
     fn to_scanner_code(&self) -> TokenStream {
         let name_ident = format_ident!("{}", self.name());
         let token_kind = quote! { TerminalKind::#name_ident };
@@ -79,7 +79,7 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
     }
 }
 
-impl KeywordScannerDefinitionExtensions for model::KeywordValue {
+impl KeywordScannerDefinitionCodegen for model::KeywordValue {
     fn to_scanner_code(&self) -> TokenStream {
         // This is a subset; let's reuse that
         ScannerDefinitionNode::from(self.clone()).to_scanner_code()

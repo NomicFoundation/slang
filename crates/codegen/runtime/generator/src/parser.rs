@@ -8,24 +8,18 @@ use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
+mod codegen;
 mod grammar;
-mod keyword_scanner_definition;
-mod parser_definition;
-mod precedence_parser_definition;
-mod scanner_definition;
-mod trie;
-mod versioned;
 
+use codegen::{
+    KeywordScannerDefinitionCodegen as _, ParserDefinitionCodegen as _,
+    PrecedenceParserDefinitionCodegen as _, ScannerDefinitionCodegen as _, Trie,
+};
 use grammar::{
     Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
     ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
     ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
-use keyword_scanner_definition::KeywordScannerDefinitionExtensions as _;
-use parser_definition::ParserDefinitionExtensions as _;
-use precedence_parser_definition::PrecedenceParserDefinitionExtensions as _;
-use scanner_definition::ScannerDefinitionExtensions as _;
-use trie::Trie;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Default, Clone)]

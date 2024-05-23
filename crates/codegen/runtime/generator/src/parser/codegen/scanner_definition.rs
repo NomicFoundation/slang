@@ -4,15 +4,15 @@ use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
+use crate::parser::codegen::versioned::VersionedQuote;
 use crate::parser::grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
-use crate::parser::versioned::VersionedQuote;
 
-pub trait ScannerDefinitionExtensions {
+pub trait ScannerDefinitionCodegen {
     fn to_scanner_code(&self) -> TokenStream;
     fn literals(&self) -> Vec<String>;
 }
 
-impl ScannerDefinitionExtensions for ScannerDefinitionRef {
+impl ScannerDefinitionCodegen for ScannerDefinitionRef {
     fn to_scanner_code(&self) -> TokenStream {
         self.node().to_scanner_code()
     }
@@ -26,12 +26,12 @@ impl ScannerDefinitionExtensions for ScannerDefinitionRef {
     }
 }
 
-pub trait ScannerDefinitionNodeExtensions {
+pub(super) trait ScannerDefinitionNodeCodegen {
     fn to_scanner_code(&self) -> TokenStream;
     fn literals(&self, accum: &mut BTreeSet<String>) -> bool;
 }
 
-impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
+impl ScannerDefinitionNodeCodegen for ScannerDefinitionNode {
     // Returns true if this is nothing but a set of literals
     fn literals(&self, accum: &mut BTreeSet<String>) -> bool {
         match self {

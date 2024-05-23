@@ -3,14 +3,14 @@ use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
+use crate::parser::codegen::parser_definition::{
+    make_choice, make_sequence, ParserDefinitionNodeCodegen,
+};
 use crate::parser::grammar::{
     PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
 };
-use crate::parser::parser_definition::{
-    make_choice, make_sequence, ParserDefinitionNodeExtensions,
-};
 
-pub trait PrecedenceParserDefinitionExtensions {
+pub trait PrecedenceParserDefinitionCodegen {
     fn to_parser_code(&self) -> TokenStream;
     /// Emit a helper parser function for each precedence expression that ensures the main parser
     /// identifies a single node of the expected type, with a child node being the expected
@@ -18,7 +18,7 @@ pub trait PrecedenceParserDefinitionExtensions {
     fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)>;
 }
 
-impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
+impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         self.node().to_parser_code(
             self.context(),
@@ -58,11 +58,11 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
     }
 }
 
-pub trait PrecedenceParserDefinitionNodeExtensions {
+pub(super) trait PrecedenceParserDefinitionNodeCodegen {
     fn to_parser_code(&self, context_name: &Identifier, expression_kind: Ident) -> TokenStream;
 }
 
-impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode {
+impl PrecedenceParserDefinitionNodeCodegen for PrecedenceParserDefinitionNode {
     // A Pratt parser can be implemented as two simple passes,
     // only the first of which can generate parse errors.
     //
