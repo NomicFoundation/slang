@@ -242,7 +242,7 @@ struct ResolveCtx<'a> {
     resolved: &'a mut HashMap<Identifier, GrammarElement>,
 }
 
-#[allow(clippy::too_many_lines)] // FIXME: Simplify me when we simplify the v2-to-v1 interface
+#[allow(clippy::too_many_lines)] // FIXME(#638): Simplify me when we simplify the v2-to-v1 interface
 fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
     let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
 
