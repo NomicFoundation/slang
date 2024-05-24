@@ -1,9 +1,9 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use slang_testlang::cst::{Edge, Node};
 use slang_testlang::cursor::Cursor;
 use slang_testlang::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
-use slang_testlang::query::{Query, QueryResult};
+use slang_testlang::query::{Query, QueryMatch};
 use slang_testlang::text_index::TextIndex;
 
 fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
@@ -25,7 +25,7 @@ fn nonterminal<const N: usize>(
 }
 
 fn binding_cursors_to_strings(
-    bindings: HashMap<String, Vec<Cursor>>,
+    bindings: BTreeMap<String, Vec<Cursor>>,
 ) -> BTreeMap<String, Vec<String>> {
     bindings
         .into_iter()
@@ -88,7 +88,10 @@ fn run_query_test(tree: &Edge, query: &str, results: Vec<BTreeMap<String, Vec<St
     let cursor = tree.cursor_with_offset(TextIndex::ZERO);
     let query = vec![Query::parse(query).unwrap()];
     let mut results = results.into_iter();
-    for QueryResult { bindings, .. } in cursor.query(query) {
+    for QueryMatch {
+        captures: bindings, ..
+    } in cursor.query(query)
+    {
         let bindings = binding_cursors_to_strings(bindings);
         if let Some(expected_bindings) = results.next() {
             assert_eq!(bindings, expected_bindings);
@@ -156,7 +159,7 @@ fn test_child() {
 fn test_parent_and_child() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @p [node:_] ...  [TreeNodeChild ... @c [DelimitedIdentifier] ...]]",
+        "[TreeNode ... @p node:[_] ...  [TreeNodeChild ... @c [DelimitedIdentifier] ...]]",
         query_results! {
             {c: ["D"], p: ["A"]}
             {c: ["E"], p: ["A"]}
@@ -168,7 +171,7 @@ fn test_parent_and_child() {
 fn test_named() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @x [node:DelimitedIdentifier] ...]",
+        "[TreeNode ... @x node:[DelimitedIdentifier] ...]",
         query_results! {
             {x: ["A"]}
         },
@@ -192,7 +195,7 @@ fn test_multilevel_adjacent() {
 fn test_multilevel_named() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [node:_] ...]",
+        "[_ ... @x node:[_] ...]",
         query_results! {
             {x: ["A"]}
             {x: ["E"]}

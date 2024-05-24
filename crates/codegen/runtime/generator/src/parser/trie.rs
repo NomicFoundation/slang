@@ -1,14 +1,14 @@
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
-use codegen_grammar::{
-    KeywordScannerAtomic, KeywordScannerDefinitionVersionedNode, ScannerDefinitionNode,
-    ScannerDefinitionRef, VersionQualityRange,
-};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser_definition::VersionQualityRangeVecExtensions;
+use crate::parser::grammar::{
+    KeywordScannerAtomic, KeywordScannerDefinitionVersionedNode, ScannerDefinitionNode,
+    ScannerDefinitionRef, VersionQualityRange,
+};
+use crate::parser::parser_definition::VersionQualityRangeVecExtensions;
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<T: Payload> {

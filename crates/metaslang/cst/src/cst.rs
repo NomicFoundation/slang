@@ -4,7 +4,35 @@ use serde::Serialize;
 
 use crate::cursor::Cursor;
 use crate::text_index::TextIndex;
-use crate::{KindTypes, TerminalKind};
+use crate::{AbstractKind as _, KindTypes, TerminalKind as _};
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum NodeKind<T: KindTypes> {
+    NonTerminal(T::NonTerminalKind),
+    Terminal(T::TerminalKind),
+}
+
+impl<T: KindTypes> From<NodeKind<T>> for &'static str {
+    fn from(val: NodeKind<T>) -> Self {
+        match val {
+            NodeKind::NonTerminal(t) => t.as_static_str(),
+            NodeKind::Terminal(t) => t.as_static_str(),
+        }
+    }
+}
+
+impl<T: KindTypes> std::fmt::Display for NodeKind<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NodeKind::NonTerminal(t) => {
+                write!(f, "{}", t.as_static_str())
+            }
+            NodeKind::Terminal(t) => {
+                write!(f, "{}", t.as_static_str())
+            }
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct TerminalNode<T: KindTypes> {
@@ -33,7 +61,7 @@ pub struct Edge<T: KindTypes> {
 }
 
 impl<T: KindTypes> Edge<T> {
-    /// Creates a anonymous node (without a label).
+    /// Creates an anonymous node (without a label).
     pub fn anonymous(node: Node<T>) -> Self {
         Self { label: None, node }
     }
@@ -62,6 +90,22 @@ impl<T: KindTypes> Node<T> {
         Self::Terminal(Rc::new(TerminalNode { kind, text }))
     }
 
+    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// and cannot be used in a persistent/serialised sense.
+    pub fn id(&self) -> usize {
+        match self {
+            Self::NonTerminal(node) => Rc::as_ptr(node) as usize,
+            Self::Terminal(node) => Rc::as_ptr(node) as usize,
+        }
+    }
+
+    pub fn kind(&self) -> NodeKind<T> {
+        match self {
+            Self::NonTerminal(node) => NodeKind::NonTerminal(node.kind),
+            Self::Terminal(node) => NodeKind::Terminal(node.kind),
+        }
+    }
+
     pub fn text_len(&self) -> TextIndex {
         match self {
             Self::NonTerminal(node) => node.text_len,
@@ -69,12 +113,21 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
-    /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[Edge<T>] {
+    /// Returns a slice of the edges (not all descendants) leaving this node.
+    pub fn edges(&self) -> &[Edge<T>] {
         match self {
             Self::NonTerminal(node) => &node.children,
             Self::Terminal(_) => &[],
         }
+    }
+
+    pub fn labeled_edges(&self) -> impl Iterator<Item = &Edge<T>> {
+        self.edges().iter().filter(|edge| edge.label.is_some())
+    }
+
+    /// Returns a slice of the children (not all descendants) of this node.
+    pub fn children(&self) -> &[Edge<T>] {
+        self.edges()
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.

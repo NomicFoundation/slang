@@ -1,4 +1,4 @@
-use crate::{
+use crate::parser::grammar::{
     Grammar, KeywordScannerDefinitionRef, ParserDefinitionNode, ParserDefinitionRef,
     PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
     ScannerDefinitionRef, TriviaParserDefinitionRef,

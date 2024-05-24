@@ -3,8 +3,8 @@ use std::rc::Rc;
 
 use codegen_language_definition::model;
 
-use crate::visitor::{GrammarVisitor, Visitable};
-use crate::{
+use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
+use crate::parser::grammar::{
     KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
     VersionQualityRange,
 };

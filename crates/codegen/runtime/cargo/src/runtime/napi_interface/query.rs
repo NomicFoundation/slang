@@ -10,7 +10,7 @@ use napi::Env;
 use napi_derive::napi;
 
 use crate::napi_interface::cursor::Cursor;
-use crate::napi_interface::{RustQuery, RustQueryResult, RustQueryResultIterator};
+use crate::napi_interface::{RustQuery, RustQueryMatch, RustQueryMatchIterator};
 
 #[napi(namespace = "query")]
 pub struct Query(RustQuery);
@@ -26,30 +26,30 @@ impl Query {
     #[napi(factory, catch_unwind)]
     pub fn parse(text: String) -> napi::Result<Query> {
         RustQuery::parse(text.as_str()).map_or_else(
-            |err| Err(napi::Error::from_reason(err)),
+            |err| Err(napi::Error::from_reason(err.message)),
             |query| Ok(query.into()),
         )
     }
 }
 
 #[napi(namespace = "query")]
-pub struct QueryResultIterator(RustQueryResultIterator);
+pub struct QueryMatchIterator(RustQueryMatchIterator);
 
 #[napi(object, namespace = "query")]
-pub struct QueryResult {
+pub struct QueryMatch {
     pub query_number: u32,
     #[napi(ts_type = "{ [key: string]: cursor.Cursor[] }")]
     pub bindings: HashMap<String, Vec<ClassInstance<Cursor>>>,
 }
 
-impl QueryResult {
-    fn new(env: Env, result: RustQueryResult) -> napi::Result<Self> {
+impl QueryMatch {
+    fn new(env: Env, result: RustQueryMatch) -> napi::Result<Self> {
         #[allow(clippy::cast_possible_truncation)]
         let query_number = result.query_number as u32;
         // transfer all of the bindings eagerly on the assumption
         // that they've all been explicitly requested.
         let bindings = result
-            .bindings
+            .captures
             .into_iter()
             .map(|(key, values)| {
                 let instances = values
@@ -68,18 +68,18 @@ impl QueryResult {
     }
 }
 
-impl From<RustQueryResultIterator> for QueryResultIterator {
-    fn from(value: RustQueryResultIterator) -> Self {
+impl From<RustQueryMatchIterator> for QueryMatchIterator {
+    fn from(value: RustQueryMatchIterator) -> Self {
         Self(value)
     }
 }
 
 #[napi(namespace = "query")]
-impl QueryResultIterator {
+impl QueryMatchIterator {
     #[napi(catch_unwind)]
-    pub fn next(&mut self, env: Env) -> napi::Result<Option<QueryResult>> {
+    pub fn next(&mut self, env: Env) -> napi::Result<Option<QueryMatch>> {
         match self.0.next() {
-            Some(result) => Ok(Some(QueryResult::new(env, result)?)),
+            Some(result) => Ok(Some(QueryMatch::new(env, result)?)),
             None => Ok(None),
         }
     }
@@ -87,11 +87,11 @@ impl QueryResultIterator {
 
 #[napi(namespace = "cursor")]
 impl Cursor {
-    #[napi(ts_return_type = "query.QueryResultIterator", catch_unwind)]
+    #[napi(ts_return_type = "query.QueryMatchIterator", catch_unwind)]
     pub fn query(
         &self,
         #[napi(ts_arg_type = "Array<query.Query>")] queries: Vec<&Query>,
-    ) -> QueryResultIterator {
+    ) -> QueryMatchIterator {
         self.0
             .clone()
             .query(queries.into_iter().map(|x| x.0.clone()).collect())

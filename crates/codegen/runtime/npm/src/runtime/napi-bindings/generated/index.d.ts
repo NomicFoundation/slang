@@ -99,7 +99,7 @@ export namespace cursor {
     goToNextNonterminal(): boolean;
     goToNextNonterminalWithKind(kind: kinds.NonTerminalKind): boolean;
     goToNextNonterminalWithKinds(kinds: Array<kinds.NonTerminalKind>): boolean;
-    query(queries: Array<query.Query>): query.QueryResultIterator;
+    query(queries: Array<query.Query>): query.QueryMatchIterator;
   }
 }
 export namespace diagnostic {
@@ -128,8 +128,6 @@ export namespace diagnostic {
     textRange(): text_index.TextRange;
     /** The primary message associated with this diagnostic. */
     message(): string;
-    /** The code (i.e. `S0123`), if any, associated with this diagnostic. */
-    code(): string;
   }
 }
 export namespace parse_error {
@@ -149,22 +147,23 @@ export namespace parse_output {
   }
 }
 export namespace query {
-  export interface QueryResult {
+  export interface QueryMatch {
     queryNumber: number;
     bindings: { [key: string]: cursor.Cursor[] };
   }
   export class Query {
     static parse(text: string): Query;
   }
-  export class QueryResultIterator {
-    next(): QueryResult | null;
+  export class QueryMatchIterator {
+    next(): QueryMatch | null;
   }
 }
 export namespace text_index {
   export interface TextIndex {
     utf8: number;
     utf16: number;
-    char: number;
+    line: number;
+    column: number;
   }
   export interface TextRange {
     start: TextIndex;

@@ -91,14 +91,17 @@ impl<'s> ParserContext<'s> {
         self.source[self.position.utf8..].chars().next()
     }
 
+    pub fn peek_pair(&self) -> Option<(char, Option<char>)> {
+        let mut iter = self.source[self.position.utf8..].chars();
+        iter.next().map(|c| (c, iter.next()))
+    }
+
     #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> Option<char> {
         self.undo_position = Some(self.position);
 
-        if let Some(c) = self.peek() {
-            self.position.utf8 += c.len_utf8();
-            self.position.utf16 += c.len_utf16();
-            self.position.char += 1;
+        if let Some((c, n)) = self.peek_pair() {
+            self.position.advance(c, n.as_ref());
             Some(c)
         } else {
             None

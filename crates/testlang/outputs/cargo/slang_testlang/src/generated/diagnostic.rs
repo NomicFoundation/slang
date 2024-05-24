@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::borrow::Cow;
-
 use crate::text_index::TextRange;
 
 /// The severity of a diagnostic.
@@ -23,10 +21,6 @@ pub trait Diagnostic {
     /// [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
     /// at the moment.
     fn range(&self) -> TextRange;
-    /// The code (i.e. `S0123`), if any, associated with this diagnostic.
-    fn code(&self) -> Option<Cow<'_, str>> {
-        None
-    }
     /// The severity of this diagnostic.
     fn severity(&self) -> Severity;
     /// The primary message associated with this diagnostic.
@@ -36,8 +30,6 @@ pub trait Diagnostic {
 #[cfg(feature = "__private_ariadne")]
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
-
-    use crate::text_index::TextRangeExtensions as _;
 
     let kind = match error.severity() {
         Severity::Error => ReportKind::Error,
@@ -54,7 +46,11 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
-    let range = error.range().char();
+    let range = {
+        let start = source[..error.range().start.utf8].chars().count();
+        let end = source[..error.range().end.utf8].chars().count();
+        start..end
+    };
 
     let report = Report::build(kind, source_id, range.start)
         .with_config(Config::default().with_color(with_color))

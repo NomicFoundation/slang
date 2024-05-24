@@ -3,7 +3,7 @@ use regex::Regex;
 use semver::Version;
 use slang_solidity::kinds::NonTerminalKind;
 use slang_solidity::language::Language;
-use slang_solidity::query::{Query, QueryResultIterator};
+use slang_solidity::query::{Query, QueryMatchIterator};
 
 static SNIPPET_MARKER_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new("// --8<-- \\[(start|end):([a-z0-9-]+)\\]").unwrap());
@@ -19,7 +19,7 @@ impl RemoveMkdocSnippetMarkers for &str {
     }
 }
 
-fn assert_matches(query: &Query, kind: NonTerminalKind, source: &str) -> QueryResultIterator {
+fn assert_matches(query: &Query, kind: NonTerminalKind, source: &str) -> QueryMatchIterator {
     let language = Language::new(Version::new(0, 8, 12)).unwrap();
     let cursor = language.parse(kind, source).create_tree_cursor();
 
@@ -49,7 +49,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-2]
-	[MultiplicativeExpression [left_operand:Expression] [Asterisk] [right_operand:Expression]]
+	[MultiplicativeExpression left_operand:[Expression] [Asterisk] right_operand:[Expression]]
     // --8<-- [end:query-syntax-2]
     "
         .remove_mkdoc_snippet_markers(),
@@ -61,7 +61,7 @@ fn query_syntax() {
     let query = Query::parse(
         &r#"
     // --8<-- [start:query-syntax-3]
-	[MultiplicativeExpression [left_operand: _] [operator: "*"] [right_operand: _]]
+	[MultiplicativeExpression left_operand:[_] operator:["*"] right_operand:[_]]
     // --8<-- [end:query-syntax-3]
     "#
         .remove_mkdoc_snippet_markers(),
@@ -73,7 +73,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-4]
-    [MultiplicativeExpression [left_operand:_] [_] ...]
+    [MultiplicativeExpression left_operand:[_] [_] ...]
     // --8<-- [end:query-syntax-4]
     "
         .remove_mkdoc_snippet_markers(),
@@ -107,7 +107,7 @@ fn capturing_nodes() {
     let query = Query::parse(
         &"
     // --8<-- [start:capturing-nodes-1]
-	[StructDefinition ... @struct_name [name:Identifier] ...]
+	[StructDefinition ... @struct_name name:[Identifier] ...]
     // --8<-- [end:capturing-nodes-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -121,14 +121,14 @@ fn capturing_nodes() {
     // --8<-- [start:capturing-nodes-2]
 	[ContractDefinition
 		...
-		@contract_name [name: Identifier]
+		@contract_name name:[Identifier]
 		...
-		[members: ContractMembers
+		members:[ContractMembers
 			...
 			[ContractMember
 				[EventDefinition
 					...
-					@event_name [name: Identifier]
+					@event_name name:[Identifier]
 					...
 				]
 			]
@@ -154,7 +154,7 @@ fn quantification() {
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-1]
-	[SourceUnit ... ([leading_trivia: _])+]
+	[SourceUnit ... (leading_trivia:[_])+]
     // --8<-- [end:quantification-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -174,7 +174,7 @@ fn quantification() {
 		...
 		(@docline [SingleLineNatSpecComment])+
 		...
-		@name [name:_]
+		@name name:[_]
 		...
 	]
     // --8<-- [end:quantification-2]
@@ -197,12 +197,12 @@ fn quantification() {
     // --8<-- [start:quantification-3]
 	[FunctionCallExpression
 		...
-		[arguments: ArgumentsDeclaration
-			[variant: PositionalArgumentsDeclaration
+		arguments:[ArgumentsDeclaration
+			variant:[PositionalArgumentsDeclaration
 				...
-				[arguments: PositionalArguments
+				arguments:[PositionalArguments
 					...
-					(@arg [Expression [variant: StringExpression]])?
+					(@arg [Expression variant:[StringExpression]])?
 					...
 				]
 				...
@@ -227,7 +227,7 @@ fn quantification() {
 
     let results: Vec<_> = iter.collect();
 
-    results[3].bindings.get("arg").unwrap();
+    results[3].captures.get("arg").unwrap();
 }
 
 #[test]
@@ -236,9 +236,9 @@ fn alternations() {
         &"
     // --8<-- [start:alternations-1]
 	[FunctionCallExpression
-		[operand: Expression
-			(@function [variant: Identifier]
-			| @method [variant: MemberAccessExpression])
+		operand:[Expression
+			(@function variant:[Identifier]
+			| @method variant:[MemberAccessExpression])
 		]
 		...
 	]
@@ -250,10 +250,10 @@ fn alternations() {
 
     let results: Vec<_> =
         assert_matches(&query, NonTerminalKind::FunctionCallExpression, "call(1)").collect();
-    results.first().unwrap().bindings.get("function").unwrap();
+    results.first().unwrap().captures.get("function").unwrap();
     let results: Vec<_> =
         assert_matches(&query, NonTerminalKind::FunctionCallExpression, "a.call(1)").collect();
-    results.first().unwrap().bindings.get("method").unwrap();
+    results.first().unwrap().captures.get("method").unwrap();
 
     let query = Query::parse(
         &r#"
@@ -280,13 +280,13 @@ fn alternations() {
     let results: Vec<_> = iter.collect();
     assert_eq!(results.len(), 2);
     assert_eq!(
-        results[0].bindings.get("keyword").unwrap()[0]
+        results[0].captures.get("keyword").unwrap()[0]
             .node()
             .unparse(),
         "if"
     );
     assert_eq!(
-        results[1].bindings.get("keyword").unwrap()[0]
+        results[1].captures.get("keyword").unwrap()[0]
             .node()
             .unparse(),
         "break"

@@ -51,10 +51,4 @@ impl Diagnostic {
     pub fn message(&self) -> String {
         self.0.message()
     }
-
-    /// The code (i.e. `S0123`), if any, associated with this diagnostic.
-    #[napi]
-    pub fn code(&self) -> String {
-        self.0.code().unwrap_or_default().into_owned()
-    }
 }

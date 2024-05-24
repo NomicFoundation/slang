@@ -3,41 +3,46 @@ pub mod cursor;
 pub mod query;
 pub mod text_index;
 
-pub trait Kind:
-    Sized
-    + Copy
-    + Clone
-    + PartialEq
-    + Eq
-    + std::fmt::Display
-    + std::fmt::Debug
-    + serde::Serialize
-    + for<'a> std::convert::TryFrom<&'a str, Error = strum::ParseError>
-{
+pub trait AbstractKind: Sized + std::fmt::Debug + Copy + PartialEq + Eq + serde::Serialize {
+    fn as_static_str(&self) -> &'static str;
+    fn try_from_str(str: &str) -> Result<Self, String>;
 }
 
-impl<T> Kind for T where
+impl<T> AbstractKind for T
+where
     T: Sized
-        + Copy
-        + Clone
-        + PartialEq
-        + Eq
-        + std::fmt::Display
         + std::fmt::Debug
+        + Copy
+        + Eq
         + serde::Serialize
-        + for<'a> std::convert::TryFrom<&'a str, Error = strum::ParseError>
+        + for<'a> std::convert::TryFrom<&'a str>
+        + std::convert::Into<&'static str>,
 {
+    fn as_static_str(&self) -> &'static str {
+        (*self).into()
+    }
+    fn try_from_str(str: &str) -> Result<Self, String> {
+        match Self::try_from(str) {
+            Ok(val) => Ok(val),
+            Err(_) => Err(format!(
+                "Failed to convert \"{str}\" to {}",
+                std::any::type_name::<Self>()
+            )),
+        }
+    }
 }
 
-pub trait TerminalKind: Kind {
-    fn is_trivia(&self) -> bool;
+pub trait TerminalKind: AbstractKind {
+    fn is_trivia(&self) -> bool {
+        false
+    }
 }
 
-pub trait NonTerminalKind: Kind {}
+pub trait NonTerminalKind: AbstractKind {}
 
-pub trait EdgeLabel: Kind {}
+pub trait EdgeLabel: AbstractKind {}
 
-pub trait KindTypes: Clone + PartialEq {
+pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
     type NonTerminalKind: NonTerminalKind;
     type TerminalKind: TerminalKind;
     type EdgeLabel: EdgeLabel;
