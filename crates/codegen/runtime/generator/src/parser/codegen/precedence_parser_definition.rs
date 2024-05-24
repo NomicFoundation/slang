@@ -20,10 +20,13 @@ pub trait PrecedenceParserDefinitionCodegen {
 
 impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        self.node().to_parser_code(
+        let code = self.node().to_parser_code(
             self.context(),
             format_ident!("{name}", name = self.name().to_pascal_case()),
-        )
+        );
+
+        let nonterminal_kind = format_ident!("{}", self.name());
+        quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
     }
 
     fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)> {

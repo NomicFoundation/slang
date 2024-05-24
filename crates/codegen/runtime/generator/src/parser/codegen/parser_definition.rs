@@ -14,10 +14,13 @@ pub trait ParserDefinitionCodegen {
 
 impl ParserDefinitionCodegen for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        self.node().version_specifier().to_conditional_code(
+        let code = self.node().version_specifier().to_conditional_code(
             self.node().to_parser_code(self.context(), false),
             Some(quote! { ParserResult::disabled() }),
-        )
+        );
+
+        let nonterminal_kind = format_ident!("{}", self.name());
+        quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
     }
 }
 

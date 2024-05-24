@@ -4,7 +4,6 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
 use codegen_language_definition::model::{Identifier, Language, VersionSpecifier};
-use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
@@ -286,16 +285,9 @@ impl GrammarVisitor for ParserAccumulatorState {
         self.set_current_context(parser.context().clone());
         if !parser.is_inline() {
             self.nonterminal_kinds.insert(parser.name().clone());
-            let code = parser.to_parser_code();
             self.parser_functions.insert(
                 parser.name().clone(),
-                RustCode(
-                    {
-                        let nonterminal_kind = format_ident!("{}", parser.name());
-                        quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
-                    }
-                    .to_string(),
-                ),
+                RustCode(parser.to_parser_code().to_string()),
             );
         }
     }
@@ -316,14 +308,7 @@ impl GrammarVisitor for ParserAccumulatorState {
 
         self.parser_functions.insert(
             parser.name().clone(),
-            RustCode(
-                {
-                    let code = parser.to_parser_code();
-                    let nonterminal_kind = format_ident!("{}", parser.name());
-                    quote! { #code.with_kind(NonTerminalKind::#nonterminal_kind) }
-                }
-                .to_string(),
-            ),
+            RustCode(parser.to_parser_code().to_string()),
         );
     }
 
