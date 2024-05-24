@@ -40,7 +40,7 @@ mod metaslang_cst {
 pub mod cst {
     use metaslang_cst::cst;
 
-    use super::metaslang_cst::KindTypes;
+    pub use super::metaslang_cst::KindTypes;
 
     pub type Node = cst::Node<KindTypes>;
     pub type NonterminalNode = cst::NonterminalNode<KindTypes>;
@@ -70,4 +70,11 @@ pub mod query {
 pub mod text_index {
     use metaslang_cst::text_index;
     pub use text_index::{TextIndex, TextRange, TextRangeExtensions};
+}
+
+pub mod graph_builder {
+    pub use ast::File;
+    pub use functions::Functions;
+    use metaslang_graph_builder::{ast, functions};
+    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 }
