@@ -30,7 +30,6 @@ pub struct PrecedenceParserDefinitionNode {
 
 impl Visitable for PrecedenceParserDefinitionNode {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
-        visitor.precedence_parser_definition_node_enter(self);
         self.primary_expression.accept_visitor(visitor);
     }
 }
