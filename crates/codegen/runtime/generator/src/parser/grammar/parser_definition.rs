@@ -1,12 +1,11 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use codegen_language_definition::model;
+use codegen_language_definition::model::{self, Identifier};
 
 use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
 use crate::parser::grammar::{
     KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
-    VersionQualityRange,
 };
 
 /// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
@@ -25,9 +24,9 @@ impl<T> std::ops::Deref for Labeled<T> {
 }
 
 pub trait ParserDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &ParserDefinitionNode;
-    fn context(&self) -> &'static str;
+    fn context(&self) -> &Identifier;
     fn is_inline(&self) -> bool;
 }
 
@@ -41,9 +40,9 @@ impl Visitable for ParserDefinitionRef {
 }
 
 pub trait TriviaParserDefinition: Debug {
-    fn name(&self) -> &'static str;
+    fn name(&self) -> &Identifier;
     fn node(&self) -> &ParserDefinitionNode;
-    fn context(&self) -> &'static str;
+    fn context(&self) -> &Identifier;
 }
 
 pub type TriviaParserDefinitionRef = Rc<dyn TriviaParserDefinition>;
@@ -76,7 +75,7 @@ impl From<model::FieldDelimiters> for DelimitedRecoveryTokenThreshold {
 
 #[derive(Clone, Debug)]
 pub enum ParserDefinitionNode {
-    Versioned(Box<Self>, Vec<VersionQualityRange>),
+    Versioned(Box<Self>, model::VersionSpecifier),
     Optional(Box<Self>),
     ZeroOrMore(Labeled<Box<Self>>),
     OneOrMore(Labeled<Box<Self>>),
