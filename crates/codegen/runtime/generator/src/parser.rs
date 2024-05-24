@@ -247,23 +247,10 @@ impl GrammarVisitor for ParserAccumulatorState {
 
     fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
         for def in scanner.definitions() {
-            let versions = def.enabled.iter().chain(def.reserved.iter());
+            let specifiers = def.enabled.iter().chain(def.reserved.iter());
 
-            for version in versions {
-                match version {
-                    VersionSpecifier::Never => {}
-                    VersionSpecifier::From { from } => {
-                        self.referenced_versions.insert(from.clone());
-                    }
-                    VersionSpecifier::Till { till } => {
-                        self.referenced_versions.insert(till.clone());
-                    }
-                    VersionSpecifier::Range { from, till } => {
-                        self.referenced_versions.insert(from.clone());
-                        self.referenced_versions.insert(till.clone());
-                    }
-                }
-            }
+            self.referenced_versions
+                .extend(specifiers.flat_map(VersionSpecifier::versions).cloned());
         }
     }
 
@@ -342,37 +329,17 @@ impl GrammarVisitor for ParserAccumulatorState {
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
         if let ScannerDefinitionNode::Versioned(_, version_specifier) = node {
-            match version_specifier {
-                VersionSpecifier::Never => {}
-                VersionSpecifier::From { from } => {
-                    self.referenced_versions.insert(from.clone());
-                }
-                VersionSpecifier::Till { till } => {
-                    self.referenced_versions.insert(till.clone());
-                }
-                VersionSpecifier::Range { from, till } => {
-                    self.referenced_versions.insert(from.clone());
-                    self.referenced_versions.insert(till.clone());
-                }
-            }
+            self.referenced_versions
+                .extend(version_specifier.versions().cloned());
         }
     }
 
     fn parser_definition_node_enter(&mut self, node: &ParserDefinitionNode) {
         match node {
-            ParserDefinitionNode::Versioned(_, version_specifier) => match version_specifier {
-                VersionSpecifier::Never => {}
-                VersionSpecifier::From { from } => {
-                    self.referenced_versions.insert(from.clone());
-                }
-                VersionSpecifier::Till { till } => {
-                    self.referenced_versions.insert(till.clone());
-                }
-                VersionSpecifier::Range { from, till } => {
-                    self.referenced_versions.insert(from.clone());
-                    self.referenced_versions.insert(till.clone());
-                }
-            },
+            ParserDefinitionNode::Versioned(_, version_specifier) => {
+                self.referenced_versions
+                    .extend(version_specifier.versions().cloned());
+            }
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name().clone());
                 self.terminal_kinds.insert(scanner.name().clone());
