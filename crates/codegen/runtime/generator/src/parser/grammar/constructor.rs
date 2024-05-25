@@ -10,7 +10,7 @@ use indexmap::IndexMap;
 use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
-    DelimitedRecoveryTokenThreshold, Grammar, GrammarElement, KeywordScannerDefinition, Labeled,
+    DelimitedRecoveryTerminalThreshold, Grammar, GrammarElement, KeywordScannerDefinition, Labeled,
     ParserDefinition, ParserDefinitionNode, PrecedenceParserDefinition,
     PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
     TriviaParserDefinition,
@@ -544,7 +544,7 @@ fn resolve_sequence_like(
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
-            let threshold = DelimitedRecoveryTokenThreshold::from(delimiters);
+            let threshold = DelimitedRecoveryTerminalThreshold::from(delimiters);
             ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close, threshold)
         };
         // Replace with a new delimited node

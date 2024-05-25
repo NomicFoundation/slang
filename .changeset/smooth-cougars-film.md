@@ -2,4 +2,4 @@
 "@nomicfoundation/slang": minor
 ---
 
-Rename RuleKind, TerminalKind and NodeLabel
+Rename `RuleKind` to `NonTerminalKind`, `TokenKind` to `TerminalKind`, and `NodeLabel` to `EdgeLabel`.

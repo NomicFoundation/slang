@@ -319,7 +319,7 @@ impl Selector {
                     node: RustNode::Terminal(terminal),
                     ..
                 } if matches!(terminal.kind, TerminalKind::SKIPPED) => {
-                    return Error::SkippedToken(self.index).into();
+                    return Error::SkippedTerminal(self.index).into();
                 }
                 labeled if filter(labeled) => {
                     self.index += 1;
@@ -360,8 +360,8 @@ enum Error {
     MissingChild(usize),
 
     // Can happen if the user decided to use an incorrect/incomplete CST node.
-    #[error("Unexpected SKIPPED token at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
-    SkippedToken(usize),
+    #[error("Unexpected SKIPPED terminal at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
+    SkippedTerminal(usize),
 }
 
 impl<T> From<Error> for Result<T> {

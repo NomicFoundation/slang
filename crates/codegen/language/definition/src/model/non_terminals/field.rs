@@ -21,7 +21,7 @@ pub struct FieldDelimiters {
     ///
     /// By default, we assume no lookahead (0) is required to recover from
     /// unrecognized body between delimiters, so it's always triggered.
-    pub tokens_matched_acceptance_threshold: Option<u8>,
+    pub terminals_matched_acceptance_threshold: Option<u8>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

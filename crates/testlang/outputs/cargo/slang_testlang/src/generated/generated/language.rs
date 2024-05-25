@@ -18,13 +18,14 @@ use crate::cst;
 use crate::kinds::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
-use crate::lexer::{KeywordScan, Lexer, ScannedToken};
+use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
+    ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -91,7 +92,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::AdditionExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -106,7 +107,7 @@ impl Language {
                 NonTerminalKind::AdditionExpression,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Plus,
                 )
@@ -117,7 +118,7 @@ impl Language {
             PrecedenceHelper::to_prefix_operator(
                 NonTerminalKind::NegationExpression,
                 3u8,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Bang,
                 )
@@ -131,14 +132,14 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::Period,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Period,
                         ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::Member,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -156,12 +157,12 @@ impl Language {
         };
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::StringLiteral,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 );
@@ -215,7 +216,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::StringLiteral,
             );
@@ -241,7 +242,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::MemberAccessExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -264,7 +265,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::NegationExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -279,7 +280,7 @@ impl Language {
                 input,
                 self,
                 |input| {
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Identifier,
                     )
@@ -333,7 +334,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::Keyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Tree>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                             input,
                             TerminalKind::TreeKeyword,
                         ),
@@ -341,7 +342,7 @@ impl Language {
                     seq.elem_labeled(
                         EdgeLabel::Name,
                         OptionalHelper::transform(
-                            self.parse_token_with_trivia::<LexicalContextType::Tree>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                                 input,
                                 TerminalKind::Identifier,
                             ),
@@ -354,12 +355,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Tree>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -376,7 +377,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenBracket,
-                self.parse_token_with_trivia::<LexicalContextType::Tree>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TerminalKind::OpenBracket,
                 ),
@@ -388,12 +389,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBracket,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseBracket,
-                self.parse_token_with_trivia::<LexicalContextType::Tree>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                     input,
                     TerminalKind::CloseBracket,
                 ),
@@ -408,7 +409,7 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.tree_node(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Tree>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                 input,
                 TerminalKind::DelimitedIdentifier,
             );
@@ -432,22 +433,22 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .parse_terminal::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .parse_terminal::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::SingleLineComment,
                     )
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::MultiLineComment,
                     )
@@ -462,18 +463,18 @@ impl Language {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                self.parse_terminal::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
                     .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(
+                self.parse_terminal::<LexicalContextType::Default>(
                     input,
                     TerminalKind::SingleLineComment,
                 )
                 .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(
-                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                self.parse_terminal::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
                     .with_label(EdgeLabel::TrailingTrivia),
             )?;
             seq.finish()
@@ -691,13 +692,13 @@ impl Lexer for Language {
         }
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(
+    fn next_terminal<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-    ) -> Option<ScannedToken> {
+    ) -> Option<ScannedTerminal> {
         let save = input.position();
         let mut furthest_position = input.position();
-        let mut longest_token = None;
+        let mut longest_terminal = None;
 
         macro_rules! longest_match {
                 ($( { $kind:ident = $function:ident } )*) => {
@@ -705,7 +706,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TerminalKind::$kind);
+                            longest_terminal = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -725,7 +726,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_terminal = Some(kind);
                 }
                 input.set_position(save);
 
@@ -741,7 +742,7 @@ impl Lexer for Language {
                 longest_match! {}
 
                 // We have an identifier; we need to check if it's a keyword
-                if let Some(identifier) = longest_token.filter(|tok| [].contains(tok)) {
+                if let Some(identifier) = longest_terminal.filter(|tok| [].contains(tok)) {
                     let kw_scan = KeywordScan::Absent;
                     let kw_scan = match kw_scan {
                         // Strict prefix; we need to match the whole identifier to promote
@@ -750,7 +751,7 @@ impl Lexer for Language {
                     };
 
                     input.set_position(furthest_position);
-                    return Some(ScannedToken::IdentifierOrKeyword {
+                    return Some(ScannedTerminal::IdentifierOrKeyword {
                         identifier,
                         kw: kw_scan,
                     });
@@ -768,7 +769,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_terminal = Some(kind);
                 }
                 input.set_position(save);
 
@@ -782,7 +783,7 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
+                    longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = if scan_chars!(input, 't', 'r', 'e', 'e') {
                         KeywordScan::Reserved(TerminalKind::TreeKeyword)
@@ -796,7 +797,7 @@ impl Lexer for Language {
                     };
 
                     input.set_position(furthest_position);
-                    return Some(ScannedToken::IdentifierOrKeyword {
+                    return Some(ScannedTerminal::IdentifierOrKeyword {
                         identifier,
                         kw: kw_scan,
                     });
@@ -804,15 +805,15 @@ impl Lexer for Language {
             }
         }
 
-        match longest_token {
-            Some(token) => {
+        match longest_terminal {
+            Some(terminal) => {
                 input.set_position(furthest_position);
-                Some(ScannedToken::Single(token))
+                Some(ScannedTerminal::Single(terminal))
             }
-            // Skip a character if possible and if we didn't recognize a token
+            // Skip a character if possible and if we didn't recognize a terminal
             None if input.peek().is_some() => {
                 let _ = input.next();
-                Some(ScannedToken::Single(TerminalKind::SKIPPED))
+                Some(ScannedTerminal::Single(TerminalKind::SKIPPED))
             }
             None => None,
         }

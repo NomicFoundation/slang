@@ -53,7 +53,11 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
-    /** Serialize the token node to JSON. */
+    /**
+     * Serialize the node to JSON.
+     *
+     * This method is intended for debugging purposes and may not be stable.
+     */
     toJSON(): string;
     unparse(): string;
   }
@@ -63,7 +67,7 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     get text(): string;
     /**
-     * Serialize the terminal node to JSON.
+     * Serialize the node to JSON.
      *
      * This method is intended for debugging purposes and may not be stable.
      */
@@ -95,7 +99,7 @@ export namespace cursor {
     goToPreviousSibling(): boolean;
     goToNextTerminal(): boolean;
     goToNextTerminalWithKind(kind: kinds.TerminalKind): boolean;
-    goToNextTokenWithKinds(kinds: Array<kinds.TerminalKind>): boolean;
+    goToNextTerminalWithKinds(kinds: Array<kinds.TerminalKind>): boolean;
     goToNextNonterminal(): boolean;
     goToNextNonterminalWithKind(kind: kinds.NonTerminalKind): boolean;
     goToNextNonterminalWithKinds(kinds: Array<kinds.NonTerminalKind>): boolean;

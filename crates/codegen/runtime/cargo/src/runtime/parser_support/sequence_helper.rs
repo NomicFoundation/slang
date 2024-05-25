@@ -49,7 +49,7 @@ impl SequenceHelper {
                 // Keep accepting or convert into PrattOperatorMatch
                 (ParserResult::Match(running), ParserResult::Match(next)) => {
                     running.nodes.extend(next.nodes);
-                    running.expected_tokens = next.expected_tokens;
+                    running.expected_terminals = next.expected_terminals;
                 }
                 (ParserResult::Match(running), ParserResult::PrattOperatorMatch(next)) => {
                     let mut children = vec![PrattElement::Expression {
@@ -63,15 +63,15 @@ impl SequenceHelper {
                     running.nodes.extend(next.nodes);
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut running.nodes),
-                        next.expected_tokens,
+                        next.expected_terminals,
                     ));
                 }
                 (ParserResult::Match(running), ParserResult::NoMatch(next)) => {
-                    running.expected_tokens.extend(next.expected_tokens);
+                    running.expected_terminals.extend(next.expected_terminals);
 
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut running.nodes),
-                        std::mem::take(&mut running.expected_tokens),
+                        std::mem::take(&mut running.expected_terminals),
                     ));
                 }
                 // Keep accepting or convert Match -> PrattOperatorMatch
@@ -93,7 +93,7 @@ impl SequenceHelper {
                             .flat_map(PrattElement::into_nodes)
                             .chain(next.nodes)
                             .collect(),
-                        next.expected_tokens,
+                        next.expected_terminals,
                     ));
                 }
                 (ParserResult::PrattOperatorMatch(cur), ParserResult::NoMatch(next)) => {
@@ -102,7 +102,7 @@ impl SequenceHelper {
                             .into_iter()
                             .flat_map(PrattElement::into_nodes)
                             .collect(),
-                        next.expected_tokens,
+                        next.expected_terminals,
                     ));
                 }
                 // Enter recovery mode
@@ -117,24 +117,24 @@ impl SequenceHelper {
                 (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) =>
                     unreachable!("Error recovery happens outside precedence parsing"),
 
-                // Try to recover until we hit an expected boundary token.
+                // Try to recover until we hit an expected boundary terminal.
                 // If the sequence is unwinding, then a subsequent non-empty match must mean that
-                // we found the expected token, so we can stop recovering.
+                // we found the expected terminal, so we can stop recovering.
                 (ParserResult::SkippedUntil(running), ParserResult::Match(next)) => {
                     if next.nodes.is_empty() {
                         return;
                     }
 
-                    // We only support skipping to a single, significant token.
+                    // We only support skipping to a single, significant terminal.
                     // Sanity check that we are recovering to the expected one.
-                    let next_token = next.nodes.iter().try_fold(None, |acc, node| {
+                    let next_terminal = next.nodes.iter().try_fold(None, |acc, node| {
                         match &**node {
-                            cst::Node::Terminal(token) if token.kind.is_trivia() => Ok(acc),
-                            cst::Node::Terminal(token) => {
+                            cst::Node::Terminal(terminal) if terminal.kind.is_trivia() => Ok(acc),
+                            cst::Node::Terminal(terminal) => {
                                 match acc {
-                                    None => Ok(Some(token.kind)),
+                                    None => Ok(Some(terminal.kind)),
                                     Some(..) => {
-                                        debug_assert!(false, "Recovery skipped to multiple tokens: {acc:?}, {token:?}");
+                                        debug_assert!(false, "Recovery skipped to multiple terminals: {acc:?}, {terminal:?}");
                                         Err(())
                                     }
                                 }
@@ -145,7 +145,7 @@ impl SequenceHelper {
                             }
                         }
                     });
-                    debug_assert_eq!(next_token, Ok(Some(running.found)));
+                    debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
                     running.nodes.push(Edge::anonymous(cst::Node::terminal(
                         TerminalKind::SKIPPED,
@@ -155,17 +155,17 @@ impl SequenceHelper {
 
                     self.result = State::Running(ParserResult::Match(Match {
                         nodes: std::mem::take(&mut running.nodes),
-                        expected_tokens: next.expected_tokens,
+                        expected_terminals: next.expected_terminals,
                     }));
                 }
                 // If the sequence is unwinding and and we didn't find a match, then it means
                 // that we recovered past it and we need to push the recovery up.
                 (ParserResult::SkippedUntil(_), ParserResult::NoMatch(_)) => {
                     // Skip any possible subsequent expected elements in this sequence until
-                    // we finally encounter the token we were looking for
+                    // we finally encounter the terminal we were looking for
                 }
                 (ParserResult::SkippedUntil(_), _) => unreachable!(
-                    "Only a single token parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
+                    "Only a single terminal parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
                 ),
             },
         }

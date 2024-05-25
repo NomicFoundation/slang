@@ -8,7 +8,7 @@ This is a departure from the classic approach of "black-box" compilers, which ar
 To use Slang, you start by initializing a `Language` object with a specific version of the language.
 The earliest Solidity version we support is `0.4.11`, and we plan on supporting all future versions as they are released.
 
-From a `Language` object, you can analyze any source text according to the rules of that specific version.
+From a `Language` object, you can analyze any source text according to the non-terminals of that specific version.
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
 You can use the `Language::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
 
@@ -26,13 +26,13 @@ which is a tree structure of the program that also includes things like punctuat
 
 This is done by using the (standard) approach of lexical analysis followed by syntax analysis.
 The source text as a sequence of characters is recognized into a sequence of
-tokens (lexical analysis), which then in turn is _parsed_ into the CST.
+terminals (lexical analysis), which then in turn is _parsed_ into the CST.
 
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
 -   `NonTerminalNode` represent sub-trees, containing a vector of other `Node` children.
--   `TerminalNode` are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
+-   `TerminalNode` are leaves and represent a terminal (i.e. an identifier, keyword, punctuation) in the source.
 
 ## CST Cursors
 

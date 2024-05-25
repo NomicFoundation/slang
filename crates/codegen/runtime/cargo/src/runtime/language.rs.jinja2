@@ -16,13 +16,14 @@ use crate::cst;
 use crate::kinds::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
-use crate::lexer::{KeywordScan, Lexer, ScannedToken};
+use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
+    ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -161,13 +162,13 @@ impl Lexer for Language {
         {%- endif -%}
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<ScannedToken> {
+    fn next_terminal<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<ScannedTerminal> {
         {%- if rendering_in_stubs -%}
-            unreachable!("Invoking next_token in stubs: {input:#?}")
+            unreachable!("Invoking next_terminal in stubs: {input:#?}")
         {%- else -%}
             let save = input.position();
             let mut furthest_position = input.position();
-            let mut longest_token = None;
+            let mut longest_terminal = None;
 
             macro_rules! longest_match {
                 ($( { $kind:ident = $function:ident } )*) => {
@@ -175,7 +176,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TerminalKind::$kind);
+                            longest_terminal = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -187,7 +188,7 @@ impl Lexer for Language {
                     LexicalContext::{{ context_name }} => {
                         if let Some(kind) = {{ context.literal_scanner }} {
                             furthest_position = input.position();
-                            longest_token = Some(kind);
+                            longest_terminal = Some(kind);
                         }
                         input.set_position(save);
 
@@ -206,7 +207,7 @@ impl Lexer for Language {
                         }
 
                         // We have an identifier; we need to check if it's a keyword
-                        if let Some(identifier) = longest_token.filter(|tok|
+                        if let Some(identifier) = longest_terminal.filter(|tok|
                             [
                                 {% for name in context.promotable_identifier_scanners %}
                                     TerminalKind::{{ name }},
@@ -246,21 +247,21 @@ impl Lexer for Language {
                             {% endif %}
 
                             input.set_position(furthest_position);
-                            return Some(ScannedToken::IdentifierOrKeyword { identifier, kw: kw_scan });
+                            return Some(ScannedTerminal::IdentifierOrKeyword { identifier, kw: kw_scan });
                         }
                     },
                 {%- endfor %}
             }
 
-            match longest_token {
-                Some(token) => {
+            match longest_terminal {
+                Some(terminal) => {
                     input.set_position(furthest_position);
-                    Some(ScannedToken::Single(token))
+                    Some(ScannedTerminal::Single(terminal))
                 },
-                // Skip a character if possible and if we didn't recognize a token
+                // Skip a character if possible and if we didn't recognize a terminal
                 None if input.peek().is_some() => {
                     let _ = input.next();
-                    Some(ScannedToken::Single(TerminalKind::SKIPPED))
+                    Some(ScannedTerminal::Single(TerminalKind::SKIPPED))
                 },
                 None => None,
             }

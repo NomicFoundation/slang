@@ -6,15 +6,15 @@ use slang_solidity::language::Language;
 
 #[test]
 fn end_of_line() -> Result<()> {
-    // Only one is valid as a single token:
+    // Only one is valid as a single terminal:
     compare_end_of_lines("\r", &["\r"])?;
     compare_end_of_lines("\n", &["\n"])?;
 
-    // Two of the same are two tokens:
+    // Two of the same are two terminals:
     compare_end_of_lines("\n\n", &["\n", "\n"])?;
     compare_end_of_lines("\r\r", &["\r", "\r"])?;
 
-    // A carriage return followed by a newline is one token, but the opposite is not:
+    // A carriage return followed by a newline is one terminal, but the opposite is not:
     compare_end_of_lines("\r\n", &["\r\n"])?;
     compare_end_of_lines("\n\r", &["\n", "\r"])?;
 
@@ -33,9 +33,9 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
         .filter_map(|node| match node {
             Node::NonTerminal(_) => None,
 
-            Node::Terminal(token) => {
-                assert_eq!(token.kind, TerminalKind::EndOfLine);
-                Some(token.text.clone())
+            Node::Terminal(terminal) => {
+                assert_eq!(terminal.kind, TerminalKind::EndOfLine);
+                Some(terminal.text.clone())
             }
         })
         .collect::<Vec<_>>();

@@ -102,7 +102,7 @@ In the case of a variable, capture it as `@function`, and in the case of a prope
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-1"
 ```
 
-This pattern would match a set of possible keyword tokens, capturing them as `@keyword`:
+This pattern would match a set of possible keyword terminals, capturing them as `@keyword`:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-2"

@@ -35,8 +35,8 @@ fn using_the_cursor() -> Result<()> {
             assert!(cursor.go_to_first_child());
             assert!(cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
-            let token_node = cursor.node();
-            contracts.push(token_node.as_terminal().unwrap().text.clone());
+            let terminal_node = cursor.node();
+            contracts.push(terminal_node.as_terminal().unwrap().text.clone());
 
             // You have to make sure you return the cursor to its original position:
             assert!(cursor.go_to_parent());
@@ -56,8 +56,8 @@ fn using_the_cursor() -> Result<()> {
             let mut child_cursor = cursor.spawn();
             assert!(child_cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
-            let token_node = child_cursor.node();
-            contracts.push(token_node.as_terminal().unwrap().text.clone());
+            let terminal_node = child_cursor.node();
+            contracts.push(terminal_node.as_terminal().unwrap().text.clone());
         }
 
         assert_eq!(contracts, &["Foo", "Bar", "Baz"]);

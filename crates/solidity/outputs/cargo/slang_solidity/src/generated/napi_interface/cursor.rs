@@ -143,7 +143,7 @@ impl Cursor {
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_token_with_kinds(
+    pub fn go_to_next_terminal_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.TerminalKind>")] kinds: Vec<TerminalKind>,
     ) -> bool {

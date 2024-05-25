@@ -126,16 +126,16 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   expectNonTerminal(cst, NonTerminalKind.Tree);
   expect(cst.children()).toHaveLength(2);
 
-  const [contractKeyword, skippedToken] = cst.children();
+  const [contractKeyword, skippedTerminal] = cst.children();
   expectTerminal(contractKeyword, TerminalKind.TreeKeyword, "tree");
-  expectTerminal(skippedToken, TerminalKind.SKIPPED, "");
+  expectTerminal(skippedTerminal, TerminalKind.SKIPPED, "");
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);
   expectNonTerminal(tree.cst, NonTerminalKind.Tree);
 
   expect(() => tree.node).toThrowError(
-    "Unexpected SKIPPED token at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
+    "Unexpected SKIPPED terminal at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
   );
 });
 

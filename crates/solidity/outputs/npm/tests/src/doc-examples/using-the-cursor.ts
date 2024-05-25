@@ -28,9 +28,9 @@ test("using the cursor", async () => {
       assert(cursor.goToFirstChild());
       assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
-      const tokenNode = cursor.node();
-      assert(tokenNode instanceof TerminalNode);
-      contracts.push(tokenNode.text);
+      const terminalNode = cursor.node();
+      assert(terminalNode instanceof TerminalNode);
+      contracts.push(terminalNode.text);
 
       assert(cursor.goToParent());
     }
@@ -49,9 +49,9 @@ test("using the cursor", async () => {
       const childCursor = cursor.spawn();
       assert(childCursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
-      const tokenNode = childCursor.node();
-      assert(tokenNode instanceof TerminalNode);
-      contracts.push(tokenNode.text);
+      const terminalNode = childCursor.node();
+      assert(terminalNode instanceof TerminalNode);
+      contracts.push(terminalNode.text);
     }
 
     assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);

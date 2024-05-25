@@ -2,7 +2,7 @@ import { Language } from "@slang-private/slang-testlang/language";
 import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import { expectNonTerminal, expectTerminal } from "../utils/cst-helpers";
 
-test("parse token", () => {
+test("parse terminal", () => {
   const source = "About_time";
   const language = new Language("1.0.0");
 
@@ -15,7 +15,7 @@ test("parse token", () => {
   expectTerminal(children[0]!, TerminalKind.DelimitedIdentifier, "About_time");
 });
 
-test("parse rule", () => {
+test("parse non-terminal", () => {
   const source = `tree [A [B C] D];`;
   const language = new Language("1.0.0");
 
@@ -57,9 +57,9 @@ test("calculate unicode characters text length", () => {
   const children = parseTree.children();
   expect(children).toHaveLength(1);
 
-  const token = children[0]!;
-  expectTerminal(token, TerminalKind.StringLiteral, `"some 😁 emoji"`);
-  expect(token.textLength).toEqual({
+  const terminal = children[0]!;
+  expectTerminal(terminal, TerminalKind.StringLiteral, `"some 😁 emoji"`);
+  expect(terminal.textLength).toEqual({
     line: 0,
     column: 14,
     utf16: 15,
@@ -67,7 +67,7 @@ test("calculate unicode characters text length", () => {
   });
 });
 
-test("can unparse rule nodes", () => {
+test("can unparse non-terminal nodes", () => {
   const source = `tree [A [B C] D];`;
   const language = new Language("1.0.0");
 

@@ -109,7 +109,7 @@ fn write_node(
         write!(w, "{key}", key = render_key(cursor))?;
 
         // If it is a parent wih a single child, inline them on the same line:
-        if matches!(cursor.node(), Node::NonTerminal(rule) if rule.children.len() == 1 && !NON_INLINABLE.contains(&rule.kind))
+        if matches!(cursor.node(), Node::NonTerminal(non_terminal) if non_terminal.children.len() == 1 && !NON_INLINABLE.contains(&non_terminal.kind))
         {
             let parent_range = cursor.text_range();
             assert!(cursor.go_to_next());
@@ -157,7 +157,9 @@ fn render_value(cursor: &mut CursorWithEdges, source: &str) -> String {
     let preview = render_preview(source, &char_range);
 
     match cursor.node() {
-        Node::NonTerminal(rule) if rule.children.is_empty() => format!("[] # ({utf8_range:?})"),
+        Node::NonTerminal(non_terminal) if non_terminal.children.is_empty() => {
+            format!("[] # ({utf8_range:?})")
+        }
         Node::NonTerminal(_) => format!("# {preview} ({utf8_range:?})"),
         Node::Terminal(_) => format!("{preview} # ({utf8_range:?})"),
     }

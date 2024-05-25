@@ -18,13 +18,14 @@ use crate::cst;
 use crate::kinds::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
 };
-use crate::lexer::{KeywordScan, Lexer, ScannedToken};
+use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
+    ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -219,14 +220,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::AbicoderKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::AbicoderKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Version,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -251,7 +252,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::AdditiveExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -264,7 +265,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::AddressKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::AddressKeyword,
                 ),
@@ -272,7 +273,7 @@ impl Language {
             seq.elem_labeled(
                 EdgeLabel::PayableKeyword,
                 OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PayableKeyword,
                     ),
@@ -298,7 +299,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::AndExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -326,7 +327,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenBracket,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenBracket,
                 ),
@@ -338,12 +339,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBracket,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseBracket,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseBracket,
                 ),
@@ -368,7 +369,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::ArrayTypeName => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -407,7 +408,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -419,12 +420,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -439,7 +440,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::AssemblyKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::AssemblyKeyword,
                 ),
@@ -473,7 +474,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::AssignmentExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -496,7 +497,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::BitwiseAndExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -519,7 +520,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::BitwiseOrExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -542,7 +543,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::BitwiseXorExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -557,7 +558,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenBrace,
                 ),
@@ -569,12 +570,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseBrace,
                 ),
@@ -588,7 +589,7 @@ impl Language {
     fn break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::BreakKeyword,
                 )
@@ -597,12 +598,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -643,7 +644,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::CallOptionsExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -657,7 +658,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::CatchKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CatchKeyword,
                     ),
@@ -682,7 +683,7 @@ impl Language {
                 seq.elem_labeled(
                     EdgeLabel::Name,
                     OptionalHelper::transform(
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -724,7 +725,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::ComparisonExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -747,7 +748,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::ConditionalExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -764,21 +765,21 @@ impl Language {
                         seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
                         seq.elem_labeled(
                             EdgeLabel::ConstantKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::ConstantKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::Name,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::Identifier,
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::Equal,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::Equal,
                             ),
@@ -790,12 +791,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -814,30 +815,30 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::InternalKeyword,
                 );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OverrideKeyword,
                     );
                     choice.consider(input, result)?;
                 }
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PublicKeyword,
                 );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_6_7 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::VirtualKeyword,
                     );
@@ -871,7 +872,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::ConstructorKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ConstructorKeyword,
                     ),
@@ -891,7 +892,7 @@ impl Language {
     fn continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ContinueKeyword,
                 )
@@ -900,12 +901,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -922,7 +923,7 @@ impl Language {
                 seq.elem_labeled(
                     EdgeLabel::AbstractKeyword,
                     OptionalHelper::transform(
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::AbstractKeyword,
                         ),
@@ -931,14 +932,14 @@ impl Language {
             }
             seq.elem_labeled(
                 EdgeLabel::ContractKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ContractKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -952,7 +953,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -964,12 +965,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -1041,7 +1042,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Literal,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::DecimalLiteral,
                 ),
@@ -1062,7 +1063,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::DoKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::DoKeyword,
                         ),
@@ -1070,7 +1071,7 @@ impl Language {
                     seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
                     seq.elem_labeled(
                         EdgeLabel::WhileKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::WhileKeyword,
                         ),
@@ -1080,7 +1081,7 @@ impl Language {
                         let input = delim_guard.ctx();
                         seq.elem_labeled(
                             EdgeLabel::OpenParen,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::OpenParen,
                             ),
@@ -1092,12 +1093,12 @@ impl Language {
                                 input,
                                 self,
                                 TerminalKind::CloseParen,
-                                TokenAcceptanceThreshold(0u8),
+                                TerminalAcceptanceThreshold(0u8),
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::CloseParen,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::CloseParen,
                             ),
@@ -1110,12 +1111,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -1128,46 +1129,46 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn elementary_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::BoolKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_8_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ByteKeyword,
                 );
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::StringKeyword,
             );
             choice.consider(input, result)?;
             let result = self.address_type(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::BytesKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::IntKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::UintKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::FixedKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::UfixedKeyword,
             );
@@ -1183,7 +1184,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ElseKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ElseKeyword,
                 ),
@@ -1202,7 +1203,7 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
                             EdgeLabel::EmitKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::EmitKeyword,
                             ),
@@ -1215,12 +1216,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -1238,14 +1239,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::EnumKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::EnumKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -1255,7 +1256,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -1267,12 +1268,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -1290,7 +1291,7 @@ impl Language {
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 )
@@ -1317,7 +1318,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::EqualityExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -1333,14 +1334,14 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
                             EdgeLabel::ErrorKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::ErrorKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::Name,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::Identifier,
                             ),
@@ -1355,12 +1356,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -1381,7 +1382,7 @@ impl Language {
                 seq.elem_labeled(
                     EdgeLabel::Name,
                     OptionalHelper::transform(
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -1419,7 +1420,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -1431,12 +1432,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseParen,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -1456,14 +1457,14 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::EventKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::EventKeyword,
                         ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::Name,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -1475,7 +1476,7 @@ impl Language {
                     seq.elem_labeled(
                         EdgeLabel::AnonymousKeyword,
                         OptionalHelper::transform(
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::AnonymousKeyword,
                             ),
@@ -1487,12 +1488,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -1509,7 +1510,7 @@ impl Language {
             seq.elem_labeled(
                 EdgeLabel::IndexedKeyword,
                 OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::IndexedKeyword,
                     ),
@@ -1518,7 +1519,7 @@ impl Language {
             seq.elem_labeled(
                 EdgeLabel::Name,
                 OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Identifier,
                     ),
@@ -1548,7 +1549,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -1560,12 +1561,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -1578,7 +1579,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn experimental_feature(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                 input,
                 TerminalKind::Identifier,
             );
@@ -1596,7 +1597,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ExperimentalKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::ExperimentalKeyword,
                 ),
@@ -1622,7 +1623,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::ExponentiationExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -1639,84 +1640,84 @@ impl Language {
                 1u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Equal,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::BarEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::PlusEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::MinusEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::CaretEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::SlashEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::PercentEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::AsteriskEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::AmpersandEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::LessThanLessThanEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThanGreaterThanEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThanGreaterThanGreaterThanEqual,
                         )
@@ -1733,7 +1734,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::QuestionMark,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::QuestionMark,
                         ),
@@ -1741,7 +1742,7 @@ impl Language {
                     seq.elem_labeled(EdgeLabel::TrueExpression, self.expression(input))?;
                     seq.elem_labeled(
                         EdgeLabel::Colon,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Colon,
                         ),
@@ -1756,7 +1757,7 @@ impl Language {
                 NonTerminalKind::OrExpression,
                 5u8,
                 5u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::BarBar,
                 )
@@ -1768,7 +1769,7 @@ impl Language {
                 NonTerminalKind::AndExpression,
                 7u8,
                 7u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::AmpersandAmpersand,
                 )
@@ -1782,14 +1783,14 @@ impl Language {
                 9u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::EqualEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::BangEqual,
                         )
@@ -1806,28 +1807,28 @@ impl Language {
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::LessThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::LessThanEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThanEqual,
                         )
@@ -1842,7 +1843,7 @@ impl Language {
                 NonTerminalKind::BitwiseOrExpression,
                 13u8,
                 13u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Bar,
                 )
@@ -1854,7 +1855,7 @@ impl Language {
                 NonTerminalKind::BitwiseXorExpression,
                 15u8,
                 15u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Caret,
                 )
@@ -1866,7 +1867,7 @@ impl Language {
                 NonTerminalKind::BitwiseAndExpression,
                 17u8,
                 17u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Ampersand,
                 )
@@ -1880,21 +1881,21 @@ impl Language {
                 19u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::LessThanLessThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThanGreaterThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::GreaterThanGreaterThanGreaterThan,
                         )
@@ -1911,14 +1912,14 @@ impl Language {
                 21u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Plus,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Minus,
                         )
@@ -1935,21 +1936,21 @@ impl Language {
                 23u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Asterisk,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Slash,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Percent,
                         )
@@ -1967,7 +1968,7 @@ impl Language {
                 ChoiceHelper::run(input, |mut choice, input| {
                     if !self.version_is_at_least_0_6_0 {
                         let result = self
-                            .parse_token_with_trivia::<LexicalContextType::Default>(
+                            .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::AsteriskAsterisk,
                             )
@@ -1986,7 +1987,7 @@ impl Language {
                 ChoiceHelper::run(input, |mut choice, input| {
                     if self.version_is_at_least_0_6_0 {
                         let result = self
-                            .parse_token_with_trivia::<LexicalContextType::Default>(
+                            .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::AsteriskAsterisk,
                             )
@@ -2003,14 +2004,14 @@ impl Language {
                 29u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::PlusPlus,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::MinusMinus,
                         )
@@ -2026,35 +2027,35 @@ impl Language {
                 31u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::PlusPlus,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::MinusMinus,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Tilde,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Bang,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Minus,
                         )
@@ -2062,7 +2063,7 @@ impl Language {
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
                         let result = self
-                            .parse_token_with_trivia::<LexicalContextType::Default>(
+                            .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::Plus,
                             )
@@ -2070,7 +2071,7 @@ impl Language {
                         choice.consider(input, result)?;
                     }
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Default>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::DeleteKeyword,
                         )
@@ -2099,15 +2100,15 @@ impl Language {
                             let input = delim_guard.ctx();
                             seq.elem_labeled(
                                 EdgeLabel::OpenBrace,
-                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                     input,
                                     TerminalKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . call_options (input) . with_label (EdgeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace , TokenAcceptanceThreshold (2u8) ,)) ? ;
+                            seq . elem (self . call_options (input) . with_label (EdgeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace , TerminalAcceptanceThreshold (2u8) ,)) ? ;
                             seq.elem_labeled(
                                 EdgeLabel::CloseBrace,
-                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                     input,
                                     TerminalKind::CloseBrace,
                                 ),
@@ -2127,7 +2128,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::Period,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Period,
                         ),
@@ -2146,7 +2147,7 @@ impl Language {
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
                         EdgeLabel::OpenBracket,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::OpenBracket,
                         ),
@@ -2167,12 +2168,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseBracket,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::CloseBracket,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::CloseBracket,
                         ),
@@ -2209,23 +2210,23 @@ impl Language {
                 let result = self.elementary_type(input);
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PayableKeyword,
                     );
                     choice.consider(input, result)?;
                 }
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::TrueKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FalseKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 );
@@ -2320,12 +2321,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -2343,27 +2344,27 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::VirtualKeyword,
                 );
@@ -2396,7 +2397,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::FallbackKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::FallbackKeyword,
                     ),
@@ -2424,7 +2425,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ForKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ForKeyword,
                 ),
@@ -2434,7 +2435,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -2459,12 +2460,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -2482,7 +2483,7 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.expression_statement(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Semicolon,
             );
@@ -2502,7 +2503,7 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.tuple_deconstruction_statement(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Semicolon,
             );
@@ -2523,53 +2524,53 @@ impl Language {
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ConstantKeyword,
                 );
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::ExternalKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PayableKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_4_16 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_6_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::VirtualKeyword,
                 );
@@ -2594,7 +2595,7 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.block(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Semicolon,
             );
@@ -2620,7 +2621,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::FunctionCallExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -2633,7 +2634,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::FunctionKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FunctionKeyword,
                 ),
@@ -2654,17 +2655,17 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn function_name(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Identifier,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::FallbackKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::ReceiveKeyword,
             );
@@ -2680,7 +2681,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::FunctionKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FunctionKeyword,
                 ),
@@ -2699,48 +2700,48 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn function_type_attribute(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::ExternalKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ConstantKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PureKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_16 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PayableKeyword,
             );
@@ -2765,7 +2766,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Literal,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::HexLiteral,
                 ),
@@ -2784,12 +2785,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::SingleQuotedHexStringLiteral,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::DoubleQuotedHexStringLiteral,
             );
@@ -2818,7 +2819,7 @@ impl Language {
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 )
@@ -2835,7 +2836,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::IfKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::IfKeyword,
                 ),
@@ -2845,7 +2846,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -2857,12 +2858,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -2884,14 +2885,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::AsKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::AsKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Identifier,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -2924,7 +2925,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -2936,12 +2937,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseBrace,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -2950,7 +2951,7 @@ impl Language {
             }))?;
             seq.elem_labeled(
                 EdgeLabel::FromKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FromKeyword,
                 ),
@@ -2966,7 +2967,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -3002,7 +3003,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::ImportKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::ImportKeyword,
                         ),
@@ -3014,12 +3015,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -3034,7 +3035,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Colon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Colon,
                 ),
@@ -3063,7 +3064,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::IndexAccessExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -3076,7 +3077,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::IsKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::IsKeyword,
                 ),
@@ -3117,14 +3118,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::InterfaceKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::InterfaceKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -3138,7 +3139,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -3150,12 +3151,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseBrace,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -3180,14 +3181,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::LibraryKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::LibraryKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -3197,7 +3198,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -3209,12 +3210,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -3242,7 +3243,7 @@ impl Language {
                 seq.elem_labeled(
                     EdgeLabel::Name,
                     OptionalHelper::transform(
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -3272,7 +3273,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::MappingKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::MappingKeyword,
                 ),
@@ -3282,7 +3283,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -3292,7 +3293,7 @@ impl Language {
                         seq.elem_labeled(EdgeLabel::KeyType, self.mapping_key(input))?;
                         seq.elem_labeled(
                             EdgeLabel::EqualGreaterThan,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::EqualGreaterThan,
                             ),
@@ -3304,12 +3305,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -3329,7 +3330,7 @@ impl Language {
                 seq.elem_labeled(
                     EdgeLabel::Name,
                     OptionalHelper::transform(
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -3344,12 +3345,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn member_access(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Identifier,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::AddressKeyword,
             );
@@ -3375,7 +3376,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::MemberAccessExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -3391,7 +3392,7 @@ impl Language {
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_6_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::VirtualKeyword,
                 );
@@ -3416,14 +3417,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ModifierKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ModifierKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -3467,7 +3468,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::MultiplicativeExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -3480,14 +3481,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Colon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Colon,
                 ),
@@ -3505,7 +3506,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenBrace,
                 ),
@@ -3517,12 +3518,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseBrace,
                 ),
@@ -3551,7 +3552,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -3563,12 +3564,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -3583,7 +3584,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Asterisk,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Asterisk,
                 ),
@@ -3591,7 +3592,7 @@ impl Language {
             seq.elem_labeled(EdgeLabel::Alias, self.import_alias(input))?;
             seq.elem_labeled(
                 EdgeLabel::FromKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FromKeyword,
                 ),
@@ -3607,7 +3608,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::NewKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::NewKeyword,
                 ),
@@ -3621,64 +3622,64 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn number_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::WeiKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_6_11 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::GweiKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_7_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::SzaboKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_7_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::FinneyKeyword,
                 );
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::EtherKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::SecondsKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::MinutesKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::HoursKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::DaysKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::WeeksKeyword,
             );
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::YearsKeyword,
                 );
@@ -3705,7 +3706,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::OrExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -3737,7 +3738,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -3749,12 +3750,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -3773,7 +3774,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::OverrideKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OverrideKeyword,
                     ),
@@ -3801,7 +3802,7 @@ impl Language {
             seq.elem_labeled(
                 EdgeLabel::Name,
                 OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Identifier,
                     ),
@@ -3831,7 +3832,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -3843,12 +3844,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -3890,7 +3891,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -3902,12 +3903,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -3932,7 +3933,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::PostfixExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -3962,7 +3963,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::PragmaKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::PragmaKeyword,
                         ),
@@ -3974,12 +3975,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -4004,7 +4005,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::PrefixExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -4020,17 +4021,17 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::VirtualKeyword,
                 );
@@ -4063,7 +4064,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::ReceiveKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ReceiveKeyword,
                     ),
@@ -4089,7 +4090,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::ReturnKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::ReturnKeyword,
                         ),
@@ -4104,12 +4105,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -4124,7 +4125,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ReturnsKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ReturnsKeyword,
                 ),
@@ -4143,7 +4144,7 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
                             EdgeLabel::RevertKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::RevertKeyword,
                             ),
@@ -4159,12 +4160,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -4192,7 +4193,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::ShiftExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -4273,28 +4274,28 @@ impl Language {
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::ConstantKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::InternalKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PrivateKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::PublicKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_6_5 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ImmutableKeyword,
                 );
@@ -4324,7 +4325,7 @@ impl Language {
                     seq.elem_labeled(EdgeLabel::Attributes, self.state_variable_attributes(input))?;
                     seq.elem_labeled(
                         EdgeLabel::Name,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -4339,12 +4340,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -4359,7 +4360,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Equal,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Equal,
                 ),
@@ -4434,18 +4435,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn storage_location(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::MemoryKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::StorageKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CallDataKeyword,
                 );
@@ -4489,12 +4490,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::SingleQuotedStringLiteral,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::DoubleQuotedStringLiteral,
             );
@@ -4522,14 +4523,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::StructKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::StructKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -4539,7 +4540,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -4551,12 +4552,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -4576,7 +4577,7 @@ impl Language {
                     seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
                     seq.elem_labeled(
                         EdgeLabel::Name,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -4587,12 +4588,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -4615,7 +4616,7 @@ impl Language {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ThrowKeyword,
                     )
@@ -4624,12 +4625,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -4648,7 +4649,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::TryKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::TryKeyword,
                     ),
@@ -4699,7 +4700,7 @@ impl Language {
                         seq.elem_labeled(
                             EdgeLabel::VarKeyword,
                             OptionalHelper::transform(
-                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                     input,
                                     TerminalKind::VarKeyword,
                                 ),
@@ -4711,7 +4712,7 @@ impl Language {
                         let input = delim_guard.ctx();
                         seq.elem_labeled(
                             EdgeLabel::OpenParen,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::OpenParen,
                             ),
@@ -4723,12 +4724,12 @@ impl Language {
                                     input,
                                     self,
                                     TerminalKind::CloseParen,
-                                    TokenAcceptanceThreshold(0u8),
+                                    TerminalAcceptanceThreshold(0u8),
                                 ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::CloseParen,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::CloseParen,
                             ),
@@ -4737,7 +4738,7 @@ impl Language {
                     }))?;
                     seq.elem_labeled(
                         EdgeLabel::Equal,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Equal,
                         ),
@@ -4749,12 +4750,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -4771,7 +4772,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -4783,12 +4784,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -4836,7 +4837,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::TypeKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::TypeKeyword,
                     ),
@@ -4846,7 +4847,7 @@ impl Language {
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
                         EdgeLabel::OpenParen,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::OpenParen,
                         ),
@@ -4858,12 +4859,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseParen,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::CloseParen,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::CloseParen,
                         ),
@@ -4889,7 +4890,7 @@ impl Language {
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
                         EdgeLabel::OpenBracket,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::OpenBracket,
                         ),
@@ -4901,12 +4902,12 @@ impl Language {
                                 input,
                                 self,
                                 TerminalKind::CloseBracket,
-                                TokenAcceptanceThreshold(0u8),
+                                TerminalAcceptanceThreshold(0u8),
                             ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::CloseBracket,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::CloseBracket,
                         ),
@@ -4960,7 +4961,7 @@ impl Language {
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -4976,7 +4977,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::UncheckedKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::UncheckedKeyword,
                     ),
@@ -4994,12 +4995,12 @@ impl Language {
     fn unicode_string_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::SingleQuotedUnicodeStringLiteral,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::DoubleQuotedUnicodeStringLiteral,
                 );
@@ -5033,52 +5034,52 @@ impl Language {
                 let result = self.modifier_invocation(input);
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ConstantKeyword,
                     );
                     choice.consider(input, result)?;
                 }
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ExternalKeyword,
                 );
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::InternalKeyword,
                     );
                     choice.consider(input, result)?;
                 }
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::PayableKeyword,
                 );
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PrivateKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PublicKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PureKeyword,
                     );
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ViewKeyword,
                     );
@@ -5112,7 +5113,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::FunctionKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::FunctionKeyword,
                     ),
@@ -5140,7 +5141,7 @@ impl Language {
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
@@ -5158,21 +5159,21 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         seq.elem_labeled(
                             EdgeLabel::TypeKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::TypeKeyword,
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::Name,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::Identifier,
                             ),
                         )?;
                         seq.elem_labeled(
                             EdgeLabel::IsKeyword,
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
                                 TerminalKind::IsKeyword,
                             ),
@@ -5184,12 +5185,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::Semicolon,
-                        TokenAcceptanceThreshold(1u8),
+                        TerminalAcceptanceThreshold(1u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::Semicolon,
                     ),
@@ -5208,7 +5209,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::AsKeyword,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::AsKeyword,
                     ),
@@ -5245,7 +5246,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenBrace,
                     ),
@@ -5257,12 +5258,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseBrace,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseBrace,
                     ),
@@ -5320,7 +5321,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
                         EdgeLabel::UsingKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::UsingKeyword,
                         ),
@@ -5328,7 +5329,7 @@ impl Language {
                     seq.elem_labeled(EdgeLabel::Clause, self.using_clause(input))?;
                     seq.elem_labeled(
                         EdgeLabel::ForKeyword,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::ForKeyword,
                         ),
@@ -5338,7 +5339,7 @@ impl Language {
                         seq.elem_labeled(
                             EdgeLabel::GlobalKeyword,
                             OptionalHelper::transform(
-                                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                                     input,
                                     TerminalKind::GlobalKeyword,
                                 ),
@@ -5351,12 +5352,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -5370,77 +5371,77 @@ impl Language {
     fn using_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_19 {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Ampersand,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Asterisk,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::BangEqual,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Bar,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Caret,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::EqualEqual,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::GreaterThan,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::GreaterThanEqual,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::LessThan,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::LessThanEqual,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Minus,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Percent,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Plus,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Slash,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Tilde,
                 );
@@ -5459,7 +5460,7 @@ impl Language {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.type_name(input);
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
                 TerminalKind::Asterisk,
             );
@@ -5485,7 +5486,7 @@ impl Language {
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::Name,
-                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
                             TerminalKind::Identifier,
                         ),
@@ -5500,12 +5501,12 @@ impl Language {
                     input,
                     self,
                     TerminalKind::Semicolon,
-                    TokenAcceptanceThreshold(1u8),
+                    TerminalAcceptanceThreshold(1u8),
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Semicolon,
                 ),
@@ -5521,7 +5522,7 @@ impl Language {
             let result = self.type_name(input);
             choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::VarKeyword,
                 );
@@ -5538,7 +5539,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::Equal,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Equal,
                 ),
@@ -5564,7 +5565,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::VersionComparator => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -5579,7 +5580,7 @@ impl Language {
                 NonTerminalKind::VersionRange,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::Minus,
                 )
@@ -5592,49 +5593,49 @@ impl Language {
                 3u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::Caret,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::Tilde,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::Equal,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::LessThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::GreaterThan,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::LessThanEqual,
                         )
                         .with_label(EdgeLabel::Operator);
                     choice.consider(input, result)?;
                     let result = self
-                        .parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                             input,
                             TerminalKind::GreaterThanEqual,
                         )
@@ -5655,12 +5656,12 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.version_specifiers(input);
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::SingleQuotedVersionLiteral,
                 );
                 choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::DoubleQuotedVersionLiteral,
                 );
@@ -5731,7 +5732,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::SolidityKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::SolidityKeyword,
                 ),
@@ -5757,7 +5758,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::VersionRange => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -5771,7 +5772,7 @@ impl Language {
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TerminalKind::VersionSpecifier,
                 )
@@ -5788,7 +5789,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::WhileKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::WhileKeyword,
                 ),
@@ -5798,7 +5799,7 @@ impl Language {
                 let input = delim_guard.ctx();
                 seq.elem_labeled(
                     EdgeLabel::OpenParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::OpenParen,
                     ),
@@ -5810,12 +5811,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::CloseParen,
                     ),
@@ -5847,7 +5848,7 @@ impl Language {
                 let result = self.yul_colon_and_equal(input);
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::ColonEqual,
             );
@@ -5876,7 +5877,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::OpenBrace,
                 ),
@@ -5888,12 +5889,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseBrace,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::CloseBrace,
                 ),
@@ -5905,7 +5906,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+        self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
             input,
             TerminalKind::YulBreakKeyword,
         )
@@ -5916,438 +5917,438 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_built_in_function(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulAddKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulAddModKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulAddressKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulAndKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulBalanceKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulBlockHashKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulByteKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallCodeKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallDataCopyKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallDataLoadKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallDataSizeKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallerKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCallValueKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCoinBaseKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulCreateKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulDelegateCallKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulDivKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulEqKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulExpKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulExtCodeCopyKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulExtCodeSizeKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulGasKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulGasLimitKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulGasPriceKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulGtKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulInvalidKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulIsZeroKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog0Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog1Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog2Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog3Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog4Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLtKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMLoadKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulModKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMSizeKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMStore8Keyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMStoreKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMulKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulMulModKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulNotKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulNumberKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulOriginKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulOrKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulPopKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulReturnKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulRevertKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSDivKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSelfDestructKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSgtKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSignExtendKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSLoadKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSltKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSModKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSStoreKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulStopKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSubKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulTimestampKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulXorKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulKeccak256Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulSha3Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulSuicideKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulReturnDataCopyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulReturnDataSizeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulStaticCallKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_4_12 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulCreate2Keyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_5_0 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulExtCodeHashKeyword,
                 );
                 choice.consider(input, result)?;
             }
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSarKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulShlKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulShrKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulChainIdKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulSelfBalanceKeyword,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_7 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulBaseFeeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if !self.version_is_at_least_0_8_18 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulDifficultyKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_18 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulPrevRandaoKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulBlobBaseFeeKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulBlobHashKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulTLoadKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulTStoreKeyword,
                 );
                 choice.consider(input, result)?;
             }
             if self.version_is_at_least_0_8_24 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulMCopyKeyword,
                 );
@@ -6365,14 +6366,14 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::Colon,
-                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TerminalKind::Colon,
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Equal,
-                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TerminalKind::Equal,
                     ),
@@ -6387,7 +6388,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+        self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
             input,
             TerminalKind::YulContinueKeyword,
         )
@@ -6400,7 +6401,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::DefaultKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulDefaultKeyword,
                 ),
@@ -6422,7 +6423,7 @@ impl Language {
                     let input = delim_guard.ctx();
                     seq.elem_labeled(
                         EdgeLabel::OpenParen,
-                        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                             input,
                             TerminalKind::OpenParen,
                         ),
@@ -6434,12 +6435,12 @@ impl Language {
                             input,
                             self,
                             TerminalKind::CloseParen,
-                            TokenAcceptanceThreshold(0u8),
+                            TerminalAcceptanceThreshold(0u8),
                         ),
                     )?;
                     seq.elem_labeled(
                         EdgeLabel::CloseParen,
-                        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                             input,
                             TerminalKind::CloseParen,
                         ),
@@ -6486,7 +6487,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::ForKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulForKeyword,
                 ),
@@ -6515,7 +6516,7 @@ impl Language {
                     node: cst::Node::NonTerminal(node),
                     ..
                 }] if node.kind == NonTerminalKind::YulFunctionCallExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
             },
@@ -6528,14 +6529,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::FunctionKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulFunctionKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Name,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulIdentifier,
                 ),
@@ -6559,7 +6560,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::IfKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulIfKeyword,
                 ),
@@ -6577,14 +6578,14 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
                     EdgeLabel::Label,
-                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TerminalKind::YulIdentifier,
                     ),
                 )?;
                 seq.elem_labeled(
                     EdgeLabel::Colon,
-                    self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TerminalKind::Colon,
                     ),
@@ -6600,7 +6601,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_leave_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLeaveKeyword,
             )
@@ -6614,22 +6615,22 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulTrueKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulFalseKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulDecimalLiteral,
             );
             choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulHexLiteral,
             );
@@ -6650,7 +6651,7 @@ impl Language {
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulIdentifier,
                 )
@@ -6669,7 +6670,7 @@ impl Language {
             let input = delim_guard.ctx();
             seq.elem_labeled(
                 EdgeLabel::OpenParen,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::OpenParen,
                 ),
@@ -6681,12 +6682,12 @@ impl Language {
                         input,
                         self,
                         TerminalKind::CloseParen,
-                        TokenAcceptanceThreshold(0u8),
+                        TerminalAcceptanceThreshold(0u8),
                     ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::CloseParen,
                 ),
@@ -6711,13 +6712,13 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_path_component(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulIdentifier,
             );
             choice.consider(input, result)?;
             if self.version_is_at_least_0_8_10 {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulAddressKeyword,
                 );
@@ -6747,7 +6748,7 @@ impl Language {
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulIdentifier,
                 )
@@ -6764,7 +6765,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::MinusGreaterThan,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::MinusGreaterThan,
                 ),
@@ -6846,7 +6847,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::SwitchKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulSwitchKeyword,
                 ),
@@ -6863,7 +6864,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::CaseKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulCaseKeyword,
                 ),
@@ -6880,14 +6881,14 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
                 EdgeLabel::LetKeyword,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulLetKeyword,
                 ),
             )?;
             seq.elem_labeled(
                 EdgeLabel::Names,
-                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::YulIdentifier,
                 ),
@@ -6916,36 +6917,36 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                    .parse_terminal::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                    .parse_terminal::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::SingleLineComment,
                     )
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::MultiLineComment,
                     )
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::SingleLineNatSpecComment,
                     )
                     .with_label(EdgeLabel::LeadingTrivia);
                 choice.consider(input, result)?;
                 let result = self
-                    .parse_token::<LexicalContextType::Default>(
+                    .parse_terminal::<LexicalContextType::Default>(
                         input,
                         TerminalKind::MultiLineNatSpecComment,
                     )
@@ -6960,18 +6961,18 @@ impl Language {
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
+                self.parse_terminal::<LexicalContextType::Default>(input, TerminalKind::Whitespace)
                     .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(OptionalHelper::transform(
-                self.parse_token::<LexicalContextType::Default>(
+                self.parse_terminal::<LexicalContextType::Default>(
                     input,
                     TerminalKind::SingleLineComment,
                 )
                 .with_label(EdgeLabel::TrailingTrivia),
             ))?;
             seq.elem(
-                self.parse_token::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
+                self.parse_terminal::<LexicalContextType::Default>(input, TerminalKind::EndOfLine)
                     .with_label(EdgeLabel::TrailingTrivia),
             )?;
             seq.finish()
@@ -9503,13 +9504,13 @@ impl Lexer for Language {
         }
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(
+    fn next_terminal<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-    ) -> Option<ScannedToken> {
+    ) -> Option<ScannedTerminal> {
         let save = input.position();
         let mut furthest_position = input.position();
-        let mut longest_token = None;
+        let mut longest_terminal = None;
 
         macro_rules! longest_match {
                 ($( { $kind:ident = $function:ident } )*) => {
@@ -9517,7 +9518,7 @@ impl Lexer for Language {
                         if self.$function(input) && input.position() > furthest_position {
                             furthest_position = input.position();
 
-                            longest_token = Some(TerminalKind::$kind);
+                            longest_terminal = Some(TerminalKind::$kind);
                         }
                         input.set_position(save);
                     )*
@@ -9673,7 +9674,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_terminal = Some(kind);
                 }
                 input.set_position(save);
 
@@ -9701,7 +9702,7 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
+                    longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
@@ -10925,7 +10926,7 @@ impl Lexer for Language {
                     }
 
                     input.set_position(furthest_position);
-                    return Some(ScannedToken::IdentifierOrKeyword {
+                    return Some(ScannedTerminal::IdentifierOrKeyword {
                         identifier,
                         kw: kw_scan,
                     });
@@ -10969,7 +10970,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_terminal = Some(kind);
                 }
                 input.set_position(save);
 
@@ -10985,7 +10986,7 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TerminalKind::Identifier].contains(tok))
+                    longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => {
@@ -11031,7 +11032,7 @@ impl Lexer for Language {
                     };
 
                     input.set_position(furthest_position);
-                    return Some(ScannedToken::IdentifierOrKeyword {
+                    return Some(ScannedTerminal::IdentifierOrKeyword {
                         identifier,
                         kw: kw_scan,
                     });
@@ -11068,7 +11069,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_terminal = Some(kind);
                 }
                 input.set_position(save);
 
@@ -11083,7 +11084,7 @@ impl Lexer for Language {
 
                 // We have an identifier; we need to check if it's a keyword
                 if let Some(identifier) =
-                    longest_token.filter(|tok| [TerminalKind::YulIdentifier].contains(tok))
+                    longest_terminal.filter(|tok| [TerminalKind::YulIdentifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
@@ -13453,7 +13454,7 @@ impl Lexer for Language {
                     }
 
                     input.set_position(furthest_position);
-                    return Some(ScannedToken::IdentifierOrKeyword {
+                    return Some(ScannedTerminal::IdentifierOrKeyword {
                         identifier,
                         kw: kw_scan,
                     });
@@ -13461,15 +13462,15 @@ impl Lexer for Language {
             }
         }
 
-        match longest_token {
-            Some(token) => {
+        match longest_terminal {
+            Some(terminal) => {
                 input.set_position(furthest_position);
-                Some(ScannedToken::Single(token))
+                Some(ScannedTerminal::Single(terminal))
             }
-            // Skip a character if possible and if we didn't recognize a token
+            // Skip a character if possible and if we didn't recognize a terminal
             None if input.peek().is_some() => {
                 let _ = input.next();
-                Some(ScannedToken::Single(TerminalKind::SKIPPED))
+                Some(ScannedTerminal::Single(TerminalKind::SKIPPED))
             }
             None => None,
         }

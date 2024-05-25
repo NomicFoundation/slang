@@ -45,29 +45,29 @@ fn binding_cursors_to_strings(
 macro_rules! cst_tree {
     ( @inner [ $($child:expr)* ]) => { [ $($child),* ] };
 
-    ( @inner [ $($child:expr)* ] $label:ident : $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* terminal(Some(EdgeLabel::$label), TerminalKind::$token_kind, $text) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $label:ident : $terminal_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* terminal(Some(EdgeLabel::$label), TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
     };
 
-    ( @inner [ $($child:expr)* ] $token_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* terminal(None, TerminalKind::$token_kind, $text) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $terminal_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* terminal(None, TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
     };
 
-    ( @inner [ $($child:expr)* ] $label:ident : $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(Some(NodeLabel::$label), NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* nonterminal(Some(EdgeLabel::$label), NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
-    ( @inner [ $($child:expr)* ] $rule_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(None, NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+    ( @inner [ $($child:expr)* ] $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
+        cst_tree!(@inner [ $($child)* nonterminal(None, NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     // Start with a nonterminal
-    ( $label:ident : $rule_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(Some(NodeLabel::$label), NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*))
+    ( $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] ) => {
+        nonterminal(Some(EdgeLabel::$label), NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
-    ( $rule_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(None, NonTerminalKind::$rule_kind, cst_tree!(@inner [] $($children)*))
+    ( $non_terminal_kind:ident [ $($children:tt)* ] ) => {
+        nonterminal(None, NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
 }

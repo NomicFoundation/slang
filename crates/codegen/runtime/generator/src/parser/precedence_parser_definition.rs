@@ -41,11 +41,11 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
                 let ParserResult::Match(r#match) = &result else { return result; };
 
                 // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
-                // can't precisely determine the expected tokens or completeness of the match otherwise.
+                // can't precisely determine the expected terminals or completeness of the match otherwise.
                 match &r#match.nodes[..] {
                     [cst::Edge { node: cst::Node::NonTerminal(node), .. }] if node.kind == NonTerminalKind::#nonterminal_name => match &node.children[..] {
                         [inner @ cst::Edge { node: cst::Node::NonTerminal(node), .. }] if node.kind == NonTerminalKind::#op_nonterminal_name => {
-                            ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                            ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                         }
                         _ => ParserResult::no_match(vec![]),
                     }

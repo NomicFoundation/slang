@@ -13,7 +13,7 @@ pub trait KeywordScannerDefinitionExtensions {
 impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
     fn to_scanner_code(&self) -> TokenStream {
         let name_ident = format_ident!("{}", self.name());
-        let token_kind = quote! { TerminalKind::#name_ident };
+        let terminal_kind = quote! { TerminalKind::#name_ident };
 
         let kw_scanners: Vec<_> = self
             .definitions()
@@ -27,14 +27,14 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                 match (&*reserved_cond.to_string(), &*enabled_cond.to_string()) {
                     ("true", _) => quote! {
                         if #scanner {
-                            KeywordScan::Reserved(#token_kind)
+                            KeywordScan::Reserved(#terminal_kind)
                         } else {
                             KeywordScan::Absent
                         }
                     },
                     ("false", _) => quote! {
                         if #enabled_cond && #scanner {
-                            KeywordScan::Present(#token_kind)
+                            KeywordScan::Present(#terminal_kind)
                         } else {
                             KeywordScan::Absent
                         }
@@ -42,9 +42,9 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                     (_, "true") => quote! {
                         if #scanner {
                             if #reserved_cond {
-                                KeywordScan::Reserved(#token_kind)
+                                KeywordScan::Reserved(#terminal_kind)
                             } else {
-                                KeywordScan::Present(#token_kind)
+                                KeywordScan::Present(#terminal_kind)
                             }
                         } else {
                             KeywordScan::Absent
@@ -52,7 +52,7 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                     },
                     (_, "false") => quote! {
                         if #reserved_cond && #scanner {
-                            KeywordScan::Reserved(#token_kind)
+                            KeywordScan::Reserved(#terminal_kind)
                         } else {
                             KeywordScan::Absent
                         }
@@ -60,9 +60,9 @@ impl KeywordScannerDefinitionExtensions for KeywordScannerDefinitionRef {
                     _ => quote! {
                         if (#reserved_cond || #enabled_cond) && #scanner {
                             if #reserved_cond {
-                                KeywordScan::Reserved(#token_kind)
+                                KeywordScan::Reserved(#terminal_kind)
                             } else {
-                                KeywordScan::Present(#token_kind)
+                                KeywordScan::Present(#terminal_kind)
                             }
                         } else {
                             KeywordScan::Absent
