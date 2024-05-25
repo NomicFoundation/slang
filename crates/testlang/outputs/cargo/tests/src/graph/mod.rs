@@ -8,7 +8,7 @@ fn builds_a_graph() {
     let version = Version::parse("1.0.0").unwrap();
     let language = Language::new(version).unwrap();
 
-    let msgb_source = r#"
+    let msgb_source = r"
         @tree [Tree] {
             node @tree.def
             attr (@tree.def) is_tree
@@ -25,7 +25,7 @@ fn builds_a_graph() {
         @parent [TreeNode ... members: [_ ... [_ @child variant: [TreeNode]] ...] ...] {
             edge @child.def -> @parent.def
         }
-    "#;
+    ";
 
     let msgb = File::from_str(msgb_source);
     assert!(msgb.is_ok());

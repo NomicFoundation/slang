@@ -71,12 +71,11 @@ pub mod text_index {
 }
 
 pub mod graph_builder {
+    pub use metaslang_graph_builder::functions::Functions;
     use metaslang_graph_builder::{ast, graph};
+    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 
     use super::metaslang_cst::KindTypes;
-
-    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
-    pub use metaslang_graph_builder::functions::Functions;
 
     pub type File = ast::File<KindTypes>;
     pub type Graph = graph::Graph<KindTypes>;
