@@ -748,11 +748,7 @@ export namespace cst {
     get textLength(): text_index.TextIndex;
     children(): Array<cst.Node>;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
-    /**
-     * Serialize the node to JSON.
-     *
-     * This method is intended for debugging purposes and may not be stable.
-     */
+    /** Serialize the node to JSON. */
     toJSON(): string;
     unparse(): string;
   }
@@ -761,11 +757,7 @@ export namespace cst {
     get kind(): kinds.TerminalKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
-    /**
-     * Serialize the node to JSON.
-     *
-     * This method is intended for debugging purposes and may not be stable.
-     */
+    /** Serialize the node to JSON. */
     toJSON(): string;
     createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }

@@ -85,10 +85,8 @@ impl NonTerminalNode {
             .into()
     }
 
-    #[napi(catch_unwind, js_name = "toJSON")]
     /// Serialize the node to JSON.
-    ///
-    /// This method is intended for debugging purposes and may not be stable.
+    #[napi(catch_unwind, js_name = "toJSON")]
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.0).unwrap()
     }
@@ -161,10 +159,8 @@ impl TerminalNode {
         self.0.text.clone()
     }
 
-    #[napi(catch_unwind, js_name = "toJSON")]
     /// Serialize the node to JSON.
-    ///
-    /// This method is intended for debugging purposes and may not be stable.
+    #[napi(catch_unwind, js_name = "toJSON")]
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.0).unwrap()
     }
