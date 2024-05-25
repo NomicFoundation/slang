@@ -1,5 +1,4 @@
 use semver::Version;
-use slang_testlang::cst::KindTypes;
 use slang_testlang::graph_builder::{ExecutionConfig, File, Functions, NoCancellation, Variables};
 use slang_testlang::kinds::NonTerminalKind;
 use slang_testlang::language::Language;
@@ -28,7 +27,7 @@ fn builds_a_graph() {
         }
     "#;
 
-    let msgb = File::<KindTypes>::from_str(msgb_source);
+    let msgb = File::from_str(msgb_source);
     assert!(msgb.is_ok());
 
     let mut msgb = msgb.unwrap();

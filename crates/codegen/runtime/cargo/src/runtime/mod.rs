@@ -38,7 +38,7 @@ mod metaslang_cst {
 pub mod cst {
     use metaslang_cst::cst;
 
-    pub use super::metaslang_cst::KindTypes;
+    use super::metaslang_cst::KindTypes;
 
     pub type Node = cst::Node<KindTypes>;
     pub type NonterminalNode = cst::NonterminalNode<KindTypes>;
@@ -71,11 +71,13 @@ pub mod text_index {
 }
 
 pub mod graph_builder {
-    use metaslang_graph_builder::ast;
-    pub use ast::File;
+    use metaslang_graph_builder::{ast, graph};
+
+    use super::metaslang_cst::KindTypes;
 
     pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
+    pub use metaslang_graph_builder::functions::Functions;
 
-    use metaslang_graph_builder::functions;
-    pub use functions::Functions;
+    pub type File = ast::File<KindTypes>;
+    pub type Graph = graph::Graph<KindTypes>;
 }
