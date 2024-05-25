@@ -26,12 +26,12 @@ pub enum DummyKind {
     Module,
 }
 impl metaslang_cst::TerminalKind for DummyKind {}
-impl metaslang_cst::NonTerminalKind for DummyKind {}
+impl metaslang_cst::NonterminalKind for DummyKind {}
 impl metaslang_cst::EdgeLabel for DummyKind {}
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct KindTypes;
 impl metaslang_cst::KindTypes for KindTypes {
-    type NonTerminalKind = DummyKind;
+    type NonterminalKind = DummyKind;
     type TerminalKind = DummyKind;
     type EdgeLabel = DummyKind;
 }

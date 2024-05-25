@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -66,7 +66,7 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         unreachable!("Attempting to parse in stubs: {kind}: {input}")
     }
 }
@@ -124,7 +124,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
+        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

@@ -38,12 +38,12 @@ pub trait TerminalKind: AbstractKind {
     }
 }
 
-pub trait NonTerminalKind: AbstractKind {}
+pub trait NonterminalKind: AbstractKind {}
 
 pub trait EdgeLabel: AbstractKind {}
 
 pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
-    type NonTerminalKind: NonTerminalKind;
+    type NonterminalKind: NonterminalKind;
     type TerminalKind: TerminalKind;
     type EdgeLabel: EdgeLabel;
 }

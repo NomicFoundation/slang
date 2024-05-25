@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { Language } from "@slang-private/slang-testlang/language";
-import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import {
   AdditionExpression,
   Expression,
@@ -12,7 +12,7 @@ import {
   TreeNode,
   TreeNodeChild,
 } from "@slang-private/slang-testlang/ast";
-import { expectNonTerminal, expectTerminal } from "../utils/cst-helpers";
+import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
 import { TerminalNode } from "@slang-private/slang-testlang/cst";
 
 test("create and use sequence types", () => {
@@ -20,14 +20,14 @@ test("create and use sequence types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Tree, source);
+  const parseOutput = language.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Tree);
+  expectNonterminal(cst, NonterminalKind.Tree);
 
   const tree = new Tree(cst);
-  expectNonTerminal(tree.cst, NonTerminalKind.Tree);
+  expectNonterminal(tree.cst, NonterminalKind.Tree);
   expect(tree.name).toBeUndefined();
   expect(tree.node.members.items).toHaveLength(3);
 });
@@ -37,19 +37,19 @@ test("create and use choice types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.TreeNodeChild, source);
+  const parseOutput = language.parse(NonterminalKind.TreeNodeChild, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cst, NonterminalKind.TreeNodeChild);
 
   const tree_node_child = new TreeNodeChild(cst);
-  expectNonTerminal(tree_node_child.cst, NonTerminalKind.TreeNodeChild);
+  expectNonterminal(tree_node_child.cst, NonterminalKind.TreeNodeChild);
   expect(tree_node_child.variant).toBeInstanceOf(TreeNode);
 
   const tree_node = tree_node_child.variant as TreeNode;
-  expectNonTerminal(tree_node.cst, NonTerminalKind.TreeNode);
-  expectNonTerminal(tree_node.members.cst, NonTerminalKind.TreeNodeChildren);
+  expectNonterminal(tree_node.cst, NonterminalKind.TreeNode);
+  expectNonterminal(tree_node.members.cst, NonterminalKind.TreeNodeChildren);
   expectTerminal(tree_node.openBracket, TerminalKind.OpenBracket, "[");
   expectTerminal(tree_node.closeBracket, TerminalKind.CloseBracket, "]");
 });
@@ -59,14 +59,14 @@ test("create and use repeated types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Tree, source);
+  const parseOutput = language.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Tree);
+  expectNonterminal(cst, NonterminalKind.Tree);
 
   const tree = new Tree(cst);
-  expectNonTerminal(tree.node.members.cst, NonTerminalKind.TreeNodeChildren);
+  expectNonterminal(tree.node.members.cst, NonterminalKind.TreeNodeChildren);
 
   const names = tree.node.members.items.map((item) => {
     expect(item.variant).toBeInstanceOf(TerminalNode);
@@ -82,14 +82,14 @@ test("create and use separated types", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.SeparatedIdentifiers, source);
+  const parseOutput = language.parse(NonterminalKind.SeparatedIdentifiers, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.SeparatedIdentifiers);
+  expectNonterminal(cst, NonterminalKind.SeparatedIdentifiers);
 
   const separated_identifiers = new SeparatedIdentifiers(cst);
-  expectNonTerminal(separated_identifiers.cst, NonTerminalKind.SeparatedIdentifiers);
+  expectNonterminal(separated_identifiers.cst, NonterminalKind.SeparatedIdentifiers);
 
   const identifiers = separated_identifiers.items.map((identifier) => identifier.text);
   expect(identifiers).toStrictEqual(["Foo", "Bar", "Baz"]);
@@ -103,11 +103,11 @@ test("throws an exception on initializing the wrong type", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Tree, source);
+  const parseOutput = language.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Tree);
+  expectNonterminal(cst, NonterminalKind.Tree);
 
   expect(() => new SourceUnit(cst)).toThrowError(
     "SourceUnit can only be initialized with a CST node of the same kind.",
@@ -119,11 +119,11 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Tree, source);
+  const parseOutput = language.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(1);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Tree);
+  expectNonterminal(cst, NonterminalKind.Tree);
   expect(cst.children()).toHaveLength(2);
 
   const [contractKeyword, skippedTerminal] = cst.children();
@@ -132,7 +132,7 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);
-  expectNonTerminal(tree.cst, NonTerminalKind.Tree);
+  expectNonterminal(tree.cst, NonterminalKind.Tree);
 
   expect(() => tree.node).toThrowError(
     "Unexpected SKIPPED terminal at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
@@ -144,11 +144,11 @@ test("create and use prefix expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Expression, source);
+  const parseOutput = language.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Expression);
+  expectNonterminal(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof NegationExpression);
@@ -163,11 +163,11 @@ test("create and use postfix expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Expression, source);
+  const parseOutput = language.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Expression);
+  expectNonterminal(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof MemberAccessExpression);
@@ -183,11 +183,11 @@ test("create and use binary expressions", () => {
 
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.Expression, source);
+  const parseOutput = language.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
-  expectNonTerminal(cst, NonTerminalKind.Expression);
+  expectNonterminal(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof AdditionExpression);

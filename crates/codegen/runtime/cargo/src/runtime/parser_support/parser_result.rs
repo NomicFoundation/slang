@@ -3,7 +3,7 @@ use std::ops::ControlFlow;
 use metaslang_cst::TerminalKind as _;
 
 use crate::cst::{self, Edge, Node};
-use crate::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
+use crate::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
 use crate::text_index::TextIndex;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -46,7 +46,7 @@ impl ParserResult {
     }
 
     #[must_use]
-    pub fn with_kind(self, new_kind: NonTerminalKind) -> ParserResult {
+    pub fn with_kind(self, new_kind: NonterminalKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
                 vec![Edge::anonymous(cst::Node::nonterminal(
@@ -148,18 +148,18 @@ pub enum PrattElement {
         nodes: Vec<cst::Edge>,
     },
     Prefix {
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         nodes: Vec<cst::Edge>,
         right: u8,
     },
     Binary {
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         nodes: Vec<cst::Edge>,
         left: u8,
         right: u8,
     },
     Postfix {
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         nodes: Vec<cst::Edge>,
         left: u8,
     },

@@ -14,7 +14,7 @@ use napi_derive::napi;
 
 use crate::cst;
 use crate::kinds::{
-    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -116,13 +116,13 @@ impl Language {
 
     {% endif %}
 
-    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         {%- if rendering_in_stubs -%}
             unreachable!("Attempting to parse in stubs: {kind}: {input}")
         {%- else -%}
             match kind {
                 {%- for parser_name, _ in model.parser.parser_functions -%}
-                    NonTerminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
+                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
                 {%- endfor -%}
             }
         {%- endif -%}
@@ -295,7 +295,7 @@ impl Language {
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
+        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
         input: String
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

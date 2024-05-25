@@ -7,9 +7,9 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
 use crate::napi_interface::{
-    NonTerminalKind, RustEdge, RustNode, RustNonTerminalNode, TerminalKind,
+    NonterminalKind, RustEdge, RustNode, RustNonterminalNode, TerminalKind,
 };
 
 //
@@ -22,152 +22,152 @@ use crate::napi_interface::{
     catch_unwind
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnit => selector.source_unit()?,
-        NonTerminalKind::PragmaDirective => selector.pragma_directive()?,
-        NonTerminalKind::ABICoderPragma => selector.abi_coder_pragma()?,
-        NonTerminalKind::ExperimentalPragma => selector.experimental_pragma()?,
-        NonTerminalKind::VersionPragma => selector.version_pragma()?,
-        NonTerminalKind::VersionRange => selector.version_range()?,
-        NonTerminalKind::VersionComparator => selector.version_comparator()?,
-        NonTerminalKind::ImportDirective => selector.import_directive()?,
-        NonTerminalKind::PathImport => selector.path_import()?,
-        NonTerminalKind::NamedImport => selector.named_import()?,
-        NonTerminalKind::ImportDeconstruction => selector.import_deconstruction()?,
-        NonTerminalKind::ImportDeconstructionSymbol => selector.import_deconstruction_symbol()?,
-        NonTerminalKind::ImportAlias => selector.import_alias()?,
-        NonTerminalKind::UsingDirective => selector.using_directive()?,
-        NonTerminalKind::UsingDeconstruction => selector.using_deconstruction()?,
-        NonTerminalKind::UsingDeconstructionSymbol => selector.using_deconstruction_symbol()?,
-        NonTerminalKind::UsingAlias => selector.using_alias()?,
-        NonTerminalKind::ContractDefinition => selector.contract_definition()?,
-        NonTerminalKind::InheritanceSpecifier => selector.inheritance_specifier()?,
-        NonTerminalKind::InheritanceType => selector.inheritance_type()?,
-        NonTerminalKind::InterfaceDefinition => selector.interface_definition()?,
-        NonTerminalKind::LibraryDefinition => selector.library_definition()?,
-        NonTerminalKind::StructDefinition => selector.struct_definition()?,
-        NonTerminalKind::StructMember => selector.struct_member()?,
-        NonTerminalKind::EnumDefinition => selector.enum_definition()?,
-        NonTerminalKind::ConstantDefinition => selector.constant_definition()?,
-        NonTerminalKind::StateVariableDefinition => selector.state_variable_definition()?,
-        NonTerminalKind::StateVariableDefinitionValue => {
+        NonterminalKind::SourceUnit => selector.source_unit()?,
+        NonterminalKind::PragmaDirective => selector.pragma_directive()?,
+        NonterminalKind::ABICoderPragma => selector.abi_coder_pragma()?,
+        NonterminalKind::ExperimentalPragma => selector.experimental_pragma()?,
+        NonterminalKind::VersionPragma => selector.version_pragma()?,
+        NonterminalKind::VersionRange => selector.version_range()?,
+        NonterminalKind::VersionComparator => selector.version_comparator()?,
+        NonterminalKind::ImportDirective => selector.import_directive()?,
+        NonterminalKind::PathImport => selector.path_import()?,
+        NonterminalKind::NamedImport => selector.named_import()?,
+        NonterminalKind::ImportDeconstruction => selector.import_deconstruction()?,
+        NonterminalKind::ImportDeconstructionSymbol => selector.import_deconstruction_symbol()?,
+        NonterminalKind::ImportAlias => selector.import_alias()?,
+        NonterminalKind::UsingDirective => selector.using_directive()?,
+        NonterminalKind::UsingDeconstruction => selector.using_deconstruction()?,
+        NonterminalKind::UsingDeconstructionSymbol => selector.using_deconstruction_symbol()?,
+        NonterminalKind::UsingAlias => selector.using_alias()?,
+        NonterminalKind::ContractDefinition => selector.contract_definition()?,
+        NonterminalKind::InheritanceSpecifier => selector.inheritance_specifier()?,
+        NonterminalKind::InheritanceType => selector.inheritance_type()?,
+        NonterminalKind::InterfaceDefinition => selector.interface_definition()?,
+        NonterminalKind::LibraryDefinition => selector.library_definition()?,
+        NonterminalKind::StructDefinition => selector.struct_definition()?,
+        NonterminalKind::StructMember => selector.struct_member()?,
+        NonterminalKind::EnumDefinition => selector.enum_definition()?,
+        NonterminalKind::ConstantDefinition => selector.constant_definition()?,
+        NonterminalKind::StateVariableDefinition => selector.state_variable_definition()?,
+        NonterminalKind::StateVariableDefinitionValue => {
             selector.state_variable_definition_value()?
         }
-        NonTerminalKind::FunctionDefinition => selector.function_definition()?,
-        NonTerminalKind::ParametersDeclaration => selector.parameters_declaration()?,
-        NonTerminalKind::Parameter => selector.parameter()?,
-        NonTerminalKind::OverrideSpecifier => selector.override_specifier()?,
-        NonTerminalKind::OverridePathsDeclaration => selector.override_paths_declaration()?,
-        NonTerminalKind::ReturnsDeclaration => selector.returns_declaration()?,
-        NonTerminalKind::ConstructorDefinition => selector.constructor_definition()?,
-        NonTerminalKind::UnnamedFunctionDefinition => selector.unnamed_function_definition()?,
-        NonTerminalKind::FallbackFunctionDefinition => selector.fallback_function_definition()?,
-        NonTerminalKind::ReceiveFunctionDefinition => selector.receive_function_definition()?,
-        NonTerminalKind::ModifierDefinition => selector.modifier_definition()?,
-        NonTerminalKind::ModifierInvocation => selector.modifier_invocation()?,
-        NonTerminalKind::EventDefinition => selector.event_definition()?,
-        NonTerminalKind::EventParametersDeclaration => selector.event_parameters_declaration()?,
-        NonTerminalKind::EventParameter => selector.event_parameter()?,
-        NonTerminalKind::UserDefinedValueTypeDefinition => {
+        NonterminalKind::FunctionDefinition => selector.function_definition()?,
+        NonterminalKind::ParametersDeclaration => selector.parameters_declaration()?,
+        NonterminalKind::Parameter => selector.parameter()?,
+        NonterminalKind::OverrideSpecifier => selector.override_specifier()?,
+        NonterminalKind::OverridePathsDeclaration => selector.override_paths_declaration()?,
+        NonterminalKind::ReturnsDeclaration => selector.returns_declaration()?,
+        NonterminalKind::ConstructorDefinition => selector.constructor_definition()?,
+        NonterminalKind::UnnamedFunctionDefinition => selector.unnamed_function_definition()?,
+        NonterminalKind::FallbackFunctionDefinition => selector.fallback_function_definition()?,
+        NonterminalKind::ReceiveFunctionDefinition => selector.receive_function_definition()?,
+        NonterminalKind::ModifierDefinition => selector.modifier_definition()?,
+        NonterminalKind::ModifierInvocation => selector.modifier_invocation()?,
+        NonterminalKind::EventDefinition => selector.event_definition()?,
+        NonterminalKind::EventParametersDeclaration => selector.event_parameters_declaration()?,
+        NonterminalKind::EventParameter => selector.event_parameter()?,
+        NonterminalKind::UserDefinedValueTypeDefinition => {
             selector.user_defined_value_type_definition()?
         }
-        NonTerminalKind::ErrorDefinition => selector.error_definition()?,
-        NonTerminalKind::ErrorParametersDeclaration => selector.error_parameters_declaration()?,
-        NonTerminalKind::ErrorParameter => selector.error_parameter()?,
-        NonTerminalKind::ArrayTypeName => selector.array_type_name()?,
-        NonTerminalKind::FunctionType => selector.function_type()?,
-        NonTerminalKind::MappingType => selector.mapping_type()?,
-        NonTerminalKind::MappingKey => selector.mapping_key()?,
-        NonTerminalKind::MappingValue => selector.mapping_value()?,
-        NonTerminalKind::AddressType => selector.address_type()?,
-        NonTerminalKind::Block => selector.block()?,
-        NonTerminalKind::UncheckedBlock => selector.unchecked_block()?,
-        NonTerminalKind::ExpressionStatement => selector.expression_statement()?,
-        NonTerminalKind::AssemblyStatement => selector.assembly_statement()?,
-        NonTerminalKind::AssemblyFlagsDeclaration => selector.assembly_flags_declaration()?,
-        NonTerminalKind::TupleDeconstructionStatement => {
+        NonterminalKind::ErrorDefinition => selector.error_definition()?,
+        NonterminalKind::ErrorParametersDeclaration => selector.error_parameters_declaration()?,
+        NonterminalKind::ErrorParameter => selector.error_parameter()?,
+        NonterminalKind::ArrayTypeName => selector.array_type_name()?,
+        NonterminalKind::FunctionType => selector.function_type()?,
+        NonterminalKind::MappingType => selector.mapping_type()?,
+        NonterminalKind::MappingKey => selector.mapping_key()?,
+        NonterminalKind::MappingValue => selector.mapping_value()?,
+        NonterminalKind::AddressType => selector.address_type()?,
+        NonterminalKind::Block => selector.block()?,
+        NonterminalKind::UncheckedBlock => selector.unchecked_block()?,
+        NonterminalKind::ExpressionStatement => selector.expression_statement()?,
+        NonterminalKind::AssemblyStatement => selector.assembly_statement()?,
+        NonterminalKind::AssemblyFlagsDeclaration => selector.assembly_flags_declaration()?,
+        NonterminalKind::TupleDeconstructionStatement => {
             selector.tuple_deconstruction_statement()?
         }
-        NonTerminalKind::TupleDeconstructionElement => selector.tuple_deconstruction_element()?,
-        NonTerminalKind::TypedTupleMember => selector.typed_tuple_member()?,
-        NonTerminalKind::UntypedTupleMember => selector.untyped_tuple_member()?,
-        NonTerminalKind::VariableDeclarationStatement => {
+        NonterminalKind::TupleDeconstructionElement => selector.tuple_deconstruction_element()?,
+        NonterminalKind::TypedTupleMember => selector.typed_tuple_member()?,
+        NonterminalKind::UntypedTupleMember => selector.untyped_tuple_member()?,
+        NonterminalKind::VariableDeclarationStatement => {
             selector.variable_declaration_statement()?
         }
-        NonTerminalKind::VariableDeclarationValue => selector.variable_declaration_value()?,
-        NonTerminalKind::IfStatement => selector.if_statement()?,
-        NonTerminalKind::ElseBranch => selector.else_branch()?,
-        NonTerminalKind::ForStatement => selector.for_statement()?,
-        NonTerminalKind::WhileStatement => selector.while_statement()?,
-        NonTerminalKind::DoWhileStatement => selector.do_while_statement()?,
-        NonTerminalKind::ContinueStatement => selector.continue_statement()?,
-        NonTerminalKind::BreakStatement => selector.break_statement()?,
-        NonTerminalKind::ReturnStatement => selector.return_statement()?,
-        NonTerminalKind::EmitStatement => selector.emit_statement()?,
-        NonTerminalKind::TryStatement => selector.try_statement()?,
-        NonTerminalKind::CatchClause => selector.catch_clause()?,
-        NonTerminalKind::CatchClauseError => selector.catch_clause_error()?,
-        NonTerminalKind::RevertStatement => selector.revert_statement()?,
-        NonTerminalKind::ThrowStatement => selector.throw_statement()?,
-        NonTerminalKind::AssignmentExpression => selector.assignment_expression()?,
-        NonTerminalKind::ConditionalExpression => selector.conditional_expression()?,
-        NonTerminalKind::OrExpression => selector.or_expression()?,
-        NonTerminalKind::AndExpression => selector.and_expression()?,
-        NonTerminalKind::EqualityExpression => selector.equality_expression()?,
-        NonTerminalKind::ComparisonExpression => selector.comparison_expression()?,
-        NonTerminalKind::BitwiseOrExpression => selector.bitwise_or_expression()?,
-        NonTerminalKind::BitwiseXorExpression => selector.bitwise_xor_expression()?,
-        NonTerminalKind::BitwiseAndExpression => selector.bitwise_and_expression()?,
-        NonTerminalKind::ShiftExpression => selector.shift_expression()?,
-        NonTerminalKind::AdditiveExpression => selector.additive_expression()?,
-        NonTerminalKind::MultiplicativeExpression => selector.multiplicative_expression()?,
-        NonTerminalKind::ExponentiationExpression => selector.exponentiation_expression()?,
-        NonTerminalKind::PostfixExpression => selector.postfix_expression()?,
-        NonTerminalKind::PrefixExpression => selector.prefix_expression()?,
-        NonTerminalKind::FunctionCallExpression => selector.function_call_expression()?,
-        NonTerminalKind::CallOptionsExpression => selector.call_options_expression()?,
-        NonTerminalKind::MemberAccessExpression => selector.member_access_expression()?,
-        NonTerminalKind::IndexAccessExpression => selector.index_access_expression()?,
-        NonTerminalKind::IndexAccessEnd => selector.index_access_end()?,
-        NonTerminalKind::PositionalArgumentsDeclaration => {
+        NonterminalKind::VariableDeclarationValue => selector.variable_declaration_value()?,
+        NonterminalKind::IfStatement => selector.if_statement()?,
+        NonterminalKind::ElseBranch => selector.else_branch()?,
+        NonterminalKind::ForStatement => selector.for_statement()?,
+        NonterminalKind::WhileStatement => selector.while_statement()?,
+        NonterminalKind::DoWhileStatement => selector.do_while_statement()?,
+        NonterminalKind::ContinueStatement => selector.continue_statement()?,
+        NonterminalKind::BreakStatement => selector.break_statement()?,
+        NonterminalKind::ReturnStatement => selector.return_statement()?,
+        NonterminalKind::EmitStatement => selector.emit_statement()?,
+        NonterminalKind::TryStatement => selector.try_statement()?,
+        NonterminalKind::CatchClause => selector.catch_clause()?,
+        NonterminalKind::CatchClauseError => selector.catch_clause_error()?,
+        NonterminalKind::RevertStatement => selector.revert_statement()?,
+        NonterminalKind::ThrowStatement => selector.throw_statement()?,
+        NonterminalKind::AssignmentExpression => selector.assignment_expression()?,
+        NonterminalKind::ConditionalExpression => selector.conditional_expression()?,
+        NonterminalKind::OrExpression => selector.or_expression()?,
+        NonterminalKind::AndExpression => selector.and_expression()?,
+        NonterminalKind::EqualityExpression => selector.equality_expression()?,
+        NonterminalKind::ComparisonExpression => selector.comparison_expression()?,
+        NonterminalKind::BitwiseOrExpression => selector.bitwise_or_expression()?,
+        NonterminalKind::BitwiseXorExpression => selector.bitwise_xor_expression()?,
+        NonterminalKind::BitwiseAndExpression => selector.bitwise_and_expression()?,
+        NonterminalKind::ShiftExpression => selector.shift_expression()?,
+        NonterminalKind::AdditiveExpression => selector.additive_expression()?,
+        NonterminalKind::MultiplicativeExpression => selector.multiplicative_expression()?,
+        NonterminalKind::ExponentiationExpression => selector.exponentiation_expression()?,
+        NonterminalKind::PostfixExpression => selector.postfix_expression()?,
+        NonterminalKind::PrefixExpression => selector.prefix_expression()?,
+        NonterminalKind::FunctionCallExpression => selector.function_call_expression()?,
+        NonterminalKind::CallOptionsExpression => selector.call_options_expression()?,
+        NonterminalKind::MemberAccessExpression => selector.member_access_expression()?,
+        NonterminalKind::IndexAccessExpression => selector.index_access_expression()?,
+        NonterminalKind::IndexAccessEnd => selector.index_access_end()?,
+        NonterminalKind::PositionalArgumentsDeclaration => {
             selector.positional_arguments_declaration()?
         }
-        NonTerminalKind::NamedArgumentsDeclaration => selector.named_arguments_declaration()?,
-        NonTerminalKind::NamedArgumentGroup => selector.named_argument_group()?,
-        NonTerminalKind::NamedArgument => selector.named_argument()?,
-        NonTerminalKind::TypeExpression => selector.type_expression()?,
-        NonTerminalKind::NewExpression => selector.new_expression()?,
-        NonTerminalKind::TupleExpression => selector.tuple_expression()?,
-        NonTerminalKind::TupleValue => selector.tuple_value()?,
-        NonTerminalKind::ArrayExpression => selector.array_expression()?,
-        NonTerminalKind::HexNumberExpression => selector.hex_number_expression()?,
-        NonTerminalKind::DecimalNumberExpression => selector.decimal_number_expression()?,
-        NonTerminalKind::YulBlock => selector.yul_block()?,
-        NonTerminalKind::YulFunctionDefinition => selector.yul_function_definition()?,
-        NonTerminalKind::YulParametersDeclaration => selector.yul_parameters_declaration()?,
-        NonTerminalKind::YulReturnsDeclaration => selector.yul_returns_declaration()?,
-        NonTerminalKind::YulVariableDeclarationStatement => {
+        NonterminalKind::NamedArgumentsDeclaration => selector.named_arguments_declaration()?,
+        NonterminalKind::NamedArgumentGroup => selector.named_argument_group()?,
+        NonterminalKind::NamedArgument => selector.named_argument()?,
+        NonterminalKind::TypeExpression => selector.type_expression()?,
+        NonterminalKind::NewExpression => selector.new_expression()?,
+        NonterminalKind::TupleExpression => selector.tuple_expression()?,
+        NonterminalKind::TupleValue => selector.tuple_value()?,
+        NonterminalKind::ArrayExpression => selector.array_expression()?,
+        NonterminalKind::HexNumberExpression => selector.hex_number_expression()?,
+        NonterminalKind::DecimalNumberExpression => selector.decimal_number_expression()?,
+        NonterminalKind::YulBlock => selector.yul_block()?,
+        NonterminalKind::YulFunctionDefinition => selector.yul_function_definition()?,
+        NonterminalKind::YulParametersDeclaration => selector.yul_parameters_declaration()?,
+        NonterminalKind::YulReturnsDeclaration => selector.yul_returns_declaration()?,
+        NonterminalKind::YulVariableDeclarationStatement => {
             selector.yul_variable_declaration_statement()?
         }
-        NonTerminalKind::YulVariableDeclarationValue => {
+        NonterminalKind::YulVariableDeclarationValue => {
             selector.yul_variable_declaration_value()?
         }
-        NonTerminalKind::YulAssignmentStatement => selector.yul_assignment_statement()?,
-        NonTerminalKind::YulColonAndEqual => selector.yul_colon_and_equal()?,
-        NonTerminalKind::YulIfStatement => selector.yul_if_statement()?,
-        NonTerminalKind::YulForStatement => selector.yul_for_statement()?,
-        NonTerminalKind::YulSwitchStatement => selector.yul_switch_statement()?,
-        NonTerminalKind::YulDefaultCase => selector.yul_default_case()?,
-        NonTerminalKind::YulValueCase => selector.yul_value_case()?,
-        NonTerminalKind::YulLeaveStatement => selector.yul_leave_statement()?,
-        NonTerminalKind::YulBreakStatement => selector.yul_break_statement()?,
-        NonTerminalKind::YulContinueStatement => selector.yul_continue_statement()?,
-        NonTerminalKind::YulLabel => selector.yul_label()?,
-        NonTerminalKind::YulFunctionCallExpression => selector.yul_function_call_expression()?,
+        NonterminalKind::YulAssignmentStatement => selector.yul_assignment_statement()?,
+        NonterminalKind::YulColonAndEqual => selector.yul_colon_and_equal()?,
+        NonterminalKind::YulIfStatement => selector.yul_if_statement()?,
+        NonterminalKind::YulForStatement => selector.yul_for_statement()?,
+        NonterminalKind::YulSwitchStatement => selector.yul_switch_statement()?,
+        NonterminalKind::YulDefaultCase => selector.yul_default_case()?,
+        NonterminalKind::YulValueCase => selector.yul_value_case()?,
+        NonterminalKind::YulLeaveStatement => selector.yul_leave_statement()?,
+        NonterminalKind::YulBreakStatement => selector.yul_break_statement()?,
+        NonterminalKind::YulContinueStatement => selector.yul_continue_statement()?,
+        NonterminalKind::YulLabel => selector.yul_label()?,
+        NonterminalKind::YulFunctionCallExpression => selector.yul_function_call_expression()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -177,25 +177,25 @@ pub fn select_sequence(
     Ok(result)
 }
 impl Selector {
-    fn source_unit(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn source_unit(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![Some(self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::SourceUnitMembers)
+            node.is_nonterminal_with_kind(NonterminalKind::SourceUnitMembers)
         })?)])
     }
 }
 
 impl Selector {
-    fn pragma_directive(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn pragma_directive(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::PragmaKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Pragma))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Pragma))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
 }
 
 impl Selector {
-    fn abi_coder_pragma(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn abi_coder_pragma(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AbicoderKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
@@ -206,83 +206,83 @@ impl Selector {
 impl Selector {
     fn experimental_pragma(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
                 self.select(|node| node.is_terminal_with_kind(TerminalKind::ExperimentalKeyword))?,
             ),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ExperimentalFeature)
+                node.is_nonterminal_with_kind(NonterminalKind::ExperimentalFeature)
             })?),
         ])
     }
 }
 
 impl Selector {
-    fn version_pragma(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn version_pragma(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::SolidityKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VersionExpressionSets)
+                node.is_nonterminal_with_kind(NonterminalKind::VersionExpressionSets)
             })?),
         ])
     }
 }
 
 impl Selector {
-    fn version_range(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn version_range(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VersionExpression)
+                node.is_nonterminal_with_kind(NonterminalKind::VersionExpression)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Minus))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VersionExpression)
+                node.is_nonterminal_with_kind(NonterminalKind::VersionExpression)
             })?),
         ])
     }
 }
 
 impl Selector {
-    fn version_comparator(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn version_comparator(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Caret))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VersionExpression)
+                node.is_nonterminal_with_kind(NonterminalKind::VersionExpression)
             })?),
         ])
     }
 }
 
 impl Selector {
-    fn import_directive(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn import_directive(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ImportKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ImportClause))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::ImportClause))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
 }
 
 impl Selector {
-    fn path_import(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn path_import(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?,
             ),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ImportAlias))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ImportAlias))?,
         ])
     }
 }
 
 impl Selector {
-    fn named_import(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn named_import(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Asterisk))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ImportAlias))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::ImportAlias))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FromKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?,
             ),
         ])
     }
@@ -291,16 +291,16 @@ impl Selector {
 impl Selector {
     fn import_deconstruction(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ImportDeconstructionSymbols)
+                node.is_nonterminal_with_kind(NonterminalKind::ImportDeconstructionSymbols)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FromKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?,
             ),
         ])
     }
@@ -309,16 +309,16 @@ impl Selector {
 impl Selector {
     fn import_deconstruction_symbol(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ImportAlias))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ImportAlias))?,
         ])
     }
 }
 
 impl Selector {
-    fn import_alias(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn import_alias(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AsKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
@@ -327,12 +327,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_directive(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn using_directive(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::UsingKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::UsingClause))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::UsingClause))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ForKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::UsingTarget))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::UsingTarget))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::GlobalKeyword))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -342,11 +342,11 @@ impl Selector {
 impl Selector {
     fn using_deconstruction(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::UsingDeconstructionSymbols)
+                node.is_nonterminal_with_kind(NonterminalKind::UsingDeconstructionSymbols)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
@@ -356,22 +356,22 @@ impl Selector {
 impl Selector {
     fn using_deconstruction_symbol(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?,
             ),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::UsingAlias))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::UsingAlias))?,
         ])
     }
 }
 
 impl Selector {
-    fn using_alias(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn using_alias(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AsKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::UsingOperator))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::UsingOperator))?,
             ),
         ])
     }
@@ -380,18 +380,18 @@ impl Selector {
 impl Selector {
     fn contract_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::AbstractKeyword))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ContractKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::InheritanceSpecifier)
+                node.is_nonterminal_with_kind(NonterminalKind::InheritanceSpecifier)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::ContractMembers)
+                    node.is_nonterminal_with_kind(NonterminalKind::ContractMembers)
                 })?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
@@ -402,12 +402,12 @@ impl Selector {
 impl Selector {
     fn inheritance_specifier(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::IsKeyword))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::InheritanceTypes)
+                    node.is_nonterminal_with_kind(NonterminalKind::InheritanceTypes)
                 })?,
             ),
         ])
@@ -415,13 +415,13 @@ impl Selector {
 }
 
 impl Selector {
-    fn inheritance_type(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn inheritance_type(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?,
             ),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ArgumentsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ArgumentsDeclaration)
             })?,
         ])
     }
@@ -430,17 +430,17 @@ impl Selector {
 impl Selector {
     fn interface_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::InterfaceKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::InheritanceSpecifier)
+                node.is_nonterminal_with_kind(NonterminalKind::InheritanceSpecifier)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::InterfaceMembers)
+                    node.is_nonterminal_with_kind(NonterminalKind::InterfaceMembers)
                 })?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
@@ -449,13 +449,13 @@ impl Selector {
 }
 
 impl Selector {
-    fn library_definition(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn library_definition(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::LibraryKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::LibraryMembers))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::LibraryMembers))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
@@ -463,13 +463,13 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_definition(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn struct_definition(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::StructKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StructMembers))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::StructMembers))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
@@ -477,9 +477,9 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_member(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn struct_member(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -487,12 +487,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn enum_definition(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn enum_definition(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::EnumKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::EnumMembers))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::EnumMembers))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
     }
@@ -501,13 +501,13 @@ impl Selector {
 impl Selector {
     fn constant_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ConstantKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
@@ -516,15 +516,15 @@ impl Selector {
 impl Selector {
     fn state_variable_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StateVariableAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::StateVariableAttributes)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StateVariableDefinitionValue)
+                node.is_nonterminal_with_kind(NonterminalKind::StateVariableDefinitionValue)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -534,10 +534,10 @@ impl Selector {
 impl Selector {
     fn state_variable_definition_value(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -545,20 +545,20 @@ impl Selector {
 impl Selector {
     fn function_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FunctionKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionName))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::FunctionAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::FunctionAttributes)
             })?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ReturnsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ReturnsDeclaration)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionBody))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionBody))?),
         ])
     }
 }
@@ -566,21 +566,21 @@ impl Selector {
 impl Selector {
     fn parameters_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Parameters))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Parameters))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
     }
 }
 
 impl Selector {
-    fn parameter(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn parameter(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StorageLocation)
+                node.is_nonterminal_with_kind(NonterminalKind::StorageLocation)
             })?,
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
         ])
@@ -588,11 +588,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn override_specifier(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn override_specifier(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OverrideKeyword))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::OverridePathsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::OverridePathsDeclaration)
             })?,
         ])
     }
@@ -601,11 +601,11 @@ impl Selector {
 impl Selector {
     fn override_paths_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::OverridePaths))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::OverridePaths))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
@@ -615,11 +615,11 @@ impl Selector {
 impl Selector {
     fn returns_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ReturnsKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
         ])
     }
@@ -628,16 +628,16 @@ impl Selector {
 impl Selector {
     fn constructor_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ConstructorKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ConstructorAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::ConstructorAttributes)
             })?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Block))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Block))?),
         ])
     }
 }
@@ -645,16 +645,16 @@ impl Selector {
 impl Selector {
     fn unnamed_function_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FunctionKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::UnnamedFunctionAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::UnnamedFunctionAttributes)
             })?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionBody))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionBody))?),
         ])
     }
 }
@@ -662,19 +662,19 @@ impl Selector {
 impl Selector {
     fn fallback_function_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FallbackKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::FallbackFunctionAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::FallbackFunctionAttributes)
             })?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ReturnsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ReturnsDeclaration)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionBody))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionBody))?),
         ])
     }
 }
@@ -682,16 +682,16 @@ impl Selector {
 impl Selector {
     fn receive_function_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ReceiveKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ReceiveFunctionAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::ReceiveFunctionAttributes)
             })?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionBody))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionBody))?),
         ])
     }
 }
@@ -699,17 +699,17 @@ impl Selector {
 impl Selector {
     fn modifier_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ModifierKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?,
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ModifierAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::ModifierAttributes)
             })?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionBody))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionBody))?),
         ])
     }
 }
@@ -717,25 +717,25 @@ impl Selector {
 impl Selector {
     fn modifier_invocation(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?,
             ),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ArgumentsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ArgumentsDeclaration)
             })?,
         ])
     }
 }
 
 impl Selector {
-    fn event_definition(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn event_definition(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::EventKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::EventParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::EventParametersDeclaration)
             })?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::AnonymousKeyword))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
@@ -746,12 +746,12 @@ impl Selector {
 impl Selector {
     fn event_parameters_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::EventParameters)
+                    node.is_nonterminal_with_kind(NonterminalKind::EventParameters)
                 })?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
@@ -760,9 +760,9 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_parameter(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn event_parameter(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::IndexedKeyword))?,
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
         ])
@@ -772,13 +772,13 @@ impl Selector {
 impl Selector {
     fn user_defined_value_type_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::TypeKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::IsKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ElementaryType))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::ElementaryType))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -786,12 +786,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_definition(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn error_definition(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ErrorKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ErrorParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ErrorParametersDeclaration)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -801,12 +801,12 @@ impl Selector {
 impl Selector {
     fn error_parameters_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::ErrorParameters)
+                    node.is_nonterminal_with_kind(NonterminalKind::ErrorParameters)
                 })?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
@@ -815,60 +815,60 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_parameter(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn error_parameter(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
         ])
     }
 }
 
 impl Selector {
-    fn array_type_name(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn array_type_name(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBracket))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBracket))?),
         ])
     }
 }
 
 impl Selector {
-    fn function_type(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn function_type(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::FunctionKeyword))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::FunctionTypeAttributes)
+                node.is_nonterminal_with_kind(NonterminalKind::FunctionTypeAttributes)
             })?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ReturnsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ReturnsDeclaration)
             })?,
         ])
     }
 }
 
 impl Selector {
-    fn mapping_type(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn mapping_type(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::MappingKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::MappingKey))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::MappingKey))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::EqualGreaterThan))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::MappingValue))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::MappingValue))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
     }
 }
 
 impl Selector {
-    fn mapping_key(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn mapping_key(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::MappingKeyType))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::MappingKeyType))?,
             ),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
         ])
@@ -876,16 +876,16 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_value(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn mapping_value(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
         ])
     }
 }
 
 impl Selector {
-    fn address_type(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn address_type(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AddressKeyword))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::PayableKeyword))?,
@@ -894,20 +894,20 @@ impl Selector {
 }
 
 impl Selector {
-    fn block(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn block(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statements))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statements))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
     }
 }
 
 impl Selector {
-    fn unchecked_block(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn unchecked_block(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::UncheckedKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Block))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Block))?),
         ])
     }
 }
@@ -915,23 +915,23 @@ impl Selector {
 impl Selector {
     fn expression_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
 }
 
 impl Selector {
-    fn assembly_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn assembly_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AssemblyKeyword))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?,
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::AssemblyFlagsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::AssemblyFlagsDeclaration)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
@@ -939,11 +939,11 @@ impl Selector {
 impl Selector {
     fn assembly_flags_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::AssemblyFlags))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::AssemblyFlags))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
@@ -953,16 +953,16 @@ impl Selector {
 impl Selector {
     fn tuple_deconstruction_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::VarKeyword))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::TupleDeconstructionElements)
+                node.is_nonterminal_with_kind(NonterminalKind::TupleDeconstructionElements)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
@@ -971,19 +971,19 @@ impl Selector {
 impl Selector {
     fn tuple_deconstruction_element(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::TupleMember)
+            node.is_nonterminal_with_kind(NonterminalKind::TupleMember)
         })?])
     }
 }
 
 impl Selector {
-    fn typed_tuple_member(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn typed_tuple_member(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StorageLocation)
+                node.is_nonterminal_with_kind(NonterminalKind::StorageLocation)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
         ])
@@ -993,10 +993,10 @@ impl Selector {
 impl Selector {
     fn untyped_tuple_member(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StorageLocation)
+                node.is_nonterminal_with_kind(NonterminalKind::StorageLocation)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
         ])
@@ -1006,17 +1006,17 @@ impl Selector {
 impl Selector {
     fn variable_declaration_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VariableDeclarationType)
+                node.is_nonterminal_with_kind(NonterminalKind::VariableDeclarationType)
             })?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::StorageLocation)
+                node.is_nonterminal_with_kind(NonterminalKind::StorageLocation)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::VariableDeclarationValue)
+                node.is_nonterminal_with_kind(NonterminalKind::VariableDeclarationValue)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -1026,74 +1026,74 @@ impl Selector {
 impl Selector {
     fn variable_declaration_value(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn if_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn if_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::IfKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ElseBranch))?,
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?),
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ElseBranch))?,
         ])
     }
 }
 
 impl Selector {
-    fn else_branch(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn else_branch(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ElseKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?),
         ])
     }
 }
 
 impl Selector {
-    fn for_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn for_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ForKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ForStatementInitialization)
+                node.is_nonterminal_with_kind(NonterminalKind::ForStatementInitialization)
             })?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ForStatementCondition)
+                node.is_nonterminal_with_kind(NonterminalKind::ForStatementCondition)
             })?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?),
         ])
     }
 }
 
 impl Selector {
-    fn while_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn while_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::WhileKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?),
         ])
     }
 }
 
 impl Selector {
-    fn do_while_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn do_while_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::DoKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::WhileKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -1101,7 +1101,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn continue_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn continue_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ContinueKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
@@ -1110,7 +1110,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn break_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn break_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::BreakKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
@@ -1119,24 +1119,24 @@ impl Selector {
 }
 
 impl Selector {
-    fn return_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn return_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ReturnKeyword))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
 }
 
 impl Selector {
-    fn emit_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn emit_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::EmitKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?,
             ),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ArgumentsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ArgumentsDeclaration)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -1144,49 +1144,49 @@ impl Selector {
 }
 
 impl Selector {
-    fn try_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn try_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::TryKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ReturnsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ReturnsDeclaration)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Block))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::CatchClauses))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Block))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::CatchClauses))?),
         ])
     }
 }
 
 impl Selector {
-    fn catch_clause(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn catch_clause(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CatchKeyword))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::CatchClauseError)
+                node.is_nonterminal_with_kind(NonterminalKind::CatchClauseError)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Block))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Block))?),
         ])
     }
 }
 
 impl Selector {
-    fn catch_clause_error(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn catch_clause_error(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ParametersDeclaration)
             })?),
         ])
     }
 }
 
 impl Selector {
-    fn revert_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn revert_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::RevertKeyword))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?,
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ArgumentsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ArgumentsDeclaration)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
@@ -1194,7 +1194,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn throw_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn throw_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::ThrowKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
@@ -1205,11 +1205,11 @@ impl Selector {
 impl Selector {
     fn assignment_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1217,33 +1217,33 @@ impl Selector {
 impl Selector {
     fn conditional_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::QuestionMark))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn or_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn or_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::BarBar))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn and_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn and_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AmpersandAmpersand))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1251,11 +1251,11 @@ impl Selector {
 impl Selector {
     fn equality_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::EqualEqual))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1263,11 +1263,11 @@ impl Selector {
 impl Selector {
     fn comparison_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::LessThan))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1275,11 +1275,11 @@ impl Selector {
 impl Selector {
     fn bitwise_or_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Bar))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1287,11 +1287,11 @@ impl Selector {
 impl Selector {
     fn bitwise_xor_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Caret))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1299,21 +1299,21 @@ impl Selector {
 impl Selector {
     fn bitwise_and_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Ampersand))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn shift_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn shift_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::LessThanLessThan))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1321,11 +1321,11 @@ impl Selector {
 impl Selector {
     fn additive_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Plus))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1333,11 +1333,11 @@ impl Selector {
 impl Selector {
     fn multiplicative_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Asterisk))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1345,29 +1345,29 @@ impl Selector {
 impl Selector {
     fn exponentiation_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::AsteriskAsterisk))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn postfix_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn postfix_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::PlusPlus))?),
         ])
     }
 }
 
 impl Selector {
-    fn prefix_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn prefix_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::PlusPlus))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -1375,11 +1375,11 @@ impl Selector {
 impl Selector {
     fn function_call_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::ArgumentsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::ArgumentsDeclaration)
             })?),
         ])
     }
@@ -1388,11 +1388,11 @@ impl Selector {
 impl Selector {
     fn call_options_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::CallOptions))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::CallOptions))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
     }
@@ -1401,11 +1401,11 @@ impl Selector {
 impl Selector {
     fn member_access_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Period))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::MemberAccess))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::MemberAccess))?),
         ])
     }
 }
@@ -1413,22 +1413,22 @@ impl Selector {
 impl Selector {
     fn index_access_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBracket))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IndexAccessEnd))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::IndexAccessEnd))?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBracket))?),
         ])
     }
 }
 
 impl Selector {
-    fn index_access_end(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn index_access_end(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
         ])
     }
 }
@@ -1436,11 +1436,11 @@ impl Selector {
 impl Selector {
     fn positional_arguments_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::PositionalArguments)
+                node.is_nonterminal_with_kind(NonterminalKind::PositionalArguments)
             })?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
@@ -1450,11 +1450,11 @@ impl Selector {
 impl Selector {
     fn named_arguments_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::NamedArgumentGroup)
+                node.is_nonterminal_with_kind(NonterminalKind::NamedArgumentGroup)
             })?,
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
@@ -1464,11 +1464,11 @@ impl Selector {
 impl Selector {
     fn named_argument_group(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::NamedArguments))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::NamedArguments))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
@@ -1476,58 +1476,58 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_argument(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn named_argument(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
 
 impl Selector {
-    fn type_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn type_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::TypeKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
     }
 }
 
 impl Selector {
-    fn new_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn new_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::NewKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TypeName))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TypeName))?),
         ])
     }
 }
 
 impl Selector {
-    fn tuple_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn tuple_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TupleValues))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TupleValues))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
     }
 }
 
 impl Selector {
-    fn tuple_value(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn tuple_value(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::Expression)
+            node.is_nonterminal_with_kind(NonterminalKind::Expression)
         })?])
     }
 }
 
 impl Selector {
-    fn array_expression(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn array_expression(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBracket))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ArrayValues))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::ArrayValues))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBracket))?),
         ])
     }
@@ -1536,10 +1536,10 @@ impl Selector {
 impl Selector {
     fn hex_number_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::HexLiteral))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::NumberUnit))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::NumberUnit))?,
         ])
     }
 }
@@ -1547,20 +1547,20 @@ impl Selector {
 impl Selector {
     fn decimal_number_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::DecimalLiteral))?),
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::NumberUnit))?,
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::NumberUnit))?,
         ])
     }
 }
 
 impl Selector {
-    fn yul_block(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_block(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBrace))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulStatements))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulStatements))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBrace))?),
         ])
@@ -1570,17 +1570,17 @@ impl Selector {
 impl Selector {
     fn yul_function_definition(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulFunctionKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulIdentifier))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulParametersDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::YulParametersDeclaration)
             })?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulReturnsDeclaration)
+                node.is_nonterminal_with_kind(NonterminalKind::YulReturnsDeclaration)
             })?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
@@ -1588,11 +1588,11 @@ impl Selector {
 impl Selector {
     fn yul_parameters_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulParameters))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulParameters))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
@@ -1602,11 +1602,11 @@ impl Selector {
 impl Selector {
     fn yul_returns_declaration(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::MinusGreaterThan))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulReturnVariables)
+                node.is_nonterminal_with_kind(NonterminalKind::YulReturnVariables)
             })?),
         ])
     }
@@ -1615,12 +1615,12 @@ impl Selector {
 impl Selector {
     fn yul_variable_declaration_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulLetKeyword))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulIdentifier))?),
             self.try_select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulVariableDeclarationValue)
+                node.is_nonterminal_with_kind(NonterminalKind::YulVariableDeclarationValue)
             })?,
         ])
     }
@@ -1629,13 +1629,13 @@ impl Selector {
 impl Selector {
     fn yul_variable_declaration_value(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulAssignmentOperator)
+                node.is_nonterminal_with_kind(NonterminalKind::YulAssignmentOperator)
             })?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
         ])
     }
@@ -1644,14 +1644,14 @@ impl Selector {
 impl Selector {
     fn yul_assignment_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulPaths))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulPaths))?),
             Some(self.select(|node| {
-                node.is_nonterminal_with_kind(NonTerminalKind::YulAssignmentOperator)
+                node.is_nonterminal_with_kind(NonterminalKind::YulAssignmentOperator)
             })?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
         ])
     }
@@ -1660,7 +1660,7 @@ impl Selector {
 impl Selector {
     fn yul_colon_and_equal(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
@@ -1669,27 +1669,27 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_if_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_if_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulIfKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
 
 impl Selector {
-    fn yul_for_statement(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_for_statement(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulForKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
@@ -1697,34 +1697,34 @@ impl Selector {
 impl Selector {
     fn yul_switch_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulSwitchKeyword))?),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulSwitchCases))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulSwitchCases))?,
             ),
         ])
     }
 }
 
 impl Selector {
-    fn yul_default_case(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_default_case(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulDefaultKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
 
 impl Selector {
-    fn yul_value_case(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_value_case(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulCaseKeyword))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulLiteral))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulBlock))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulLiteral))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulBlock))?),
         ])
     }
 }
@@ -1732,7 +1732,7 @@ impl Selector {
 impl Selector {
     fn yul_leave_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_terminal_with_kind(TerminalKind::YulLeaveKeyword)
         })?)])
@@ -1742,7 +1742,7 @@ impl Selector {
 impl Selector {
     fn yul_break_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_terminal_with_kind(TerminalKind::YulBreakKeyword)
         })?)])
@@ -1752,7 +1752,7 @@ impl Selector {
 impl Selector {
     fn yul_continue_statement(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![Some(self.select(|node| {
             node.is_terminal_with_kind(TerminalKind::YulContinueKeyword)
         })?)])
@@ -1760,7 +1760,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_label(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_label(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::YulIdentifier))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
@@ -1771,13 +1771,13 @@ impl Selector {
 impl Selector {
     fn yul_function_call_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(
-                self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?,
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenParen))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulArguments))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulArguments))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseParen))?),
         ])
     }
@@ -1788,54 +1788,54 @@ impl Selector {
 
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Either<NonterminalNode, TerminalNode>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnitMember => selector.source_unit_member()?,
-        NonTerminalKind::Pragma => selector.pragma()?,
-        NonTerminalKind::ExperimentalFeature => selector.experimental_feature()?,
-        NonTerminalKind::VersionExpression => selector.version_expression()?,
-        NonTerminalKind::ImportClause => selector.import_clause()?,
-        NonTerminalKind::UsingClause => selector.using_clause()?,
-        NonTerminalKind::UsingOperator => selector.using_operator()?,
-        NonTerminalKind::UsingTarget => selector.using_target()?,
-        NonTerminalKind::ContractMember => selector.contract_member()?,
-        NonTerminalKind::StateVariableAttribute => selector.state_variable_attribute()?,
-        NonTerminalKind::FunctionName => selector.function_name()?,
-        NonTerminalKind::FunctionAttribute => selector.function_attribute()?,
-        NonTerminalKind::FunctionBody => selector.function_body()?,
-        NonTerminalKind::ConstructorAttribute => selector.constructor_attribute()?,
-        NonTerminalKind::UnnamedFunctionAttribute => selector.unnamed_function_attribute()?,
-        NonTerminalKind::FallbackFunctionAttribute => selector.fallback_function_attribute()?,
-        NonTerminalKind::ReceiveFunctionAttribute => selector.receive_function_attribute()?,
-        NonTerminalKind::ModifierAttribute => selector.modifier_attribute()?,
-        NonTerminalKind::TypeName => selector.type_name()?,
-        NonTerminalKind::FunctionTypeAttribute => selector.function_type_attribute()?,
-        NonTerminalKind::MappingKeyType => selector.mapping_key_type()?,
-        NonTerminalKind::ElementaryType => selector.elementary_type()?,
-        NonTerminalKind::Statement => selector.statement()?,
-        NonTerminalKind::TupleMember => selector.tuple_member()?,
-        NonTerminalKind::VariableDeclarationType => selector.variable_declaration_type()?,
-        NonTerminalKind::StorageLocation => selector.storage_location()?,
-        NonTerminalKind::ForStatementInitialization => selector.for_statement_initialization()?,
-        NonTerminalKind::ForStatementCondition => selector.for_statement_condition()?,
-        NonTerminalKind::Expression => selector.expression()?,
-        NonTerminalKind::MemberAccess => selector.member_access()?,
-        NonTerminalKind::ArgumentsDeclaration => selector.arguments_declaration()?,
-        NonTerminalKind::NumberUnit => selector.number_unit()?,
-        NonTerminalKind::StringExpression => selector.string_expression()?,
-        NonTerminalKind::StringLiteral => selector.string_literal()?,
-        NonTerminalKind::HexStringLiteral => selector.hex_string_literal()?,
-        NonTerminalKind::UnicodeStringLiteral => selector.unicode_string_literal()?,
-        NonTerminalKind::YulStatement => selector.yul_statement()?,
-        NonTerminalKind::YulAssignmentOperator => selector.yul_assignment_operator()?,
-        NonTerminalKind::YulSwitchCase => selector.yul_switch_case()?,
-        NonTerminalKind::YulExpression => selector.yul_expression()?,
-        NonTerminalKind::YulPathComponent => selector.yul_path_component()?,
-        NonTerminalKind::YulBuiltInFunction => selector.yul_built_in_function()?,
-        NonTerminalKind::YulLiteral => selector.yul_literal()?,
+        NonterminalKind::SourceUnitMember => selector.source_unit_member()?,
+        NonterminalKind::Pragma => selector.pragma()?,
+        NonterminalKind::ExperimentalFeature => selector.experimental_feature()?,
+        NonterminalKind::VersionExpression => selector.version_expression()?,
+        NonterminalKind::ImportClause => selector.import_clause()?,
+        NonterminalKind::UsingClause => selector.using_clause()?,
+        NonterminalKind::UsingOperator => selector.using_operator()?,
+        NonterminalKind::UsingTarget => selector.using_target()?,
+        NonterminalKind::ContractMember => selector.contract_member()?,
+        NonterminalKind::StateVariableAttribute => selector.state_variable_attribute()?,
+        NonterminalKind::FunctionName => selector.function_name()?,
+        NonterminalKind::FunctionAttribute => selector.function_attribute()?,
+        NonterminalKind::FunctionBody => selector.function_body()?,
+        NonterminalKind::ConstructorAttribute => selector.constructor_attribute()?,
+        NonterminalKind::UnnamedFunctionAttribute => selector.unnamed_function_attribute()?,
+        NonterminalKind::FallbackFunctionAttribute => selector.fallback_function_attribute()?,
+        NonterminalKind::ReceiveFunctionAttribute => selector.receive_function_attribute()?,
+        NonterminalKind::ModifierAttribute => selector.modifier_attribute()?,
+        NonterminalKind::TypeName => selector.type_name()?,
+        NonterminalKind::FunctionTypeAttribute => selector.function_type_attribute()?,
+        NonterminalKind::MappingKeyType => selector.mapping_key_type()?,
+        NonterminalKind::ElementaryType => selector.elementary_type()?,
+        NonterminalKind::Statement => selector.statement()?,
+        NonterminalKind::TupleMember => selector.tuple_member()?,
+        NonterminalKind::VariableDeclarationType => selector.variable_declaration_type()?,
+        NonterminalKind::StorageLocation => selector.storage_location()?,
+        NonterminalKind::ForStatementInitialization => selector.for_statement_initialization()?,
+        NonterminalKind::ForStatementCondition => selector.for_statement_condition()?,
+        NonterminalKind::Expression => selector.expression()?,
+        NonterminalKind::MemberAccess => selector.member_access()?,
+        NonterminalKind::ArgumentsDeclaration => selector.arguments_declaration()?,
+        NonterminalKind::NumberUnit => selector.number_unit()?,
+        NonterminalKind::StringExpression => selector.string_expression()?,
+        NonterminalKind::StringLiteral => selector.string_literal()?,
+        NonterminalKind::HexStringLiteral => selector.hex_string_literal()?,
+        NonterminalKind::UnicodeStringLiteral => selector.unicode_string_literal()?,
+        NonterminalKind::YulStatement => selector.yul_statement()?,
+        NonterminalKind::YulAssignmentOperator => selector.yul_assignment_operator()?,
+        NonterminalKind::YulSwitchCase => selector.yul_switch_case()?,
+        NonterminalKind::YulExpression => selector.yul_expression()?,
+        NonterminalKind::YulPathComponent => selector.yul_path_component()?,
+        NonterminalKind::YulBuiltInFunction => selector.yul_built_in_function()?,
+        NonterminalKind::YulLiteral => selector.yul_literal()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -1846,55 +1846,55 @@ pub fn select_choice(
 }
 
 impl Selector {
-    fn source_unit_member(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn source_unit_member(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::PragmaDirective,
-                NonTerminalKind::ImportDirective,
-                NonTerminalKind::ContractDefinition,
-                NonTerminalKind::InterfaceDefinition,
-                NonTerminalKind::LibraryDefinition,
-                NonTerminalKind::StructDefinition,
-                NonTerminalKind::EnumDefinition,
-                NonTerminalKind::FunctionDefinition,
-                NonTerminalKind::ConstantDefinition,
-                NonTerminalKind::ErrorDefinition,
-                NonTerminalKind::UserDefinedValueTypeDefinition,
-                NonTerminalKind::UsingDirective,
-                NonTerminalKind::EventDefinition,
+                NonterminalKind::PragmaDirective,
+                NonterminalKind::ImportDirective,
+                NonterminalKind::ContractDefinition,
+                NonterminalKind::InterfaceDefinition,
+                NonterminalKind::LibraryDefinition,
+                NonterminalKind::StructDefinition,
+                NonterminalKind::EnumDefinition,
+                NonterminalKind::FunctionDefinition,
+                NonterminalKind::ConstantDefinition,
+                NonterminalKind::ErrorDefinition,
+                NonterminalKind::UserDefinedValueTypeDefinition,
+                NonterminalKind::UsingDirective,
+                NonterminalKind::EventDefinition,
             ])
         })
     }
 }
 
 impl Selector {
-    fn pragma(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn pragma(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ABICoderPragma,
-                NonTerminalKind::ExperimentalPragma,
-                NonTerminalKind::VersionPragma,
+                NonterminalKind::ABICoderPragma,
+                NonterminalKind::ExperimentalPragma,
+                NonterminalKind::VersionPragma,
             ])
         })
     }
 }
 
 impl Selector {
-    fn experimental_feature(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn experimental_feature(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral)
+            node.is_nonterminal_with_kind(NonterminalKind::StringLiteral)
                 || node.is_terminal_with_kind(TerminalKind::Identifier)
         })
     }
 }
 
 impl Selector {
-    fn version_expression(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn version_expression(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::VersionRange,
-                NonTerminalKind::VersionComparator,
-                NonTerminalKind::VersionSpecifiers,
+                NonterminalKind::VersionRange,
+                NonterminalKind::VersionComparator,
+                NonterminalKind::VersionSpecifiers,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::SingleQuotedVersionLiteral,
                 TerminalKind::DoubleQuotedVersionLiteral,
@@ -1904,30 +1904,30 @@ impl Selector {
 }
 
 impl Selector {
-    fn import_clause(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn import_clause(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::PathImport,
-                NonTerminalKind::NamedImport,
-                NonTerminalKind::ImportDeconstruction,
+                NonterminalKind::PathImport,
+                NonterminalKind::NamedImport,
+                NonterminalKind::ImportDeconstruction,
             ])
         })
     }
 }
 
 impl Selector {
-    fn using_clause(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn using_clause(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::IdentifierPath,
-                NonTerminalKind::UsingDeconstruction,
+                NonterminalKind::IdentifierPath,
+                NonterminalKind::UsingDeconstruction,
             ])
         })
     }
 }
 
 impl Selector {
-    fn using_operator(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn using_operator(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::Ampersand,
@@ -1951,40 +1951,40 @@ impl Selector {
 }
 
 impl Selector {
-    fn using_target(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn using_target(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::TypeName)
+            node.is_nonterminal_with_kind(NonterminalKind::TypeName)
                 || node.is_terminal_with_kind(TerminalKind::Asterisk)
         })
     }
 }
 
 impl Selector {
-    fn contract_member(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn contract_member(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::UsingDirective,
-                NonTerminalKind::FunctionDefinition,
-                NonTerminalKind::ConstructorDefinition,
-                NonTerminalKind::ReceiveFunctionDefinition,
-                NonTerminalKind::FallbackFunctionDefinition,
-                NonTerminalKind::UnnamedFunctionDefinition,
-                NonTerminalKind::ModifierDefinition,
-                NonTerminalKind::StructDefinition,
-                NonTerminalKind::EnumDefinition,
-                NonTerminalKind::EventDefinition,
-                NonTerminalKind::StateVariableDefinition,
-                NonTerminalKind::ErrorDefinition,
-                NonTerminalKind::UserDefinedValueTypeDefinition,
+                NonterminalKind::UsingDirective,
+                NonterminalKind::FunctionDefinition,
+                NonterminalKind::ConstructorDefinition,
+                NonterminalKind::ReceiveFunctionDefinition,
+                NonterminalKind::FallbackFunctionDefinition,
+                NonterminalKind::UnnamedFunctionDefinition,
+                NonterminalKind::ModifierDefinition,
+                NonterminalKind::StructDefinition,
+                NonterminalKind::EnumDefinition,
+                NonterminalKind::EventDefinition,
+                NonterminalKind::StateVariableDefinition,
+                NonterminalKind::ErrorDefinition,
+                NonterminalKind::UserDefinedValueTypeDefinition,
             ])
         })
     }
 }
 
 impl Selector {
-    fn state_variable_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn state_variable_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::OverrideSpecifier)
+            node.is_nonterminal_with_kind(NonterminalKind::OverrideSpecifier)
                 || node.is_terminal_with_kinds(&[
                     TerminalKind::ConstantKeyword,
                     TerminalKind::InternalKeyword,
@@ -1997,7 +1997,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_name(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn function_name(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::Identifier,
@@ -2009,11 +2009,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn function_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ModifierInvocation,
-                NonTerminalKind::OverrideSpecifier,
+                NonterminalKind::ModifierInvocation,
+                NonterminalKind::OverrideSpecifier,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::ConstantKeyword,
                 TerminalKind::ExternalKeyword,
@@ -2030,18 +2030,18 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_body(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn function_body(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::Block)
+            node.is_nonterminal_with_kind(NonterminalKind::Block)
                 || node.is_terminal_with_kind(TerminalKind::Semicolon)
         })
     }
 }
 
 impl Selector {
-    fn constructor_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn constructor_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ModifierInvocation)
+            node.is_nonterminal_with_kind(NonterminalKind::ModifierInvocation)
                 || node.is_terminal_with_kinds(&[
                     TerminalKind::InternalKeyword,
                     TerminalKind::OverrideKeyword,
@@ -2054,9 +2054,9 @@ impl Selector {
 }
 
 impl Selector {
-    fn unnamed_function_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn unnamed_function_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ModifierInvocation)
+            node.is_nonterminal_with_kind(NonterminalKind::ModifierInvocation)
                 || node.is_terminal_with_kinds(&[
                     TerminalKind::ConstantKeyword,
                     TerminalKind::ExternalKeyword,
@@ -2072,11 +2072,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn fallback_function_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn fallback_function_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ModifierInvocation,
-                NonTerminalKind::OverrideSpecifier,
+                NonterminalKind::ModifierInvocation,
+                NonterminalKind::OverrideSpecifier,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::ExternalKeyword,
                 TerminalKind::PayableKeyword,
@@ -2089,11 +2089,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn receive_function_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn receive_function_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ModifierInvocation,
-                NonTerminalKind::OverrideSpecifier,
+                NonterminalKind::ModifierInvocation,
+                NonterminalKind::OverrideSpecifier,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::ExternalKeyword,
                 TerminalKind::PayableKeyword,
@@ -2104,30 +2104,30 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn modifier_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::OverrideSpecifier)
+            node.is_nonterminal_with_kind(NonterminalKind::OverrideSpecifier)
                 || node.is_terminal_with_kind(TerminalKind::VirtualKeyword)
         })
     }
 }
 
 impl Selector {
-    fn type_name(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn type_name(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ArrayTypeName,
-                NonTerminalKind::FunctionType,
-                NonTerminalKind::MappingType,
-                NonTerminalKind::ElementaryType,
-                NonTerminalKind::IdentifierPath,
+                NonterminalKind::ArrayTypeName,
+                NonterminalKind::FunctionType,
+                NonterminalKind::MappingType,
+                NonterminalKind::ElementaryType,
+                NonterminalKind::IdentifierPath,
             ])
         })
     }
 }
 
 impl Selector {
-    fn function_type_attribute(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn function_type_attribute(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::InternalKeyword,
@@ -2144,20 +2144,20 @@ impl Selector {
 }
 
 impl Selector {
-    fn mapping_key_type(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn mapping_key_type(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ElementaryType,
-                NonTerminalKind::IdentifierPath,
+                NonterminalKind::ElementaryType,
+                NonterminalKind::IdentifierPath,
             ])
         })
     }
 }
 
 impl Selector {
-    fn elementary_type(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn elementary_type(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::AddressType)
+            node.is_nonterminal_with_kind(NonterminalKind::AddressType)
                 || node.is_terminal_with_kinds(&[
                     TerminalKind::BoolKeyword,
                     TerminalKind::ByteKeyword,
@@ -2173,53 +2173,53 @@ impl Selector {
 }
 
 impl Selector {
-    fn statement(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn statement(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ExpressionStatement,
-                NonTerminalKind::VariableDeclarationStatement,
-                NonTerminalKind::TupleDeconstructionStatement,
-                NonTerminalKind::IfStatement,
-                NonTerminalKind::ForStatement,
-                NonTerminalKind::WhileStatement,
-                NonTerminalKind::DoWhileStatement,
-                NonTerminalKind::ContinueStatement,
-                NonTerminalKind::BreakStatement,
-                NonTerminalKind::ReturnStatement,
-                NonTerminalKind::ThrowStatement,
-                NonTerminalKind::EmitStatement,
-                NonTerminalKind::TryStatement,
-                NonTerminalKind::RevertStatement,
-                NonTerminalKind::AssemblyStatement,
-                NonTerminalKind::Block,
-                NonTerminalKind::UncheckedBlock,
+                NonterminalKind::ExpressionStatement,
+                NonterminalKind::VariableDeclarationStatement,
+                NonterminalKind::TupleDeconstructionStatement,
+                NonterminalKind::IfStatement,
+                NonterminalKind::ForStatement,
+                NonterminalKind::WhileStatement,
+                NonterminalKind::DoWhileStatement,
+                NonterminalKind::ContinueStatement,
+                NonterminalKind::BreakStatement,
+                NonterminalKind::ReturnStatement,
+                NonterminalKind::ThrowStatement,
+                NonterminalKind::EmitStatement,
+                NonterminalKind::TryStatement,
+                NonterminalKind::RevertStatement,
+                NonterminalKind::AssemblyStatement,
+                NonterminalKind::Block,
+                NonterminalKind::UncheckedBlock,
             ])
         })
     }
 }
 
 impl Selector {
-    fn tuple_member(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn tuple_member(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::TypedTupleMember,
-                NonTerminalKind::UntypedTupleMember,
+                NonterminalKind::TypedTupleMember,
+                NonterminalKind::UntypedTupleMember,
             ])
         })
     }
 }
 
 impl Selector {
-    fn variable_declaration_type(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn variable_declaration_type(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::TypeName)
+            node.is_nonterminal_with_kind(NonterminalKind::TypeName)
                 || node.is_terminal_with_kind(TerminalKind::VarKeyword)
         })
     }
 }
 
 impl Selector {
-    fn storage_location(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn storage_location(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::MemoryKeyword,
@@ -2231,57 +2231,57 @@ impl Selector {
 }
 
 impl Selector {
-    fn for_statement_initialization(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn for_statement_initialization(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::ExpressionStatement,
-                NonTerminalKind::VariableDeclarationStatement,
-                NonTerminalKind::TupleDeconstructionStatement,
+                NonterminalKind::ExpressionStatement,
+                NonterminalKind::VariableDeclarationStatement,
+                NonterminalKind::TupleDeconstructionStatement,
             ]) || node.is_terminal_with_kind(TerminalKind::Semicolon)
         })
     }
 }
 
 impl Selector {
-    fn for_statement_condition(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn for_statement_condition(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ExpressionStatement)
+            node.is_nonterminal_with_kind(NonterminalKind::ExpressionStatement)
                 || node.is_terminal_with_kind(TerminalKind::Semicolon)
         })
     }
 }
 
 impl Selector {
-    fn expression(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn expression(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::AssignmentExpression,
-                NonTerminalKind::ConditionalExpression,
-                NonTerminalKind::OrExpression,
-                NonTerminalKind::AndExpression,
-                NonTerminalKind::EqualityExpression,
-                NonTerminalKind::ComparisonExpression,
-                NonTerminalKind::BitwiseOrExpression,
-                NonTerminalKind::BitwiseXorExpression,
-                NonTerminalKind::BitwiseAndExpression,
-                NonTerminalKind::ShiftExpression,
-                NonTerminalKind::AdditiveExpression,
-                NonTerminalKind::MultiplicativeExpression,
-                NonTerminalKind::ExponentiationExpression,
-                NonTerminalKind::PostfixExpression,
-                NonTerminalKind::PrefixExpression,
-                NonTerminalKind::FunctionCallExpression,
-                NonTerminalKind::CallOptionsExpression,
-                NonTerminalKind::MemberAccessExpression,
-                NonTerminalKind::IndexAccessExpression,
-                NonTerminalKind::NewExpression,
-                NonTerminalKind::TupleExpression,
-                NonTerminalKind::TypeExpression,
-                NonTerminalKind::ArrayExpression,
-                NonTerminalKind::HexNumberExpression,
-                NonTerminalKind::DecimalNumberExpression,
-                NonTerminalKind::StringExpression,
-                NonTerminalKind::ElementaryType,
+                NonterminalKind::AssignmentExpression,
+                NonterminalKind::ConditionalExpression,
+                NonterminalKind::OrExpression,
+                NonterminalKind::AndExpression,
+                NonterminalKind::EqualityExpression,
+                NonterminalKind::ComparisonExpression,
+                NonterminalKind::BitwiseOrExpression,
+                NonterminalKind::BitwiseXorExpression,
+                NonterminalKind::BitwiseAndExpression,
+                NonterminalKind::ShiftExpression,
+                NonterminalKind::AdditiveExpression,
+                NonterminalKind::MultiplicativeExpression,
+                NonterminalKind::ExponentiationExpression,
+                NonterminalKind::PostfixExpression,
+                NonterminalKind::PrefixExpression,
+                NonterminalKind::FunctionCallExpression,
+                NonterminalKind::CallOptionsExpression,
+                NonterminalKind::MemberAccessExpression,
+                NonterminalKind::IndexAccessExpression,
+                NonterminalKind::NewExpression,
+                NonterminalKind::TupleExpression,
+                NonterminalKind::TypeExpression,
+                NonterminalKind::ArrayExpression,
+                NonterminalKind::HexNumberExpression,
+                NonterminalKind::DecimalNumberExpression,
+                NonterminalKind::StringExpression,
+                NonterminalKind::ElementaryType,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::PayableKeyword,
                 TerminalKind::TrueKeyword,
@@ -2293,7 +2293,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn member_access(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn member_access(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[TerminalKind::Identifier, TerminalKind::AddressKeyword])
         })
@@ -2301,18 +2301,18 @@ impl Selector {
 }
 
 impl Selector {
-    fn arguments_declaration(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn arguments_declaration(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::PositionalArgumentsDeclaration,
-                NonTerminalKind::NamedArgumentsDeclaration,
+                NonterminalKind::PositionalArgumentsDeclaration,
+                NonterminalKind::NamedArgumentsDeclaration,
             ])
         })
     }
 }
 
 impl Selector {
-    fn number_unit(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn number_unit(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::WeiKeyword,
@@ -2332,21 +2332,21 @@ impl Selector {
 }
 
 impl Selector {
-    fn string_expression(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn string_expression(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::StringLiteral,
-                NonTerminalKind::StringLiterals,
-                NonTerminalKind::HexStringLiteral,
-                NonTerminalKind::HexStringLiterals,
-                NonTerminalKind::UnicodeStringLiterals,
+                NonterminalKind::StringLiteral,
+                NonterminalKind::StringLiterals,
+                NonterminalKind::HexStringLiteral,
+                NonterminalKind::HexStringLiterals,
+                NonterminalKind::UnicodeStringLiterals,
             ])
         })
     }
 }
 
 impl Selector {
-    fn string_literal(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn string_literal(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::SingleQuotedStringLiteral,
@@ -2357,7 +2357,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_string_literal(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn hex_string_literal(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::SingleQuotedHexStringLiteral,
@@ -2368,7 +2368,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn unicode_string_literal(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn unicode_string_literal(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::SingleQuotedUnicodeStringLiteral,
@@ -2379,61 +2379,61 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_statement(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_statement(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::YulBlock,
-                NonTerminalKind::YulFunctionDefinition,
-                NonTerminalKind::YulVariableDeclarationStatement,
-                NonTerminalKind::YulAssignmentStatement,
-                NonTerminalKind::YulIfStatement,
-                NonTerminalKind::YulForStatement,
-                NonTerminalKind::YulSwitchStatement,
-                NonTerminalKind::YulLeaveStatement,
-                NonTerminalKind::YulBreakStatement,
-                NonTerminalKind::YulContinueStatement,
-                NonTerminalKind::YulLabel,
-                NonTerminalKind::YulExpression,
+                NonterminalKind::YulBlock,
+                NonterminalKind::YulFunctionDefinition,
+                NonterminalKind::YulVariableDeclarationStatement,
+                NonterminalKind::YulAssignmentStatement,
+                NonterminalKind::YulIfStatement,
+                NonterminalKind::YulForStatement,
+                NonterminalKind::YulSwitchStatement,
+                NonterminalKind::YulLeaveStatement,
+                NonterminalKind::YulBreakStatement,
+                NonterminalKind::YulContinueStatement,
+                NonterminalKind::YulLabel,
+                NonterminalKind::YulExpression,
             ])
         })
     }
 }
 
 impl Selector {
-    fn yul_assignment_operator(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_assignment_operator(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::YulColonAndEqual)
+            node.is_nonterminal_with_kind(NonterminalKind::YulColonAndEqual)
                 || node.is_terminal_with_kind(TerminalKind::ColonEqual)
         })
     }
 }
 
 impl Selector {
-    fn yul_switch_case(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_switch_case(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::YulDefaultCase,
-                NonTerminalKind::YulValueCase,
+                NonterminalKind::YulDefaultCase,
+                NonterminalKind::YulValueCase,
             ])
         })
     }
 }
 
 impl Selector {
-    fn yul_expression(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_expression(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::YulFunctionCallExpression,
-                NonTerminalKind::YulLiteral,
-                NonTerminalKind::YulBuiltInFunction,
-                NonTerminalKind::YulPath,
+                NonterminalKind::YulFunctionCallExpression,
+                NonterminalKind::YulLiteral,
+                NonterminalKind::YulBuiltInFunction,
+                NonterminalKind::YulPath,
             ])
         })
     }
 }
 
 impl Selector {
-    fn yul_path_component(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_path_component(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::YulIdentifier,
@@ -2444,7 +2444,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_built_in_function(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_built_in_function(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_terminal_with_kinds(&[
                 TerminalKind::YulAddKeyword,
@@ -2534,11 +2534,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_literal(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn yul_literal(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::HexStringLiteral,
-                NonTerminalKind::StringLiteral,
+                NonterminalKind::HexStringLiteral,
+                NonterminalKind::StringLiteral,
             ]) || node.is_terminal_with_kinds(&[
                 TerminalKind::YulTrueKeyword,
                 TerminalKind::YulFalseKeyword,
@@ -2559,32 +2559,32 @@ impl Selector {
     catch_unwind
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnitMembers => selector.source_unit_members()?,
-        NonTerminalKind::VersionExpressionSet => selector.version_expression_set()?,
-        NonTerminalKind::ContractMembers => selector.contract_members()?,
-        NonTerminalKind::InterfaceMembers => selector.interface_members()?,
-        NonTerminalKind::LibraryMembers => selector.library_members()?,
-        NonTerminalKind::StructMembers => selector.struct_members()?,
-        NonTerminalKind::StateVariableAttributes => selector.state_variable_attributes()?,
-        NonTerminalKind::FunctionAttributes => selector.function_attributes()?,
-        NonTerminalKind::ConstructorAttributes => selector.constructor_attributes()?,
-        NonTerminalKind::UnnamedFunctionAttributes => selector.unnamed_function_attributes()?,
-        NonTerminalKind::FallbackFunctionAttributes => selector.fallback_function_attributes()?,
-        NonTerminalKind::ReceiveFunctionAttributes => selector.receive_function_attributes()?,
-        NonTerminalKind::ModifierAttributes => selector.modifier_attributes()?,
-        NonTerminalKind::FunctionTypeAttributes => selector.function_type_attributes()?,
-        NonTerminalKind::Statements => selector.statements()?,
-        NonTerminalKind::CatchClauses => selector.catch_clauses()?,
-        NonTerminalKind::StringLiterals => selector.string_literals()?,
-        NonTerminalKind::HexStringLiterals => selector.hex_string_literals()?,
-        NonTerminalKind::UnicodeStringLiterals => selector.unicode_string_literals()?,
-        NonTerminalKind::YulStatements => selector.yul_statements()?,
-        NonTerminalKind::YulSwitchCases => selector.yul_switch_cases()?,
+        NonterminalKind::SourceUnitMembers => selector.source_unit_members()?,
+        NonterminalKind::VersionExpressionSet => selector.version_expression_set()?,
+        NonterminalKind::ContractMembers => selector.contract_members()?,
+        NonterminalKind::InterfaceMembers => selector.interface_members()?,
+        NonterminalKind::LibraryMembers => selector.library_members()?,
+        NonterminalKind::StructMembers => selector.struct_members()?,
+        NonterminalKind::StateVariableAttributes => selector.state_variable_attributes()?,
+        NonterminalKind::FunctionAttributes => selector.function_attributes()?,
+        NonterminalKind::ConstructorAttributes => selector.constructor_attributes()?,
+        NonterminalKind::UnnamedFunctionAttributes => selector.unnamed_function_attributes()?,
+        NonterminalKind::FallbackFunctionAttributes => selector.fallback_function_attributes()?,
+        NonterminalKind::ReceiveFunctionAttributes => selector.receive_function_attributes()?,
+        NonterminalKind::ModifierAttributes => selector.modifier_attributes()?,
+        NonterminalKind::FunctionTypeAttributes => selector.function_type_attributes()?,
+        NonterminalKind::Statements => selector.statements()?,
+        NonterminalKind::CatchClauses => selector.catch_clauses()?,
+        NonterminalKind::StringLiterals => selector.string_literals()?,
+        NonterminalKind::HexStringLiterals => selector.hex_string_literals()?,
+        NonterminalKind::UnicodeStringLiterals => selector.unicode_string_literals()?,
+        NonterminalKind::YulStatements => selector.yul_statements()?,
+        NonterminalKind::YulSwitchCases => selector.yul_switch_cases()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -2595,11 +2595,11 @@ pub fn select_repeated(
 }
 
 impl Selector {
-    fn source_unit_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn source_unit_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::SourceUnitMember))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::SourceUnitMember))?
         {
             items.push(item);
         }
@@ -2609,11 +2609,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_expression_set(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn version_expression_set(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::VersionExpression))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::VersionExpression))?
         {
             items.push(item);
         }
@@ -2623,11 +2623,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn contract_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn contract_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ContractMember))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ContractMember))?
         {
             items.push(item);
         }
@@ -2637,11 +2637,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn interface_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn interface_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ContractMember))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ContractMember))?
         {
             items.push(item);
         }
@@ -2651,11 +2651,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn library_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn library_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ContractMember))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ContractMember))?
         {
             items.push(item);
         }
@@ -2665,11 +2665,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn struct_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn struct_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StructMember))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::StructMember))?
         {
             items.push(item);
         }
@@ -2679,11 +2679,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn state_variable_attributes(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn state_variable_attributes(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::StateVariableAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::StateVariableAttribute)
         })? {
             items.push(item);
         }
@@ -2693,11 +2693,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_attributes(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn function_attributes(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::FunctionAttribute))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::FunctionAttribute))?
         {
             items.push(item);
         }
@@ -2707,11 +2707,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn constructor_attributes(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn constructor_attributes(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ConstructorAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::ConstructorAttribute)
         })? {
             items.push(item);
         }
@@ -2723,11 +2723,11 @@ impl Selector {
 impl Selector {
     fn unnamed_function_attributes(
         &mut self,
-    ) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::UnnamedFunctionAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::UnnamedFunctionAttribute)
         })? {
             items.push(item);
         }
@@ -2739,11 +2739,11 @@ impl Selector {
 impl Selector {
     fn fallback_function_attributes(
         &mut self,
-    ) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::FallbackFunctionAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::FallbackFunctionAttribute)
         })? {
             items.push(item);
         }
@@ -2755,11 +2755,11 @@ impl Selector {
 impl Selector {
     fn receive_function_attributes(
         &mut self,
-    ) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ReceiveFunctionAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::ReceiveFunctionAttribute)
         })? {
             items.push(item);
         }
@@ -2769,11 +2769,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn modifier_attributes(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn modifier_attributes(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ModifierAttribute))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ModifierAttribute))?
         {
             items.push(item);
         }
@@ -2783,11 +2783,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn function_type_attributes(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn function_type_attributes(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::FunctionTypeAttribute)
+            node.is_nonterminal_with_kind(NonterminalKind::FunctionTypeAttribute)
         })? {
             items.push(item);
         }
@@ -2797,11 +2797,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn statements(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn statements(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Statement))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Statement))?
         {
             items.push(item);
         }
@@ -2811,11 +2811,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn catch_clauses(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn catch_clauses(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::CatchClause))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::CatchClause))?
         {
             items.push(item);
         }
@@ -2825,11 +2825,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn string_literals(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn string_literals(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?
         {
             items.push(item);
         }
@@ -2839,11 +2839,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn hex_string_literals(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn hex_string_literals(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::HexStringLiteral))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::HexStringLiteral))?
         {
             items.push(item);
         }
@@ -2853,11 +2853,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn unicode_string_literals(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn unicode_string_literals(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::UnicodeStringLiteral)
+            node.is_nonterminal_with_kind(NonterminalKind::UnicodeStringLiteral)
         })? {
             items.push(item);
         }
@@ -2867,11 +2867,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_statements(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn yul_statements(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulStatement))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulStatement))?
         {
             items.push(item);
         }
@@ -2881,11 +2881,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_switch_cases(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn yul_switch_cases(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulSwitchCase))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulSwitchCase))?
         {
             items.push(item);
         }
@@ -2904,34 +2904,34 @@ impl Selector {
     catch_unwind
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::VersionExpressionSets => selector.version_expression_sets()?,
-        NonTerminalKind::VersionSpecifiers => selector.version_specifiers()?,
-        NonTerminalKind::ImportDeconstructionSymbols => selector.import_deconstruction_symbols()?,
-        NonTerminalKind::UsingDeconstructionSymbols => selector.using_deconstruction_symbols()?,
-        NonTerminalKind::InheritanceTypes => selector.inheritance_types()?,
-        NonTerminalKind::EnumMembers => selector.enum_members()?,
-        NonTerminalKind::Parameters => selector.parameters()?,
-        NonTerminalKind::OverridePaths => selector.override_paths()?,
-        NonTerminalKind::EventParameters => selector.event_parameters()?,
-        NonTerminalKind::ErrorParameters => selector.error_parameters()?,
-        NonTerminalKind::AssemblyFlags => selector.assembly_flags()?,
-        NonTerminalKind::TupleDeconstructionElements => selector.tuple_deconstruction_elements()?,
-        NonTerminalKind::PositionalArguments => selector.positional_arguments()?,
-        NonTerminalKind::NamedArguments => selector.named_arguments()?,
-        NonTerminalKind::CallOptions => selector.call_options()?,
-        NonTerminalKind::TupleValues => selector.tuple_values()?,
-        NonTerminalKind::ArrayValues => selector.array_values()?,
-        NonTerminalKind::IdentifierPath => selector.identifier_path()?,
-        NonTerminalKind::YulParameters => selector.yul_parameters()?,
-        NonTerminalKind::YulReturnVariables => selector.yul_return_variables()?,
-        NonTerminalKind::YulArguments => selector.yul_arguments()?,
-        NonTerminalKind::YulPaths => selector.yul_paths()?,
-        NonTerminalKind::YulPath => selector.yul_path()?,
+        NonterminalKind::VersionExpressionSets => selector.version_expression_sets()?,
+        NonterminalKind::VersionSpecifiers => selector.version_specifiers()?,
+        NonterminalKind::ImportDeconstructionSymbols => selector.import_deconstruction_symbols()?,
+        NonterminalKind::UsingDeconstructionSymbols => selector.using_deconstruction_symbols()?,
+        NonterminalKind::InheritanceTypes => selector.inheritance_types()?,
+        NonterminalKind::EnumMembers => selector.enum_members()?,
+        NonterminalKind::Parameters => selector.parameters()?,
+        NonterminalKind::OverridePaths => selector.override_paths()?,
+        NonterminalKind::EventParameters => selector.event_parameters()?,
+        NonterminalKind::ErrorParameters => selector.error_parameters()?,
+        NonterminalKind::AssemblyFlags => selector.assembly_flags()?,
+        NonterminalKind::TupleDeconstructionElements => selector.tuple_deconstruction_elements()?,
+        NonterminalKind::PositionalArguments => selector.positional_arguments()?,
+        NonterminalKind::NamedArguments => selector.named_arguments()?,
+        NonterminalKind::CallOptions => selector.call_options()?,
+        NonterminalKind::TupleValues => selector.tuple_values()?,
+        NonterminalKind::ArrayValues => selector.array_values()?,
+        NonterminalKind::IdentifierPath => selector.identifier_path()?,
+        NonterminalKind::YulParameters => selector.yul_parameters()?,
+        NonterminalKind::YulReturnVariables => selector.yul_return_variables()?,
+        NonterminalKind::YulArguments => selector.yul_arguments()?,
+        NonterminalKind::YulPaths => selector.yul_paths()?,
+        NonterminalKind::YulPath => selector.yul_path()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -2944,12 +2944,12 @@ pub fn select_separated(
 impl Selector {
     fn version_expression_sets(
         &mut self,
-    ) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::VersionExpressionSet)
+            node.is_nonterminal_with_kind(NonterminalKind::VersionExpressionSet)
         })? {
             separated.push(first);
 
@@ -2959,7 +2959,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::VersionExpressionSet)
+                    node.is_nonterminal_with_kind(NonterminalKind::VersionExpressionSet)
                 })?);
             }
         }
@@ -2969,7 +2969,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn version_specifiers(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn version_specifiers(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -2996,12 +2996,12 @@ impl Selector {
 impl Selector {
     fn import_deconstruction_symbols(
         &mut self,
-    ) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::ImportDeconstructionSymbol)
+            node.is_nonterminal_with_kind(NonterminalKind::ImportDeconstructionSymbol)
         })? {
             separated.push(first);
 
@@ -3011,7 +3011,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::ImportDeconstructionSymbol)
+                    node.is_nonterminal_with_kind(NonterminalKind::ImportDeconstructionSymbol)
                 })?);
             }
         }
@@ -3023,12 +3023,12 @@ impl Selector {
 impl Selector {
     fn using_deconstruction_symbols(
         &mut self,
-    ) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::UsingDeconstructionSymbol)
+            node.is_nonterminal_with_kind(NonterminalKind::UsingDeconstructionSymbol)
         })? {
             separated.push(first);
 
@@ -3038,7 +3038,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::UsingDeconstructionSymbol)
+                    node.is_nonterminal_with_kind(NonterminalKind::UsingDeconstructionSymbol)
                 })?);
             }
         }
@@ -3048,12 +3048,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn inheritance_types(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn inheritance_types(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::InheritanceType))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::InheritanceType))?
         {
             separated.push(first);
 
@@ -3063,7 +3063,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::InheritanceType)
+                    node.is_nonterminal_with_kind(NonterminalKind::InheritanceType)
                 })?);
             }
         }
@@ -3073,7 +3073,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn enum_members(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn enum_members(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3098,12 +3098,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn parameters(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn parameters(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Parameter))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Parameter))?
         {
             separated.push(first);
 
@@ -3113,7 +3113,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Parameter))?,
+                    self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Parameter))?,
                 );
             }
         }
@@ -3123,12 +3123,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn override_paths(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn override_paths(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath))?
         {
             separated.push(first);
 
@@ -3138,7 +3138,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::IdentifierPath)
+                    node.is_nonterminal_with_kind(NonterminalKind::IdentifierPath)
                 })?);
             }
         }
@@ -3148,12 +3148,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn event_parameters(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn event_parameters(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::EventParameter))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::EventParameter))?
         {
             separated.push(first);
 
@@ -3163,7 +3163,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::EventParameter)
+                    node.is_nonterminal_with_kind(NonterminalKind::EventParameter)
                 })?);
             }
         }
@@ -3173,12 +3173,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn error_parameters(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn error_parameters(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::ErrorParameter))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::ErrorParameter))?
         {
             separated.push(first);
 
@@ -3188,7 +3188,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::ErrorParameter)
+                    node.is_nonterminal_with_kind(NonterminalKind::ErrorParameter)
                 })?);
             }
         }
@@ -3198,12 +3198,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn assembly_flags(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn assembly_flags(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::StringLiteral))?
         {
             separated.push(first);
 
@@ -3213,7 +3213,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::StringLiteral)
+                    node.is_nonterminal_with_kind(NonterminalKind::StringLiteral)
                 })?);
             }
         }
@@ -3225,12 +3225,12 @@ impl Selector {
 impl Selector {
     fn tuple_deconstruction_elements(
         &mut self,
-    ) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) = self.try_select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::TupleDeconstructionElement)
+            node.is_nonterminal_with_kind(NonterminalKind::TupleDeconstructionElement)
         })? {
             separated.push(first);
 
@@ -3240,7 +3240,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::TupleDeconstructionElement)
+                    node.is_nonterminal_with_kind(NonterminalKind::TupleDeconstructionElement)
                 })?);
             }
         }
@@ -3250,12 +3250,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn positional_arguments(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn positional_arguments(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?
         {
             separated.push(first);
 
@@ -3265,7 +3265,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+                    self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
                 );
             }
         }
@@ -3275,12 +3275,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn named_arguments(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn named_arguments(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::NamedArgument))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::NamedArgument))?
         {
             separated.push(first);
 
@@ -3290,7 +3290,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::NamedArgument)
+                    node.is_nonterminal_with_kind(NonterminalKind::NamedArgument)
                 })?);
             }
         }
@@ -3300,12 +3300,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn call_options(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn call_options(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::NamedArgument))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::NamedArgument))?
         {
             separated.push(first);
 
@@ -3315,7 +3315,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::NamedArgument)
+                    node.is_nonterminal_with_kind(NonterminalKind::NamedArgument)
                 })?);
             }
         }
@@ -3325,12 +3325,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn tuple_values(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn tuple_values(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TupleValue))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::TupleValue))?
         {
             separated.push(first);
 
@@ -3340,7 +3340,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TupleValue))?,
+                    self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TupleValue))?,
                 );
             }
         }
@@ -3350,12 +3350,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn array_values(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn array_values(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?
         {
             separated.push(first);
 
@@ -3365,7 +3365,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?,
+                    self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?,
                 );
             }
         }
@@ -3375,7 +3375,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn identifier_path(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn identifier_path(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3400,7 +3400,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_parameters(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_parameters(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3425,7 +3425,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_return_variables(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_return_variables(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -3450,12 +3450,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_arguments(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_arguments(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulExpression))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?
         {
             separated.push(first);
 
@@ -3465,7 +3465,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::YulExpression)
+                    node.is_nonterminal_with_kind(NonterminalKind::YulExpression)
                 })?);
             }
         }
@@ -3475,12 +3475,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_paths(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_paths(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulPath))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulPath))?
         {
             separated.push(first);
 
@@ -3490,7 +3490,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(
-                    self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulPath))?,
+                    self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulPath))?,
                 );
             }
         }
@@ -3500,12 +3500,12 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_path(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn yul_path(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
         if let Some(first) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::YulPathComponent))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulPathComponent))?
         {
             separated.push(first);
 
@@ -3515,7 +3515,7 @@ impl Selector {
                 separators.push(separator);
 
                 separated.push(self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::YulPathComponent)
+                    node.is_nonterminal_with_kind(NonterminalKind::YulPathComponent)
                 })?);
             }
         }
@@ -3529,12 +3529,12 @@ impl Selector {
 //
 
 struct Selector {
-    node: Rc<RustNonTerminalNode>,
+    node: Rc<RustNonterminalNode>,
     index: usize,
 }
 
 impl Selector {
-    fn new(node: &NonTerminalNode) -> Self {
+    fn new(node: &NonterminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
@@ -3544,7 +3544,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    ) -> Result<Either<NonterminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -3554,7 +3554,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Option<Either<NonterminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -3595,8 +3595,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
-    UnexpectedParent(NonTerminalKind),
+    #[error("Unexpected parent node with NonterminalKind '{0}'.")]
+    UnexpectedParent(NonterminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]

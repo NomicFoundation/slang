@@ -1,32 +1,32 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { EdgeLabel, NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import { EdgeLabel, NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import { Cursor } from "@slang-private/slang-testlang/cursor";
-import { expectNonTerminal, expectTerminal } from "../utils/cst-helpers";
+import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
 import { NodeType } from "@slang-private/slang-testlang/cst";
 
 test("use cursor", () => {
   const source = "tree [A [B C] D];";
   const language = new Language("1.0.0");
 
-  const parseOutput = language.parse(NonTerminalKind.SourceUnit, source);
+  const parseOutput = language.parse(NonterminalKind.SourceUnit, source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.SourceUnit);
+  expectNonterminal(cursor.node(), NonterminalKind.SourceUnit);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.SourceUnitMembers);
+  expectNonterminal(cursor.node(), NonterminalKind.SourceUnitMembers);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.SourceUnitMember);
+  expectNonterminal(cursor.node(), NonterminalKind.SourceUnitMember);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.Tree);
+  expectNonterminal(cursor.node(), NonterminalKind.Tree);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.TreeKeyword, "tree");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNode);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNode);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.Whitespace, " ");
@@ -35,19 +35,19 @@ test("use cursor", () => {
   expectTerminal(cursor.node(), TerminalKind.OpenBracket, "[");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChildren);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChildren);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.DelimitedIdentifier, "A");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNode);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNode);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.Whitespace, " ");
@@ -56,16 +56,16 @@ test("use cursor", () => {
   expectTerminal(cursor.node(), TerminalKind.OpenBracket, "[");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChildren);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChildren);
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.DelimitedIdentifier, "B");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.Whitespace, " ");
@@ -77,7 +77,7 @@ test("use cursor", () => {
   expectTerminal(cursor.node(), TerminalKind.CloseBracket, "]");
   expect(cursor.goToNext()).toBe(true);
 
-  expectNonTerminal(cursor.node(), NonTerminalKind.TreeNodeChild);
+  expectNonterminal(cursor.node(), NonterminalKind.TreeNodeChild);
   expect(cursor.goToNext()).toBe(true);
 
   expectTerminal(cursor.node(), TerminalKind.Whitespace, " ");
@@ -96,12 +96,12 @@ test("use cursor", () => {
 test("access the node using its name", () => {
   const source = "tree [A [B C] D];";
   const language = new Language("1.0.0");
-  const parseTree = language.parse(NonTerminalKind.SourceUnit, source);
+  const parseTree = language.parse(NonterminalKind.SourceUnit, source);
 
   const cursor = parseTree.createTreeCursor();
   let names: string[] = [];
 
-  while (cursor.goToNextNonterminalWithKind(NonTerminalKind.TreeNode)) {
+  while (cursor.goToNextNonterminalWithKind(NonterminalKind.TreeNode)) {
     const innerCursor = cursor.spawn();
     while (innerCursor.goToNext()) {
       const node = innerCursor.node();

@@ -29,10 +29,10 @@ impl<T: KindTypes + 'static> Cursor<T> {
 
     fn matches_node_selector(&self, node_selector: &NodeSelector<T>) -> bool {
         match self.node() {
-            Node::<T>::NonTerminal(nonterminal) => match node_selector {
+            Node::<T>::Nonterminal(nonterminal) => match node_selector {
                 NodeSelector::Anonymous => true,
                 NodeSelector::NodeKind { node_kind } => {
-                    NodeKind::NonTerminal(nonterminal.kind) == *node_kind
+                    NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { .. } => false,
                 NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
@@ -41,7 +41,7 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     node_kind,
                 } => {
                     Some(*edge_label) == self.label()
-                        && NodeKind::NonTerminal(nonterminal.kind) == *node_kind
+                        && NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::EdgeLabelAndNodeText { .. } => false,
             },

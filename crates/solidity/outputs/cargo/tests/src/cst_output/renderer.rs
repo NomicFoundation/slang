@@ -9,7 +9,7 @@ use inflector::Inflector;
 use once_cell::sync::Lazy;
 use slang_solidity::cst::Node;
 use slang_solidity::cursor::CursorWithEdges;
-use slang_solidity::kinds::NonTerminalKind;
+use slang_solidity::kinds::NonterminalKind;
 use slang_solidity::text_index::TextRangeExtensions;
 use solidity_language::SolidityDefinition;
 
@@ -109,7 +109,7 @@ fn write_node(
         write!(w, "{key}", key = render_key(cursor))?;
 
         // If it is a parent wih a single child, inline them on the same line:
-        if matches!(cursor.node(), Node::NonTerminal(non_terminal) if non_terminal.children.len() == 1 && !NON_INLINABLE.contains(&non_terminal.kind))
+        if matches!(cursor.node(), Node::Nonterminal(nonterminal) if nonterminal.children.len() == 1 && !NON_INLINABLE.contains(&nonterminal.kind))
         {
             let parent_range = cursor.text_range();
             assert!(cursor.go_to_next());
@@ -136,7 +136,7 @@ fn write_node(
 
 fn render_key(cursor: &mut CursorWithEdges) -> String {
     let kind = match cursor.node() {
-        Node::NonTerminal(nonterminal) => nonterminal.kind.to_string(),
+        Node::Nonterminal(nonterminal) => nonterminal.kind.to_string(),
         Node::Terminal(terminal) => terminal.kind.to_string(),
     };
 
@@ -157,10 +157,10 @@ fn render_value(cursor: &mut CursorWithEdges, source: &str) -> String {
     let preview = render_preview(source, &char_range);
 
     match cursor.node() {
-        Node::NonTerminal(non_terminal) if non_terminal.children.is_empty() => {
+        Node::Nonterminal(nonterminal) if nonterminal.children.is_empty() => {
             format!("[] # ({utf8_range:?})")
         }
-        Node::NonTerminal(_) => format!("# {preview} ({utf8_range:?})"),
+        Node::Nonterminal(_) => format!("# {preview} ({utf8_range:?})"),
         Node::Terminal(_) => format!("{preview} # ({utf8_range:?})"),
     }
 }
@@ -197,7 +197,7 @@ fn render_preview(source: &str, char_range: &Range<usize>) -> String {
     }
 }
 
-static NON_INLINABLE: Lazy<HashSet<NonTerminalKind>> = Lazy::new(|| {
+static NON_INLINABLE: Lazy<HashSet<NonterminalKind>> = Lazy::new(|| {
     let mut kinds = HashSet::new();
 
     for item in SolidityDefinition::create().items() {
@@ -207,7 +207,7 @@ static NON_INLINABLE: Lazy<HashSet<NonTerminalKind>> = Lazy::new(|| {
                 kinds.insert(item.name().parse().unwrap());
             }
             Item::Struct { .. } | Item::Enum { .. } | Item::Precedence { .. } => {
-                // These non-terminals can be inlined if they have a single child.
+                // These nonterminals can be inlined if they have a single child.
                 // Note: same goes for 'PrecedenceExpression' items under each 'Precedence' item.
             }
             Item::Trivia { .. }

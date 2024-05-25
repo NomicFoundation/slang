@@ -1,11 +1,11 @@
 mod item;
 mod manifest;
-mod non_terminals;
+mod nonterminals;
 mod terminals;
 mod utils;
 
 pub use item::*;
 pub use manifest::*;
-pub use non_terminals::*;
+pub use nonterminals::*;
 pub use terminals::*;
 pub use utils::*;

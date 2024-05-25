@@ -5,8 +5,8 @@ export type Node = generated.cst.Node;
 export const NodeType = generated.cst.NodeType;
 export type NodeType = generated.cst.NodeType;
 
-export const NonTerminalNode = generated.cst.NonTerminalNode;
-export type NonTerminalNode = generated.cst.NonTerminalNode;
+export const NonterminalNode = generated.cst.NonterminalNode;
+export type NonterminalNode = generated.cst.NonterminalNode;
 
 export const TerminalNode = generated.cst.TerminalNode;
 export type TerminalNode = generated.cst.TerminalNode;

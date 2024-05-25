@@ -141,7 +141,7 @@ impl SequenceHelper {
                                     }
                                 }
                             }
-                            cst::Node::NonTerminal(node) => {
+                            cst::Node::Nonterminal(node) => {
                                 debug_assert!(false, "Recovery skipped to a nonterminal: {node:?}");
                                 Err(())
                             }

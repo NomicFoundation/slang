@@ -250,8 +250,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         .clone()
         .unwrap_or_else(|| Identifier::from("Default"));
 
-    // The non-terminals are mutually recursive (so will be the resolution of their definitions),
-    // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
+    // The nonterminals are mutually recursive (so will be the resolution of their definitions),
+    // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
     let inserted_thunk = match (elem, ctx.resolved.contains_key(ident)) {
         (
             Item::Struct { .. }
@@ -291,8 +291,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         // Already resolved
         (None, Some(resolved)) => resolved.clone(),
         (Some(..), None) => unreachable!("We just inserted a thunk!"),
-        // First time resolving a non-terminal named `ident` (since we just inserted a thunk)
-        // Any recursive resolution for this non-terminal will already use the thunk.
+        // First time resolving a nonterminal named `ident` (since we just inserted a thunk)
+        // Any recursive resolution for this nonterminal will already use the thunk.
         // Once we're finished, we initialize the cell with the resolved definition.
         (Some(thunk), _) => {
             match elem {
@@ -332,7 +332,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         .set(resolve_precedence(item.deref().clone(), &lex_ctx, ctx))
                         .unwrap();
                 }
-                _ => unreachable!("Only non-terminals can be resolved here"),
+                _ => unreachable!("Only nonterminals can be resolved here"),
             };
 
             ctx.resolved.get(ident).cloned().unwrap()

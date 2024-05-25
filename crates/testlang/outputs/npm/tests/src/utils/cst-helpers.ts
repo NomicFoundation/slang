@@ -1,11 +1,11 @@
-import { NodeType, NonTerminalNode, TerminalNode } from "@slang-private/slang-testlang/cst";
-import { NonTerminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import { NodeType, NonterminalNode, TerminalNode } from "@slang-private/slang-testlang/cst";
+import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 
-export function expectNonTerminal(node: unknown, kind: NonTerminalKind): asserts node is NonTerminalNode {
-  expect(node).toBeInstanceOf(NonTerminalNode);
+export function expectNonterminal(node: unknown, kind: NonterminalKind): asserts node is NonterminalNode {
+  expect(node).toBeInstanceOf(NonterminalNode);
 
-  const nonTerminal = node as NonTerminalNode;
-  expect(nonTerminal.type).toEqual(NodeType.NonTerminal);
+  const nonTerminal = node as NonterminalNode;
+  expect(nonTerminal.type).toEqual(NodeType.Nonterminal);
   expect(nonTerminal.kind).toEqual(kind);
 }
 

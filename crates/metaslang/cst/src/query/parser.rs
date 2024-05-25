@@ -208,7 +208,7 @@ fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<
             T::TerminalKind::try_from_str(id.as_str())
                 .map(NodeKind::Terminal)
                 .or_else(|_| {
-                    T::NonTerminalKind::try_from_str(id.as_str()).map(NodeKind::NonTerminal)
+                    T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
                 })
         }),
         multispace0,

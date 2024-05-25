@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use slang_testlang::cst::{Edge, Node};
 use slang_testlang::cursor::Cursor;
-use slang_testlang::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
+use slang_testlang::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
 use slang_testlang::query::{Query, QueryMatch};
 use slang_testlang::text_index::TextIndex;
 
@@ -15,7 +15,7 @@ fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
 
 fn nonterminal<const N: usize>(
     label: Option<EdgeLabel>,
-    kind: NonTerminalKind,
+    kind: NonterminalKind,
     children: [Edge; N],
 ) -> Edge {
     Edge {
@@ -54,20 +54,20 @@ macro_rules! cst_tree {
     };
 
     ( @inner [ $($child:expr)* ] $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(Some(EdgeLabel::$label), NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(Some(EdgeLabel::$label), NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(None, NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(None, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     // Start with a nonterminal
     ( $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(Some(EdgeLabel::$label), NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(Some(EdgeLabel::$label), NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
     ( $non_terminal_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(None, NonTerminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(None, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
 }

@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::cst::{self, Edge};
-use crate::kinds::{EdgeLabel, NonTerminalKind};
+use crate::kinds::{EdgeLabel, NonterminalKind};
 use crate::parser_support::parser_result::PrattElement::{
     self, Binary, Expression, Postfix, Prefix,
 };
@@ -11,7 +11,7 @@ pub struct PrecedenceHelper;
 
 impl PrecedenceHelper {
     pub fn to_prefix_operator(
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         right: u8,
         result: ParserResult,
     ) -> ParserResult {
@@ -29,7 +29,7 @@ impl PrecedenceHelper {
     }
 
     pub fn to_postfix_operator(
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         left: u8,
         result: ParserResult,
     ) -> ParserResult {
@@ -47,7 +47,7 @@ impl PrecedenceHelper {
     }
 
     pub fn to_binary_operator(
-        kind: NonTerminalKind,
+        kind: NonterminalKind,
         left: u8,
         right: u8,
         result: ParserResult,
@@ -68,7 +68,7 @@ impl PrecedenceHelper {
 
     #[allow(clippy::too_many_lines, clippy::redundant_else)] // Explicit on purpose, see below.
     pub fn reduce_precedence_result(
-        child_kind: NonTerminalKind,
+        child_kind: NonterminalKind,
         result: ParserResult,
     ) -> ParserResult {
         // This requires some careful thinking. It could be more compact,
@@ -162,7 +162,7 @@ impl PrecedenceHelper {
             // 2. Reduce the operator and it's child expressions to a new expression
 
             let make_expression = |left: Option<PrattElement>,
-                                   kind: NonTerminalKind,
+                                   kind: NonterminalKind,
                                    nodes: Vec<cst::Edge>,
                                    right: Option<PrattElement>| {
                 assert!(left.is_some() || right.is_some());

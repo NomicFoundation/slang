@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { NonTerminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
-import { NonTerminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the cursor", async () => {
@@ -15,7 +15,7 @@ test("using the cursor", async () => {
   // --8<-- [start:parse-input]
   const language = new Language("0.8.0");
 
-  const parseOutput = language.parse(NonTerminalKind.SourceUnit, source);
+  const parseOutput = language.parse(NonterminalKind.SourceUnit, source);
   // --8<-- [end:parse-input]
 
   {
@@ -24,7 +24,7 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
       assert(cursor.goToFirstChild());
       assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
@@ -45,7 +45,7 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
       const childCursor = cursor.spawn();
       assert(childCursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
@@ -64,11 +64,11 @@ test("using the cursor", async () => {
 
     const cursor = parseOutput.createTreeCursor();
 
-    while (cursor.goToNextNonterminalWithKind(NonTerminalKind.ContractDefinition)) {
+    while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
       const range = cursor.textRange;
 
       const contractNode = cursor.node();
-      assert(contractNode instanceof NonTerminalNode);
+      assert(contractNode instanceof NonterminalNode);
 
       contracts.push([
         range.start.line,

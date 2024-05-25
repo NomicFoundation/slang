@@ -7,9 +7,9 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
 use crate::napi_interface::{
-    NonTerminalKind, RustEdge, RustNode, RustNonTerminalNode, TerminalKind,
+    NonterminalKind, RustEdge, RustNode, RustNonterminalNode, TerminalKind,
 };
 
 //
@@ -22,8 +22,8 @@ use crate::napi_interface::{
     catch_unwind
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 } //
   // Choices:
@@ -31,8 +31,8 @@ pub fn select_sequence(
 
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Either<NonterminalNode, TerminalNode>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -46,8 +46,8 @@ pub fn select_choice(
     catch_unwind
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -61,8 +61,8 @@ pub fn select_repeated(
     catch_unwind
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
     unreachable!("Invoking AST selectors in stubs: {node:#?}")
 }
 
@@ -71,12 +71,12 @@ pub fn select_separated(
 //
 
 struct Selector {
-    node: Rc<RustNonTerminalNode>,
+    node: Rc<RustNonterminalNode>,
     index: usize,
 }
 
 impl Selector {
-    fn new(node: &NonTerminalNode) -> Self {
+    fn new(node: &NonterminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
@@ -86,7 +86,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    ) -> Result<Either<NonterminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -96,7 +96,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Option<Either<NonterminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -137,8 +137,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
-    UnexpectedParent(NonTerminalKind),
+    #[error("Unexpected parent node with NonterminalKind '{0}'.")]
+    UnexpectedParent(NonterminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]

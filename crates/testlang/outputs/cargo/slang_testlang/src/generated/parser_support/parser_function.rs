@@ -31,7 +31,7 @@ where
         if let ParserResult::Match(r#match) = &mut result {
             let [topmost] = r#match.nodes.as_mut_slice() else {
                 unreachable!(
-                    "Match at the top level of a parse does not have exactly one NonTerminal node"
+                    "Match at the top level of a parse does not have exactly one Nonterminal node"
                 )
             };
 
@@ -42,7 +42,7 @@ where
                 _ => None,
             };
 
-            if let (cst::Node::NonTerminal(nonterminal), Some(eof_trivia)) =
+            if let (cst::Node::Nonterminal(nonterminal), Some(eof_trivia)) =
                 (&mut topmost.node, eof_trivia)
             {
                 let mut new_children = nonterminal.children.clone();
@@ -85,9 +85,9 @@ where
                 };
 
                 let topmost_node = match &nodes[..] {
-                    [Edge { node: cst::Node::NonTerminal(nonterminal), ..} ] => Rc::clone(nonterminal),
+                    [Edge { node: cst::Node::Nonterminal(nonterminal), ..} ] => Rc::clone(nonterminal),
                     [_] => unreachable!(
-                        "(Incomplete)Match at the top level of a parser is not a NonTerminal node"
+                        "(Incomplete)Match at the top level of a parser is not a Nonterminal node"
                     ),
                     _ => unreachable!(
                         "(Incomplete)Match at the top level of a parser does not have exactly one node"
@@ -118,7 +118,7 @@ where
                         errors,
                     }
                 } else {
-                    let parse_tree = cst::Node::NonTerminal(topmost_node);
+                    let parse_tree = cst::Node::Nonterminal(topmost_node);
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes

@@ -5,8 +5,8 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
-use crate::napi_interface::{NonTerminalKind, RustEdge, RustNode, RustNonTerminalNode, TerminalKind};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
+use crate::napi_interface::{NonterminalKind, RustEdge, RustNode, RustNonterminalNode, TerminalKind};
 
 //
 // Sequences:
@@ -18,8 +18,8 @@ use crate::napi_interface::{NonTerminalKind, RustEdge, RustNode, RustNonTerminal
     catch_unwind,
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -27,7 +27,7 @@ pub fn select_sequence(
 
         let result = match node.kind() {
             {%- for sequence in model.ast.sequences -%}
-                NonTerminalKind::{{ sequence.name }} => {
+                NonterminalKind::{{ sequence.name }} => {
                     selector.{{ sequence.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -44,7 +44,7 @@ pub fn select_sequence(
 {%- if not rendering_in_stubs -%}
     {% for sequence in model.ast.sequences %}
         impl Selector {
-            fn {{ sequence.name | snake_case }}(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+            fn {{ sequence.name | snake_case }}(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
                 Ok(vec![
                     {%- for field in sequence.fields -%}
                         {%- if field.is_optional -%}
@@ -53,7 +53,7 @@ pub fn select_sequence(
                                 {%- if field.is_terminal -%}
                                     node.is_terminal_with_kind(TerminalKind::{{ field.reference }})
                                 {%- else -%}
-                                    node.is_nonterminal_with_kind(NonTerminalKind::{{ field.reference }})
+                                    node.is_nonterminal_with_kind(NonterminalKind::{{ field.reference }})
                                 {%- endif -%}
                             })?,
 
@@ -63,7 +63,7 @@ pub fn select_sequence(
                                 {%- if field.is_terminal -%}
                                     node.is_terminal_with_kind(TerminalKind::{{ field.reference }})
                                 {%- else -%}
-                                    node.is_nonterminal_with_kind(NonTerminalKind::{{ field.reference }})
+                                    node.is_nonterminal_with_kind(NonterminalKind::{{ field.reference }})
                                 {%- endif -%}
                             })?),
 
@@ -85,8 +85,8 @@ pub fn select_sequence(
     catch_unwind,
 )]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Either<NonterminalNode, TerminalNode>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -94,7 +94,7 @@ pub fn select_choice(
 
         let result = match node.kind() {
             {%- for choice in model.ast.choices -%}
-                NonTerminalKind::{{ choice.name }} => {
+                NonterminalKind::{{ choice.name }} => {
                     selector.{{ choice.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -111,22 +111,22 @@ pub fn select_choice(
 {% if not rendering_in_stubs %}
     {% for choice in model.ast.choices %}
         impl Selector {
-            fn {{ choice.name | snake_case }}(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+            fn {{ choice.name | snake_case }}(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
                 self.select(|node| {
-                    {%- set non_terminals_len = choice.non_terminals | length -%}
+                    {%- set nonterminals_len = choice.nonterminals | length -%}
                     {%- set terminals_len = choice.terminals | length -%}
 
-                    {%- if non_terminals_len == 1 -%}
-                        node.is_nonterminal_with_kind(NonTerminalKind::{{ choice.non_terminals[0] }})
-                    {%- elif non_terminals_len > 1 -%}
+                    {%- if nonterminals_len == 1 -%}
+                        node.is_nonterminal_with_kind(NonterminalKind::{{ choice.nonterminals[0] }})
+                    {%- elif nonterminals_len > 1 -%}
                         node.is_nonterminal_with_kinds(&[
-                            {%- for non_terminal in choice.non_terminals -%}
-                                NonTerminalKind::{{ non_terminal }},
+                            {%- for nonterminal in choice.nonterminals -%}
+                                NonterminalKind::{{ nonterminal }},
                             {%- endfor -%}
                         ])
                     {%- endif -%}
 
-                    {%- if non_terminals_len > 0 and terminals_len > 0 -%}
+                    {%- if nonterminals_len > 0 and terminals_len > 0 -%}
                         ||
                     {%- endif -%}
 
@@ -155,8 +155,8 @@ pub fn select_choice(
     catch_unwind,
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -164,7 +164,7 @@ pub fn select_repeated(
 
         let result = match node.kind() {
             {%- for repeated in model.ast.repeated -%}
-                NonTerminalKind::{{ repeated.name }} => {
+                NonterminalKind::{{ repeated.name }} => {
                     selector.{{ repeated.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -181,14 +181,14 @@ pub fn select_repeated(
 {% if not rendering_in_stubs %}
     {% for repeated in model.ast.repeated %}
         impl Selector {
-            fn {{ repeated.name | snake_case }}(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+            fn {{ repeated.name | snake_case }}(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
                 let mut items = vec![];
 
                 while let Some(item) = self.try_select(|node| {
                     {%- if repeated.is_terminal -%}
                         node.is_terminal_with_kind(TerminalKind::{{ repeated.reference }})
                     {%- else -%}
-                        node.is_nonterminal_with_kind(NonTerminalKind::{{ repeated.reference }})
+                        node.is_nonterminal_with_kind(NonterminalKind::{{ repeated.reference }})
                     {%- endif -%}
                 })? {
                     items.push(item);
@@ -210,8 +210,8 @@ pub fn select_repeated(
     catch_unwind,
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
     {%- if rendering_in_stubs -%}
         unreachable!("Invoking AST selectors in stubs: {node:#?}")
     {%- else -%}
@@ -219,7 +219,7 @@ pub fn select_separated(
 
         let result = match node.kind() {
             {%- for separated in model.ast.separated -%}
-                NonTerminalKind::{{ separated.name }} => {
+                NonterminalKind::{{ separated.name }} => {
                     selector.{{ separated.name | snake_case }}()?
                 },
             {%- endfor -%}
@@ -236,7 +236,7 @@ pub fn select_separated(
 {% if not rendering_in_stubs %}
     {% for separated in model.ast.separated %}
         impl Selector {
-            fn {{ separated.name | snake_case }}(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+            fn {{ separated.name | snake_case }}(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
                 let mut separated = vec![];
                 let mut separators = vec![];
 
@@ -244,7 +244,7 @@ pub fn select_separated(
                     {%- if separated.is_terminal -%}
                         node.is_terminal_with_kind(TerminalKind::{{ separated.reference }})
                     {%- else -%}
-                        node.is_nonterminal_with_kind(NonTerminalKind::{{ separated.reference }})
+                        node.is_nonterminal_with_kind(NonterminalKind::{{ separated.reference }})
                     {%- endif -%}
                 })? {
                     separated.push(first);
@@ -256,7 +256,7 @@ pub fn select_separated(
                             {%- if separated.is_terminal -%}
                                 node.is_terminal_with_kind(TerminalKind::{{ separated.reference }})
                             {%- else -%}
-                                node.is_nonterminal_with_kind(NonTerminalKind::{{ separated.reference }})
+                                node.is_nonterminal_with_kind(NonterminalKind::{{ separated.reference }})
                             {%- endif -%}
                         })?);
                     }
@@ -273,26 +273,26 @@ pub fn select_separated(
 //
 
 struct Selector {
-    node: Rc<RustNonTerminalNode>,
+    node: Rc<RustNonterminalNode>,
     index: usize,
 }
 
 impl Selector {
-    fn new(node: &NonTerminalNode) -> Self {
+    fn new(node: &NonterminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
         }
     }
 
-    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Either<NonterminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
         }
     }
 
-    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
+    fn try_select(&mut self, filter: impl FnOnce(&RustNode) -> bool) -> Result<Option<Either<NonterminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -333,8 +333,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
-    UnexpectedParent(NonTerminalKind),
+    #[error("Unexpected parent node with NonterminalKind '{0}'.")]
+    UnexpectedParent(NonterminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]

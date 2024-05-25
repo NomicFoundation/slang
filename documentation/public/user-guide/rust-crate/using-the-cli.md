@@ -28,17 +28,17 @@ Options:
 Here is an example of the JSON output it can print:
 
 ```json
-// A NonTerminal node
-"NonTerminal": {
-  // Name of the non-terminal kind
+// A Nonterminal node
+"Nonterminal": {
+  // Name of the nonterminal kind
   "kind": "SourceUnit",
-  // Length of the non-terminal in Unicode code points, depending on the encoding used
+  // Length of the nonterminal in Unicode code points, depending on the encoding used
   "text_len": {
     "utf8": 24,
     "utf16": 24,
     "char": 24 // de facto utf32
   },
-  "children": [/* NonTerminal or Terminal nodes */]
+  "children": [/* Nonterminal or Terminal nodes */]
 }
 // A Terminal node
 "Terminal": {

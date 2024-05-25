@@ -11,7 +11,7 @@ Let's start with this simple source file, that contains a single contract:
 ```
 
 We begin by creating a `Language` object with a specified version. This is an entry point for our parser API.
-Then we can use it to parse the source file, specifying the top-level non-terminal to parse:
+Then we can use it to parse the source file, specifying the top-level nonterminal to parse:
 
 ```{ .ts }
 --8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.ts:imports"

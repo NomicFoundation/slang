@@ -35,7 +35,7 @@ pub struct Choice {
     pub name: model::Identifier,
 
     pub terminals: Vec<model::Identifier>,
-    pub non_terminals: Vec<model::Identifier>,
+    pub nonterminals: Vec<model::Identifier>,
 }
 
 #[derive(Serialize)]
@@ -63,8 +63,8 @@ impl AstModel {
         // First pass: collect all terminals:
         model.collect_terminals(language);
 
-        // Second pass: use them to build non-terminals:
-        model.collect_non_terminals(language);
+        // Second pass: use them to build nonterminals:
+        model.collect_nonterminals(language);
 
         model
     }
@@ -77,7 +77,7 @@ impl AstModel {
                 | model::Item::Repeated { .. }
                 | model::Item::Separated { .. }
                 | model::Item::Precedence { .. } => {
-                    // These items are non-terminals.
+                    // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
                     self.terminals.insert(item.name.clone());
@@ -95,7 +95,7 @@ impl AstModel {
         }
     }
 
-    fn collect_non_terminals(&mut self, language: &model::Language) {
+    fn collect_nonterminals(&mut self, language: &model::Language) {
         for item in language.items() {
             match item {
                 model::Item::Struct { item } => {
@@ -139,7 +139,7 @@ impl AstModel {
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let name = item.name.clone();
 
-        let (terminals, non_terminals) = item
+        let (terminals, nonterminals) = item
             .variants
             .iter()
             .map(|variant| variant.reference.clone())
@@ -148,7 +148,7 @@ impl AstModel {
         self.choices.push(Choice {
             name,
             terminals,
-            non_terminals,
+            nonterminals,
         });
     }
 
@@ -191,14 +191,14 @@ impl AstModel {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (terminals, non_terminals) = precedence_expressions
+        let (terminals, nonterminals) = precedence_expressions
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
         self.choices.push(Choice {
             name,
             terminals,
-            non_terminals,
+            nonterminals,
         });
     }
 

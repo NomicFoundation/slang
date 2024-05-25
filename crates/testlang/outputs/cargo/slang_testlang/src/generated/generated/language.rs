@@ -16,7 +16,7 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
 use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
@@ -85,13 +85,13 @@ impl Language {
         };
         match &r#match.nodes[..] {
             [cst::Edge {
-                node: cst::Node::NonTerminal(node),
+                node: cst::Node::Nonterminal(node),
                 ..
-            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
                 [inner @ cst::Edge {
-                    node: cst::Node::NonTerminal(node),
+                    node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonTerminalKind::AdditionExpression => {
+                }] if node.kind == NonterminalKind::AdditionExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -104,7 +104,7 @@ impl Language {
     fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         let parse_left_addition_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                NonTerminalKind::AdditionExpression,
+                NonterminalKind::AdditionExpression,
                 1u8,
                 1u8 + 1,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -116,7 +116,7 @@ impl Language {
         };
         let parse_prefix_negation_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                NonTerminalKind::NegationExpression,
+                NonterminalKind::NegationExpression,
                 3u8,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -127,7 +127,7 @@ impl Language {
         };
         let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                NonTerminalKind::MemberAccessExpression,
+                NonterminalKind::MemberAccessExpression,
                 5u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem_labeled(
@@ -207,10 +207,10 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            NonTerminalKind::Expression,
+            NonterminalKind::Expression,
             linear_expression_parser(input),
         )
-        .with_kind(NonTerminalKind::Expression)
+        .with_kind(NonterminalKind::Expression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -224,7 +224,7 @@ impl Language {
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
-        .with_kind(NonTerminalKind::Literal)
+        .with_kind(NonterminalKind::Literal)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -235,13 +235,13 @@ impl Language {
         };
         match &r#match.nodes[..] {
             [cst::Edge {
-                node: cst::Node::NonTerminal(node),
+                node: cst::Node::Nonterminal(node),
                 ..
-            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
                 [inner @ cst::Edge {
-                    node: cst::Node::NonTerminal(node),
+                    node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonTerminalKind::MemberAccessExpression => {
+                }] if node.kind == NonterminalKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -258,13 +258,13 @@ impl Language {
         };
         match &r#match.nodes[..] {
             [cst::Edge {
-                node: cst::Node::NonTerminal(node),
+                node: cst::Node::Nonterminal(node),
                 ..
-            }] if node.kind == NonTerminalKind::Expression => match &node.children[..] {
+            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
                 [inner @ cst::Edge {
-                    node: cst::Node::NonTerminal(node),
+                    node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonTerminalKind::NegationExpression => {
+                }] if node.kind == NonterminalKind::NegationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -292,14 +292,14 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(NonTerminalKind::SeparatedIdentifiers)
+        .with_kind(NonterminalKind::SeparatedIdentifiers)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.source_unit_members(input)
             .with_label(EdgeLabel::Members)
-            .with_kind(NonTerminalKind::SourceUnit)
+            .with_kind(NonterminalKind::SourceUnit)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -316,7 +316,7 @@ impl Language {
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
-        .with_kind(NonTerminalKind::SourceUnitMember)
+        .with_kind(NonterminalKind::SourceUnitMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -324,7 +324,7 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             self.source_unit_member(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(NonTerminalKind::SourceUnitMembers)
+        .with_kind(NonterminalKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -367,7 +367,7 @@ impl Language {
             )?;
             seq.finish()
         })
-        .with_kind(NonTerminalKind::Tree)
+        .with_kind(NonterminalKind::Tree)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -401,7 +401,7 @@ impl Language {
             )?;
             seq.finish()
         })
-        .with_kind(NonTerminalKind::TreeNode)
+        .with_kind(NonterminalKind::TreeNode)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -417,7 +417,7 @@ impl Language {
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
-        .with_kind(NonTerminalKind::TreeNodeChild)
+        .with_kind(NonterminalKind::TreeNodeChild)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -425,7 +425,7 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             self.tree_node_child(input).with_label(EdgeLabel::Item)
         })
-        .with_kind(NonTerminalKind::TreeNodeChildren)
+        .with_kind(NonterminalKind::TreeNodeChildren)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -655,23 +655,23 @@ impl Language {
         )
     }
 
-    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
-            NonTerminalKind::AdditionExpression => Self::addition_expression.parse(self, input),
-            NonTerminalKind::Expression => Self::expression.parse(self, input),
-            NonTerminalKind::Literal => Self::literal.parse(self, input),
-            NonTerminalKind::MemberAccessExpression => {
+            NonterminalKind::AdditionExpression => Self::addition_expression.parse(self, input),
+            NonterminalKind::Expression => Self::expression.parse(self, input),
+            NonterminalKind::Literal => Self::literal.parse(self, input),
+            NonterminalKind::MemberAccessExpression => {
                 Self::member_access_expression.parse(self, input)
             }
-            NonTerminalKind::NegationExpression => Self::negation_expression.parse(self, input),
-            NonTerminalKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
-            NonTerminalKind::SourceUnit => Self::source_unit.parse(self, input),
-            NonTerminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
-            NonTerminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            NonTerminalKind::Tree => Self::tree.parse(self, input),
-            NonTerminalKind::TreeNode => Self::tree_node.parse(self, input),
-            NonTerminalKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
-            NonTerminalKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
+            NonterminalKind::NegationExpression => Self::negation_expression.parse(self, input),
+            NonterminalKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
+            NonterminalKind::SourceUnit => Self::source_unit.parse(self, input),
+            NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
+            NonterminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            NonterminalKind::Tree => Self::tree.parse(self, input),
+            NonterminalKind::TreeNode => Self::tree_node.parse(self, input),
+            NonterminalKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
+            NonterminalKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
         }
     }
 }
@@ -852,7 +852,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
+        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

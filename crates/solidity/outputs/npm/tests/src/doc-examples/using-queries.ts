@@ -4,15 +4,15 @@ import assert from "node:assert";
 import fs from "node:fs/promises";
 
 import { Language } from "@nomicfoundation/slang/language";
-import { NonTerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonterminalKind } from "@nomicfoundation/slang/kinds";
 import { Query, QueryMatchIterator } from "@nomicfoundation/slang/query";
-import { NonTerminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(filePath: string) {
   const inputPath = path.join(repoPath("documentation/public/user-guide/inputs"), filePath);
   const source = await fs.readFile(inputPath, "utf8").then((source) => source.trim());
   const language = new Language("0.8.0");
-  return language.parse(NonTerminalKind.SourceUnit, source);
+  return language.parse(NonterminalKind.SourceUnit, source);
 }
 
 test("using queries", async () => {
@@ -43,7 +43,7 @@ test("using queries", async () => {
       const bindings = result.bindings;
       const cursors = bindings["contract"];
 
-      const cursor = cursors?.[0]?.node() as NonTerminalNode;
+      const cursor = cursors?.[0]?.node() as NonterminalNode;
 
       found.push(cursor.unparse().trim());
     }
@@ -99,7 +99,7 @@ test("using queries", async () => {
 
       const cursor = cursors?.[0];
 
-      names.push((cursor?.node() as NonTerminalNode).unparse());
+      names.push((cursor?.node() as NonterminalNode).unparse());
     }
 
     assert.deepStrictEqual(names, ["uint", " uint16", " uint64", " uint256"]);
@@ -161,7 +161,7 @@ test("using queries", async () => {
 
       const cursor = cursors?.[0];
 
-      found.push([cursor?.textOffset.utf8, (cursor?.node() as NonTerminalNode).unparse()]);
+      found.push([cursor?.textOffset.utf8, (cursor?.node() as NonterminalNode).unparse()]);
     }
 
     assert.deepStrictEqual(found, [[375, "tx.origin"]]);
