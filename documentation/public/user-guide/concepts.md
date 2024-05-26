@@ -66,7 +66,7 @@ longest/shortest/first/last match. There is no concept of a 'greedy' operator
 for example.
 
 Query execution is based on `Cursor`s, and the resulting matches and unification
-bindings are returned as `Cursor`s as well. This allows you to mix and match
+captures are returned as `Cursor`s as well. This allows you to mix and match
 manual traversal, cursors, and queries.
 
 Multiple queries can be executed in a batch, and efficiently traverse the tree

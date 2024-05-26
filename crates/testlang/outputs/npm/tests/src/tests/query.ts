@@ -11,23 +11,23 @@ test("simple query", () => {
   const query_source = `[TreeNodeChild ... @id [DelimitedIdentifier]]`;
   const query = Query.parse(query_source);
 
-  const query_result = parse_output.createTreeCursor().query([query]);
+  const matches = parse_output.createTreeCursor().query([query]);
 
-  const expectNextResult = (name: string) => {
-    let result = query_result.next();
-    expect(result).not.toBeNull();
-    expect(Object.keys(result!.bindings)).toStrictEqual(["id"]);
-    let cursors = result!.bindings["id"]!;
+  const expectNextMatch = (name: string) => {
+    let match = matches.next();
+    expect(match).not.toBeNull();
+    expect(Object.keys(match!.captures)).toStrictEqual(["id"]);
+    let cursors = match!.captures["id"]!;
     expect(cursors.length).toEqual(1);
     expectTerminal(cursors[0]!.node(), TerminalKind.DelimitedIdentifier, name);
   };
 
-  expectNextResult("A");
-  expectNextResult("B");
-  expectNextResult("C");
-  expectNextResult("D");
+  expectNextMatch("A");
+  expectNextMatch("B");
+  expectNextMatch("C");
+  expectNextMatch("D");
 
-  expect(query_result.next()).toBeNull();
+  expect(matches.next()).toBeNull();
 });
 
 test("parser error", () => {

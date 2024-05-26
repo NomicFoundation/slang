@@ -144,7 +144,7 @@ export namespace parse_output {
 export namespace query {
   export interface QueryMatch {
     queryNumber: number;
-    bindings: { [key: string]: cursor.Cursor[] };
+    captures: { [key: string]: cursor.Cursor[] };
   }
   export class Query {
     static parse(text: string): Query;

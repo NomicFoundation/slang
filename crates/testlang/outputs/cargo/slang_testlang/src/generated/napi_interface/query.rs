@@ -41,16 +41,16 @@ pub struct QueryMatchIterator(RustQueryMatchIterator);
 pub struct QueryMatch {
     pub query_number: u32,
     #[napi(ts_type = "{ [key: string]: cursor.Cursor[] }")]
-    pub bindings: HashMap<String, Vec<ClassInstance<Cursor>>>,
+    pub captures: HashMap<String, Vec<ClassInstance<Cursor>>>,
 }
 
 impl QueryMatch {
-    fn new(env: Env, result: RustQueryMatch) -> napi::Result<Self> {
+    fn new(env: Env, r#match: RustQueryMatch) -> napi::Result<Self> {
         #[allow(clippy::cast_possible_truncation)]
-        let query_number = result.query_number as u32;
-        // transfer all of the bindings eagerly on the assumption
+        let query_number = r#match.query_number as u32;
+        // transfer all of the captures eagerly on the assumption
         // that they've all been explicitly requested.
-        let bindings = result
+        let captures = r#match
             .captures
             .into_iter()
             .map(|(key, values)| {
@@ -65,7 +65,7 @@ impl QueryMatch {
 
         Ok(Self {
             query_number,
-            bindings,
+            captures,
         })
     }
 }
@@ -81,7 +81,7 @@ impl QueryMatchIterator {
     #[napi(catch_unwind)]
     pub fn next(&mut self, env: Env) -> napi::Result<Option<QueryMatch>> {
         match self.0.next() {
-            Some(result) => Ok(Some(QueryMatch::new(env, result)?)),
+            Some(r#match) => Ok(Some(QueryMatch::new(env, r#match)?)),
             None => Ok(None),
         }
     }

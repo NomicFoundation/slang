@@ -24,9 +24,9 @@ test("using queries", async () => {
     const cursor = parse_output.createTreeCursor();
 
     const query = Query.parse("[ContractDefinition]");
-    const results: QueryMatchIterator = cursor.query([query]);
+    const matches: QueryMatchIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
-    results; // Silence the unused warning
+    matches; // Silence the unused warning
   }
 
   {
@@ -36,12 +36,12 @@ test("using queries", async () => {
     const found = [];
 
     const query = Query.parse("@contract [ContractDefinition]");
-    const results = cursor.query([query]);
+    const matches = cursor.query([query]);
 
-    let result = null;
-    while ((result = results.next())) {
-      const bindings = result.bindings;
-      const cursors = bindings["contract"];
+    let match = null;
+    while ((match = matches.next())) {
+      const captures = match.captures;
+      const cursors = captures["contract"];
 
       const cursor = cursors?.[0]?.node() as NonterminalNode;
 
@@ -60,13 +60,13 @@ test("using queries", async () => {
 
     const struct_def = Query.parse("[StructDefinition ... @name [Identifier] ...]");
     const enum_def = Query.parse("[EnumDefinition ... @name [Identifier] ...]");
-    const results = cursor.query([struct_def, enum_def]);
+    const matches = cursor.query([struct_def, enum_def]);
 
-    let result = null;
-    while ((result = results.next())) {
-      const index = result.queryNumber;
-      const bindings = result.bindings;
-      const cursors = bindings["name"];
+    let match = null;
+    while ((match = matches.next())) {
+      const index = match.queryNumber;
+      const captures = match.captures;
+      const cursors = captures["name"];
 
       const cursor = cursors?.[0];
 
@@ -90,12 +90,12 @@ test("using queries", async () => {
     const names = [];
 
     const query = Query.parse("[TypedTupleMember ... @type type_name:[_] ...]");
-    const results = cursor.query([query]);
+    const matches = cursor.query([query]);
 
-    let result = null;
-    while ((result = results.next())) {
-      const bindings = result.bindings;
-      const cursors = bindings["type"];
+    let match = null;
+    while ((match = matches.next())) {
+      const captures = match.captures;
+      const cursors = captures["type"];
 
       const cursor = cursors?.[0];
 
@@ -115,12 +115,12 @@ test("using queries", async () => {
     const names = [];
 
     const query = Query.parse(`[ElementaryType @uint_keyword variant:["uint"]]`);
-    const results = cursor.query([query]);
+    const matches = cursor.query([query]);
 
-    let result = null;
-    while ((result = results.next())) {
-      const bindings = result.bindings;
-      const cursors = bindings["uint_keyword"];
+    let match = null;
+    while ((match = matches.next())) {
+      const captures = match.captures;
+      const cursors = captures["uint_keyword"];
 
       const cursor = cursors?.[0];
 
@@ -150,14 +150,14 @@ test("using queries", async () => {
         ...
       ]
     ]`);
-    const results = cursor.query([query]);
+    const matches = cursor.query([query]);
 
     const found = [];
 
-    let result = null;
-    while ((result = results.next())) {
-      const bindings = result.bindings;
-      const cursors = bindings["txorigin"];
+    let match = null;
+    while ((match = matches.next())) {
+      const captures = match.captures;
+      const cursors = captures["txorigin"];
 
       const cursor = cursors?.[0];
 

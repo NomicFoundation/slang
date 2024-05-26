@@ -24,10 +24,10 @@ fn nonterminal<const N: usize>(
     }
 }
 
-fn binding_cursors_to_strings(
-    bindings: BTreeMap<String, Vec<Cursor>>,
+fn capture_cursors_to_strings(
+    captures: BTreeMap<String, Vec<Cursor>>,
 ) -> BTreeMap<String, Vec<String>> {
-    bindings
+    captures
         .into_iter()
         .map(|(key, values)| {
             (
@@ -72,35 +72,32 @@ macro_rules! cst_tree {
 
 }
 
-macro_rules! query_results {
+macro_rules! query_matches {
     ( $( { $( $key:ident : [ $($value:literal),* ] ),* } )* ) => {
         vec![ $( {
             #[allow(unused_mut)]
-            let mut bindings = BTreeMap::new();
-            $( bindings.insert( stringify!($key).to_string(), vec![ $( $value.to_string() ),* ]); )*
-            bindings
+            let mut captures = BTreeMap::new();
+            $( captures.insert( stringify!($key).to_string(), vec![ $( $value.to_string() ),* ]); )*
+            captures
         } ),* ]
     };
 
 }
 
-fn run_query_test(tree: &Edge, query: &str, results: Vec<BTreeMap<String, Vec<String>>>) {
+fn run_query_test(tree: &Edge, query: &str, matches: Vec<BTreeMap<String, Vec<String>>>) {
     let cursor = tree.cursor_with_offset(TextIndex::ZERO);
     let query = vec![Query::parse(query).unwrap()];
-    let mut results = results.into_iter();
-    for QueryMatch {
-        captures: bindings, ..
-    } in cursor.query(query)
-    {
-        let bindings = binding_cursors_to_strings(bindings);
-        if let Some(expected_bindings) = results.next() {
-            assert_eq!(bindings, expected_bindings);
+    let mut matches = matches.into_iter();
+    for QueryMatch { captures, .. } in cursor.query(query) {
+        let captures = capture_cursors_to_strings(captures);
+        if let Some(expected_captures) = matches.next() {
+            assert_eq!(captures, expected_captures);
         } else {
-            panic!("Unexpected query result: {bindings:?}");
+            panic!("Unexpected query match: {captures:?}");
         }
     }
-    if let Some(expected_bindings) = results.next() {
-        panic!("Missing query result: {expected_bindings:?}");
+    if let Some(expected_captures) = matches.next() {
+        panic!("Missing query match: {expected_captures:?}");
     }
 }
 
@@ -123,7 +120,7 @@ fn test_spread() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... @x1 [DelimitedIdentifier] ... @x2 [DelimitedIdentifier] ...]",
-        query_results! {
+        query_matches! {
             {x1: ["A"], x2: ["B"]}
             {x1: ["A"], x2: ["C"]}
             {x1: ["B"], x2: ["C"]}
@@ -136,7 +133,7 @@ fn test_adjacent() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... @y1 [DelimitedIdentifier] @y2 [DelimitedIdentifier] ...]",
-        query_results! {
+        query_matches! {
             {y1: ["A"], y2: ["B"]}
             {y1: ["B"], y2: ["C"]}
         },
@@ -148,7 +145,7 @@ fn test_child() {
     run_query_test(
         &common_test_tree(),
         "[TreeNodeChild ... @x [DelimitedIdentifier] ...]",
-        query_results! {
+        query_matches! {
             {x: ["D"]}
             {x: ["E"]}
         },
@@ -160,7 +157,7 @@ fn test_parent_and_child() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... @p node:[_] ...  [TreeNodeChild ... @c [DelimitedIdentifier] ...]]",
-        query_results! {
+        query_matches! {
             {c: ["D"], p: ["A"]}
             {c: ["E"], p: ["A"]}
         },
@@ -172,7 +169,7 @@ fn test_named() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... @x node:[DelimitedIdentifier] ...]",
-        query_results! {
+        query_matches! {
             {x: ["A"]}
         },
     );
@@ -183,7 +180,7 @@ fn test_multilevel_adjacent() {
     run_query_test(
         &common_test_tree(),
         "[_ ... @x [DelimitedIdentifier] @y [DelimitedIdentifier] ...]",
-        query_results! {
+        query_matches! {
             {x: ["A"], y: ["B"]}
             {x: ["B"], y: ["C"]}
             {x: ["D"], y: ["E"]}
@@ -196,7 +193,7 @@ fn test_multilevel_named() {
     run_query_test(
         &common_test_tree(),
         "[_ ... @x node:[_] ...]",
-        query_results! {
+        query_matches! {
             {x: ["A"]}
             {x: ["E"]}
         },
@@ -208,7 +205,7 @@ fn test_text_value() {
     run_query_test(
         &common_test_tree(),
         r#"[TreeNode ... @z1 [DelimitedIdentifier] ["B"] @z2 [DelimitedIdentifier] ...]"#,
-        query_results! {
+        query_matches! {
             {z1: ["A"], z2: ["C"]}
         },
     );
@@ -219,7 +216,7 @@ fn test_one_or_more() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... (@x [DelimitedIdentifier])+ [_] ]",
-        query_results! {
+        query_matches! {
             {x: ["A", "B", "C"]}
             {x: ["B", "C"]}
             {x: ["C"]}
@@ -232,7 +229,7 @@ fn test_zero_or_more() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... (@y [DelimitedIdentifier])* [_] ]",
-        query_results! {
+        query_matches! {
             {y: ["A", "B", "C"]}
             {y: ["B", "C"]}
             {y: ["C"]}
@@ -246,7 +243,7 @@ fn test_optional() {
     run_query_test(
         &common_test_tree(),
         "[TreeNode ... (@z [DelimitedIdentifier])? [_] ]",
-        query_results! {
+        query_matches! {
             {z: ["C"]}
             {}
         },
@@ -258,7 +255,7 @@ fn test_nested() {
     run_query_test(
         &common_test_tree(),
         "@root [TreeNode ... @z [DelimitedIdentifier] [_] ]",
-        query_results! {
+        query_matches! {
             {root: ["ABCDE"], z: ["C"]}
         },
     );

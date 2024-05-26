@@ -225,9 +225,9 @@ fn quantification() {
 		",
     );
 
-    let results: Vec<_> = iter.collect();
+    let matches: Vec<_> = iter.collect();
 
-    results[3].captures.get("arg").unwrap();
+    matches[3].captures.get("arg").unwrap();
 }
 
 #[test]
@@ -248,12 +248,12 @@ fn alternations() {
     )
     .unwrap();
 
-    let results: Vec<_> =
+    let matches: Vec<_> =
         assert_matches(&query, NonterminalKind::FunctionCallExpression, "call(1)").collect();
-    results.first().unwrap().captures.get("function").unwrap();
-    let results: Vec<_> =
+    matches.first().unwrap().captures.get("function").unwrap();
+    let matches: Vec<_> =
         assert_matches(&query, NonterminalKind::FunctionCallExpression, "a.call(1)").collect();
-    results.first().unwrap().captures.get("method").unwrap();
+    matches.first().unwrap().captures.get("method").unwrap();
 
     let query = Query::parse(
         &r#"
@@ -277,16 +277,16 @@ fn alternations() {
 
     let iter = assert_matches(&query, NonterminalKind::IfStatement, "if (true) { break; }");
 
-    let results: Vec<_> = iter.collect();
-    assert_eq!(results.len(), 2);
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 2);
     assert_eq!(
-        results[0].captures.get("keyword").unwrap()[0]
+        matches[0].captures.get("keyword").unwrap()[0]
             .node()
             .unparse(),
         "if"
     );
     assert_eq!(
-        results[1].captures.get("keyword").unwrap()[0]
+        matches[1].captures.get("keyword").unwrap()[0]
             .node()
             .unparse(),
         "break"
