@@ -322,7 +322,7 @@ pub enum EdgeLabel {
     ImportKeyword,
     Index,
     IndexedKeyword,
-    Inheritence,
+    Inheritance,
     Initialization,
     InterfaceKeyword,
     IsKeyword,

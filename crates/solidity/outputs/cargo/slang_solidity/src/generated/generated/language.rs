@@ -945,7 +945,7 @@ impl Language {
                 ),
             )?;
             seq.elem_labeled(
-                EdgeLabel::Inheritence,
+                EdgeLabel::Inheritance,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
@@ -3131,7 +3131,7 @@ impl Language {
                 ),
             )?;
             seq.elem_labeled(
-                EdgeLabel::Inheritence,
+                EdgeLabel::Inheritance,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {

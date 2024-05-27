@@ -10,7 +10,7 @@ Tree:
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
-      - (inheritence꞉ InheritanceSpecifier): # " is Foo, Bar(1, 2), Baz" (15..38)
+      - (inheritance꞉ InheritanceSpecifier): # " is Foo, Bar(1, 2), Baz" (15..38)
           - (leading_trivia꞉ Whitespace): " " # (15..16)
           - (is_keyword꞉ IsKeyword): "is" # (16..18)
           - (types꞉ InheritanceTypes): # " Foo, Bar(1, 2), Baz" (18..38)

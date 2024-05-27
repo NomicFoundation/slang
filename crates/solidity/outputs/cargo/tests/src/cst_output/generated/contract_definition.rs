@@ -35,8 +35,8 @@ fn header_comment() -> Result<()> {
 }
 
 #[test]
-fn inheritence_specifier() -> Result<()> {
-    run("ContractDefinition", "inheritence_specifier")
+fn inheritance_specifier() -> Result<()> {
+    run("ContractDefinition", "inheritance_specifier")
 }
 
 #[test]
