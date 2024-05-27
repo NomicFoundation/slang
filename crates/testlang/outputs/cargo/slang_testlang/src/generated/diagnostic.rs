@@ -20,7 +20,7 @@ pub trait Diagnostic {
     /// Note that this is not tracking columns, so it is not compatible with LSP's
     /// [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
     /// at the moment.
-    fn range(&self) -> TextRange;
+    fn text_range(&self) -> TextRange;
     /// The severity of this diagnostic.
     fn severity(&self) -> Severity;
     /// The primary message associated with this diagnostic.
@@ -47,8 +47,8 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
     }
 
     let range = {
-        let start = source[..error.range().start.utf8].chars().count();
-        let end = source[..error.range().end.utf8].chars().count();
+        let start = source[..error.text_range().start.utf8].chars().count();
+        let end = source[..error.text_range().end.utf8].chars().count();
         start..end
     };
 

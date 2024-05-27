@@ -64,7 +64,7 @@ impl fmt::Display for ParseError {
 }
 
 impl Diagnostic for ParseError {
-    fn range(&self) -> TextRange {
+    fn text_range(&self) -> TextRange {
         self.text_range.clone()
     }
 

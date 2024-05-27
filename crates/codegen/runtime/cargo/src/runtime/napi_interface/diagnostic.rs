@@ -43,7 +43,7 @@ impl Diagnostic {
     /// at the moment.
     #[napi(ts_return_type = "text_index.TextRange")]
     pub fn text_range(&self) -> TextRange {
-        self.0.range().into()
+        self.0.text_range().into()
     }
 
     /// The primary message associated with this diagnostic.
