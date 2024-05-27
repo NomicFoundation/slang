@@ -4,10 +4,9 @@
 #![allow(clippy::needless_pass_by_value)]
 
 use napi_derive::napi;
-use text_index::TextRange;
 
-use crate::napi_interface::diagnostic::Diagnostic;
-use crate::napi_interface::{text_index, RustParseError};
+use crate::expose_diagnostic_trait_interface;
+use crate::napi_interface::RustParseError;
 
 #[napi(namespace = "parse_error")]
 #[derive(PartialEq, Clone)]
@@ -19,22 +18,4 @@ impl From<RustParseError> for ParseError {
     }
 }
 
-#[napi(namespace = "parse_error")]
-impl ParseError {
-    #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
-    pub fn text_range(&self) -> TextRange {
-        self.0.text_range().clone().into()
-    }
-
-    #[napi(catch_unwind)]
-    pub fn message(&self) -> String {
-        self.0.message()
-    }
-
-    #[napi(ts_return_type = "diagnostic.Diagnostic", catch_unwind)]
-    pub fn to_diagnostic(&self) -> Diagnostic {
-        // TODO: Figure out if we can auto-gen Diagnostics methods
-        // in TS for this implementor rather than having to clone here
-        Diagnostic(Box::new(self.0.clone()))
-    }
-}
+expose_diagnostic_trait_interface!("parse_error", ParseError);

@@ -48,3 +48,31 @@ impl Diagnostic {
         self.0.message()
     }
 }
+
+/// Exposes the [`Diagnostic`](crate::diagnostic::Diagnostic) methods implemented for a given type
+/// as regular N-API functions, satisfying the custom `DiagnosticInterface` interface on the N-API side.
+// NOTE(#987): This is required because we can't directly expose the trait using `#[napi]` or expose
+// an interface that has only methods defined.
+// To not require explicit conversions, we define the interface ourselves and expose the relevant methods to satisfy it.
+#[macro_export]
+macro_rules! expose_diagnostic_trait_interface {
+    ($namespace:literal, $diagnostic:ty) => {
+        #[napi(namespace = $namespace)]
+        impl $diagnostic {
+            #[napi(ts_return_type = "diagnostic.Severity", catch_unwind)]
+            pub fn severity(&self) -> $crate::napi_interface::diagnostic::Severity {
+                $crate::diagnostic::Diagnostic::severity(&self.0).into()
+            }
+
+            #[napi(ts_return_type = "text_index.TextRange", catch_unwind)]
+            pub fn text_range(&self) -> $crate::napi_interface::text_index::TextRange {
+                $crate::diagnostic::Diagnostic::text_range(&self.0).into()
+            }
+
+            #[napi]
+            pub fn message(&self) -> String {
+                $crate::diagnostic::Diagnostic::message(&self.0)
+            }
+        }
+    };
+}
