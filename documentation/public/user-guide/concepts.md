@@ -8,14 +8,14 @@ This is a departure from the classic approach of "black-box" compilers, which ar
 To use Slang, you start by initializing a `Language` object with a specific version of the language.
 The earliest Solidity version we support is `0.4.11`, and we plan on supporting all future versions as they are released.
 
-From a `Language` object, you can analyze any source text according to the rules of that specific version.
+From a `Language` object, you can analyze any source text according to the nonterminals of that specific version.
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
 You can use the `Language::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
 
 The `Language::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
-Each `parse()` operation accepts the input source code, and a `NonTerminalKind` variant.
-This allows callers to parse entire source files (`NonTerminalKind::SourceUnit`), individual contracts (`NonTerminalKind::ContractDefinition`),
-methods (`NonTerminalKind::FunctionDefinition`), or any other syntax nodes.
+Each `parse()` operation accepts the input source code, and a `NonterminalKind` variant.
+This allows callers to parse entire source files (`NonterminalKind::SourceUnit`), individual contracts (`NonterminalKind::ContractDefinition`),
+methods (`NonterminalKind::FunctionDefinition`), or any other syntax nodes.
 
 The resulting `ParseOutput` object will contain syntax errors (if any), and the syntax tree corresponding to the input source code.
 
@@ -26,13 +26,13 @@ which is a tree structure of the program that also includes things like punctuat
 
 This is done by using the (standard) approach of lexical analysis followed by syntax analysis.
 The source text as a sequence of characters is recognized into a sequence of
-tokens (lexical analysis), which then in turn is _parsed_ into the CST.
+terminals (lexical analysis), which then in turn is _parsed_ into the CST.
 
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
--   `NonTerminalNode` represent sub-trees, containing a vector of other `Node` children.
--   `TerminalNode` are leaves and represent a lexical token (i.e. an identifier, keyword, punctuation) in the source.
+-   `NonterminalNode` represent sub-trees, containing a vector of other `Node` children.
+-   `TerminalNode` are leaves and represent a terminal (i.e. an identifier, keyword, punctuation) in the source.
 
 ## CST Cursors
 
@@ -66,7 +66,7 @@ longest/shortest/first/last match. There is no concept of a 'greedy' operator
 for example.
 
 Query execution is based on `Cursor`s, and the resulting matches and unification
-bindings are returned as `Cursor`s as well. This allows you to mix and match
+captures are returned as `Cursor`s as well. This allows you to mix and match
 manual traversal, cursors, and queries.
 
 Multiple queries can be executed in a batch, and efficiently traverse the tree
@@ -77,7 +77,7 @@ looking for matches. This mode of operation can replace all visitor patterns.
 AST types are a set of abstractions that provide a typed view of the untyped CST nodes.
 You can convert any untyped CST node to its corresponding AST type using their constructors.
 
-There is a corresponding type for each `NonTerminalKind` in the language. AST types are immutable.
+There is a corresponding type for each `NonterminalKind` in the language. AST types are immutable.
 Additionally, their fields are constructed lazily as they are accessed for the first time.
 
 AST nodes maintain a reference to the CST node they were constructed from,

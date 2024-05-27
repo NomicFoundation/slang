@@ -29,10 +29,10 @@ impl<T: KindTypes + 'static> Cursor<T> {
 
     fn matches_node_selector(&self, node_selector: &NodeSelector<T>) -> bool {
         match self.node() {
-            Node::<T>::NonTerminal(nonterminal) => match node_selector {
+            Node::<T>::Nonterminal(nonterminal) => match node_selector {
                 NodeSelector::Anonymous => true,
                 NodeSelector::NodeKind { node_kind } => {
-                    NodeKind::NonTerminal(nonterminal.kind) == *node_kind
+                    NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { .. } => false,
                 NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
@@ -41,15 +41,15 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     node_kind,
                 } => {
                     Some(*edge_label) == self.label()
-                        && NodeKind::NonTerminal(nonterminal.kind) == *node_kind
+                        && NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::EdgeLabelAndNodeText { .. } => false,
             },
 
             Node::<T>::Terminal(terminal) => match node_selector {
                 NodeSelector::Anonymous => true,
-                NodeSelector::NodeKind { node_kind: kind } => {
-                    NodeKind::Terminal(terminal.kind) == *kind
+                NodeSelector::NodeKind { node_kind } => {
+                    NodeKind::Terminal(terminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { node_text } => terminal.text == *node_text,
                 NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
@@ -73,7 +73,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
     // This allows for queries to pre-flight against a cursor without allocating
     fn can_match(&self, cursor: &Cursor<T>) -> bool {
         match self {
-            Self::Binding(matcher) => matcher.child.can_match(cursor),
+            Self::Capture(matcher) => matcher.child.can_match(cursor),
             Self::NodeMatch(matcher) => cursor.matches_node_selector(&matcher.node_selector),
             Self::Alternatives(matcher) => matcher.children.iter().any(|c| c.can_match(cursor)),
             Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
@@ -85,7 +85,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
 
     fn create_matcher(&self, cursor: Cursor<T>) -> MatcherRef<T> {
         match self {
-            Self::Binding(matcher) => Box::new(CaptureMatcher::<T>::new(matcher.clone(), cursor)),
+            Self::Capture(matcher) => Box::new(CaptureMatcher::<T>::new(matcher.clone(), cursor)),
             Self::NodeMatch(matcher) => {
                 Box::new(NodeMatchMatcher::<T>::new(matcher.clone(), cursor))
             }
@@ -191,13 +191,13 @@ impl<T: KindTypes + 'static> Iterator for QueryMatchIterator<T> {
         while !self.cursor.is_completed() {
             if let Some(matcher) = self.matcher.as_mut() {
                 if matcher.next().is_some() {
-                    let mut bindings = BTreeMap::new();
-                    matcher.record_captures(&mut bindings);
+                    let mut captures = BTreeMap::new();
+                    matcher.record_captures(&mut captures);
                     return Some(QueryMatch {
                         queries: Rc::clone(&self.queries),
                         root_cursor: self.cursor.clone(),
                         query_number: self.query_number,
-                        captures: bindings,
+                        captures,
                     });
                 }
                 self.query_number += 1;
@@ -215,7 +215,7 @@ trait Matcher<T: KindTypes> {
     // Some(cursor) if cursor.is_complete -> matched, end of input
     // Some(cursor) if !cursor.is_complete -> matched, more input to go
     fn next(&mut self) -> Option<Cursor<T>>;
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>);
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>);
 }
 type MatcherRef<T> = Box<dyn Matcher<T>>;
 
@@ -241,12 +241,12 @@ impl<T: KindTypes> Matcher<T> for CaptureMatcher<T> {
         self.child.next()
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
-        bindings
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+        captures
             .entry(self.matcher.name.clone())
             .or_default()
             .push(self.cursor.clone());
-        self.child.record_captures(bindings);
+        self.child.record_captures(captures);
     }
 }
 
@@ -312,9 +312,9 @@ impl<T: KindTypes + 'static> Matcher<T> for NodeMatchMatcher<T> {
         None
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         if let Some(child) = self.child.as_ref() {
-            child.record_captures(bindings);
+            child.record_captures(captures);
         }
     }
 }
@@ -363,9 +363,9 @@ impl<T: KindTypes + 'static> Matcher<T> for SequenceMatcher<T> {
         None
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         for child in &self.children {
-            child.record_captures(bindings);
+            child.record_captures(captures);
         }
     }
 }
@@ -409,8 +409,8 @@ impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
         }
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
-        self.child.as_ref().unwrap().record_captures(bindings);
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+        self.child.as_ref().unwrap().record_captures(captures);
     }
 }
 
@@ -436,9 +436,9 @@ impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
         if let Some(child) = self.child.as_mut() {
             match child.next() {
-                result @ Some(_) => {
+                r#match @ Some(_) => {
                     self.have_nonempty_match = true;
-                    result
+                    r#match
                 }
                 None => {
                     self.child = None;
@@ -453,10 +453,10 @@ impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
         }
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         if self.have_nonempty_match {
             if let Some(child) = self.child.as_ref() {
-                child.record_captures(bindings);
+                child.record_captures(captures);
             }
         }
     }
@@ -504,9 +504,9 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
         }
     }
 
-    fn record_captures(&self, bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {
+    fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
         for child in &self.children {
-            child.record_captures(bindings);
+            child.record_captures(captures);
         }
     }
 }
@@ -539,5 +539,5 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
         None
     }
 
-    fn record_captures(&self, _bindings: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
+    fn record_captures(&self, _: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
 }

@@ -6,19 +6,18 @@
 
 use std::collections::{BTreeSet, HashMap};
 
+use codegen_language_definition::model::Identifier;
 use semver::Version;
 
 pub mod constructor;
 pub mod parser_definition;
 pub mod precedence_parser_definition;
 pub mod scanner_definition;
-pub mod version_quality;
 pub mod visitor;
 
 pub use parser_definition::*;
 pub use precedence_parser_definition::*;
 pub use scanner_definition::*;
-pub use version_quality::*;
 pub use visitor::*;
 
 pub struct Grammar {
@@ -26,7 +25,7 @@ pub struct Grammar {
     pub versions: BTreeSet<Version>,
     pub leading_trivia_parser: TriviaParserDefinitionRef,
     pub trailing_trivia_parser: TriviaParserDefinitionRef,
-    pub elements: HashMap<&'static str, GrammarElement>,
+    pub elements: HashMap<Identifier, GrammarElement>,
 }
 
 impl Grammar {

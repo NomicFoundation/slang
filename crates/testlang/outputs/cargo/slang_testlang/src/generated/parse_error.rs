@@ -13,7 +13,7 @@ use crate::text_index::TextRange;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
-    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+    pub(crate) terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
 }
 
 impl ParseError {
@@ -31,22 +31,25 @@ impl ParseError {
 impl ParseError {
     pub(crate) fn new(
         text_range: TextRange,
-        tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+        terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {
         Self {
             text_range,
-            tokens_that_would_have_allowed_more_progress,
+            terminals_that_would_have_allowed_more_progress,
         }
     }
 }
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.tokens_that_would_have_allowed_more_progress.is_empty() {
+        if self
+            .terminals_that_would_have_allowed_more_progress
+            .is_empty()
+        {
             write!(f, "Expected end of file.")
         } else {
             let deduped = self
-                .tokens_that_would_have_allowed_more_progress
+                .terminals_that_would_have_allowed_more_progress
                 .iter()
                 .collect::<BTreeSet<_>>();
 

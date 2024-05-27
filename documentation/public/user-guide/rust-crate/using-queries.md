@@ -10,7 +10,7 @@ If not specified otherwise, let's assume we already parsed a Solidity source and
 
 You can create a `Query` struct using `Query::parse`, which accepts a `&str`. These can be then used by `Cursor::query` to execute it.
 
-You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning results in the order they appear in input.
+You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning matches in the order they appear in input.
 
 ```{ .rust }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_queries.rs:creating-a-query"
@@ -18,7 +18,7 @@ You can pass multiple queries to a cursor to and efficiently traverse the tree l
 
 ## Iterating over node patterns
 
-Queries allow you to iterate over all node patterns that match the query, which can replace your need for manual iteration via cursors or visitors. In order to get a `Cursor` that points to the matched node, you need to capture them with a name binding (`@binding_name`) to a specific node in the query pattern.
+Queries allow you to iterate over all node patterns that match the query, which can replace your need for manual iteration via cursors or visitors. In order to get a `Cursor` that points to the matched node, you need to capture them with a name capture (`@capture_name`) to a specific node in the query pattern.
 
 Let's use this to list all the contract definitions in the source file:
 

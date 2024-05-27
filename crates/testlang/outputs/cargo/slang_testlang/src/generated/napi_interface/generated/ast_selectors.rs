@@ -7,9 +7,9 @@ use std::rc::Rc;
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
 use crate::napi_interface::{
-    NonTerminalKind, RustEdge, RustNode, RustNonTerminalNode, TerminalKind,
+    NonterminalKind, RustEdge, RustNode, RustNonterminalNode, TerminalKind,
 };
 
 //
@@ -22,17 +22,17 @@ use crate::napi_interface::{
     catch_unwind
 )]
 pub fn select_sequence(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnit => selector.source_unit()?,
-        NonTerminalKind::Tree => selector.tree()?,
-        NonTerminalKind::TreeNode => selector.tree_node()?,
-        NonTerminalKind::AdditionExpression => selector.addition_expression()?,
-        NonTerminalKind::NegationExpression => selector.negation_expression()?,
-        NonTerminalKind::MemberAccessExpression => selector.member_access_expression()?,
+        NonterminalKind::SourceUnit => selector.source_unit()?,
+        NonterminalKind::Tree => selector.tree()?,
+        NonterminalKind::TreeNode => selector.tree_node()?,
+        NonterminalKind::AdditionExpression => selector.addition_expression()?,
+        NonterminalKind::NegationExpression => selector.negation_expression()?,
+        NonterminalKind::MemberAccessExpression => selector.member_access_expression()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -42,31 +42,31 @@ pub fn select_sequence(
     Ok(result)
 }
 impl Selector {
-    fn source_unit(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn source_unit(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![Some(self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::SourceUnitMembers)
+            node.is_nonterminal_with_kind(NonterminalKind::SourceUnitMembers)
         })?)])
     }
 }
 
 impl Selector {
-    fn tree(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn tree(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::TreeKeyword))?),
             self.try_select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?,
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TreeNode))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::TreeNode))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Semicolon))?),
         ])
     }
 }
 
 impl Selector {
-    fn tree_node(&mut self) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    fn tree_node(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::OpenBracket))?),
             Some(
                 self.select(|node| {
-                    node.is_nonterminal_with_kind(NonTerminalKind::TreeNodeChildren)
+                    node.is_nonterminal_with_kind(NonterminalKind::TreeNodeChildren)
                 })?,
             ),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::CloseBracket))?),
@@ -77,11 +77,11 @@ impl Selector {
 impl Selector {
     fn addition_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Plus))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -89,10 +89,10 @@ impl Selector {
 impl Selector {
     fn negation_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Bang))?),
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
         ])
     }
 }
@@ -100,9 +100,9 @@ impl Selector {
 impl Selector {
     fn member_access_expression(
         &mut self,
-    ) -> Result<Vec<Option<Either<NonTerminalNode, TerminalNode>>>> {
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(|node| node.is_nonterminal_with_kind(NonTerminalKind::Expression))?),
+            Some(self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::Expression))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Period))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Identifier))?),
         ])
@@ -114,15 +114,15 @@ impl Selector {
 
 #[napi(namespace = "ast_internal", ts_return_type = "cst.Node", catch_unwind)]
 pub fn select_choice(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Either<NonterminalNode, TerminalNode>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnitMember => selector.source_unit_member()?,
-        NonTerminalKind::TreeNodeChild => selector.tree_node_child()?,
-        NonTerminalKind::Expression => selector.expression()?,
-        NonTerminalKind::Literal => selector.literal()?,
+        NonterminalKind::SourceUnitMember => selector.source_unit_member()?,
+        NonterminalKind::TreeNodeChild => selector.tree_node_child()?,
+        NonterminalKind::Expression => selector.expression()?,
+        NonterminalKind::Literal => selector.literal()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -133,34 +133,34 @@ pub fn select_choice(
 }
 
 impl Selector {
-    fn source_unit_member(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn source_unit_member(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::Tree,
-                NonTerminalKind::Expression,
-                NonTerminalKind::SeparatedIdentifiers,
-                NonTerminalKind::Literal,
+                NonterminalKind::Tree,
+                NonterminalKind::Expression,
+                NonterminalKind::SeparatedIdentifiers,
+                NonterminalKind::Literal,
             ])
         })
     }
 }
 
 impl Selector {
-    fn tree_node_child(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn tree_node_child(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonTerminalKind::TreeNode)
+            node.is_nonterminal_with_kind(NonterminalKind::TreeNode)
                 || node.is_terminal_with_kind(TerminalKind::DelimitedIdentifier)
         })
     }
 }
 
 impl Selector {
-    fn expression(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn expression(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
             node.is_nonterminal_with_kinds(&[
-                NonTerminalKind::AdditionExpression,
-                NonTerminalKind::NegationExpression,
-                NonTerminalKind::MemberAccessExpression,
+                NonterminalKind::AdditionExpression,
+                NonterminalKind::NegationExpression,
+                NonterminalKind::MemberAccessExpression,
             ]) || node
                 .is_terminal_with_kinds(&[TerminalKind::StringLiteral, TerminalKind::Identifier])
         })
@@ -168,7 +168,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn literal(&mut self) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    fn literal(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| node.is_terminal_with_kind(TerminalKind::StringLiteral))
     }
 }
@@ -183,13 +183,13 @@ impl Selector {
     catch_unwind
 )]
 pub fn select_repeated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SourceUnitMembers => selector.source_unit_members()?,
-        NonTerminalKind::TreeNodeChildren => selector.tree_node_children()?,
+        NonterminalKind::SourceUnitMembers => selector.source_unit_members()?,
+        NonterminalKind::TreeNodeChildren => selector.tree_node_children()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -200,11 +200,11 @@ pub fn select_repeated(
 }
 
 impl Selector {
-    fn source_unit_members(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn source_unit_members(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) = self
-            .try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::SourceUnitMember))?
+            .try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::SourceUnitMember))?
         {
             items.push(item);
         }
@@ -214,11 +214,11 @@ impl Selector {
 }
 
 impl Selector {
-    fn tree_node_children(&mut self) -> Result<Vec<Either<NonTerminalNode, TerminalNode>>> {
+    fn tree_node_children(&mut self) -> Result<Vec<Either<NonterminalNode, TerminalNode>>> {
         let mut items = vec![];
 
         while let Some(item) =
-            self.try_select(|node| node.is_nonterminal_with_kind(NonTerminalKind::TreeNodeChild))?
+            self.try_select(|node| node.is_nonterminal_with_kind(NonterminalKind::TreeNodeChild))?
         {
             items.push(item);
         }
@@ -237,12 +237,12 @@ impl Selector {
     catch_unwind
 )]
 pub fn select_separated(
-    #[napi(ts_arg_type = "cst.NonTerminalNode")] node: &NonTerminalNode,
-) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    #[napi(ts_arg_type = "cst.NonterminalNode")] node: &NonterminalNode,
+) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
     let mut selector = Selector::new(node);
 
     let result = match node.kind() {
-        NonTerminalKind::SeparatedIdentifiers => selector.separated_identifiers()?,
+        NonterminalKind::SeparatedIdentifiers => selector.separated_identifiers()?,
         _ => {
             return Error::UnexpectedParent(node.kind()).into();
         }
@@ -253,7 +253,7 @@ pub fn select_separated(
 }
 
 impl Selector {
-    fn separated_identifiers(&mut self) -> Result<Vec<Vec<Either<NonTerminalNode, TerminalNode>>>> {
+    fn separated_identifiers(&mut self) -> Result<Vec<Vec<Either<NonterminalNode, TerminalNode>>>> {
         let mut separated = vec![];
         let mut separators = vec![];
 
@@ -282,12 +282,12 @@ impl Selector {
 //
 
 struct Selector {
-    node: Rc<RustNonTerminalNode>,
+    node: Rc<RustNonterminalNode>,
     index: usize,
 }
 
 impl Selector {
-    fn new(node: &NonTerminalNode) -> Self {
+    fn new(node: &NonterminalNode) -> Self {
         Self {
             node: Rc::clone(&node.0),
             index: 0,
@@ -297,7 +297,7 @@ impl Selector {
     fn select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Either<NonTerminalNode, TerminalNode>> {
+    ) -> Result<Either<NonterminalNode, TerminalNode>> {
         match self.try_select(filter)? {
             Some(node) => Ok(node),
             None => Error::MissingChild(self.index).into(),
@@ -307,7 +307,7 @@ impl Selector {
     fn try_select(
         &mut self,
         filter: impl FnOnce(&RustNode) -> bool,
-    ) -> Result<Option<Either<NonTerminalNode, TerminalNode>>> {
+    ) -> Result<Option<Either<NonterminalNode, TerminalNode>>> {
         while let Some(child) = self.node.children.get(self.index) {
             match child {
                 node if node.is_trivia() => {
@@ -319,7 +319,7 @@ impl Selector {
                     node: RustNode::Terminal(terminal),
                     ..
                 } if matches!(terminal.kind, TerminalKind::SKIPPED) => {
-                    return Error::SkippedToken(self.index).into();
+                    return Error::SkippedTerminal(self.index).into();
                 }
                 labeled if filter(labeled) => {
                     self.index += 1;
@@ -348,8 +348,8 @@ type Result<T> = std::result::Result<T, napi::Error>;
 #[derive(Debug, thiserror::Error)]
 enum Error {
     // Should not theoretically happen, since we're only called from our own generated AST types.
-    #[error("Unexpected parent node with NonTerminalKind '{0}'.")]
-    UnexpectedParent(NonTerminalKind),
+    #[error("Unexpected parent node with NonterminalKind '{0}'.")]
+    UnexpectedParent(NonterminalKind),
 
     // Should not theoretically happen, since we're only called from our own generated AST types.
     #[error("Unexpected trailing children at index '{0}'.")]
@@ -360,8 +360,8 @@ enum Error {
     MissingChild(usize),
 
     // Can happen if the user decided to use an incorrect/incomplete CST node.
-    #[error("Unexpected SKIPPED token at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
-    SkippedToken(usize),
+    #[error("Unexpected SKIPPED terminal at index '{0}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.")]
+    SkippedTerminal(usize),
 }
 
 impl<T> From<Error> for Result<T> {

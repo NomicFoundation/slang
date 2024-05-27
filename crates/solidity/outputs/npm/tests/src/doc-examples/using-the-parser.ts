@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { NonTerminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
-import { NonTerminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
+import { NonterminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the parser", async () => {
@@ -15,7 +15,7 @@ test("using the parser", async () => {
   // --8<-- [start:parse-input]
   const language = new Language("0.8.0");
 
-  const parseOutput = language.parse(NonTerminalKind.ContractDefinition, source);
+  const parseOutput = language.parse(NonterminalKind.ContractDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:print-errors]
@@ -30,8 +30,8 @@ test("using the parser", async () => {
 
   // --8<-- [start:inspect-tree]
   const contract = parseOutput.tree();
-  assert(contract instanceof NonTerminalNode);
-  assert.equal(contract.kind, NonTerminalKind.ContractDefinition);
+  assert(contract instanceof NonterminalNode);
+  assert.equal(contract.kind, NonterminalKind.ContractDefinition);
 
   const contractChildren = contract.children();
   assert.equal(contractChildren.length, 7);
@@ -43,7 +43,7 @@ test("using the parser", async () => {
   assert.equal(contractName?.kind, TerminalKind.Identifier);
   assert.equal(secondSpace?.kind, TerminalKind.Whitespace);
   assert.equal(openBrace?.kind, TerminalKind.OpenBrace);
-  assert.equal(members?.kind, NonTerminalKind.ContractMembers);
+  assert.equal(members?.kind, NonterminalKind.ContractMembers);
   assert.equal(closeBrace?.kind, TerminalKind.CloseBrace);
   // --8<-- [end:inspect-tree]
 

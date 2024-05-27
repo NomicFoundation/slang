@@ -3439,7 +3439,7 @@ codegen_language_macros::compile!(Language(
                                                 // we can only recover if we found at least two tokens (`ident:`)
                                                 // in the body, as this may be otherwise ambiguous with
                                                 // `try <EXPR> { func() } catch {}`.
-                                                tokens_matched_acceptance_threshold = 2
+                                                terminals_matched_acceptance_threshold = 2
                                             )
                                         ),
                                         fields = (

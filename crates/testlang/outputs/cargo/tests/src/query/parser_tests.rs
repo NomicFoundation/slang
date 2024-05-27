@@ -26,7 +26,7 @@ fn test_anonymous() {
 }
 
 #[test]
-fn test_root_binding() {
+fn test_root_capture() {
     run_parser_test(
         r#"@root [DelimitedIdentifier]"#,
         r#"@root [DelimitedIdentifier]"#,
@@ -34,7 +34,7 @@ fn test_root_binding() {
 }
 
 #[test]
-fn test_binding() {
+fn test_capture() {
     run_parser_test(
         r#"[TreeNode @b [DelimitedIdentifier]]"#,
         r#"[TreeNode @b [DelimitedIdentifier]]"#,

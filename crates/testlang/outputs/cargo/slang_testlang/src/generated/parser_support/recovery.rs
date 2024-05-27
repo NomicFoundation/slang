@@ -2,18 +2,18 @@
 
 use crate::cst;
 use crate::kinds::{IsLexicalContext, TerminalKind};
-use crate::lexer::{Lexer, ScannedToken};
+use crate::lexer::{Lexer, ScannedTerminal};
 use crate::parse_error::ParseError;
 use crate::parser_support::context::ParserContext;
 use crate::parser_support::parser_result::SkippedUntil;
 use crate::parser_support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions};
 
-/// How many tokens have to be matched to trigger the error recovery.
+/// How many terminals have to be matched to trigger the error recovery.
 /// For ambiguous syntaxes this needs to be set to at least N, where N
-/// is the token lookahead required to disambiguate the syntax.
+/// is the terminal lookahead required to disambiguate the syntax.
 #[derive(Clone, Copy)]
-pub(crate) struct TokenAcceptanceThreshold(pub(crate) u8);
+pub(crate) struct TerminalAcceptanceThreshold(pub(crate) u8);
 
 fn opt_parse(
     input: &mut ParserContext<'_>,
@@ -29,19 +29,19 @@ fn opt_parse(
 }
 
 impl ParserResult {
-    /// For partial matches (partial prefix match or if the next token after the match is not expected)
-    /// attempts to skip tokens until a given token is found or until we hit a delimiter that's expected
+    /// For partial matches (partial prefix match or if the next terminal after the match is not expected)
+    /// attempts to skip terminals until a given terminal is found or until we hit a delimiter that's expected
     /// by an outer parse. Returns [`ParserResult::SkippedUntil`] on success.
     ///
-    /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
-    /// Does not consume the `expected` token.
+    /// Respects nested delimiters, i.e. the `expected` terminal is only accepted if it's not nested inside.
+    /// Does not consume the `expected` terminal.
     #[must_use]
     pub(crate) fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
         input: &mut ParserContext<'_>,
         lexer: &L,
         expected: TerminalKind,
-        acceptance_threshold: TokenAcceptanceThreshold,
+        acceptance_threshold: TerminalAcceptanceThreshold,
     ) -> ParserResult {
         enum ParseResultKind {
             Match,
@@ -51,26 +51,30 @@ impl ParserResult {
 
         let before_recovery = input.position();
 
-        let (mut nodes, mut expected_tokens, result_kind) = match self {
+        let (mut nodes, mut expected_terminals, result_kind) = match self {
             ParserResult::IncompleteMatch(result)
-                if result.matches_at_least_n_tokens(acceptance_threshold.0) =>
+                if result.matches_at_least_n_terminals(acceptance_threshold.0) =>
             {
                 (
                     result.nodes,
-                    result.expected_tokens,
+                    result.expected_terminals,
                     ParseResultKind::Incomplete,
                 )
             }
             ParserResult::Match(result)
                 if lexer
-                    .peek_token_with_trivia::<LexCtx>(input)
-                    .map(ScannedToken::unambiguous)
+                    .peek_terminal_with_trivia::<LexCtx>(input)
+                    .map(ScannedTerminal::unambiguous)
                     != Some(expected) =>
             {
-                (result.nodes, result.expected_tokens, ParseResultKind::Match)
+                (
+                    result.nodes,
+                    result.expected_terminals,
+                    ParseResultKind::Match,
+                )
             }
             ParserResult::NoMatch(result) if acceptance_threshold.0 == 0 => {
-                (vec![], result.expected_tokens, ParseResultKind::NoMatch)
+                (vec![], result.expected_terminals, ParseResultKind::NoMatch)
             }
             // No need to recover, so just return as-is.
             _ => return self,
@@ -83,14 +87,14 @@ impl ParserResult {
         {
             nodes.extend(leading_trivia);
             if matches!(result_kind, ParseResultKind::Match) {
-                expected_tokens.push(expected);
+                expected_terminals.push(expected);
             }
 
             let skipped = input.content(skipped_range.utf8());
 
             input.emit(ParseError {
                 text_range: skipped_range,
-                tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
+                terminals_that_would_have_allowed_more_progress: expected_terminals.clone(),
             });
 
             ParserResult::SkippedUntil(SkippedUntil {
@@ -104,21 +108,21 @@ impl ParserResult {
             input.set_position(before_recovery);
 
             match result_kind {
-                ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
+                ParseResultKind::Match => ParserResult::r#match(nodes, expected_terminals),
                 ParseResultKind::Incomplete => {
-                    ParserResult::incomplete_match(nodes, expected_tokens)
+                    ParserResult::incomplete_match(nodes, expected_terminals)
                 }
-                ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
+                ParseResultKind::NoMatch => ParserResult::no_match(expected_terminals),
             }
         }
     }
 }
 
-/// Skips tokens until a given token is found or until we hit a closing delimiter that's expected by an outer parse.
-/// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
-/// Does not consume the `expected` token.
+/// Skips terminals until a given terminal is found or until we hit a closing delimiter that's expected by an outer parse.
+/// Respects nested delimiters, i.e. the `expected` terminal is only accepted if it's not nested inside.
+/// Does not consume the `expected` terminal.
 ///
-/// Returns the found token and the range of skipped tokens on success.
+/// Returns the found terminal and the range of skipped terminals on success.
 pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     input: &mut ParserContext<'_>,
     lexer: &L,
@@ -132,27 +136,27 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     loop {
         let save = input.position();
         match lexer
-            .next_token::<LexCtx>(input)
-            .map(ScannedToken::unambiguous)
+            .next_terminal::<LexCtx>(input)
+            .map(ScannedTerminal::unambiguous)
         {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
-            // we can unwind on a token that's expected by us or by our ancestor.
-            Some(token)
+            // we can unwind on a terminal that's expected by us or by our ancestor.
+            Some(terminal)
                 if local_delims.is_empty()
-                    && (token == until || input.closing_delimiters().contains(&token)) =>
+                    && (terminal == until || input.closing_delimiters().contains(&terminal)) =>
             {
                 // Don't consume the delimiter; parent will consume it
                 input.set_position(save);
 
-                return Some((token, start..save));
+                return Some((terminal, start..save));
             }
             // Found the local closing delimiter, pop the stack
-            Some(token) if local_delims.last() == Some(&token) => {
+            Some(terminal) if local_delims.last() == Some(&terminal) => {
                 local_delims.pop();
             }
-            Some(token) => {
+            Some(terminal) => {
                 // Found a local opening delimiter, skip until we find a closing one
-                if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
+                if let Some((_, close)) = delims.iter().find(|(op, _)| terminal == *op) {
                     local_delims.push(*close);
                 } else {
                     // Keep eating (eventually hits EOF)

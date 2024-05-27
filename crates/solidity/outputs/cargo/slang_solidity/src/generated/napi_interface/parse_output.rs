@@ -3,7 +3,7 @@
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonTerminalNode, TerminalNode};
+use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
 use crate::napi_interface::{cursor, parse_error, RustParseOutput};
 
 #[napi(namespace = "parse_output")]
@@ -18,7 +18,7 @@ impl From<RustParseOutput> for ParseOutput {
 #[napi(namespace = "parse_output")]
 impl ParseOutput {
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn tree(&self) -> Either<NonTerminalNode, TerminalNode> {
+    pub fn tree(&self) -> Either<NonterminalNode, TerminalNode> {
         self.0.tree().into_js_either_node()
     }
 

@@ -1,12 +1,12 @@
+use codegen_language_definition::model::{Identifier, VersionSpecifier};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use semver::Version;
 
 use crate::parser::grammar::{
-    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
-    VersionQualityRange,
+    Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef,
 };
+use crate::parser::versioned::{Versioned as _, VersionedQuote as _};
 
 pub trait ParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
@@ -14,7 +14,7 @@ pub trait ParserDefinitionExtensions {
 
 impl ParserDefinitionExtensions for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        self.node().applicable_version_quality_ranges().wrap_code(
+        self.node().version_specifier().to_conditional_code(
             self.node().to_parser_code(self.context(), false),
             Some(quote! { ParserResult::disabled() }),
         )
@@ -28,13 +28,12 @@ impl ParserDefinitionExtensions for TriviaParserDefinitionRef {
 }
 
 pub trait ParserDefinitionNodeExtensions {
-    fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream;
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange>;
+    fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream;
 }
 
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
     #[allow(clippy::too_many_lines)] // giant switch over parser definition node types
-    fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream {
+    fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream {
         let context = format_ident!("{context_name}");
         let lex_ctx = quote! { LexicalContextType::#context };
 
@@ -102,7 +101,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     (
                         value.to_parser_code(context_name, is_trivia),
                         label.clone(),
-                        value.applicable_version_quality_ranges(),
+                        value.version_specifier(),
                     )
                 })),
             },
@@ -111,7 +110,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = make_choice_versioned(value.iter().map(|node| {
                     (
                         node.to_parser_code(context_name, is_trivia),
-                        node.applicable_version_quality_ranges(),
+                        node.version_specifier(),
                     )
                 }));
 
@@ -129,29 +128,29 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             Self::ScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
-                let parse_token = if is_trivia {
-                    format_ident!("parse_token")
+                let parse_terminal = if is_trivia {
+                    format_ident!("parse_terminal")
                 } else {
-                    format_ident!("parse_token_with_trivia")
+                    format_ident!("parse_terminal_with_trivia")
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
+                    self.#parse_terminal::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
-            // Keyword scanner uses the promotion inside the parse_token
+            // Keyword scanner uses the promotion inside the parse_terminal
             Self::KeywordScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
-                let parse_token = if is_trivia {
-                    format_ident!("parse_token")
+                let parse_terminal = if is_trivia {
+                    format_ident!("parse_terminal")
                 } else {
-                    format_ident!("parse_token_with_trivia")
+                    format_ident!("parse_terminal_with_trivia")
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
+                    self.#parse_terminal::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
@@ -205,13 +204,13 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let threshold = threshold.0;
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
                         seq.elem(#parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TerminalKind::#close_delim,
-                                TokenAcceptanceThreshold(#threshold),
+                                TerminalAcceptanceThreshold(#threshold),
                             )
                         )?;
                     },
@@ -225,12 +224,12 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
                         seq.elem_labeled(
                             EdgeLabel::#open_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#open_delim)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#open_delim)
                         )?;
                         #body_parser
                         seq.elem_labeled(
                             EdgeLabel::#close_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#close_delim)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#close_delim)
                         )?;
                         seq.finish()
                     })
@@ -270,7 +269,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
                         seq.elem(
                             #parser
@@ -278,7 +277,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                                 self,
                                 TerminalKind::#terminator,
                                  // Requires at least a partial match not to risk misparsing
-                                TokenAcceptanceThreshold(1u8),
+                                TerminalAcceptanceThreshold(1u8),
                             )
                         )?;
                     },
@@ -290,75 +289,12 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         #body_parser
                         seq.elem_labeled(
                             EdgeLabel::#terminator_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#terminator)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#terminator)
                         )?;
                         seq.finish()
                     })
                 }
             }
-        }
-    }
-
-    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
-        match self {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
-                version_quality_ranges.clone()
-            }
-
-            ParserDefinitionNode::Optional(value)
-            | ParserDefinitionNode::ZeroOrMore(Labeled { value, .. })
-            | ParserDefinitionNode::OneOrMore(Labeled { value, .. }) => {
-                value.applicable_version_quality_ranges()
-            }
-
-            _ => vec![],
-        }
-    }
-}
-
-pub trait VersionQualityRangeVecExtensions {
-    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream;
-    // Quotes a boolean expression that is satisfied for the given version quality ranges
-    fn as_bool_expr(&self) -> TokenStream;
-}
-
-impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
-    fn as_bool_expr(&self) -> TokenStream {
-        if self.is_empty() {
-            quote!(true)
-        } else {
-            // Optimize for legibility; return `false` for "never enabled"
-            match self.as_slice() {
-                [VersionQualityRange {
-                    from,
-                    quality: VersionQuality::Removed,
-                }] if from == &Version::new(0, 0, 0) => return quote!(false),
-                _ => {}
-            }
-
-            let flags = self.iter().map(|vqr| {
-                let flag = format_ident!(
-                    "version_is_at_least_{v}",
-                    v = &vqr.from.to_string().replace('.', "_")
-                );
-                if vqr.quality == VersionQuality::Introduced {
-                    quote! { self.#flag }
-                } else {
-                    quote! { !self.#flag }
-                }
-            });
-            quote! { #(#flags)&&* }
-        }
-    }
-
-    fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream {
-        if self.is_empty() {
-            if_true
-        } else {
-            let condition = self.as_bool_expr();
-
-            let else_part = if_false.map(|if_false| quote! { else { #if_false } });
-            quote! { if #condition { #if_true } #else_part }
         }
     }
 }
@@ -367,12 +303,12 @@ pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStr
     make_sequence_versioned(
         parsers
             .into_iter()
-            .map(|parser| (parser, String::new(), vec![])),
+            .map(|parser| (parser, String::new(), None)),
     )
 }
 
-pub fn make_sequence_versioned(
-    parsers: impl IntoIterator<Item = (TokenStream, String, Vec<VersionQualityRange>)>,
+pub fn make_sequence_versioned<'a>(
+    parsers: impl IntoIterator<Item = (TokenStream, String, Option<&'a VersionSpecifier>)>,
 ) -> TokenStream {
     let parsers = parsers
         .into_iter()
@@ -385,7 +321,7 @@ pub fn make_sequence_versioned(
                 quote! { seq.elem_labeled(EdgeLabel::#label, #parser)?; }
             };
 
-            versions.wrap_code(code, None)
+            versions.to_conditional_code(code, None)
         })
         .collect::<Vec<_>>();
     quote! {
@@ -397,16 +333,16 @@ pub fn make_sequence_versioned(
 }
 
 pub fn make_choice(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
-    make_choice_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+    make_choice_versioned(parsers.into_iter().map(|parser| (parser, None)))
 }
 
-fn make_choice_versioned(
-    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+fn make_choice_versioned<'a>(
+    parsers: impl IntoIterator<Item = (TokenStream, Option<&'a VersionSpecifier>)>,
 ) -> TokenStream {
     let parsers = parsers
         .into_iter()
         .map(|(parser, versions)| {
-            versions.wrap_code(
+            versions.to_conditional_code(
                 quote! {
                     let result = #parser;
                     choice.consider(input, result)?;

@@ -25,9 +25,9 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             result @ ParserResult::SkippedUntil(_) => return result,
 
             // Couldn't get a full match but we allow 0 items - return an empty match
-            // so the parse is considered valid but note the expected tokens
-            ParserResult::NoMatch(NoMatch { expected_tokens }) if MIN_COUNT == 0 => {
-                return ParserResult::r#match(vec![], expected_tokens);
+            // so the parse is considered valid but note the expected terminals
+            ParserResult::NoMatch(NoMatch { expected_terminals }) if MIN_COUNT == 0 => {
+                return ParserResult::r#match(vec![], expected_terminals);
             }
             // Don't try repeating if we don't have a full match and we require at least one
             incomplete_or_no_match => return incomplete_or_no_match,
@@ -40,7 +40,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             match (&mut accum, next_result) {
                 (ParserResult::Match(running), ParserResult::Match(next)) => {
                     running.nodes.extend(next.nodes);
-                    running.expected_tokens = next.expected_tokens;
+                    running.expected_terminals = next.expected_terminals;
                 }
 
                 (ParserResult::PrattOperatorMatch(cur), ParserResult::PrattOperatorMatch(next)) => {
@@ -54,16 +54,16 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     "Match seen while repeating PrattOperatorMatches in RepetitionHelper"
                 ),
                 // Can't proceed further with a complete parse, so back up, return
-                // the accumulated result and note the expected tokens
+                // the accumulated result and note the expected terminals
                 (
                     ParserResult::Match(running),
                     ParserResult::IncompleteMatch(IncompleteMatch {
-                        expected_tokens, ..
+                        expected_terminals, ..
                     })
-                    | ParserResult::NoMatch(NoMatch { expected_tokens }),
+                    | ParserResult::NoMatch(NoMatch { expected_terminals }),
                 ) => {
                     input.rewind(save);
-                    running.expected_tokens = expected_tokens;
+                    running.expected_terminals = expected_terminals;
                     return accum;
                 }
 

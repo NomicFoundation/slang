@@ -17,8 +17,9 @@ pub struct KeywordItem {
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordDefinition {
     pub enabled: Option<VersionSpecifier>,
+    /// When the keyword is reserved, i.e. can't be used in other position (e.g. as a name)
     pub reserved: Option<VersionSpecifier>,
-
+    // Underlying keyword scanner (i.e. identifier scanner)
     pub value: KeywordValue,
 }
 

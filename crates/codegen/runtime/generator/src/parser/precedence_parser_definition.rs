@@ -1,3 +1,4 @@
+use codegen_language_definition::model::Identifier;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
@@ -14,7 +15,7 @@ pub trait PrecedenceParserDefinitionExtensions {
     /// Emit a helper parser function for each precedence expression that ensures the main parser
     /// identifies a single node of the expected type, with a child node being the expected
     /// precedence expression.
-    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)>;
+    fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)>;
 }
 
 impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
@@ -25,7 +26,7 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
         )
     }
 
-    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)> {
+    fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)> {
         let mut res = vec![];
         let parser_name = format_ident!("{}", self.name().to_snake_case());
         let nonterminal_name = format_ident!("{}", self.name().to_pascal_case());
@@ -40,25 +41,25 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
                 let ParserResult::Match(r#match) = &result else { return result; };
 
                 // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
-                // can't precisely determine the expected tokens or completeness of the match otherwise.
+                // can't precisely determine the expected terminals or completeness of the match otherwise.
                 match &r#match.nodes[..] {
-                    [cst::Edge { node: cst::Node::NonTerminal(node), .. }] if node.kind == NonTerminalKind::#nonterminal_name => match &node.children[..] {
-                        [inner @ cst::Edge { node: cst::Node::NonTerminal(node), .. }] if node.kind == NonTerminalKind::#op_nonterminal_name => {
-                            ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    [cst::Edge { node: cst::Node::Nonterminal(node), .. }] if node.kind == NonterminalKind::#nonterminal_name => match &node.children[..] {
+                        [inner @ cst::Edge { node: cst::Node::Nonterminal(node), .. }] if node.kind == NonterminalKind::#op_nonterminal_name => {
+                            ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                         }
                         _ => ParserResult::no_match(vec![]),
                     }
                     _ => ParserResult::no_match(vec![]),
                 }
             };
-            res.push((*name, code));
+            res.push((name.clone(), code));
         }
         res
     }
 }
 
 pub trait PrecedenceParserDefinitionNodeExtensions {
-    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream;
+    fn to_parser_code(&self, context_name: &Identifier, expression_kind: Ident) -> TokenStream;
 }
 
 impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode {
@@ -91,7 +92,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     //
     // The second pass is to use the binding strengths to resolve the linear structure into a
     // tree, and maybe wrap each child of each Operator as a node with the kind of the overall
-    // precedence parser root e.g. `NonTerminalKind::Expression`.
+    // precedence parser root e.g. `NonterminalKind::Expression`.
     //
     // Given the result of step one, this second pass cannot fail to correctly resolve to a
     // single node. So all the panics disappear and Pratt parsing becomes “… so simple that
@@ -103,7 +104,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     // is independent of the grammar.
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
-    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
+    fn to_parser_code(&self, context_name: &Identifier, expression_kind: Ident) -> TokenStream {
         let mut prefix_operator_parsers: Vec<TokenStream> = Vec::new();
         let mut postfix_operator_parsers: Vec<TokenStream> = Vec::new();
         let mut binary_operator_parsers: Vec<TokenStream> = Vec::new();
@@ -132,7 +133,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_binary_operator(
-                                NonTerminalKind::#nonterminal_kind,
+                                NonterminalKind::#nonterminal_kind,
                                 #binding_power,
                                 #binding_power + 1,
                                 #operator_code
@@ -144,7 +145,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_binary_operator(
-                                NonTerminalKind::#nonterminal_kind,
+                                NonterminalKind::#nonterminal_kind,
                                 #binding_power + 1,
                                 #binding_power,
                                 #operator_code
@@ -156,7 +157,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_prefix_operator(
-                                NonTerminalKind::#nonterminal_kind,
+                                NonterminalKind::#nonterminal_kind,
                                 #binding_power,
                                 #operator_code
                             );
@@ -167,7 +168,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     operator_closures.push(quote! {
                         let #closure_name = |input: &mut ParserContext<'_>|
                             PrecedenceHelper::to_postfix_operator(
-                                NonTerminalKind::#nonterminal_kind,
+                                NonterminalKind::#nonterminal_kind,
                                 #binding_power,
                                 #operator_code
                             );
@@ -230,7 +231,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 #operator_closures
             )*
 
-            PrecedenceHelper::reduce_precedence_result(NonTerminalKind::#expression_kind, linear_expression_parser(input))
+            PrecedenceHelper::reduce_precedence_result(NonterminalKind::#expression_kind, linear_expression_parser(input))
         }
     }
 }

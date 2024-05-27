@@ -30,7 +30,7 @@ Here is an example of the node type, similar to what we have now:
 ```rust
 pub enum Node {
     Terminal { node: Rc<TerminalNode> },
-    NonTerminal { node: Rc<NonTerminalNode> },
+    Nonterminal { node: Rc<NonterminalNode> },
 }
 
 pub struct TerminalNode {
@@ -38,8 +38,8 @@ pub struct TerminalNode {
     pub text: String,
 }
 
-pub struct NonTerminalNode {
-    pub kind: NonTerminalKind,
+pub struct NonterminalNode {
+    pub kind: NonterminalKind,
     pub text_length: TextIndex,
     pub children: Vec<Node>,
 }
@@ -110,7 +110,7 @@ Trivia items are similar tokens, contributing their own `TerminalKind`. They are
 collecting them in a flat list.
 
 Previously, we used to create many `LeadingTrivia` and `TrailingTrivia` nodes that hold whitespace/comments. Not only this
-is wasteful memory-wise, it is also unnatural/unexpected to wrap whitespace in non-terminal nodes. Instead, I propose
+is wasteful memory-wise, it is also unnatural/unexpected to wrap whitespace in nonterminal nodes. Instead, I propose
 treating them like any other token, and storing them as siblings to the tokens they belong to (in-order). Not only this
 is simpler, it is also more efficient, and is natural to how input is consumed and produced.
 
@@ -120,19 +120,19 @@ Fragments are not visible to users, and don't contribute a `TerminalKind`. They 
 common parts of the grammar, and avoid duplication. During processing the language definition, they are inlined wherever
 they are referenced.
 
-## NonTerminals
+## Nonterminals
 
 ### Struct Items
 
-Structs represent a flat list (sequence) of typed fields. They are the simplest non-terminal, and generate a `struct` AST type.
-Their fields match 1-1 with the item fields. The struct name contributes a `NonTerminalKind`.
+Structs represent a flat list (sequence) of typed fields. They are the simplest nonterminal, and generate a `struct` AST type.
+Their fields match 1-1 with the item fields. The struct name contributes a `NonterminalKind`.
 
 Each field can be either `Required(T)` or `Optional(T)`. Required fields are always present and parsed. Optional fields
 can be omitted if they don't exist, and are represented with Rust's `Option<T>` type (or TypeScript `T | undefined`).
 However, optional fields have an additional `enabled` property. After parsing optional fields, we should compare them
 with the current language version, and produce errors if they don't match, but continue parsing normally.
 
-The type of each field can be a `NonTerminal(T)` or `Terminal(Set<T>)`. A non-terminal field refers to another item, and
+The type of each field can be a `Nonterminal(T)` or `Terminal(Set<T>)`. A nonterminal field refers to another item, and
 holds its type. A terminal field refers to one or more terminal items (all valid in this position), and is of type `TerminalNode`.
 
 Additionally, the struct also stores the CST node that holds its contents:
@@ -142,7 +142,7 @@ Struct(
     name = ParametersDeclaration,
     fields = (
         open_paren = Required(Terminal([OpenParen])),
-        parameters = Required(NonTerminal(Parameters)),
+        parameters = Required(Nonterminal(Parameters)),
         close_paren = Required(Terminal([CloseParen]))
     )
 )
@@ -154,14 +154,14 @@ pub struct ParametersDeclaration {
     pub parameters: Rc<Parameters>,
     pub close_paren: Rc<TerminalNode>,
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 ```
 
 ### Enum Items
 
 Enums represent an ordered choice operator of multiple variants (possibilities). The enum name itself does NOT contribute
-a `NonTerminalKind`, since it will always result in one of its variants (each with a unique `TerminalKind` or a `NonTerminalKind`.
+a `NonterminalKind`, since it will always result in one of its variants (each with a unique `TerminalKind` or a `NonterminalKind`.
 They only exist in the AST, and don't affect the CST at all.
 
 We attempt to parse each variant (in-order), and choose the first one that succeeds. However, each variant can have
@@ -184,19 +184,19 @@ pub enum FunctionBody {
     Block {
         block: Rc<Block>,
 
-        cst: Rc<NonTerminalNode>,
+        cst: Rc<NonterminalNode>,
     },
     Semicolon {
         semicolon: Rc<TerminalNode>,
 
-        cst: Rc<NonTerminalNode>,
+        cst: Rc<NonterminalNode>,
     },
 }
 ```
 
 ### Repeated Items
 
-Repeated items represent a list of items of the same kind. The item name contributes a `NonTerminalKind`.
+Repeated items represent a list of items of the same kind. The item name contributes a `NonterminalKind`.
 The AST type is a wrapper around a `Vec<T>`, with any utilities we need to add for convenience.
 
 It has an `allow_empty` boolean property, which allows parsing zero items. If it is `false`, we should still allow parsing
@@ -214,14 +214,14 @@ Repeated(
 pub struct FunctionAttributes {
     pub items: Vec<Rc<FunctionAttribute>>
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 ```
 
 ### Separated Items
 
 Separated items represent a list of items of the same kind, separated by a delimiter.
-The item name contributes a `NonTerminalKind`. The AST type is a wrapper around two `Vec<T>` for items and their delimiters,
+The item name contributes a `NonterminalKind`. The AST type is a wrapper around two `Vec<T>` for items and their delimiters,
 with any utilities we need to add for convenience. For example, we should add APIs to create iterators for only the
 separated items, the separators, or both (in-order).
 
@@ -243,13 +243,13 @@ pub struct EventParameters {
     pub items: Vec<Rc<EventParameter>>
     pub separators: Vec<Rc<TerminalNode>>
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 ```
 
 ### Precedence Items
 
-This is perhaps the most complex non-terminal. It still uses the same PRATT algorithm from the previous implementation (no changes there), but
+This is perhaps the most complex nonterminal. It still uses the same PRATT algorithm from the previous implementation (no changes there), but
 adapted for the new AST types. It has two lists:
 
 First, a list of `precedence_expressions`, with each expression having a list of operators. Each operator has its own
@@ -263,7 +263,7 @@ operators with different associativity, but defined in enabled/disabled in diffe
 Second, a list of `primary_expressions`, with their own versioning (`enabled` property) as well.
 We should try to parse them as an operator (similar to `EnumItem`), and produce an error if the version doesn't match afterwards.
 
-It is important to note that the item name doesn't contribute a `NonTerminalKind`, but each `PrecedenceExpression` under it contributes one.
+It is important to note that the item name doesn't contribute a `NonterminalKind`, but each `PrecedenceExpression` under it contributes one.
 
 ```rust title="Definition"
 Precedence(
@@ -282,7 +282,7 @@ Precedence(
                 model = Postfix,
                 fields = (
                     open_paren = Required(Terminal([OpenParen])),
-                    arguments = Required(NonTerminal(Arguments)),
+                    arguments = Required(Nonterminal(Arguments)),
                     close_paren = Required(Terminal([CloseParen]))
                 )
             )]
@@ -322,7 +322,7 @@ pub struct AdditionExpression {
     // 'right_operand' auto-generated (after) because it is a binary expression, and same type as parent
     pub right_operand: Rc<Expression>,
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 
 pub struct FunctionCallExpression {
@@ -333,7 +333,7 @@ pub struct FunctionCallExpression {
     pub arguments: Rc<Arguments>,
     pub close_paren: Rc<TerminalNode>,
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 
 pub struct NegationExpression {
@@ -342,7 +342,7 @@ pub struct NegationExpression {
     // 'operand' auto-generated (after) because it is a prefix expression, and same type as parent
     pub operand: Rc<Expression>,
 
-    pub cst: Rc<NonTerminalNode>,
+    pub cst: Rc<NonterminalNode>,
 }
 ```
 
@@ -358,11 +358,11 @@ During AST construction, we will simply check for `TerminalKind::UNRECOGNIZED` n
 Based on the above, I propose the following changes to the current public API:
 
 -   Rename `TokenKind` to `TerminalKind`, since it will also refer to trivia.
--   Rename `RuleKind` to `NonTerminalKind`, since "rule" is ambiguous.
+-   Rename `RuleKind` to `NonterminalKind`, since "rule" is ambiguous.
 -   Rename `TerminalKind::SKIPPED`to `UNRECOGNIZED` for clarity.
 -   Hide `LexicalContext` and `fn scan(TokenKind)` from the public API, as it is a short-term workaround,
     and will be replaced later when we have language embedding.
--   Remove `ProductionKind` completely, since it is no longer needed. We only need to expose `fn parse(NonTerminalKind)`.
+-   Remove `ProductionKind` completely, since it is no longer needed. We only need to expose `fn parse(NonterminalKind)`.
 -   Since `EndOFFileTrivia` no longer exists, `ParseResult` should collect any remaining trivia at the end of the input,
     and include it in the `ParseResult` returned, for any kind of node, not just `SourceUnit`.
 
