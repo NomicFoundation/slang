@@ -26,20 +26,20 @@ pub trait Diagnostic {
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 
-    let kind = match error.severity() {
-        Severity::Error => ReportKind::Error,
-        Severity::Warning => ReportKind::Warning,
-        Severity::Information => ReportKind::Advice,
-        Severity::Hint => ReportKind::Advice,
+    let (kind, color) = match error.severity() {
+        Severity::Error => (ReportKind::Error, Color::Red),
+        Severity::Warning => (ReportKind::Warning, Color::Yellow),
+        Severity::Information => (ReportKind::Advice, Color::Blue),
+        Severity::Hint => (ReportKind::Advice, Color::Blue),
     };
-
-    let color = if with_color { Color::Red } else { Color::Unset };
 
     let message = error.message();
 
     if source.is_empty() {
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
+
+    let color = if with_color { color } else { Color::Unset };
 
     let range = {
         let start = source[..error.text_range().start.utf8].chars().count();
