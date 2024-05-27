@@ -346,6 +346,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
+ "strum",
  "strum_macros",
  "syn",
  "thiserror",
@@ -413,7 +414,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
- "strum_macros",
+ "strum",
 ]
 
 [[package]]
