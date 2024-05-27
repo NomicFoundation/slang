@@ -98,8 +98,8 @@ impl SpecTopic {
                 item: precedence_item,
             } = item
             {
-                for precedence_expr in &precedence_item.as_ref().precedence_expressions {
-                    items.push(precedence_expr.as_ref().name.clone());
+                for precedence_expr in &precedence_item.precedence_expressions {
+                    items.push(precedence_expr.name.clone());
                 }
             }
         }
