@@ -16,9 +16,6 @@ pub enum Severity {
 /// A compiler diagnostic that can be rendered to a user.
 pub trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
-    ///
-    /// Note that this is not tracking columns, so it is not compatible with LSP's
-    /// [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
     /// at the moment.
     fn text_range(&self) -> TextRange;
     /// The severity of this diagnostic.

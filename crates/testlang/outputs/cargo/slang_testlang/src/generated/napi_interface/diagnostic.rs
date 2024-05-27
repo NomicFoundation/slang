@@ -39,10 +39,6 @@ impl Diagnostic {
     }
 
     /// The character range of the source that this diagnostic applies to.
-    ///
-    /// Note that this is not tracking columns, so it is not compatible with LSP's
-    /// [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
-    /// at the moment.
     #[napi(ts_return_type = "text_index.TextRange")]
     pub fn text_range(&self) -> TextRange {
         self.0.text_range().into()

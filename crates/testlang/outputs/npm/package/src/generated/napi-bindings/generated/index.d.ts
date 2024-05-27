@@ -146,13 +146,7 @@ export namespace diagnostic {
   export class Diagnostic {
     /** The severity of this diagnostic. */
     severity(): Severity;
-    /**
-     * The character range of the source that this diagnostic applies to.
-     *
-     * Note that this is not tracking columns, so it is not compatible with LSP's
-     * [`Position`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
-     * at the moment.
-     */
+    /** The character range of the source that this diagnostic applies to. */
     textRange(): text_index.TextRange;
     /** The primary message associated with this diagnostic. */
     message(): string;
