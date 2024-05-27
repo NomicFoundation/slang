@@ -62,6 +62,10 @@ impl Language {
         }
     }
 
+    pub fn root_kind() -> NonterminalKind {
+        unreachable!("Undefined root_kind for stubs");
+    }
+
     pub fn version(&self) -> &Version {
         &self.version
     }

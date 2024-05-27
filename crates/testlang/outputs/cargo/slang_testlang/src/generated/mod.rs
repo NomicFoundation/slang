@@ -4,6 +4,8 @@
 pub(crate) mod parser_support;
 pub(crate) mod lexer;
 
+#[cfg(feature = "cli")]
+pub mod commands;
 pub mod diagnostic;
 #[path = "generated/kinds.rs"]
 pub mod kinds;
@@ -75,7 +77,7 @@ pub mod text_index {
 pub mod graph_builder {
     pub use metaslang_graph_builder::functions::Functions;
     use metaslang_graph_builder::{ast, graph};
-    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
+    pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
 
     use super::metaslang_cst::KindTypes;
 

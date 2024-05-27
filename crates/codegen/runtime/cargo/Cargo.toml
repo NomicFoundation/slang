@@ -27,10 +27,11 @@ thiserror = { workspace = true }
 # Since the source code is copied over as-is, we need to retain exact feature set with target crate,
 # i.e `slang_solidity_node_addon`.
 [features]
-default = ["slang_napi_interfaces"]
+default = ["slang_napi_interfaces", "__private_ariadne", "cli"]
 slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
+cli = ["dep:serde_json"]
 
 [lints]
 workspace = true

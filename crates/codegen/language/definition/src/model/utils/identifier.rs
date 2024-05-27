@@ -12,7 +12,7 @@ use crate::internals::{
 };
 
 /// A wrapper type to make sure the DSL token is written as an identifier instead of a string literal.
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Identifier {
     value: String,
 }

@@ -71,6 +71,10 @@ impl Language {
         }
     }
 
+    pub fn root_kind() -> NonterminalKind {
+        NonterminalKind::SourceUnit
+    }
+
     pub fn version(&self) -> &Version {
         &self.version
     } /********************************************

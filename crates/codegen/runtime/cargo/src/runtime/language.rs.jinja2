@@ -80,6 +80,14 @@ impl Language {
         }
     }
 
+    pub fn root_kind() -> NonterminalKind {
+        {%- if rendering_in_stubs -%}
+            unreachable!("Undefined root_kind for stubs");
+        {%- else -%}
+            NonterminalKind::{{ model.root_item }}
+        {%- endif -%}
+    }
+
     pub fn version(&self) -> &Version {
         &self.version
     }

@@ -1,6 +1,6 @@
 use semver::Version;
 use slang_testlang::graph_builder::{ExecutionConfig, File, Functions, NoCancellation, Variables};
-use slang_testlang::kinds::NonTerminalKind;
+use slang_testlang::kinds::NonterminalKind;
 use slang_testlang::language::Language;
 
 #[test]
@@ -34,7 +34,7 @@ fn builds_a_graph() {
     assert!(msgb.check().is_ok());
 
     let source = "tree $t1 [A [B C]];";
-    let parse_output = language.parse(NonTerminalKind::SourceUnit, source);
+    let parse_output = language.parse(NonterminalKind::SourceUnit, source);
 
     assert!(parse_output.is_valid());
     let tree = parse_output.create_tree_cursor();
