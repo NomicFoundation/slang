@@ -20,7 +20,7 @@ test("using the parser", async () => {
 
   // --8<-- [start:print-errors]
   for (const error of parseOutput.errors()) {
-    console.error(error.toErrorReport(inputPath, source, true));
+    console.error(`Error at byte offset ${error.textRange().start.utf8}: ${error.message()}`);
   }
   // --8<-- [end:print-errors]
 

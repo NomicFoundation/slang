@@ -98,10 +98,33 @@ export namespace cursor {
     query(queries: Array<query.Query>): query.QueryMatchIterator;
   }
 }
+export namespace diagnostic {
+  /**
+   * Severity of the compiler diagnostic.
+   *
+   * Explicitly compatible with the LSP protocol.
+   */
+  export enum Severity {
+    Error = 1,
+    Warning = 2,
+    Information = 3,
+    Hint = 4,
+  }
+  /** A compiler diagnostic that can be rendered to a user. */
+  export class Diagnostic {
+    /** The severity of this diagnostic. */
+    severity(): Severity;
+    /** The character range of the source that this diagnostic applies to. */
+    textRange(): text_index.TextRange;
+    /** The primary message associated with this diagnostic. */
+    message(): string;
+  }
+}
 export namespace parse_error {
   export class ParseError {
-    get textRange(): text_index.TextRange;
-    toErrorReport(sourceId: string, source: string, withColor: boolean): string;
+    severity(): diagnostic.Severity;
+    textRange(): text_index.TextRange;
+    message(): string;
   }
 }
 export namespace parse_output {

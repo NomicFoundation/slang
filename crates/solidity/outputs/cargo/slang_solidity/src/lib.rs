@@ -8,5 +8,5 @@ pub use generated::*;
 // https://github.com/rust-lang/cargo/issues/1982
 #[cfg(feature = "cli")]
 mod supress_cli_dependencies {
-    use {anyhow as _, clap as _, serde_json as _};
+    use {anyhow as _, ariadne as _, clap as _, serde_json as _};
 }

@@ -27,7 +27,11 @@ fn using_the_parser() -> Result<()> {
 
     // --8<-- [start:print-errors]
     for error in parse_output.errors() {
-        eprintln!("{}", error.to_error_report(input_path, source, true));
+        eprintln!(
+            "Error at byte offset {offset}: {message}",
+            offset = error.text_range().start.utf8,
+            message = error.message()
+        );
     }
     // --8<-- [end:print-errors]
 

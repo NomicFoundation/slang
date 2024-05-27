@@ -4,6 +4,7 @@
 pub(crate) mod parser_support;
 pub(crate) mod lexer;
 
+pub mod diagnostic;
 #[path = "generated/kinds.rs"]
 pub mod kinds;
 #[path = "generated/language.rs"]

@@ -112,7 +112,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let source_id = file.path.strip_repo_root()?.unwrap_str();
 
     for error in output.errors() {
-        let report = error.to_error_report(source_id, &source, with_color);
+        let report = slang_solidity::diagnostic::render(error, source_id, &source, with_color);
 
         events.parse_error(format!("[{version}] {report}"));
     }

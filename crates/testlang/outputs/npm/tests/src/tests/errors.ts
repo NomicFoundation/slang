@@ -1,5 +1,7 @@
 import { Language } from "@slang-private/slang-testlang/language";
 import { NonterminalKind } from "@slang-private/slang-testlang/kinds";
+import { TextIndex } from "@slang-private/slang-testlang/text_index";
+import { Severity } from "@slang-private/slang-testlang/diagnostic";
 
 test("render error reports", () => {
   const source = "tree [AB;";
@@ -8,18 +10,10 @@ test("render error reports", () => {
   const errors = language.parse(NonterminalKind.SourceUnit, source).errors();
   expect(errors).toHaveLength(1);
 
-  const report = errors[0]!.toErrorReport("test.testlang", source, /* withColor */ false);
-  expect(report).toEqual(
-    `
-Error: Expected Identifier or StringLiteral or TreeKeyword.
-   ╭─[test.testlang:1:6]
-   │
- 1 │ tree [AB;
-   │      ──┬─  
-   │        ╰─── Error occurred here.
-───╯
-    `.trim(),
-  );
+  expect(errors[0]!.severity()).toBe(Severity.Error);
+  expect(errors[0]!.message()).toBe("Expected Identifier or StringLiteral or TreeKeyword.");
+  expect(errors[0]!.textRange().start).toEqual({ utf8: 5, utf16: 5, column: 5, line: 0 } satisfies TextIndex);
+  expect(errors[0]!.textRange().end).toEqual({ utf8: 9, utf16: 9, column: 9, line: 0 } satisfies TextIndex);
 });
 
 test("invalid semantic version", () => {
