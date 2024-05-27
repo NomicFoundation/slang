@@ -30,7 +30,7 @@ mod metaslang_cst {
     pub enum KindTypes {}
 
     impl metaslang_cst::KindTypes for KindTypes {
-        type NonTerminalKind = crate::kinds::NonTerminalKind;
+        type NonterminalKind = crate::kinds::NonterminalKind;
         type TerminalKind = crate::kinds::TerminalKind;
         type EdgeLabel = crate::kinds::EdgeLabel;
     }
@@ -42,7 +42,7 @@ pub mod cst {
     use super::metaslang_cst::KindTypes;
 
     pub type Node = cst::Node<KindTypes>;
-    pub type NonTerminalNode = cst::NonTerminalNode<KindTypes>;
+    pub type NonterminalNode = cst::NonterminalNode<KindTypes>;
     pub type TerminalNode = cst::TerminalNode<KindTypes>;
     pub type Edge = cst::Edge<KindTypes>;
 }

@@ -16,15 +16,16 @@ use semver::Version;
 
 use crate::cst;
 use crate::kinds::{
-    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonTerminalKind, TerminalKind,
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
-use crate::lexer::{KeywordScan, Lexer, ScannedToken};
+use crate::lexer::{KeywordScan, Lexer, ScannedTerminal};
 #[cfg(feature = "slang_napi_interfaces")]
 use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 use crate::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TokenAcceptanceThreshold, ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
+    ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -65,7 +66,7 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, kind: NonTerminalKind, input: &str) -> ParseOutput {
+    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         unreachable!("Attempting to parse in stubs: {kind}: {input}")
     }
 }
@@ -83,11 +84,11 @@ impl Lexer for Language {
         unreachable!("Invoking delimiters in stubs.")
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(
+    fn next_terminal<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-    ) -> Option<ScannedToken> {
-        unreachable!("Invoking next_token in stubs: {input:#?}")
+    ) -> Option<ScannedTerminal> {
+        unreachable!("Invoking next_terminal in stubs: {input:#?}")
     }
 }
 
@@ -123,7 +124,7 @@ impl Language {
     )]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
+        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
         input: String,
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

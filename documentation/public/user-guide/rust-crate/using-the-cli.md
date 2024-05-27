@@ -28,21 +28,21 @@ Options:
 Here is an example of the JSON output it can print:
 
 ```json
-// A Rule node
-"Rule": {
-  // Name of the rule kind
+// A Nonterminal node
+"Nonterminal": {
+  // Name of the nonterminal kind
   "kind": "SourceUnit",
-  // Length of the rule in Unicode code points, depending on the encoding used
+  // Length of the nonterminal in Unicode code points, depending on the encoding used
   "text_len": {
     "utf8": 24,
     "utf16": 24,
     "char": 24 // de facto utf32
   },
-  "children": [/* Rule or Token nodes */]
+  "children": [/* Nonterminal or Terminal nodes */]
 }
-// A Token node
-"Token": {
-  // Name of the token kind
+// A Terminal node
+"Terminal": {
+  // Name of the terminal kind
   "kind": "PragmaKeyword",
   // Literal value, taken from the source code
   "text": "pragma"
@@ -64,11 +64,11 @@ slang_solidity parse --json --version "0.8.0" "input.sol" > "output.json"
 Because the resulting structure is well-defined and recursive, we can use the popular `jq` tool to quickly analyze the resulting output:
 
 ```bash
-JQ_QUERY='recurse | select(.Token?) | .Token'
+JQ_QUERY='recurse | select(.Terminal?) | .Terminal'
 cat output.json | jq "$JQ_QUERY"
 ```
 
-This gives us a flat list of the Token nodes:
+This gives us a flat list of the Terminal nodes:
 
 ```json
 {
@@ -125,7 +125,7 @@ Now, we can adapt the query to select the `text` fields of the nodes and concate
 which gives us back the reconstructed source code! 🎉
 
 ```bash
-$ JQ_QUERY='[recurse | select(.Token?) | .Token.text] | join("")'
+$ JQ_QUERY='[recurse | select(.Terminal?) | .Terminal.text] | join("")'
 $ cat output.json | jq "$JQ_QUERY"
 
 "pragma solidity ^0.8.0;\n"

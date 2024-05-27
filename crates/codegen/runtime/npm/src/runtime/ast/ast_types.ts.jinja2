@@ -3,8 +3,8 @@
 {%- else -%}
     import * as assert from "node:assert";
     import { ast_internal } from "../../napi-bindings/generated";
-    import { NonTerminalNode, TerminalNode } from "../../cst";
-    import { NonTerminalKind, TerminalKind } from "../../kinds";
+    import { NonterminalNode, TerminalNode } from "../../cst";
+    import { NonterminalKind, TerminalKind } from "../../kinds";
 
     /*
     * Sequences:
@@ -28,14 +28,14 @@
               {%- if field.is_terminal -%}
                 ${{ field.name | camel_case }} as TerminalNode,
               {%- else -%}
-                new {{ field.reference }}(${{ field.name | camel_case }} as NonTerminalNode),
+                new {{ field.reference }}(${{ field.name | camel_case }} as NonterminalNode),
               {%- endif -%}
             {% endfor -%}
           };
         });
 
-        public constructor(public readonly cst: NonTerminalNode) {
-          assertKind(this.cst.kind, NonTerminalKind.{{ sequence.name }});
+        public constructor(public readonly cst: NonterminalNode) {
+          assertKind(this.cst.kind, NonterminalKind.{{ sequence.name }});
         }
 
         {% for field in sequence.fields %}
@@ -61,7 +61,7 @@
 
     {% for choice in model.ast.choices %}
       export class {{ choice.name }} {
-        {%- set variant_types = choice.non_terminals -%}
+        {%- set variant_types = choice.nonterminals -%}
         {%- if choice.terminals | length > 0 -%}
           {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
         {%- endif -%}
@@ -71,9 +71,9 @@
           const variant = ast_internal.selectChoice(this.cst);
 
           switch (variant.kind) {
-            {%- for non_terminal in choice.non_terminals %}
-              case NonTerminalKind.{{ non_terminal }}:
-                return new {{ non_terminal }}(variant as NonTerminalNode);
+            {%- for nonterminal in choice.nonterminals %}
+              case NonterminalKind.{{ nonterminal }}:
+                return new {{ nonterminal }}(variant as NonterminalNode);
             {%- endfor %}
 
             {% if choice.terminals | length > 0 %}
@@ -88,8 +88,8 @@
           }
         });
 
-        public constructor(public readonly cst: NonTerminalNode) {
-          assertKind(this.cst.kind, NonTerminalKind.{{ choice.name }});
+        public constructor(public readonly cst: NonterminalNode) {
+          assertKind(this.cst.kind, NonterminalKind.{{ choice.name }});
         }
 
         public get variant(): {{ variant_types }} {
@@ -110,12 +110,12 @@
           {%- if repeated.is_terminal -%}
             return items as TerminalNode[];
           {%- else -%}
-            return items.map((item) => new {{ repeated.reference }}(item as NonTerminalNode));
+            return items.map((item) => new {{ repeated.reference }}(item as NonterminalNode));
           {%- endif -%}
         });
           
-        public constructor(public readonly cst: NonTerminalNode) {
-          assertKind(this.cst.kind, NonTerminalKind.{{ repeated.name }});
+        public constructor(public readonly cst: NonterminalNode) {
+          assertKind(this.cst.kind, NonterminalKind.{{ repeated.name }});
         }
 
         public get items():
@@ -143,14 +143,14 @@
             {%- if separated.is_terminal -%}
               items: items as TerminalNode[],
             {%- else -%}
-              items: items.map((item) => new {{ separated.reference }}(item as NonTerminalNode)),
+              items: items.map((item) => new {{ separated.reference }}(item as NonterminalNode)),
             {%- endif -%}
             separators: separators as TerminalNode[],
           };
         });
 
-        public constructor(public readonly cst: NonTerminalNode) {
-          assertKind(this.cst.kind, NonTerminalKind.{{ separated.name }});
+        public constructor(public readonly cst: NonterminalNode) {
+          assertKind(this.cst.kind, NonterminalKind.{{ separated.name }});
         }
 
         public get items():
@@ -183,7 +183,7 @@
       };
     }
 
-    function assertKind(actual: NonTerminalKind, expected: NonTerminalKind): void {
+    function assertKind(actual: NonterminalKind, expected: NonterminalKind): void {
       assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
     }
 {%- endif %}

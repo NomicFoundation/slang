@@ -19,7 +19,7 @@ use metaslang_graph_builder::{Identifier, Location, ParseError};
     strum_macros::IntoStaticStr,
     strum_macros::EnumString,
 )]
-pub enum NonTerminalKind {
+pub enum NonterminalKind {
     Module,
     FunctionDefinition,
     PassStatement,
@@ -51,12 +51,12 @@ pub enum EdgeLabel {
     Name,
 }
 impl metaslang_cst::TerminalKind for TerminalKind {}
-impl metaslang_cst::NonTerminalKind for NonTerminalKind {}
+impl metaslang_cst::NonterminalKind for NonterminalKind {}
 impl metaslang_cst::EdgeLabel for EdgeLabel {}
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct KindTypes;
 impl metaslang_cst::KindTypes for KindTypes {
-    type NonTerminalKind = NonTerminalKind;
+    type NonterminalKind = NonterminalKind;
     type TerminalKind = TerminalKind;
     type EdgeLabel = EdgeLabel;
 }

@@ -8,7 +8,7 @@ use crate::text_index::TextRange;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
-    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+    pub(crate) terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
 }
 
 impl ParseError {
@@ -16,13 +16,13 @@ impl ParseError {
         &self.text_range
     }
 
-    pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
-        let tokens_that_would_have_allowed_more_progress = self
-            .tokens_that_would_have_allowed_more_progress
+    pub fn terminals_that_would_have_allowed_more_progress(&self) -> Vec<String> {
+        let terminals_that_would_have_allowed_more_progress = self
+            .terminals_that_would_have_allowed_more_progress
             .iter()
             .collect::<BTreeSet<_>>();
 
-        tokens_that_would_have_allowed_more_progress
+        terminals_that_would_have_allowed_more_progress
             .into_iter()
             .map(TerminalKind::to_string)
             .collect()
@@ -36,11 +36,11 @@ impl ParseError {
 impl ParseError {
     pub(crate) fn new(
         text_range: TextRange,
-        tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+        terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {
         Self {
             text_range,
-            tokens_that_would_have_allowed_more_progress,
+            terminals_that_would_have_allowed_more_progress,
         }
     }
 }
@@ -56,14 +56,14 @@ pub(crate) fn render_error_report(
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
 
-    let tokens_that_would_have_allowed_more_progress =
-        error.tokens_that_would_have_allowed_more_progress();
-    let message = if tokens_that_would_have_allowed_more_progress.is_empty() {
+    let terminals_that_would_have_allowed_more_progress =
+        error.terminals_that_would_have_allowed_more_progress();
+    let message = if terminals_that_would_have_allowed_more_progress.is_empty() {
         "Expected end of file.".to_string()
     } else {
         format!(
             "Expected {expectations}.",
-            expectations = tokens_that_would_have_allowed_more_progress.join(" or ")
+            expectations = terminals_that_would_have_allowed_more_progress.join(" or ")
         )
     };
 

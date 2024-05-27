@@ -101,14 +101,14 @@ pub(super) fn parse_bound_matcher<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
     pair(
-        opt(binding_name_token),
+        opt(capture_name_token),
         alt((
             delimited(token('('), parse_matcher_alternatives::<T>, token(')')),
             parse_edge,
         )),
     )
     .map(|(name, child)| match name {
-        Some(name) => ASTNode::Binding(Rc::new(CaptureASTNode { name, child })),
+        Some(name) => ASTNode::Capture(Rc::new(CaptureASTNode { name, child })),
         None => child,
     })
     .parse(i)
@@ -198,7 +198,7 @@ fn raw_identifier(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     .parse(i)
 }
 
-fn binding_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
+fn capture_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
@@ -208,7 +208,7 @@ fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<
             T::TerminalKind::try_from_str(id.as_str())
                 .map(NodeKind::Terminal)
                 .or_else(|_| {
-                    T::NonTerminalKind::try_from_str(id.as_str()).map(NodeKind::NonTerminal)
+                    T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
                 })
         }),
         multispace0,

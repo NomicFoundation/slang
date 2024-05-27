@@ -18,13 +18,13 @@ use napi_derive::napi;
 )]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum NonTerminalKind {
+pub enum NonterminalKind {
     Stub1,
     Stub2,
     Stub3,
 }
 
-impl metaslang_cst::NonTerminalKind for NonTerminalKind {}
+impl metaslang_cst::NonterminalKind for NonterminalKind {}
 
 #[derive(
     Debug,

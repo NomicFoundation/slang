@@ -3,7 +3,7 @@ use std::path::Path;
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
-use slang_solidity::kinds::NonTerminalKind;
+use slang_solidity::kinds::NonterminalKind;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
 use slang_solidity::query::{Query, QueryMatchIterator};
@@ -15,7 +15,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
     let language = Language::new(Version::new(0, 8, 0))?;
 
-    Ok(language.parse(NonTerminalKind::SourceUnit, source.trim()))
+    Ok(language.parse(NonterminalKind::SourceUnit, source.trim()))
 }
 
 #[test]
@@ -42,9 +42,9 @@ fn using_queries() -> Result<()> {
 
         let query = Query::parse("@contract [ContractDefinition]").unwrap();
 
-        for result in cursor.query(vec![query]) {
-            let bindings = result.captures;
-            let cursors = bindings.get("contract").unwrap();
+        for r#match in cursor.query(vec![query]) {
+            let captures = r#match.captures;
+            let cursors = captures.get("contract").unwrap();
 
             let cursor = cursors.first().unwrap();
 
@@ -67,10 +67,10 @@ fn using_queries() -> Result<()> {
         let struct_def = Query::parse("[StructDefinition ... @name [Identifier] ...]").unwrap();
         let enum_def = Query::parse("[EnumDefinition ... @name [Identifier] ...]").unwrap();
 
-        for result in cursor.query(vec![struct_def, enum_def]) {
-            let index = result.query_number;
-            let bindings = result.captures;
-            let cursors = bindings.get("name").unwrap();
+        for r#match in cursor.query(vec![struct_def, enum_def]) {
+            let index = r#match.query_number;
+            let captures = r#match.captures;
+            let cursors = captures.get("name").unwrap();
 
             let cursor = cursors.first().unwrap();
 
@@ -98,9 +98,9 @@ fn using_queries() -> Result<()> {
 
         let query = Query::parse("[TypedTupleMember ... @type type_name:[_] ...]").unwrap();
 
-        for result in cursor.query(vec![query]) {
-            let bindings = result.captures;
-            let cursors = bindings.get("type").unwrap();
+        for r#match in cursor.query(vec![query]) {
+            let captures = r#match.captures;
+            let cursors = captures.get("type").unwrap();
 
             let cursor = cursors.first().unwrap();
 
@@ -121,9 +121,9 @@ fn using_queries() -> Result<()> {
 
         let query = Query::parse(r#"[ElementaryType @uint_keyword variant:["uint"]]"#).unwrap();
 
-        for result in cursor.query(vec![query]) {
-            let bindings = result.captures;
-            let cursors = bindings.get("uint_keyword").unwrap();
+        for r#match in cursor.query(vec![query]) {
+            let captures = r#match.captures;
+            let cursors = captures.get("uint_keyword").unwrap();
 
             let cursor = cursors.first().unwrap();
 
@@ -162,9 +162,9 @@ fn tx_origin_query() -> Result<()> {
 
     let mut results = vec![];
 
-    for result in cursor.query(vec![query]) {
-        let bindings = result.captures;
-        let cursors = bindings.get("txorigin").unwrap();
+    for r#match in cursor.query(vec![query]) {
+        let captures = r#match.captures;
+        let cursors = captures.get("txorigin").unwrap();
 
         let cursor = cursors.first().unwrap();
 

@@ -25,10 +25,10 @@ impl SeparatedHelper {
                 ParserResult::Match(r#match) => {
                     accum.extend(r#match.nodes);
 
-                    match lexer.peek_token_with_trivia::<LexCtx>(input) {
+                    match lexer.peek_terminal_with_trivia::<LexCtx>(input) {
                         Some(scanned) if scanned.accepted_as(separator) => {
                             match lexer
-                                .parse_token_with_trivia::<LexCtx>(input, separator)
+                                .parse_terminal_with_trivia::<LexCtx>(input, separator)
                                 .with_label(separator_label)
                             {
                                 ParserResult::Match(r#match) => {
@@ -41,12 +41,12 @@ impl SeparatedHelper {
 
                         // Unrecognized, return the accumulated matches.
                         // NOTE: We can't correctly attempt recovery until #600 lands, otherwise we'd risk misparses,
-                        // as we need to stop at certain synchronizing tokens (and we can't reliably scan until
+                        // as we need to stop at certain synchronizing terminals (and we can't reliably scan until
                         // a delimiter, as not every list is enclosed in a delimited group).
                         Some(..) | None => return ParserResult::r#match(accum, vec![separator]),
                     }
                 }
-                // Body was partially parsed, so try to recover by skipping tokens until we see a separator
+                // Body was partially parsed, so try to recover by skipping terminals until we see a separator
                 ParserResult::IncompleteMatch(incomplete) => {
                     accum.extend(incomplete.nodes);
 
@@ -61,11 +61,11 @@ impl SeparatedHelper {
                             )));
                             input.emit(ParseError {
                                 text_range: skipped_range,
-                                tokens_that_would_have_allowed_more_progress: incomplete
-                                    .expected_tokens,
+                                terminals_that_would_have_allowed_more_progress: incomplete
+                                    .expected_terminals,
                             });
 
-                            match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
+                            match lexer.parse_terminal_with_trivia::<LexCtx>(input, separator) {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
@@ -82,16 +82,16 @@ impl SeparatedHelper {
 
                             return ParserResult::incomplete_match(
                                 accum,
-                                incomplete.expected_tokens,
+                                incomplete.expected_terminals,
                             );
                         }
                     }
                 }
                 ParserResult::NoMatch(no_match) => {
                     return if accum.is_empty() {
-                        ParserResult::no_match(no_match.expected_tokens)
+                        ParserResult::no_match(no_match.expected_terminals)
                     } else {
-                        ParserResult::incomplete_match(accum, no_match.expected_tokens)
+                        ParserResult::incomplete_match(accum, no_match.expected_terminals)
                     };
                 }
 

@@ -128,29 +128,29 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             Self::ScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
-                let parse_token = if is_trivia {
-                    format_ident!("parse_token")
+                let parse_terminal = if is_trivia {
+                    format_ident!("parse_terminal")
                 } else {
-                    format_ident!("parse_token_with_trivia")
+                    format_ident!("parse_terminal_with_trivia")
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
+                    self.#parse_terminal::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
-            // Keyword scanner uses the promotion inside the parse_token
+            // Keyword scanner uses the promotion inside the parse_terminal
             Self::KeywordScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
-                let parse_token = if is_trivia {
-                    format_ident!("parse_token")
+                let parse_terminal = if is_trivia {
+                    format_ident!("parse_terminal")
                 } else {
-                    format_ident!("parse_token_with_trivia")
+                    format_ident!("parse_terminal_with_trivia")
                 };
 
                 quote! {
-                    self.#parse_token::<#lex_ctx>(input, TerminalKind::#kind)
+                    self.#parse_terminal::<#lex_ctx>(input, TerminalKind::#kind)
                 }
             }
 
@@ -210,7 +210,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TerminalKind::#close_delim,
-                                TokenAcceptanceThreshold(#threshold),
+                                TerminalAcceptanceThreshold(#threshold),
                             )
                         )?;
                     },
@@ -224,12 +224,12 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
                         seq.elem_labeled(
                             EdgeLabel::#open_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#open_delim)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#open_delim)
                         )?;
                         #body_parser
                         seq.elem_labeled(
                             EdgeLabel::#close_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#close_delim)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#close_delim)
                         )?;
                         seq.finish()
                     })
@@ -277,7 +277,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                                 self,
                                 TerminalKind::#terminator,
                                  // Requires at least a partial match not to risk misparsing
-                                TokenAcceptanceThreshold(1u8),
+                                TerminalAcceptanceThreshold(1u8),
                             )
                         )?;
                     },
@@ -289,7 +289,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         #body_parser
                         seq.elem_labeled(
                             EdgeLabel::#terminator_label,
-                            self.parse_token_with_trivia::<#lex_ctx>(input, TerminalKind::#terminator)
+                            self.parse_terminal_with_trivia::<#lex_ctx>(input, TerminalKind::#terminator)
                         )?;
                         seq.finish()
                     })
