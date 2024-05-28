@@ -70,8 +70,6 @@ struct ScannerContextModel {
 
 #[derive(Default)]
 struct ParserAccumulatorState {
-    /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<String>,
 
@@ -107,6 +105,8 @@ struct DslV2CollectorState {
     terminal_kinds: BTreeSet<Identifier>,
     /// Defines the `NonterminalKind` enum variants.
     nonterminal_kinds: BTreeSet<Identifier>,
+    /// Defines `TerminalKind::is_trivia` method.
+    trivia_scanner_names: BTreeSet<Identifier>,
 }
 
 impl ParserModel {
@@ -150,10 +150,19 @@ impl ParserModel {
             }
         }
 
+        let trivia_scanner_names = language
+            .items()
+            .filter_map(|item| match item {
+                Item::Trivia { item } => Some(item.name.clone()),
+                _ => None,
+            })
+            .collect();
+
         acc.into_model(DslV2CollectorState {
             referenced_versions: language.collect_breaking_versions(),
             terminal_kinds,
             nonterminal_kinds,
+            trivia_scanner_names,
         })
     }
 }
@@ -263,7 +272,6 @@ impl ParserAccumulatorState {
         self.labels.remove("trailing_trivia");
 
         ParserModel {
-            trivia_scanner_names: self.trivia_scanner_names,
             labels: self.labels,
             parser_functions: self.parser_functions,
             trivia_parser_functions: self.trivia_parser_functions,
@@ -275,6 +283,7 @@ impl ParserAccumulatorState {
             referenced_versions: collected.referenced_versions,
             terminal_kinds: collected.terminal_kinds,
             nonterminal_kinds: collected.nonterminal_kinds,
+            trivia_scanner_names: collected.trivia_scanner_names,
         }
     }
 }
@@ -287,24 +296,6 @@ impl GrammarVisitor for ParserAccumulatorState {
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
-        let trivia_scanners = {
-            use crate::parser::grammar::visitor::Visitable;
-
-            #[derive(Default)]
-            struct CollectTriviaScanners {
-                scanner_names: BTreeSet<Identifier>,
-            }
-            impl crate::parser::grammar::visitor::GrammarVisitor for CollectTriviaScanners {
-                fn scanner_definition_enter(&mut self, node: &ScannerDefinitionRef) {
-                    self.scanner_names.insert(node.name().clone());
-                }
-            }
-
-            let mut visitor = CollectTriviaScanners::default();
-            parser.node().accept_visitor(&mut visitor);
-            visitor.scanner_names
-        };
-        self.trivia_scanner_names.extend(trivia_scanners);
 
         self.trivia_parser_functions.insert(
             parser.name().clone(),
