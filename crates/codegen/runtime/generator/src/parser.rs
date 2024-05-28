@@ -70,9 +70,6 @@ struct ScannerContextModel {
 
 #[derive(Default)]
 struct ParserAccumulatorState {
-    /// Defines `EdgeLabel` enum variants.
-    labels: BTreeSet<String>,
-
     // Defines the `LexicalContext(Type)` enum and type-level variants.
     scanner_contexts: BTreeMap<Identifier, ScannerContextAccumulatorState>,
 
@@ -107,6 +104,8 @@ struct DslV2CollectorState {
     nonterminal_kinds: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
+    /// Defines `EdgeLabel` enum variants.
+    labels: BTreeSet<String>,
 }
 
 impl ParserModel {
@@ -158,11 +157,33 @@ impl ParserModel {
             })
             .collect();
 
+        let mut labels = BTreeSet::default();
+        for item in language.items() {
+            match item {
+                Item::Struct { item } => {
+                    for field_name in item.fields.keys() {
+                        labels.insert(field_name.to_string());
+                    }
+                }
+                Item::Precedence { item } => {
+                    for item in &item.precedence_expressions {
+                        for item in &item.operators {
+                            for field_name in item.fields.keys() {
+                                labels.insert(field_name.to_string());
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
         acc.into_model(DslV2CollectorState {
             referenced_versions: language.collect_breaking_versions(),
             terminal_kinds,
             nonterminal_kinds,
             trivia_scanner_names,
+            labels,
         })
     }
 }
@@ -179,7 +200,7 @@ impl ParserAccumulatorState {
             .expect("context must be set with `set_current_context`")
     }
 
-    fn into_model(mut self, collected: DslV2CollectorState) -> ParserModel {
+    fn into_model(self, collected: DslV2CollectorState) -> ParserModel {
         let contexts = self
             .scanner_contexts
             .into_iter()
@@ -258,21 +279,7 @@ impl ParserAccumulatorState {
             })
             .collect();
 
-        // Make sure empty strings are not there
-        self.labels.remove("");
-        // These are built-in and already pre-defined
-        // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
-        self.labels.remove("item");
-        self.labels.remove("variant");
-        self.labels.remove("separator");
-        self.labels.remove("operand");
-        self.labels.remove("left_operand");
-        self.labels.remove("right_operand");
-        self.labels.remove("leading_trivia");
-        self.labels.remove("trailing_trivia");
-
         ParserModel {
-            labels: self.labels,
             parser_functions: self.parser_functions,
             trivia_parser_functions: self.trivia_parser_functions,
             // These are derived from the accumulated state
@@ -284,6 +291,7 @@ impl ParserAccumulatorState {
             terminal_kinds: collected.terminal_kinds,
             nonterminal_kinds: collected.nonterminal_kinds,
             trivia_scanner_names: collected.trivia_scanner_names,
+            labels: collected.labels,
         }
     }
 }
@@ -345,28 +353,8 @@ impl GrammarVisitor for ParserAccumulatorState {
                     .insert(scanner.name().clone(), Rc::clone(scanner));
             }
 
-            // Collect labels:
-            ParserDefinitionNode::Choice(choice) => {
-                self.labels.insert(choice.label.clone());
-            }
-            ParserDefinitionNode::Sequence(sequence) => {
-                for node in sequence {
-                    self.labels.insert(node.label.clone());
-                }
-            }
-            ParserDefinitionNode::SeparatedBy(item, separator) => {
-                self.labels.insert(item.label.clone());
-                self.labels.insert(separator.label.clone());
-            }
-            ParserDefinitionNode::TerminatedBy(_, terminator) => {
-                self.labels.insert(terminator.label.clone());
-            }
-
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close, ..) => {
-                self.labels.insert(open.label.clone());
-                self.labels.insert(close.label.clone());
-
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
