@@ -1,9 +1,10 @@
 use std::collections::BTreeSet;
 use std::rc::Rc;
 
-use codegen_language_definition::model::Language;
+use codegen_language_definition::model::{BuiltInLabel, Language};
 use semver::Version;
 use serde::Serialize;
+use strum::IntoEnumIterator;
 
 use crate::ast::AstModel;
 use crate::kinds::KindsModel;
@@ -16,6 +17,7 @@ pub struct RuntimeModel {
     parser: ParserModel,
     ast: AstModel,
     kinds: KindsModel,
+    builtin_labels: Vec<String>,
 }
 
 impl RuntimeModel {
@@ -25,6 +27,20 @@ impl RuntimeModel {
             ast: AstModel::create(language),
             parser: ParserModel::from_language(language),
             kinds: KindsModel::create(language),
+            builtin_labels: builtin_labels(),
         }
     }
+
+    pub fn for_stubs() -> Self {
+        Self {
+            builtin_labels: builtin_labels(),
+            ..Default::default()
+        }
+    }
+}
+
+fn builtin_labels() -> Vec<String> {
+    BuiltInLabel::iter()
+        .map(|label| label.as_ref().to_owned())
+        .collect()
 }

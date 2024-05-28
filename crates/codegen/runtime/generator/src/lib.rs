@@ -2,11 +2,10 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use anyhow::Result;
-use codegen_language_definition::model::{BuiltInLabel, Language};
+use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenTemplates;
 use serde::Serialize;
-use strum::IntoEnumIterator;
 
 use crate::model::RuntimeModel;
 
@@ -26,22 +25,14 @@ pub enum OutputLanguage {
 #[derive(Serialize)]
 struct ModelWrapper {
     rendering_in_stubs: bool,
-    model: Option<RuntimeModel>,
-    builtin_labels: Vec<String>,
-}
-
-fn builtin_labels() -> Vec<String> {
-    BuiltInLabel::iter()
-        .map(|label| label.as_ref().to_owned())
-        .collect()
+    model: RuntimeModel,
 }
 
 impl OutputLanguage {
     pub fn generate_runtime(&self, language: &Rc<Language>, output_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
-            model: Some(RuntimeModel::from_language(language)),
-            builtin_labels: builtin_labels(),
+            model: RuntimeModel::from_language(language),
         };
 
         let mut templates = CodegenTemplates::new(self.source_dir()?)?;
@@ -52,8 +43,7 @@ impl OutputLanguage {
     pub fn generate_stubs(&self) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,
-            model: None,
-            builtin_labels: builtin_labels(),
+            model: RuntimeModel::for_stubs(),
         };
 
         let mut templates = CodegenTemplates::new(self.source_dir()?)?;
