@@ -30,11 +30,10 @@ impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
     }
 
     fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)> {
-        let mut res = vec![];
         let parser_name = format_ident!("{}", self.name().to_snake_case());
         let nonterminal_name = format_ident!("{}", self.name().to_pascal_case());
 
-        for name in &self.node().precedence_expression_names {
+        self.node().precedence_expression_names.iter().map(|name| {
             let op_nonterminal_name = format_ident!("{}", name.to_pascal_case());
 
             // Ensure that the parser correctly identifies a single node of the expected type,
@@ -55,9 +54,10 @@ impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
                     _ => ParserResult::no_match(vec![]),
                 }
             };
-            res.push((name.clone(), code));
-        }
-        res
+
+
+            (name.clone(), code)
+        }).collect()
     }
 }
 
