@@ -464,14 +464,14 @@ export class UsingAlias {
 
 export class ContractDefinition {
   private readonly fetch = once(() => {
-    const [$abstractKeyword, $contractKeyword, $name, $inheritence, $openBrace, $members, $closeBrace] =
+    const [$abstractKeyword, $contractKeyword, $name, $inheritance, $openBrace, $members, $closeBrace] =
       ast_internal.selectSequence(this.cst);
 
     return {
       abstractKeyword: $abstractKeyword === null ? undefined : ($abstractKeyword as TerminalNode),
       contractKeyword: $contractKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
+      inheritance: $inheritance === null ? undefined : new InheritanceSpecifier($inheritance as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
       members: new ContractMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
@@ -494,8 +494,8 @@ export class ContractDefinition {
     return this.fetch().name;
   }
 
-  public get inheritence(): InheritanceSpecifier | undefined {
-    return this.fetch().inheritence;
+  public get inheritance(): InheritanceSpecifier | undefined {
+    return this.fetch().inheritance;
   }
 
   public get openBrace(): TerminalNode {
@@ -559,14 +559,14 @@ export class InheritanceType {
 
 export class InterfaceDefinition {
   private readonly fetch = once(() => {
-    const [$interfaceKeyword, $name, $inheritence, $openBrace, $members, $closeBrace] = ast_internal.selectSequence(
+    const [$interfaceKeyword, $name, $inheritance, $openBrace, $members, $closeBrace] = ast_internal.selectSequence(
       this.cst,
     );
 
     return {
       interfaceKeyword: $interfaceKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
+      inheritance: $inheritance === null ? undefined : new InheritanceSpecifier($inheritance as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
       members: new InterfaceMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
@@ -585,8 +585,8 @@ export class InterfaceDefinition {
     return this.fetch().name;
   }
 
-  public get inheritence(): InheritanceSpecifier | undefined {
-    return this.fetch().inheritence;
+  public get inheritance(): InheritanceSpecifier | undefined {
+    return this.fetch().inheritance;
   }
 
   public get openBrace(): TerminalNode {

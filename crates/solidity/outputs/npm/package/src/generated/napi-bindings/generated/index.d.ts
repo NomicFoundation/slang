@@ -291,7 +291,7 @@ export namespace kinds {
     ImportKeyword = "ImportKeyword",
     Index = "Index",
     IndexedKeyword = "IndexedKeyword",
-    Inheritence = "Inheritence",
+    Inheritance = "Inheritance",
     Initialization = "Initialization",
     InterfaceKeyword = "InterfaceKeyword",
     IsKeyword = "IsKeyword",

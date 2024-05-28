@@ -2079,7 +2079,7 @@ codegen_language_macros::compile!(Language(
                                     Optional(reference = AbstractKeyword, enabled = From("0.6.0")),
                                 contract_keyword = Required(ContractKeyword),
                                 name = Required(Identifier),
-                                inheritence = Optional(reference = InheritanceSpecifier),
+                                inheritance = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
                                 members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
@@ -2156,7 +2156,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 interface_keyword = Required(InterfaceKeyword),
                                 name = Required(Identifier),
-                                inheritence = Optional(reference = InheritanceSpecifier),
+                                inheritance = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
                                 members = Required(InterfaceMembers),
                                 close_brace = Required(CloseBrace)
