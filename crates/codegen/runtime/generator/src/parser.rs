@@ -70,8 +70,6 @@ struct ScannerContextModel {
 
 #[derive(Default)]
 struct ParserAccumulatorState {
-    /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
@@ -101,12 +99,14 @@ struct ScannerContextAccumulatorState {
     keyword_scanner_defs: BTreeMap<Identifier, KeywordScannerDefinitionRef>,
 }
 
-/// Collects model state from the DSLv2 rather than via the remaining visitor pattern.
+/// Collects model state from the DSL v2 rather than via the remaining visitor pattern.
 struct DslV2CollectorState {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
     /// Defines the `TerminalKind` enum variants.
     terminal_kinds: BTreeSet<Identifier>,
+    /// Defines the `NonterminalKind` enum variants.
+    nonterminal_kinds: BTreeSet<Identifier>,
 }
 
 impl ParserModel {
@@ -124,9 +124,36 @@ impl ParserModel {
             .map(|item| item.name().clone())
             .collect();
 
+        let mut nonterminal_kinds = BTreeSet::default();
+        for item in language.items() {
+            match item {
+                Item::Struct { item } => {
+                    nonterminal_kinds.insert(item.name.clone());
+                }
+                Item::Enum { item } => {
+                    nonterminal_kinds.insert(item.name.clone());
+                }
+                Item::Repeated { item } => {
+                    nonterminal_kinds.insert(item.name.clone());
+                }
+                Item::Separated { item } => {
+                    nonterminal_kinds.insert(item.name.clone());
+                }
+                Item::Precedence { item } => {
+                    nonterminal_kinds.insert(item.name.clone());
+                    for op in &item.precedence_expressions {
+                        nonterminal_kinds.insert(op.name.clone());
+                    }
+                }
+                // Terminals
+                _ => {}
+            }
+        }
+
         acc.into_model(DslV2CollectorState {
             referenced_versions: language.collect_breaking_versions(),
             terminal_kinds,
+            nonterminal_kinds,
         })
     }
 }
@@ -236,7 +263,6 @@ impl ParserAccumulatorState {
         self.labels.remove("trailing_trivia");
 
         ParserModel {
-            nonterminal_kinds: self.nonterminal_kinds,
             trivia_scanner_names: self.trivia_scanner_names,
             labels: self.labels,
             parser_functions: self.parser_functions,
@@ -248,6 +274,7 @@ impl ParserAccumulatorState {
             // These are derived from the DSLv2 model directly
             referenced_versions: collected.referenced_versions,
             terminal_kinds: collected.terminal_kinds,
+            nonterminal_kinds: collected.nonterminal_kinds,
         }
     }
 }
@@ -289,7 +316,6 @@ impl GrammarVisitor for ParserAccumulatorState {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context().clone());
         if !parser.is_inline() {
-            self.nonterminal_kinds.insert(parser.name().clone());
             self.parser_functions.insert(
                 parser.name().clone(),
                 RustCode(parser.to_parser_code().to_string()),
@@ -299,10 +325,6 @@ impl GrammarVisitor for ParserAccumulatorState {
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
-        self.nonterminal_kinds.insert(parser.name().clone());
-        for (_, name, _) in &parser.node().operators {
-            self.nonterminal_kinds.insert(name.clone());
-        }
 
         // While it's not common to parse a precedence expression as a standalone nonterminal,
         // we generate a function for completeness.
