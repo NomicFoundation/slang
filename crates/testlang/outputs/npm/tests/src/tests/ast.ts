@@ -109,9 +109,7 @@ test("throws an exception on initializing the wrong type", () => {
   const cst = parseOutput.tree();
   expectNonterminal(cst, NonterminalKind.Tree);
 
-  expect(() => new SourceUnit(cst)).toThrowError(
-    "SourceUnit can only be initialized with a CST node of the same kind.",
-  );
+  expect(() => new SourceUnit(cst)).toThrow("SourceUnit can only be initialized with a CST node of the same kind.");
 });
 
 test("throws an exception on on using an incorrect/incomplete CST node", () => {
@@ -134,7 +132,7 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   const tree = new Tree(cst);
   expectNonterminal(tree.cst, NonterminalKind.Tree);
 
-  expect(() => tree.node).toThrowError(
+  expect(() => tree.node).toThrow(
     "Unexpected SKIPPED terminal at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
   );
 });
