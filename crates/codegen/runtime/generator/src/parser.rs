@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_language_definition::model::{Identifier, Language};
+use codegen_language_definition::model::{Identifier, Item, Language};
 use semver::Version;
 use serde::Serialize;
 
@@ -72,8 +72,6 @@ struct ScannerContextModel {
 struct ParserAccumulatorState {
     /// Defines the `NonterminalKind` enum variants.
     nonterminal_kinds: BTreeSet<Identifier>,
-    /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
@@ -107,6 +105,8 @@ struct ScannerContextAccumulatorState {
 struct DslV2CollectorState {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
+    /// Defines the `TerminalKind` enum variants.
+    terminal_kinds: BTreeSet<Identifier>,
 }
 
 impl ParserModel {
@@ -118,8 +118,15 @@ impl ParserModel {
         grammar.accept_visitor(&mut acc);
 
         // WIP(#638): Gradually migrate off `GrammarVisitor`
+        let terminal_kinds = language
+            .items()
+            .filter(|item| item.is_terminal() && !matches!(item, Item::Fragment { .. }))
+            .map(|item| item.name().clone())
+            .collect();
+
         acc.into_model(DslV2CollectorState {
             referenced_versions: language.collect_breaking_versions(),
+            terminal_kinds,
         })
     }
 }
@@ -230,7 +237,6 @@ impl ParserAccumulatorState {
 
         ParserModel {
             nonterminal_kinds: self.nonterminal_kinds,
-            terminal_kinds: self.terminal_kinds,
             trivia_scanner_names: self.trivia_scanner_names,
             labels: self.labels,
             parser_functions: self.parser_functions,
@@ -241,6 +247,7 @@ impl ParserAccumulatorState {
             keyword_compound_scanners,
             // These are derived from the DSLv2 model directly
             referenced_versions: collected.referenced_versions,
+            terminal_kinds: collected.terminal_kinds,
         }
     }
 }
@@ -314,15 +321,12 @@ impl GrammarVisitor for ParserAccumulatorState {
         match node {
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name().clone());
-                self.terminal_kinds.insert(scanner.name().clone());
 
                 self.current_context()
                     .scanner_definitions
                     .insert(scanner.name().clone());
             }
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
-                self.terminal_kinds.insert(scanner.name().clone());
-
                 self.current_context()
                     .keyword_scanner_defs
                     .insert(scanner.name().clone(), Rc::clone(scanner));

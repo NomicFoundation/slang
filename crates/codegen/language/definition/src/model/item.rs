@@ -39,4 +39,16 @@ impl Item {
             Item::Fragment { item } => &item.name,
         }
     }
+
+    pub fn is_terminal(&self) -> bool {
+        matches!(
+            self,
+            Item::Trivia { .. } | Item::Keyword { .. } | Item::Token { .. } | Item::Fragment { .. }
+        )
+    }
+
+    pub fn is_nonterminal(&self) -> bool {
+        // Items are disjoint, hence it's enough to negate this.
+        !self.is_terminal()
+    }
 }
