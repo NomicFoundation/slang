@@ -31,6 +31,7 @@ use crate::parser_support::{
 pub struct Language {
     {%- if not rendering_in_stubs -%}
         {%- for version in model.parser.referenced_versions -%}
+            #[allow(dead_code)]
             pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
         {%- endfor -%}
     {%- endif -%}

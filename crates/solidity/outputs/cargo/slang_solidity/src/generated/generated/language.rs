@@ -31,37 +31,71 @@ use crate::parser_support::{
 #[derive(Debug)]
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
+    #[allow(dead_code)]
+    pub(crate) version_is_at_least_0_4_11: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_12: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_14: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_16: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_21: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_22: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_25: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_0: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_3: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_5: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_8: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_10: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_12: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_5_14: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_0: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_2: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_5: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_7: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_8: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_6_11: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_7_0: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_7_1: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_7_4: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_0: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_4: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_7: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_8: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_10: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_13: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_18: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_19: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_22: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_0_8_24: bool,
     pub(crate) version: Version,
 }
@@ -170,6 +204,7 @@ impl Language {
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
+                version_is_at_least_0_4_11: Version::new(0, 4, 11) <= version,
                 version_is_at_least_0_4_12: Version::new(0, 4, 12) <= version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
                 version_is_at_least_0_4_16: Version::new(0, 4, 16) <= version,
