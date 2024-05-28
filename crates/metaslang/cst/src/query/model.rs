@@ -23,17 +23,17 @@ impl<T: KindTypes> Query<T> {
             capture_quantifiers: &mut BTreeMap<String, CaptureQuantifier>,
         ) -> Result<(), QueryError> {
             match ast_node {
-                ASTNode::Binding(binding) => {
+                ASTNode::Capture(capture) => {
                     // If the capture has already been used, return an error
-                    if capture_quantifiers.contains_key(&binding.name) {
+                    if capture_quantifiers.contains_key(&capture.name) {
                         return Err(QueryError {
-                            message: format!("Capture name '{}' used more than once", binding.name),
+                            message: format!("Capture name '{}' used more than once", capture.name),
                             row: 0,
                             column: 0,
                         });
                     }
-                    capture_quantifiers.insert(binding.name.clone(), quantifier);
-                    collect_capture_quantifiers(&binding.child, quantifier, capture_quantifiers)?;
+                    capture_quantifiers.insert(capture.name.clone(), quantifier);
+                    collect_capture_quantifiers(&capture.child, quantifier, capture_quantifiers)?;
                 }
                 ASTNode::NodeMatch(node_match) => {
                     if let Some(child) = &node_match.child {
@@ -106,7 +106,7 @@ impl<T: KindTypes> fmt::Display for Query<T> {
 
 #[derive(Clone, Debug)]
 pub enum ASTNode<T: KindTypes> {
-    Binding(Rc<CaptureASTNode<T>>),
+    Capture(Rc<CaptureASTNode<T>>),
     NodeMatch(Rc<NodeMatchASTNode<T>>),
     Optional(Rc<OptionalASTNode<T>>),
     Alternatives(Rc<AlternativesASTNode<T>>),
@@ -124,8 +124,8 @@ impl<T: KindTypes> ASTNode<T> {
 impl<T: KindTypes> fmt::Display for ASTNode<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Binding(binding) => {
-                write!(f, "@{} {}", binding.name, binding.child)
+            Self::Capture(capture) => {
+                write!(f, "@{} {}", capture.name, capture.child)
             }
             Self::NodeMatch(node) => {
                 if let Some(child) = &node.child {

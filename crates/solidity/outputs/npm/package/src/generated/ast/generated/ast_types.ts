@@ -2,8 +2,8 @@
 
 import * as assert from "node:assert";
 import { ast_internal } from "../../napi-bindings/generated";
-import { NonTerminalNode, TerminalNode } from "../../cst";
-import { NonTerminalKind, TerminalKind } from "../../kinds";
+import { NonterminalNode, TerminalNode } from "../../cst";
+import { NonterminalKind, TerminalKind } from "../../kinds";
 
 /*
  * Sequences:
@@ -14,12 +14,12 @@ export class SourceUnit {
     const [$members] = ast_internal.selectSequence(this.cst);
 
     return {
-      members: new SourceUnitMembers($members as NonTerminalNode),
+      members: new SourceUnitMembers($members as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnit);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnit);
   }
 
   public get members(): SourceUnitMembers {
@@ -33,13 +33,13 @@ export class PragmaDirective {
 
     return {
       pragmaKeyword: $pragmaKeyword as TerminalNode,
-      pragma: new Pragma($pragma as NonTerminalNode),
+      pragma: new Pragma($pragma as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PragmaDirective);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PragmaDirective);
   }
 
   public get pragmaKeyword(): TerminalNode {
@@ -65,8 +65,8 @@ export class ABICoderPragma {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ABICoderPragma);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ABICoderPragma);
   }
 
   public get abicoderKeyword(): TerminalNode {
@@ -84,12 +84,12 @@ export class ExperimentalPragma {
 
     return {
       experimentalKeyword: $experimentalKeyword as TerminalNode,
-      feature: new ExperimentalFeature($feature as NonTerminalNode),
+      feature: new ExperimentalFeature($feature as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ExperimentalPragma);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ExperimentalPragma);
   }
 
   public get experimentalKeyword(): TerminalNode {
@@ -107,12 +107,12 @@ export class VersionPragma {
 
     return {
       solidityKeyword: $solidityKeyword as TerminalNode,
-      sets: new VersionExpressionSets($sets as NonTerminalNode),
+      sets: new VersionExpressionSets($sets as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionPragma);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionPragma);
   }
 
   public get solidityKeyword(): TerminalNode {
@@ -129,14 +129,14 @@ export class VersionRange {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new VersionExpression($leftOperand as NonTerminalNode),
+      leftOperand: new VersionExpression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new VersionExpression($rightOperand as NonTerminalNode),
+      rightOperand: new VersionExpression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionRange);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionRange);
   }
 
   public get leftOperand(): VersionExpression {
@@ -158,12 +158,12 @@ export class VersionComparator {
 
     return {
       operator: $operator as TerminalNode,
-      operand: new VersionExpression($operand as NonTerminalNode),
+      operand: new VersionExpression($operand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionComparator);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionComparator);
   }
 
   public get operator(): TerminalNode {
@@ -181,13 +181,13 @@ export class ImportDirective {
 
     return {
       importKeyword: $importKeyword as TerminalNode,
-      clause: new ImportClause($clause as NonTerminalNode),
+      clause: new ImportClause($clause as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportDirective);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportDirective);
   }
 
   public get importKeyword(): TerminalNode {
@@ -208,13 +208,13 @@ export class PathImport {
     const [$path, $alias] = ast_internal.selectSequence(this.cst);
 
     return {
-      path: new StringLiteral($path as NonTerminalNode),
-      alias: $alias === null ? undefined : new ImportAlias($alias as NonTerminalNode),
+      path: new StringLiteral($path as NonterminalNode),
+      alias: $alias === null ? undefined : new ImportAlias($alias as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PathImport);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PathImport);
   }
 
   public get path(): StringLiteral {
@@ -232,14 +232,14 @@ export class NamedImport {
 
     return {
       asterisk: $asterisk as TerminalNode,
-      alias: new ImportAlias($alias as NonTerminalNode),
+      alias: new ImportAlias($alias as NonterminalNode),
       fromKeyword: $fromKeyword as TerminalNode,
-      path: new StringLiteral($path as NonTerminalNode),
+      path: new StringLiteral($path as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NamedImport);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NamedImport);
   }
 
   public get asterisk(): TerminalNode {
@@ -265,15 +265,15 @@ export class ImportDeconstruction {
 
     return {
       openBrace: $openBrace as TerminalNode,
-      symbols: new ImportDeconstructionSymbols($symbols as NonTerminalNode),
+      symbols: new ImportDeconstructionSymbols($symbols as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
       fromKeyword: $fromKeyword as TerminalNode,
-      path: new StringLiteral($path as NonTerminalNode),
+      path: new StringLiteral($path as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportDeconstruction);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportDeconstruction);
   }
 
   public get openBrace(): TerminalNode {
@@ -303,12 +303,12 @@ export class ImportDeconstructionSymbol {
 
     return {
       name: $name as TerminalNode,
-      alias: $alias === null ? undefined : new ImportAlias($alias as NonTerminalNode),
+      alias: $alias === null ? undefined : new ImportAlias($alias as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportDeconstructionSymbol);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportDeconstructionSymbol);
   }
 
   public get name(): TerminalNode {
@@ -330,8 +330,8 @@ export class ImportAlias {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportAlias);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportAlias);
   }
 
   public get asKeyword(): TerminalNode {
@@ -351,16 +351,16 @@ export class UsingDirective {
 
     return {
       usingKeyword: $usingKeyword as TerminalNode,
-      clause: new UsingClause($clause as NonTerminalNode),
+      clause: new UsingClause($clause as NonterminalNode),
       forKeyword: $forKeyword as TerminalNode,
-      target: new UsingTarget($target as NonTerminalNode),
+      target: new UsingTarget($target as NonterminalNode),
       globalKeyword: $globalKeyword === null ? undefined : ($globalKeyword as TerminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingDirective);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingDirective);
   }
 
   public get usingKeyword(): TerminalNode {
@@ -394,13 +394,13 @@ export class UsingDeconstruction {
 
     return {
       openBrace: $openBrace as TerminalNode,
-      symbols: new UsingDeconstructionSymbols($symbols as NonTerminalNode),
+      symbols: new UsingDeconstructionSymbols($symbols as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingDeconstruction);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingDeconstruction);
   }
 
   public get openBrace(): TerminalNode {
@@ -421,13 +421,13 @@ export class UsingDeconstructionSymbol {
     const [$name, $alias] = ast_internal.selectSequence(this.cst);
 
     return {
-      name: new IdentifierPath($name as NonTerminalNode),
-      alias: $alias === null ? undefined : new UsingAlias($alias as NonTerminalNode),
+      name: new IdentifierPath($name as NonterminalNode),
+      alias: $alias === null ? undefined : new UsingAlias($alias as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingDeconstructionSymbol);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingDeconstructionSymbol);
   }
 
   public get name(): IdentifierPath {
@@ -445,12 +445,12 @@ export class UsingAlias {
 
     return {
       asKeyword: $asKeyword as TerminalNode,
-      operator: new UsingOperator($operator as NonTerminalNode),
+      operator: new UsingOperator($operator as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingAlias);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingAlias);
   }
 
   public get asKeyword(): TerminalNode {
@@ -471,15 +471,15 @@ export class ContractDefinition {
       abstractKeyword: $abstractKeyword === null ? undefined : ($abstractKeyword as TerminalNode),
       contractKeyword: $contractKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonTerminalNode),
+      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
-      members: new ContractMembers($members as NonTerminalNode),
+      members: new ContractMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ContractDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ContractDefinition);
   }
 
   public get abstractKeyword(): TerminalNode | undefined {
@@ -517,12 +517,12 @@ export class InheritanceSpecifier {
 
     return {
       isKeyword: $isKeyword as TerminalNode,
-      types: new InheritanceTypes($types as NonTerminalNode),
+      types: new InheritanceTypes($types as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.InheritanceSpecifier);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.InheritanceSpecifier);
   }
 
   public get isKeyword(): TerminalNode {
@@ -539,13 +539,13 @@ export class InheritanceType {
     const [$typeName, $arguments] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new IdentifierPath($typeName as NonTerminalNode),
-      arguments: $arguments === null ? undefined : new ArgumentsDeclaration($arguments as NonTerminalNode),
+      typeName: new IdentifierPath($typeName as NonterminalNode),
+      arguments: $arguments === null ? undefined : new ArgumentsDeclaration($arguments as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.InheritanceType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.InheritanceType);
   }
 
   public get typeName(): IdentifierPath {
@@ -566,15 +566,15 @@ export class InterfaceDefinition {
     return {
       interfaceKeyword: $interfaceKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonTerminalNode),
+      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
-      members: new InterfaceMembers($members as NonTerminalNode),
+      members: new InterfaceMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.InterfaceDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.InterfaceDefinition);
   }
 
   public get interfaceKeyword(): TerminalNode {
@@ -610,13 +610,13 @@ export class LibraryDefinition {
       libraryKeyword: $libraryKeyword as TerminalNode,
       name: $name as TerminalNode,
       openBrace: $openBrace as TerminalNode,
-      members: new LibraryMembers($members as NonTerminalNode),
+      members: new LibraryMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.LibraryDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.LibraryDefinition);
   }
 
   public get libraryKeyword(): TerminalNode {
@@ -648,13 +648,13 @@ export class StructDefinition {
       structKeyword: $structKeyword as TerminalNode,
       name: $name as TerminalNode,
       openBrace: $openBrace as TerminalNode,
-      members: new StructMembers($members as NonTerminalNode),
+      members: new StructMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StructDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StructDefinition);
   }
 
   public get structKeyword(): TerminalNode {
@@ -683,14 +683,14 @@ export class StructMember {
     const [$typeName, $name, $semicolon] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       name: $name as TerminalNode,
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StructMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StructMember);
   }
 
   public get typeName(): TypeName {
@@ -714,13 +714,13 @@ export class EnumDefinition {
       enumKeyword: $enumKeyword as TerminalNode,
       name: $name as TerminalNode,
       openBrace: $openBrace as TerminalNode,
-      members: new EnumMembers($members as NonTerminalNode),
+      members: new EnumMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EnumDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EnumDefinition);
   }
 
   public get enumKeyword(): TerminalNode {
@@ -749,17 +749,17 @@ export class ConstantDefinition {
     const [$typeName, $constantKeyword, $name, $equal, $value, $semicolon] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       constantKeyword: $constantKeyword as TerminalNode,
       name: $name as TerminalNode,
       equal: $equal as TerminalNode,
-      value: new Expression($value as NonTerminalNode),
+      value: new Expression($value as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ConstantDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ConstantDefinition);
   }
 
   public get typeName(): TypeName {
@@ -792,16 +792,16 @@ export class StateVariableDefinition {
     const [$typeName, $attributes, $name, $value, $semicolon] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
-      attributes: new StateVariableAttributes($attributes as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
+      attributes: new StateVariableAttributes($attributes as NonterminalNode),
       name: $name as TerminalNode,
-      value: $value === null ? undefined : new StateVariableDefinitionValue($value as NonTerminalNode),
+      value: $value === null ? undefined : new StateVariableDefinitionValue($value as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StateVariableDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StateVariableDefinition);
   }
 
   public get typeName(): TypeName {
@@ -831,12 +831,12 @@ export class StateVariableDefinitionValue {
 
     return {
       equal: $equal as TerminalNode,
-      value: new Expression($value as NonTerminalNode),
+      value: new Expression($value as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StateVariableDefinitionValue);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StateVariableDefinitionValue);
   }
 
   public get equal(): TerminalNode {
@@ -854,16 +854,16 @@ export class FunctionDefinition {
 
     return {
       functionKeyword: $functionKeyword as TerminalNode,
-      name: new FunctionName($name as NonTerminalNode),
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new FunctionAttributes($attributes as NonTerminalNode),
-      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonTerminalNode),
-      body: new FunctionBody($body as NonTerminalNode),
+      name: new FunctionName($name as NonterminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new FunctionAttributes($attributes as NonterminalNode),
+      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonterminalNode),
+      body: new FunctionBody($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionDefinition);
   }
 
   public get functionKeyword(): TerminalNode {
@@ -897,13 +897,13 @@ export class ParametersDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      parameters: new Parameters($parameters as NonTerminalNode),
+      parameters: new Parameters($parameters as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ParametersDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ParametersDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -924,14 +924,14 @@ export class Parameter {
     const [$typeName, $storageLocation, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
-      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
+      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonterminalNode),
       name: $name === null ? undefined : ($name as TerminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Parameter);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Parameter);
   }
 
   public get typeName(): TypeName {
@@ -953,12 +953,12 @@ export class OverrideSpecifier {
 
     return {
       overrideKeyword: $overrideKeyword as TerminalNode,
-      overridden: $overridden === null ? undefined : new OverridePathsDeclaration($overridden as NonTerminalNode),
+      overridden: $overridden === null ? undefined : new OverridePathsDeclaration($overridden as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.OverrideSpecifier);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.OverrideSpecifier);
   }
 
   public get overrideKeyword(): TerminalNode {
@@ -976,13 +976,13 @@ export class OverridePathsDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      paths: new OverridePaths($paths as NonTerminalNode),
+      paths: new OverridePaths($paths as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.OverridePathsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.OverridePathsDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -1004,12 +1004,12 @@ export class ReturnsDeclaration {
 
     return {
       returnsKeyword: $returnsKeyword as TerminalNode,
-      variables: new ParametersDeclaration($variables as NonTerminalNode),
+      variables: new ParametersDeclaration($variables as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ReturnsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ReturnsDeclaration);
   }
 
   public get returnsKeyword(): TerminalNode {
@@ -1027,14 +1027,14 @@ export class ConstructorDefinition {
 
     return {
       constructorKeyword: $constructorKeyword as TerminalNode,
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new ConstructorAttributes($attributes as NonTerminalNode),
-      body: new Block($body as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new ConstructorAttributes($attributes as NonterminalNode),
+      body: new Block($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ConstructorDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ConstructorDefinition);
   }
 
   public get constructorKeyword(): TerminalNode {
@@ -1060,14 +1060,14 @@ export class UnnamedFunctionDefinition {
 
     return {
       functionKeyword: $functionKeyword as TerminalNode,
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new UnnamedFunctionAttributes($attributes as NonTerminalNode),
-      body: new FunctionBody($body as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new UnnamedFunctionAttributes($attributes as NonterminalNode),
+      body: new FunctionBody($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UnnamedFunctionDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UnnamedFunctionDefinition);
   }
 
   public get functionKeyword(): TerminalNode {
@@ -1093,15 +1093,15 @@ export class FallbackFunctionDefinition {
 
     return {
       fallbackKeyword: $fallbackKeyword as TerminalNode,
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new FallbackFunctionAttributes($attributes as NonTerminalNode),
-      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonTerminalNode),
-      body: new FunctionBody($body as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new FallbackFunctionAttributes($attributes as NonterminalNode),
+      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonterminalNode),
+      body: new FunctionBody($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FallbackFunctionDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FallbackFunctionDefinition);
   }
 
   public get fallbackKeyword(): TerminalNode {
@@ -1131,14 +1131,14 @@ export class ReceiveFunctionDefinition {
 
     return {
       receiveKeyword: $receiveKeyword as TerminalNode,
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new ReceiveFunctionAttributes($attributes as NonTerminalNode),
-      body: new FunctionBody($body as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new ReceiveFunctionAttributes($attributes as NonterminalNode),
+      body: new FunctionBody($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ReceiveFunctionDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ReceiveFunctionDefinition);
   }
 
   public get receiveKeyword(): TerminalNode {
@@ -1165,14 +1165,14 @@ export class ModifierDefinition {
     return {
       modifierKeyword: $modifierKeyword as TerminalNode,
       name: $name as TerminalNode,
-      parameters: $parameters === null ? undefined : new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new ModifierAttributes($attributes as NonTerminalNode),
-      body: new FunctionBody($body as NonTerminalNode),
+      parameters: $parameters === null ? undefined : new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new ModifierAttributes($attributes as NonterminalNode),
+      body: new FunctionBody($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ModifierDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ModifierDefinition);
   }
 
   public get modifierKeyword(): TerminalNode {
@@ -1201,13 +1201,13 @@ export class ModifierInvocation {
     const [$name, $arguments] = ast_internal.selectSequence(this.cst);
 
     return {
-      name: new IdentifierPath($name as NonTerminalNode),
-      arguments: $arguments === null ? undefined : new ArgumentsDeclaration($arguments as NonTerminalNode),
+      name: new IdentifierPath($name as NonterminalNode),
+      arguments: $arguments === null ? undefined : new ArgumentsDeclaration($arguments as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ModifierInvocation);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ModifierInvocation);
   }
 
   public get name(): IdentifierPath {
@@ -1226,14 +1226,14 @@ export class EventDefinition {
     return {
       eventKeyword: $eventKeyword as TerminalNode,
       name: $name as TerminalNode,
-      parameters: new EventParametersDeclaration($parameters as NonTerminalNode),
+      parameters: new EventParametersDeclaration($parameters as NonterminalNode),
       anonymousKeyword: $anonymousKeyword === null ? undefined : ($anonymousKeyword as TerminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EventDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EventDefinition);
   }
 
   public get eventKeyword(): TerminalNode {
@@ -1263,13 +1263,13 @@ export class EventParametersDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      parameters: new EventParameters($parameters as NonTerminalNode),
+      parameters: new EventParameters($parameters as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EventParametersDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EventParametersDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -1290,14 +1290,14 @@ export class EventParameter {
     const [$typeName, $indexedKeyword, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       indexedKeyword: $indexedKeyword === null ? undefined : ($indexedKeyword as TerminalNode),
       name: $name === null ? undefined : ($name as TerminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EventParameter);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EventParameter);
   }
 
   public get typeName(): TypeName {
@@ -1321,13 +1321,13 @@ export class UserDefinedValueTypeDefinition {
       typeKeyword: $typeKeyword as TerminalNode,
       name: $name as TerminalNode,
       isKeyword: $isKeyword as TerminalNode,
-      valueType: new ElementaryType($valueType as NonTerminalNode),
+      valueType: new ElementaryType($valueType as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UserDefinedValueTypeDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UserDefinedValueTypeDefinition);
   }
 
   public get typeKeyword(): TerminalNode {
@@ -1358,13 +1358,13 @@ export class ErrorDefinition {
     return {
       errorKeyword: $errorKeyword as TerminalNode,
       name: $name as TerminalNode,
-      members: new ErrorParametersDeclaration($members as NonTerminalNode),
+      members: new ErrorParametersDeclaration($members as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ErrorDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ErrorDefinition);
   }
 
   public get errorKeyword(): TerminalNode {
@@ -1390,13 +1390,13 @@ export class ErrorParametersDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      parameters: new ErrorParameters($parameters as NonTerminalNode),
+      parameters: new ErrorParameters($parameters as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ErrorParametersDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ErrorParametersDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -1417,13 +1417,13 @@ export class ErrorParameter {
     const [$typeName, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       name: $name === null ? undefined : ($name as TerminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ErrorParameter);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ErrorParameter);
   }
 
   public get typeName(): TypeName {
@@ -1440,15 +1440,15 @@ export class ArrayTypeName {
     const [$operand, $openBracket, $index, $closeBracket] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new TypeName($operand as NonTerminalNode),
+      operand: new TypeName($operand as NonterminalNode),
       openBracket: $openBracket as TerminalNode,
-      index: $index === null ? undefined : new Expression($index as NonTerminalNode),
+      index: $index === null ? undefined : new Expression($index as NonterminalNode),
       closeBracket: $closeBracket as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ArrayTypeName);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ArrayTypeName);
   }
 
   public get operand(): TypeName {
@@ -1474,14 +1474,14 @@ export class FunctionType {
 
     return {
       functionKeyword: $functionKeyword as TerminalNode,
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
-      attributes: new FunctionTypeAttributes($attributes as NonTerminalNode),
-      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
+      attributes: new FunctionTypeAttributes($attributes as NonterminalNode),
+      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionType);
   }
 
   public get functionKeyword(): TerminalNode {
@@ -1509,15 +1509,15 @@ export class MappingType {
     return {
       mappingKeyword: $mappingKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      keyType: new MappingKey($keyType as NonTerminalNode),
+      keyType: new MappingKey($keyType as NonterminalNode),
       equalGreaterThan: $equalGreaterThan as TerminalNode,
-      valueType: new MappingValue($valueType as NonTerminalNode),
+      valueType: new MappingValue($valueType as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MappingType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MappingType);
   }
 
   public get mappingKeyword(): TerminalNode {
@@ -1550,13 +1550,13 @@ export class MappingKey {
     const [$keyType, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      keyType: new MappingKeyType($keyType as NonTerminalNode),
+      keyType: new MappingKeyType($keyType as NonterminalNode),
       name: $name === null ? undefined : ($name as TerminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MappingKey);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MappingKey);
   }
 
   public get keyType(): MappingKeyType {
@@ -1573,13 +1573,13 @@ export class MappingValue {
     const [$typeName, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       name: $name === null ? undefined : ($name as TerminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MappingValue);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MappingValue);
   }
 
   public get typeName(): TypeName {
@@ -1601,8 +1601,8 @@ export class AddressType {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AddressType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AddressType);
   }
 
   public get addressKeyword(): TerminalNode {
@@ -1620,13 +1620,13 @@ export class Block {
 
     return {
       openBrace: $openBrace as TerminalNode,
-      statements: new Statements($statements as NonTerminalNode),
+      statements: new Statements($statements as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Block);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Block);
   }
 
   public get openBrace(): TerminalNode {
@@ -1648,12 +1648,12 @@ export class UncheckedBlock {
 
     return {
       uncheckedKeyword: $uncheckedKeyword as TerminalNode,
-      block: new Block($block as NonTerminalNode),
+      block: new Block($block as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UncheckedBlock);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UncheckedBlock);
   }
 
   public get uncheckedKeyword(): TerminalNode {
@@ -1670,13 +1670,13 @@ export class ExpressionStatement {
     const [$expression, $semicolon] = ast_internal.selectSequence(this.cst);
 
     return {
-      expression: new Expression($expression as NonTerminalNode),
+      expression: new Expression($expression as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ExpressionStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ExpressionStatement);
   }
 
   public get expression(): Expression {
@@ -1694,14 +1694,14 @@ export class AssemblyStatement {
 
     return {
       assemblyKeyword: $assemblyKeyword as TerminalNode,
-      label: $label === null ? undefined : new StringLiteral($label as NonTerminalNode),
-      flags: $flags === null ? undefined : new AssemblyFlagsDeclaration($flags as NonTerminalNode),
-      body: new YulBlock($body as NonTerminalNode),
+      label: $label === null ? undefined : new StringLiteral($label as NonterminalNode),
+      flags: $flags === null ? undefined : new AssemblyFlagsDeclaration($flags as NonterminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AssemblyStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AssemblyStatement);
   }
 
   public get assemblyKeyword(): TerminalNode {
@@ -1727,13 +1727,13 @@ export class AssemblyFlagsDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      flags: new AssemblyFlags($flags as NonTerminalNode),
+      flags: new AssemblyFlags($flags as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AssemblyFlagsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AssemblyFlagsDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -1757,16 +1757,16 @@ export class TupleDeconstructionStatement {
     return {
       varKeyword: $varKeyword === null ? undefined : ($varKeyword as TerminalNode),
       openParen: $openParen as TerminalNode,
-      elements: new TupleDeconstructionElements($elements as NonTerminalNode),
+      elements: new TupleDeconstructionElements($elements as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
       equal: $equal as TerminalNode,
-      expression: new Expression($expression as NonTerminalNode),
+      expression: new Expression($expression as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleDeconstructionStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionStatement);
   }
 
   public get varKeyword(): TerminalNode | undefined {
@@ -1803,12 +1803,12 @@ export class TupleDeconstructionElement {
     const [$member] = ast_internal.selectSequence(this.cst);
 
     return {
-      member: $member === null ? undefined : new TupleMember($member as NonTerminalNode),
+      member: $member === null ? undefined : new TupleMember($member as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleDeconstructionElement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionElement);
   }
 
   public get member(): TupleMember | undefined {
@@ -1821,14 +1821,14 @@ export class TypedTupleMember {
     const [$typeName, $storageLocation, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      typeName: new TypeName($typeName as NonTerminalNode),
-      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
+      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonterminalNode),
       name: $name as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TypedTupleMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TypedTupleMember);
   }
 
   public get typeName(): TypeName {
@@ -1849,13 +1849,13 @@ export class UntypedTupleMember {
     const [$storageLocation, $name] = ast_internal.selectSequence(this.cst);
 
     return {
-      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonTerminalNode),
+      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonterminalNode),
       name: $name as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UntypedTupleMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UntypedTupleMember);
   }
 
   public get storageLocation(): StorageLocation | undefined {
@@ -1872,16 +1872,16 @@ export class VariableDeclarationStatement {
     const [$variableType, $storageLocation, $name, $value, $semicolon] = ast_internal.selectSequence(this.cst);
 
     return {
-      variableType: new VariableDeclarationType($variableType as NonTerminalNode),
-      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonTerminalNode),
+      variableType: new VariableDeclarationType($variableType as NonterminalNode),
+      storageLocation: $storageLocation === null ? undefined : new StorageLocation($storageLocation as NonterminalNode),
       name: $name as TerminalNode,
-      value: $value === null ? undefined : new VariableDeclarationValue($value as NonTerminalNode),
+      value: $value === null ? undefined : new VariableDeclarationValue($value as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VariableDeclarationStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VariableDeclarationStatement);
   }
 
   public get variableType(): VariableDeclarationType {
@@ -1911,12 +1911,12 @@ export class VariableDeclarationValue {
 
     return {
       equal: $equal as TerminalNode,
-      expression: new Expression($expression as NonTerminalNode),
+      expression: new Expression($expression as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VariableDeclarationValue);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VariableDeclarationValue);
   }
 
   public get equal(): TerminalNode {
@@ -1935,15 +1935,15 @@ export class IfStatement {
     return {
       ifKeyword: $ifKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      condition: new Expression($condition as NonTerminalNode),
+      condition: new Expression($condition as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
-      body: new Statement($body as NonTerminalNode),
-      elseBranch: $elseBranch === null ? undefined : new ElseBranch($elseBranch as NonTerminalNode),
+      body: new Statement($body as NonterminalNode),
+      elseBranch: $elseBranch === null ? undefined : new ElseBranch($elseBranch as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.IfStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.IfStatement);
   }
 
   public get ifKeyword(): TerminalNode {
@@ -1977,12 +1977,12 @@ export class ElseBranch {
 
     return {
       elseKeyword: $elseKeyword as TerminalNode,
-      body: new Statement($body as NonTerminalNode),
+      body: new Statement($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ElseBranch);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ElseBranch);
   }
 
   public get elseKeyword(): TerminalNode {
@@ -2002,16 +2002,16 @@ export class ForStatement {
     return {
       forKeyword: $forKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      initialization: new ForStatementInitialization($initialization as NonTerminalNode),
-      condition: new ForStatementCondition($condition as NonTerminalNode),
-      iterator: $iterator === null ? undefined : new Expression($iterator as NonTerminalNode),
+      initialization: new ForStatementInitialization($initialization as NonterminalNode),
+      condition: new ForStatementCondition($condition as NonterminalNode),
+      iterator: $iterator === null ? undefined : new Expression($iterator as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
-      body: new Statement($body as NonTerminalNode),
+      body: new Statement($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ForStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ForStatement);
   }
 
   public get forKeyword(): TerminalNode {
@@ -2050,14 +2050,14 @@ export class WhileStatement {
     return {
       whileKeyword: $whileKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      condition: new Expression($condition as NonTerminalNode),
+      condition: new Expression($condition as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
-      body: new Statement($body as NonTerminalNode),
+      body: new Statement($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.WhileStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.WhileStatement);
   }
 
   public get whileKeyword(): TerminalNode {
@@ -2088,17 +2088,17 @@ export class DoWhileStatement {
 
     return {
       doKeyword: $doKeyword as TerminalNode,
-      body: new Statement($body as NonTerminalNode),
+      body: new Statement($body as NonterminalNode),
       whileKeyword: $whileKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      condition: new Expression($condition as NonTerminalNode),
+      condition: new Expression($condition as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.DoWhileStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.DoWhileStatement);
   }
 
   public get doKeyword(): TerminalNode {
@@ -2140,8 +2140,8 @@ export class ContinueStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ContinueStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ContinueStatement);
   }
 
   public get continueKeyword(): TerminalNode {
@@ -2163,8 +2163,8 @@ export class BreakStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.BreakStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.BreakStatement);
   }
 
   public get breakKeyword(): TerminalNode {
@@ -2182,13 +2182,13 @@ export class ReturnStatement {
 
     return {
       returnKeyword: $returnKeyword as TerminalNode,
-      expression: $expression === null ? undefined : new Expression($expression as NonTerminalNode),
+      expression: $expression === null ? undefined : new Expression($expression as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ReturnStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ReturnStatement);
   }
 
   public get returnKeyword(): TerminalNode {
@@ -2210,14 +2210,14 @@ export class EmitStatement {
 
     return {
       emitKeyword: $emitKeyword as TerminalNode,
-      event: new IdentifierPath($event as NonTerminalNode),
-      arguments: new ArgumentsDeclaration($arguments as NonTerminalNode),
+      event: new IdentifierPath($event as NonterminalNode),
+      arguments: new ArgumentsDeclaration($arguments as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EmitStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EmitStatement);
   }
 
   public get emitKeyword(): TerminalNode {
@@ -2243,15 +2243,15 @@ export class TryStatement {
 
     return {
       tryKeyword: $tryKeyword as TerminalNode,
-      expression: new Expression($expression as NonTerminalNode),
-      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonTerminalNode),
-      body: new Block($body as NonTerminalNode),
-      catchClauses: new CatchClauses($catchClauses as NonTerminalNode),
+      expression: new Expression($expression as NonterminalNode),
+      returns: $returns === null ? undefined : new ReturnsDeclaration($returns as NonterminalNode),
+      body: new Block($body as NonterminalNode),
+      catchClauses: new CatchClauses($catchClauses as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TryStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TryStatement);
   }
 
   public get tryKeyword(): TerminalNode {
@@ -2281,13 +2281,13 @@ export class CatchClause {
 
     return {
       catchKeyword: $catchKeyword as TerminalNode,
-      error: $error === null ? undefined : new CatchClauseError($error as NonTerminalNode),
-      body: new Block($body as NonTerminalNode),
+      error: $error === null ? undefined : new CatchClauseError($error as NonterminalNode),
+      body: new Block($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.CatchClause);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.CatchClause);
   }
 
   public get catchKeyword(): TerminalNode {
@@ -2309,12 +2309,12 @@ export class CatchClauseError {
 
     return {
       name: $name === null ? undefined : ($name as TerminalNode),
-      parameters: new ParametersDeclaration($parameters as NonTerminalNode),
+      parameters: new ParametersDeclaration($parameters as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.CatchClauseError);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.CatchClauseError);
   }
 
   public get name(): TerminalNode | undefined {
@@ -2332,14 +2332,14 @@ export class RevertStatement {
 
     return {
       revertKeyword: $revertKeyword as TerminalNode,
-      error: $error === null ? undefined : new IdentifierPath($error as NonTerminalNode),
-      arguments: new ArgumentsDeclaration($arguments as NonTerminalNode),
+      error: $error === null ? undefined : new IdentifierPath($error as NonterminalNode),
+      arguments: new ArgumentsDeclaration($arguments as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.RevertStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.RevertStatement);
   }
 
   public get revertKeyword(): TerminalNode {
@@ -2369,8 +2369,8 @@ export class ThrowStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ThrowStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ThrowStatement);
   }
 
   public get throwKeyword(): TerminalNode {
@@ -2387,14 +2387,14 @@ export class AssignmentExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AssignmentExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AssignmentExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2415,16 +2415,16 @@ export class ConditionalExpression {
     const [$operand, $questionMark, $trueExpression, $colon, $falseExpression] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       questionMark: $questionMark as TerminalNode,
-      trueExpression: new Expression($trueExpression as NonTerminalNode),
+      trueExpression: new Expression($trueExpression as NonterminalNode),
       colon: $colon as TerminalNode,
-      falseExpression: new Expression($falseExpression as NonTerminalNode),
+      falseExpression: new Expression($falseExpression as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ConditionalExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ConditionalExpression);
   }
 
   public get operand(): Expression {
@@ -2453,14 +2453,14 @@ export class OrExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.OrExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.OrExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2481,14 +2481,14 @@ export class AndExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AndExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AndExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2509,14 +2509,14 @@ export class EqualityExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EqualityExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EqualityExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2537,14 +2537,14 @@ export class ComparisonExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ComparisonExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ComparisonExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2565,14 +2565,14 @@ export class BitwiseOrExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.BitwiseOrExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.BitwiseOrExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2593,14 +2593,14 @@ export class BitwiseXorExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.BitwiseXorExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.BitwiseXorExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2621,14 +2621,14 @@ export class BitwiseAndExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.BitwiseAndExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.BitwiseAndExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2649,14 +2649,14 @@ export class ShiftExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ShiftExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ShiftExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2677,14 +2677,14 @@ export class AdditiveExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AdditiveExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AdditiveExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2705,14 +2705,14 @@ export class MultiplicativeExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MultiplicativeExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MultiplicativeExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2733,14 +2733,14 @@ export class ExponentiationExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ExponentiationExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ExponentiationExpression);
   }
 
   public get leftOperand(): Expression {
@@ -2761,13 +2761,13 @@ export class PostfixExpression {
     const [$operand, $operator] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       operator: $operator as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PostfixExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PostfixExpression);
   }
 
   public get operand(): Expression {
@@ -2785,12 +2785,12 @@ export class PrefixExpression {
 
     return {
       operator: $operator as TerminalNode,
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PrefixExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PrefixExpression);
   }
 
   public get operator(): TerminalNode {
@@ -2807,13 +2807,13 @@ export class FunctionCallExpression {
     const [$operand, $arguments] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
-      arguments: new ArgumentsDeclaration($arguments as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
+      arguments: new ArgumentsDeclaration($arguments as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionCallExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionCallExpression);
   }
 
   public get operand(): Expression {
@@ -2830,15 +2830,15 @@ export class CallOptionsExpression {
     const [$operand, $openBrace, $options, $closeBrace] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
-      options: new CallOptions($options as NonTerminalNode),
+      options: new CallOptions($options as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.CallOptionsExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.CallOptionsExpression);
   }
 
   public get operand(): Expression {
@@ -2863,14 +2863,14 @@ export class MemberAccessExpression {
     const [$operand, $period, $member] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       period: $period as TerminalNode,
-      member: new MemberAccess($member as NonTerminalNode),
+      member: new MemberAccess($member as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MemberAccessExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MemberAccessExpression);
   }
 
   public get operand(): Expression {
@@ -2891,16 +2891,16 @@ export class IndexAccessExpression {
     const [$operand, $openBracket, $start, $end, $closeBracket] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       openBracket: $openBracket as TerminalNode,
-      start: $start === null ? undefined : new Expression($start as NonTerminalNode),
-      end: $end === null ? undefined : new IndexAccessEnd($end as NonTerminalNode),
+      start: $start === null ? undefined : new Expression($start as NonterminalNode),
+      end: $end === null ? undefined : new IndexAccessEnd($end as NonterminalNode),
       closeBracket: $closeBracket as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.IndexAccessExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.IndexAccessExpression);
   }
 
   public get operand(): Expression {
@@ -2930,12 +2930,12 @@ export class IndexAccessEnd {
 
     return {
       colon: $colon as TerminalNode,
-      end: $end === null ? undefined : new Expression($end as NonTerminalNode),
+      end: $end === null ? undefined : new Expression($end as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.IndexAccessEnd);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.IndexAccessEnd);
   }
 
   public get colon(): TerminalNode {
@@ -2953,13 +2953,13 @@ export class PositionalArgumentsDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      arguments: new PositionalArguments($arguments as NonTerminalNode),
+      arguments: new PositionalArguments($arguments as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PositionalArgumentsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PositionalArgumentsDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -2981,13 +2981,13 @@ export class NamedArgumentsDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      arguments: $arguments === null ? undefined : new NamedArgumentGroup($arguments as NonTerminalNode),
+      arguments: $arguments === null ? undefined : new NamedArgumentGroup($arguments as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NamedArgumentsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NamedArgumentsDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -3009,13 +3009,13 @@ export class NamedArgumentGroup {
 
     return {
       openBrace: $openBrace as TerminalNode,
-      arguments: new NamedArguments($arguments as NonTerminalNode),
+      arguments: new NamedArguments($arguments as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NamedArgumentGroup);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NamedArgumentGroup);
   }
 
   public get openBrace(): TerminalNode {
@@ -3038,12 +3038,12 @@ export class NamedArgument {
     return {
       name: $name as TerminalNode,
       colon: $colon as TerminalNode,
-      value: new Expression($value as NonTerminalNode),
+      value: new Expression($value as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NamedArgument);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NamedArgument);
   }
 
   public get name(): TerminalNode {
@@ -3066,13 +3066,13 @@ export class TypeExpression {
     return {
       typeKeyword: $typeKeyword as TerminalNode,
       openParen: $openParen as TerminalNode,
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TypeExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TypeExpression);
   }
 
   public get typeKeyword(): TerminalNode {
@@ -3098,12 +3098,12 @@ export class NewExpression {
 
     return {
       newKeyword: $newKeyword as TerminalNode,
-      typeName: new TypeName($typeName as NonTerminalNode),
+      typeName: new TypeName($typeName as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NewExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NewExpression);
   }
 
   public get newKeyword(): TerminalNode {
@@ -3121,13 +3121,13 @@ export class TupleExpression {
 
     return {
       openParen: $openParen as TerminalNode,
-      items: new TupleValues($items as NonTerminalNode),
+      items: new TupleValues($items as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleExpression);
   }
 
   public get openParen(): TerminalNode {
@@ -3148,12 +3148,12 @@ export class TupleValue {
     const [$expression] = ast_internal.selectSequence(this.cst);
 
     return {
-      expression: $expression === null ? undefined : new Expression($expression as NonTerminalNode),
+      expression: $expression === null ? undefined : new Expression($expression as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleValue);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleValue);
   }
 
   public get expression(): Expression | undefined {
@@ -3167,13 +3167,13 @@ export class ArrayExpression {
 
     return {
       openBracket: $openBracket as TerminalNode,
-      items: new ArrayValues($items as NonTerminalNode),
+      items: new ArrayValues($items as NonterminalNode),
       closeBracket: $closeBracket as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ArrayExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ArrayExpression);
   }
 
   public get openBracket(): TerminalNode {
@@ -3195,12 +3195,12 @@ export class HexNumberExpression {
 
     return {
       literal: $literal as TerminalNode,
-      unit: $unit === null ? undefined : new NumberUnit($unit as NonTerminalNode),
+      unit: $unit === null ? undefined : new NumberUnit($unit as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.HexNumberExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.HexNumberExpression);
   }
 
   public get literal(): TerminalNode {
@@ -3218,12 +3218,12 @@ export class DecimalNumberExpression {
 
     return {
       literal: $literal as TerminalNode,
-      unit: $unit === null ? undefined : new NumberUnit($unit as NonTerminalNode),
+      unit: $unit === null ? undefined : new NumberUnit($unit as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.DecimalNumberExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.DecimalNumberExpression);
   }
 
   public get literal(): TerminalNode {
@@ -3241,13 +3241,13 @@ export class YulBlock {
 
     return {
       openBrace: $openBrace as TerminalNode,
-      statements: new YulStatements($statements as NonTerminalNode),
+      statements: new YulStatements($statements as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulBlock);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulBlock);
   }
 
   public get openBrace(): TerminalNode {
@@ -3270,14 +3270,14 @@ export class YulFunctionDefinition {
     return {
       functionKeyword: $functionKeyword as TerminalNode,
       name: $name as TerminalNode,
-      parameters: new YulParametersDeclaration($parameters as NonTerminalNode),
-      returns: $returns === null ? undefined : new YulReturnsDeclaration($returns as NonTerminalNode),
-      body: new YulBlock($body as NonTerminalNode),
+      parameters: new YulParametersDeclaration($parameters as NonterminalNode),
+      returns: $returns === null ? undefined : new YulReturnsDeclaration($returns as NonterminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulFunctionDefinition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulFunctionDefinition);
   }
 
   public get functionKeyword(): TerminalNode {
@@ -3307,13 +3307,13 @@ export class YulParametersDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      parameters: new YulParameters($parameters as NonTerminalNode),
+      parameters: new YulParameters($parameters as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulParametersDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulParametersDeclaration);
   }
 
   public get openParen(): TerminalNode {
@@ -3335,12 +3335,12 @@ export class YulReturnsDeclaration {
 
     return {
       minusGreaterThan: $minusGreaterThan as TerminalNode,
-      variables: new YulReturnVariables($variables as NonTerminalNode),
+      variables: new YulReturnVariables($variables as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulReturnsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulReturnsDeclaration);
   }
 
   public get minusGreaterThan(): TerminalNode {
@@ -3359,12 +3359,12 @@ export class YulVariableDeclarationStatement {
     return {
       letKeyword: $letKeyword as TerminalNode,
       names: $names as TerminalNode,
-      value: $value === null ? undefined : new YulVariableDeclarationValue($value as NonTerminalNode),
+      value: $value === null ? undefined : new YulVariableDeclarationValue($value as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulVariableDeclarationStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulVariableDeclarationStatement);
   }
 
   public get letKeyword(): TerminalNode {
@@ -3385,13 +3385,13 @@ export class YulVariableDeclarationValue {
     const [$assignment, $expression] = ast_internal.selectSequence(this.cst);
 
     return {
-      assignment: new YulAssignmentOperator($assignment as NonTerminalNode),
-      expression: new YulExpression($expression as NonTerminalNode),
+      assignment: new YulAssignmentOperator($assignment as NonterminalNode),
+      expression: new YulExpression($expression as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulVariableDeclarationValue);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulVariableDeclarationValue);
   }
 
   public get assignment(): YulAssignmentOperator {
@@ -3408,14 +3408,14 @@ export class YulAssignmentStatement {
     const [$names, $assignment, $expression] = ast_internal.selectSequence(this.cst);
 
     return {
-      names: new YulPaths($names as NonTerminalNode),
-      assignment: new YulAssignmentOperator($assignment as NonTerminalNode),
-      expression: new YulExpression($expression as NonTerminalNode),
+      names: new YulPaths($names as NonterminalNode),
+      assignment: new YulAssignmentOperator($assignment as NonterminalNode),
+      expression: new YulExpression($expression as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulAssignmentStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulAssignmentStatement);
   }
 
   public get names(): YulPaths {
@@ -3441,8 +3441,8 @@ export class YulColonAndEqual {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulColonAndEqual);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulColonAndEqual);
   }
 
   public get colon(): TerminalNode {
@@ -3460,13 +3460,13 @@ export class YulIfStatement {
 
     return {
       ifKeyword: $ifKeyword as TerminalNode,
-      condition: new YulExpression($condition as NonTerminalNode),
-      body: new YulBlock($body as NonTerminalNode),
+      condition: new YulExpression($condition as NonterminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulIfStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulIfStatement);
   }
 
   public get ifKeyword(): TerminalNode {
@@ -3488,15 +3488,15 @@ export class YulForStatement {
 
     return {
       forKeyword: $forKeyword as TerminalNode,
-      initialization: new YulBlock($initialization as NonTerminalNode),
-      condition: new YulExpression($condition as NonTerminalNode),
-      iterator: new YulBlock($iterator as NonTerminalNode),
-      body: new YulBlock($body as NonTerminalNode),
+      initialization: new YulBlock($initialization as NonterminalNode),
+      condition: new YulExpression($condition as NonterminalNode),
+      iterator: new YulBlock($iterator as NonterminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulForStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulForStatement);
   }
 
   public get forKeyword(): TerminalNode {
@@ -3526,13 +3526,13 @@ export class YulSwitchStatement {
 
     return {
       switchKeyword: $switchKeyword as TerminalNode,
-      expression: new YulExpression($expression as NonTerminalNode),
-      cases: new YulSwitchCases($cases as NonTerminalNode),
+      expression: new YulExpression($expression as NonterminalNode),
+      cases: new YulSwitchCases($cases as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulSwitchStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulSwitchStatement);
   }
 
   public get switchKeyword(): TerminalNode {
@@ -3554,12 +3554,12 @@ export class YulDefaultCase {
 
     return {
       defaultKeyword: $defaultKeyword as TerminalNode,
-      body: new YulBlock($body as NonTerminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulDefaultCase);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulDefaultCase);
   }
 
   public get defaultKeyword(): TerminalNode {
@@ -3577,13 +3577,13 @@ export class YulValueCase {
 
     return {
       caseKeyword: $caseKeyword as TerminalNode,
-      value: new YulLiteral($value as NonTerminalNode),
-      body: new YulBlock($body as NonTerminalNode),
+      value: new YulLiteral($value as NonterminalNode),
+      body: new YulBlock($body as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulValueCase);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulValueCase);
   }
 
   public get caseKeyword(): TerminalNode {
@@ -3608,8 +3608,8 @@ export class YulLeaveStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulLeaveStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulLeaveStatement);
   }
 
   public get leaveKeyword(): TerminalNode {
@@ -3626,8 +3626,8 @@ export class YulBreakStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulBreakStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulBreakStatement);
   }
 
   public get breakKeyword(): TerminalNode {
@@ -3644,8 +3644,8 @@ export class YulContinueStatement {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulContinueStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulContinueStatement);
   }
 
   public get continueKeyword(): TerminalNode {
@@ -3663,8 +3663,8 @@ export class YulLabel {
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulLabel);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulLabel);
   }
 
   public get label(): TerminalNode {
@@ -3681,15 +3681,15 @@ export class YulFunctionCallExpression {
     const [$operand, $openParen, $arguments, $closeParen] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new YulExpression($operand as NonTerminalNode),
+      operand: new YulExpression($operand as NonterminalNode),
       openParen: $openParen as TerminalNode,
-      arguments: new YulArguments($arguments as NonTerminalNode),
+      arguments: new YulArguments($arguments as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulFunctionCallExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulFunctionCallExpression);
   }
 
   public get operand(): YulExpression {
@@ -3731,40 +3731,40 @@ export class SourceUnitMember {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.PragmaDirective:
-        return new PragmaDirective(variant as NonTerminalNode);
-      case NonTerminalKind.ImportDirective:
-        return new ImportDirective(variant as NonTerminalNode);
-      case NonTerminalKind.ContractDefinition:
-        return new ContractDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.InterfaceDefinition:
-        return new InterfaceDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.LibraryDefinition:
-        return new LibraryDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.StructDefinition:
-        return new StructDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.EnumDefinition:
-        return new EnumDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.FunctionDefinition:
-        return new FunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ConstantDefinition:
-        return new ConstantDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ErrorDefinition:
-        return new ErrorDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.UserDefinedValueTypeDefinition:
-        return new UserDefinedValueTypeDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.UsingDirective:
-        return new UsingDirective(variant as NonTerminalNode);
-      case NonTerminalKind.EventDefinition:
-        return new EventDefinition(variant as NonTerminalNode);
+      case NonterminalKind.PragmaDirective:
+        return new PragmaDirective(variant as NonterminalNode);
+      case NonterminalKind.ImportDirective:
+        return new ImportDirective(variant as NonterminalNode);
+      case NonterminalKind.ContractDefinition:
+        return new ContractDefinition(variant as NonterminalNode);
+      case NonterminalKind.InterfaceDefinition:
+        return new InterfaceDefinition(variant as NonterminalNode);
+      case NonterminalKind.LibraryDefinition:
+        return new LibraryDefinition(variant as NonterminalNode);
+      case NonterminalKind.StructDefinition:
+        return new StructDefinition(variant as NonterminalNode);
+      case NonterminalKind.EnumDefinition:
+        return new EnumDefinition(variant as NonterminalNode);
+      case NonterminalKind.FunctionDefinition:
+        return new FunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.ConstantDefinition:
+        return new ConstantDefinition(variant as NonterminalNode);
+      case NonterminalKind.ErrorDefinition:
+        return new ErrorDefinition(variant as NonterminalNode);
+      case NonterminalKind.UserDefinedValueTypeDefinition:
+        return new UserDefinedValueTypeDefinition(variant as NonterminalNode);
+      case NonterminalKind.UsingDirective:
+        return new UsingDirective(variant as NonterminalNode);
+      case NonterminalKind.EventDefinition:
+        return new EventDefinition(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnitMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnitMember);
   }
 
   public get variant():
@@ -3790,20 +3790,20 @@ export class Pragma {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ABICoderPragma:
-        return new ABICoderPragma(variant as NonTerminalNode);
-      case NonTerminalKind.ExperimentalPragma:
-        return new ExperimentalPragma(variant as NonTerminalNode);
-      case NonTerminalKind.VersionPragma:
-        return new VersionPragma(variant as NonTerminalNode);
+      case NonterminalKind.ABICoderPragma:
+        return new ABICoderPragma(variant as NonterminalNode);
+      case NonterminalKind.ExperimentalPragma:
+        return new ExperimentalPragma(variant as NonterminalNode);
+      case NonterminalKind.VersionPragma:
+        return new VersionPragma(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Pragma);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Pragma);
   }
 
   public get variant(): ABICoderPragma | ExperimentalPragma | VersionPragma {
@@ -3816,8 +3816,8 @@ export class ExperimentalFeature {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.StringLiteral:
-        return new StringLiteral(variant as NonTerminalNode);
+      case NonterminalKind.StringLiteral:
+        return new StringLiteral(variant as NonterminalNode);
 
       case TerminalKind.Identifier:
         return variant as TerminalNode;
@@ -3827,8 +3827,8 @@ export class ExperimentalFeature {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ExperimentalFeature);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ExperimentalFeature);
   }
 
   public get variant(): StringLiteral | TerminalNode {
@@ -3841,12 +3841,12 @@ export class VersionExpression {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.VersionRange:
-        return new VersionRange(variant as NonTerminalNode);
-      case NonTerminalKind.VersionComparator:
-        return new VersionComparator(variant as NonTerminalNode);
-      case NonTerminalKind.VersionSpecifiers:
-        return new VersionSpecifiers(variant as NonTerminalNode);
+      case NonterminalKind.VersionRange:
+        return new VersionRange(variant as NonterminalNode);
+      case NonterminalKind.VersionComparator:
+        return new VersionComparator(variant as NonterminalNode);
+      case NonterminalKind.VersionSpecifiers:
+        return new VersionSpecifiers(variant as NonterminalNode);
 
       case TerminalKind.SingleQuotedVersionLiteral:
       case TerminalKind.DoubleQuotedVersionLiteral:
@@ -3857,8 +3857,8 @@ export class VersionExpression {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionExpression);
   }
 
   public get variant(): VersionRange | VersionComparator | VersionSpecifiers | TerminalNode {
@@ -3871,20 +3871,20 @@ export class ImportClause {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.PathImport:
-        return new PathImport(variant as NonTerminalNode);
-      case NonTerminalKind.NamedImport:
-        return new NamedImport(variant as NonTerminalNode);
-      case NonTerminalKind.ImportDeconstruction:
-        return new ImportDeconstruction(variant as NonTerminalNode);
+      case NonterminalKind.PathImport:
+        return new PathImport(variant as NonterminalNode);
+      case NonterminalKind.NamedImport:
+        return new NamedImport(variant as NonterminalNode);
+      case NonterminalKind.ImportDeconstruction:
+        return new ImportDeconstruction(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportClause);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportClause);
   }
 
   public get variant(): PathImport | NamedImport | ImportDeconstruction {
@@ -3897,18 +3897,18 @@ export class UsingClause {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.IdentifierPath:
-        return new IdentifierPath(variant as NonTerminalNode);
-      case NonTerminalKind.UsingDeconstruction:
-        return new UsingDeconstruction(variant as NonTerminalNode);
+      case NonterminalKind.IdentifierPath:
+        return new IdentifierPath(variant as NonterminalNode);
+      case NonterminalKind.UsingDeconstruction:
+        return new UsingDeconstruction(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingClause);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingClause);
   }
 
   public get variant(): IdentifierPath | UsingDeconstruction {
@@ -3943,8 +3943,8 @@ export class UsingOperator {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingOperator);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingOperator);
   }
 
   public get variant(): TerminalNode {
@@ -3957,8 +3957,8 @@ export class UsingTarget {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.TypeName:
-        return new TypeName(variant as NonTerminalNode);
+      case NonterminalKind.TypeName:
+        return new TypeName(variant as NonterminalNode);
 
       case TerminalKind.Asterisk:
         return variant as TerminalNode;
@@ -3968,8 +3968,8 @@ export class UsingTarget {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingTarget);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingTarget);
   }
 
   public get variant(): TypeName | TerminalNode {
@@ -3995,40 +3995,40 @@ export class ContractMember {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.UsingDirective:
-        return new UsingDirective(variant as NonTerminalNode);
-      case NonTerminalKind.FunctionDefinition:
-        return new FunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ConstructorDefinition:
-        return new ConstructorDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ReceiveFunctionDefinition:
-        return new ReceiveFunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.FallbackFunctionDefinition:
-        return new FallbackFunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.UnnamedFunctionDefinition:
-        return new UnnamedFunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ModifierDefinition:
-        return new ModifierDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.StructDefinition:
-        return new StructDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.EnumDefinition:
-        return new EnumDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.EventDefinition:
-        return new EventDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.StateVariableDefinition:
-        return new StateVariableDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.ErrorDefinition:
-        return new ErrorDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.UserDefinedValueTypeDefinition:
-        return new UserDefinedValueTypeDefinition(variant as NonTerminalNode);
+      case NonterminalKind.UsingDirective:
+        return new UsingDirective(variant as NonterminalNode);
+      case NonterminalKind.FunctionDefinition:
+        return new FunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.ConstructorDefinition:
+        return new ConstructorDefinition(variant as NonterminalNode);
+      case NonterminalKind.ReceiveFunctionDefinition:
+        return new ReceiveFunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.FallbackFunctionDefinition:
+        return new FallbackFunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.UnnamedFunctionDefinition:
+        return new UnnamedFunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.ModifierDefinition:
+        return new ModifierDefinition(variant as NonterminalNode);
+      case NonterminalKind.StructDefinition:
+        return new StructDefinition(variant as NonterminalNode);
+      case NonterminalKind.EnumDefinition:
+        return new EnumDefinition(variant as NonterminalNode);
+      case NonterminalKind.EventDefinition:
+        return new EventDefinition(variant as NonterminalNode);
+      case NonterminalKind.StateVariableDefinition:
+        return new StateVariableDefinition(variant as NonterminalNode);
+      case NonterminalKind.ErrorDefinition:
+        return new ErrorDefinition(variant as NonterminalNode);
+      case NonterminalKind.UserDefinedValueTypeDefinition:
+        return new UserDefinedValueTypeDefinition(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ContractMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ContractMember);
   }
 
   public get variant():
@@ -4054,8 +4054,8 @@ export class StateVariableAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as NonTerminalNode);
+      case NonterminalKind.OverrideSpecifier:
+        return new OverrideSpecifier(variant as NonterminalNode);
 
       case TerminalKind.ConstantKeyword:
       case TerminalKind.InternalKeyword:
@@ -4069,8 +4069,8 @@ export class StateVariableAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StateVariableAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StateVariableAttribute);
   }
 
   public get variant(): OverrideSpecifier | TerminalNode {
@@ -4093,8 +4093,8 @@ export class FunctionName {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionName);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionName);
   }
 
   public get variant(): TerminalNode {
@@ -4107,10 +4107,10 @@ export class FunctionAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ModifierInvocation:
-        return new ModifierInvocation(variant as NonTerminalNode);
-      case NonTerminalKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as NonTerminalNode);
+      case NonterminalKind.ModifierInvocation:
+        return new ModifierInvocation(variant as NonterminalNode);
+      case NonterminalKind.OverrideSpecifier:
+        return new OverrideSpecifier(variant as NonterminalNode);
 
       case TerminalKind.ConstantKeyword:
       case TerminalKind.ExternalKeyword:
@@ -4128,8 +4128,8 @@ export class FunctionAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionAttribute);
   }
 
   public get variant(): ModifierInvocation | OverrideSpecifier | TerminalNode {
@@ -4142,8 +4142,8 @@ export class FunctionBody {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.Block:
-        return new Block(variant as NonTerminalNode);
+      case NonterminalKind.Block:
+        return new Block(variant as NonterminalNode);
 
       case TerminalKind.Semicolon:
         return variant as TerminalNode;
@@ -4153,8 +4153,8 @@ export class FunctionBody {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionBody);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionBody);
   }
 
   public get variant(): Block | TerminalNode {
@@ -4167,8 +4167,8 @@ export class ConstructorAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ModifierInvocation:
-        return new ModifierInvocation(variant as NonTerminalNode);
+      case NonterminalKind.ModifierInvocation:
+        return new ModifierInvocation(variant as NonterminalNode);
 
       case TerminalKind.InternalKeyword:
       case TerminalKind.OverrideKeyword:
@@ -4182,8 +4182,8 @@ export class ConstructorAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ConstructorAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ConstructorAttribute);
   }
 
   public get variant(): ModifierInvocation | TerminalNode {
@@ -4196,8 +4196,8 @@ export class UnnamedFunctionAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ModifierInvocation:
-        return new ModifierInvocation(variant as NonTerminalNode);
+      case NonterminalKind.ModifierInvocation:
+        return new ModifierInvocation(variant as NonterminalNode);
 
       case TerminalKind.ConstantKeyword:
       case TerminalKind.ExternalKeyword:
@@ -4214,8 +4214,8 @@ export class UnnamedFunctionAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UnnamedFunctionAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UnnamedFunctionAttribute);
   }
 
   public get variant(): ModifierInvocation | TerminalNode {
@@ -4228,10 +4228,10 @@ export class FallbackFunctionAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ModifierInvocation:
-        return new ModifierInvocation(variant as NonTerminalNode);
-      case NonTerminalKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as NonTerminalNode);
+      case NonterminalKind.ModifierInvocation:
+        return new ModifierInvocation(variant as NonterminalNode);
+      case NonterminalKind.OverrideSpecifier:
+        return new OverrideSpecifier(variant as NonterminalNode);
 
       case TerminalKind.ExternalKeyword:
       case TerminalKind.PayableKeyword:
@@ -4245,8 +4245,8 @@ export class FallbackFunctionAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FallbackFunctionAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FallbackFunctionAttribute);
   }
 
   public get variant(): ModifierInvocation | OverrideSpecifier | TerminalNode {
@@ -4259,10 +4259,10 @@ export class ReceiveFunctionAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ModifierInvocation:
-        return new ModifierInvocation(variant as NonTerminalNode);
-      case NonTerminalKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as NonTerminalNode);
+      case NonterminalKind.ModifierInvocation:
+        return new ModifierInvocation(variant as NonterminalNode);
+      case NonterminalKind.OverrideSpecifier:
+        return new OverrideSpecifier(variant as NonterminalNode);
 
       case TerminalKind.ExternalKeyword:
       case TerminalKind.PayableKeyword:
@@ -4274,8 +4274,8 @@ export class ReceiveFunctionAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ReceiveFunctionAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ReceiveFunctionAttribute);
   }
 
   public get variant(): ModifierInvocation | OverrideSpecifier | TerminalNode {
@@ -4288,8 +4288,8 @@ export class ModifierAttribute {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.OverrideSpecifier:
-        return new OverrideSpecifier(variant as NonTerminalNode);
+      case NonterminalKind.OverrideSpecifier:
+        return new OverrideSpecifier(variant as NonterminalNode);
 
       case TerminalKind.VirtualKeyword:
         return variant as TerminalNode;
@@ -4299,8 +4299,8 @@ export class ModifierAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ModifierAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ModifierAttribute);
   }
 
   public get variant(): OverrideSpecifier | TerminalNode {
@@ -4314,16 +4314,16 @@ export class TypeName {
       const variant = ast_internal.selectChoice(this.cst);
 
       switch (variant.kind) {
-        case NonTerminalKind.ArrayTypeName:
-          return new ArrayTypeName(variant as NonTerminalNode);
-        case NonTerminalKind.FunctionType:
-          return new FunctionType(variant as NonTerminalNode);
-        case NonTerminalKind.MappingType:
-          return new MappingType(variant as NonTerminalNode);
-        case NonTerminalKind.ElementaryType:
-          return new ElementaryType(variant as NonTerminalNode);
-        case NonTerminalKind.IdentifierPath:
-          return new IdentifierPath(variant as NonTerminalNode);
+        case NonterminalKind.ArrayTypeName:
+          return new ArrayTypeName(variant as NonterminalNode);
+        case NonterminalKind.FunctionType:
+          return new FunctionType(variant as NonterminalNode);
+        case NonterminalKind.MappingType:
+          return new MappingType(variant as NonterminalNode);
+        case NonterminalKind.ElementaryType:
+          return new ElementaryType(variant as NonterminalNode);
+        case NonterminalKind.IdentifierPath:
+          return new IdentifierPath(variant as NonterminalNode);
 
         default:
           assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4331,8 +4331,8 @@ export class TypeName {
     },
   );
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TypeName);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TypeName);
   }
 
   public get variant(): ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath {
@@ -4360,8 +4360,8 @@ export class FunctionTypeAttribute {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionTypeAttribute);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionTypeAttribute);
   }
 
   public get variant(): TerminalNode {
@@ -4374,18 +4374,18 @@ export class MappingKeyType {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ElementaryType:
-        return new ElementaryType(variant as NonTerminalNode);
-      case NonTerminalKind.IdentifierPath:
-        return new IdentifierPath(variant as NonTerminalNode);
+      case NonterminalKind.ElementaryType:
+        return new ElementaryType(variant as NonterminalNode);
+      case NonterminalKind.IdentifierPath:
+        return new IdentifierPath(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MappingKeyType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MappingKeyType);
   }
 
   public get variant(): ElementaryType | IdentifierPath {
@@ -4398,8 +4398,8 @@ export class ElementaryType {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.AddressType:
-        return new AddressType(variant as NonTerminalNode);
+      case NonterminalKind.AddressType:
+        return new AddressType(variant as NonterminalNode);
 
       case TerminalKind.BoolKeyword:
       case TerminalKind.ByteKeyword:
@@ -4416,8 +4416,8 @@ export class ElementaryType {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ElementaryType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ElementaryType);
   }
 
   public get variant(): AddressType | TerminalNode {
@@ -4447,48 +4447,48 @@ export class Statement {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ExpressionStatement:
-        return new ExpressionStatement(variant as NonTerminalNode);
-      case NonTerminalKind.VariableDeclarationStatement:
-        return new VariableDeclarationStatement(variant as NonTerminalNode);
-      case NonTerminalKind.TupleDeconstructionStatement:
-        return new TupleDeconstructionStatement(variant as NonTerminalNode);
-      case NonTerminalKind.IfStatement:
-        return new IfStatement(variant as NonTerminalNode);
-      case NonTerminalKind.ForStatement:
-        return new ForStatement(variant as NonTerminalNode);
-      case NonTerminalKind.WhileStatement:
-        return new WhileStatement(variant as NonTerminalNode);
-      case NonTerminalKind.DoWhileStatement:
-        return new DoWhileStatement(variant as NonTerminalNode);
-      case NonTerminalKind.ContinueStatement:
-        return new ContinueStatement(variant as NonTerminalNode);
-      case NonTerminalKind.BreakStatement:
-        return new BreakStatement(variant as NonTerminalNode);
-      case NonTerminalKind.ReturnStatement:
-        return new ReturnStatement(variant as NonTerminalNode);
-      case NonTerminalKind.ThrowStatement:
-        return new ThrowStatement(variant as NonTerminalNode);
-      case NonTerminalKind.EmitStatement:
-        return new EmitStatement(variant as NonTerminalNode);
-      case NonTerminalKind.TryStatement:
-        return new TryStatement(variant as NonTerminalNode);
-      case NonTerminalKind.RevertStatement:
-        return new RevertStatement(variant as NonTerminalNode);
-      case NonTerminalKind.AssemblyStatement:
-        return new AssemblyStatement(variant as NonTerminalNode);
-      case NonTerminalKind.Block:
-        return new Block(variant as NonTerminalNode);
-      case NonTerminalKind.UncheckedBlock:
-        return new UncheckedBlock(variant as NonTerminalNode);
+      case NonterminalKind.ExpressionStatement:
+        return new ExpressionStatement(variant as NonterminalNode);
+      case NonterminalKind.VariableDeclarationStatement:
+        return new VariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.TupleDeconstructionStatement:
+        return new TupleDeconstructionStatement(variant as NonterminalNode);
+      case NonterminalKind.IfStatement:
+        return new IfStatement(variant as NonterminalNode);
+      case NonterminalKind.ForStatement:
+        return new ForStatement(variant as NonterminalNode);
+      case NonterminalKind.WhileStatement:
+        return new WhileStatement(variant as NonterminalNode);
+      case NonterminalKind.DoWhileStatement:
+        return new DoWhileStatement(variant as NonterminalNode);
+      case NonterminalKind.ContinueStatement:
+        return new ContinueStatement(variant as NonterminalNode);
+      case NonterminalKind.BreakStatement:
+        return new BreakStatement(variant as NonterminalNode);
+      case NonterminalKind.ReturnStatement:
+        return new ReturnStatement(variant as NonterminalNode);
+      case NonterminalKind.ThrowStatement:
+        return new ThrowStatement(variant as NonterminalNode);
+      case NonterminalKind.EmitStatement:
+        return new EmitStatement(variant as NonterminalNode);
+      case NonterminalKind.TryStatement:
+        return new TryStatement(variant as NonterminalNode);
+      case NonterminalKind.RevertStatement:
+        return new RevertStatement(variant as NonterminalNode);
+      case NonterminalKind.AssemblyStatement:
+        return new AssemblyStatement(variant as NonterminalNode);
+      case NonterminalKind.Block:
+        return new Block(variant as NonterminalNode);
+      case NonterminalKind.UncheckedBlock:
+        return new UncheckedBlock(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Statement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Statement);
   }
 
   public get variant():
@@ -4518,18 +4518,18 @@ export class TupleMember {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.TypedTupleMember:
-        return new TypedTupleMember(variant as NonTerminalNode);
-      case NonTerminalKind.UntypedTupleMember:
-        return new UntypedTupleMember(variant as NonTerminalNode);
+      case NonterminalKind.TypedTupleMember:
+        return new TypedTupleMember(variant as NonterminalNode);
+      case NonterminalKind.UntypedTupleMember:
+        return new UntypedTupleMember(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleMember);
   }
 
   public get variant(): TypedTupleMember | UntypedTupleMember {
@@ -4542,8 +4542,8 @@ export class VariableDeclarationType {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.TypeName:
-        return new TypeName(variant as NonTerminalNode);
+      case NonterminalKind.TypeName:
+        return new TypeName(variant as NonterminalNode);
 
       case TerminalKind.VarKeyword:
         return variant as TerminalNode;
@@ -4553,8 +4553,8 @@ export class VariableDeclarationType {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VariableDeclarationType);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VariableDeclarationType);
   }
 
   public get variant(): TypeName | TerminalNode {
@@ -4577,8 +4577,8 @@ export class StorageLocation {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StorageLocation);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StorageLocation);
   }
 
   public get variant(): TerminalNode {
@@ -4595,12 +4595,12 @@ export class ForStatementInitialization {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ExpressionStatement:
-        return new ExpressionStatement(variant as NonTerminalNode);
-      case NonTerminalKind.VariableDeclarationStatement:
-        return new VariableDeclarationStatement(variant as NonTerminalNode);
-      case NonTerminalKind.TupleDeconstructionStatement:
-        return new TupleDeconstructionStatement(variant as NonTerminalNode);
+      case NonterminalKind.ExpressionStatement:
+        return new ExpressionStatement(variant as NonterminalNode);
+      case NonterminalKind.VariableDeclarationStatement:
+        return new VariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.TupleDeconstructionStatement:
+        return new TupleDeconstructionStatement(variant as NonterminalNode);
 
       case TerminalKind.Semicolon:
         return variant as TerminalNode;
@@ -4610,8 +4610,8 @@ export class ForStatementInitialization {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ForStatementInitialization);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ForStatementInitialization);
   }
 
   public get variant():
@@ -4628,8 +4628,8 @@ export class ForStatementCondition {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.ExpressionStatement:
-        return new ExpressionStatement(variant as NonTerminalNode);
+      case NonterminalKind.ExpressionStatement:
+        return new ExpressionStatement(variant as NonterminalNode);
 
       case TerminalKind.Semicolon:
         return variant as TerminalNode;
@@ -4639,8 +4639,8 @@ export class ForStatementCondition {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ForStatementCondition);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ForStatementCondition);
   }
 
   public get variant(): ExpressionStatement | TerminalNode {
@@ -4681,60 +4681,60 @@ export class Expression {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.AssignmentExpression:
-        return new AssignmentExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ConditionalExpression:
-        return new ConditionalExpression(variant as NonTerminalNode);
-      case NonTerminalKind.OrExpression:
-        return new OrExpression(variant as NonTerminalNode);
-      case NonTerminalKind.AndExpression:
-        return new AndExpression(variant as NonTerminalNode);
-      case NonTerminalKind.EqualityExpression:
-        return new EqualityExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ComparisonExpression:
-        return new ComparisonExpression(variant as NonTerminalNode);
-      case NonTerminalKind.BitwiseOrExpression:
-        return new BitwiseOrExpression(variant as NonTerminalNode);
-      case NonTerminalKind.BitwiseXorExpression:
-        return new BitwiseXorExpression(variant as NonTerminalNode);
-      case NonTerminalKind.BitwiseAndExpression:
-        return new BitwiseAndExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ShiftExpression:
-        return new ShiftExpression(variant as NonTerminalNode);
-      case NonTerminalKind.AdditiveExpression:
-        return new AdditiveExpression(variant as NonTerminalNode);
-      case NonTerminalKind.MultiplicativeExpression:
-        return new MultiplicativeExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ExponentiationExpression:
-        return new ExponentiationExpression(variant as NonTerminalNode);
-      case NonTerminalKind.PostfixExpression:
-        return new PostfixExpression(variant as NonTerminalNode);
-      case NonTerminalKind.PrefixExpression:
-        return new PrefixExpression(variant as NonTerminalNode);
-      case NonTerminalKind.FunctionCallExpression:
-        return new FunctionCallExpression(variant as NonTerminalNode);
-      case NonTerminalKind.CallOptionsExpression:
-        return new CallOptionsExpression(variant as NonTerminalNode);
-      case NonTerminalKind.MemberAccessExpression:
-        return new MemberAccessExpression(variant as NonTerminalNode);
-      case NonTerminalKind.IndexAccessExpression:
-        return new IndexAccessExpression(variant as NonTerminalNode);
-      case NonTerminalKind.NewExpression:
-        return new NewExpression(variant as NonTerminalNode);
-      case NonTerminalKind.TupleExpression:
-        return new TupleExpression(variant as NonTerminalNode);
-      case NonTerminalKind.TypeExpression:
-        return new TypeExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ArrayExpression:
-        return new ArrayExpression(variant as NonTerminalNode);
-      case NonTerminalKind.HexNumberExpression:
-        return new HexNumberExpression(variant as NonTerminalNode);
-      case NonTerminalKind.DecimalNumberExpression:
-        return new DecimalNumberExpression(variant as NonTerminalNode);
-      case NonTerminalKind.StringExpression:
-        return new StringExpression(variant as NonTerminalNode);
-      case NonTerminalKind.ElementaryType:
-        return new ElementaryType(variant as NonTerminalNode);
+      case NonterminalKind.AssignmentExpression:
+        return new AssignmentExpression(variant as NonterminalNode);
+      case NonterminalKind.ConditionalExpression:
+        return new ConditionalExpression(variant as NonterminalNode);
+      case NonterminalKind.OrExpression:
+        return new OrExpression(variant as NonterminalNode);
+      case NonterminalKind.AndExpression:
+        return new AndExpression(variant as NonterminalNode);
+      case NonterminalKind.EqualityExpression:
+        return new EqualityExpression(variant as NonterminalNode);
+      case NonterminalKind.ComparisonExpression:
+        return new ComparisonExpression(variant as NonterminalNode);
+      case NonterminalKind.BitwiseOrExpression:
+        return new BitwiseOrExpression(variant as NonterminalNode);
+      case NonterminalKind.BitwiseXorExpression:
+        return new BitwiseXorExpression(variant as NonterminalNode);
+      case NonterminalKind.BitwiseAndExpression:
+        return new BitwiseAndExpression(variant as NonterminalNode);
+      case NonterminalKind.ShiftExpression:
+        return new ShiftExpression(variant as NonterminalNode);
+      case NonterminalKind.AdditiveExpression:
+        return new AdditiveExpression(variant as NonterminalNode);
+      case NonterminalKind.MultiplicativeExpression:
+        return new MultiplicativeExpression(variant as NonterminalNode);
+      case NonterminalKind.ExponentiationExpression:
+        return new ExponentiationExpression(variant as NonterminalNode);
+      case NonterminalKind.PostfixExpression:
+        return new PostfixExpression(variant as NonterminalNode);
+      case NonterminalKind.PrefixExpression:
+        return new PrefixExpression(variant as NonterminalNode);
+      case NonterminalKind.FunctionCallExpression:
+        return new FunctionCallExpression(variant as NonterminalNode);
+      case NonterminalKind.CallOptionsExpression:
+        return new CallOptionsExpression(variant as NonterminalNode);
+      case NonterminalKind.MemberAccessExpression:
+        return new MemberAccessExpression(variant as NonterminalNode);
+      case NonterminalKind.IndexAccessExpression:
+        return new IndexAccessExpression(variant as NonterminalNode);
+      case NonterminalKind.NewExpression:
+        return new NewExpression(variant as NonterminalNode);
+      case NonterminalKind.TupleExpression:
+        return new TupleExpression(variant as NonterminalNode);
+      case NonterminalKind.TypeExpression:
+        return new TypeExpression(variant as NonterminalNode);
+      case NonterminalKind.ArrayExpression:
+        return new ArrayExpression(variant as NonterminalNode);
+      case NonterminalKind.HexNumberExpression:
+        return new HexNumberExpression(variant as NonterminalNode);
+      case NonterminalKind.DecimalNumberExpression:
+        return new DecimalNumberExpression(variant as NonterminalNode);
+      case NonterminalKind.StringExpression:
+        return new StringExpression(variant as NonterminalNode);
+      case NonterminalKind.ElementaryType:
+        return new ElementaryType(variant as NonterminalNode);
 
       case TerminalKind.PayableKeyword:
       case TerminalKind.TrueKeyword:
@@ -4747,8 +4747,8 @@ export class Expression {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Expression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Expression);
   }
 
   public get variant():
@@ -4798,8 +4798,8 @@ export class MemberAccess {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MemberAccess);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MemberAccess);
   }
 
   public get variant(): TerminalNode {
@@ -4812,18 +4812,18 @@ export class ArgumentsDeclaration {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.PositionalArgumentsDeclaration:
-        return new PositionalArgumentsDeclaration(variant as NonTerminalNode);
-      case NonTerminalKind.NamedArgumentsDeclaration:
-        return new NamedArgumentsDeclaration(variant as NonTerminalNode);
+      case NonterminalKind.PositionalArgumentsDeclaration:
+        return new PositionalArgumentsDeclaration(variant as NonterminalNode);
+      case NonterminalKind.NamedArgumentsDeclaration:
+        return new NamedArgumentsDeclaration(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ArgumentsDeclaration);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ArgumentsDeclaration);
   }
 
   public get variant(): PositionalArgumentsDeclaration | NamedArgumentsDeclaration {
@@ -4854,8 +4854,8 @@ export class NumberUnit {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NumberUnit);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NumberUnit);
   }
 
   public get variant(): TerminalNode {
@@ -4873,24 +4873,24 @@ export class StringExpression {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.StringLiteral:
-        return new StringLiteral(variant as NonTerminalNode);
-      case NonTerminalKind.StringLiterals:
-        return new StringLiterals(variant as NonTerminalNode);
-      case NonTerminalKind.HexStringLiteral:
-        return new HexStringLiteral(variant as NonTerminalNode);
-      case NonTerminalKind.HexStringLiterals:
-        return new HexStringLiterals(variant as NonTerminalNode);
-      case NonTerminalKind.UnicodeStringLiterals:
-        return new UnicodeStringLiterals(variant as NonTerminalNode);
+      case NonterminalKind.StringLiteral:
+        return new StringLiteral(variant as NonterminalNode);
+      case NonterminalKind.StringLiterals:
+        return new StringLiterals(variant as NonterminalNode);
+      case NonterminalKind.HexStringLiteral:
+        return new HexStringLiteral(variant as NonterminalNode);
+      case NonterminalKind.HexStringLiterals:
+        return new HexStringLiterals(variant as NonterminalNode);
+      case NonterminalKind.UnicodeStringLiterals:
+        return new UnicodeStringLiterals(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StringExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StringExpression);
   }
 
   public get variant(): StringLiteral | StringLiterals | HexStringLiteral | HexStringLiterals | UnicodeStringLiterals {
@@ -4912,8 +4912,8 @@ export class StringLiteral {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StringLiteral);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StringLiteral);
   }
 
   public get variant(): TerminalNode {
@@ -4935,8 +4935,8 @@ export class HexStringLiteral {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.HexStringLiteral);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.HexStringLiteral);
   }
 
   public get variant(): TerminalNode {
@@ -4958,8 +4958,8 @@ export class UnicodeStringLiteral {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UnicodeStringLiteral);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UnicodeStringLiteral);
   }
 
   public get variant(): TerminalNode {
@@ -4984,38 +4984,38 @@ export class YulStatement {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.YulBlock:
-        return new YulBlock(variant as NonTerminalNode);
-      case NonTerminalKind.YulFunctionDefinition:
-        return new YulFunctionDefinition(variant as NonTerminalNode);
-      case NonTerminalKind.YulVariableDeclarationStatement:
-        return new YulVariableDeclarationStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulAssignmentStatement:
-        return new YulAssignmentStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulIfStatement:
-        return new YulIfStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulForStatement:
-        return new YulForStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulSwitchStatement:
-        return new YulSwitchStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulLeaveStatement:
-        return new YulLeaveStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulBreakStatement:
-        return new YulBreakStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulContinueStatement:
-        return new YulContinueStatement(variant as NonTerminalNode);
-      case NonTerminalKind.YulLabel:
-        return new YulLabel(variant as NonTerminalNode);
-      case NonTerminalKind.YulExpression:
-        return new YulExpression(variant as NonTerminalNode);
+      case NonterminalKind.YulBlock:
+        return new YulBlock(variant as NonterminalNode);
+      case NonterminalKind.YulFunctionDefinition:
+        return new YulFunctionDefinition(variant as NonterminalNode);
+      case NonterminalKind.YulVariableDeclarationStatement:
+        return new YulVariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.YulAssignmentStatement:
+        return new YulAssignmentStatement(variant as NonterminalNode);
+      case NonterminalKind.YulIfStatement:
+        return new YulIfStatement(variant as NonterminalNode);
+      case NonterminalKind.YulForStatement:
+        return new YulForStatement(variant as NonterminalNode);
+      case NonterminalKind.YulSwitchStatement:
+        return new YulSwitchStatement(variant as NonterminalNode);
+      case NonterminalKind.YulLeaveStatement:
+        return new YulLeaveStatement(variant as NonterminalNode);
+      case NonterminalKind.YulBreakStatement:
+        return new YulBreakStatement(variant as NonterminalNode);
+      case NonterminalKind.YulContinueStatement:
+        return new YulContinueStatement(variant as NonterminalNode);
+      case NonterminalKind.YulLabel:
+        return new YulLabel(variant as NonterminalNode);
+      case NonterminalKind.YulExpression:
+        return new YulExpression(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulStatement);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulStatement);
   }
 
   public get variant():
@@ -5040,8 +5040,8 @@ export class YulAssignmentOperator {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.YulColonAndEqual:
-        return new YulColonAndEqual(variant as NonTerminalNode);
+      case NonterminalKind.YulColonAndEqual:
+        return new YulColonAndEqual(variant as NonterminalNode);
 
       case TerminalKind.ColonEqual:
         return variant as TerminalNode;
@@ -5051,8 +5051,8 @@ export class YulAssignmentOperator {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulAssignmentOperator);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulAssignmentOperator);
   }
 
   public get variant(): YulColonAndEqual | TerminalNode {
@@ -5065,18 +5065,18 @@ export class YulSwitchCase {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.YulDefaultCase:
-        return new YulDefaultCase(variant as NonTerminalNode);
-      case NonTerminalKind.YulValueCase:
-        return new YulValueCase(variant as NonTerminalNode);
+      case NonterminalKind.YulDefaultCase:
+        return new YulDefaultCase(variant as NonterminalNode);
+      case NonterminalKind.YulValueCase:
+        return new YulValueCase(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulSwitchCase);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulSwitchCase);
   }
 
   public get variant(): YulDefaultCase | YulValueCase {
@@ -5089,22 +5089,22 @@ export class YulExpression {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.YulFunctionCallExpression:
-        return new YulFunctionCallExpression(variant as NonTerminalNode);
-      case NonTerminalKind.YulLiteral:
-        return new YulLiteral(variant as NonTerminalNode);
-      case NonTerminalKind.YulBuiltInFunction:
-        return new YulBuiltInFunction(variant as NonTerminalNode);
-      case NonTerminalKind.YulPath:
-        return new YulPath(variant as NonTerminalNode);
+      case NonterminalKind.YulFunctionCallExpression:
+        return new YulFunctionCallExpression(variant as NonterminalNode);
+      case NonterminalKind.YulLiteral:
+        return new YulLiteral(variant as NonterminalNode);
+      case NonterminalKind.YulBuiltInFunction:
+        return new YulBuiltInFunction(variant as NonterminalNode);
+      case NonterminalKind.YulPath:
+        return new YulPath(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulExpression);
   }
 
   public get variant(): YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulPath {
@@ -5126,8 +5126,8 @@ export class YulPathComponent {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulPathComponent);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulPathComponent);
   }
 
   public get variant(): TerminalNode {
@@ -5228,8 +5228,8 @@ export class YulBuiltInFunction {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulBuiltInFunction);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulBuiltInFunction);
   }
 
   public get variant(): TerminalNode {
@@ -5242,10 +5242,10 @@ export class YulLiteral {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.HexStringLiteral:
-        return new HexStringLiteral(variant as NonTerminalNode);
-      case NonTerminalKind.StringLiteral:
-        return new StringLiteral(variant as NonTerminalNode);
+      case NonterminalKind.HexStringLiteral:
+        return new HexStringLiteral(variant as NonterminalNode);
+      case NonterminalKind.StringLiteral:
+        return new StringLiteral(variant as NonterminalNode);
 
       case TerminalKind.YulTrueKeyword:
       case TerminalKind.YulFalseKeyword:
@@ -5258,8 +5258,8 @@ export class YulLiteral {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulLiteral);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulLiteral);
   }
 
   public get variant(): HexStringLiteral | StringLiteral | TerminalNode {
@@ -5274,11 +5274,11 @@ export class YulLiteral {
 export class SourceUnitMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new SourceUnitMember(item as NonTerminalNode));
+    return items.map((item) => new SourceUnitMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnitMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnitMembers);
   }
 
   public get items(): readonly SourceUnitMember[] {
@@ -5289,11 +5289,11 @@ export class SourceUnitMembers {
 export class VersionExpressionSet {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new VersionExpression(item as NonTerminalNode));
+    return items.map((item) => new VersionExpression(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionExpressionSet);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionExpressionSet);
   }
 
   public get items(): readonly VersionExpression[] {
@@ -5304,11 +5304,11 @@ export class VersionExpressionSet {
 export class ContractMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ContractMember(item as NonTerminalNode));
+    return items.map((item) => new ContractMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ContractMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ContractMembers);
   }
 
   public get items(): readonly ContractMember[] {
@@ -5319,11 +5319,11 @@ export class ContractMembers {
 export class InterfaceMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ContractMember(item as NonTerminalNode));
+    return items.map((item) => new ContractMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.InterfaceMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.InterfaceMembers);
   }
 
   public get items(): readonly ContractMember[] {
@@ -5334,11 +5334,11 @@ export class InterfaceMembers {
 export class LibraryMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ContractMember(item as NonTerminalNode));
+    return items.map((item) => new ContractMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.LibraryMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.LibraryMembers);
   }
 
   public get items(): readonly ContractMember[] {
@@ -5349,11 +5349,11 @@ export class LibraryMembers {
 export class StructMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new StructMember(item as NonTerminalNode));
+    return items.map((item) => new StructMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StructMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StructMembers);
   }
 
   public get items(): readonly StructMember[] {
@@ -5364,11 +5364,11 @@ export class StructMembers {
 export class StateVariableAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new StateVariableAttribute(item as NonTerminalNode));
+    return items.map((item) => new StateVariableAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StateVariableAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StateVariableAttributes);
   }
 
   public get items(): readonly StateVariableAttribute[] {
@@ -5379,11 +5379,11 @@ export class StateVariableAttributes {
 export class FunctionAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new FunctionAttribute(item as NonTerminalNode));
+    return items.map((item) => new FunctionAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionAttributes);
   }
 
   public get items(): readonly FunctionAttribute[] {
@@ -5394,11 +5394,11 @@ export class FunctionAttributes {
 export class ConstructorAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ConstructorAttribute(item as NonTerminalNode));
+    return items.map((item) => new ConstructorAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ConstructorAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ConstructorAttributes);
   }
 
   public get items(): readonly ConstructorAttribute[] {
@@ -5409,11 +5409,11 @@ export class ConstructorAttributes {
 export class UnnamedFunctionAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new UnnamedFunctionAttribute(item as NonTerminalNode));
+    return items.map((item) => new UnnamedFunctionAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UnnamedFunctionAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UnnamedFunctionAttributes);
   }
 
   public get items(): readonly UnnamedFunctionAttribute[] {
@@ -5424,11 +5424,11 @@ export class UnnamedFunctionAttributes {
 export class FallbackFunctionAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new FallbackFunctionAttribute(item as NonTerminalNode));
+    return items.map((item) => new FallbackFunctionAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FallbackFunctionAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FallbackFunctionAttributes);
   }
 
   public get items(): readonly FallbackFunctionAttribute[] {
@@ -5439,11 +5439,11 @@ export class FallbackFunctionAttributes {
 export class ReceiveFunctionAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ReceiveFunctionAttribute(item as NonTerminalNode));
+    return items.map((item) => new ReceiveFunctionAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ReceiveFunctionAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ReceiveFunctionAttributes);
   }
 
   public get items(): readonly ReceiveFunctionAttribute[] {
@@ -5454,11 +5454,11 @@ export class ReceiveFunctionAttributes {
 export class ModifierAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new ModifierAttribute(item as NonTerminalNode));
+    return items.map((item) => new ModifierAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ModifierAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ModifierAttributes);
   }
 
   public get items(): readonly ModifierAttribute[] {
@@ -5469,11 +5469,11 @@ export class ModifierAttributes {
 export class FunctionTypeAttributes {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new FunctionTypeAttribute(item as NonTerminalNode));
+    return items.map((item) => new FunctionTypeAttribute(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.FunctionTypeAttributes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.FunctionTypeAttributes);
   }
 
   public get items(): readonly FunctionTypeAttribute[] {
@@ -5484,11 +5484,11 @@ export class FunctionTypeAttributes {
 export class Statements {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new Statement(item as NonTerminalNode));
+    return items.map((item) => new Statement(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Statements);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Statements);
   }
 
   public get items(): readonly Statement[] {
@@ -5499,11 +5499,11 @@ export class Statements {
 export class CatchClauses {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new CatchClause(item as NonTerminalNode));
+    return items.map((item) => new CatchClause(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.CatchClauses);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.CatchClauses);
   }
 
   public get items(): readonly CatchClause[] {
@@ -5514,11 +5514,11 @@ export class CatchClauses {
 export class StringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new StringLiteral(item as NonTerminalNode));
+    return items.map((item) => new StringLiteral(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.StringLiterals);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.StringLiterals);
   }
 
   public get items(): readonly StringLiteral[] {
@@ -5529,11 +5529,11 @@ export class StringLiterals {
 export class HexStringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new HexStringLiteral(item as NonTerminalNode));
+    return items.map((item) => new HexStringLiteral(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.HexStringLiterals);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.HexStringLiterals);
   }
 
   public get items(): readonly HexStringLiteral[] {
@@ -5544,11 +5544,11 @@ export class HexStringLiterals {
 export class UnicodeStringLiterals {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new UnicodeStringLiteral(item as NonTerminalNode));
+    return items.map((item) => new UnicodeStringLiteral(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UnicodeStringLiterals);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UnicodeStringLiterals);
   }
 
   public get items(): readonly UnicodeStringLiteral[] {
@@ -5559,11 +5559,11 @@ export class UnicodeStringLiterals {
 export class YulStatements {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new YulStatement(item as NonTerminalNode));
+    return items.map((item) => new YulStatement(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulStatements);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulStatements);
   }
 
   public get items(): readonly YulStatement[] {
@@ -5574,11 +5574,11 @@ export class YulStatements {
 export class YulSwitchCases {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new YulSwitchCase(item as NonTerminalNode));
+    return items.map((item) => new YulSwitchCase(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulSwitchCases);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulSwitchCases);
   }
 
   public get items(): readonly YulSwitchCase[] {
@@ -5595,13 +5595,13 @@ export class VersionExpressionSets {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new VersionExpressionSet(item as NonTerminalNode)),
+      items: items.map((item) => new VersionExpressionSet(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionExpressionSets);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionExpressionSets);
   }
 
   public get items(): readonly VersionExpressionSet[] {
@@ -5620,8 +5620,8 @@ export class VersionSpecifiers {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.VersionSpecifiers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionSpecifiers);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -5638,13 +5638,13 @@ export class ImportDeconstructionSymbols {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new ImportDeconstructionSymbol(item as NonTerminalNode)),
+      items: items.map((item) => new ImportDeconstructionSymbol(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ImportDeconstructionSymbols);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ImportDeconstructionSymbols);
   }
 
   public get items(): readonly ImportDeconstructionSymbol[] {
@@ -5661,13 +5661,13 @@ export class UsingDeconstructionSymbols {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new UsingDeconstructionSymbol(item as NonTerminalNode)),
+      items: items.map((item) => new UsingDeconstructionSymbol(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.UsingDeconstructionSymbols);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.UsingDeconstructionSymbols);
   }
 
   public get items(): readonly UsingDeconstructionSymbol[] {
@@ -5684,13 +5684,13 @@ export class InheritanceTypes {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new InheritanceType(item as NonTerminalNode)),
+      items: items.map((item) => new InheritanceType(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.InheritanceTypes);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.InheritanceTypes);
   }
 
   public get items(): readonly InheritanceType[] {
@@ -5709,8 +5709,8 @@ export class EnumMembers {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EnumMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EnumMembers);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -5727,13 +5727,13 @@ export class Parameters {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new Parameter(item as NonTerminalNode)),
+      items: items.map((item) => new Parameter(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Parameters);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Parameters);
   }
 
   public get items(): readonly Parameter[] {
@@ -5750,13 +5750,13 @@ export class OverridePaths {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new IdentifierPath(item as NonTerminalNode)),
+      items: items.map((item) => new IdentifierPath(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.OverridePaths);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.OverridePaths);
   }
 
   public get items(): readonly IdentifierPath[] {
@@ -5773,13 +5773,13 @@ export class EventParameters {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new EventParameter(item as NonTerminalNode)),
+      items: items.map((item) => new EventParameter(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.EventParameters);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.EventParameters);
   }
 
   public get items(): readonly EventParameter[] {
@@ -5796,13 +5796,13 @@ export class ErrorParameters {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new ErrorParameter(item as NonTerminalNode)),
+      items: items.map((item) => new ErrorParameter(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ErrorParameters);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ErrorParameters);
   }
 
   public get items(): readonly ErrorParameter[] {
@@ -5819,13 +5819,13 @@ export class AssemblyFlags {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new StringLiteral(item as NonTerminalNode)),
+      items: items.map((item) => new StringLiteral(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AssemblyFlags);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AssemblyFlags);
   }
 
   public get items(): readonly StringLiteral[] {
@@ -5842,13 +5842,13 @@ export class TupleDeconstructionElements {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new TupleDeconstructionElement(item as NonTerminalNode)),
+      items: items.map((item) => new TupleDeconstructionElement(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleDeconstructionElements);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionElements);
   }
 
   public get items(): readonly TupleDeconstructionElement[] {
@@ -5865,13 +5865,13 @@ export class PositionalArguments {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new Expression(item as NonTerminalNode)),
+      items: items.map((item) => new Expression(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.PositionalArguments);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.PositionalArguments);
   }
 
   public get items(): readonly Expression[] {
@@ -5888,13 +5888,13 @@ export class NamedArguments {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new NamedArgument(item as NonTerminalNode)),
+      items: items.map((item) => new NamedArgument(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NamedArguments);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NamedArguments);
   }
 
   public get items(): readonly NamedArgument[] {
@@ -5911,13 +5911,13 @@ export class CallOptions {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new NamedArgument(item as NonTerminalNode)),
+      items: items.map((item) => new NamedArgument(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.CallOptions);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.CallOptions);
   }
 
   public get items(): readonly NamedArgument[] {
@@ -5934,13 +5934,13 @@ export class TupleValues {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new TupleValue(item as NonTerminalNode)),
+      items: items.map((item) => new TupleValue(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TupleValues);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TupleValues);
   }
 
   public get items(): readonly TupleValue[] {
@@ -5957,13 +5957,13 @@ export class ArrayValues {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new Expression(item as NonTerminalNode)),
+      items: items.map((item) => new Expression(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.ArrayValues);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.ArrayValues);
   }
 
   public get items(): readonly Expression[] {
@@ -5982,8 +5982,8 @@ export class IdentifierPath {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.IdentifierPath);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.IdentifierPath);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -6002,8 +6002,8 @@ export class YulParameters {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulParameters);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulParameters);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -6022,8 +6022,8 @@ export class YulReturnVariables {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulReturnVariables);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulReturnVariables);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -6040,13 +6040,13 @@ export class YulArguments {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new YulExpression(item as NonTerminalNode)),
+      items: items.map((item) => new YulExpression(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulArguments);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulArguments);
   }
 
   public get items(): readonly YulExpression[] {
@@ -6063,13 +6063,13 @@ export class YulPaths {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new YulPath(item as NonTerminalNode)),
+      items: items.map((item) => new YulPath(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulPaths);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulPaths);
   }
 
   public get items(): readonly YulPath[] {
@@ -6086,13 +6086,13 @@ export class YulPath {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
     return {
-      items: items.map((item) => new YulPathComponent(item as NonTerminalNode)),
+      items: items.map((item) => new YulPathComponent(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.YulPath);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulPath);
   }
 
   public get items(): readonly YulPathComponent[] {
@@ -6118,6 +6118,6 @@ function once<T>(factory: () => T): () => T {
   };
 }
 
-function assertKind(actual: NonTerminalKind, expected: NonTerminalKind): void {
+function assertKind(actual: NonterminalKind, expected: NonterminalKind): void {
   assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
 }

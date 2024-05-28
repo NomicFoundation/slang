@@ -5,7 +5,7 @@ use codegen_language_definition::model::Identifier;
 ///
 /// Additionally, it computes the EBNF ID from the name, accourding to the following rules:
 ///
-/// - For non-terminals, we use the original name in `PascalCase`.
+/// - For nonterminals, we use the original name in `PascalCase`.
 /// - For terminals, we use the name in `SCREAMING_SNAKE_CASE`.
 /// - For fragments, we add `«guillemets»` around the name.
 #[derive(derive_new::new)]

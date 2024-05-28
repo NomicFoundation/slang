@@ -54,9 +54,11 @@ impl ChoiceHelper {
                 return;
             }
 
-            // Still no match, extend the possible expected tokens.
+            // Still no match, extend the possible expected terminals.
             (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
-                running.expected_tokens.extend(next.expected_tokens.clone());
+                running
+                    .expected_terminals
+                    .extend(next.expected_terminals.clone());
                 false
             }
             // Otherwise, we already have some match, so we ignore a next missing one.
@@ -65,7 +67,7 @@ impl ChoiceHelper {
             // Try to improve our match.
             (_, ParserResult::Match(next)) if next.is_full_recursive() => true,
             (_, ParserResult::PrattOperatorMatch(..)) => true,
-            // Optimize for matches that have a longer span of non-skipped tokens.
+            // Optimize for matches that have a longer span of non-skipped terminals.
             (cur, next) => total_not_skipped_span(cur) < total_not_skipped_span(next),
         };
 
@@ -123,7 +125,7 @@ impl ChoiceHelper {
     }
 }
 
-/// Returns the total length of the span of tokens that were not skipped.
+/// Returns the total length of the span of terminals that were not skipped.
 pub fn total_not_skipped_span(result: &ParserResult) -> usize {
     let nodes = match result {
         ParserResult::Match(match_) => &match_.nodes,

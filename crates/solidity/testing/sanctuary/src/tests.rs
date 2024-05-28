@@ -5,7 +5,7 @@ use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use semver::Version;
-use slang_solidity::kinds::NonTerminalKind;
+use slang_solidity::kinds::NonterminalKind;
 use slang_solidity::language::Language;
 
 use crate::datasets::{DataSet, SourceFile};
@@ -99,7 +99,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         .replace("&#39;", "\"");
 
     let language = Language::new(version.clone())?;
-    let output = language.parse(NonTerminalKind::SourceUnit, &source);
+    let output = language.parse(NonterminalKind::SourceUnit, &source);
 
     if output.is_valid() {
         events.test(TestOutcome::Passed);
@@ -112,7 +112,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let source_id = file.path.strip_repo_root()?.unwrap_str();
 
     for error in output.errors() {
-        let report = error.to_error_report(source_id, &source, with_color);
+        let report = slang_solidity::diagnostic::render(error, source_id, &source, with_color);
 
         events.parse_error(format!("[{version}] {report}"));
     }

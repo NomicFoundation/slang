@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::kinds::NonTerminalKind;
+use slang_solidity::kinds::NonterminalKind;
 use slang_solidity::language::Language;
 
 // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
@@ -60,11 +60,12 @@ fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -
 
     let input = fs::read_to_string(file_path)?;
     let language = Language::new(version)?;
-    let output = language.parse(NonTerminalKind::SourceUnit, &input);
+    let output = language.parse(NonterminalKind::SourceUnit, &input);
 
     let errors = output.errors();
     for error in errors {
-        let report = error.to_error_report(file_path_string, &input, /* with_color */ true);
+        const COLOR: bool = true;
+        let report = slang_solidity::diagnostic::render(error, file_path_string, &input, COLOR);
         eprintln!("{report}");
     }
 

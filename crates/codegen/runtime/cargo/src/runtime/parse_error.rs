@@ -1,98 +1,80 @@
 use std::collections::BTreeSet;
+use std::fmt;
 
+use crate::diagnostic::{self, Diagnostic};
 use crate::kinds::TerminalKind;
 use crate::text_index::TextRange;
 
+/// Represents an error that occurred during parsing.
+///
+/// This could have been caused by a syntax error, or by reaching the end of the file when more tokens were expected.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
-    pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+    pub(crate) terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
 }
 
 impl ParseError {
+    /// The text range at which the error occurred.
     pub fn text_range(&self) -> &TextRange {
         &self.text_range
     }
 
-    pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
-        let tokens_that_would_have_allowed_more_progress = self
-            .tokens_that_would_have_allowed_more_progress
-            .iter()
-            .collect::<BTreeSet<_>>();
-
-        tokens_that_would_have_allowed_more_progress
-            .into_iter()
-            .map(TerminalKind::to_string)
-            .collect()
-    }
-
-    pub fn to_error_report(&self, source_id: &str, source: &str, with_color: bool) -> String {
-        render_error_report(self, source_id, source, with_color)
+    /// Renders the message for this error.
+    pub fn message(&self) -> String {
+        Diagnostic::message(self)
     }
 }
 
 impl ParseError {
     pub(crate) fn new(
         text_range: TextRange,
-        tokens_that_would_have_allowed_more_progress: Vec<TerminalKind>,
+        terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {
         Self {
             text_range,
-            tokens_that_would_have_allowed_more_progress,
+            terminals_that_would_have_allowed_more_progress,
         }
     }
 }
 
-pub(crate) fn render_error_report(
-    error: &ParseError,
-    source_id: &str,
-    source: &str,
-    with_color: bool,
-) -> String {
-    use ariadne::{Color, Config, Label, Report, ReportKind, Source};
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self
+            .terminals_that_would_have_allowed_more_progress
+            .is_empty()
+        {
+            write!(f, "Expected end of file.")
+        } else {
+            let deduped = self
+                .terminals_that_would_have_allowed_more_progress
+                .iter()
+                .collect::<BTreeSet<_>>();
 
-    let kind = ReportKind::Error;
-    let color = if with_color { Color::Red } else { Color::Unset };
+            write!(f, "Expected ")?;
 
-    let tokens_that_would_have_allowed_more_progress =
-        error.tokens_that_would_have_allowed_more_progress();
-    let message = if tokens_that_would_have_allowed_more_progress.is_empty() {
-        "Expected end of file.".to_string()
-    } else {
-        format!(
-            "Expected {expectations}.",
-            expectations = tokens_that_would_have_allowed_more_progress.join(" or ")
-        )
-    };
+            for kind in deduped.iter().take(deduped.len() - 1) {
+                write!(f, "{kind} or ")?;
+            }
+            let last = deduped.last().expect("we just checked that it's not empty");
+            write!(f, "{last}.")?;
 
-    if source.is_empty() {
-        return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
+            Ok(())
+        }
+    }
+}
+
+impl Diagnostic for ParseError {
+    fn text_range(&self) -> TextRange {
+        self.text_range.clone()
     }
 
-    let range = {
-        let start = source[..error.text_range.start.utf8].chars().count();
-        let end = source[..error.text_range.end.utf8].chars().count();
-        start..end
-    };
+    fn severity(&self) -> diagnostic::Severity {
+        diagnostic::Severity::Error
+    }
 
-    let mut builder = Report::build(kind, source_id, range.start)
-        .with_config(Config::default().with_color(with_color))
-        .with_message(message);
-
-    builder.add_label(
-        Label::new((source_id, range))
-            .with_color(color)
-            .with_message("Error occurred here.".to_string()),
-    );
-
-    let mut result = vec![];
-    builder
-        .finish()
-        .write((source_id, Source::from(&source)), &mut result)
-        .expect("Failed to write report");
-
-    return String::from_utf8(result)
-        .expect("Failed to convert report to utf8")
-        .trim()
-        .to_string();
+    fn message(&self) -> String {
+        // Uses the impl from `Display` above.
+        self.to_string()
+    }
 }

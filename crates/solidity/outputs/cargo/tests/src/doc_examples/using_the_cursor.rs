@@ -8,7 +8,7 @@ use infra_utils::paths::PathExtensions;
 fn using_the_cursor() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::kinds::{EdgeLabel, NonTerminalKind, TerminalKind};
+    use slang_solidity::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
     use slang_solidity::language::Language;
     use slang_solidity::text_index::TextRangeExtensions;
     // --8<-- [end:imports]
@@ -22,7 +22,7 @@ fn using_the_cursor() -> Result<()> {
     // --8<-- [start:parse-input]
     let language = Language::new(Version::parse("0.8.0")?)?;
 
-    let parse_output = language.parse(NonTerminalKind::SourceUnit, source);
+    let parse_output = language.parse(NonterminalKind::SourceUnit, source);
     // --8<-- [end:parse-input]
 
     {
@@ -31,12 +31,12 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
             assert!(cursor.go_to_first_child());
             assert!(cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
-            let token_node = cursor.node();
-            contracts.push(token_node.as_terminal().unwrap().text.clone());
+            let terminal_node = cursor.node();
+            contracts.push(terminal_node.as_terminal().unwrap().text.clone());
 
             // You have to make sure you return the cursor to its original position:
             assert!(cursor.go_to_parent());
@@ -52,12 +52,12 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
             let mut child_cursor = cursor.spawn();
             assert!(child_cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier));
 
-            let token_node = child_cursor.node();
-            contracts.push(token_node.as_terminal().unwrap().text.clone());
+            let terminal_node = child_cursor.node();
+            contracts.push(terminal_node.as_terminal().unwrap().text.clone());
         }
 
         assert_eq!(contracts, &["Foo", "Bar", "Baz"]);
@@ -70,7 +70,7 @@ fn using_the_cursor() -> Result<()> {
 
         let mut cursor = parse_output.create_tree_cursor();
 
-        while cursor.go_to_next_nonterminal_with_kind(NonTerminalKind::ContractDefinition) {
+        while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
             let range = cursor.text_range().utf8();
             let text = Rc::clone(cursor.node().as_nonterminal().unwrap()).unparse();
 

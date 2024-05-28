@@ -8,14 +8,14 @@ use crate::{AbstractKind as _, KindTypes, TerminalKind as _};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum NodeKind<T: KindTypes> {
-    NonTerminal(T::NonTerminalKind),
+    Nonterminal(T::NonterminalKind),
     Terminal(T::TerminalKind),
 }
 
 impl<T: KindTypes> From<NodeKind<T>> for &'static str {
     fn from(val: NodeKind<T>) -> Self {
         match val {
-            NodeKind::NonTerminal(t) => t.as_static_str(),
+            NodeKind::Nonterminal(t) => t.as_static_str(),
             NodeKind::Terminal(t) => t.as_static_str(),
         }
     }
@@ -24,7 +24,7 @@ impl<T: KindTypes> From<NodeKind<T>> for &'static str {
 impl<T: KindTypes> std::fmt::Display for NodeKind<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            NodeKind::NonTerminal(t) => {
+            NodeKind::Nonterminal(t) => {
                 write!(f, "{}", t.as_static_str())
             }
             NodeKind::Terminal(t) => {
@@ -41,8 +41,8 @@ pub struct TerminalNode<T: KindTypes> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct NonTerminalNode<T: KindTypes> {
-    pub kind: T::NonTerminalKind,
+pub struct NonterminalNode<T: KindTypes> {
+    pub kind: T::NonterminalKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub children: Vec<Edge<T>>,
@@ -50,7 +50,7 @@ pub struct NonTerminalNode<T: KindTypes> {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node<T: KindTypes> {
-    NonTerminal(Rc<NonTerminalNode<T>>),
+    Nonterminal(Rc<NonterminalNode<T>>),
     Terminal(Rc<TerminalNode<T>>),
 }
 
@@ -76,10 +76,10 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 }
 
 impl<T: KindTypes> Node<T> {
-    pub fn nonterminal(kind: T::NonTerminalKind, children: Vec<Edge<T>>) -> Self {
+    pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
         let text_len = children.iter().map(|node| node.text_len()).sum();
 
-        Self::NonTerminal(Rc::new(NonTerminalNode {
+        Self::Nonterminal(Rc::new(NonterminalNode {
             kind,
             text_len,
             children,
@@ -94,21 +94,21 @@ impl<T: KindTypes> Node<T> {
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(&self) -> usize {
         match self {
-            Self::NonTerminal(node) => Rc::as_ptr(node) as usize,
+            Self::Nonterminal(node) => Rc::as_ptr(node) as usize,
             Self::Terminal(node) => Rc::as_ptr(node) as usize,
         }
     }
 
     pub fn kind(&self) -> NodeKind<T> {
         match self {
-            Self::NonTerminal(node) => NodeKind::NonTerminal(node.kind),
+            Self::Nonterminal(node) => NodeKind::Nonterminal(node.kind),
             Self::Terminal(node) => NodeKind::Terminal(node.kind),
         }
     }
 
     pub fn text_len(&self) -> TextIndex {
         match self {
-            Self::NonTerminal(node) => node.text_len,
+            Self::Nonterminal(node) => node.text_len,
             Self::Terminal(node) => (&node.text).into(),
         }
     }
@@ -116,7 +116,7 @@ impl<T: KindTypes> Node<T> {
     /// Returns a slice of the edges (not all descendants) leaving this node.
     pub fn edges(&self) -> &[Edge<T>] {
         match self {
-            Self::NonTerminal(node) => &node.children,
+            Self::Nonterminal(node) => &node.children,
             Self::Terminal(_) => &[],
         }
     }
@@ -138,14 +138,14 @@ impl<T: KindTypes> Node<T> {
     /// Reconstructs the original source code from the parse tree.
     pub fn unparse(self) -> String {
         match self {
-            Self::NonTerminal(nonterminal) => nonterminal.unparse(),
+            Self::Nonterminal(nonterminal) => nonterminal.unparse(),
             Self::Terminal(terminal) => terminal.text.clone(),
         }
     }
 
-    pub fn into_nonterminal(self) -> Option<Rc<NonTerminalNode<T>>> {
+    pub fn into_nonterminal(self) -> Option<Rc<NonterminalNode<T>>> {
         match self {
-            Self::NonTerminal(nonterminal) => Some(nonterminal),
+            Self::Nonterminal(nonterminal) => Some(nonterminal),
             Self::Terminal(..) => None,
         }
     }
@@ -154,32 +154,32 @@ impl<T: KindTypes> Node<T> {
         self.as_nonterminal().is_some()
     }
 
-    pub fn as_nonterminal(&self) -> Option<&Rc<NonTerminalNode<T>>> {
+    pub fn as_nonterminal(&self) -> Option<&Rc<NonterminalNode<T>>> {
         match self {
-            Self::NonTerminal(nonterminal) => Some(nonterminal),
+            Self::Nonterminal(nonterminal) => Some(nonterminal),
             Self::Terminal(..) => None,
         }
     }
 
-    pub fn is_nonterminal_with_kind(&self, kind: T::NonTerminalKind) -> bool {
+    pub fn is_nonterminal_with_kind(&self, kind: T::NonterminalKind) -> bool {
         self.as_nonterminal_with_kind(kind).is_some()
     }
 
     pub fn as_nonterminal_with_kind(
         &self,
-        kind: T::NonTerminalKind,
-    ) -> Option<&Rc<NonTerminalNode<T>>> {
+        kind: T::NonterminalKind,
+    ) -> Option<&Rc<NonterminalNode<T>>> {
         self.as_nonterminal().filter(|node| node.kind == kind)
     }
 
-    pub fn is_nonterminal_with_kinds(&self, kinds: &[T::NonTerminalKind]) -> bool {
+    pub fn is_nonterminal_with_kinds(&self, kinds: &[T::NonterminalKind]) -> bool {
         self.as_nonterminal_with_kinds(kinds).is_some()
     }
 
     pub fn as_nonterminal_with_kinds(
         &self,
-        kinds: &[T::NonTerminalKind],
-    ) -> Option<&Rc<NonTerminalNode<T>>> {
+        kinds: &[T::NonterminalKind],
+    ) -> Option<&Rc<NonterminalNode<T>>> {
         self.as_nonterminal()
             .filter(|nonterminal| kinds.contains(&nonterminal.kind))
     }
@@ -187,7 +187,7 @@ impl<T: KindTypes> Node<T> {
     pub fn into_terminal(self) -> Option<Rc<TerminalNode<T>>> {
         match self {
             Self::Terminal(terminal) => Some(terminal),
-            Self::NonTerminal(..) => None,
+            Self::Nonterminal(..) => None,
         }
     }
 
@@ -198,7 +198,7 @@ impl<T: KindTypes> Node<T> {
     pub fn as_terminal(&self) -> Option<&Rc<TerminalNode<T>>> {
         match self {
             Self::Terminal(terminal) => Some(terminal),
-            Self::NonTerminal(..) => None,
+            Self::Nonterminal(..) => None,
         }
     }
 
@@ -224,15 +224,15 @@ impl<T: KindTypes> Node<T> {
 
     pub fn is_trivia(&self) -> bool {
         match self {
-            Self::NonTerminal(_) => false,
+            Self::Nonterminal(_) => false,
             Self::Terminal(terminal) => terminal.kind.is_trivia(),
         }
     }
 }
 
-impl<T: KindTypes> From<Rc<NonTerminalNode<T>>> for Node<T> {
-    fn from(nonterminal: Rc<NonTerminalNode<T>>) -> Self {
-        Self::NonTerminal(nonterminal)
+impl<T: KindTypes> From<Rc<NonterminalNode<T>>> for Node<T> {
+    fn from(nonterminal: Rc<NonterminalNode<T>>) -> Self {
+        Self::Nonterminal(nonterminal)
     }
 }
 
@@ -242,10 +242,10 @@ impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
     }
 }
 
-impl<T: KindTypes> NonTerminalNode<T> {
+impl<T: KindTypes> NonterminalNode<T> {
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::new(Node::NonTerminal(self), text_offset)
+        Cursor::new(Node::Nonterminal(self), text_offset)
     }
 
     /// Reconstructs the original source code from the parse tree.

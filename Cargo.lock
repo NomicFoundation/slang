@@ -419,7 +419,6 @@ dependencies = [
 name = "codegen_runtime_node_addon"
 version = "0.14.2"
 dependencies = [
- "ariadne",
  "metaslang_cst",
  "napi",
  "napi-build",
@@ -1948,7 +1947,6 @@ dependencies = [
 name = "slang_solidity_node_addon"
 version = "0.14.2"
 dependencies = [
- "ariadne",
  "metaslang_cst",
  "napi",
  "napi-build",
@@ -1966,7 +1964,6 @@ name = "slang_testlang"
 version = "0.14.2"
 dependencies = [
  "anyhow",
- "ariadne",
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_cst",
@@ -1982,7 +1979,6 @@ dependencies = [
 name = "slang_testlang_node_addon"
 version = "0.14.2"
 dependencies = [
- "ariadne",
  "metaslang_cst",
  "napi",
  "napi-build",

@@ -6,24 +6,24 @@ use napi_derive::napi;
 use crate::napi_interface::cursor::Cursor;
 use crate::napi_interface::text_index::TextIndex;
 use crate::napi_interface::{
-    NonTerminalKind, RustNode, RustNonTerminalNode, RustTerminalNode, RustTextIndex, TerminalKind,
+    NonterminalKind, RustNode, RustNonterminalNode, RustTerminalNode, RustTextIndex, TerminalKind,
 };
 
 #[napi(namespace = "cst", string_enum)]
 pub enum NodeType {
-    NonTerminal,
+    Nonterminal,
     Terminal,
 }
 
 pub trait NAPINodeExtensions {
-    fn into_js_either_node(self) -> Either<NonTerminalNode, TerminalNode>;
+    fn into_js_either_node(self) -> Either<NonterminalNode, TerminalNode>;
 }
 
 impl NAPINodeExtensions for RustNode {
-    /// Converts the node into `napi` wrapper for `NonTerminalNode | TerminalNode` JS object.
-    fn into_js_either_node(self) -> Either<NonTerminalNode, TerminalNode> {
+    /// Converts the node into `napi` wrapper for `NonterminalNode | TerminalNode` JS object.
+    fn into_js_either_node(self) -> Either<NonterminalNode, TerminalNode> {
         match self {
-            RustNode::NonTerminal(nonterminal) => Either::A(NonTerminalNode(nonterminal)),
+            RustNode::Nonterminal(nonterminal) => Either::A(NonterminalNode(nonterminal)),
             RustNode::Terminal(terminal) => Either::B(TerminalNode(terminal)),
         }
     }
@@ -31,26 +31,26 @@ impl NAPINodeExtensions for RustNode {
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
-pub struct NonTerminalNode(pub(crate) Rc<RustNonTerminalNode>);
+pub struct NonterminalNode(pub(crate) Rc<RustNonterminalNode>);
 
 #[derive(Debug)]
 #[napi(namespace = "cst")]
 pub struct TerminalNode(pub(crate) Rc<RustTerminalNode>);
 
 #[napi(namespace = "cst")]
-impl NonTerminalNode {
+impl NonterminalNode {
     #[napi(
         getter,
         js_name = "type",
-        ts_return_type = "NodeType.NonTerminal",
+        ts_return_type = "NodeType.Nonterminal",
         catch_unwind
     )]
     pub fn tipe(&self) -> NodeType {
-        NodeType::NonTerminal
+        NodeType::Nonterminal
     }
 
-    #[napi(getter, ts_return_type = "kinds.NonTerminalKind", catch_unwind)]
-    pub fn kind(&self) -> NonTerminalKind {
+    #[napi(getter, ts_return_type = "kinds.NonterminalKind", catch_unwind)]
+    pub fn kind(&self) -> NonterminalKind {
         self.0.kind
     }
 
@@ -65,7 +65,7 @@ impl NonTerminalNode {
     }
 
     #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
-    pub fn children(&self) -> Vec<Either<NonTerminalNode, TerminalNode>> {
+    pub fn children(&self) -> Vec<Either<NonterminalNode, TerminalNode>> {
         self.0
             .children
             .iter()
@@ -78,13 +78,13 @@ impl NonTerminalNode {
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
     ) -> Cursor {
-        RustNode::NonTerminal(Rc::clone(&self.0))
+        RustNode::Nonterminal(Rc::clone(&self.0))
             .cursor_with_offset(text_offset.into())
             .into()
     }
 
+    /// Serialize the node to JSON.
     #[napi(catch_unwind, js_name = "toJSON")]
-    /// Serialize the token node to JSON.
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.0).unwrap()
     }
@@ -105,7 +105,7 @@ impl NonTerminalNode {
         skip_typescript,
         catch_unwind
     )]
-    pub fn __children(&self) -> Vec<Either<NonTerminalNode, TerminalNode>> {
+    pub fn __children(&self) -> Vec<Either<NonterminalNode, TerminalNode>> {
         Self::children(self)
     }
 
@@ -157,10 +157,8 @@ impl TerminalNode {
         self.0.text.clone()
     }
 
+    /// Serialize the node to JSON.
     #[napi(catch_unwind, js_name = "toJSON")]
-    /// Serialize the terminal node to JSON.
-    ///
-    /// This method is intended for debugging purposes and may not be stable.
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.0).unwrap()
     }

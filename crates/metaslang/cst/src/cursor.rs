@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, NonTerminalNode};
+use crate::cst::{Edge, Node, NonterminalNode};
 use crate::text_index::{TextIndex, TextRange};
 use crate::KindTypes;
 
@@ -10,7 +10,7 @@ use crate::KindTypes;
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct PathAncestor<T: KindTypes> {
     parent: Option<Rc<PathAncestor<T>>>,
-    nonterminal_node: Rc<NonTerminalNode<T>>,
+    nonterminal_node: Rc<NonterminalNode<T>>,
     child_number: usize,
     text_offset: TextIndex,
 }
@@ -36,7 +36,7 @@ pub struct Cursor<T: KindTypes> {
 
 impl<T: KindTypes> Cursor<T> {
     fn as_ancestor_node(&self) -> Option<Rc<PathAncestor<T>>> {
-        if let Node::<T>::NonTerminal(nonterminal_node) = &self.node {
+        if let Node::<T>::Nonterminal(nonterminal_node) = &self.node {
             Some(Rc::new(PathAncestor {
                 parent: self.parent.clone(),
                 nonterminal_node: nonterminal_node.clone(),
@@ -50,7 +50,7 @@ impl<T: KindTypes> Cursor<T> {
 
     fn set_from_ancestor_node(&mut self, ancestor: &Rc<PathAncestor<T>>) {
         self.parent = ancestor.parent.clone();
-        self.node = Node::<T>::NonTerminal(ancestor.nonterminal_node.clone());
+        self.node = Node::<T>::Nonterminal(ancestor.nonterminal_node.clone());
         self.child_number = ancestor.child_number;
         self.text_offset = ancestor.text_offset;
     }
@@ -160,12 +160,12 @@ impl<T: KindTypes> Cursor<T> {
     }
 
     /// Returns an iterator over the current node's ancestors, starting from the parent of the current node.
-    pub fn ancestors(&self) -> impl Iterator<Item = Rc<NonTerminalNode<T>>> {
+    pub fn ancestors(&self) -> impl Iterator<Item = Rc<NonterminalNode<T>>> {
         struct Iter<T: KindTypes> {
             a: Option<Rc<PathAncestor<T>>>,
         }
         impl<T: KindTypes> Iterator for Iter<T> {
-            type Item = Rc<NonTerminalNode<T>>;
+            type Item = Rc<NonterminalNode<T>>;
 
             fn next(&mut self) -> Option<Self::Item> {
                 if let Some(a) = self.a.take() {
@@ -390,24 +390,24 @@ impl<T: KindTypes> Cursor<T> {
         self.go_to_next_matching(|node| node.is_terminal_with_kinds(kinds))
     }
 
-    /// Attempts to go to the next non-terminal node, according to the DFS pre-order traversal.
+    /// Attempts to go to the next nonterminal node, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_nonterminal(&mut self) -> bool {
         self.go_to_next_matching(|node| node.is_nonterminal())
     }
 
-    /// Attempts to go to the next non-terminal node with the given kind, according to the DFS pre-order traversal.
+    /// Attempts to go to the next nonterminal node with the given kind, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_nonterminal_with_kind(&mut self, kind: T::NonTerminalKind) -> bool {
+    pub fn go_to_next_nonterminal_with_kind(&mut self, kind: T::NonterminalKind) -> bool {
         self.go_to_next_matching(|node| node.is_nonterminal_with_kind(kind))
     }
 
-    /// Attempts to go to the next non-terminal node with any of the given kinds, according to the DFS pre-order traversal.
+    /// Attempts to go to the next nonterminal node with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_nonterminal_with_kinds(&mut self, kinds: &[T::NonTerminalKind]) -> bool {
+    pub fn go_to_next_nonterminal_with_kinds(&mut self, kinds: &[T::NonterminalKind]) -> bool {
         self.go_to_next_matching(|node| node.is_nonterminal_with_kinds(kinds))
     }
 

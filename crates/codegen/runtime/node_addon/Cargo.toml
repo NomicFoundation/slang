@@ -34,7 +34,6 @@ slang_napi_interfaces = [
 napi-build = { workspace = true }
 
 [dependencies]
-ariadne = { workspace = true }
 metaslang_cst = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }

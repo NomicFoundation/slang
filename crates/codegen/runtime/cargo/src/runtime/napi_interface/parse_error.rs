@@ -2,9 +2,9 @@
 #![allow(clippy::needless_pass_by_value)]
 
 use napi_derive::napi;
-use text_index::TextRange;
 
-use crate::napi_interface::{text_index, RustParseError};
+use crate::expose_diagnostic_trait_interface;
+use crate::napi_interface::RustParseError;
 
 #[napi(namespace = "parse_error")]
 #[derive(PartialEq, Clone)]
@@ -16,15 +16,4 @@ impl From<RustParseError> for ParseError {
     }
 }
 
-#[napi(namespace = "parse_error")]
-impl ParseError {
-    #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
-    pub fn text_range(&self) -> TextRange {
-        self.0.text_range().clone().into()
-    }
-
-    #[napi(catch_unwind)]
-    pub fn to_error_report(&self, source_id: String, source: String, with_color: bool) -> String {
-        self.0.to_error_report(&source_id, &source, with_color)
-    }
-}
+expose_diagnostic_trait_interface!("parse_error", ParseError);

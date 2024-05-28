@@ -54,21 +54,21 @@ impl Visitable for TriviaParserDefinitionRef {
     }
 }
 
-/// How many tokens have to be matched to trigger the error recovery.
+/// How many terminals have to be matched to trigger the error recovery.
 /// For ambiguous syntaxes this needs to be set to at least N, where N
-/// is the token lookahead required to disambiguate the syntax.
+/// is the terminal lookahead required to disambiguate the syntax.
 ///
 // By default, we assume no lookahead (0) is required to recover from
 // unrecognized body between delimiters, so it's always triggered.
 #[derive(Clone, Debug, Default)]
-pub struct DelimitedRecoveryTokenThreshold(pub u8);
+pub struct DelimitedRecoveryTerminalThreshold(pub u8);
 
-impl From<model::FieldDelimiters> for DelimitedRecoveryTokenThreshold {
+impl From<model::FieldDelimiters> for DelimitedRecoveryTerminalThreshold {
     fn from(delimiters: model::FieldDelimiters) -> Self {
         Self(
             delimiters
-                .tokens_matched_acceptance_threshold
-                .unwrap_or(DelimitedRecoveryTokenThreshold::default().0),
+                .terminals_matched_acceptance_threshold
+                .unwrap_or(DelimitedRecoveryTerminalThreshold::default().0),
         )
     }
 }
@@ -90,7 +90,7 @@ pub enum ParserDefinitionNode {
         Labeled<Box<Self>>,
         Box<Self>,
         Labeled<Box<Self>>,
-        DelimitedRecoveryTokenThreshold,
+        DelimitedRecoveryTerminalThreshold,
     ),
     SeparatedBy(Labeled<Box<Self>>, Labeled<Box<Self>>),
     TerminatedBy(Box<Self>, Labeled<Box<Self>>),

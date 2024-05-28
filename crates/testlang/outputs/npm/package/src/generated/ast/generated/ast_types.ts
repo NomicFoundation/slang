@@ -2,8 +2,8 @@
 
 import * as assert from "node:assert";
 import { ast_internal } from "../../napi-bindings/generated";
-import { NonTerminalNode, TerminalNode } from "../../cst";
-import { NonTerminalKind, TerminalKind } from "../../kinds";
+import { NonterminalNode, TerminalNode } from "../../cst";
+import { NonterminalKind, TerminalKind } from "../../kinds";
 
 /*
  * Sequences:
@@ -14,12 +14,12 @@ export class SourceUnit {
     const [$members] = ast_internal.selectSequence(this.cst);
 
     return {
-      members: new SourceUnitMembers($members as NonTerminalNode),
+      members: new SourceUnitMembers($members as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnit);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnit);
   }
 
   public get members(): SourceUnitMembers {
@@ -34,13 +34,13 @@ export class Tree {
     return {
       keyword: $keyword as TerminalNode,
       name: $name === null ? undefined : ($name as TerminalNode),
-      node: new TreeNode($node as NonTerminalNode),
+      node: new TreeNode($node as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Tree);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Tree);
   }
 
   public get keyword(): TerminalNode {
@@ -66,13 +66,13 @@ export class TreeNode {
 
     return {
       openBracket: $openBracket as TerminalNode,
-      members: new TreeNodeChildren($members as NonTerminalNode),
+      members: new TreeNodeChildren($members as NonterminalNode),
       closeBracket: $closeBracket as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TreeNode);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TreeNode);
   }
 
   public get openBracket(): TerminalNode {
@@ -93,14 +93,14 @@ export class AdditionExpression {
     const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new Expression($leftOperand as NonTerminalNode),
+      leftOperand: new Expression($leftOperand as NonterminalNode),
       operator: $operator as TerminalNode,
-      rightOperand: new Expression($rightOperand as NonTerminalNode),
+      rightOperand: new Expression($rightOperand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.AdditionExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.AdditionExpression);
   }
 
   public get leftOperand(): Expression {
@@ -122,12 +122,12 @@ export class NegationExpression {
 
     return {
       operator: $operator as TerminalNode,
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.NegationExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.NegationExpression);
   }
 
   public get operator(): TerminalNode {
@@ -144,14 +144,14 @@ export class MemberAccessExpression {
     const [$operand, $period, $member] = ast_internal.selectSequence(this.cst);
 
     return {
-      operand: new Expression($operand as NonTerminalNode),
+      operand: new Expression($operand as NonterminalNode),
       period: $period as TerminalNode,
       member: $member as TerminalNode,
     };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.MemberAccessExpression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.MemberAccessExpression);
   }
 
   public get operand(): Expression {
@@ -176,22 +176,22 @@ export class SourceUnitMember {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.Tree:
-        return new Tree(variant as NonTerminalNode);
-      case NonTerminalKind.Expression:
-        return new Expression(variant as NonTerminalNode);
-      case NonTerminalKind.SeparatedIdentifiers:
-        return new SeparatedIdentifiers(variant as NonTerminalNode);
-      case NonTerminalKind.Literal:
-        return new Literal(variant as NonTerminalNode);
+      case NonterminalKind.Tree:
+        return new Tree(variant as NonterminalNode);
+      case NonterminalKind.Expression:
+        return new Expression(variant as NonterminalNode);
+      case NonterminalKind.SeparatedIdentifiers:
+        return new SeparatedIdentifiers(variant as NonterminalNode);
+      case NonterminalKind.Literal:
+        return new Literal(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnitMember);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnitMember);
   }
 
   public get variant(): Tree | Expression | SeparatedIdentifiers | Literal {
@@ -204,8 +204,8 @@ export class TreeNodeChild {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonTerminalKind.TreeNode:
-        return new TreeNode(variant as NonTerminalNode);
+      case NonterminalKind.TreeNode:
+        return new TreeNode(variant as NonterminalNode);
 
       case TerminalKind.DelimitedIdentifier:
         return variant as TerminalNode;
@@ -215,8 +215,8 @@ export class TreeNodeChild {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TreeNodeChild);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TreeNodeChild);
   }
 
   public get variant(): TreeNode | TerminalNode {
@@ -230,12 +230,12 @@ export class Expression {
       const variant = ast_internal.selectChoice(this.cst);
 
       switch (variant.kind) {
-        case NonTerminalKind.AdditionExpression:
-          return new AdditionExpression(variant as NonTerminalNode);
-        case NonTerminalKind.NegationExpression:
-          return new NegationExpression(variant as NonTerminalNode);
-        case NonTerminalKind.MemberAccessExpression:
-          return new MemberAccessExpression(variant as NonTerminalNode);
+        case NonterminalKind.AdditionExpression:
+          return new AdditionExpression(variant as NonterminalNode);
+        case NonterminalKind.NegationExpression:
+          return new NegationExpression(variant as NonterminalNode);
+        case NonterminalKind.MemberAccessExpression:
+          return new MemberAccessExpression(variant as NonterminalNode);
 
         case TerminalKind.StringLiteral:
         case TerminalKind.Identifier:
@@ -247,8 +247,8 @@ export class Expression {
     },
   );
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Expression);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Expression);
   }
 
   public get variant(): AdditionExpression | NegationExpression | MemberAccessExpression | TerminalNode {
@@ -269,8 +269,8 @@ export class Literal {
     }
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.Literal);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.Literal);
   }
 
   public get variant(): TerminalNode {
@@ -285,11 +285,11 @@ export class Literal {
 export class SourceUnitMembers {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new SourceUnitMember(item as NonTerminalNode));
+    return items.map((item) => new SourceUnitMember(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SourceUnitMembers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SourceUnitMembers);
   }
 
   public get items(): readonly SourceUnitMember[] {
@@ -300,11 +300,11 @@ export class SourceUnitMembers {
 export class TreeNodeChildren {
   private readonly fetch = once(() => {
     const items = ast_internal.selectRepeated(this.cst);
-    return items.map((item) => new TreeNodeChild(item as NonTerminalNode));
+    return items.map((item) => new TreeNodeChild(item as NonterminalNode));
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.TreeNodeChildren);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.TreeNodeChildren);
   }
 
   public get items(): readonly TreeNodeChild[] {
@@ -323,8 +323,8 @@ export class SeparatedIdentifiers {
     return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
-  public constructor(public readonly cst: NonTerminalNode) {
-    assertKind(this.cst.kind, NonTerminalKind.SeparatedIdentifiers);
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.SeparatedIdentifiers);
   }
 
   public get items(): readonly TerminalNode[] {
@@ -350,6 +350,6 @@ function once<T>(factory: () => T): () => T {
   };
 }
 
-function assertKind(actual: NonTerminalKind, expected: NonTerminalKind): void {
+function assertKind(actual: NonterminalKind, expected: NonterminalKind): void {
   assert.equal(actual, expected, `${expected} can only be initialized with a CST node of the same kind.`);
 }

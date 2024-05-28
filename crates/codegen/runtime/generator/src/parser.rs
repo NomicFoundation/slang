@@ -29,13 +29,13 @@ pub struct ParserModel {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
-    /// Defines the `NonTerminalKind` enum variants.
+    /// Defines the `NonterminalKind` enum variants.
     nonterminal_kinds: BTreeSet<Identifier>,
     /// Defines the `TerminalKind` enum variants.
     terminal_kinds: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `NodeLabel` enum variants.
+    /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<String>,
 
     /// Defines the top-level scanner functions in `Language`.
@@ -73,13 +73,13 @@ struct ParserAccumulatorState {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
-    /// Defines the `NonTerminalKind` enum variants.
+    /// Defines the `NonterminalKind` enum variants.
     nonterminal_kinds: BTreeSet<Identifier>,
     /// Defines the `TerminalKind` enum variants.
     terminal_kinds: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `NodeLabel` enum variants.
+    /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<String>,
 
     // Defines the `LexicalContext(Type)` enum and type-level variants.
@@ -299,7 +299,7 @@ impl GrammarVisitor for ParserAccumulatorState {
             self.nonterminal_kinds.insert(name.clone());
         }
 
-        // While it's not common to parse a precedence expression as a standalone rule,
+        // While it's not common to parse a precedence expression as a standalone nonterminal,
         // we generate a function for completeness.
         for (name, code) in parser.to_precedence_expression_parser_code() {
             self.parser_functions

@@ -7,8 +7,8 @@ use napi::Either;
 use napi_derive::napi;
 use text_index::{TextIndex, TextRange};
 
-use crate::napi_interface::cst::{self, NAPINodeExtensions, NonTerminalNode, TerminalNode};
-use crate::napi_interface::{text_index, EdgeLabel, NonTerminalKind, RustCursor, TerminalKind};
+use crate::napi_interface::cst::{self, NAPINodeExtensions, NonterminalNode, TerminalNode};
+use crate::napi_interface::{text_index, EdgeLabel, NonterminalKind, RustCursor, TerminalKind};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(pub(super) RustCursor);
@@ -52,7 +52,7 @@ impl Cursor {
     }
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
-    pub fn node(&self) -> Either<NonTerminalNode, TerminalNode> {
+    pub fn node(&self) -> Either<NonterminalNode, TerminalNode> {
         self.0.node().into_js_either_node()
     }
 
@@ -77,9 +77,9 @@ impl Cursor {
         self.0.depth() as u32
     }
 
-    #[napi(ts_return_type = "Array<cst.NonTerminalNode>", catch_unwind)]
-    pub fn ancestors(&self) -> Vec<cst::NonTerminalNode> {
-        self.0.ancestors().map(cst::NonTerminalNode).collect()
+    #[napi(ts_return_type = "Array<cst.NonterminalNode>", catch_unwind)]
+    pub fn ancestors(&self) -> Vec<cst::NonterminalNode> {
+        self.0.ancestors().map(cst::NonterminalNode).collect()
     }
 
     #[napi(catch_unwind)]
@@ -141,7 +141,7 @@ impl Cursor {
     }
 
     #[napi(catch_unwind)]
-    pub fn go_to_next_token_with_kinds(
+    pub fn go_to_next_terminal_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.TerminalKind>")] kinds: Vec<TerminalKind>,
     ) -> bool {
@@ -156,7 +156,7 @@ impl Cursor {
     #[napi(catch_unwind)]
     pub fn go_to_next_nonterminal_with_kind(
         &mut self,
-        #[napi(ts_arg_type = "kinds.NonTerminalKind")] kind: NonTerminalKind,
+        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
     ) -> bool {
         self.0.go_to_next_nonterminal_with_kind(kind)
     }
@@ -164,7 +164,7 @@ impl Cursor {
     #[napi(catch_unwind)]
     pub fn go_to_next_nonterminal_with_kinds(
         &mut self,
-        #[napi(ts_arg_type = "Array<kinds.NonTerminalKind>")] kinds: Vec<NonTerminalKind>,
+        #[napi(ts_arg_type = "Array<kinds.NonterminalKind>")] kinds: Vec<NonterminalKind>,
     ) -> bool {
         self.0.go_to_next_nonterminal_with_kinds(&kinds)
     }
