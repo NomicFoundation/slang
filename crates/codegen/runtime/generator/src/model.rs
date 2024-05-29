@@ -6,6 +6,7 @@ use semver::Version;
 use serde::Serialize;
 
 use crate::ast::AstModel;
+use crate::kinds::KindsModel;
 use crate::parser::ParserModel;
 
 #[derive(Default, Serialize)]
@@ -14,6 +15,7 @@ pub struct RuntimeModel {
     all_versions: BTreeSet<Version>,
     parser: ParserModel,
     ast: AstModel,
+    kinds: KindsModel,
 }
 
 impl RuntimeModel {
@@ -22,6 +24,7 @@ impl RuntimeModel {
             all_versions: language.versions.iter().cloned().collect(),
             ast: AstModel::create(language),
             parser: ParserModel::from_language(language),
+            kinds: KindsModel::create(language),
         }
     }
 }

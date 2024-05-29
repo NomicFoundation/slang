@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_language_definition::model::{Identifier, Item, Language};
+use codegen_language_definition::model::{Identifier, Language};
 use semver::Version;
 use serde::Serialize;
 
@@ -28,15 +28,6 @@ struct RustCode(String);
 pub struct ParserModel {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
-
-    /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
-    /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
-    /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `EdgeLabel` enum variants.
-    labels: BTreeSet<String>,
 
     /// Defines the top-level scanner functions in `Language`.
     scanner_functions: BTreeMap<Identifier, RustCode>, // (name of scanner, code)
@@ -98,14 +89,6 @@ struct ScannerContextAccumulatorState {
 struct DslV2CollectorState {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
-    /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
-    /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
-    /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `EdgeLabel` enum variants.
-    labels: BTreeSet<String>,
 }
 
 impl ParserModel {
@@ -117,73 +100,8 @@ impl ParserModel {
         grammar.accept_visitor(&mut acc);
 
         // WIP(#638): Gradually migrate off `GrammarVisitor`
-        let terminal_kinds = language
-            .items()
-            .filter(|item| item.is_terminal() && !matches!(item, Item::Fragment { .. }))
-            .map(|item| item.name().clone())
-            .collect();
-
-        let mut nonterminal_kinds = BTreeSet::default();
-        for item in language.items() {
-            match item {
-                Item::Struct { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
-                }
-                Item::Enum { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
-                }
-                Item::Repeated { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
-                }
-                Item::Separated { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
-                }
-                Item::Precedence { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
-                    for op in &item.precedence_expressions {
-                        nonterminal_kinds.insert(op.name.clone());
-                    }
-                }
-                // Terminals
-                _ => {}
-            }
-        }
-
-        let trivia_scanner_names = language
-            .items()
-            .filter_map(|item| match item {
-                Item::Trivia { item } => Some(item.name.clone()),
-                _ => None,
-            })
-            .collect();
-
-        let mut labels = BTreeSet::default();
-        for item in language.items() {
-            match item {
-                Item::Struct { item } => {
-                    for field_name in item.fields.keys() {
-                        labels.insert(field_name.to_string());
-                    }
-                }
-                Item::Precedence { item } => {
-                    for item in &item.precedence_expressions {
-                        for item in &item.operators {
-                            for field_name in item.fields.keys() {
-                                labels.insert(field_name.to_string());
-                            }
-                        }
-                    }
-                }
-                _ => {}
-            }
-        }
-
         acc.into_model(DslV2CollectorState {
             referenced_versions: language.collect_breaking_versions(),
-            terminal_kinds,
-            nonterminal_kinds,
-            trivia_scanner_names,
-            labels,
         })
     }
 }
@@ -288,10 +206,6 @@ impl ParserAccumulatorState {
             keyword_compound_scanners,
             // These are derived from the DSLv2 model directly
             referenced_versions: collected.referenced_versions,
-            terminal_kinds: collected.terminal_kinds,
-            nonterminal_kinds: collected.nonterminal_kinds,
-            trivia_scanner_names: collected.trivia_scanner_names,
-            labels: collected.labels,
         }
     }
 }
