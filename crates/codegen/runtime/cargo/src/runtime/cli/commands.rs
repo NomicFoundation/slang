@@ -89,9 +89,7 @@ fn parse_source_file(
         let report = output
             .errors()
             .iter()
-            .map(|error| {
-                diagnostic::render(error, file_path_string, &input, COLOR)
-            })
+            .map(|error| diagnostic::render(error, file_path_string, &input, COLOR))
             .collect::<Vec<_>>()
             .join("\n");
         Err(CommandError::ParseFailed(report))

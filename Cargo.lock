@@ -385,6 +385,7 @@ version = "0.14.2"
 dependencies = [
  "anyhow",
  "ariadne",
+ "clap",
  "codegen_runtime_generator",
  "metaslang_cst",
  "metaslang_graph_builder",

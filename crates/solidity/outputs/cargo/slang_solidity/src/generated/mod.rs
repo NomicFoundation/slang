@@ -4,8 +4,6 @@
 pub(crate) mod parser_support;
 pub(crate) mod lexer;
 
-#[cfg(feature = "cli")]
-pub mod commands;
 pub mod diagnostic;
 #[path = "generated/kinds.rs"]
 pub mod kinds;
@@ -16,6 +14,9 @@ pub mod parse_output;
 
 #[cfg(feature = "slang_napi_interfaces")]
 pub mod napi_interface;
+
+#[cfg(feature = "cli")]
+pub mod cli;
 
 mod metaslang_cst {
     #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]

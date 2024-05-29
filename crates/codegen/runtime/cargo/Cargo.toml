@@ -13,6 +13,7 @@ codegen_runtime_generator = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true, optional = true }
+clap = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true }
 napi = { workspace = true, optional = true }
@@ -31,7 +32,7 @@ default = ["slang_napi_interfaces", "__private_ariadne", "cli"]
 slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
-cli = ["dep:serde_json"]
+cli = ["dep:clap", "dep:serde_json"]
 
 [lints]
 workspace = true
