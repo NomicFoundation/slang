@@ -615,7 +615,7 @@ TILDE = "~";
 ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
                      (* contract_keyword: *) CONTRACT_KEYWORD
                      (* name: *) IDENTIFIER
-                     (* inheritence: *) InheritanceSpecifier?
+                     (* inheritance: *) InheritanceSpecifier?
                      (* open_brace: *) OPEN_BRACE
                      (* members: *) ContractMembers
                      (* close_brace: *) CLOSE_BRACE;
@@ -648,7 +648,7 @@ ContractMember = (* variant: *) UsingDirective
 
 InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
                       (* name: *) IDENTIFIER
-                      (* inheritence: *) InheritanceSpecifier?
+                      (* inheritance: *) InheritanceSpecifier?
                       (* open_brace: *) OPEN_BRACE
                       (* members: *) InterfaceMembers
                       (* close_brace: *) CLOSE_BRACE;
