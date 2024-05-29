@@ -36,14 +36,14 @@ pub fn execute_parse_command(
     version: Version,
     json: bool,
 ) -> Result<(), CommandError> {
-    let output = parse_source_file(file_path_string, version)?;
-
-    if json {
-        let root_node = output.tree();
-        let json = serde_json::to_string_pretty(&root_node).expect("JSON serialization failed");
-        println!("{json}");
-    }
-    Ok(())
+    parse_source_file(file_path_string, version, |output| {
+        if json {
+            let root_node = output.tree();
+            let json = serde_json::to_string_pretty(&root_node).expect("JSON serialization failed");
+            println!("{json}");
+        }
+    })
+    .map(|_| ())
 }
 
 pub fn execute_build_graph_command(
@@ -52,8 +52,7 @@ pub fn execute_build_graph_command(
     msgb_path_string: &str,
     output_json: bool,
 ) -> Result<(), CommandError> {
-    let parse_output = parse_source_file(file_path_string, version)?;
-
+    let parse_output = parse_source_file(file_path_string, version, |_| ())?;
     let msgb = parse_graph_builder(msgb_path_string)?;
 
     let functions = Functions::stdlib();
@@ -72,23 +71,29 @@ pub fn execute_build_graph_command(
     Ok(())
 }
 
-fn parse_source_file(
+fn parse_source_file<F>(
     file_path_string: &str,
     version: Version,
-) -> Result<ParseOutput, CommandError> {
+    run_before_checking: F,
+) -> Result<ParseOutput, CommandError>
+where
+    F: FnOnce(&ParseOutput),
+{
     let file_path = PathBuf::from(&file_path_string)
         .canonicalize()
         .map_err(|_| CommandError::FileNotFound(file_path_string.to_string()))?;
 
     let input = fs::read_to_string(file_path)?;
     let language = Language::new(version)?;
-    let output = language.parse(Language::root_kind(), &input);
+    let parse_output = language.parse(Language::root_kind(), &input);
 
-    if output.is_valid() {
-        Ok(output)
+    run_before_checking(&parse_output);
+
+    if parse_output.is_valid() {
+        Ok(parse_output)
     } else {
         const COLOR: bool = true;
-        let report = output
+        let report = parse_output
             .errors()
             .iter()
             .map(|error| diagnostic::render(error, file_path_string, &input, COLOR))
