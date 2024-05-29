@@ -1,22 +1,23 @@
+use std::rc::Rc;
+
 use codegen_language_definition::model;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::codegen::scanner_definition::ScannerDefinitionNodeCodegen as _;
+use crate::parser::codegen::scanner_definition::ScannerExt as _;
 use crate::parser::codegen::versioned::VersionedQuote;
-use crate::parser::grammar::{KeywordScannerDefinitionRef, ScannerDefinitionNode};
 
 pub trait KeywordScannerDefinitionCodegen {
     fn to_scanner_code(&self) -> TokenStream;
 }
 
-impl KeywordScannerDefinitionCodegen for KeywordScannerDefinitionRef {
+impl KeywordScannerDefinitionCodegen for model::KeywordItem {
     fn to_scanner_code(&self) -> TokenStream {
-        let name_ident = format_ident!("{}", self.name());
+        let name_ident = format_ident!("{}", self.name);
         let terminal_kind = quote! { TerminalKind::#name_ident };
 
         let kw_scanners: Vec<_> = self
-            .definitions()
+            .definitions
             .iter()
             .map(|versioned_kw| {
                 let scanner = versioned_kw.value.to_scanner_code();
@@ -82,6 +83,54 @@ impl KeywordScannerDefinitionCodegen for KeywordScannerDefinitionRef {
 impl KeywordScannerDefinitionCodegen for model::KeywordValue {
     fn to_scanner_code(&self) -> TokenStream {
         // This is a subset; let's reuse that
-        ScannerDefinitionNode::from(self.clone()).to_scanner_code()
+        model::Scanner::from(self.clone()).to_scanner_code()
+    }
+}
+
+/// A newtype wrapper around [`model::KeywordItem`] that only has a single atom value.
+///
+/// The main usage for this type is to construct a keyword trie, as trie will
+/// only work with single atom values and keyword promotion needs to additionally account for
+/// keyword reservation, rather than just literal presence.
+#[derive(Clone)]
+pub struct KeywordScannerAtomic(Rc<model::KeywordItem>);
+
+impl KeywordScannerAtomic {
+    /// Wraps the keyword scanner definition if it is a single atom value.
+    pub fn try_from_def(def: &Rc<model::KeywordItem>) -> Option<Self> {
+        match def.definitions[..] {
+            [model::KeywordDefinition {
+                value: model::KeywordValue::Atom { .. },
+                ..
+            }] => Some(Self(Rc::clone(def))),
+            _ => None,
+        }
+    }
+}
+
+impl std::ops::Deref for KeywordScannerAtomic {
+    type Target = Rc<model::KeywordItem>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl KeywordScannerAtomic {
+    pub fn definition(&self) -> &model::KeywordDefinition {
+        self.0
+            .definitions
+            .first()
+            .expect("KeywordScannerAtomic should have exactly one definition")
+    }
+
+    pub fn value(&self) -> &str {
+        match self.definition() {
+            model::KeywordDefinition {
+                value: model::KeywordValue::Atom { atom },
+                ..
+            } => atom,
+            _ => unreachable!("KeywordScannerAtomic should have a single atom value"),
+        }
     }
 }

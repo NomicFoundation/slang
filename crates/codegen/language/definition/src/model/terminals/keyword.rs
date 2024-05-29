@@ -2,7 +2,7 @@ use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, Wr
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Identifier, VersionSpecifier};
+use crate::model::{Identifier, Scanner, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -30,6 +30,23 @@ pub enum KeywordValue {
     Optional { value: Box<KeywordValue> },
     Choice { values: Vec<KeywordValue> },
     Atom { atom: String },
+}
+
+impl From<KeywordValue> for Scanner {
+    fn from(value: KeywordValue) -> Scanner {
+        match value {
+            KeywordValue::Optional { value } => Scanner::Optional {
+                scanner: Box::new((*value).into()),
+            },
+            KeywordValue::Sequence { values } => Scanner::Sequence {
+                scanners: values.into_iter().map(Into::into).collect(),
+            },
+            KeywordValue::Atom { atom } => Scanner::Atom { atom },
+            KeywordValue::Choice { values } => Scanner::Choice {
+                scanners: values.into_iter().map(Into::into).collect(),
+            },
+        }
+    }
 }
 
 impl KeywordValue {

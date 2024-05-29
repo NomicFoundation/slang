@@ -5,8 +5,9 @@
 // module with the one from the new DSLv2 in the `constructor` module.
 
 use std::collections::{BTreeSet, HashMap};
+use std::rc::Rc;
 
-use codegen_language_definition::model::Identifier;
+use codegen_language_definition::model::{self, Identifier};
 use semver::Version;
 
 pub mod constructor;
@@ -42,7 +43,7 @@ impl Grammar {
 #[derive(Clone)]
 pub enum GrammarElement {
     ScannerDefinition(ScannerDefinitionRef),
-    KeywordScannerDefinition(KeywordScannerDefinitionRef),
+    KeywordScannerDefinition(Rc<model::KeywordItem>),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
@@ -76,7 +77,7 @@ impl Visitable for GrammarElement {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         match self {
             Self::ScannerDefinition(scanner) => scanner.accept_visitor(visitor),
-            Self::KeywordScannerDefinition(scanner) => scanner.accept_visitor(visitor),
+            Self::KeywordScannerDefinition(_) => {}
             Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
             Self::ParserDefinition(parser) => parser.accept_visitor(visitor),
             Self::PrecedenceParserDefinition(precedence_parser) => {

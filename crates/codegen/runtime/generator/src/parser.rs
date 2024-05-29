@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_language_definition::model::{Identifier, Language};
+use codegen_language_definition::model::{self, Identifier, Language};
 use serde::Serialize;
 
 mod codegen;
@@ -11,13 +11,14 @@ mod grammar;
 
 use codegen::{
     KeywordScannerDefinitionCodegen as _, ParserDefinitionCodegen as _,
-    PrecedenceParserDefinitionCodegen as _, ScannerDefinitionCodegen as _, Trie,
+    PrecedenceParserDefinitionCodegen as _, Trie,
 };
 use grammar::{
-    Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
-    ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
-    TriviaParserDefinitionRef,
+    Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
+
+use crate::parser::codegen::KeywordScannerAtomic;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Default, Clone)]
@@ -78,7 +79,7 @@ struct ScannerContextAccumulatorState {
     /// Set of delimiter pairs for this context that are used in delimited error recovery.
     delimiters: BTreeMap<Identifier, Identifier>,
     scanner_definitions: BTreeSet<Identifier>,
-    keyword_scanner_defs: BTreeMap<Identifier, KeywordScannerDefinitionRef>,
+    keyword_scanner_defs: BTreeMap<Identifier, Rc<model::KeywordItem>>,
 }
 
 impl ParserModel {
@@ -121,7 +122,7 @@ impl ParserAccumulatorState {
                 for scanner_name in &context.scanner_definitions {
                     let scanner = &self.all_scanners[scanner_name];
 
-                    let literals = scanner.literals();
+                    let literals = scanner.literals().unwrap_or_default();
                     if literals.is_empty() {
                         acc.compound_scanner_names.push(scanner_name.clone());
                     } else {
@@ -135,7 +136,7 @@ impl ParserAccumulatorState {
                 acc.promotable_identifier_scanners = context
                     .keyword_scanner_defs
                     .values()
-                    .map(|def| def.identifier_scanner().clone())
+                    .map(|def| def.identifier.clone())
                     .collect();
 
                 let mut keyword_trie = Trie::new();
@@ -161,7 +162,7 @@ impl ParserAccumulatorState {
             .iter()
             .filter(|(name, scanner)| {
                 // are compound (do not consist of only literals)
-                scanner.literals().is_empty() ||
+                scanner.literals().is_none() ||
                 // but make sure to also include a scanner that is referenced by other scanners, even if not compound
                 !self.top_level_scanner_names.contains(*name)
             })
@@ -249,7 +250,7 @@ impl GrammarVisitor for ParserAccumulatorState {
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
                 self.current_context()
                     .keyword_scanner_defs
-                    .insert(scanner.name().clone(), Rc::clone(scanner));
+                    .insert(scanner.name.clone(), Rc::clone(scanner));
             }
 
             // Collect delimiters for each context
