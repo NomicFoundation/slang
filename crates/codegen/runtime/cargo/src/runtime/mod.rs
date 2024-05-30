@@ -77,7 +77,9 @@ pub mod text_index {
 pub(crate) mod graph_builder {
     use metaslang_graph_builder::ast;
     pub(crate) use metaslang_graph_builder::functions::Functions;
-    pub(crate) use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
+    pub(crate) use metaslang_graph_builder::{
+        ExecutionConfig, ExecutionError, NoCancellation, Variables,
+    };
 
     use super::metaslang_cst::KindTypes;
 

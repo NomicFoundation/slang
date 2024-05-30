@@ -51,13 +51,21 @@ pub fn execute_build_graph_command(
     version: Version,
     msgb_path_string: &str,
     output_json: bool,
+    debug: bool,
 ) -> Result<(), CommandError> {
     let parse_output = parse_source_file(file_path_string, version, |_| ())?;
     let msgb = parse_graph_builder(msgb_path_string)?;
 
     let functions = Functions::stdlib();
     let variables = Variables::new();
-    let execution_config = ExecutionConfig::new(&functions, &variables);
+    let mut execution_config = ExecutionConfig::new(&functions, &variables);
+    if debug {
+        execution_config = execution_config.debug_attributes(
+            "_location".into(),
+            "_variable".into(),
+            "_match".into(),
+        );
+    }
 
     let tree = parse_output.create_tree_cursor();
     let graph = msgb.execute(&tree, &execution_config, &NoCancellation)?;

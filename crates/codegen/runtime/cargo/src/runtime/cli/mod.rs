@@ -37,6 +37,10 @@ pub enum Commands {
         /// Print the graph as JSON
         #[clap(long)]
         json: bool,
+
+        /// Include debug info (location, variable and match) in the built graph
+        #[clap(long)]
+        debug: bool,
     },
 }
 
@@ -53,7 +57,10 @@ impl Commands {
                 version,
                 msgb_path,
                 json,
-            } => commands::execute_build_graph_command(&file_path, version, &msgb_path, json),
+                debug,
+            } => {
+                commands::execute_build_graph_command(&file_path, version, &msgb_path, json, debug)
+            }
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,
