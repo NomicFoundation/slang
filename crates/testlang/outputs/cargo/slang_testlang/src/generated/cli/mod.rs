@@ -24,6 +24,7 @@ pub enum Commands {
     },
 
     /// Parses a source file and builds a graph executing the instructions from the builder file (*.msgb)
+    #[command(hide = true)]
     BuildGraph {
         /// File path to the source file to parse
         file_path: String,
