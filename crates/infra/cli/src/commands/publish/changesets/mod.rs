@@ -3,7 +3,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
-use crate::toolchains::napi::{NapiCli, NapiConfig, NapiResolver};
+use crate::toolchains::napi::{NapiConfig, NapiResolver};
 
 /// This repository versions and releases all its artifacts together, generating the same changelog.
 /// Unfortunately, changesets does not support combining changelogs from multiple packages into one.
@@ -43,10 +43,6 @@ pub fn publish_changesets() -> Result<()> {
         println!("No version changes. Skipping.");
         return Ok(());
     }
-
-    // Update platform-specific packages:
-
-    NapiCli::prepublish(resolver)?;
 
     // Format the updated package files:
 
