@@ -90,6 +90,7 @@ pub enum Expression {
         atom: String,
     },
     Reference {
+        leading_comment: Option<String>,
         reference: Identifier,
     },
 }

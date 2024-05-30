@@ -147,7 +147,14 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
             Expression::Atom { atom } => {
                 self.serialize_string_literal(atom)?;
             }
-            Expression::Reference { reference } => {
+            Expression::Reference {
+                leading_comment,
+                reference,
+            } => {
+                if let Some(comment) = leading_comment {
+                    self.serialize_comment(comment)?;
+                    self.serialize_punctuation(" ")?;
+                }
                 self.serialize_identifier(reference)?;
             }
         };
