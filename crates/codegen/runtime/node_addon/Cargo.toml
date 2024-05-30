@@ -35,7 +35,6 @@ napi-build = { workspace = true }
 
 [dependencies]
 metaslang_cst = { workspace = true }
-metaslang_graph_builder = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
 semver = { workspace = true }

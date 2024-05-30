@@ -73,13 +73,13 @@ pub mod text_index {
     pub use text_index::{TextIndex, TextRange, TextRangeExtensions};
 }
 
-pub mod graph_builder {
-    pub use metaslang_graph_builder::functions::Functions;
-    use metaslang_graph_builder::{ast, graph};
-    pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
+#[cfg(feature = "cli")]
+pub(crate) mod graph_builder {
+    use metaslang_graph_builder::ast;
+    pub(crate) use metaslang_graph_builder::functions::Functions;
+    pub(crate) use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
 
     use super::metaslang_cst::KindTypes;
 
-    pub type File = ast::File<KindTypes>;
-    pub type Graph = graph::Graph<KindTypes>;
+    pub(crate) type File = ast::File<KindTypes>;
 }

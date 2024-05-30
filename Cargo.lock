@@ -422,7 +422,6 @@ name = "codegen_runtime_node_addon"
 version = "0.14.2"
 dependencies = [
  "metaslang_cst",
- "metaslang_graph_builder",
  "napi",
  "napi-build",
  "napi-derive",
@@ -1952,7 +1951,6 @@ name = "slang_solidity_node_addon"
 version = "0.14.2"
 dependencies = [
  "metaslang_cst",
- "metaslang_graph_builder",
  "napi",
  "napi-build",
  "napi-derive",
@@ -1972,7 +1970,6 @@ dependencies = [
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_cst",
- "metaslang_graph_builder",
  "semver",
  "serde",
  "strum",
@@ -1986,7 +1983,6 @@ name = "slang_testlang_node_addon"
 version = "0.14.2"
 dependencies = [
  "metaslang_cst",
- "metaslang_graph_builder",
  "napi",
  "napi-build",
  "napi-derive",

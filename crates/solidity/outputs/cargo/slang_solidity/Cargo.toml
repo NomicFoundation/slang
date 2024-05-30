@@ -33,7 +33,7 @@ required-features = ["cli"]
 
 [features]
 default = ["cli"]
-cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
+cli = ["dep:clap", "dep:metaslang_graph_builder", "dep:serde_json", "__private_ariadne"]
 # This is meant to be used by the CLI or internally only.
 __private_ariadne = ["dep:ariadne"]
 
@@ -47,7 +47,7 @@ solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CAR
 ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
-metaslang_graph_builder = { workspace = true }
+metaslang_graph_builder = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
