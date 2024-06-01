@@ -1617,7 +1617,8 @@ YulStatements = (* item: *) YulStatement*;
 YulStatement = (* variant: *) YulBlock
              | (* variant: *) YulFunctionDefinition
              | (* variant: *) YulVariableDeclarationStatement
-             | (* variant: *) YulAssignmentStatement
+             | (* variant: *) YulVariableAssignmentStatement
+             | (* variant: *) YulStackAssignmentStatement (* Deprecated in 0.5.0 *)
              | (* variant: *) YulIfStatement
              | (* variant: *) YulForStatement
              | (* variant: *) YulSwitchStatement
@@ -1651,16 +1652,20 @@ YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
 YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
                               (* expression: *) YulExpression;
 
-YulAssignmentStatement = (* names: *) YulPaths
-                         (* assignment: *) YulAssignmentOperator
-                         (* expression: *) YulExpression;
+YulVariableAssignmentStatement = (* names: *) YulPaths
+                                 (* assignment: *) YulAssignmentOperator
+                                 (* expression: *) YulExpression;
 
-YulAssignmentOperator = (* variant: *) YulColonAndEqual (* Deprecated in 0.5.5 *)
+(* Deprecated in 0.5.0 *)
+YulStackAssignmentStatement = (* assignment: *) YulAssignmentOperator
+                              (* expression: *) YulExpression;
+
+YulAssignmentOperator = (* variant: *) YulColonEqual (* Deprecated in 0.5.5 *)
                       | (* variant: *) COLON_EQUAL;
 
 (* Deprecated in 0.5.5 *)
-YulColonAndEqual = (* colon: *) COLON
-                   (* equal: *) EQUAL;
+YulColonEqual = (* colon: *) COLON
+                (* equal: *) EQUAL;
 
 YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
                  (* condition: *) YulExpression

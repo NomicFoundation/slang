@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ keccak256 := 0                                                                   │ 0..14
+
+Errors: # 1 total
+  - >
+    Error: Expected YulAddressKeyword or YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableAssignmentStatement/identifier_keccak256/input.sol:1:1]
+       │
+     1 │ keccak256 := 0
+       │ ───────┬───────  
+       │        ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): "keccak256 := 0\n" # (0..15)
