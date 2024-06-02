@@ -4154,7 +4154,11 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulBlock),
                                 EnumVariant(reference = YulFunctionDefinition),
                                 EnumVariant(reference = YulVariableDeclarationStatement),
-                                EnumVariant(reference = YulAssignmentStatement),
+                                EnumVariant(reference = YulVariableAssignmentStatement),
+                                EnumVariant(
+                                    reference = YulStackAssignmentStatement,
+                                    enabled = Till("0.5.0")
+                                ),
                                 EnumVariant(reference = YulIfStatement),
                                 EnumVariant(reference = YulForStatement),
                                 EnumVariant(reference = YulSwitchStatement),
@@ -4221,9 +4225,17 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Struct(
-                            name = YulAssignmentStatement,
+                            name = YulVariableAssignmentStatement,
                             fields = (
                                 names = Required(YulPaths),
+                                assignment = Required(YulAssignmentOperator),
+                                expression = Required(YulExpression)
+                            )
+                        ),
+                        Struct(
+                            name = YulStackAssignmentStatement,
+                            enabled = Till("0.5.0"),
+                            fields = (
                                 assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
@@ -4231,12 +4243,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulAssignmentOperator,
                             variants = [
-                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5")),
+                                EnumVariant(reference = YulColonEqual, enabled = Till("0.5.5")),
                                 EnumVariant(reference = ColonEqual)
                             ]
                         ),
                         Struct(
-                            name = YulColonAndEqual,
+                            name = YulColonEqual,
                             enabled = Till("0.5.5"),
                             fields = (colon = Required(Colon), equal = Required(Equal))
                         ),

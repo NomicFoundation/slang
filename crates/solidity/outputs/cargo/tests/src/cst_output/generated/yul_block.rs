@@ -13,3 +13,8 @@ fn function_def() -> Result<()> {
 fn ignore_unknown_delim() -> Result<()> {
     run("YulBlock", "ignore_unknown_delim")
 }
+
+#[test]
+fn multiple_stack_assignments() -> Result<()> {
+    run("YulBlock", "multiple_stack_assignments")
+}

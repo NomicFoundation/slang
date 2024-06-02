@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ selfbalance := 0                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - (YulVariableAssignmentStatement): # "selfbalance := 0\n" (0..17)
+      - (names꞉ YulPaths): # "selfbalance" (0..11)
+          - (item꞉ YulPath): # "selfbalance" (0..11)
+              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "selfbalance" # (0..11)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)
+          - (leading_trivia꞉ Whitespace): " " # (11..12)
+          - (variant꞉ ColonEqual): ":=" # (12..14)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (14..17)
+          - (leading_trivia꞉ Whitespace): " " # (14..15)
+          - (variant꞉ YulDecimalLiteral): "0" # (15..16)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (16..17)

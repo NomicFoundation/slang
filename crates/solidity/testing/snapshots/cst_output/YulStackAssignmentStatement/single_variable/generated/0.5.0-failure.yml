@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ := success                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStackAssignmentStatement/single_variable/input.sol:1:1]
+       │
+     1 │ := success
+       │ ─────┬─────  
+       │      ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): ":= success\n" # (0..11)
