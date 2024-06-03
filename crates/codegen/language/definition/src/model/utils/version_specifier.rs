@@ -21,7 +21,7 @@ impl VersionSpecifier {
         }
     }
 
-    /// Returns an iterator over the versions specified by this specifier.
+    /// Returns an iterator over the versions specified as the upper and lower bound.
     pub fn versions(&self) -> impl Iterator<Item = &Version> {
         match self {
             VersionSpecifier::Never => [None, None],
