@@ -2,7 +2,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::FileWalker;
 use semver::Version;
-use slang_solidity::graph_builder::{
+use slang_solidity::bindings::graph_builder::{
     ExecutionConfig, File as GraphBuilderFile, Functions, NoCancellation, Variables,
 };
 use slang_solidity::language::Language;
@@ -27,7 +27,7 @@ fn run(file_name: &str) -> Result<()> {
     let input = fs::read_to_string(input_path)?;
     // TODO: de-hardcode this and parse with different versions?
     let language = Language::new(Version::new(0, 8, 22))?;
-    let parse_output = language.parse(Language::root_kind(), &input);
+    let parse_output = language.parse(Language::ROOT_KIND, &input);
     assert!(parse_output.is_valid());
 
     let msgb_path =
