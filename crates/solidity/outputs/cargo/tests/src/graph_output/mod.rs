@@ -3,9 +3,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::FileWalker;
 use semver::Version;
 use slang_solidity::bindings::graph_builder::{
-    ExecutionConfig, File as GraphBuilderFile, Functions, NoCancellation, Variables,
+    ExecutionConfig, File as GraphBuilderFile, Functions, Graph, NoCancellation, Variables,
 };
 use slang_solidity::language::Language;
+use std::fmt;
 use std::fs::{self, create_dir_all};
 
 #[test]
@@ -45,8 +46,41 @@ fn run(file_name: &str) -> Result<()> {
     create_dir_all(&output_dir)?;
 
     let output_path = output_dir.join(format!("{file_name}.graph"));
-
     fs::write(output_path, format!("{}", graph.pretty_print()))?;
 
+    let output_path = output_dir.join(format!("{file_name}.mmd"));
+    fs::write(output_path, format!("{}", print_graph_as_mermaid(&graph)))?;
+
     Ok(())
+}
+
+fn print_graph_as_mermaid<'a>(graph: &'a Graph) -> impl fmt::Display + 'a {
+    struct DisplayGraph<'a>(&'a Graph);
+
+    impl<'a> fmt::Display for DisplayGraph<'a> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            let graph = self.0;
+            write!(f, "graph TD\n")?;
+            for node in graph.iter_nodes() {
+                let gn = &graph[node];
+                let node_label = if let Some(symbol) = gn.attributes.get("symbol") {
+                    symbol.to_string()
+                } else {
+                    format!("{}", node.0)
+                };
+                let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());
+                match node_type {
+                    Some("push_symbol") => write!(f, "\tN{}[/{}\\]\n", node.0, node_label)?,
+                    Some("pop_symbol") => write!(f, "\tN{}[\\{}/]\n", node.0, node_label)?,
+                    _ => write!(f, "\tN{}[{}]\n", node.0, node_label)?,
+                }
+                for (sink, _edge) in gn.iter_edges() {
+                    write!(f, "\tN{} --> N{}\n", node.0, sink.0)?;
+                }
+            }
+            Ok(())
+        }
+    }
+
+    DisplayGraph(graph)
 }
