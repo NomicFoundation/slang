@@ -15,10 +15,11 @@ use codegen::{
 };
 use grammar::{
     GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
-    ScannerDefinitionRef, TriviaParserDefinitionRef,
+    TriviaParserDefinitionRef,
 };
 
 use crate::parser::codegen::KeywordItemAtom;
+use crate::parser::grammar::resolver::Resolution;
 use crate::parser::grammar::ResolveCtx;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
@@ -69,8 +70,6 @@ struct ParserAccumulatorState {
 
     /// Makes sure to codegen the scanner functions that are referenced by other scanners.
     top_level_scanner_names: BTreeSet<Identifier>,
-    /// Lookup table for all scanners; used to generate trie scanners.
-    all_scanners: BTreeMap<Identifier, ScannerDefinitionRef>,
     /// The current context of a parent scanner/parser being processed.
     current_context_name: Option<Identifier>,
 }
@@ -92,7 +91,7 @@ impl ParserModel {
         let mut acc = ParserAccumulatorState::default();
         grammar.accept_visitor(&mut acc);
 
-        acc.into_model()
+        acc.into_model(&resolved)
     }
 }
 
@@ -108,7 +107,14 @@ impl ParserAccumulatorState {
             .expect("context must be set with `set_current_context`")
     }
 
-    fn into_model(self) -> ParserModel {
+    fn into_model(self, resolved: &Resolution) -> ParserModel {
+        // Lookup table for all scanners; used to generate trie scanners.
+        let all_scanners: BTreeMap<_, _> = resolved
+            .items()
+            .filter_map(|(_, item)| item.try_as_scanner_definition_ref())
+            .map(|scanner| (scanner.name().clone(), Rc::clone(scanner)))
+            .collect();
+
         let contexts = self
             .scanner_contexts
             .into_iter()
@@ -122,7 +128,7 @@ impl ParserAccumulatorState {
                 let mut literal_trie = Trie::new();
 
                 for scanner_name in &context.scanner_definitions {
-                    let scanner = &self.all_scanners[scanner_name];
+                    let scanner = &all_scanners[scanner_name];
 
                     let literals = scanner.literals().unwrap_or_default();
                     if literals.is_empty() {
@@ -159,8 +165,7 @@ impl ParserAccumulatorState {
             .collect::<BTreeMap<_, _>>();
 
         // Expose the scanner functions that...
-        let scanner_functions = self
-            .all_scanners
+        let scanner_functions = all_scanners
             .iter()
             .filter(|(name, scanner)| {
                 // are compound (do not consist of only literals)
@@ -199,11 +204,6 @@ impl ParserAccumulatorState {
 }
 
 impl GrammarVisitor for ParserAccumulatorState {
-    fn scanner_definition_enter(&mut self, scanner: &ScannerDefinitionRef) {
-        self.all_scanners
-            .insert(scanner.name().clone(), Rc::clone(scanner));
-    }
-
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
 

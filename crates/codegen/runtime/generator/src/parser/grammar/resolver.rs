@@ -197,6 +197,11 @@ impl ResolveCtx {
 }
 
 impl Resolution {
+    /// Returns the resolved items.
+    pub fn items(&self) -> impl Iterator<Item = (&Identifier, &GrammarElement)> {
+        self.resolved.iter()
+    }
+
     /// Collects the already resolved item into a [`Grammar`].
     pub fn to_grammar(&self) -> Grammar {
         let resolved_items = self
