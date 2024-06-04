@@ -1,12 +1,12 @@
 //! Defines a translation of DSL v2 model into [`Grammar`], which is used for generating the parser and the CST.
 
 use std::cell::OnceCell;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
 use codegen_language_definition::model::{
-    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item,
+    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item, Language,
 };
 use indexmap::IndexMap;
 use once_cell::sync::Lazy;
@@ -17,27 +17,12 @@ use crate::parser::grammar::{
     TriviaParserDefinition,
 };
 
+static DEFAULT_LEX_CTXT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
+
 impl Grammar {
     /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
     pub fn from_dsl_v2(lang: &model::Language) -> Grammar {
-        // Collect language items into a lookup table to speed up resolution
-        let items: HashMap<_, _> = lang
-            .topics()
-            .flat_map(|topic| {
-                topic.items.iter().map(|item| {
-                    (
-                        item.name().clone(),
-                        (topic.lexical_context.clone(), item.clone()),
-                    )
-                })
-            })
-            .collect();
-
-        let mut resolved = HashMap::new();
-        let mut ctx = ResolveCtx {
-            items: &items,
-            resolved: &mut resolved,
-        };
+        let mut ctx = ResolveCtx::new(lang);
 
         let leading_trivia = Rc::new(NamedTriviaParser {
             name: Identifier::from("LeadingTrivia"),
@@ -49,7 +34,7 @@ impl Grammar {
             def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
-        for (_lex_ctx, item) in items.values() {
+        for item in lang.items() {
             resolve_grammar_element(item.name(), &mut ctx);
         }
 
@@ -57,25 +42,22 @@ impl Grammar {
         // we replicate the DSL v1 behaviour of introducing a synthetic parser that is only meant to group
         // keywords by their lexical context.
         let mut keywords_per_ctxt = HashMap::new();
-        for (ident, (lex_ctx, item)) in &items {
-            let lex_ctx = lex_ctx.clone().unwrap_or(Identifier::from("Default"));
+        for (ident, (lex_ctx, item)) in &ctx.items {
             if let Item::Keyword { .. } = item {
                 keywords_per_ctxt
-                    .entry(lex_ctx)
-                    .or_insert_with(Vec::new)
-                    .push(ident);
+                    .entry(lex_ctx.clone())
+                    .or_insert_with(BTreeSet::new)
+                    .insert(ident.clone());
             }
         }
-        for (lex_ctx, mut keywords) in keywords_per_ctxt {
-            keywords.sort_unstable_by_key(|kw| kw.as_str());
-
+        for (lex_ctx, keywords) in keywords_per_ctxt {
             let parser_name = Identifier::from(format!("{lex_ctx}AllKeywords"));
             let all_keywords = model::EnumItem {
                 name: parser_name.clone(),
                 enabled: None,
                 variants: keywords
                     .iter()
-                    .map(|&ident| model::EnumVariant {
+                    .map(|ident| model::EnumVariant {
                         reference: ident.clone(),
                         enabled: None,
                     })
@@ -87,7 +69,7 @@ impl Grammar {
                 parser_name.clone(),
                 GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
                     name: parser_name,
-                    context: lex_ctx,
+                    context: lex_ctx.clone(),
                     is_inline: true,
                     def: OnceCell::from(def),
                 })),
@@ -123,8 +105,7 @@ impl TriviaParserDefinition for NamedTriviaParser {
     }
 
     fn context(&self) -> &Identifier {
-        static DEFAULT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
-        &DEFAULT
+        &DEFAULT_LEX_CTXT
     }
 
     fn node(&self) -> &ParserDefinitionNode {
@@ -198,18 +179,36 @@ impl ParserThunk {
     }
 }
 
-struct ResolveCtx<'a> {
-    items: &'a HashMap<Identifier, (Option<Identifier>, Item)>,
-    resolved: &'a mut HashMap<Identifier, GrammarElement>,
+struct ResolveCtx {
+    items: HashMap<Identifier, (Identifier, Item)>,
+    resolved: HashMap<Identifier, GrammarElement>,
+}
+
+impl ResolveCtx {
+    pub fn new(language: &Language) -> Self {
+        // Collect language items into a lookup table to speed up resolution
+        let items: HashMap<_, _> = language
+            .topics()
+            .flat_map(|topic| {
+                topic.items.iter().map(|item| {
+                    let lex_ctxt = topic.lexical_context.as_ref().unwrap_or(&DEFAULT_LEX_CTXT);
+
+                    (item.name().clone(), (lex_ctxt.clone(), item.clone()))
+                })
+            })
+            .collect();
+
+        ResolveCtx {
+            items,
+            resolved: HashMap::new(),
+        }
+    }
 }
 
 #[allow(clippy::too_many_lines)] // FIXME(#638): Simplify me when we simplify the v2-to-v1 interface
-fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
+fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
     let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
-
-    let lex_ctx = lex_ctx
-        .clone()
-        .unwrap_or_else(|| Identifier::from("Default"));
+    let lex_ctx = lex_ctx.clone();
 
     // The nonterminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
@@ -325,7 +324,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
 fn resolve_trivia(
     parser: model::TriviaParser,
     kind: TriviaKind,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> ParserDefinitionNode {
     match parser {
         model::TriviaParser::Optional { parser } => {
@@ -366,7 +365,7 @@ fn resolve_trivia(
     }
 }
 
-fn resolve_field(field: model::Field, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_field(field: model::Field, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     match field {
         model::Field::Required { reference } => {
             resolve_grammar_element(&reference, ctx).into_parser_def_node()
@@ -383,7 +382,7 @@ fn resolve_sequence_like(
     enabled: Option<model::VersionSpecifier>,
     fields: IndexMap<Identifier, model::Field>,
     error_recovery: Option<FieldsErrorRecovery>,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> ParserDefinitionNode {
     let (terminator, delimiters) = match error_recovery {
         Some(FieldsErrorRecovery {
@@ -464,7 +463,7 @@ fn resolve_sequence_like(
     .versioned(enabled)
 }
 
-fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let variants = item
         .variants
         .into_iter()
@@ -479,7 +478,7 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         .versioned(item.enabled)
 }
 
-fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
     let repeated = Labeled::with_builtin_label(BuiltInLabel::Item, reference);
@@ -491,7 +490,7 @@ fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> Pars
     }
 }
 
-fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let reference = resolve_grammar_element(&item.reference, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
@@ -510,7 +509,7 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
 fn resolve_precedence(
     item: model::PrecedenceItem,
     lex_ctx: &Identifier,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> PrecedenceParserDefinitionNode {
     let primaries: Vec<_> = item
         .primary_expressions
