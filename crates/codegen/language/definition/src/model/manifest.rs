@@ -36,27 +36,15 @@ impl Language {
     }
 
     /// Collects all versions that change the language grammar in a breaking way.
+    ///
+    /// Includes the first supported version.
     pub fn collect_breaking_versions(&self) -> BTreeSet<Version> {
         let first = self.versions.first().unwrap().clone();
         let mut res = BTreeSet::from_iter([first]);
 
         let mut add_spec = |spec: &Option<VersionSpecifier>| {
-            let Some(spec) = spec else {
-                return;
-            };
-
-            match spec.clone() {
-                VersionSpecifier::Never => (),
-                VersionSpecifier::From { from } => {
-                    res.insert(from);
-                }
-                VersionSpecifier::Till { till } => {
-                    res.insert(till);
-                }
-                VersionSpecifier::Range { from, till } => {
-                    res.insert(from);
-                    res.insert(till);
-                }
+            if let Some(spec) = spec {
+                res.extend(spec.versions().cloned());
             }
         };
 
