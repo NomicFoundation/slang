@@ -219,47 +219,48 @@ impl Resolution {
     }
 }
 
-#[allow(clippy::too_many_lines)] // FIXME(#638): Simplify me when we simplify the v2-to-v1 interface
-fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
-    let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
-    let lex_ctx = lex_ctx.clone();
-
-    // The nonterminals are mutually recursive (so will be the resolution of their definitions),
-    // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
-    let inserted_thunk = match (elem, ctx.resolved.contains_key(ident)) {
-        (
-            Item::Struct { .. }
-            | Item::Enum { .. }
-            | Item::Repeated { .. }
-            | Item::Separated { .. },
-            false,
-        ) => {
+/// Inserts a thunk for the given item in a context to be resolved later and returns it if it was inserted.
+fn insert_parser_thunk(
+    item: &Item,
+    lex_ctx: &Identifier,
+    ctx: &mut ResolveCtx,
+) -> Option<ParserThunk> {
+    match (item, ctx.resolved.contains_key(item.name())) {
+        (Item::Precedence { .. }, false) => {
+            let thunk = Rc::new(NamedPrecedenceParserThunk {
+                name: item.name().clone(),
+                context: lex_ctx.clone(),
+                def: OnceCell::new(),
+            });
+            ctx.resolved.insert(
+                item.name().clone(),
+                (Rc::clone(&thunk) as Rc<dyn PrecedenceParserDefinition>).into(),
+            );
+            Some(ParserThunk::Precedence(thunk))
+        }
+        (item, false) if item.is_nonterminal() => {
             let thunk = Rc::new(NamedParserThunk {
-                name: ident.clone(),
+                name: item.name().clone(),
                 context: lex_ctx.clone(),
                 is_inline: false,
                 def: OnceCell::new(),
             });
             ctx.resolved.insert(
-                ident.clone(),
+                item.name().clone(),
                 (Rc::clone(&thunk) as Rc<dyn ParserDefinition>).into(),
             );
             Some(ParserThunk::Regular(thunk))
         }
-        (Item::Precedence { .. }, false) => {
-            let thunk = Rc::new(NamedPrecedenceParserThunk {
-                name: ident.clone(),
-                context: lex_ctx.clone(),
-                def: OnceCell::new(),
-            });
-            ctx.resolved.insert(
-                ident.clone(),
-                (Rc::clone(&thunk) as Rc<dyn PrecedenceParserDefinition>).into(),
-            );
-            Some(ParserThunk::Precedence(thunk))
-        }
         _ => None,
-    };
+    }
+}
+
+fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
+    let (lex_ctx, elem) = ctx.items.get(ident).cloned().expect("Missing item");
+
+    // The nonterminals are mutually recursive (so will be the resolution of their definitions),
+    // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
+    let inserted_thunk = insert_parser_thunk(&elem, &lex_ctx, ctx);
 
     match (inserted_thunk, ctx.resolved.get(ident)) {
         // Already resolved
@@ -314,16 +315,15 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
         // First time resolving a terminal named `ident`
         (None, None) => {
             let named_scanner = match elem {
-                Item::Trivia { item } => Rc::clone(item) as Rc<_>,
-                Item::Fragment { item } => Rc::clone(item) as Rc<_>,
-                Item::Token { item } => Rc::clone(item) as Rc<_>,
                 Item::Keyword { item } => {
                     // Keywords are special scanners and are handled separately
-                    let resolved =
-                        GrammarElement::KeywordScannerDefinition(Rc::clone(item) as Rc<_>);
+                    let resolved = GrammarElement::KeywordScannerDefinition(item as Rc<_>);
                     ctx.resolved.insert(ident.clone(), resolved.clone());
                     return resolved;
                 }
+                Item::Token { item } => item as Rc<_>,
+                Item::Trivia { item } => item as Rc<_>,
+                Item::Fragment { item } => item as Rc<_>,
                 _ => unreachable!("Only terminals can be resolved here"),
             };
 
