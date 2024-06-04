@@ -19,80 +19,6 @@ use crate::parser::grammar::{
 
 static DEFAULT_LEX_CTXT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
 
-impl Grammar {
-    /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
-    pub fn from_dsl_v2(lang: &model::Language) -> Grammar {
-        let mut ctx = ResolveCtx::new(lang);
-
-        let leading_trivia = Rc::new(NamedTriviaParser {
-            name: Identifier::from("LeadingTrivia"),
-            def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
-        }) as Rc<dyn TriviaParserDefinition>;
-
-        let trailing_trivia = Rc::new(NamedTriviaParser {
-            name: Identifier::from("TrailingTrivia"),
-            def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
-        }) as Rc<dyn TriviaParserDefinition>;
-
-        for item in lang.items() {
-            resolve_grammar_element(item.name(), &mut ctx);
-        }
-
-        // TODO(#638): To make sure the unused (not referred to) keywords are included in the scanner literal trie,
-        // we replicate the DSL v1 behaviour of introducing a synthetic parser that is only meant to group
-        // keywords by their lexical context.
-        let mut keywords_per_ctxt = HashMap::new();
-        for (ident, (lex_ctx, item)) in &ctx.items {
-            if let Item::Keyword { .. } = item {
-                keywords_per_ctxt
-                    .entry(lex_ctx.clone())
-                    .or_insert_with(BTreeSet::new)
-                    .insert(ident.clone());
-            }
-        }
-        for (lex_ctx, keywords) in keywords_per_ctxt {
-            let parser_name = Identifier::from(format!("{lex_ctx}AllKeywords"));
-            let all_keywords = model::EnumItem {
-                name: parser_name.clone(),
-                enabled: None,
-                variants: keywords
-                    .iter()
-                    .map(|ident| model::EnumVariant {
-                        reference: ident.clone(),
-                        enabled: None,
-                    })
-                    .collect(),
-            };
-
-            let def = resolve_choice(all_keywords, &mut ctx);
-            ctx.resolved.insert(
-                parser_name.clone(),
-                GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
-                    name: parser_name,
-                    context: lex_ctx.clone(),
-                    is_inline: true,
-                    def: OnceCell::from(def),
-                })),
-            );
-        }
-
-        let resolved_items = ctx
-            .resolved
-            .iter()
-            .map(|(name, elem)| (name.clone(), elem.clone()));
-
-        Grammar {
-            elements: resolved_items
-                .chain(
-                    [leading_trivia, trailing_trivia]
-                        .into_iter()
-                        .map(|elem| (elem.name().clone(), elem.into())),
-                )
-                .collect(),
-        }
-    }
-}
-
 #[derive(Debug)]
 struct NamedTriviaParser {
     name: Identifier,
@@ -179,13 +105,20 @@ impl ParserThunk {
     }
 }
 
-struct ResolveCtx {
+pub struct ResolveCtx {
     items: HashMap<Identifier, (Identifier, Item)>,
     resolved: HashMap<Identifier, GrammarElement>,
 }
 
+pub struct Resolution {
+    resolved: HashMap<Identifier, GrammarElement>,
+    // Trivia are defined separately from the main grammar
+    leading_trivia: Rc<dyn TriviaParserDefinition>,
+    trailing_trivia: Rc<dyn TriviaParserDefinition>,
+}
+
 impl ResolveCtx {
-    pub fn new(language: &Language) -> Self {
+    fn new(language: &Language) -> Self {
         // Collect language items into a lookup table to speed up resolution
         let items: HashMap<_, _> = language
             .topics()
@@ -201,6 +134,87 @@ impl ResolveCtx {
         ResolveCtx {
             items,
             resolved: HashMap::new(),
+        }
+    }
+
+    pub fn resolve(lang: &Language) -> Resolution {
+        let mut ctx = ResolveCtx::new(lang);
+
+        for item in lang.items() {
+            resolve_grammar_element(item.name(), &mut ctx);
+        }
+
+        // TODO(#638): To make sure the unused (not referred to) keywords are included in the scanner literal trie,
+        // we replicate the DSL v1 behaviour of introducing a synthetic parser that is only meant to group
+        // keywords by their lexical context.
+        let mut keywords_per_ctxt = HashMap::new();
+        for (ident, (lex_ctx, item)) in &ctx.items {
+            if let Item::Keyword { .. } = item {
+                keywords_per_ctxt
+                    .entry(lex_ctx.clone())
+                    .or_insert_with(BTreeSet::new)
+                    .insert(ident.clone());
+            }
+        }
+        for (lex_ctx, keywords) in keywords_per_ctxt {
+            let parser_name = Identifier::from(format!("{lex_ctx}AllKeywords"));
+            let all_keywords = model::EnumItem {
+                name: parser_name.clone(),
+                enabled: None,
+                variants: keywords
+                    .iter()
+                    .map(|ident| model::EnumVariant {
+                        reference: ident.clone(),
+                        enabled: None,
+                    })
+                    .collect(),
+            };
+
+            let def = resolve_choice(all_keywords, &mut ctx);
+            ctx.resolved.insert(
+                parser_name.clone(),
+                GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
+                    name: parser_name,
+                    context: lex_ctx.clone(),
+                    is_inline: true,
+                    def: OnceCell::from(def),
+                })),
+            );
+        }
+
+        Resolution {
+            leading_trivia: Rc::new(NamedTriviaParser {
+                name: Identifier::from("LeadingTrivia"),
+                def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
+            }) as Rc<dyn TriviaParserDefinition>,
+            trailing_trivia: Rc::new(NamedTriviaParser {
+                name: Identifier::from("TrailingTrivia"),
+                def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
+            }) as Rc<dyn TriviaParserDefinition>,
+            resolved: ctx.resolved,
+        }
+    }
+}
+
+impl Resolution {
+    /// Collects the already resolved item into a [`Grammar`].
+    pub fn to_grammar(&self) -> Grammar {
+        let resolved_items = self
+            .resolved
+            .iter()
+            .map(|(name, elem)| (name.clone(), elem.clone()));
+
+        let leading_trivia = Rc::clone(&self.leading_trivia);
+        let trailing_trivia = Rc::clone(&self.trailing_trivia);
+
+        Grammar {
+            elements: resolved_items
+                .chain(
+                    [leading_trivia, trailing_trivia]
+                        .into_iter()
+                        .map(|elem| (elem.name().clone(), elem.into())),
+                )
+                .collect(),
         }
     }
 }

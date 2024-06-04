@@ -14,11 +14,12 @@ use codegen::{
     PrecedenceParserDefinitionCodegen as _, Trie,
 };
 use grammar::{
-    Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionRef, ScannerDefinitionRef, TriviaParserDefinitionRef,
+    GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
+    ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 
 use crate::parser::codegen::KeywordItemAtom;
+use crate::parser::grammar::ResolveCtx;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Default, Clone)]
@@ -85,7 +86,8 @@ struct ScannerContextAccumulatorState {
 impl ParserModel {
     pub fn from_language(language: &Rc<Language>) -> Self {
         // First, we construct the DSLv1 model from the DSLv2 definition...
-        let grammar = Grammar::from_dsl_v2(language);
+        let resolved = ResolveCtx::resolve(language);
+        let grammar = resolved.to_grammar();
         // ...which we then transform into the parser model
         let mut acc = ParserAccumulatorState::default();
         grammar.accept_visitor(&mut acc);
@@ -214,6 +216,7 @@ impl GrammarVisitor for ParserAccumulatorState {
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context().clone());
+
         if !parser.is_inline() {
             self.parser_functions.insert(
                 parser.name().clone(),
