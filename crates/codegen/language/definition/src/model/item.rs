@@ -39,4 +39,24 @@ impl Item {
             Item::Fragment { item } => &item.name,
         }
     }
+
+    /// Whether the language item corresponds to a dedicated terminal kind.
+    pub fn is_terminal(&self) -> bool {
+        // NOTE: `Item::Fragment` is inlined.
+        matches!(
+            self,
+            Item::Trivia { .. } | Item::Keyword { .. } | Item::Token { .. }
+        )
+    }
+
+    pub fn is_nonterminal(&self) -> bool {
+        matches!(
+            self,
+            Item::Struct { .. }
+                | Item::Enum { .. }
+                | Item::Repeated { .. }
+                | Item::Separated { .. }
+                | Item::Precedence { .. }
+        )
+    }
 }

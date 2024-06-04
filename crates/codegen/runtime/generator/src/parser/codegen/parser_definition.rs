@@ -3,35 +3,38 @@ use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
+use crate::parser::codegen::versioned::{Versioned as _, VersionedQuote as _};
 use crate::parser::grammar::{
     Labeled, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef,
 };
-use crate::parser::versioned::{Versioned as _, VersionedQuote as _};
 
-pub trait ParserDefinitionExtensions {
+pub trait ParserDefinitionCodegen {
     fn to_parser_code(&self) -> TokenStream;
 }
 
-impl ParserDefinitionExtensions for ParserDefinitionRef {
+impl ParserDefinitionCodegen for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        self.node().version_specifier().to_conditional_code(
+        let code = self.node().version_specifier().to_conditional_code(
             self.node().to_parser_code(self.context(), false),
             Some(quote! { ParserResult::disabled() }),
-        )
+        );
+
+        let nonterminal_kind = format_ident!("{}", self.name());
+        quote! { #code.with_kind(NonterminalKind::#nonterminal_kind) }
     }
 }
 
-impl ParserDefinitionExtensions for TriviaParserDefinitionRef {
+impl ParserDefinitionCodegen for TriviaParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         self.node().to_parser_code(self.context(), true)
     }
 }
 
-pub trait ParserDefinitionNodeExtensions {
+pub(super) trait ParserDefinitionNodeCodegen {
     fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream;
 }
 
-impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
+impl ParserDefinitionNodeCodegen for ParserDefinitionNode {
     #[allow(clippy::too_many_lines)] // giant switch over parser definition node types
     fn to_parser_code(&self, context_name: &Identifier, is_trivia: bool) -> TokenStream {
         let context = format_ident!("{context_name}");

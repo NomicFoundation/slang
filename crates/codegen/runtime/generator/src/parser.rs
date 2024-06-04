@@ -4,28 +4,21 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
 use codegen_language_definition::model::{Identifier, Language, VersionSpecifier};
-use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
+mod codegen;
 mod grammar;
-mod keyword_scanner_definition;
-mod parser_definition;
-mod precedence_parser_definition;
-mod scanner_definition;
-mod trie;
-mod versioned;
 
+use codegen::{
+    KeywordScannerDefinitionCodegen as _, ParserDefinitionCodegen as _,
+    PrecedenceParserDefinitionCodegen as _, ScannerDefinitionCodegen as _, Trie,
+};
 use grammar::{
     Grammar, GrammarVisitor, KeywordScannerAtomic, KeywordScannerDefinitionRef,
     ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionRef,
     ScannerDefinitionNode, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
-use keyword_scanner_definition::KeywordScannerDefinitionExtensions as _;
-use parser_definition::ParserDefinitionExtensions as _;
-use precedence_parser_definition::PrecedenceParserDefinitionExtensions as _;
-use scanner_definition::ScannerDefinitionExtensions as _;
-use trie::Trie;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Default, Clone)]
@@ -36,18 +29,9 @@ pub struct ParserModel {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
-    /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
-    /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
-    /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `EdgeLabel` enum variants.
-    labels: BTreeSet<String>,
-
     /// Defines the top-level scanner functions in `Language`.
     scanner_functions: BTreeMap<Identifier, RustCode>, // (name of scanner, code)
-    // Defines the `LexicalContext(Type)` enum and type-level variants.
+    // Defines the `Lexer::next_terminal` method.
     scanner_contexts: BTreeMap<Identifier, ScannerContextModel>,
     /// Defines the top-level compound scanners used when lexing in `Language`.
     keyword_compound_scanners: BTreeMap<Identifier, RustCode>, // (name of the KW scanner, code)
@@ -80,16 +64,7 @@ struct ParserAccumulatorState {
     /// Constructs inner `Language` the state to evaluate the version-dependent branches.
     referenced_versions: BTreeSet<Version>,
 
-    /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
-    /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
-    /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
-    /// Defines `EdgeLabel` enum variants.
-    labels: BTreeSet<String>,
-
-    // Defines the `LexicalContext(Type)` enum and type-level variants.
+    // Defines the `Lexer::next_terminal` method.
     scanner_contexts: BTreeMap<Identifier, ScannerContextAccumulatorState>,
 
     /// Defines the top-level parser functions in `Language`.
@@ -137,7 +112,7 @@ impl ParserAccumulatorState {
             .expect("context must be set with `set_current_context`")
     }
 
-    fn into_model(mut self) -> ParserModel {
+    fn into_model(self) -> ParserModel {
         let contexts = self
             .scanner_contexts
             .into_iter()
@@ -216,25 +191,8 @@ impl ParserAccumulatorState {
             })
             .collect();
 
-        // Make sure empty strings are not there
-        self.labels.remove("");
-        // These are built-in and already pre-defined
-        // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
-        self.labels.remove("item");
-        self.labels.remove("variant");
-        self.labels.remove("separator");
-        self.labels.remove("operand");
-        self.labels.remove("left_operand");
-        self.labels.remove("right_operand");
-        self.labels.remove("leading_trivia");
-        self.labels.remove("trailing_trivia");
-
         ParserModel {
             referenced_versions: self.referenced_versions,
-            nonterminal_kinds: self.nonterminal_kinds,
-            terminal_kinds: self.terminal_kinds,
-            trivia_scanner_names: self.trivia_scanner_names,
-            labels: self.labels,
             parser_functions: self.parser_functions,
             trivia_parser_functions: self.trivia_parser_functions,
             // These are derived from the accumulated state
@@ -253,46 +211,15 @@ impl GrammarVisitor for ParserAccumulatorState {
 
     fn keyword_scanner_definition_enter(&mut self, scanner: &KeywordScannerDefinitionRef) {
         for def in scanner.definitions() {
-            let versions = def.enabled.iter().chain(def.reserved.iter());
+            let specifiers = def.enabled.iter().chain(def.reserved.iter());
 
-            for version in versions {
-                match version {
-                    VersionSpecifier::Never => {}
-                    VersionSpecifier::From { from } => {
-                        self.referenced_versions.insert(from.clone());
-                    }
-                    VersionSpecifier::Till { till } => {
-                        self.referenced_versions.insert(till.clone());
-                    }
-                    VersionSpecifier::Range { from, till } => {
-                        self.referenced_versions.insert(from.clone());
-                        self.referenced_versions.insert(till.clone());
-                    }
-                }
-            }
+            self.referenced_versions
+                .extend(specifiers.flat_map(VersionSpecifier::versions).cloned());
         }
     }
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
-        let trivia_scanners = {
-            use crate::parser::grammar::visitor::Visitable;
-
-            #[derive(Default)]
-            struct CollectTriviaScanners {
-                scanner_names: BTreeSet<Identifier>,
-            }
-            impl crate::parser::grammar::visitor::GrammarVisitor for CollectTriviaScanners {
-                fn scanner_definition_enter(&mut self, node: &ScannerDefinitionRef) {
-                    self.scanner_names.insert(node.name().clone());
-                }
-            }
-
-            let mut visitor = CollectTriviaScanners::default();
-            parser.node().accept_visitor(&mut visitor);
-            visitor.scanner_names
-        };
-        self.trivia_scanner_names.extend(trivia_scanners);
 
         self.trivia_parser_functions.insert(
             parser.name().clone(),
@@ -304,27 +231,15 @@ impl GrammarVisitor for ParserAccumulatorState {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context().clone());
         if !parser.is_inline() {
-            self.nonterminal_kinds.insert(parser.name().clone());
-            let code = parser.to_parser_code();
             self.parser_functions.insert(
                 parser.name().clone(),
-                RustCode(
-                    {
-                        let nonterminal_kind = format_ident!("{}", parser.name());
-                        quote! { #code.with_kind(NonterminalKind::#nonterminal_kind) }
-                    }
-                    .to_string(),
-                ),
+                RustCode(parser.to_parser_code().to_string()),
             );
         }
     }
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
-        self.nonterminal_kinds.insert(parser.name().clone());
-        for (_, name, _) in &parser.node().operators {
-            self.nonterminal_kinds.insert(name.clone());
-        }
 
         // While it's not common to parse a precedence expression as a standalone nonterminal,
         // we generate a function for completeness.
@@ -335,88 +250,38 @@ impl GrammarVisitor for ParserAccumulatorState {
 
         self.parser_functions.insert(
             parser.name().clone(),
-            RustCode(
-                {
-                    let code = parser.to_parser_code();
-                    let nonterminal_kind = format_ident!("{}", parser.name());
-                    quote! { #code.with_kind(NonterminalKind::#nonterminal_kind) }
-                }
-                .to_string(),
-            ),
+            RustCode(parser.to_parser_code().to_string()),
         );
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
         if let ScannerDefinitionNode::Versioned(_, version_specifier) = node {
-            match version_specifier {
-                VersionSpecifier::Never => {}
-                VersionSpecifier::From { from } => {
-                    self.referenced_versions.insert(from.clone());
-                }
-                VersionSpecifier::Till { till } => {
-                    self.referenced_versions.insert(till.clone());
-                }
-                VersionSpecifier::Range { from, till } => {
-                    self.referenced_versions.insert(from.clone());
-                    self.referenced_versions.insert(till.clone());
-                }
-            }
+            self.referenced_versions
+                .extend(version_specifier.versions().cloned());
         }
     }
 
     fn parser_definition_node_enter(&mut self, node: &ParserDefinitionNode) {
         match node {
-            ParserDefinitionNode::Versioned(_, version_specifier) => match version_specifier {
-                VersionSpecifier::Never => {}
-                VersionSpecifier::From { from } => {
-                    self.referenced_versions.insert(from.clone());
-                }
-                VersionSpecifier::Till { till } => {
-                    self.referenced_versions.insert(till.clone());
-                }
-                VersionSpecifier::Range { from, till } => {
-                    self.referenced_versions.insert(from.clone());
-                    self.referenced_versions.insert(till.clone());
-                }
-            },
+            ParserDefinitionNode::Versioned(_, version_specifier) => {
+                self.referenced_versions
+                    .extend(version_specifier.versions().cloned());
+            }
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name().clone());
-                self.terminal_kinds.insert(scanner.name().clone());
 
                 self.current_context()
                     .scanner_definitions
                     .insert(scanner.name().clone());
             }
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
-                self.terminal_kinds.insert(scanner.name().clone());
-
                 self.current_context()
                     .keyword_scanner_defs
                     .insert(scanner.name().clone(), Rc::clone(scanner));
             }
 
-            // Collect labels:
-            ParserDefinitionNode::Choice(choice) => {
-                self.labels.insert(choice.label.clone());
-            }
-            ParserDefinitionNode::Sequence(sequence) => {
-                for node in sequence {
-                    self.labels.insert(node.label.clone());
-                }
-            }
-            ParserDefinitionNode::SeparatedBy(item, separator) => {
-                self.labels.insert(item.label.clone());
-                self.labels.insert(separator.label.clone());
-            }
-            ParserDefinitionNode::TerminatedBy(_, terminator) => {
-                self.labels.insert(terminator.label.clone());
-            }
-
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close, ..) => {
-                self.labels.insert(open.label.clone());
-                self.labels.insert(close.label.clone());
-
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),

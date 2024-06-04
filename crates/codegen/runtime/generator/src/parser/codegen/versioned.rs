@@ -5,7 +5,7 @@ use semver::Version;
 
 use crate::parser::grammar::{Labeled, ParserDefinitionNode, ScannerDefinitionNode};
 
-pub trait Versioned {
+pub(super) trait Versioned {
     fn version_specifier(&self) -> Option<&VersionSpecifier>;
 }
 
@@ -39,7 +39,7 @@ impl Versioned for ScannerDefinitionNode {
     }
 }
 
-pub trait VersionedQuote {
+pub(super) trait VersionedQuote {
     /// Depending on the `as_bool_expr` result, wraps the given code in an `if` block and optionally includes an `else` block
     fn to_conditional_code(
         &self,

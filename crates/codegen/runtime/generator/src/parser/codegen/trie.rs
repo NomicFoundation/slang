@@ -5,8 +5,8 @@ use codegen_language_definition::model::KeywordDefinition;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
+use crate::parser::codegen::versioned::{Versioned as _, VersionedQuote as _};
 use crate::parser::grammar::{KeywordScannerAtomic, ScannerDefinitionRef};
-use crate::parser::versioned::{Versioned as _, VersionedQuote as _};
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<T: Payload> {

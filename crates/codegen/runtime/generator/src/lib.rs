@@ -10,6 +10,7 @@ use serde::Serialize;
 use crate::model::RuntimeModel;
 
 mod ast;
+mod kinds;
 mod model;
 mod parser;
 
