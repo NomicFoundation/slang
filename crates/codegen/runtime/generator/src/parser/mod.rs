@@ -107,13 +107,26 @@ impl ParserAccumulatorState {
             .expect("context must be set with `set_current_context`")
     }
 
-    fn into_model(self, resolved: &Resolution) -> ParserModel {
+    fn into_model(mut self, resolved: &Resolution) -> ParserModel {
         // Lookup table for all scanners; used to generate trie scanners.
         let all_scanners: BTreeMap<_, _> = resolved
             .items()
             .filter_map(|(_, item)| item.try_as_scanner_definition_ref())
             .map(|scanner| (scanner.name().clone(), Rc::clone(scanner)))
             .collect();
+
+        for kw_scanner_def in resolved
+            .items()
+            .filter_map(|(_, item)| item.try_as_keyword_scanner_definition_ref())
+        {
+            let (lex_ctxt, _) = resolved.original(&kw_scanner_def.name);
+
+            self.scanner_contexts
+                .entry(lex_ctxt.clone())
+                .or_default()
+                .keyword_scanner_defs
+                .insert(kw_scanner_def.name.clone(), Rc::clone(kw_scanner_def));
+        }
 
         let contexts = self
             .scanner_contexts
@@ -251,6 +264,8 @@ impl GrammarVisitor for ParserAccumulatorState {
                     .insert(scanner.name().clone());
             }
             ParserDefinitionNode::KeywordScannerDefinition(scanner) => {
+                // In addition to the context a keyword is defined in, we also
+                // need to include reachable ones for the current lexical context
                 self.current_context()
                     .keyword_scanner_defs
                     .insert(scanner.name.clone(), Rc::clone(scanner));

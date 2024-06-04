@@ -1,7 +1,7 @@
 //! Defines a translation of DSL v2 model into [`Grammar`], which is used for generating the parser and the CST.
 
 use std::cell::OnceCell;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -111,6 +111,8 @@ pub struct ResolveCtx {
 }
 
 pub struct Resolution {
+    /// Original items as defined by the DSL v2.
+    items: HashMap<Identifier, (Identifier, Item)>,
     resolved: HashMap<Identifier, GrammarElement>,
     // Trivia are defined separately from the main grammar
     leading_trivia: Rc<dyn TriviaParserDefinition>,
@@ -118,9 +120,9 @@ pub struct Resolution {
 }
 
 impl ResolveCtx {
-    fn new(language: &Language) -> Self {
+    pub fn resolve(lang: &Language) -> Resolution {
         // Collect language items into a lookup table to speed up resolution
-        let items: HashMap<_, _> = language
+        let items: HashMap<_, _> = lang
             .topics()
             .flat_map(|topic| {
                 topic.items.iter().map(|item| {
@@ -131,55 +133,13 @@ impl ResolveCtx {
             })
             .collect();
 
-        ResolveCtx {
+        let mut ctx = ResolveCtx {
             items,
             resolved: HashMap::new(),
-        }
-    }
-
-    pub fn resolve(lang: &Language) -> Resolution {
-        let mut ctx = ResolveCtx::new(lang);
+        };
 
         for item in lang.items() {
             resolve_grammar_element(item.name(), &mut ctx);
-        }
-
-        // TODO(#638): To make sure the unused (not referred to) keywords are included in the scanner literal trie,
-        // we replicate the DSL v1 behaviour of introducing a synthetic parser that is only meant to group
-        // keywords by their lexical context.
-        let mut keywords_per_ctxt = HashMap::new();
-        for (ident, (lex_ctx, item)) in &ctx.items {
-            if let Item::Keyword { .. } = item {
-                keywords_per_ctxt
-                    .entry(lex_ctx.clone())
-                    .or_insert_with(BTreeSet::new)
-                    .insert(ident.clone());
-            }
-        }
-        for (lex_ctx, keywords) in keywords_per_ctxt {
-            let parser_name = Identifier::from(format!("{lex_ctx}AllKeywords"));
-            let all_keywords = model::EnumItem {
-                name: parser_name.clone(),
-                enabled: None,
-                variants: keywords
-                    .iter()
-                    .map(|ident| model::EnumVariant {
-                        reference: ident.clone(),
-                        enabled: None,
-                    })
-                    .collect(),
-            };
-
-            let def = resolve_choice(all_keywords, &mut ctx);
-            ctx.resolved.insert(
-                parser_name.clone(),
-                GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
-                    name: parser_name,
-                    context: lex_ctx.clone(),
-                    is_inline: true,
-                    def: OnceCell::from(def),
-                })),
-            );
         }
 
         Resolution {
@@ -191,12 +151,17 @@ impl ResolveCtx {
                 name: Identifier::from("TrailingTrivia"),
                 def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
             }) as Rc<dyn TriviaParserDefinition>,
+            items: ctx.items,
             resolved: ctx.resolved,
         }
     }
 }
 
 impl Resolution {
+    pub fn original(&self, name: &Identifier) -> &(Identifier, Item) {
+        &self.items[name]
+    }
+
     /// Returns the resolved items.
     pub fn items(&self) -> impl Iterator<Item = (&Identifier, &GrammarElement)> {
         self.resolved.iter()
