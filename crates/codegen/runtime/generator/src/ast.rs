@@ -58,21 +58,41 @@ pub struct Separated {
 
 impl AstModel {
     pub fn create(language: &model::Language) -> Self {
+        let mut model = Self::default();
+
         // First pass: collect all terminals:
-        let mut model = Self {
-            terminals: language
-                .items()
-                .filter(|item| item.is_terminal())
-                .map(|item| item.name())
-                .cloned()
-                .collect(),
-            ..Self::default()
-        };
+        model.collect_terminals(language);
 
         // Second pass: use them to build nonterminals:
         model.collect_nonterminals(language);
 
         model
+    }
+
+    fn collect_terminals(&mut self, language: &model::Language) {
+        for item in language.items() {
+            match item {
+                model::Item::Struct { .. }
+                | model::Item::Enum { .. }
+                | model::Item::Repeated { .. }
+                | model::Item::Separated { .. }
+                | model::Item::Precedence { .. } => {
+                    // These items are nonterminals.
+                }
+                model::Item::Trivia { item } => {
+                    self.terminals.insert(item.name.clone());
+                }
+                model::Item::Keyword { item } => {
+                    self.terminals.insert(item.name.clone());
+                }
+                model::Item::Token { item } => {
+                    self.terminals.insert(item.name.clone());
+                }
+                model::Item::Fragment { .. } => {
+                    // These items are inlined.
+                }
+            };
+        }
     }
 
     fn collect_nonterminals(&mut self, language: &model::Language) {
