@@ -43,7 +43,7 @@ impl OutputLanguage {
     pub fn generate_stubs(&self) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,
-            model: RuntimeModel::for_stubs(),
+            model: RuntimeModel::default(),
         };
 
         let mut templates = CodegenTemplates::new(self.source_dir()?)?;

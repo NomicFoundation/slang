@@ -1,9 +1,10 @@
 use std::collections::BTreeSet;
 
-use codegen_language_definition::model::{self, Identifier, Item};
+use codegen_language_definition::model::{self, BuiltInLabel, Identifier, Item};
 use serde::Serialize;
+use strum::VariantNames;
 
-#[derive(Default, Serialize)]
+#[derive(Serialize)]
 pub struct KindsModel {
     /// Defines the `NonterminalKind` enum variants.
     nonterminal_kinds: BTreeSet<Identifier>,
@@ -13,8 +14,23 @@ pub struct KindsModel {
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<Identifier>,
+    /// Built-in labels for edges
+    built_in_labels: &'static [&'static str],
     // Defines the `LexicalContext(Type)` enum and type-level variants.
     lexical_contexts: BTreeSet<Identifier>,
+}
+
+impl Default for KindsModel {
+    fn default() -> Self {
+        Self {
+            nonterminal_kinds: Default::default(),
+            terminal_kinds: Default::default(),
+            trivia_scanner_names: Default::default(),
+            labels: Default::default(),
+            built_in_labels: BuiltInLabel::VARIANTS,
+            lexical_contexts: Default::default(),
+        }
+    }
 }
 
 impl KindsModel {
@@ -93,6 +109,7 @@ impl KindsModel {
             trivia_scanner_names,
             labels,
             lexical_contexts,
+            ..Self::default()
         }
     }
 }

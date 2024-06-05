@@ -49,7 +49,7 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
-    {% for label in model.builtin_labels -%}
+    {% for label in model.kinds.built_in_labels -%}
         {{ label | pascal_case }},
     {%- endfor %}
 
