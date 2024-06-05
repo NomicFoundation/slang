@@ -25,19 +25,20 @@ use crate::parser::grammar::{GrammarElement, ResolveCtx, TriviaParserDefinitionR
 #[derive(Serialize, Default, Clone)]
 struct RustCode(String);
 
+/// The main model for the parser + lexer code generation.
 #[derive(Default, Serialize)]
 pub struct ParserModel {
     /// Defines the top-level scanner functions in `Language`.
-    scanner_functions: BTreeMap<Identifier, RustCode>, // (name of scanner, code)
+    scanner_functions: BTreeMap<Identifier, RustCode>,
     // Defines the `Lexer::next_terminal` method.
     scanner_contexts: BTreeMap<Identifier, ScannerContextModel>,
     /// Defines the top-level compound scanners used when lexing in `Language`.
-    keyword_compound_scanners: BTreeMap<Identifier, RustCode>, // (name of the KW scanner, code)
+    keyword_compound_scanners: BTreeMap<Identifier, RustCode>,
 
     /// Defines the top-level parser functions in `Language`.
-    parser_functions: BTreeMap<Identifier, RustCode>, // (name of parser, code)
+    parser_functions: BTreeMap<Identifier, RustCode>,
     /// Defines the top-level trivia parser functions in `Language`.
-    trivia_parser_functions: BTreeMap<Identifier, RustCode>, // (name of parser, code)
+    trivia_parser_functions: BTreeMap<Identifier, RustCode>,
 }
 
 #[derive(Default, Serialize)]
@@ -57,10 +58,25 @@ struct ScannerContextModel {
     delimiters: BTreeMap<Identifier, Identifier>,
 }
 
+impl ParserModel {
+    pub fn from_language(language: &Rc<Language>) -> Self {
+        // First, resolve the grammar structure from the flat list of items
+        let resolved = ResolveCtx::resolve(language);
+
+        // Collect all parser functions
+        let parser_fns = ParserFunctions::collect(&resolved);
+        // Collect all scanner contexts and their scanners
+        let mut acc = ScannerContextCollector::default();
+        resolved.to_grammar().accept_visitor(&mut acc);
+
+        // Combine everything into the final model
+        acc.into_model(&resolved, parser_fns)
+    }
+}
+
 #[derive(Default)]
-struct ParserAccumulatorState {
-    // Defines the `Lexer::next_terminal` method.
-    scanner_contexts: BTreeMap<Identifier, ScannerContextAccumulatorState>,
+struct ScannerContextCollector {
+    scanner_contexts: BTreeMap<Identifier, ScannerContextCollectorState>,
 
     /// Makes sure to codegen the scanner functions that are referenced by other scanners.
     top_level_scanner_names: BTreeSet<Identifier>,
@@ -69,40 +85,26 @@ struct ParserAccumulatorState {
 }
 
 #[derive(Default)]
-struct ScannerContextAccumulatorState {
-    /// Set of delimiter pairs for this context that are used in delimited error recovery.
+struct ScannerContextCollectorState {
     delimiters: BTreeMap<Identifier, Identifier>,
     scanner_definitions: BTreeSet<Identifier>,
     keyword_scanner_defs: BTreeMap<Identifier, Rc<model::KeywordItem>>,
 }
 
-impl ParserModel {
-    pub fn from_language(language: &Rc<Language>) -> Self {
-        // First, we construct the DSLv1 model from the DSLv2 definition...
-        let resolved = ResolveCtx::resolve(language);
-        let grammar = resolved.to_grammar();
-        // ...which we then transform into the parser model
-        let mut acc = ParserAccumulatorState::default();
-        grammar.accept_visitor(&mut acc);
-
-        acc.into_model(&resolved)
-    }
-}
-
-impl ParserAccumulatorState {
+impl ScannerContextCollector {
     fn set_current_context(&mut self, name: Identifier) {
         self.current_context_name = Some(name.clone());
         self.scanner_contexts.entry(name).or_default();
     }
 
-    fn current_context(&mut self) -> &mut ScannerContextAccumulatorState {
+    fn current_context(&mut self) -> &mut ScannerContextCollectorState {
         self.scanner_contexts
             .get_mut(self.current_context_name.as_ref().unwrap())
             .expect("context must be set with `set_current_context`")
     }
 
-    #[allow(clippy::too_many_lines)] // FIXME
-    fn into_model(mut self, resolved: &Resolution) -> ParserModel {
+    // TODO: Separate it to a function that combines the accumulated state with the parser_fns
+    fn into_model(mut self, resolved: &Resolution, parser_fns: ParserFunctions) -> ParserModel {
         // Lookup table for all scanners; used to generate trie scanners.
         let all_scanners: BTreeMap<_, _> = resolved
             .items()
@@ -200,53 +202,19 @@ impl ParserAccumulatorState {
             })
             .collect();
 
-        // FIXME: Move this to a separate collector for clarity
-        // and to limit mutable state needed for the lexer model
-        let mut trivia_parser_functions = BTreeMap::default();
-        let mut parser_functions = BTreeMap::default();
-        for (_, item) in resolved.items() {
-            match item {
-                GrammarElement::TriviaParserDefinition(parser) => {
-                    trivia_parser_functions.insert(
-                        parser.name().clone(),
-                        RustCode(parser.to_parser_code().to_string()),
-                    );
-                }
-                GrammarElement::ParserDefinition(parser) if !parser.is_inline() => {
-                    parser_functions.insert(
-                        parser.name().clone(),
-                        RustCode(parser.to_parser_code().to_string()),
-                    );
-                }
-
-                GrammarElement::PrecedenceParserDefinition(parser) => {
-                    // While it's not common to parse a precedence expression as a standalone nonterminal,
-                    // we generate a function for completeness.
-                    for (name, code) in parser.to_precedence_expression_parser_code() {
-                        parser_functions.insert(name.clone(), RustCode(code.to_string()));
-                    }
-                    parser_functions.insert(
-                        parser.name().clone(),
-                        RustCode(parser.to_parser_code().to_string()),
-                    );
-                }
-                _ => {}
-            }
-        }
-
         ParserModel {
-            // These are directly collected from the flat resolved items
-            parser_functions,
-            trivia_parser_functions,
             // These are derived from the accumulated state
             scanner_contexts: contexts,
             scanner_functions,
             keyword_compound_scanners,
+            // These are directly collected from the flat resolved items
+            parser_functions: parser_fns.parser_functions,
+            trivia_parser_functions: parser_fns.trivia_parser_functions,
         }
     }
 }
 
-impl GrammarVisitor for ParserAccumulatorState {
+impl GrammarVisitor for ScannerContextCollector {
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context().clone());
     }
@@ -296,5 +264,53 @@ impl GrammarVisitor for ParserAccumulatorState {
             }
             _ => {}
         };
+    }
+}
+
+/// Collects all parser functions from the resolved grammar.
+struct ParserFunctions {
+    parser_functions: BTreeMap<Identifier, RustCode>,
+    trivia_parser_functions: BTreeMap<Identifier, RustCode>,
+}
+
+impl ParserFunctions {
+    fn collect(resolved: &Resolution) -> Self {
+        let mut parser_functions = BTreeMap::default();
+        let mut trivia_parser_functions = BTreeMap::default();
+
+        for (_, item) in resolved.items() {
+            match item {
+                GrammarElement::TriviaParserDefinition(parser) => {
+                    trivia_parser_functions.insert(
+                        parser.name().clone(),
+                        RustCode(parser.to_parser_code().to_string()),
+                    );
+                }
+                GrammarElement::ParserDefinition(parser) if !parser.is_inline() => {
+                    parser_functions.insert(
+                        parser.name().clone(),
+                        RustCode(parser.to_parser_code().to_string()),
+                    );
+                }
+
+                GrammarElement::PrecedenceParserDefinition(parser) => {
+                    // While it's not common to parse a precedence expression as a standalone nonterminal,
+                    // we generate a function for completeness.
+                    for (name, code) in parser.to_precedence_expression_parser_code() {
+                        parser_functions.insert(name.clone(), RustCode(code.to_string()));
+                    }
+                    parser_functions.insert(
+                        parser.name().clone(),
+                        RustCode(parser.to_parser_code().to_string()),
+                    );
+                }
+                _ => {}
+            }
+        }
+
+        Self {
+            parser_functions,
+            trivia_parser_functions,
+        }
     }
 }
