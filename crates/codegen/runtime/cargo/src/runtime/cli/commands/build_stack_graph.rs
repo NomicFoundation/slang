@@ -1,16 +1,15 @@
-use std::fs;
 use std::path::PathBuf;
+use std::collections::BTreeSet;
 
 use semver::Version;
 use stack_graphs::graph::StackGraph;
-use thiserror::Error;
+use stack_graphs::partial::PartialPaths;
+use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
 use crate::diagnostic;
 use crate::bindings::{
     ExecutionConfig, ExecutionError, File as GraphBuilderFile, Functions, NoCancellation, Variables,
 };
-use crate::language::{Error as LanguageError, Language};
-use crate::parse_output::ParseOutput;
 
 use crate::cli::stack_graph::{self, StackGraphLanguage};
 
@@ -24,9 +23,27 @@ pub fn execute(
     let sgl = StackGraphLanguage::new(msgb);
 
     let mut stack_graph = StackGraph::new();
-    let file = stack_graph.get_or_create_file(file_path_string);
+    let file_path = PathBuf::from(file_path_string);
+    let root_path = file_path.parent().unwrap();
+    let file_name = file_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .expect("Source file has a name");
+    let file = stack_graph.get_or_create_file(file_name);
     let tree_cursor = parse_output.create_tree_cursor();
-    let globals = Variables::new();
+    let mut globals = Variables::new();
+    globals
+        .add(
+            stack_graph::ROOT_PATH_VAR.into(),
+            root_path.to_str().unwrap().into(),
+        )
+        .expect("failed to add ROOT_PATH variable");
+    globals
+        .add(
+            stack_graph::FILE_PATH_VAR.into(),
+            file_path.to_str().unwrap().into(),
+        )
+        .expect("failed to add FILE_PATH variable");
     sgl.build_stack_graph_into(
         &mut stack_graph,
         file,
@@ -35,14 +52,54 @@ pub fn execute(
         &stack_graph::NoCancellation,
     )?;
 
+    print_defs_and_refs(&stack_graph);
+    resolve_refs(&stack_graph);
+
+    Ok(())
+}
+
+fn print_defs_and_refs(stack_graph: &StackGraph) {
     for handle in stack_graph.iter_nodes() {
         let node = &stack_graph[handle];
         if node.is_definition() {
-            println!("Node #{node} is definition", node = node.display(&stack_graph));
+            println!(
+                "Node #{node} is definition",
+                node = node.display(stack_graph)
+            );
         } else if node.is_reference() {
-            println!("Node #{node} is reference", node = node.display(&stack_graph));
+            println!(
+                "Node #{node} is reference",
+                node = node.display(stack_graph)
+            );
         }
     }
+}
 
-    Ok(())
+fn resolve_refs(stack_graph: &StackGraph) {
+    let mut paths = PartialPaths::new();
+    let mut results = BTreeSet::new();
+    let references = stack_graph
+        .iter_nodes()
+        .filter(|handle| stack_graph[*handle].is_reference())
+        .collect::<Vec<_>>();
+    for reference in references.iter() {
+        println!(
+            "Found ref: {reference}",
+            reference = reference.display(stack_graph)
+        );
+    }
+    ForwardPartialPathStitcher::find_all_complete_partial_paths(
+        &mut GraphEdgeCandidates::new(stack_graph, &mut paths, None),
+        references,
+        StitcherConfig::default(),
+        &stack_graphs::NoCancellation,
+        |graph, paths, path| {
+            results.insert(path.display(graph, paths).to_string());
+        },
+    )
+    .expect("should never be cancelled");
+
+    for result in results.iter() {
+        println!("Found path: {result}");
+    }
 }
