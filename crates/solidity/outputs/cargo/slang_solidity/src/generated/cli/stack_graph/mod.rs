@@ -351,12 +351,12 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
-use crate::cursor::Cursor;
-use crate::graph_builder::{
+use crate::bindings::{
     CancellationError as GraphCancellationError, CancellationFlag as GraphCancellationFlag, Edge,
     ExecutionError, File as GraphFile, Functions, Graph, GraphNode, GraphNodeRef, ParseError,
     Value, Variables,
 };
+use crate::cursor::Cursor;
 
 mod functions;
 

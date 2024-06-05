@@ -16,8 +16,8 @@ pub mod path {
 
     use metaslang_graph_builder::functions::Function;
 
+    use crate::bindings::{ExecutionError, Functions, Graph, Parameters, Value};
     use crate::cst::KindTypes;
-    use crate::graph_builder::{ExecutionError, Functions, Graph, Parameters, Value};
 
     pub fn add_path_functions(functions: &mut Functions) {
         functions.add(

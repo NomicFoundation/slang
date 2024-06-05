@@ -2,6 +2,8 @@ use thiserror::Error;
 
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod build_graph;
+#[cfg(feature = "__experimental_bindings_api")]
+pub mod build_stack_graph;
 pub mod parse;
 
 #[derive(Debug, Error)]
@@ -21,4 +23,8 @@ pub enum CommandError {
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
     ExecutionFailed(#[from] crate::bindings::ExecutionError),
+
+    #[cfg(feature = "__experimental_bindings_api")]
+    #[error(transparent)]
+    BuildError(#[from] super::stack_graph::BuildError),
 }

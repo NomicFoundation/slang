@@ -7,7 +7,7 @@ use semver::Version;
 
 pub mod commands;
 
-#[cfg(feature = "__graph")]
+#[cfg(feature = "__experimental_bindings_api")]
 mod stack_graph;
 
 #[derive(Subcommand, Debug)]
@@ -48,6 +48,20 @@ pub enum Commands {
         #[clap(long)]
         debug: bool,
     },
+
+    // This is only intended for internal development
+    #[cfg(feature = "__experimental_bindings_api")]
+    BuildStackGraph {
+        /// File path to the source file to parse
+        file_path: String,
+
+        /// The language version to use for parsing
+        #[arg(short, long)]
+        version: Version,
+
+        /// The graph buider (.msgb) file to use
+        msgb_path: String,
+    },
 }
 
 impl Commands {
@@ -66,6 +80,12 @@ impl Commands {
                 json,
                 debug,
             } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
+            #[cfg(feature = "__experimental_bindings_api")]
+            Commands::BuildStackGraph {
+                file_path,
+                version,
+                msgb_path,
+            } => commands::build_stack_graph::execute(&file_path, version, &msgb_path),
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,

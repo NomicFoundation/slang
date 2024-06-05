@@ -16,11 +16,11 @@ pub mod path {
     use std::path::PathBuf;
 
     use crate::cst::KindTypes;
-    use crate::graph_builder::ExecutionError;
-    use crate::graph_builder::Functions;
-    use crate::graph_builder::Graph;
-    use crate::graph_builder::Parameters;
-    use crate::graph_builder::Value;
+    use crate::bindings::ExecutionError;
+    use crate::bindings::Functions;
+    use crate::bindings::Graph;
+    use crate::bindings::Parameters;
+    use crate::bindings::Value;
 
     pub fn add_path_functions(functions: &mut Functions) {
         functions.add(
