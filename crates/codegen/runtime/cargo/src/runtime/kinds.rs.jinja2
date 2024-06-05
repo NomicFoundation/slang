@@ -49,15 +49,9 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
-    {# _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync) #}
-    Item,
-    Variant,
-    Separator,
-    Operand,
-    LeftOperand,
-    RightOperand,
-    LeadingTrivia,
-    TrailingTrivia,
+    {% for label in model.kinds.built_in_labels -%}
+        {{ label | pascal_case }},
+    {%- endfor %}
 
     // Generated:
     {% if rendering_in_stubs -%}

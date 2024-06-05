@@ -17,7 +17,7 @@ proc-macro2 = { workspace = true }
 quote = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
-strum_macros = { workspace = true }
+strum = { workspace = true }
 
 [lints]
 workspace = true

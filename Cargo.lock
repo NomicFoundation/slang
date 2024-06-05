@@ -330,7 +330,6 @@ dependencies = [
  "codegen_language_definition",
  "derive-new",
  "indexmap",
- "strum_macros",
 ]
 
 [[package]]
@@ -346,6 +345,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
+ "strum",
  "strum_macros",
  "syn",
  "thiserror",
@@ -413,7 +413,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
- "strum_macros",
+ "strum",
 ]
 
 [[package]]

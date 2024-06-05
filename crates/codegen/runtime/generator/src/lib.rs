@@ -25,14 +25,14 @@ pub enum OutputLanguage {
 #[derive(Serialize)]
 struct ModelWrapper {
     rendering_in_stubs: bool,
-    model: Option<RuntimeModel>,
+    model: RuntimeModel,
 }
 
 impl OutputLanguage {
     pub fn generate_runtime(&self, language: &Rc<Language>, output_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
-            model: Some(RuntimeModel::from_language(language)),
+            model: RuntimeModel::from_language(language),
         };
 
         let mut templates = CodegenTemplates::new(self.source_dir()?)?;
@@ -43,7 +43,7 @@ impl OutputLanguage {
     pub fn generate_stubs(&self) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,
-            model: None,
+            model: RuntimeModel::default(),
         };
 
         let mut templates = CodegenTemplates::new(self.source_dir()?)?;

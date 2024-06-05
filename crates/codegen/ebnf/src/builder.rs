@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use codegen_language_definition::model::{
-    EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition, KeywordItem,
-    KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
+    BuiltInLabel, EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition,
+    KeywordItem, KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
     PrecedenceOperator, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem, StructItem,
     TokenDefinition, TokenItem, TriviaItem, VersionSpecifier,
 };
@@ -10,21 +10,6 @@ use indexmap::IndexMap;
 use inflector::Inflector;
 
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
-
-#[allow(dead_code)]
-#[derive(strum_macros::AsRefStr)]
-#[strum(serialize_all = "snake_case")]
-enum BuiltInLabel {
-    // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
-    Item,
-    Variant,
-    Separator,
-    Operand,
-    LeftOperand,
-    RightOperand,
-    LeadingTrivia,
-    TrailingTrivia,
-}
 
 pub struct Builder {
     section_index: usize,
