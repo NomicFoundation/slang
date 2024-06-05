@@ -30,7 +30,10 @@ use crate::parser_support::{
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     {%- if not rendering_in_stubs -%}
-        {%- for version in model.parser.referenced_versions -%}
+        {%- for version in model.breaking_versions -%}
+            {% if loop.first %} {# The first supported version may not be referenced by the items #}
+            #[allow(dead_code)]
+            {% endif %}
             pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
         {%- endfor -%}
     {%- endif -%}
@@ -68,7 +71,7 @@ impl Language {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 {%- if not rendering_in_stubs -%}
-                    {%- for version in model.parser.referenced_versions %}
+                    {%- for version in model.breaking_versions %}
                         version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                     {%- endfor -%}
                 {%- endif -%}

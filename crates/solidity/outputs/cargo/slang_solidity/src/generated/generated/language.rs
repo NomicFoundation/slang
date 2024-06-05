@@ -31,6 +31,8 @@ use crate::parser_support::{
 #[derive(Debug)]
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
+    #[allow(dead_code)]
+    pub(crate) version_is_at_least_0_4_11: bool,
     pub(crate) version_is_at_least_0_4_12: bool,
     pub(crate) version_is_at_least_0_4_14: bool,
     pub(crate) version_is_at_least_0_4_16: bool,
@@ -171,6 +173,7 @@ impl Language {
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
+                version_is_at_least_0_4_11: Version::new(0, 4, 11) <= version,
                 version_is_at_least_0_4_12: Version::new(0, 4, 12) <= version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
                 version_is_at_least_0_4_16: Version::new(0, 4, 16) <= version,
