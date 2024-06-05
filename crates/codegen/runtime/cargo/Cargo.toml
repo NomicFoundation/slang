@@ -14,13 +14,17 @@ codegen_runtime_generator = { workspace = true }
 [dependencies]
 ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
+controlled-option = { workspace = true, optional = true }
+lsp-positions = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true, optional = true }
 napi = { workspace = true, optional = true }
 napi-derive = { workspace = true, optional = true }
+once_cell = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
+stack-graphs = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
@@ -34,7 +38,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__experimental_bindings_api = ["dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:controlled-option", "dep:lsp-positions", "dep:metaslang_graph_builder", "dep:stack-graphs", "dep:once_cell"]
 
 [lints]
 workspace = true

@@ -5,6 +5,9 @@ use semver::Version;
 
 pub mod commands;
 
+#[cfg(feature = "__graph")]
+mod stack_graph;
+
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Parses a source file, and outputs any syntax errors, or a JSON concrete syntax tree
