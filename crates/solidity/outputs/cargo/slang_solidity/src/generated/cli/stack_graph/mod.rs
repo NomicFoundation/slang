@@ -294,53 +294,10 @@
 //!   ; ...
 //! }
 //! ```
-//!
-//! ## Using this crate from Rust
-//!
-//! If you need very fine-grained control over how to use the resulting stack graphs, you can
-//! construct and operate on [`StackGraph`][stack_graphs::graph::StackGraph] instances directly
-//! from Rust code.  You will need Rust bindings for the tree-sitter grammar for your source
-//! language — for instance, [`tree-sitter-python`][].  Grammar Rust bindings provide a global
-//! symbol [`language`][] that you will need.  For this example we assume the source of the stack
-//! graph rules is defined in a constant `STACK_GRAPH_RULES`.
-//!
-//! [`tree-sitter-python`]: https://docs.rs/tree-sitter-python/*/
-//! [`language`]: https://docs.rs/tree-sitter-python/*/tree_sitter_python/fn.language.html
-//!
-//! Once you have those, and the contents of the source file you want to analyze, you can construct
-//! a stack graph as follows:
-//!
-//! ```
-//! # use stack_graphs::graph::StackGraph;
-//! # use tree_sitter_graph::Variables;
-//! # use tree_sitter_stack_graphs::StackGraphLanguage;
-//! # use tree_sitter_stack_graphs::NoCancellation;
-//! #
-//! # // This documentation test is not meant to test Python's actual stack graph
-//! # // construction rules.  An empty TSG file is perfectly valid (it just won't produce any stack
-//! # // graph content).  This minimizes the amount of work that we do when running `cargo test`.
-//! # static STACK_GRAPH_RULES: &str = "";
-//! #
-//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
-//! let python_source = r#"
-//!   import sys
-//!   print(sys.path)
-//! "#;
-//! let grammar = tree_sitter_python::language();
-//! let tsg_source = STACK_GRAPH_RULES;
-//! let mut language = StackGraphLanguage::from_str(grammar, tsg_source)?;
-//! let mut stack_graph = StackGraph::new();
-//! let file_handle = stack_graph.get_or_create_file("test.py");
-//! let globals = Variables::new();
-//! language.build_stack_graph_into(&mut stack_graph, file_handle, python_source, &globals, &NoCancellation)?;
-//! # Ok(())
-//! # }
-//! ```
 
-use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::ops::BitOr;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -353,8 +310,7 @@ use thiserror::Error;
 
 use crate::bindings::{
     CancellationError as GraphCancellationError, CancellationFlag as GraphCancellationFlag, Edge,
-    ExecutionError, File as GraphFile, Functions, Graph, GraphNode, GraphNodeRef, ParseError,
-    Value, Variables,
+    ExecutionError, File as GraphFile, Functions, Graph, GraphNode, GraphNodeRef, Value, Variables,
 };
 use crate::cursor::Cursor;
 
@@ -443,10 +399,6 @@ impl StackGraphLanguage {
         let mut functions = Functions::stdlib();
         functions::add_path_functions(&mut functions);
         functions
-    }
-
-    pub fn functions_mut(&mut self) -> &mut Functions {
-        &mut self.functions
     }
 }
 
@@ -621,6 +573,7 @@ pub struct CancelAfterDuration {
 }
 
 impl CancelAfterDuration {
+    #[allow(dead_code)]
     pub fn new(limit: Duration) -> Self {
         Self {
             start: Instant::now(),
@@ -628,6 +581,7 @@ impl CancelAfterDuration {
         }
     }
 
+    #[allow(dead_code)]
     pub fn from_option(limit: Option<Duration>) -> Box<dyn CancellationFlag> {
         match limit {
             Some(limit) => Box::new(Self::new(limit)),
@@ -651,12 +605,14 @@ pub struct AtomicCancellationFlag {
 }
 
 impl AtomicCancellationFlag {
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Self {
             flag: Arc::new(AtomicBool::new(false)),
         }
     }
 
+    #[allow(dead_code)]
     pub fn cancel(&self) {
         self.flag.store(true, Ordering::Relaxed)
     }

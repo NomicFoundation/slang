@@ -406,8 +406,6 @@ dependencies = [
  "ariadne",
  "clap",
  "codegen_runtime_generator",
- "controlled-option",
- "lsp-positions",
  "metaslang_cst",
  "metaslang_graph_builder",
  "napi",
@@ -2179,7 +2177,6 @@ dependencies = [
  "semver",
  "slang_solidity",
  "solidity_language",
- "stack-graphs",
  "strum_macros",
 ]
 

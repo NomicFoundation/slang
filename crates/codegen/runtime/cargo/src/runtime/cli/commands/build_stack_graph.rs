@@ -6,10 +6,7 @@ use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::diagnostic;
-use crate::bindings::{
-    ExecutionConfig, ExecutionError, File as GraphBuilderFile, Functions, NoCancellation, Variables,
-};
+use crate::bindings::Variables;
 
 use crate::cli::stack_graph::{self, StackGraphLanguage};
 

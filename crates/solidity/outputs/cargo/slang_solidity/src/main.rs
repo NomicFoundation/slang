@@ -9,7 +9,9 @@ use slang_solidity::cli::Commands;
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
     #[cfg(feature = "__experimental_bindings_api")]
-    use metaslang_graph_builder as _;
+    use {
+        metaslang_graph_builder as _, once_cell as _, stack_graphs as _,
+    };
     use {
         ariadne as _, metaslang_cst as _, semver as _, serde as _, serde_json as _, strum as _,
         strum_macros as _, thiserror as _,
