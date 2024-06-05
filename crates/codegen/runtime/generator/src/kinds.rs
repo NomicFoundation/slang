@@ -23,12 +23,12 @@ pub struct KindsModel {
 impl Default for KindsModel {
     fn default() -> Self {
         Self {
-            nonterminal_kinds: Default::default(),
-            terminal_kinds: Default::default(),
-            trivia_scanner_names: Default::default(),
-            labels: Default::default(),
+            nonterminal_kinds: BTreeSet::default(),
+            terminal_kinds: BTreeSet::default(),
+            trivia_scanner_names: BTreeSet::default(),
+            labels: BTreeSet::default(),
             built_in_labels: BuiltInLabel::VARIANTS,
-            lexical_contexts: Default::default(),
+            lexical_contexts: BTreeSet::default(),
         }
     }
 }
