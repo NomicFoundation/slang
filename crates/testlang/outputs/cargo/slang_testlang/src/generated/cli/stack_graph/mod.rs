@@ -302,6 +302,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+use metaslang_graph_builder::graph::SyntaxNodeRef;
 use metaslang_graph_builder::ExecutionConfig;
 use once_cell::sync::Lazy;
 use stack_graphs::arena::Handle;
@@ -407,6 +408,7 @@ impl StackGraphLanguage {
     /// nodes and edges in `stack_graph`.  Any new nodes that we create will belong to `file`.
     /// (The source file must be implemented in this language, otherwise you'll probably get a
     /// parse error.)
+    #[allow(dead_code)]
     pub fn build_stack_graph_into<'a>(
         &'a self,
         stack_graph: &'a mut StackGraph,
@@ -435,12 +437,13 @@ impl StackGraphLanguage {
 
 pub struct Builder<'a> {
     sgl: &'a StackGraphLanguage,
-    stack_graph: &'a mut StackGraph,
+    pub stack_graph: &'a mut StackGraph,
     file: Handle<File>,
     tree_cursor: Cursor,
-    graph: Graph,
+    pub graph: Graph,
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
+    nodes_to_syntax: HashMap<Handle<Node>, SyntaxNodeRef>,
 }
 
 impl<'a> Builder<'a> {
@@ -458,12 +461,13 @@ impl<'a> Builder<'a> {
             graph: Graph::new(),
             remapped_nodes: HashMap::new(),
             injected_node_count: 0,
+            nodes_to_syntax: HashMap::new(),
         }
     }
 
     /// Executes this builder.
     pub fn build(
-        mut self,
+        &mut self,
         globals: &'a Variables<'a>,
         cancellation_flag: &dyn CancellationFlag,
     ) -> Result<(), BuildError> {
@@ -484,23 +488,20 @@ impl<'a> Builder<'a> {
         let mut config = ExecutionConfig::new(&self.sgl.functions, &globals)
             .lazy(true)
             .debug_attributes(
-                [DEBUG_ATTR_PREFIX, "tsg_location"].concat().as_str().into(),
-                [DEBUG_ATTR_PREFIX, "tsg_variable"].concat().as_str().into(),
-                [DEBUG_ATTR_PREFIX, "tsg_match_node"]
+                [DEBUG_ATTR_PREFIX, "msgb_location"]
+                    .concat()
+                    .as_str()
+                    .into(),
+                [DEBUG_ATTR_PREFIX, "msgb_variable"]
+                    .concat()
+                    .as_str()
+                    .into(),
+                [DEBUG_ATTR_PREFIX, "msgb_match_node"]
                     .concat()
                     .as_str()
                     .into(),
             );
 
-        // The execute_into() method requires that the reference to the tree matches the lifetime
-        // parameter 'a of the Graph, because the Graph can hold references to the Tree. In this Builder,
-        // the Graph is created _before_ the Tree, so that it can be prepopulated with nodes. Because of
-        // that, the borrow checker complains that the Tree only lives as long as this method, not as long
-        // as the lifetime parameter 'a. Here we transmute the Tree reference to give it the required 'a
-        // lifetime, which is safe because:
-        // (1) this method takes ownership of the Builder; and
-        // (2) it returns no values connected to 'a.
-        // These together guarantee that no values connected to the lifetime 'a outlive the Tree.
         self.sgl.msgb.execute_into(
             &mut self.graph,
             &self.tree_cursor,
@@ -518,6 +519,10 @@ impl<'a> Builder<'a> {
         self.remapped_nodes.insert(node.index(), id);
         self.injected_node_count += 1;
         node
+    }
+
+    pub fn node_handle_to_syntax_ref(&self, node_handle: &Handle<Node>) -> Option<&SyntaxNodeRef> {
+        self.nodes_to_syntax.get(node_handle)
     }
 }
 
@@ -707,7 +712,7 @@ impl std::fmt::Display for DisplayBuildErrorPretty<'_> {
 }
 
 impl<'a> Builder<'a> {
-    fn load(mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
+    fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
         // By default graph ids are used for stack graph local_ids. A remapping is computed
@@ -966,7 +971,9 @@ impl<'a> Builder<'a> {
         let node = &self.graph[node_ref];
 
         if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
-            let source_node = &self.graph[source_node.as_syntax_node_ref()?];
+            let syntax_node_ref = source_node.as_syntax_node_ref()?;
+            self.nodes_to_syntax.insert(node_handle, syntax_node_ref);
+            let source_node = &self.graph[syntax_node_ref];
             let mut source_range = source_node.text_range();
             if match node.attributes.get(EMPTY_SOURCE_SPAN_ATTR) {
                 Some(empty_source_span) => empty_source_span.as_boolean()?,
@@ -989,6 +996,8 @@ impl<'a> Builder<'a> {
         Ok(())
     }
 
+    // TODO: we can probably remove this and all references to definiens since
+    // we're not gonna need it?
     fn load_definiens_info(
         &mut self,
         node_ref: GraphNodeRef,

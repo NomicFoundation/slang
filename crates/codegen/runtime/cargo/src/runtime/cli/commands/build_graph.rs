@@ -42,7 +42,9 @@ pub fn execute(
     Ok(())
 }
 
-pub(crate) fn parse_graph_builder(msgb_path_string: &str) -> Result<GraphBuilderFile, CommandError> {
+pub(crate) fn parse_graph_builder(
+    msgb_path_string: &str,
+) -> Result<GraphBuilderFile, CommandError> {
     let msgb_path = PathBuf::from(&msgb_path_string)
         .canonicalize()
         .map_err(|_| CommandError::FileNotFound(msgb_path_string.to_string()))?;

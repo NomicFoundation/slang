@@ -1,14 +1,13 @@
-use std::path::PathBuf;
 use std::collections::BTreeSet;
+use std::path::PathBuf;
 
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
+use crate::cli::stack_graph::{self, Builder, StackGraphLanguage};
 use crate::bindings::Variables;
-
-use crate::cli::stack_graph::{self, StackGraphLanguage};
 
 pub fn execute(
     file_path_string: &str,
@@ -41,33 +40,36 @@ pub fn execute(
             file_path.to_str().unwrap().into(),
         )
         .expect("failed to add FILE_PATH variable");
-    sgl.build_stack_graph_into(
-        &mut stack_graph,
-        file,
-        tree_cursor,
-        &globals,
-        &stack_graph::NoCancellation,
-    )?;
 
-    print_defs_and_refs(&stack_graph);
+    let mut builder = sgl.builder_into_stack_graph(&mut stack_graph, file, tree_cursor);
+    builder.build(&globals, &stack_graph::NoCancellation)?;
+
+    print_defs_and_refs(&builder);
     resolve_refs(&stack_graph);
 
     Ok(())
 }
 
-fn print_defs_and_refs(stack_graph: &StackGraph) {
+fn print_defs_and_refs(builder: &Builder<'_>) {
+    let stack_graph = &builder.stack_graph;
     for handle in stack_graph.iter_nodes() {
         let node = &stack_graph[handle];
+        let syntax_node_ref = builder.node_handle_to_syntax_ref(&handle);
+
         if node.is_definition() {
             println!(
                 "Node #{node} is definition",
-                node = node.display(stack_graph)
+                node = node.display(stack_graph),
             );
         } else if node.is_reference() {
             println!(
                 "Node #{node} is reference",
                 node = node.display(stack_graph)
             );
+        }
+        if let Some(syntax_ref) = syntax_node_ref {
+            let cursor = &builder.graph[*syntax_ref];
+            println!("{:?}", cursor.text_range());
         }
     }
 }

@@ -10,17 +10,12 @@
 pub use path::add_path_functions;
 
 pub mod path {
+    use std::path::{Component, Path, PathBuf};
+
     use metaslang_graph_builder::functions::Function;
-    use std::path::Component;
-    use std::path::Path;
-    use std::path::PathBuf;
 
     use crate::cst::KindTypes;
-    use crate::bindings::ExecutionError;
-    use crate::bindings::Functions;
-    use crate::bindings::Graph;
-    use crate::bindings::Parameters;
-    use crate::bindings::Value;
+    use crate::bindings::{ExecutionError, Functions, Graph, Parameters, Value};
 
     pub fn add_path_functions(functions: &mut Functions) {
         functions.add(
