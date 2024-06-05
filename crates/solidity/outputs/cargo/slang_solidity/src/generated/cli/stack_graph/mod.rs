@@ -425,53 +425,18 @@ pub const ROOT_PATH_VAR: &'static str = "ROOT_PATH";
 
 /// Holds information about how to construct stack graphs for a particular language.
 pub struct StackGraphLanguage {
-    tsg: GraphFile,
-    tsg_path: PathBuf,
-    tsg_source: std::borrow::Cow<'static, str>,
+    msgb: GraphFile,
     functions: Functions,
 }
 
 impl StackGraphLanguage {
     /// Creates a new stack graph language for the given language and
     /// TSG stack graph construction rules.
-    pub fn new(tsg: GraphFile) -> StackGraphLanguage {
+    pub fn new(msgb: GraphFile) -> StackGraphLanguage {
         StackGraphLanguage {
-            tsg,
-            tsg_path: PathBuf::from("<tsg>"),
-            tsg_source: Cow::from(String::new()),
+            msgb,
             functions: Self::default_functions(),
         }
-    }
-
-    /// Creates a new stack graph language for the given language, loading the
-    /// TSG stack graph construction rules from a string. Keeps the source, which
-    /// can later be used for [`BuildError::display_pretty`][].
-    pub fn from_str(tsg_source: &str) -> Result<StackGraphLanguage, ParseError> {
-        let tsg = GraphFile::from_str(tsg_source)?;
-        Ok(StackGraphLanguage {
-            tsg,
-            tsg_path: PathBuf::from("<missing tsg path>"),
-            tsg_source: Cow::from(tsg_source.to_string()),
-            functions: Self::default_functions(),
-        })
-    }
-
-    /// Creates a new stack graph language for the given language, loading the TSG
-    /// stack graph construction rules from the given source. The path is purely for
-    /// informational purposes, and is not accessed. The source and path are kept,
-    /// e.g. to use for [`BuildError::display_pretty`][].
-    pub fn from_source(
-        tsg_path: PathBuf,
-        tsg_source: &str,
-    ) -> Result<StackGraphLanguage, ParseError> {
-        let mut sgl = Self::from_str(tsg_source)?;
-        sgl.tsg_path = tsg_path;
-        Ok(sgl)
-    }
-
-    pub fn set_tsg_info(&mut self, path: PathBuf, source: Cow<'static, str>) {
-        self.tsg_path = path;
-        self.tsg_source = source;
     }
 
     fn default_functions() -> Functions {
@@ -482,18 +447,6 @@ impl StackGraphLanguage {
 
     pub fn functions_mut(&mut self) -> &mut Functions {
         &mut self.functions
-    }
-
-    /// Returns the original TSG path, if it was provided at construction or set with
-    /// [`set_tsg_info`][]. Can be used as input for [`BuildError::display_pretty`][].
-    pub fn tsg_path(&self) -> &Path {
-        &self.tsg_path
-    }
-
-    /// Returns the original TSG source, if it was provided at construction or set with
-    /// [`set_tsg_info`][]. Can be used as input for [`BuildError::display_pretty`][].
-    pub fn tsg_source(&self) -> &Cow<'static, str> {
-        &self.tsg_source
     }
 }
 
@@ -596,7 +549,7 @@ impl<'a> Builder<'a> {
         // (1) this method takes ownership of the Builder; and
         // (2) it returns no values connected to 'a.
         // These together guarantee that no values connected to the lifetime 'a outlive the Tree.
-        self.sgl.tsg.execute_into(
+        self.sgl.msgb.execute_into(
             &mut self.graph,
             &self.tree_cursor,
             &mut config,
