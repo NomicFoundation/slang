@@ -114,9 +114,6 @@ pub struct Resolution {
     /// Original items as defined by the DSL v2.
     items: HashMap<Identifier, (Identifier, Item)>,
     resolved: HashMap<Identifier, GrammarElement>,
-    // Trivia are defined separately from the main grammar
-    leading_trivia: Rc<dyn TriviaParserDefinition>,
-    trailing_trivia: Rc<dyn TriviaParserDefinition>,
 }
 
 impl ResolveCtx {
@@ -142,15 +139,25 @@ impl ResolveCtx {
             resolve_grammar_element(item.name(), &mut ctx);
         }
 
+        // Trivia is defined separately from the main grammar
+        let leading_trivia = Rc::new(NamedTriviaParser {
+            name: Identifier::from("LeadingTrivia"),
+            def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
+        });
+
+        let trailing_trivia = Rc::new(NamedTriviaParser {
+            name: Identifier::from("TrailingTrivia"),
+            def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
+        });
+
+        for trivia in [leading_trivia, trailing_trivia] {
+            ctx.resolved.insert(
+                trivia.name().clone(),
+                GrammarElement::TriviaParserDefinition(trivia),
+            );
+        }
+
         Resolution {
-            leading_trivia: Rc::new(NamedTriviaParser {
-                name: Identifier::from("LeadingTrivia"),
-                def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
-            }) as Rc<dyn TriviaParserDefinition>,
-            trailing_trivia: Rc::new(NamedTriviaParser {
-                name: Identifier::from("TrailingTrivia"),
-                def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
-            }) as Rc<dyn TriviaParserDefinition>,
             items: ctx.items,
             resolved: ctx.resolved,
         }
@@ -169,21 +176,11 @@ impl Resolution {
 
     /// Collects the already resolved item into a [`Grammar`].
     pub fn to_grammar(&self) -> Grammar {
-        let resolved_items = self
-            .resolved
-            .iter()
-            .map(|(name, elem)| (name.clone(), elem.clone()));
-
-        let leading_trivia = Rc::clone(&self.leading_trivia);
-        let trailing_trivia = Rc::clone(&self.trailing_trivia);
-
         Grammar {
-            elements: resolved_items
-                .chain(
-                    [leading_trivia, trailing_trivia]
-                        .into_iter()
-                        .map(|elem| (elem.name().clone(), elem.into())),
-                )
+            elements: self
+                .resolved
+                .iter()
+                .map(|(name, elem)| (name.clone(), elem.clone()))
                 .collect(),
         }
     }
