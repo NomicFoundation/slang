@@ -33,6 +33,7 @@ slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
 cli = ["dep:clap", "dep:serde_json"]
+# For internal development only
 __graph_builder = ["dep:metaslang_graph_builder"]
 
 [lints]

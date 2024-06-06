@@ -23,6 +23,7 @@ pub enum Commands {
         json: bool,
     },
 
+    // This is only intended for internal development
     #[cfg(feature = "__graph_builder")]
     /// Parses a source file and builds a graph executing the instructions from the builder file (*.msgb)
     BuildGraph {
