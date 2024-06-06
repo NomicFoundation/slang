@@ -51,7 +51,7 @@ impl Commands {
                 file_path,
                 version,
                 json,
-            } => commands::execute_parse_command(&file_path, version, json),
+            } => commands::parse::execute(&file_path, version, json),
             #[cfg(feature = "__graph_builder")]
             Commands::BuildGraph {
                 file_path,
@@ -59,9 +59,7 @@ impl Commands {
                 msgb_path,
                 json,
                 debug,
-            } => commands::graph_builder::execute_build_graph_command(
-                &file_path, version, &msgb_path, json, debug,
-            ),
+            } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,
