@@ -61,6 +61,8 @@ impl Language {
         Version::new(1, 1, 1),
     ];
 
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
+
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
@@ -70,10 +72,6 @@ impl Language {
         } else {
             Err(Error::UnsupportedLanguageVersion(version))
         }
-    }
-
-    pub fn root_kind() -> NonterminalKind {
-        NonterminalKind::SourceUnit
     }
 
     pub fn version(&self) -> &Version {

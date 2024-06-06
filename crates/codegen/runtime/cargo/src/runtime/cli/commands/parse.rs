@@ -33,7 +33,7 @@ where
 
     let input = fs::read_to_string(file_path)?;
     let language = Language::new(version)?;
-    let parse_output = language.parse(Language::root_kind(), &input);
+    let parse_output = language.parse(Language::ROOT_KIND, &input);
 
     run_before_checking(&parse_output);
 

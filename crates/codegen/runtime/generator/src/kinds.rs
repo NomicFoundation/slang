@@ -14,10 +14,12 @@ pub struct KindsModel {
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<Identifier>,
-    /// Built-in labels for edges
+    /// Built-in labels for edges.
     built_in_labels: &'static [&'static str],
     // Defines the `LexicalContext(Type)` enum and type-level variants.
     lexical_contexts: BTreeSet<Identifier>,
+    /// Defines the root `NonterminalKind` for a source file of the language.
+    root_kind: Identifier,
 }
 
 impl Default for KindsModel {
@@ -29,6 +31,7 @@ impl Default for KindsModel {
             labels: BTreeSet::default(),
             built_in_labels: BuiltInLabel::VARIANTS,
             lexical_contexts: BTreeSet::default(),
+            root_kind: Identifier::from("Stub1"),
         }
     }
 }
@@ -103,12 +106,15 @@ impl KindsModel {
             .chain(std::iter::once(Identifier::from("Default")))
             .collect();
 
+        let root_kind = language.root_item.clone();
+
         KindsModel {
             nonterminal_kinds,
             terminal_kinds,
             trivia_scanner_names,
             labels,
             lexical_contexts,
+            root_kind,
             ..Self::default()
         }
     }

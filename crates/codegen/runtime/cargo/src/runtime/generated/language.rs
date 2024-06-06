@@ -54,16 +54,14 @@ impl From<Error> for napi::Error {
 impl Language {
     pub const SUPPORTED_VERSIONS: &'static [Version] = &[];
 
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::Stub1;
+
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self { version })
         } else {
             Err(Error::UnsupportedLanguageVersion(version))
         }
-    }
-
-    pub fn root_kind() -> NonterminalKind {
-        unreachable!("Undefined root_kind for stubs");
     }
 
     pub fn version(&self) -> &Version {

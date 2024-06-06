@@ -67,6 +67,8 @@ impl Language {
         {%- endif -%}
     ];
 
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::{{ model.kinds.root_kind }};
+
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
@@ -81,14 +83,6 @@ impl Language {
         } else {
             Err(Error::UnsupportedLanguageVersion(version))
         }
-    }
-
-    pub fn root_kind() -> NonterminalKind {
-        {%- if rendering_in_stubs -%}
-            unreachable!("Undefined root_kind for stubs");
-        {%- else -%}
-            NonterminalKind::{{ model.root_item }}
-        {%- endif -%}
     }
 
     pub fn version(&self) -> &Version {

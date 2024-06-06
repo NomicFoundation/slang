@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::rc::Rc;
 
-use codegen_language_definition::model::{Identifier, Language};
+use codegen_language_definition::model::Language;
 use semver::Version;
 use serde::Serialize;
 
@@ -17,7 +17,6 @@ pub struct RuntimeModel {
     parser: ParserModel,
     ast: AstModel,
     kinds: KindsModel,
-    root_item: Identifier,
 }
 
 impl RuntimeModel {
@@ -28,7 +27,6 @@ impl RuntimeModel {
             ast: AstModel::create(language),
             parser: ParserModel::from_language(language),
             kinds: KindsModel::create(language),
-            root_item: language.root_item.clone(),
         }
     }
 }
