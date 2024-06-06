@@ -2,5 +2,6 @@
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
   "access": "public",
   "baseBranch": "main",
-  "changelog": ["@changesets/changelog-github", { "repo": "NomicFoundation/slang" }]
+  "changelog": ["./custom-changelog-generator.js", { "repo": "NomicFoundation/slang" }],
+  "fixed": [["@nomicfoundation/slang", "@nomicfoundation/slang-*"]]
 }

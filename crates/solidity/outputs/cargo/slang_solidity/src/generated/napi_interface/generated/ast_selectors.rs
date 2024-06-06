@@ -156,8 +156,13 @@ pub fn select_sequence(
         NonterminalKind::YulVariableDeclarationValue => {
             selector.yul_variable_declaration_value()?
         }
-        NonterminalKind::YulAssignmentStatement => selector.yul_assignment_statement()?,
-        NonterminalKind::YulColonAndEqual => selector.yul_colon_and_equal()?,
+        NonterminalKind::YulVariableAssignmentStatement => {
+            selector.yul_variable_assignment_statement()?
+        }
+        NonterminalKind::YulStackAssignmentStatement => {
+            selector.yul_stack_assignment_statement()?
+        }
+        NonterminalKind::YulColonEqual => selector.yul_colon_equal()?,
         NonterminalKind::YulIfStatement => selector.yul_if_statement()?,
         NonterminalKind::YulForStatement => selector.yul_for_statement()?,
         NonterminalKind::YulSwitchStatement => selector.yul_switch_statement()?,
@@ -1642,7 +1647,7 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_assignment_statement(
+    fn yul_variable_assignment_statement(
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
@@ -1658,9 +1663,22 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_colon_and_equal(
+    fn yul_stack_assignment_statement(
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
+        Ok(vec![
+            Some(self.select(|node| {
+                node.is_nonterminal_with_kind(NonterminalKind::YulAssignmentOperator)
+            })?),
+            Some(
+                self.select(|node| node.is_nonterminal_with_kind(NonterminalKind::YulExpression))?,
+            ),
+        ])
+    }
+}
+
+impl Selector {
+    fn yul_colon_equal(&mut self) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Colon))?),
             Some(self.select(|node| node.is_terminal_with_kind(TerminalKind::Equal))?),
@@ -2385,7 +2403,8 @@ impl Selector {
                 NonterminalKind::YulBlock,
                 NonterminalKind::YulFunctionDefinition,
                 NonterminalKind::YulVariableDeclarationStatement,
-                NonterminalKind::YulAssignmentStatement,
+                NonterminalKind::YulVariableAssignmentStatement,
+                NonterminalKind::YulStackAssignmentStatement,
                 NonterminalKind::YulIfStatement,
                 NonterminalKind::YulForStatement,
                 NonterminalKind::YulSwitchStatement,
@@ -2402,7 +2421,7 @@ impl Selector {
 impl Selector {
     fn yul_assignment_operator(&mut self) -> Result<Either<NonterminalNode, TerminalNode>> {
         self.select(|node| {
-            node.is_nonterminal_with_kind(NonterminalKind::YulColonAndEqual)
+            node.is_nonterminal_with_kind(NonterminalKind::YulColonEqual)
                 || node.is_terminal_with_kind(TerminalKind::ColonEqual)
         })
     }

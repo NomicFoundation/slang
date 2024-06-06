@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ suicide := 0                                                                     │ 0..12
+
+Errors: # 1 total
+  - >
+    Error: Expected YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulVariableAssignmentStatement/identifier_suicide/input.sol:1:1]
+       │
+     1 │ suicide := 0
+       │ ──────┬──────  
+       │       ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (SKIPPED): "suicide := 0\n" # (0..13)

@@ -31,6 +31,7 @@ use crate::parser_support::{
 #[derive(Debug)]
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
+    #[allow(dead_code)]
     pub(crate) version_is_at_least_1_0_0: bool,
     pub(crate) version: Version,
 }

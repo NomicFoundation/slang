@@ -31,6 +31,8 @@ use crate::parser_support::{
 #[derive(Debug)]
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
+    #[allow(dead_code)]
+    pub(crate) version_is_at_least_0_4_11: bool,
     pub(crate) version_is_at_least_0_4_12: bool,
     pub(crate) version_is_at_least_0_4_14: bool,
     pub(crate) version_is_at_least_0_4_16: bool,
@@ -165,11 +167,13 @@ impl Language {
         Version::new(0, 8, 23),
         Version::new(0, 8, 24),
         Version::new(0, 8, 25),
+        Version::new(0, 8, 26),
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
+                version_is_at_least_0_4_11: Version::new(0, 4, 11) <= version,
                 version_is_at_least_0_4_12: Version::new(0, 4, 12) <= version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
                 version_is_at_least_0_4_16: Version::new(0, 4, 16) <= version,
@@ -949,7 +953,7 @@ impl Language {
                 ),
             )?;
             seq.elem_labeled(
-                EdgeLabel::Inheritence,
+                EdgeLabel::Inheritance,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
@@ -3135,7 +3139,7 @@ impl Language {
                 ),
             )?;
             seq.elem_labeled(
-                EdgeLabel::Inheritence,
+                EdgeLabel::Inheritance,
                 OptionalHelper::transform(self.inheritance_specifier(input)),
             )?;
             seq.elem(SequenceHelper::run(|mut seq| {
@@ -5849,7 +5853,7 @@ impl Language {
     fn yul_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             if !self.version_is_at_least_0_5_5 {
-                let result = self.yul_colon_and_equal(input);
+                let result = self.yul_colon_equal(input);
                 choice.consider(input, result)?;
             }
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
@@ -5861,17 +5865,6 @@ impl Language {
         })
         .with_label(EdgeLabel::Variant)
         .with_kind(NonterminalKind::YulAssignmentOperator)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(EdgeLabel::Names, self.yul_paths(input))?;
-            seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
-            seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
-            seq.finish()
-        })
-        .with_kind(NonterminalKind::YulAssignmentStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6365,7 +6358,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_colon_and_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn yul_colon_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_5 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
@@ -6387,7 +6380,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(NonterminalKind::YulColonAndEqual)
+        .with_kind(NonterminalKind::YulColonEqual)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6781,6 +6774,20 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_stack_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
+                seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(NonterminalKind::YulStackAssignmentStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.yul_block(input);
@@ -6789,8 +6796,12 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.yul_variable_declaration_statement(input);
             choice.consider(input, result)?;
-            let result = self.yul_assignment_statement(input);
+            let result = self.yul_variable_assignment_statement(input);
             choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.yul_stack_assignment_statement(input);
+                choice.consider(input, result)?;
+            }
             let result = self.yul_if_statement(input);
             choice.consider(input, result)?;
             let result = self.yul_for_statement(input);
@@ -6878,6 +6889,17 @@ impl Language {
             seq.finish()
         })
         .with_kind(NonterminalKind::YulValueCase)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_variable_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem_labeled(EdgeLabel::Names, self.yul_paths(input))?;
+            seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
+            seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
+            seq.finish()
+        })
+        .with_kind(NonterminalKind::YulVariableAssignmentStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9434,13 +9456,10 @@ impl Language {
             NonterminalKind::YulAssignmentOperator => {
                 Self::yul_assignment_operator.parse(self, input)
             }
-            NonterminalKind::YulAssignmentStatement => {
-                Self::yul_assignment_statement.parse(self, input)
-            }
             NonterminalKind::YulBlock => Self::yul_block.parse(self, input),
             NonterminalKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
             NonterminalKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input),
-            NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input),
+            NonterminalKind::YulColonEqual => Self::yul_colon_equal.parse(self, input),
             NonterminalKind::YulContinueStatement => {
                 Self::yul_continue_statement.parse(self, input)
             }
@@ -9468,12 +9487,18 @@ impl Language {
             NonterminalKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
+            NonterminalKind::YulStackAssignmentStatement => {
+                Self::yul_stack_assignment_statement.parse(self, input)
+            }
             NonterminalKind::YulStatement => Self::yul_statement.parse(self, input),
             NonterminalKind::YulStatements => Self::yul_statements.parse(self, input),
             NonterminalKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
             NonterminalKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
             NonterminalKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
             NonterminalKind::YulValueCase => Self::yul_value_case.parse(self, input),
+            NonterminalKind::YulVariableAssignmentStatement => {
+                Self::yul_variable_assignment_statement.parse(self, input)
+            }
             NonterminalKind::YulVariableDeclarationStatement => {
                 Self::yul_variable_declaration_statement.parse(self, input)
             }
@@ -10910,7 +10935,7 @@ impl Lexer for Language {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#638): Don't allocate a string here
+                        // TODO(#1001): Don't allocate a string here
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                         for keyword_compound_scanner in [
@@ -13438,7 +13463,7 @@ impl Lexer for Language {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#638): Don't allocate a string here
+                        // TODO(#1001): Don't allocate a string here
                         let ident_value = input.content(save.utf8..furthest_position.utf8);
 
                         for keyword_compound_scanner in [

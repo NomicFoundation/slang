@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use codegen_language_definition::model::{
-    EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition, KeywordItem,
-    KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
+    BuiltInLabel, EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition,
+    KeywordItem, KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
     PrecedenceOperator, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem, StructItem,
     TokenDefinition, TokenItem, TriviaItem, VersionSpecifier,
 };
@@ -128,7 +128,7 @@ impl Builder {
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
-                Self::build_ref(reference),
+                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), reference),
                 Self::build_enabled_comment(enabled),
             )
         });
@@ -151,10 +151,11 @@ impl Builder {
 
         self.add_entry(name, Terminal::No, Inlined::No);
 
+        let label = BuiltInLabel::Item.as_ref();
         let expression = if allow_empty.unwrap_or_default() {
-            Expression::new_zero_or_more(Self::build_ref(reference).into())
+            Expression::new_zero_or_more(Self::build_ref(Some(label), reference).into())
         } else {
-            Expression::new_one_or_more(Self::build_ref(reference).into())
+            Expression::new_one_or_more(Self::build_ref(Some(label), reference).into())
         };
 
         self.add_definition(
@@ -177,11 +178,11 @@ impl Builder {
         self.add_entry(name, Terminal::No, Inlined::No);
 
         let mut expression = Expression::new_sequence(vec![
-            Self::build_ref(reference),
+            Self::build_ref(Some(BuiltInLabel::Item.as_ref()), reference),
             Expression::new_zero_or_more(
                 Expression::new_sequence(vec![
-                    Self::build_ref(separator),
-                    Self::build_ref(reference),
+                    Self::build_ref(Some(BuiltInLabel::Separator.as_ref()), separator),
+                    Self::build_ref(Some(BuiltInLabel::Item.as_ref()), reference),
                 ])
                 .into(),
             ),
@@ -214,7 +215,10 @@ impl Builder {
         for precedence_expression in precedence_expressions {
             let PrecedenceExpression { name, operators } = precedence_expression.as_ref();
 
-            values.push(Value::new(Self::build_ref(name), None));
+            values.push(Value::new(
+                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), name),
+                None,
+            ));
 
             self.add_entry(name, Terminal::No, Inlined::No);
 
@@ -227,7 +231,7 @@ impl Builder {
             let PrimaryExpression { reference, enabled } = primary_expression;
 
             values.push(Value::new(
-                Self::build_ref(reference),
+                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), reference),
                 Self::build_enabled_comment(enabled),
             ));
         }
@@ -260,24 +264,51 @@ impl Builder {
             OperatorModel::Prefix => {
                 leading_comments.push("Prefix unary operator".to_string());
 
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.push(Value::new(
+                    Self::build_ref(Some(BuiltInLabel::Operand.as_ref()), base_name),
+                    None,
+                ));
             }
             OperatorModel::Postfix => {
                 leading_comments.push("Postfix unary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_ref(Some(BuiltInLabel::Operand.as_ref()), base_name),
+                        None,
+                    ),
+                );
             }
             OperatorModel::BinaryLeftAssociative => {
                 leading_comments.push("Left-associative binary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_ref(Some(BuiltInLabel::LeftOperand.as_ref()), base_name),
+                        None,
+                    ),
+                );
+                values.push(Value::new(
+                    Self::build_ref(Some(BuiltInLabel::RightOperand.as_ref()), base_name),
+                    None,
+                ));
             }
             OperatorModel::BinaryRightAssociative => {
                 leading_comments.push("Right-associative binary operator".to_string());
 
-                values.insert(0, Value::new(Self::build_ref(base_name), None));
-                values.push(Value::new(Self::build_ref(base_name), None));
+                values.insert(
+                    0,
+                    Value::new(
+                        Self::build_ref(Some(BuiltInLabel::LeftOperand.as_ref()), base_name),
+                        None,
+                    ),
+                );
+                values.push(Value::new(
+                    Self::build_ref(Some(BuiltInLabel::RightOperand.as_ref()), base_name),
+                    None,
+                ));
             }
         };
 
@@ -288,11 +319,13 @@ impl Builder {
 
     fn build_fields(fields: &IndexMap<Identifier, Field>) -> Vec<Value> {
         fields
-            .values()
-            .map(|field| match field {
-                Field::Required { reference } => Value::new(Self::build_ref(reference), None),
+            .iter()
+            .map(|(identifier, field)| match field {
+                Field::Required { reference } => {
+                    Value::new(Self::build_ref(Some(identifier), reference), None)
+                }
                 Field::Optional { reference, enabled } => Value::new(
-                    Expression::new_optional(Self::build_ref(reference).into()),
+                    Expression::new_optional(Self::build_ref(Some(identifier), reference).into()),
                     Self::build_enabled_comment(enabled),
                 ),
             })
@@ -454,12 +487,13 @@ impl Builder {
                 scanner,
                 not_followed_by: _,
             } => Self::build_scanner(scanner),
-            Scanner::Fragment { reference } => Self::build_ref(reference),
+            Scanner::Fragment { reference } => Self::build_ref(None, reference),
         }
     }
 
-    fn build_ref(reference: &Identifier) -> Expression {
-        Expression::new_reference(reference.to_owned())
+    fn build_ref(label: Option<&str>, reference: &Identifier) -> Expression {
+        let leading_comment = label.map(|label| format!("{label}:"));
+        Expression::new_reference(leading_comment, reference.to_owned())
     }
 }
 

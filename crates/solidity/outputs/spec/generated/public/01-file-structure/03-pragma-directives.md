@@ -8,61 +8,73 @@
 
 ```
 
-<pre ebnf-snippet="PragmaDirective" style="display: none;"><a href="#PragmaDirective"><span class="k">PragmaDirective</span></a><span class="o"> = </span><a href="../08-keywords#PragmaKeyword"><span class="k">PRAGMA_KEYWORD</span></a><br /><span class="o">                  </span><a href="#Pragma"><span class="k">Pragma</span></a><br /><span class="o">                  </span><a href="../09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="PragmaDirective" style="display: none;"><a href="#PragmaDirective"><span class="k">PragmaDirective</span></a><span class="o"> = </span><span class="cm">(* pragma_keyword: *)</span><span class="o"> </span><a href="../08-keywords#PragmaKeyword"><span class="k">PRAGMA_KEYWORD</span></a><br /><span class="o">                  </span><span class="cm">(* pragma: *)</span><span class="o"> </span><a href="#Pragma"><span class="k">Pragma</span></a><br /><span class="o">                  </span><span class="cm">(* semicolon: *)</span><span class="o"> </span><a href="../09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #Pragma }
 
 ```
 
-<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><br /><span class="o">       | </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ABICoderPragma }
 
 ```
 
-<pre ebnf-snippet="ABICoderPragma" style="display: none;"><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><span class="o"> = </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ABICoderPragma" style="display: none;"><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><span class="o"> = </span><span class="cm">(* abicoder_keyword: *)</span><span class="o"> </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* version: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalPragma }
 
 ```
 
-<pre ebnf-snippet="ExperimentalPragma" style="display: none;"><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><span class="o"> = </span><a href="#ExperimentalKeyword"><span class="k">EXPERIMENTAL_KEYWORD</span></a><br /><span class="o">                     </span><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalPragma" style="display: none;"><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><span class="o"> = </span><span class="cm">(* experimental_keyword: *)</span><span class="o"> </span><a href="#ExperimentalKeyword"><span class="k">EXPERIMENTAL_KEYWORD</span></a><br /><span class="o">                     </span><span class="cm">(* feature: *)</span><span class="o"> </span><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalFeature }
 
 ```
 
-<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                    | </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionPragma }
 
 ```
 
-<pre ebnf-snippet="VersionPragma" style="display: none;"><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o"> = </span><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><br /><span class="o">                </span><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionPragma" style="display: none;"><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o"> = </span><span class="cm">(* solidity_keyword: *)</span><span class="o"> </span><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><br /><span class="o">                </span><span class="cm">(* sets: *)</span><span class="o"> </span><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionExpressionSets }
 
 ```
 
-<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionExpressionSet }
 
 ```
 
-<pre ebnf-snippet="VersionExpressionSet" style="display: none;"><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> = </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionExpressionSet" style="display: none;"><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionExpression }
 
 ```
 
-<pre ebnf-snippet="VersionExpression" style="display: none;"><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o"> = </span><a href="#VersionRange"><span class="k">VersionRange</span></a><br /><span class="o">                  | </span><a href="#VersionComparator"><span class="k">VersionComparator</span></a><br /><span class="o">                  | </span><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><br /><span class="o">                  | </span><a href="#SingleQuotedVersionLiteral"><span class="k">SINGLE_QUOTED_VERSION_LITERAL</span></a><br /><span class="o">                  | </span><a href="#DoubleQuotedVersionLiteral"><span class="k">DOUBLE_QUOTED_VERSION_LITERAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionExpression" style="display: none;"><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionRange"><span class="k">VersionRange</span></a><br /><span class="o">                  | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionComparator"><span class="k">VersionComparator</span></a><br /><span class="o">                  | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><br /><span class="o">                  | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#SingleQuotedVersionLiteral"><span class="k">SINGLE_QUOTED_VERSION_LITERAL</span></a><br /><span class="o">                  | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#DoubleQuotedVersionLiteral"><span class="k">DOUBLE_QUOTED_VERSION_LITERAL</span></a><span class="o">;</span></pre>
+
+```{ .ebnf #VersionRange }
+
+```
+
+<pre ebnf-snippet="VersionRange" style="display: none;"><span class="cm">(* Left-associative binary operator *)</span><br /><a href="#VersionRange"><span class="k">VersionRange</span></a><span class="o"> = </span><span class="cm">(* left_operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><br /><span class="o">               </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#Minus"><span class="k">MINUS</span></a><br /><span class="o">               </span><span class="cm">(* right_operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span></pre>
+
+```{ .ebnf #VersionComparator }
+
+```
+
+<pre ebnf-snippet="VersionComparator" style="display: none;"><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#Caret"><span class="k">CARET</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#Tilde"><span class="k">TILDE</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#Equal"><span class="k">EQUAL</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#LessThan"><span class="k">LESS_THAN</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#GreaterThan"><span class="k">GREATER_THAN</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#LessThanEqual"><span class="k">LESS_THAN_EQUAL</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span><br /><br /><span class="cm">(* Prefix unary operator *)</span><br /><a href="#VersionComparator"><span class="k">VersionComparator</span></a><span class="o"> = </span><span class="cm">(* operator: *)</span><span class="o"> </span><a href="../09-punctuation#GreaterThanEqual"><span class="k">GREATER_THAN_EQUAL</span></a><br /><span class="o">                    </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#VersionExpression"><span class="k">VersionExpression</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionSpecifiers }
 
 ```
 
-<pre ebnf-snippet="VersionSpecifiers" style="display: none;"><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><span class="o"> = </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><a href="../09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionSpecifiers" style="display: none;"><a href="#VersionSpecifiers"><span class="k">VersionSpecifiers</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionSpecifier }
 

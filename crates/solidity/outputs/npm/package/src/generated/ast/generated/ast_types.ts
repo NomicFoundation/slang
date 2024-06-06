@@ -464,14 +464,14 @@ export class UsingAlias {
 
 export class ContractDefinition {
   private readonly fetch = once(() => {
-    const [$abstractKeyword, $contractKeyword, $name, $inheritence, $openBrace, $members, $closeBrace] =
+    const [$abstractKeyword, $contractKeyword, $name, $inheritance, $openBrace, $members, $closeBrace] =
       ast_internal.selectSequence(this.cst);
 
     return {
       abstractKeyword: $abstractKeyword === null ? undefined : ($abstractKeyword as TerminalNode),
       contractKeyword: $contractKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
+      inheritance: $inheritance === null ? undefined : new InheritanceSpecifier($inheritance as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
       members: new ContractMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
@@ -494,8 +494,8 @@ export class ContractDefinition {
     return this.fetch().name;
   }
 
-  public get inheritence(): InheritanceSpecifier | undefined {
-    return this.fetch().inheritence;
+  public get inheritance(): InheritanceSpecifier | undefined {
+    return this.fetch().inheritance;
   }
 
   public get openBrace(): TerminalNode {
@@ -559,14 +559,14 @@ export class InheritanceType {
 
 export class InterfaceDefinition {
   private readonly fetch = once(() => {
-    const [$interfaceKeyword, $name, $inheritence, $openBrace, $members, $closeBrace] = ast_internal.selectSequence(
+    const [$interfaceKeyword, $name, $inheritance, $openBrace, $members, $closeBrace] = ast_internal.selectSequence(
       this.cst,
     );
 
     return {
       interfaceKeyword: $interfaceKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritence: $inheritence === null ? undefined : new InheritanceSpecifier($inheritence as NonterminalNode),
+      inheritance: $inheritance === null ? undefined : new InheritanceSpecifier($inheritance as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
       members: new InterfaceMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
@@ -585,8 +585,8 @@ export class InterfaceDefinition {
     return this.fetch().name;
   }
 
-  public get inheritence(): InheritanceSpecifier | undefined {
-    return this.fetch().inheritence;
+  public get inheritance(): InheritanceSpecifier | undefined {
+    return this.fetch().inheritance;
   }
 
   public get openBrace(): TerminalNode {
@@ -3403,7 +3403,7 @@ export class YulVariableDeclarationValue {
   }
 }
 
-export class YulAssignmentStatement {
+export class YulVariableAssignmentStatement {
   private readonly fetch = once(() => {
     const [$names, $assignment, $expression] = ast_internal.selectSequence(this.cst);
 
@@ -3415,7 +3415,7 @@ export class YulAssignmentStatement {
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulAssignmentStatement);
+    assertKind(this.cst.kind, NonterminalKind.YulVariableAssignmentStatement);
   }
 
   public get names(): YulPaths {
@@ -3431,7 +3431,30 @@ export class YulAssignmentStatement {
   }
 }
 
-export class YulColonAndEqual {
+export class YulStackAssignmentStatement {
+  private readonly fetch = once(() => {
+    const [$assignment, $expression] = ast_internal.selectSequence(this.cst);
+
+    return {
+      assignment: new YulAssignmentOperator($assignment as NonterminalNode),
+      expression: new YulExpression($expression as NonterminalNode),
+    };
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulStackAssignmentStatement);
+  }
+
+  public get assignment(): YulAssignmentOperator {
+    return this.fetch().assignment;
+  }
+
+  public get expression(): YulExpression {
+    return this.fetch().expression;
+  }
+}
+
+export class YulColonEqual {
   private readonly fetch = once(() => {
     const [$colon, $equal] = ast_internal.selectSequence(this.cst);
 
@@ -3442,7 +3465,7 @@ export class YulColonAndEqual {
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulColonAndEqual);
+    assertKind(this.cst.kind, NonterminalKind.YulColonEqual);
   }
 
   public get colon(): TerminalNode {
@@ -4972,7 +4995,8 @@ export class YulStatement {
     | YulBlock
     | YulFunctionDefinition
     | YulVariableDeclarationStatement
-    | YulAssignmentStatement
+    | YulVariableAssignmentStatement
+    | YulStackAssignmentStatement
     | YulIfStatement
     | YulForStatement
     | YulSwitchStatement
@@ -4990,8 +5014,10 @@ export class YulStatement {
         return new YulFunctionDefinition(variant as NonterminalNode);
       case NonterminalKind.YulVariableDeclarationStatement:
         return new YulVariableDeclarationStatement(variant as NonterminalNode);
-      case NonterminalKind.YulAssignmentStatement:
-        return new YulAssignmentStatement(variant as NonterminalNode);
+      case NonterminalKind.YulVariableAssignmentStatement:
+        return new YulVariableAssignmentStatement(variant as NonterminalNode);
+      case NonterminalKind.YulStackAssignmentStatement:
+        return new YulStackAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulIfStatement:
         return new YulIfStatement(variant as NonterminalNode);
       case NonterminalKind.YulForStatement:
@@ -5022,7 +5048,8 @@ export class YulStatement {
     | YulBlock
     | YulFunctionDefinition
     | YulVariableDeclarationStatement
-    | YulAssignmentStatement
+    | YulVariableAssignmentStatement
+    | YulStackAssignmentStatement
     | YulIfStatement
     | YulForStatement
     | YulSwitchStatement
@@ -5036,12 +5063,12 @@ export class YulStatement {
 }
 
 export class YulAssignmentOperator {
-  private readonly fetch: () => YulColonAndEqual | TerminalNode = once(() => {
+  private readonly fetch: () => YulColonEqual | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonterminalKind.YulColonAndEqual:
-        return new YulColonAndEqual(variant as NonterminalNode);
+      case NonterminalKind.YulColonEqual:
+        return new YulColonEqual(variant as NonterminalNode);
 
       case TerminalKind.ColonEqual:
         return variant as TerminalNode;
@@ -5055,7 +5082,7 @@ export class YulAssignmentOperator {
     assertKind(this.cst.kind, NonterminalKind.YulAssignmentOperator);
   }
 
-  public get variant(): YulColonAndEqual | TerminalNode {
+  public get variant(): YulColonEqual | TerminalNode {
     return this.fetch();
   }
 }

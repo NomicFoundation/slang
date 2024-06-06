@@ -22,7 +22,7 @@ pub enum NonterminalKind {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.parser.nonterminal_kinds -%}
+        {%- for variant in model.kinds.nonterminal_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
@@ -49,15 +49,9 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
-    {# _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync) #}
-    Item,
-    Variant,
-    Separator,
-    Operand,
-    LeftOperand,
-    RightOperand,
-    LeadingTrivia,
-    TrailingTrivia,
+    {% for label in model.kinds.built_in_labels -%}
+        {{ label | pascal_case }},
+    {%- endfor %}
 
     // Generated:
     {% if rendering_in_stubs -%}
@@ -65,7 +59,7 @@ pub enum EdgeLabel {
         Stub2,
         Stub3,
     {%- else -%}
-        {% for variant in model.parser.labels -%}
+        {% for variant in model.kinds.labels -%}
             {{ variant | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
@@ -98,7 +92,7 @@ pub enum TerminalKind {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for variant in model.parser.terminal_kinds -%}
+        {%- for variant in model.kinds.terminal_kinds -%}
             {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
             {{ variant }},
         {%- endfor -%}
@@ -112,7 +106,7 @@ impl metaslang_cst::TerminalKind for TerminalKind {
         {%- else -%}
             matches!(
                 self,
-                {%- for variant in model.parser.trivia_scanner_names -%}
+                {%- for variant in model.kinds.trivia_scanner_names -%}
                     | Self::{{ variant }}
                 {%- endfor -%}
             )
@@ -128,7 +122,7 @@ pub(crate) enum LexicalContext {
         Stub2,
         Stub3,
     {%- else -%}
-        {%- for context_name, _ in model.parser.scanner_contexts %}
+        {%- for context_name in model.kinds.lexical_contexts %}
             {{ context_name }},
         {%- endfor %}
     {%- endif -%}
@@ -143,7 +137,7 @@ pub(crate) trait IsLexicalContext {
 #[allow(non_snake_case)]
 pub(crate) mod LexicalContextType {
     {%- if not rendering_in_stubs -%}
-        {%- for context_name, _ in model.parser.scanner_contexts %}
+        {%- for context_name in model.kinds.lexical_contexts %}
             pub struct {{ context_name }};
 
             impl super::IsLexicalContext for {{ context_name }} {

@@ -9,7 +9,6 @@ description = "Construct graphs from parsed source code"
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
-  "Douglas Creager <dcreager@dcreager.net>",
   "Nomic Foundation <packages@nomic.foundation>",
   "Antony Blakey <antony@nomic.foundation>",
   "Igor Matuszewski <igor@nomic.foundation>",
@@ -20,9 +19,6 @@ readme = "README.md"
 license = "MIT"
 keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
-
-[lib]
-test = false
 
 [dependencies]
 log = { workspace = true }

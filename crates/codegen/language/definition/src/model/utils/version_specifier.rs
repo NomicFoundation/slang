@@ -20,4 +20,16 @@ impl VersionSpecifier {
             VersionSpecifier::Range { from, till } => from <= version && version < till,
         }
     }
+
+    /// Returns an iterator over the versions specified as the upper and lower bound.
+    pub fn versions(&self) -> impl Iterator<Item = &Version> {
+        match self {
+            VersionSpecifier::Never => [None, None],
+            VersionSpecifier::From { from } => [Some(from), None],
+            VersionSpecifier::Till { till } => [None, Some(till)],
+            VersionSpecifier::Range { from, till } => [Some(from), Some(till)],
+        }
+        .into_iter()
+        .flatten()
+    }
 }

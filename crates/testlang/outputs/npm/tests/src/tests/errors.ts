@@ -17,9 +17,9 @@ test("render error reports", () => {
 });
 
 test("invalid semantic version", () => {
-  expect(() => new Language("foo_bar")).toThrowError("Invalid semantic version 'foo_bar'.");
+  expect(() => new Language("foo_bar")).toThrow("Invalid semantic version 'foo_bar'.");
 });
 
 test("unsupported language version", () => {
-  expect(() => new Language("0.0.0")).toThrowError("Unsupported language version '0.0.0'.");
+  expect(() => new Language("0.0.0")).toThrow("Unsupported language version '0.0.0'.");
 });

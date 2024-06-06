@@ -24,7 +24,7 @@ Tree:
           - (open_brace꞉ OpenBrace): "{" # (0..1)
           - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
           - (statements꞉ YulStatements): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
-              - (item꞉ YulStatement) ► (variant꞉ YulAssignmentStatement) ► (names꞉ YulPaths): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
+              - (item꞉ YulStatement) ► (variant꞉ YulVariableAssignmentStatement) ► (names꞉ YulPaths): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
                   - (item꞉ YulPath): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..163)
                       - (item꞉ YulPathComponent): # "\t// https://github.com/ethereum/solidity/blob/ebdc..." (2..162)
                           - (leading_trivia꞉ Whitespace): "\t" # (2..3)

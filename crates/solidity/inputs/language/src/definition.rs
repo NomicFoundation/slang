@@ -28,7 +28,7 @@ codegen_language_macros::compile!(Language(
         "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
-        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25"
+        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26"
     ],
     sections = [
         Section(
@@ -2079,7 +2079,7 @@ codegen_language_macros::compile!(Language(
                                     Optional(reference = AbstractKeyword, enabled = From("0.6.0")),
                                 contract_keyword = Required(ContractKeyword),
                                 name = Required(Identifier),
-                                inheritence = Optional(reference = InheritanceSpecifier),
+                                inheritance = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
                                 members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
@@ -2156,7 +2156,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 interface_keyword = Required(InterfaceKeyword),
                                 name = Required(Identifier),
-                                inheritence = Optional(reference = InheritanceSpecifier),
+                                inheritance = Optional(reference = InheritanceSpecifier),
                                 open_brace = Required(OpenBrace),
                                 members = Required(InterfaceMembers),
                                 close_brace = Required(CloseBrace)
@@ -4154,7 +4154,11 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulBlock),
                                 EnumVariant(reference = YulFunctionDefinition),
                                 EnumVariant(reference = YulVariableDeclarationStatement),
-                                EnumVariant(reference = YulAssignmentStatement),
+                                EnumVariant(reference = YulVariableAssignmentStatement),
+                                EnumVariant(
+                                    reference = YulStackAssignmentStatement,
+                                    enabled = Till("0.5.0")
+                                ),
                                 EnumVariant(reference = YulIfStatement),
                                 EnumVariant(reference = YulForStatement),
                                 EnumVariant(reference = YulSwitchStatement),
@@ -4221,9 +4225,17 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Struct(
-                            name = YulAssignmentStatement,
+                            name = YulVariableAssignmentStatement,
                             fields = (
                                 names = Required(YulPaths),
+                                assignment = Required(YulAssignmentOperator),
+                                expression = Required(YulExpression)
+                            )
+                        ),
+                        Struct(
+                            name = YulStackAssignmentStatement,
+                            enabled = Till("0.5.0"),
+                            fields = (
                                 assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
@@ -4231,12 +4243,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulAssignmentOperator,
                             variants = [
-                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5")),
+                                EnumVariant(reference = YulColonEqual, enabled = Till("0.5.5")),
                                 EnumVariant(reference = ColonEqual)
                             ]
                         ),
                         Struct(
-                            name = YulColonAndEqual,
+                            name = YulColonEqual,
                             enabled = Till("0.5.5"),
                             fields = (colon = Required(Colon), equal = Required(Equal))
                         ),

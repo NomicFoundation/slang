@@ -99,21 +99,4 @@ impl NapiCli {
             node_binary,
         })
     }
-
-    pub fn prepublish(resolver: NapiResolver) -> Result<()> {
-        let package_dir = resolver.main_package_dir();
-        let platforms_dir = resolver.platforms_dir();
-
-        // Note: NAPI expects all arguments to be relative to the current directory.
-        let package_dir = package_dir.strip_repo_root()?;
-        let platforms_dir = platforms_dir.strip_repo_root()?;
-
-        return Command::new("napi")
-            .arg("prepublish")
-            .flag("--skip-gh-release")
-            .property("--config", package_dir.join("package.json").unwrap_str())
-            .property("--prefix", platforms_dir.unwrap_str())
-            .env("npm_config_dry_run", "true")
-            .run();
-    }
 }
