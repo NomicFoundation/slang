@@ -73,7 +73,7 @@ pub mod text_index {
     pub use text_index::{TextIndex, TextRange, TextRangeExtensions};
 }
 
-#[cfg(feature = "cli")]
+#[cfg(feature = "__graph_builder")]
 pub(crate) mod graph_builder {
     use metaslang_graph_builder::ast;
     pub(crate) use metaslang_graph_builder::functions::Functions;

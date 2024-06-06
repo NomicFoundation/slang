@@ -21,8 +21,8 @@ pub enum Commands {
         json: bool,
     },
 
+    #[cfg(feature = "__graph_builder")]
     /// Parses a source file and builds a graph executing the instructions from the builder file (*.msgb)
-    #[command(hide = true)]
     BuildGraph {
         /// File path to the source file to parse
         file_path: String,
@@ -52,15 +52,16 @@ impl Commands {
                 version,
                 json,
             } => commands::execute_parse_command(&file_path, version, json),
+            #[cfg(feature = "__graph_builder")]
             Commands::BuildGraph {
                 file_path,
                 version,
                 msgb_path,
                 json,
                 debug,
-            } => {
-                commands::execute_build_graph_command(&file_path, version, &msgb_path, json, debug)
-            }
+            } => commands::graph_builder::execute_build_graph_command(
+                &file_path, version, &msgb_path, json, debug,
+            ),
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,

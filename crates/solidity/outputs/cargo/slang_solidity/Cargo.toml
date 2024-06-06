@@ -33,9 +33,10 @@ required-features = ["cli"]
 
 [features]
 default = ["cli"]
-cli = ["dep:clap", "dep:metaslang_graph_builder", "dep:serde_json", "__private_ariadne"]
+cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # This is meant to be used by the CLI or internally only.
 __private_ariadne = ["dep:ariadne"]
+__graph_builder = ["dep:metaslang_graph_builder"]
 
 [build-dependencies] # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
