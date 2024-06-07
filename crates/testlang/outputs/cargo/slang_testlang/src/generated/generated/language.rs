@@ -849,6 +849,15 @@ impl Language {
     }
 
     #[napi(
+        js_name = "rootKind",
+        ts_return_type = "kinds.NonterminalKind",
+        catch_unwind
+    )]
+    pub fn root_kind_napi() -> NonterminalKind {
+        Self::ROOT_KIND
+    }
+
+    #[napi(
         js_name = "parse",
         ts_return_type = "parse_output.ParseOutput",
         catch_unwind

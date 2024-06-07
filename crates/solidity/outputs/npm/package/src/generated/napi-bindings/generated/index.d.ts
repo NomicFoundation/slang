@@ -735,6 +735,7 @@ export namespace language {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;
+    static rootKind(): kinds.NonterminalKind;
     parse(kind: kinds.NonterminalKind, input: string): parse_output.ParseOutput;
   }
 }
