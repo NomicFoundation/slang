@@ -1,8 +1,6 @@
 #![cfg(test)]
 
 mod errors;
+mod graph;
 mod query;
 mod versions;
-
-#[cfg(feature = "__graph_builder")]
-mod graph;

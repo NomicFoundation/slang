@@ -1971,6 +1971,7 @@ dependencies = [
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_cst",
+ "metaslang_graph_builder",
  "semver",
  "serde",
  "strum",

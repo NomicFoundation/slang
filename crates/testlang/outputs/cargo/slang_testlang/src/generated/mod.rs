@@ -76,14 +76,12 @@ pub mod text_index {
 }
 
 #[cfg(feature = "__graph_builder")]
-pub(crate) mod graph_builder {
+pub mod graph_builder {
     use metaslang_graph_builder::ast;
-    pub(crate) use metaslang_graph_builder::functions::Functions;
-    pub(crate) use metaslang_graph_builder::{
-        ExecutionConfig, ExecutionError, NoCancellation, Variables,
-    };
+    pub use metaslang_graph_builder::functions::Functions;
+    pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
 
     use super::metaslang_cst::KindTypes;
 
-    pub(crate) type File = ast::File<KindTypes>;
+    pub type File = ast::File<KindTypes>;
 }
