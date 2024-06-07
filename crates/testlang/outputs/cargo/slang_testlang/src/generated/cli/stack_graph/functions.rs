@@ -68,13 +68,11 @@ pub mod path {
             parameters.finish()?;
 
             let path = self.0(&path);
-            Ok(path
-                .map(|s| {
-                    s.into_string()
-                        .unwrap_or_else(|s| s.to_string_lossy().to_string())
-                        .into()
-                })
-                .unwrap_or(Value::Null))
+            Ok(path.map_or(Value::Null, |s| {
+                s.into_string()
+                    .unwrap_or_else(|s| s.to_string_lossy().to_string())
+                    .into()
+            }))
         }
     }
 
@@ -120,7 +118,7 @@ pub mod path {
     // Licensed under MIT license & Apache License (Version 2.0)
     pub fn normalize(path: &Path) -> Option<PathBuf> {
         let mut components = path.components().peekable();
-        let mut ret = if let Some(c @ Component::Prefix(..)) = components.peek().cloned() {
+        let mut ret = if let Some(c @ Component::Prefix(..)) = components.peek().copied() {
             components.next();
             PathBuf::from(c.as_os_str())
         } else {

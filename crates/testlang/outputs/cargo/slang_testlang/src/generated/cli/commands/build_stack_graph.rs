@@ -56,7 +56,7 @@ fn print_defs_and_refs(builder: &Builder<'_>) {
     let stack_graph = &builder.stack_graph;
     for handle in stack_graph.iter_nodes() {
         let node = &stack_graph[handle];
-        let syntax_node_ref = builder.node_handle_to_syntax_ref(&handle);
+        let syntax_node_ref = builder.node_handle_to_syntax_ref(handle);
 
         if node.is_definition() {
             println!(
@@ -83,7 +83,7 @@ fn resolve_refs(stack_graph: &StackGraph) {
         .iter_nodes()
         .filter(|handle| stack_graph[*handle].is_reference())
         .collect::<Vec<_>>();
-    for reference in references.iter() {
+    for reference in &references {
         println!(
             "Found ref: {reference}",
             reference = reference.display(stack_graph)
@@ -100,7 +100,7 @@ fn resolve_refs(stack_graph: &StackGraph) {
     )
     .expect("should never be cancelled");
 
-    for result in results.iter() {
+    for result in &results {
         println!("Found path: {result}");
     }
 }
