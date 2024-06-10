@@ -67,6 +67,8 @@ impl Language {
         {%- endif -%}
     ];
 
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::{{ model.kinds.root_kind }};
+
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
@@ -293,6 +295,11 @@ impl Language {
     #[napi(js_name = "supportedVersions", catch_unwind)]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
+    }
+
+    #[napi(js_name = "rootKind", ts_return_type = "kinds.NonterminalKind", catch_unwind)]
+    pub fn root_kind_napi() -> NonterminalKind {
+        Self::ROOT_KIND
     }
 
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]

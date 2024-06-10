@@ -15,6 +15,9 @@ pub mod parse_output;
 #[cfg(feature = "slang_napi_interfaces")]
 pub mod napi_interface;
 
+#[cfg(feature = "cli")]
+pub mod cli;
+
 mod metaslang_cst {
     #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
     // These derives are because default #[derive(...)] on a generic type implements only the trait
@@ -70,4 +73,15 @@ pub mod query {
 pub mod text_index {
     use metaslang_cst::text_index;
     pub use text_index::{TextIndex, TextRange, TextRangeExtensions};
+}
+
+#[cfg(feature = "__graph_builder")]
+pub mod graph_builder {
+    use metaslang_graph_builder::ast;
+    pub use metaslang_graph_builder::functions::Functions;
+    pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
+
+    use super::metaslang_cst::KindTypes;
+
+    pub type File = ast::File<KindTypes>;
 }

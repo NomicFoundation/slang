@@ -14,6 +14,7 @@ use crate::commands::publish::DryRun;
 const USER_FACING_CRATES: &[&str] = &[
     // Sorted by dependency order (from dependencies to dependents):
     "metaslang_cst",
+    "metaslang_graph_builder",
     "slang_solidity",
 ];
 

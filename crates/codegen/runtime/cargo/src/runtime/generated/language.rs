@@ -54,6 +54,8 @@ impl From<Error> for napi::Error {
 impl Language {
     pub const SUPPORTED_VERSIONS: &'static [Version] = &[];
 
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::Stub1;
+
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self { version })
@@ -115,6 +117,15 @@ impl Language {
             .iter()
             .map(|v| v.to_string())
             .collect();
+    }
+
+    #[napi(
+        js_name = "rootKind",
+        ts_return_type = "kinds.NonterminalKind",
+        catch_unwind
+    )]
+    pub fn root_kind_napi() -> NonterminalKind {
+        Self::ROOT_KIND
     }
 
     #[napi(
