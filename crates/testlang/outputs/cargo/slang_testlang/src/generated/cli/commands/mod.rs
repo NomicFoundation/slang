@@ -28,5 +28,5 @@ pub enum CommandError {
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    BuildError(#[from] super::stack_graph::BuildError),
+    BuildError(#[from] crate::bindings::stack_graph::BuildError),
 }

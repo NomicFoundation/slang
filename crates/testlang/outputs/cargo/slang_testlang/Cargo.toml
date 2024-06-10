@@ -15,8 +15,10 @@ testlang_language = { workspace = true }
 [dependencies]
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true, optional = true }
+once_cell = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
+stack-graphs = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
@@ -25,4 +27,4 @@ thiserror = { workspace = true }
 workspace = true
 
 [features]
-__experimental_bindings_api = ["dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:metaslang_graph_builder", "dep:once_cell", "dep:stack-graphs"]

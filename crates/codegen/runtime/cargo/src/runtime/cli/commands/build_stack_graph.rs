@@ -6,8 +6,8 @@ use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::cli::stack_graph::{self, Builder, StackGraphLanguage};
 use crate::bindings::Variables;
+use crate::bindings::stack_graph::{self, Builder, StackGraphLanguage};
 
 pub fn execute(
     file_path_string: &str,

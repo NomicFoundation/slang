@@ -5,9 +5,6 @@ use semver::Version;
 
 pub mod commands;
 
-#[cfg(feature = "__experimental_bindings_api")]
-mod stack_graph;
-
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Parses a source file, and outputs any syntax errors, or a JSON concrete syntax tree
