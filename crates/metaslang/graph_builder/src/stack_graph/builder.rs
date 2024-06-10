@@ -1,10 +1,8 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
-use metaslang_graph_builder::graph::SyntaxNodeRef;
-use metaslang_graph_builder::ExecutionConfig;
+use metaslang_cst::cursor::Cursor;
+use metaslang_cst::KindTypes;
 use once_cell::sync::Lazy;
 use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
@@ -12,8 +10,9 @@ use thiserror::Error;
 
 use super::cancellation::CancellationFlag;
 use super::StackGraphLanguage;
-use crate::bindings::{Edge, ExecutionError, Graph, GraphNode, GraphNodeRef, Value, Variables};
-use crate::cursor::Cursor;
+use crate::execution::error::ExecutionError;
+use crate::graph::{Edge, Graph, GraphNode, GraphNodeRef, SyntaxNodeRef, Value};
+use crate::{ExecutionConfig, Variables};
 
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
@@ -78,23 +77,23 @@ pub const FILE_PATH_VAR: &str = "FILE_PATH";
 /// If given, should be an ancestor of the file path.
 pub const ROOT_PATH_VAR: &str = "ROOT_PATH";
 
-pub struct Builder<'a> {
-    sgl: &'a StackGraphLanguage,
+pub struct Builder<'a, KT: KindTypes> {
+    sgl: &'a StackGraphLanguage<KT>,
     pub stack_graph: &'a mut StackGraph,
     file: Handle<File>,
-    tree_cursor: Cursor,
-    pub graph: Graph,
+    tree_cursor: Cursor<KT>,
+    pub graph: Graph<KT>,
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
     nodes_to_syntax: HashMap<Handle<Node>, SyntaxNodeRef>,
 }
 
-impl<'a> Builder<'a> {
+impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
     pub fn new(
-        sgl: &'a StackGraphLanguage,
+        sgl: &'a StackGraphLanguage<KT>,
         stack_graph: &'a mut StackGraph,
         file: Handle<File>,
-        tree_cursor: Cursor,
+        tree_cursor: Cursor<KT>,
     ) -> Self {
         Builder {
             sgl,
@@ -248,7 +247,7 @@ impl std::fmt::Display for DisplayBuildErrorPretty<'_> {
     }
 }
 
-impl<'a> Builder<'a> {
+impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
     fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
@@ -372,7 +371,7 @@ enum NodeType {
     Scope,
 }
 
-impl<'a> Builder<'a> {
+impl<'a, KT: KindTypes> Builder<'a, KT> {
     /// Get the `NodeID` corresponding to a `Graph` node.
     ///
     /// By default, graph nodes get their index shifted by [`self.injected_node_count`] as their

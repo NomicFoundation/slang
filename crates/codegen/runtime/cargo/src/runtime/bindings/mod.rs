@@ -15,4 +15,14 @@ pub type File = ast::File<KindTypes>;
 pub type Functions = functions::Functions<KindTypes>;
 pub type Graph = metaslang_graph_builder::graph::Graph<KindTypes>;
 
-pub mod stack_graph;
+pub mod stack_graph {
+    use metaslang_graph_builder::stack_graph;
+    pub use metaslang_graph_builder::stack_graph::{
+        BuildError, NoCancellation, FILE_PATH_VAR, ROOT_PATH_VAR,
+    };
+
+    use crate::cst::KindTypes;
+
+    pub type Builder<'a> = stack_graph::Builder<'a, KindTypes>;
+    pub type StackGraphLanguage = stack_graph::StackGraphLanguage<KindTypes>;
+}

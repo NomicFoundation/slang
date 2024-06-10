@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
 
 use thiserror::Error;
 
-use crate::bindings::{
+use crate::execution::{
     CancellationError as GraphCancellationError, CancellationFlag as GraphCancellationFlag,
 };
 

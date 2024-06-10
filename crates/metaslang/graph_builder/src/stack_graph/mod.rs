@@ -1,5 +1,3 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 // -*- coding: utf-8 -*-
 // ------------------------------------------------------------------------------------------------
 // Copyright © 2021, stack-graphs authors.
@@ -295,11 +293,14 @@
 //! }
 //! ```
 
+use metaslang_cst::cursor::Cursor;
+use metaslang_cst::KindTypes;
 use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, StackGraph};
 
-use crate::bindings::{File as GraphFile, Functions, Variables};
-use crate::cursor::Cursor;
+use crate::ast::File as GraphFile;
+use crate::functions::Functions;
+use crate::Variables;
 
 mod builder;
 mod cancellation;
@@ -309,29 +310,29 @@ pub use builder::{BuildError, Builder, FILE_PATH_VAR, ROOT_PATH_VAR};
 pub use cancellation::{CancellationFlag, NoCancellation};
 
 /// Holds information about how to construct stack graphs for a particular language.
-pub struct StackGraphLanguage {
-    msgb: GraphFile,
-    functions: Functions,
+pub struct StackGraphLanguage<KT: KindTypes> {
+    msgb: GraphFile<KT>,
+    functions: Functions<KT>,
 }
 
-impl StackGraphLanguage {
+impl<KT: KindTypes + 'static> StackGraphLanguage<KT> {
     /// Creates a new stack graph language for the given language and
     /// TSG stack graph construction rules.
-    pub fn new(msgb: GraphFile) -> StackGraphLanguage {
+    pub fn new(msgb: GraphFile<KT>) -> StackGraphLanguage<KT> {
         StackGraphLanguage {
             msgb,
             functions: Self::default_functions(),
         }
     }
 
-    fn default_functions() -> Functions {
+    fn default_functions() -> Functions<KT> {
         let mut functions = Functions::stdlib();
         functions::add_path_functions(&mut functions);
         functions
     }
 }
 
-impl StackGraphLanguage {
+impl<KT: KindTypes + 'static> StackGraphLanguage<KT> {
     /// Executes the graph construction rules for this language against a source file, creating new
     /// nodes and edges in `stack_graph`.  Any new nodes that we create will belong to `file`.
     /// (The source file must be implemented in this language, otherwise you'll probably get a
@@ -341,7 +342,7 @@ impl StackGraphLanguage {
         &'a self,
         stack_graph: &'a mut StackGraph,
         file: Handle<File>,
-        tree_cursor: Cursor,
+        tree_cursor: Cursor<KT>,
         globals: &'a Variables<'a>,
         cancellation_flag: &'a dyn CancellationFlag,
     ) -> Result<(), BuildError> {
@@ -357,8 +358,8 @@ impl StackGraphLanguage {
         &'a self,
         stack_graph: &'a mut StackGraph,
         file: Handle<File>,
-        tree_cursor: Cursor,
-    ) -> Builder<'a> {
+        tree_cursor: Cursor<KT>,
+    ) -> Builder<'a, KT> {
         Builder::new(self, stack_graph, file, tree_cursor)
     }
 }

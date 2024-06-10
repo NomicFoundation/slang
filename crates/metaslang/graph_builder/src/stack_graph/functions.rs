@@ -1,5 +1,3 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 // -*- coding: utf-8 -*-
 // ------------------------------------------------------------------------------------------------
 // Copyright © 2021, stack-graphs authors.
@@ -14,12 +12,13 @@ pub use path::add_path_functions;
 pub mod path {
     use std::path::{Component, Path, PathBuf};
 
-    use metaslang_graph_builder::functions::Function;
+    use metaslang_cst::KindTypes;
 
-    use crate::bindings::{ExecutionError, Functions, Graph, Parameters, Value};
-    use crate::cst::KindTypes;
+    use crate::execution::error::ExecutionError;
+    use crate::functions::{Function, Functions, Parameters};
+    use crate::graph::{Graph, Value};
 
-    pub fn add_path_functions(functions: &mut Functions) {
+    pub fn add_path_functions<KT: KindTypes + 'static>(functions: &mut Functions<KT>) {
         functions.add(
             "path-dir".into(),
             path_fn(|p| p.parent().map(|s| s.as_os_str().to_os_string())),
@@ -44,7 +43,7 @@ pub mod path {
         functions.add("path-split".into(), PathSplit);
     }
 
-    pub fn path_fn<F>(f: F) -> impl Function<KindTypes>
+    pub fn path_fn<F, KT: KindTypes>(f: F) -> impl Function<KT>
     where
         F: Fn(&Path) -> Option<std::ffi::OsString>,
     {
@@ -55,13 +54,13 @@ pub mod path {
     where
         F: Fn(&Path) -> Option<std::ffi::OsString>;
 
-    impl<F> Function<KindTypes> for PathFn<F>
+    impl<F, KT: KindTypes> Function<KT> for PathFn<F>
     where
         F: Fn(&Path) -> Option<std::ffi::OsString>,
     {
         fn call(
             &self,
-            _graph: &mut Graph,
+            _graph: &mut Graph<KT>,
             parameters: &mut dyn Parameters,
         ) -> Result<Value, ExecutionError> {
             let path = PathBuf::from(parameters.param()?.into_string()?);
@@ -78,10 +77,10 @@ pub mod path {
 
     struct PathJoin;
 
-    impl Function<KindTypes> for PathJoin {
+    impl<KT: KindTypes> Function<KT> for PathJoin {
         fn call(
             &self,
-            _graph: &mut Graph,
+            _graph: &mut Graph<KT>,
             parameters: &mut dyn Parameters,
         ) -> Result<Value, ExecutionError> {
             let mut path = PathBuf::new();
@@ -95,10 +94,10 @@ pub mod path {
 
     struct PathSplit;
 
-    impl Function<KindTypes> for PathSplit {
+    impl<KT: KindTypes> Function<KT> for PathSplit {
         fn call(
             &self,
-            _graph: &mut Graph,
+            _graph: &mut Graph<KT>,
             parameters: &mut dyn Parameters,
         ) -> Result<Value, ExecutionError> {
             let path = PathBuf::from(parameters.param()?.into_string()?);
