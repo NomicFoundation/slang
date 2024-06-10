@@ -5,6 +5,7 @@ env = {
 
   // Python:
   "LANG": "en_US.UTF-8",
+  "TZ": "UTC",
 
   // Rust:
   "RUST_BACKTRACE": "full",
