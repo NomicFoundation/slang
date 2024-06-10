@@ -15,9 +15,27 @@ codegen_language_macros::compile!(Language(
                 Precedence(
                     name = Bar,
                     precedence_expressions = [
-                        PrecedenceExpression(name = Expression1, operators = []),
-                        PrecedenceExpression(name = Expression2, operators = []),
-                        PrecedenceExpression(name = Expression1, operators = [])
+                        PrecedenceExpression(
+                            name = Expression1,
+                            operators = [PrecedenceOperator(
+                                model = BinaryLeftAssociative,
+                                fields = (operator = Required(Baz))
+                            )]
+                        ),
+                        PrecedenceExpression(
+                            name = Expression2,
+                            operators = [PrecedenceOperator(
+                                model = BinaryLeftAssociative,
+                                fields = (operator = Required(Baz))
+                            )]
+                        ),
+                        PrecedenceExpression(
+                            name = Expression1,
+                            operators = [PrecedenceOperator(
+                                model = BinaryLeftAssociative,
+                                fields = (operator = Required(Baz))
+                            )]
+                        )
                     ],
                     primary_expressions = [PrimaryExpression(reference = Baz)]
                 ),

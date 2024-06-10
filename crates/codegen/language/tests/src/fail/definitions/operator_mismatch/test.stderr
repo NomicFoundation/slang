@@ -1,0 +1,5 @@
+error: All operators under the same expression must have the same model and type.
+  --> src/fail/definitions/operator_mismatch/test.rs:18:32
+   |
+18 |                         name = Foo,
+   |                                ^^^

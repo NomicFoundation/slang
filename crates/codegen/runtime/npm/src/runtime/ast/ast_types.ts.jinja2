@@ -3,53 +3,53 @@
 {%- else -%}
     import * as assert from "node:assert";
     import { ast_internal } from "../../napi-bindings/generated";
-    import { NonterminalNode, TerminalNode } from "../../cst";
-    import { NonterminalKind, TerminalKind } from "../../kinds";
+    import { NodeType, NonterminalNode, TerminalNode } from "../../cst";
+    import { NonterminalKind } from "../../kinds";
 
     /*
     * Sequences:
     */
 
     {% for sequence in model.ast.sequences %}
-      export class {{ sequence.name }} {
+      export class {{ sequence.parent_type }} {
         private readonly fetch = once(() => {
           const [
             {%- for field in sequence.fields %}
-              ${{ field.name | camel_case }},
+              ${{ field.label | camel_case }},
             {%- endfor %}
           ] = ast_internal.selectSequence(this.cst);
 
           return {
             {%- for field in sequence.fields %}
-              {{ field.name | camel_case }}:
+              {{ field.label | camel_case }}:
               {%- if field.is_optional -%}
-                ${{ field.name | camel_case }} === null ? undefined :
+                ${{ field.label | camel_case }} === null ? undefined :
               {%- endif -%}
-              {%- if field.is_terminal -%}
-                ${{ field.name | camel_case }} as TerminalNode,
+              {%- if field.type -%}
+                new {{ field.type }}(${{ field.label | camel_case }} as NonterminalNode),
               {%- else -%}
-                new {{ field.reference }}(${{ field.name | camel_case }} as NonterminalNode),
+                ${{ field.label | camel_case }} as TerminalNode,
               {%- endif -%}
             {% endfor -%}
           };
         });
 
         public constructor(public readonly cst: NonterminalNode) {
-          assertKind(this.cst.kind, NonterminalKind.{{ sequence.name }});
+          assertKind(this.cst.kind, NonterminalKind.{{ sequence.parent_type }});
         }
 
         {% for field in sequence.fields %}
-          public get {{ field.name | camel_case }}() :
-            {%- if field.is_terminal -%}
-              TerminalNode
+          public get {{ field.label | camel_case }}() :
+            {%- if field.type -%}
+              {{ field.type }}
             {%- else -%}
-              {{ field.reference }}
+              TerminalNode
             {%- endif -%}
             {%- if field.is_optional -%}
               | undefined
             {%- endif -%}
           {
-            return this.fetch().{{ field.name | camel_case }};
+            return this.fetch().{{ field.label | camel_case }};
           }
         {% endfor %}
       }
@@ -60,9 +60,9 @@
     */
 
     {% for choice in model.ast.choices %}
-      export class {{ choice.name }} {
-        {%- set variant_types = choice.nonterminals -%}
-        {%- if choice.terminals | length > 0 -%}
+      export class {{ choice.parent_type }} {
+        {%- set variant_types = choice.nonterminal_types -%}
+        {%- if choice.includes_terminals -%}
           {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
         {%- endif -%}
         {%- set variant_types = variant_types | join(sep = " | ") -%}
@@ -70,26 +70,29 @@
         private readonly fetch: () => {{ variant_types }} = once(() => {
           const variant = ast_internal.selectChoice(this.cst);
 
-          switch (variant.kind) {
-            {%- for nonterminal in choice.nonterminals %}
-              case NonterminalKind.{{ nonterminal }}:
-                return new {{ nonterminal }}(variant as NonterminalNode);
-            {%- endfor %}
-
-            {% if choice.terminals | length > 0 %}
-              {%- for terminal in choice.terminals %}
-                case TerminalKind.{{ terminal }}:
-              {%- endfor %}
-                return variant as TerminalNode;
+          {% if choice.nonterminal_types | length == 0 -%}
+            return variant as TerminalNode;
+          {%- else -%}
+            {% if choice.includes_terminals -%}
+              if (variant.type == NodeType.Terminal) {
+                  return variant as TerminalNode;
+              }
             {%- endif %}
 
-            default:
-              assert.fail(`Unexpected variant: ${variant.kind}`);
-          }
+            switch (variant.kind) {
+              {%- for nonterminal in choice.nonterminal_types %}
+                case NonterminalKind.{{ nonterminal }}:
+                  return new {{ nonterminal }}(variant as NonterminalNode);
+              {%- endfor %}
+
+              default:
+                assert.fail(`Unexpected variant: ${variant.kind}`);
+            }
+          {%- endif %}
         });
 
         public constructor(public readonly cst: NonterminalNode) {
-          assertKind(this.cst.kind, NonterminalKind.{{ choice.name }});
+          assertKind(this.cst.kind, NonterminalKind.{{ choice.parent_type }});
         }
 
         public get variant(): {{ variant_types }} {
@@ -103,26 +106,26 @@
     */
 
     {% for repeated in model.ast.repeated %}
-      export class {{ repeated.name }} {
+      export class {{ repeated.parent_type }} {
         private readonly fetch = once(() => {
           const items = ast_internal.selectRepeated(this.cst);
 
-          {%- if repeated.is_terminal -%}
-            return items as TerminalNode[];
+          {%- if repeated.item_type -%}
+            return items.map((item) => new {{ repeated.item_type }}(item as NonterminalNode));
           {%- else -%}
-            return items.map((item) => new {{ repeated.reference }}(item as NonterminalNode));
+            return items as TerminalNode[];
           {%- endif -%}
         });
           
         public constructor(public readonly cst: NonterminalNode) {
-          assertKind(this.cst.kind, NonterminalKind.{{ repeated.name }});
+          assertKind(this.cst.kind, NonterminalKind.{{ repeated.parent_type }});
         }
 
         public get items():
-          {%- if repeated.is_terminal -%}
-            readonly TerminalNode[]
+          {%- if repeated.item_type -%}
+            readonly {{ repeated.item_type }}[]
           {%- else -%}
-            readonly {{ repeated.reference }}[]
+            readonly TerminalNode[]
           {%- endif -%}
         {
           return this.fetch();
@@ -135,29 +138,29 @@
     */
 
     {% for separated in model.ast.separated %}
-      export class {{ separated.name }} {
+      export class {{ separated.parent_type }} {
         private readonly fetch = once(() => {
           const [items, separators] = ast_internal.selectSeparated(this.cst);
 
           return {
-            {%- if separated.is_terminal -%}
-              items: items as TerminalNode[],
+            {%- if separated.item_type -%}
+              items: items.map((item) => new {{ separated.item_type }}(item as NonterminalNode)),
             {%- else -%}
-              items: items.map((item) => new {{ separated.reference }}(item as NonterminalNode)),
+              items: items as TerminalNode[],
             {%- endif -%}
             separators: separators as TerminalNode[],
           };
         });
 
         public constructor(public readonly cst: NonterminalNode) {
-          assertKind(this.cst.kind, NonterminalKind.{{ separated.name }});
+          assertKind(this.cst.kind, NonterminalKind.{{ separated.parent_type }});
         }
 
         public get items():
-          {%- if separated.is_terminal -%}
-            readonly TerminalNode[]
+          {%- if separated.item_type -%}
+            readonly {{ separated.item_type }}[]
           {%- else -%}
-            readonly {{ separated.reference }}[]
+            readonly TerminalNode[]
           {%- endif -%}
         {
           return this.fetch().items;

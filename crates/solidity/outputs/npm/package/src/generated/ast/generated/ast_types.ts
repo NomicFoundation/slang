@@ -2,8 +2,8 @@
 
 import * as assert from "node:assert";
 import { ast_internal } from "../../napi-bindings/generated";
-import { NonterminalNode, TerminalNode } from "../../cst";
-import { NonterminalKind, TerminalKind } from "../../kinds";
+import { NodeType, NonterminalNode, TerminalNode } from "../../cst";
+import { NonterminalKind } from "../../kinds";
 
 /*
  * Sequences:
@@ -3838,12 +3838,13 @@ export class ExperimentalFeature {
   private readonly fetch: () => StringLiteral | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.StringLiteral:
         return new StringLiteral(variant as NonterminalNode);
-
-      case TerminalKind.Identifier:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3863,6 +3864,10 @@ export class VersionExpression {
   private readonly fetch: () => VersionRange | VersionComparator | VersionSpecifiers | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.VersionRange:
         return new VersionRange(variant as NonterminalNode);
@@ -3870,10 +3875,6 @@ export class VersionExpression {
         return new VersionComparator(variant as NonterminalNode);
       case NonterminalKind.VersionSpecifiers:
         return new VersionSpecifiers(variant as NonterminalNode);
-
-      case TerminalKind.SingleQuotedVersionLiteral:
-      case TerminalKind.DoubleQuotedVersionLiteral:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3943,27 +3944,7 @@ export class UsingOperator {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.Ampersand:
-      case TerminalKind.Asterisk:
-      case TerminalKind.BangEqual:
-      case TerminalKind.Bar:
-      case TerminalKind.Caret:
-      case TerminalKind.EqualEqual:
-      case TerminalKind.GreaterThan:
-      case TerminalKind.GreaterThanEqual:
-      case TerminalKind.LessThan:
-      case TerminalKind.LessThanEqual:
-      case TerminalKind.Minus:
-      case TerminalKind.Percent:
-      case TerminalKind.Plus:
-      case TerminalKind.Slash:
-      case TerminalKind.Tilde:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -3979,12 +3960,13 @@ export class UsingTarget {
   private readonly fetch: () => TypeName | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.TypeName:
         return new TypeName(variant as NonterminalNode);
-
-      case TerminalKind.Asterisk:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4076,16 +4058,13 @@ export class StateVariableAttribute {
   private readonly fetch: () => OverrideSpecifier | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as NonterminalNode);
-
-      case TerminalKind.ConstantKeyword:
-      case TerminalKind.InternalKeyword:
-      case TerminalKind.PrivateKeyword:
-      case TerminalKind.PublicKeyword:
-      case TerminalKind.ImmutableKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4105,15 +4084,7 @@ export class FunctionName {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.Identifier:
-      case TerminalKind.FallbackKeyword:
-      case TerminalKind.ReceiveKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4129,22 +4100,15 @@ export class FunctionAttribute {
   private readonly fetch: () => ModifierInvocation | OverrideSpecifier | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ModifierInvocation:
         return new ModifierInvocation(variant as NonterminalNode);
       case NonterminalKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as NonterminalNode);
-
-      case TerminalKind.ConstantKeyword:
-      case TerminalKind.ExternalKeyword:
-      case TerminalKind.InternalKeyword:
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.PrivateKeyword:
-      case TerminalKind.PublicKeyword:
-      case TerminalKind.PureKeyword:
-      case TerminalKind.ViewKeyword:
-      case TerminalKind.VirtualKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4164,12 +4128,13 @@ export class FunctionBody {
   private readonly fetch: () => Block | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.Block:
         return new Block(variant as NonterminalNode);
-
-      case TerminalKind.Semicolon:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4189,16 +4154,13 @@ export class ConstructorAttribute {
   private readonly fetch: () => ModifierInvocation | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ModifierInvocation:
         return new ModifierInvocation(variant as NonterminalNode);
-
-      case TerminalKind.InternalKeyword:
-      case TerminalKind.OverrideKeyword:
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.PublicKeyword:
-      case TerminalKind.VirtualKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4218,19 +4180,13 @@ export class UnnamedFunctionAttribute {
   private readonly fetch: () => ModifierInvocation | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ModifierInvocation:
         return new ModifierInvocation(variant as NonterminalNode);
-
-      case TerminalKind.ConstantKeyword:
-      case TerminalKind.ExternalKeyword:
-      case TerminalKind.InternalKeyword:
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.PrivateKeyword:
-      case TerminalKind.PublicKeyword:
-      case TerminalKind.PureKeyword:
-      case TerminalKind.ViewKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4250,18 +4206,15 @@ export class FallbackFunctionAttribute {
   private readonly fetch: () => ModifierInvocation | OverrideSpecifier | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ModifierInvocation:
         return new ModifierInvocation(variant as NonterminalNode);
       case NonterminalKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as NonterminalNode);
-
-      case TerminalKind.ExternalKeyword:
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.PureKeyword:
-      case TerminalKind.ViewKeyword:
-      case TerminalKind.VirtualKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4281,16 +4234,15 @@ export class ReceiveFunctionAttribute {
   private readonly fetch: () => ModifierInvocation | OverrideSpecifier | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ModifierInvocation:
         return new ModifierInvocation(variant as NonterminalNode);
       case NonterminalKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as NonterminalNode);
-
-      case TerminalKind.ExternalKeyword:
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.VirtualKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4310,12 +4262,13 @@ export class ModifierAttribute {
   private readonly fetch: () => OverrideSpecifier | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.OverrideSpecifier:
         return new OverrideSpecifier(variant as NonterminalNode);
-
-      case TerminalKind.VirtualKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4367,20 +4320,7 @@ export class FunctionTypeAttribute {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.InternalKeyword:
-      case TerminalKind.ExternalKeyword:
-      case TerminalKind.PrivateKeyword:
-      case TerminalKind.PublicKeyword:
-      case TerminalKind.ConstantKeyword:
-      case TerminalKind.PureKeyword:
-      case TerminalKind.ViewKeyword:
-      case TerminalKind.PayableKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4420,19 +4360,13 @@ export class ElementaryType {
   private readonly fetch: () => AddressType | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.AddressType:
         return new AddressType(variant as NonterminalNode);
-
-      case TerminalKind.BoolKeyword:
-      case TerminalKind.ByteKeyword:
-      case TerminalKind.StringKeyword:
-      case TerminalKind.BytesKeyword:
-      case TerminalKind.IntKeyword:
-      case TerminalKind.UintKeyword:
-      case TerminalKind.FixedKeyword:
-      case TerminalKind.UfixedKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4564,12 +4498,13 @@ export class VariableDeclarationType {
   private readonly fetch: () => TypeName | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.TypeName:
         return new TypeName(variant as NonterminalNode);
-
-      case TerminalKind.VarKeyword:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4589,15 +4524,7 @@ export class StorageLocation {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.MemoryKeyword:
-      case TerminalKind.StorageKeyword:
-      case TerminalKind.CallDataKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4617,6 +4544,10 @@ export class ForStatementInitialization {
     | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ExpressionStatement:
         return new ExpressionStatement(variant as NonterminalNode);
@@ -4624,9 +4555,6 @@ export class ForStatementInitialization {
         return new VariableDeclarationStatement(variant as NonterminalNode);
       case NonterminalKind.TupleDeconstructionStatement:
         return new TupleDeconstructionStatement(variant as NonterminalNode);
-
-      case TerminalKind.Semicolon:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4650,12 +4578,13 @@ export class ForStatementCondition {
   private readonly fetch: () => ExpressionStatement | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.ExpressionStatement:
         return new ExpressionStatement(variant as NonterminalNode);
-
-      case TerminalKind.Semicolon:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4702,6 +4631,10 @@ export class Expression {
     | ElementaryType
     | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
+
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
 
     switch (variant.kind) {
       case NonterminalKind.AssignmentExpression:
@@ -4759,12 +4692,6 @@ export class Expression {
       case NonterminalKind.ElementaryType:
         return new ElementaryType(variant as NonterminalNode);
 
-      case TerminalKind.PayableKeyword:
-      case TerminalKind.TrueKeyword:
-      case TerminalKind.FalseKeyword:
-      case TerminalKind.Identifier:
-        return variant as TerminalNode;
-
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
     }
@@ -4811,14 +4738,7 @@ export class MemberAccess {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.Identifier:
-      case TerminalKind.AddressKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4858,23 +4778,7 @@ export class NumberUnit {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.WeiKeyword:
-      case TerminalKind.GweiKeyword:
-      case TerminalKind.SzaboKeyword:
-      case TerminalKind.FinneyKeyword:
-      case TerminalKind.EtherKeyword:
-      case TerminalKind.SecondsKeyword:
-      case TerminalKind.MinutesKeyword:
-      case TerminalKind.HoursKeyword:
-      case TerminalKind.DaysKeyword:
-      case TerminalKind.WeeksKeyword:
-      case TerminalKind.YearsKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4925,14 +4829,7 @@ export class StringLiteral {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.SingleQuotedStringLiteral:
-      case TerminalKind.DoubleQuotedStringLiteral:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4948,14 +4845,7 @@ export class HexStringLiteral {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.SingleQuotedHexStringLiteral:
-      case TerminalKind.DoubleQuotedHexStringLiteral:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -4971,14 +4861,7 @@ export class UnicodeStringLiteral {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.SingleQuotedUnicodeStringLiteral:
-      case TerminalKind.DoubleQuotedUnicodeStringLiteral:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -5066,12 +4949,13 @@ export class YulAssignmentOperator {
   private readonly fetch: () => YulColonEqual | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.YulColonEqual:
         return new YulColonEqual(variant as NonterminalNode);
-
-      case TerminalKind.ColonEqual:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -5143,14 +5027,7 @@ export class YulPathComponent {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.YulIdentifier:
-      case TerminalKind.YulAddressKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -5166,93 +5043,7 @@ export class YulBuiltInFunction {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.YulAddKeyword:
-      case TerminalKind.YulAddModKeyword:
-      case TerminalKind.YulAddressKeyword:
-      case TerminalKind.YulAndKeyword:
-      case TerminalKind.YulBalanceKeyword:
-      case TerminalKind.YulBlockHashKeyword:
-      case TerminalKind.YulByteKeyword:
-      case TerminalKind.YulCallCodeKeyword:
-      case TerminalKind.YulCallDataCopyKeyword:
-      case TerminalKind.YulCallDataLoadKeyword:
-      case TerminalKind.YulCallDataSizeKeyword:
-      case TerminalKind.YulCallerKeyword:
-      case TerminalKind.YulCallKeyword:
-      case TerminalKind.YulCallValueKeyword:
-      case TerminalKind.YulCoinBaseKeyword:
-      case TerminalKind.YulCreateKeyword:
-      case TerminalKind.YulDelegateCallKeyword:
-      case TerminalKind.YulDivKeyword:
-      case TerminalKind.YulEqKeyword:
-      case TerminalKind.YulExpKeyword:
-      case TerminalKind.YulExtCodeCopyKeyword:
-      case TerminalKind.YulExtCodeSizeKeyword:
-      case TerminalKind.YulGasKeyword:
-      case TerminalKind.YulGasLimitKeyword:
-      case TerminalKind.YulGasPriceKeyword:
-      case TerminalKind.YulGtKeyword:
-      case TerminalKind.YulInvalidKeyword:
-      case TerminalKind.YulIsZeroKeyword:
-      case TerminalKind.YulLog0Keyword:
-      case TerminalKind.YulLog1Keyword:
-      case TerminalKind.YulLog2Keyword:
-      case TerminalKind.YulLog3Keyword:
-      case TerminalKind.YulLog4Keyword:
-      case TerminalKind.YulLtKeyword:
-      case TerminalKind.YulMLoadKeyword:
-      case TerminalKind.YulModKeyword:
-      case TerminalKind.YulMSizeKeyword:
-      case TerminalKind.YulMStore8Keyword:
-      case TerminalKind.YulMStoreKeyword:
-      case TerminalKind.YulMulKeyword:
-      case TerminalKind.YulMulModKeyword:
-      case TerminalKind.YulNotKeyword:
-      case TerminalKind.YulNumberKeyword:
-      case TerminalKind.YulOriginKeyword:
-      case TerminalKind.YulOrKeyword:
-      case TerminalKind.YulPopKeyword:
-      case TerminalKind.YulReturnKeyword:
-      case TerminalKind.YulRevertKeyword:
-      case TerminalKind.YulSDivKeyword:
-      case TerminalKind.YulSelfDestructKeyword:
-      case TerminalKind.YulSgtKeyword:
-      case TerminalKind.YulSignExtendKeyword:
-      case TerminalKind.YulSLoadKeyword:
-      case TerminalKind.YulSltKeyword:
-      case TerminalKind.YulSModKeyword:
-      case TerminalKind.YulSStoreKeyword:
-      case TerminalKind.YulStopKeyword:
-      case TerminalKind.YulSubKeyword:
-      case TerminalKind.YulTimestampKeyword:
-      case TerminalKind.YulXorKeyword:
-      case TerminalKind.YulKeccak256Keyword:
-      case TerminalKind.YulSha3Keyword:
-      case TerminalKind.YulSuicideKeyword:
-      case TerminalKind.YulReturnDataCopyKeyword:
-      case TerminalKind.YulReturnDataSizeKeyword:
-      case TerminalKind.YulStaticCallKeyword:
-      case TerminalKind.YulCreate2Keyword:
-      case TerminalKind.YulExtCodeHashKeyword:
-      case TerminalKind.YulSarKeyword:
-      case TerminalKind.YulShlKeyword:
-      case TerminalKind.YulShrKeyword:
-      case TerminalKind.YulChainIdKeyword:
-      case TerminalKind.YulSelfBalanceKeyword:
-      case TerminalKind.YulBaseFeeKeyword:
-      case TerminalKind.YulDifficultyKeyword:
-      case TerminalKind.YulPrevRandaoKeyword:
-      case TerminalKind.YulBlobBaseFeeKeyword:
-      case TerminalKind.YulBlobHashKeyword:
-      case TerminalKind.YulTLoadKeyword:
-      case TerminalKind.YulTStoreKeyword:
-      case TerminalKind.YulMCopyKeyword:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {
@@ -5268,17 +5059,15 @@ export class YulLiteral {
   private readonly fetch: () => HexStringLiteral | StringLiteral | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.HexStringLiteral:
         return new HexStringLiteral(variant as NonterminalNode);
       case NonterminalKind.StringLiteral:
         return new StringLiteral(variant as NonterminalNode);
-
-      case TerminalKind.YulTrueKeyword:
-      case TerminalKind.YulFalseKeyword:
-      case TerminalKind.YulDecimalLiteral:
-      case TerminalKind.YulHexLiteral:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
