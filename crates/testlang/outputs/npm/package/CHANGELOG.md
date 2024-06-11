@@ -1,5 +1,25 @@
 # changelog
 
+## 0.15.0
+
+### Minor Changes
+
+-   [#975](https://github.com/NomicFoundation/slang/pull/975) [`46b1dde`](https://github.com/NomicFoundation/slang/commit/46b1dde2e39903cff6398d5da3a4d1a1820f0095) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `QueryResult` to `QueryMatch`, and its `bindings` to `captures`.
+
+-   [#971](https://github.com/NomicFoundation/slang/pull/971) [`be943b7`](https://github.com/NomicFoundation/slang/commit/be943b7349e4c4b7589d93cf670bc8453125b229) Thanks [@Xanewok](https://github.com/Xanewok)! - Rename `RuleKind` to `NonterminalKind`, `TokenKind` to `TerminalKind`, and `NodeLabel` to `EdgeLabel`.
+
+-   [#963](https://github.com/NomicFoundation/slang/pull/963) [`a5593f9`](https://github.com/NomicFoundation/slang/commit/a5593f981b1df133449264c995c91ac738981474) Thanks [@Xanewok](https://github.com/Xanewok)! - Introduce a `Diagnostic` API for compiler errors, warnings etc.
+
+### Patch Changes
+
+-   [#996](https://github.com/NomicFoundation/slang/pull/996) [`cdc153d`](https://github.com/NomicFoundation/slang/commit/cdc153dbb149c277f6f0d00ed95bbac1e5bec8f1) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add support for version `0.8.26`.
+
+-   [#983](https://github.com/NomicFoundation/slang/pull/983) [`ea31417`](https://github.com/NomicFoundation/slang/commit/ea3141741ef3e491b2125f0d24d5db58c2f5d600) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Expose the language root non-terminal kind at `Language.rootKind()`.
+
+-   [#965](https://github.com/NomicFoundation/slang/pull/965) [`61b6b06`](https://github.com/NomicFoundation/slang/commit/61b6b06deaa1db86a21c5fed675cd665ed2c42a4) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - refactor CST building and querying utilities into a separate `metaslang_cst` crate.
+
+-   [#997](https://github.com/NomicFoundation/slang/pull/997) [`84ad856`](https://github.com/NomicFoundation/slang/commit/84ad856b344e7c17376b38c420a7952556dc4ff5) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Support stack assignments in Yul before `0.5.0`.
+
 ## 0.14.2
 
 ### Patch Changes
