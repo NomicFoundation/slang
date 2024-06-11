@@ -128,7 +128,9 @@ pub struct Topic {
     pub items: Vec<Item>,
 }
 
-#[derive(strum_macros::AsRefStr, strum_macros::EnumIter, strum_macros::VariantNames)]
+#[derive(
+    Clone, Copy, Debug, strum_macros::AsRefStr, strum_macros::EnumIter, strum_macros::VariantNames,
+)]
 #[strum(serialize_all = "snake_case")]
 pub enum BuiltInLabel {
     Item,

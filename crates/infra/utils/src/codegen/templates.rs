@@ -159,7 +159,7 @@ impl CodegenTemplates {
         let source = template_path.read_to_string()?;
 
         let variable_location = Regex::new(&format!(
-            "\\{{%.*[^a-zA-Z0-9_\\.](?<variable>{variable}).*%\\}}"
+            "\\{{.*[^a-zA-Z0-9_\\.](?<variable>{variable}).*\\}}"
         ))?
         .captures(&source)
         .unwrap()

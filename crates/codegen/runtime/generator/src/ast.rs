@@ -1,6 +1,5 @@
-use codegen_language_definition::model;
+use codegen_language_definition::model::{self, BuiltInLabel};
 use indexmap::{IndexMap, IndexSet};
-use itertools::Itertools;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
@@ -16,44 +15,43 @@ pub struct AstModel {
 
 #[derive(Serialize)]
 pub struct Sequence {
-    pub name: model::Identifier,
+    pub parent_type: model::Identifier,
 
     pub fields: Vec<Field>,
 }
 
 #[derive(Clone, Serialize)]
 pub struct Field {
-    pub name: model::Identifier,
+    pub label: model::Identifier,
 
-    pub reference: model::Identifier,
-    pub is_terminal: bool,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub r#type: Option<model::Identifier>,
+
     pub is_optional: bool,
 }
 
 #[derive(Serialize)]
 pub struct Choice {
-    pub name: model::Identifier,
+    pub parent_type: model::Identifier,
 
-    pub terminals: Vec<model::Identifier>,
-    pub nonterminals: Vec<model::Identifier>,
+    pub nonterminal_types: Vec<model::Identifier>,
+    pub includes_terminals: bool,
 }
 
 #[derive(Serialize)]
 pub struct Repeated {
-    pub name: model::Identifier,
+    pub parent_type: model::Identifier,
 
-    pub reference: model::Identifier,
-    pub is_terminal: bool,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub item_type: Option<model::Identifier>,
 }
 
 #[derive(Serialize)]
 pub struct Separated {
-    pub name: model::Identifier,
+    pub parent_type: model::Identifier,
 
-    pub reference: model::Identifier,
-    pub is_terminal: bool,
-
-    pub separator: model::Identifier,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub item_type: Option<model::Identifier>,
 }
 
 impl AstModel {
@@ -130,56 +128,59 @@ impl AstModel {
     }
 
     fn add_struct_item(&mut self, item: &model::StructItem) {
-        let name = item.name.clone();
-        let fields = self.convert_fields(&item.fields);
+        let parent_type = item.name.clone();
+        let fields = self.convert_fields(&item.fields).collect();
 
-        self.sequences.push(Sequence { name, fields });
+        self.sequences.push(Sequence {
+            parent_type,
+            fields,
+        });
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
-        let name = item.name.clone();
+        let parent_type = item.name.clone();
 
-        let (terminals, nonterminals) = item
+        let (terminal_types, nonterminal_types) = item
             .variants
             .iter()
             .map(|variant| variant.reference.clone())
             .partition(|reference| self.terminals.contains(reference));
 
         self.choices.push(Choice {
-            name,
-            terminals,
-            nonterminals,
+            parent_type,
+            nonterminal_types,
+            includes_terminals: !terminal_types.is_empty(),
         });
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
-        let name = item.name.clone();
-        let reference = item.reference.clone();
-        let is_terminal = self.terminals.contains(&reference);
+        let parent_type = item.name.clone();
 
         self.repeated.push(Repeated {
-            name,
-            reference,
-            is_terminal,
+            parent_type,
+            item_type: if self.terminals.contains(&item.reference) {
+                None
+            } else {
+                Some(item.reference.clone())
+            },
         });
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
-        let name = item.name.clone();
-        let reference = item.reference.clone();
-        let is_terminal = self.terminals.contains(&reference);
-        let separator = item.separator.clone();
+        let parent_type = item.name.clone();
 
         self.separated.push(Separated {
-            name,
-            reference,
-            is_terminal,
-            separator,
+            parent_type,
+            item_type: if self.terminals.contains(&item.reference) {
+                None
+            } else {
+                Some(item.reference.clone())
+            },
         });
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
-        let name = item.name.clone();
+        let parent_type = item.name.clone();
 
         let precedence_expressions = item
             .precedence_expressions
@@ -191,14 +192,14 @@ impl AstModel {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (terminals, nonterminals) = precedence_expressions
+        let (terminal_types, nonterminal_types) = precedence_expressions
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
         self.choices.push(Choice {
-            name,
-            terminals,
-            nonterminals,
+            parent_type,
+            nonterminal_types,
+            includes_terminals: !terminal_types.is_empty(),
         });
     }
 
@@ -207,93 +208,64 @@ impl AstModel {
         base_name: &model::Identifier,
         expression: &model::PrecedenceExpression,
     ) {
-        let name = expression.name.clone();
-        let operator = self.pick_operator(expression);
-
-        let mut fields = self.convert_fields(&operator.fields);
-
-        let operand = |name: &str| Field {
-            name: name.into(),
-            reference: base_name.clone(),
-            is_terminal: self.terminals.contains(base_name),
+        let operand = |label: BuiltInLabel| Field {
+            label: label.as_ref().into(),
+            r#type: Some(base_name.clone()),
             is_optional: false,
         };
 
+        let parent_type = expression.name.clone();
+
+        // All operators should have the same structure (validated at compile-time),
+        // So let's pick up the first one to generate the types:
+        let operator = &expression.operators[0];
+        let mut fields = vec![];
+
         match operator.model {
             model::OperatorModel::Prefix => {
-                fields.push(operand("operand"));
+                fields.extend(self.convert_fields(&operator.fields));
+                fields.push(operand(BuiltInLabel::Operand));
             }
             model::OperatorModel::Postfix => {
-                fields.insert(0, operand("operand"));
+                fields.push(operand(BuiltInLabel::Operand));
+                fields.extend(self.convert_fields(&operator.fields));
             }
             model::OperatorModel::BinaryLeftAssociative
             | model::OperatorModel::BinaryRightAssociative => {
-                fields.insert(0, operand("left_operand"));
-                fields.push(operand("right_operand"));
+                fields.push(operand(BuiltInLabel::LeftOperand));
+                fields.extend(self.convert_fields(&operator.fields));
+                fields.push(operand(BuiltInLabel::RightOperand));
             }
         };
 
-        self.sequences.push(Sequence { name, fields });
+        self.sequences.push(Sequence {
+            parent_type,
+            fields,
+        });
     }
 
-    /// Temporary hack to assert that types are consistent.
-    /// TODO(#872): Replace with DSL validation/intellisense afterwards.
-    fn pick_operator<'a>(
-        &mut self,
-        expression: &'a model::PrecedenceExpression,
-    ) -> &'a model::PrecedenceOperator {
-        for (left, right) in expression.operators.iter().tuple_windows() {
-            let left_fields = self.convert_fields(&left.fields);
-            let right_fields = self.convert_fields(&right.fields);
-
-            assert_eq!(left_fields.len(), right_fields.len());
-
-            for (left, right) in left_fields.iter().zip(right_fields.iter()) {
-                assert_eq!(left.is_optional, right.is_optional);
-
-                if self.terminals.contains(&left.reference) {
-                    assert!(self.terminals.contains(&right.reference));
-                } else {
-                    assert_eq!(left.reference, right.reference);
-                }
-            }
-
-            assert!(matches!(
-                (left.model, right.model),
-                (model::OperatorModel::Prefix, model::OperatorModel::Prefix)
-                    | (model::OperatorModel::Postfix, model::OperatorModel::Postfix)
-                    | (
-                        model::OperatorModel::BinaryLeftAssociative
-                            | model::OperatorModel::BinaryRightAssociative,
-                        model::OperatorModel::BinaryLeftAssociative
-                            | model::OperatorModel::BinaryRightAssociative,
-                    )
-            ));
-        }
-
-        &expression.operators[0]
-    }
-
-    fn convert_fields(&self, fields: &IndexMap<model::Identifier, model::Field>) -> Vec<Field> {
-        fields
-            .iter()
-            .map(|(name, field)| match field {
-                model::Field::Required { reference } => Field {
-                    name: name.clone(),
-                    reference: reference.clone(),
-                    is_terminal: self.terminals.contains(reference),
-                    is_optional: false,
-                },
+    fn convert_fields<'a>(
+        &'a self,
+        fields: &'a IndexMap<model::Identifier, model::Field>,
+    ) -> impl Iterator<Item = Field> + 'a {
+        fields.iter().map(|(label, field)| {
+            let (reference, is_optional) = match field {
+                model::Field::Required { reference } => (reference, false),
                 model::Field::Optional {
                     reference,
                     enabled: _,
-                } => Field {
-                    name: name.clone(),
-                    reference: reference.clone(),
-                    is_terminal: self.terminals.contains(reference),
-                    is_optional: true,
+                } => (reference, true),
+            };
+
+            Field {
+                label: label.clone(),
+                r#type: if self.terminals.contains(reference) {
+                    None
+                } else {
+                    Some(reference.clone())
                 },
-            })
-            .collect()
+                is_optional,
+            }
+        })
     }
 }

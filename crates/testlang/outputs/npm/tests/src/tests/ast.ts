@@ -133,7 +133,7 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   expectNonterminal(tree.cst, NonterminalKind.Tree);
 
   expect(() => tree.node).toThrow(
-    "Unexpected SKIPPED terminal at index '1'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
+    "Missing child with label 'node'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
   );
 });
 
