@@ -10,5 +10,9 @@ pub type Bindings = metaslang_bindings::Bindings<KindTypes>;
 pub type Handle<'a> = metaslang_bindings::Handle<'a, KindTypes>;
 
 pub fn create(version: Version) -> Bindings {
-    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE)
+    Bindings::create(version, get_binding_rules())
+}
+
+pub fn get_binding_rules() -> &'static str {
+    binding_rules::BINDING_RULES_SOURCE
 }

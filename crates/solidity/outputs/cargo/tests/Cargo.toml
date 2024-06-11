@@ -16,6 +16,7 @@ anyhow = { workspace = true }
 codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
+metaslang_graph_builder = { workspace = true }
 once_cell = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }

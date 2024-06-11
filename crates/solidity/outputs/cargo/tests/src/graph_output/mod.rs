@@ -1,13 +1,17 @@
+use std::fmt;
+use std::fs::{self, create_dir_all};
+
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::FileWalker;
+use metaslang_graph_builder::ast::File;
+use metaslang_graph_builder::functions::Functions;
+use metaslang_graph_builder::graph::Graph;
+use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use semver::Version;
-use slang_solidity::bindings::graph_builder::{
-    ExecutionConfig, File as GraphBuilderFile, Functions, Graph, NoCancellation, Variables,
-};
+use slang_solidity::bindings;
+use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
-use std::fmt;
-use std::fs::{self, create_dir_all};
 
 #[test]
 pub fn run_all() -> Result<()> {
@@ -31,10 +35,7 @@ fn run(file_name: &str) -> Result<()> {
     let parse_output = language.parse(Language::ROOT_KIND, &input);
     assert!(parse_output.is_valid());
 
-    let msgb_path =
-        CargoWorkspace::locate_source_crate("solidity_stack_graph")?.join("stack-graphs.msgb");
-    let msgb_source = fs::read_to_string(&msgb_path)?;
-    let graph_builder = GraphBuilderFile::from_str(&msgb_source)?;
+    let graph_builder = File::from_str(bindings::get_binding_rules())?;
 
     let functions = Functions::stdlib();
     let variables = Variables::new();
@@ -54,13 +55,13 @@ fn run(file_name: &str) -> Result<()> {
     Ok(())
 }
 
-fn print_graph_as_mermaid<'a>(graph: &'a Graph) -> impl fmt::Display + 'a {
-    struct DisplayGraph<'a>(&'a Graph);
+fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
+    struct DisplayGraph<'a>(&'a Graph<KindTypes>);
 
     impl<'a> fmt::Display for DisplayGraph<'a> {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             let graph = self.0;
-            write!(f, "graph TD\n")?;
+            writeln!(f, "graph TD")?;
             for node in graph.iter_nodes() {
                 let gn = &graph[node];
                 let node_label = if let Some(symbol) = gn.attributes.get("symbol") {
@@ -70,12 +71,12 @@ fn print_graph_as_mermaid<'a>(graph: &'a Graph) -> impl fmt::Display + 'a {
                 };
                 let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());
                 match node_type {
-                    Some("push_symbol") => write!(f, "\tN{}[/{}\\]\n", node.0, node_label)?,
-                    Some("pop_symbol") => write!(f, "\tN{}[\\{}/]\n", node.0, node_label)?,
-                    _ => write!(f, "\tN{}[{}]\n", node.0, node_label)?,
+                    Some("push_symbol") => writeln!(f, "\tN{}[/{}\\]", node.0, node_label)?,
+                    Some("pop_symbol") => writeln!(f, "\tN{}[\\{}/]", node.0, node_label)?,
+                    _ => writeln!(f, "\tN{}[{}]", node.0, node_label)?,
                 }
                 for (sink, _edge) in gn.iter_edges() {
-                    write!(f, "\tN{} --> N{}\n", node.0, sink.0)?;
+                    writeln!(f, "\tN{} --> N{}", node.0, sink.0)?;
                 }
             }
             Ok(())
