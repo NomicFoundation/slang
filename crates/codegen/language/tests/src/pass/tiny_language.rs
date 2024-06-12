@@ -10,6 +10,7 @@ use semver::Version;
 codegen_language_macros::compile!(Language(
     name = Tiny,
     documentation_dir = "tiny/docs",
+    binding_rules_file = "tiny/bindings/rules.msgb",
     root_item = Foo,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
@@ -47,6 +48,7 @@ fn definition() {
         Language {
             name: "Tiny".into(),
             documentation_dir: Path::repo_path("tiny/docs"),
+            binding_rules_file: Path::repo_path("tiny/bindings/rules.msgb"),
             root_item: "Foo".into(),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
             trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
