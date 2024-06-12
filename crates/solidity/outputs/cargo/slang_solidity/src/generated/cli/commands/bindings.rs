@@ -1,8 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use core::fmt;
+
 use semver::Version;
 
-use crate::bindings;
+use crate::bindings::{self, Bindings, Handle};
+use crate::cursor::Cursor;
 
 pub fn execute(file_path_string: &str, version: Version) -> Result<(), super::CommandError> {
     let mut bindings = bindings::create_for(version.clone());
@@ -11,61 +14,74 @@ pub fn execute(file_path_string: &str, version: Version) -> Result<(), super::Co
 
     bindings.add_file(file_path_string, tree_cursor)?;
 
-    // print_defs_and_refs(&bindings);
-    // resolve_refs(&bindings);
+    print_definitions(&bindings);
+    print_references(&bindings);
 
     Ok(())
 }
 
-// fn print_defs_and_refs(bindings: &Bindings) {
-//     let stack_graph = &bindings.stack_graph;
-//     for handle in stack_graph.iter_nodes() {
-//         let node = &stack_graph[handle];
-//         let syntax_node_ref = bindings.node_handle_to_syntax_ref(handle);
+fn print_definitions(bindings: &Bindings) {
+    println!("\nAll definitions found:");
+    for definition in bindings.all_definitions() {
+        println!("{}", DisplayDefinition(&definition));
+    }
+}
 
-//         if node.is_definition() {
-//             println!(
-//                 "Node #{node} is definition",
-//                 node = node.display(stack_graph),
-//             );
-//         } else if node.is_reference() {
-//             println!(
-//                 "Node #{node} is reference",
-//                 node = node.display(stack_graph)
-//             );
-//         }
-//         if let Some(syntax_ref) = syntax_node_ref {
-//             let cursor = &bindings.graph[*syntax_ref];
-//             println!("{:?}", cursor.text_range());
-//         }
-//     }
-// }
+fn print_references(bindings: &Bindings) {
+    println!("\nAll references found:");
+    for reference in bindings.all_references() {
+        println!("{}", DisplayReference(&reference));
+        if let Some(def) = reference.jump_to_definition() {
+            println!("  -> {}", DisplayDefinition(&def));
+        } else {
+            println!("  -> No definition found");
+        }
+    }
+}
 
-// fn resolve_refs(stack_graph: &StackGraph) {
-//     let mut paths = PartialPaths::new();
-//     let mut results = BTreeSet::new();
-//     let references = stack_graph
-//         .iter_nodes()
-//         .filter(|handle| stack_graph[*handle].is_reference())
-//         .collect::<Vec<_>>();
-//     for reference in &references {
-//         println!(
-//             "Found ref: {reference}",
-//             reference = reference.display(stack_graph)
-//         );
-//     }
-//     ForwardPartialPathStitcher::find_all_complete_partial_paths(
-//         &mut GraphEdgeCandidates::new(stack_graph, &mut paths, None),
-//         references,
-//         StitcherConfig::default(),
-//         &stack_graphs::NoCancellation,
-//         |graph, paths, path| {
-//             results.insert(path.display(graph, paths).to_string());
-//         },
-//     )
-//     .expect("should never be cancelled");
+struct DisplayRange<'a>(&'a Cursor);
 
-//     for result in &results {
-//         println!("Found path: {result}");
-//     }
-// }
+impl<'a> fmt::Display for DisplayRange<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let range = self.0.text_range();
+        write!(f, "{}..{}", range.start, range.end)
+    }
+}
+
+struct DisplayDefinition<'a>(&'a Handle<'a>);
+
+impl<'a> fmt::Display for DisplayDefinition<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let file = self.0.get_file().unwrap_or("<unkwown>");
+        if let Some(cursor) = self.0.get_cursor() {
+            let location = DisplayRange(&cursor);
+            let identifier = cursor.node().unparse();
+            write!(f, "`{identifier}` defined at {location} in {file}")
+        } else {
+            write!(
+                f,
+                "Definition without available cursor: {definition:?} in {file}",
+                definition = self.0
+            )
+        }
+    }
+}
+
+struct DisplayReference<'a>(&'a Handle<'a>);
+
+impl<'a> fmt::Display for DisplayReference<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let file = self.0.get_file().unwrap_or("<unkwown>");
+        if let Some(cursor) = self.0.get_cursor() {
+            let location = DisplayRange(&cursor);
+            let identifier = cursor.node().unparse();
+            write!(f, "`{identifier}` referenced at {location} in {file}")
+        } else {
+            write!(
+                f,
+                "Reference without available cursor: {reference:?} in {file}",
+                reference = self.0
+            )
+        }
+    }
+}

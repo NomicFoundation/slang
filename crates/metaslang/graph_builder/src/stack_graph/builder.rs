@@ -11,7 +11,7 @@ use thiserror::Error;
 use super::cancellation::CancellationFlag;
 use crate::execution::error::ExecutionError;
 use crate::functions::Functions;
-use crate::graph::{Edge, Graph, GraphNode, GraphNodeRef, SyntaxNodeRef, Value};
+use crate::graph::{Edge, Graph, GraphNode, GraphNodeRef, Value};
 use crate::{ExecutionConfig, Variables};
 
 // Node type values
@@ -84,13 +84,12 @@ use crate::ast::File as GraphBuilderFile;
 pub struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
-    pub stack_graph: &'a mut StackGraph,
+    stack_graph: &'a mut StackGraph,
     file: Handle<File>,
     tree_cursor: Cursor<KT>,
-    pub graph: Graph<KT>,
+    graph: Graph<KT>,
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
-    nodes_to_syntax: HashMap<Handle<Node>, SyntaxNodeRef>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -110,7 +109,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             graph: Graph::new(),
             remapped_nodes: HashMap::new(),
             injected_node_count: 0,
-            nodes_to_syntax: HashMap::new(),
         }
     }
 
@@ -119,6 +117,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         &mut self,
         globals: &'a Variables<'a>,
         cancellation_flag: &dyn CancellationFlag,
+        on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>) -> (),
     ) -> Result<(), BuildError> {
         let mut globals = Variables::nested(globals);
 
@@ -158,7 +157,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             &(cancellation_flag as &dyn CancellationFlag),
         )?;
 
-        self.load(cancellation_flag)
+        self.load(cancellation_flag, on_added_node)
     }
 
     /// Create a graph node to represent the stack graph node. It is the callers responsibility to
@@ -168,10 +167,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         self.remapped_nodes.insert(node.index(), id);
         self.injected_node_count += 1;
         node
-    }
-
-    pub fn node_handle_to_syntax_ref(&self, node_handle: Handle<Node>) -> Option<&SyntaxNodeRef> {
-        self.nodes_to_syntax.get(&node_handle)
     }
 }
 
@@ -255,7 +250,11 @@ impl std::fmt::Display for DisplayBuildErrorPretty<'_> {
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
-    fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
+    fn load(
+        &mut self,
+        cancellation_flag: &dyn CancellationFlag,
+        mut on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>) -> (),
+    ) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
         // By default graph ids are used for stack graph local_ids. A remapping is computed
@@ -299,6 +298,16 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             };
             self.load_source_info(node_ref, handle)?;
             self.load_node_debug_info(node_ref, handle);
+
+            // For every added graph node which links to a corresponding source
+            // node, invoke the callback so our caller can link the newly built
+            // node with the matching CST cursor.
+            let node = &self.graph[node_ref];
+            if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
+                let syntax_node_ref = source_node.as_syntax_node_ref()?;
+                let source_node = &self.graph[syntax_node_ref];
+                on_added_node(handle, source_node);
+            }
         }
 
         for node in self.stack_graph.nodes_for_file(self.file) {
@@ -523,7 +532,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
 
         if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
             let syntax_node_ref = source_node.as_syntax_node_ref()?;
-            self.nodes_to_syntax.insert(node_handle, syntax_node_ref);
             let source_node = &self.graph[syntax_node_ref];
             let mut source_range = source_node.text_range();
             if match node.attributes.get(EMPTY_SOURCE_SPAN_ATTR) {
