@@ -293,73 +293,10 @@
 //! }
 //! ```
 
-use metaslang_cst::cursor::Cursor;
-use metaslang_cst::KindTypes;
-use stack_graphs::arena::Handle;
-use stack_graphs::graph::{File, StackGraph};
-
-use crate::ast::File as GraphFile;
-use crate::functions::Functions;
-use crate::Variables;
-
 mod builder;
 mod cancellation;
 mod functions;
 
 pub use builder::{BuildError, Builder, FILE_PATH_VAR, ROOT_PATH_VAR, VERSION_VAR};
 pub use cancellation::{CancellationFlag, NoCancellation};
-
-/// Holds information about how to construct stack graphs for a particular language.
-pub struct StackGraphLanguage<KT: KindTypes> {
-    msgb: GraphFile<KT>,
-    functions: Functions<KT>,
-}
-
-impl<KT: KindTypes + 'static> StackGraphLanguage<KT> {
-    /// Creates a new stack graph language for the given language and
-    /// TSG stack graph construction rules.
-    pub fn new(msgb: GraphFile<KT>) -> StackGraphLanguage<KT> {
-        StackGraphLanguage {
-            msgb,
-            functions: Self::default_functions(),
-        }
-    }
-
-    fn default_functions() -> Functions<KT> {
-        let mut functions = Functions::stdlib();
-        functions::add_path_functions(&mut functions);
-        functions
-    }
-}
-
-impl<KT: KindTypes + 'static> StackGraphLanguage<KT> {
-    /// Executes the graph construction rules for this language against a source file, creating new
-    /// nodes and edges in `stack_graph`.  Any new nodes that we create will belong to `file`.
-    /// (The source file must be implemented in this language, otherwise you'll probably get a
-    /// parse error.)
-    #[allow(dead_code)]
-    pub fn build_stack_graph_into<'a>(
-        &'a self,
-        stack_graph: &'a mut StackGraph,
-        file: Handle<File>,
-        tree_cursor: Cursor<KT>,
-        globals: &'a Variables<'a>,
-        cancellation_flag: &'a dyn CancellationFlag,
-    ) -> Result<(), BuildError> {
-        self.builder_into_stack_graph(stack_graph, file, tree_cursor)
-            .build(globals, cancellation_flag)
-    }
-
-    /// Create a builder that will execute the graph construction rules for this language against
-    /// a source file, creating new nodes and edges in `stack_graph`.  Any new nodes created during
-    /// execution will belong to `file`.  (The source file must be implemented in this language,
-    /// otherwise you'll probably get a parse error.)
-    pub fn builder_into_stack_graph<'a>(
-        &'a self,
-        stack_graph: &'a mut StackGraph,
-        file: Handle<File>,
-        tree_cursor: Cursor<KT>,
-    ) -> Builder<'a, KT> {
-        Builder::new(self, stack_graph, file, tree_cursor)
-    }
-}
+pub use functions::default_functions;

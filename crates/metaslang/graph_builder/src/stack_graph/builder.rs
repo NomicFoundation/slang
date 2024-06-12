@@ -9,8 +9,8 @@ use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
 use super::cancellation::CancellationFlag;
-use super::StackGraphLanguage;
 use crate::execution::error::ExecutionError;
+use crate::functions::Functions;
 use crate::graph::{Edge, Graph, GraphNode, GraphNodeRef, SyntaxNodeRef, Value};
 use crate::{ExecutionConfig, Variables};
 
@@ -79,9 +79,11 @@ pub const ROOT_PATH_VAR: &str = "ROOT_PATH";
 /// Version of the language being processed, to apply different semantic rules
 pub const VERSION_VAR: &str = "VERSION";
 
+use crate::ast::File as GraphBuilderFile;
 
 pub struct Builder<'a, KT: KindTypes> {
-    sgl: &'a StackGraphLanguage<KT>,
+    msgb: &'a GraphBuilderFile<KT>,
+    functions: &'a Functions<KT>,
     pub stack_graph: &'a mut StackGraph,
     file: Handle<File>,
     tree_cursor: Cursor<KT>,
@@ -93,13 +95,15 @@ pub struct Builder<'a, KT: KindTypes> {
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
     pub fn new(
-        sgl: &'a StackGraphLanguage<KT>,
+        msgb: &'a GraphBuilderFile<KT>,
+        functions: &'a Functions<KT>,
         stack_graph: &'a mut StackGraph,
         file: Handle<File>,
         tree_cursor: Cursor<KT>,
     ) -> Self {
         Builder {
-            sgl,
+            msgb,
+            functions,
             stack_graph,
             file,
             tree_cursor,
@@ -130,7 +134,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             .add(JUMP_TO_SCOPE_NODE_VAR.into(), jump_to_scope_node.into())
             .expect("Failed to set JUMP_TO_SCOPE_NODE");
 
-        let config = ExecutionConfig::new(&self.sgl.functions, &globals)
+        let config = ExecutionConfig::new(self.functions, &globals)
             .lazy(true)
             .debug_attributes(
                 [DEBUG_ATTR_PREFIX, "msgb_location"]
@@ -147,7 +151,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
                     .into(),
             );
 
-        self.sgl.msgb.execute_into(
+        self.msgb.execute_into(
             &mut self.graph,
             &self.tree_cursor,
             &config,

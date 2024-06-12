@@ -7,7 +7,14 @@
 
 //! Define tree-sitter-graph functions
 
-pub use path::add_path_functions;
+use metaslang_cst::KindTypes;
+use crate::functions::Functions;
+
+pub fn default_functions<KT: KindTypes + 'static>() -> Functions<KT> {
+    let mut functions = Functions::stdlib();
+    path::add_path_functions(&mut functions);
+    functions
+}
 
 pub mod path {
     use std::path::{Component, Path, PathBuf};
