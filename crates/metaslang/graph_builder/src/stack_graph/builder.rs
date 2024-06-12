@@ -76,6 +76,9 @@ pub const FILE_PATH_VAR: &str = "FILE_PATH";
 /// Name of the variable used to pass the root path.
 /// If given, should be an ancestor of the file path.
 pub const ROOT_PATH_VAR: &str = "ROOT_PATH";
+/// Version of the language being processed, to apply different semantic rules
+pub const VERSION_VAR: &str = "VERSION";
+
 
 pub struct Builder<'a, KT: KindTypes> {
     sgl: &'a StackGraphLanguage<KT>,

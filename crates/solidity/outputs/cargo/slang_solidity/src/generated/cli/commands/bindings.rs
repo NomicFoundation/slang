@@ -1,22 +1,15 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::path::PathBuf;
-
 use semver::Version;
 
-use super::CommandError;
 use crate::bindings;
-use crate::language::Language;
 
 pub fn execute(file_path_string: &str, version: Version) -> Result<(), super::CommandError> {
-    let language = Language::new(version)?;
-    let mut bindings = bindings::create_for(language);
+    let mut bindings = bindings::create_for(version.clone());
+    let parse_output = super::parse::parse_source_file(file_path_string, version, |_| ())?;
+    let tree_cursor = parse_output.create_tree_cursor();
 
-    let file_path = PathBuf::from(&file_path_string)
-        .canonicalize()
-        .map_err(|_| CommandError::FileNotFound(file_path_string.to_string()))?;
-
-    bindings.add_file(&file_path)?;
+    bindings.add_file(file_path_string, tree_cursor)?;
 
     // print_defs_and_refs(&bindings);
     // resolve_refs(&bindings);

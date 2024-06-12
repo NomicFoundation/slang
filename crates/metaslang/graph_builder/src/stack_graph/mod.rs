@@ -306,7 +306,7 @@ mod builder;
 mod cancellation;
 mod functions;
 
-pub use builder::{BuildError, Builder, FILE_PATH_VAR, ROOT_PATH_VAR};
+pub use builder::{BuildError, Builder, FILE_PATH_VAR, ROOT_PATH_VAR, VERSION_VAR};
 pub use cancellation::{CancellationFlag, NoCancellation};
 
 /// Holds information about how to construct stack graphs for a particular language.
