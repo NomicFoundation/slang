@@ -8,7 +8,7 @@ use slang_solidity::cli::Commands;
 // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
-    #[cfg(feature = "__graph_builder")]
+    #[cfg(feature = "__experimental_bindings_api")]
     use metaslang_graph_builder as _;
     use {
         ariadne as _, metaslang_cst as _, semver as _, serde as _, serde_json as _, strum as _,

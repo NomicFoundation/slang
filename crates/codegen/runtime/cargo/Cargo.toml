@@ -34,7 +34,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__graph_builder = ["dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:metaslang_graph_builder"]
 
 [lints]
 workspace = true

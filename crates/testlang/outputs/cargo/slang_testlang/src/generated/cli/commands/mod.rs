@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-#[cfg(feature = "__graph_builder")]
+#[cfg(feature = "__experimental_bindings_api")]
 pub mod build_graph;
 pub mod parse;
 
@@ -20,7 +20,7 @@ pub enum CommandError {
     #[error("Parsing failed: {0}")]
     ParseFailed(String),
 
-    #[cfg(feature = "__graph_builder")]
+    #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    ExecutionFailed(#[from] crate::graph_builder::ExecutionError),
+    ExecutionFailed(#[from] crate::bindings::ExecutionError),
 }

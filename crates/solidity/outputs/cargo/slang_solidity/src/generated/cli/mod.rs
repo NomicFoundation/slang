@@ -24,7 +24,7 @@ pub enum Commands {
     },
 
     // This is only intended for internal development
-    #[cfg(feature = "__graph_builder")]
+    #[cfg(feature = "__experimental_bindings_api")]
     /// Parses a source file and builds a graph executing the instructions from the builder file (*.msgb)
     BuildGraph {
         /// File path to the source file to parse
@@ -55,7 +55,7 @@ impl Commands {
                 version,
                 json,
             } => commands::parse::execute(&file_path, version, json),
-            #[cfg(feature = "__graph_builder")]
+            #[cfg(feature = "__experimental_bindings_api")]
             Commands::BuildGraph {
                 file_path,
                 version,

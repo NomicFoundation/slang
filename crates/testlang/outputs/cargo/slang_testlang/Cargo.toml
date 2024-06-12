@@ -25,4 +25,4 @@ thiserror = { workspace = true }
 workspace = true
 
 [features]
-__graph_builder = ["dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:metaslang_graph_builder"]

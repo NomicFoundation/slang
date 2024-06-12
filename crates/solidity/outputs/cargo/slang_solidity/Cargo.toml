@@ -37,7 +37,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # This is meant to be used by the CLI or internally only.
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__graph_builder = ["dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:metaslang_graph_builder"]
 
 [build-dependencies] # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
