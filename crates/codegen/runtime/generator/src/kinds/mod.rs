@@ -37,7 +37,7 @@ impl Default for KindsModel {
 }
 
 impl KindsModel {
-    pub fn create(language: &model::Language) -> Self {
+    pub fn from_language(language: &model::Language) -> Self {
         let terminal_kinds = language
             .items()
             .filter(|item| item.is_terminal() && !matches!(item, Item::Fragment { .. }))

@@ -3,6 +3,7 @@ pub use testlang::TestlangDefinition;
 codegen_language_macros::compile!(Language(
     name = Testlang,
     documentation_dir = "crates/testlang/inputs/language/docs",
+    binding_rules_file = "crates/testlang/inputs/language/bindings/rules.msgb",
     root_item = SourceUnit,
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
