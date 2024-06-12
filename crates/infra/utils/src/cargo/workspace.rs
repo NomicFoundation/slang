@@ -1,7 +1,7 @@
 use std::env::var;
 use std::path::{Path, PathBuf};
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{Context, Result};
 use regex::Regex;
 use semver::Version;
 
@@ -80,21 +80,16 @@ impl CargoWorkspace {
         Version::parse(version).with_context(|| format!("Failed to parse version: '{version}'"))
     }
 
-    pub fn update_version(existing_version: &Version, updated_version: &Version) -> Result<()> {
-        // A hack until 'cargo metadata' can support updating versions.
-        // Just read the 'Cargo.toml' file manually and update the version:
+    pub fn update_version(new_version: &Version) -> Result<()> {
+        CargoWorkspace::install_binary("cargo-edit")?;
 
-        let cargo_toml = Path::repo_path("Cargo.toml");
-        let existing_contents = cargo_toml.read_to_string()?;
-
-        let existing_header = format!("[workspace.package]\nversion = \"{existing_version}\"\n");
-        let updated_header = format!("[workspace.package]\nversion = \"{updated_version}\"\n");
-        ensure!(existing_contents.starts_with(&existing_header));
-
-        let updated_contents = existing_contents.replace(&existing_header, &updated_header);
-        ensure!(updated_contents.starts_with(&updated_header));
-
-        cargo_toml.write_string(updated_contents)
+        // This will update the '[workspace.package.version]' field of the root 'Cargo.toml' file.
+        // And also the '[version]' field of all internal crates in its '[workspace.dependencies]' table.
+        Command::new("cargo")
+            .arg("set-version")
+            .flag("--workspace")
+            .arg(new_version.to_string())
+            .run()
     }
 
     pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
