@@ -4,8 +4,10 @@ use thiserror::Error;
 
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod build_graph;
+
 #[cfg(feature = "__experimental_bindings_api")]
-pub mod build_stack_graph;
+pub mod bindings;
+
 pub mod parse;
 
 #[derive(Debug, Error)]
@@ -28,5 +30,9 @@ pub enum CommandError {
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    BuildError(#[from] crate::bindings::stack_graph::BuildError),
+    BuildError(#[from] metaslang_graph_builder::stack_graph::BuildError),
+
+    #[cfg(feature = "__experimental_bindings_api")]
+    #[error(transparent)]
+    BindingsError(#[from] crate::bindings::BindingsError),
 }

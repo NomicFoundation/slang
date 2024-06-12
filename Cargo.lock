@@ -2116,6 +2116,7 @@ dependencies = [
  "metaslang_graph_builder",
  "semver",
  "serde",
+ "stack-graphs",
  "strum",
  "strum_macros",
  "testlang_language",

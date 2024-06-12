@@ -46,16 +46,13 @@ pub enum Commands {
 
     // This is only intended for internal development
     #[cfg(feature = "__experimental_bindings_api")]
-    BuildStackGraph {
+    Bindings {
         /// File path to the source file to parse
         file_path: String,
 
         /// The language version to use for parsing
         #[arg(short, long)]
         version: Version,
-
-        /// The graph buider (.msgb) file to use
-        msgb_path: String,
     },
 }
 
@@ -76,11 +73,10 @@ impl Commands {
                 debug,
             } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
             #[cfg(feature = "__experimental_bindings_api")]
-            Commands::BuildStackGraph {
+            Commands::Bindings {
                 file_path,
                 version,
-                msgb_path,
-            } => commands::build_stack_graph::execute(&file_path, version, &msgb_path),
+            } => commands::bindings::execute(&file_path, version),
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,
