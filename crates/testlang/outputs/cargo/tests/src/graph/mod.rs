@@ -1,5 +1,5 @@
 use semver::Version;
-use slang_testlang::graph_builder::{ExecutionConfig, File, Functions, NoCancellation, Variables};
+use slang_testlang::bindings::{ExecutionConfig, File, Functions, NoCancellation, Variables};
 use slang_testlang::kinds::NonterminalKind;
 use slang_testlang::language::Language;
 

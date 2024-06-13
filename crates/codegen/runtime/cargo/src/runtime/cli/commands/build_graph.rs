@@ -5,7 +5,7 @@ use semver::Version;
 
 use super::parse::parse_source_file;
 use super::CommandError;
-use crate::graph_builder::{
+use crate::bindings::{
     ExecutionConfig, File as GraphBuilderFile, Functions, NoCancellation, Variables,
 };
 
