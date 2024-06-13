@@ -14,6 +14,8 @@ pub struct Language {
     pub name: Identifier,
 
     pub documentation_dir: PathBuf,
+    pub binding_rules_file: PathBuf,
+
     pub root_item: Identifier,
 
     pub leading_trivia: TriviaParser,

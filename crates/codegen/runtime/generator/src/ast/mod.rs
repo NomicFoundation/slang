@@ -55,7 +55,7 @@ pub struct Separated {
 }
 
 impl AstModel {
-    pub fn create(language: &model::Language) -> Self {
+    pub fn from_language(language: &model::Language) -> Self {
         let mut model = Self::default();
 
         // First pass: collect all terminals:

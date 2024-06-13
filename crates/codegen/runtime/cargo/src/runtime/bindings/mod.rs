@@ -1,3 +1,6 @@
+#[path = "generated/binding_rules.rs"]
+mod binding_rules;
+
 use metaslang_graph_builder::ast;
 pub use metaslang_graph_builder::functions::Functions;
 pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
