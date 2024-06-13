@@ -73,10 +73,9 @@ impl Commands {
                 debug,
             } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
             #[cfg(feature = "__experimental_bindings_api")]
-            Commands::Bindings {
-                file_path,
-                version,
-            } => commands::bindings::execute(&file_path, version),
+            Commands::Bindings { file_path, version } => {
+                commands::bindings::execute(&file_path, version)
+            }
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,

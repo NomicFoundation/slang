@@ -8,6 +8,7 @@
 //! Define tree-sitter-graph functions
 
 use metaslang_cst::KindTypes;
+
 use crate::functions::Functions;
 
 pub fn default_functions<KT: KindTypes + 'static>() -> Functions<KT> {

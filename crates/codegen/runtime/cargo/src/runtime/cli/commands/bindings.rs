@@ -2,12 +2,10 @@ use core::fmt;
 
 use semver::Version;
 
-use crate::{bindings::{self, Bindings, Handle}, cursor::Cursor};
+use crate::bindings::{self, Bindings, Handle};
+use crate::cursor::Cursor;
 
-pub fn execute(
-    file_path_string: &str,
-    version: Version,
-) -> Result<(), super::CommandError> {
+pub fn execute(file_path_string: &str, version: Version) -> Result<(), super::CommandError> {
     let mut bindings = bindings::create_for(version.clone());
     let parse_output = super::parse::parse_source_file(file_path_string, version, |_| ())?;
     let tree_cursor = parse_output.create_tree_cursor();
@@ -58,7 +56,11 @@ impl<'a> fmt::Display for DisplayDefinition<'a> {
             let identifier = cursor.node().unparse();
             write!(f, "`{identifier}` defined at {location} in {file}")
         } else {
-            write!(f, "Definition without available cursor: {definition:?} in {file}", definition = self.0)
+            write!(
+                f,
+                "Definition without available cursor: {definition:?} in {file}",
+                definition = self.0
+            )
         }
     }
 }
@@ -73,7 +75,11 @@ impl<'a> fmt::Display for DisplayReference<'a> {
             let identifier = cursor.node().unparse();
             write!(f, "`{identifier}` referenced at {location} in {file}")
         } else {
-            write!(f, "Reference without available cursor: {reference:?} in {file}", reference = self.0)
+            write!(
+                f,
+                "Reference without available cursor: {reference:?} in {file}",
+                reference = self.0
+            )
         }
     }
 }

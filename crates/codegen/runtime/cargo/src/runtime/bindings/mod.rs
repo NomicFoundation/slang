@@ -3,13 +3,11 @@ mod binding_rules;
 
 pub use metaslang_graph_builder::functions::Parameters;
 pub use metaslang_graph_builder::graph::{Edge, GraphNode, GraphNodeRef, Value};
-use metaslang_graph_builder::{ast, functions};
+use metaslang_graph_builder::{ast, functions, stack_graph};
 pub use metaslang_graph_builder::{
     CancellationError, CancellationFlag, ExecutionConfig, ExecutionError, NoCancellation,
     ParseError, Variables,
 };
-use metaslang_graph_builder::stack_graph;
-
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
@@ -26,6 +24,7 @@ use std::fmt;
 use std::fmt::Debug;
 use std::iter::once;
 use std::path::PathBuf;
+
 use semver::Version;
 use thiserror::Error;
 
@@ -60,17 +59,17 @@ pub fn create_for(version: Version) -> Bindings {
 impl Bindings {
     #[allow(dead_code)]
     pub(crate) fn create(version: Version, msgb_source: &str) -> Self {
-        let graph_builder_file = File::from_str(msgb_source)
-            .expect("Bindings stack graph builder parse error");
+        let graph_builder_file =
+            File::from_str(msgb_source).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = stack_graph::default_functions();
         let cursors = HashMap::new();
 
         Self {
             version,
-            stack_graph,
             graph_builder_file,
             functions,
+            stack_graph,
             cursors,
         }
     }

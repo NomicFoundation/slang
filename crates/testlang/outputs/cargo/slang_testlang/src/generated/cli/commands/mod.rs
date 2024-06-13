@@ -3,11 +3,9 @@
 use thiserror::Error;
 
 #[cfg(feature = "__experimental_bindings_api")]
-pub mod build_graph;
-
-#[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;
-
+#[cfg(feature = "__experimental_bindings_api")]
+pub mod build_graph;
 pub mod parse;
 
 #[derive(Debug, Error)]

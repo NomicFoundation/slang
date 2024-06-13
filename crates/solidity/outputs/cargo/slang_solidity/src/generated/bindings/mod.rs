@@ -69,9 +69,9 @@ impl Bindings {
 
         Self {
             version,
-            stack_graph,
             graph_builder_file,
             functions,
+            stack_graph,
             cursors,
         }
     }
