@@ -689,7 +689,7 @@ impl std::fmt::Debug for SyntaxNodeRef {
 
 /// A reference to a graph node
 #[derive(Clone, Copy, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct GraphNodeRef(pub GraphNodeID);
+pub struct GraphNodeRef(GraphNodeID);
 
 impl GraphNodeRef {
     /// Returns the index of the graph node that this reference refers to.

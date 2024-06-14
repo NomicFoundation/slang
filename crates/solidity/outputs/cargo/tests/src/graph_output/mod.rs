@@ -67,16 +67,16 @@ fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
                 let node_label = if let Some(symbol) = gn.attributes.get("symbol") {
                     symbol.to_string()
                 } else {
-                    format!("{}", node.0)
+                    format!("{}", node.index())
                 };
                 let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());
                 match node_type {
-                    Some("push_symbol") => writeln!(f, "\tN{}[/{}\\]", node.0, node_label)?,
-                    Some("pop_symbol") => writeln!(f, "\tN{}[\\{}/]", node.0, node_label)?,
-                    _ => writeln!(f, "\tN{}[{}]", node.0, node_label)?,
+                    Some("push_symbol") => writeln!(f, "\tN{}[/{}\\]", node.index(), node_label)?,
+                    Some("pop_symbol") => writeln!(f, "\tN{}[\\{}/]", node.index(), node_label)?,
+                    _ => writeln!(f, "\tN{}[{}]", node.index(), node_label)?,
                 }
                 for (sink, _edge) in gn.iter_edges() {
-                    writeln!(f, "\tN{} --> N{}", node.0, sink.0)?;
+                    writeln!(f, "\tN{} --> N{}", node.index(), sink.index())?;
                 }
             }
             Ok(())

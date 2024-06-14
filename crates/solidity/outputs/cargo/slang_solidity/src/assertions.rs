@@ -198,7 +198,7 @@ impl fmt::Display for Assertion {
                 cursor
             }
             Self::Reference { id: None, cursor } => {
-                write!(f, "Unresolved Reference",)?;
+                write!(f, "Unresolved Reference")?;
                 cursor
             }
             Self::Reference {
