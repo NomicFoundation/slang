@@ -5,7 +5,7 @@
 // Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
 // ------------------------------------------------------------------------------------------------
 
-//! This crate lets you construct [stack graphs][] using tree-sitter's [graph construction DSL][].
+//! This module lets you construct [stack graphs][] using this crate's [graph construction DSL][].
 //! The graph DSL lets you construct arbitrary graph structures from the parsed syntax tree of a
 //! source file.  If you construct a graph using the vocabulary of attributes described below, then
 //! the result of executing the graph DSL will be a valid stack graph, which we can then use for
@@ -14,21 +14,15 @@
 //! ## Prerequisites
 //!
 //! [stack graphs]: https://docs.rs/stack-graphs/*/
-//! [graph construction DSL]: https://docs.rs/tree-sitter-graph/*/
+//! [graph construction DSL]: https://docs.rs/metaslang_graph_builder/*/
 //!
-//! To process a particular source language, you will first need a tree-sitter grammar for that
-//! language.  There are already tree-sitter grammars [available][] for many languages.  If you do
-//! not have a tree-sitter grammar for your language, you will need to create that first.  (Check
-//! out the tree-sitter [discussion forum][] if you have questions or need pointers on how to do
-//! that.)
-//!
-//! [available]: https://tree-sitter.github.io/tree-sitter/#available-parsers
-//! [discussion forum]: https://github.com/tree-sitter/tree-sitter/discussions
+//! To process a particular source language, you'll need to first get the CST from the source, using
+//! the parser constructed from the language definition that uses the metaslang_cst crate.
 //!
 //! You will then need to create _stack graph construction rules_ for your language.  These rules
-//! are implemented using tree-sitter's [graph construction DSL][].  They define the particular
-//! stack graph nodes and edges that should be created for each part of the parsed syntax tree of a
-//! source file.
+//! are implemented using metaslang's [graph construction DSL][], which is based from tree-sitter's
+//! graph construction DSL. They define the particular stack graph nodes and edges that should be
+//! created for each part of the parsed syntax tree of a source file.
 //!
 //! ## Graph DSL vocabulary
 //!
@@ -39,21 +33,21 @@
 //! graph content.
 //!
 //! As mentioned above, your stack graph construction rules should create stack graph nodes and
-//! edges from the parsed content of a source file.  You will use TSG [stanzas][] to match on
+//! edges from the parsed content of a source file.  You will use MSGB [stanzas][] to match on
 //! different parts of the parsed syntax tree, and create stack graph content for each match.
 //!
 //! ### Creating stack graph nodes
 //!
-//! To create a stack graph node for each identifier in a Python file, you could use the following
-//! TSG stanza:
+//! To create a stack graph node for each identifier in a Solidity file, you could use the following
+//! MSGB stanza:
 //!
 //! ``` skip
-//! (identifier) {
+//! [Identifier] {
 //!   node new_node
 //! }
 //! ```
 //!
-//! (Here, `node` is a TSG statement that creates a new node, and `new_node` is the name of a local
+//! (Here, `node` is a MSGB statement that creates a new node, and `new_node` is the name of a local
 //! variable that the new node is assigned to, letting you refer to the new node in the rest of the
 //! stanza.)
 //!
@@ -63,7 +57,7 @@
 //! graph node, set the `type` attribute on the new node:
 //!
 //! ``` skip
-//! (identifier) {
+//! [Identifier] {
 //!   node new_node
 //!   attr (new_node) type = "push_symbol"
 //! }
@@ -81,37 +75,37 @@
 //! A node without an explicit `type` attribute is assumed to be of type `scope`.
 //!
 //! Certain node types — `pop_symbol`, `pop_scoped_symbol`, `push_symbol` and `push_scoped_symbol` —
-//! also require you to provide a `symbol` attribute.  Its value must be a string, but will typically
+//! also require you to provide a `symbol` attribute. Its value must be a string, but will typically
 //! come from the content of a parsed syntax node using the [`source-text`][] function and a syntax
 //! capture:
 //!
 //! [`source-text`]: https://docs.rs/tree-sitter-graph/*/tree_sitter_graph/reference/functions/index.html#source-text
 //!
 //! ``` skip
-//! (identifier) @id {
+//! @id [Identifier] {
 //!   node new_node
 //!   attr (new_node) type = "push_symbol", symbol = (source-text @id)
 //! }
 //! ```
 //!
-//! Node types `pop_symbol` and `pop_scoped_symbol` allow an optional `is_definition` attribute, which
-//! marks that node as a proper definition.  Node types `push_symbol` and `push_scoped_symbol` allow
-//! an optional `is_reference` attribute, which marks the node as a proper reference.  When `is_definition`
-//! or `is_reference` are set, the `source_node` attribute is required.
+//! Node types `pop_symbol` and `pop_scoped_symbol` allow an optional `is_definition` attribute,
+//! which marks that node as a proper definition. Node types `push_symbol` and `push_scoped_symbol`
+//! allow an optional `is_reference` attribute, which marks the node as a proper reference. When
+//! `is_definition` or `is_reference` are set, the `source_node` attribute is required.
 //!
 //! ``` skip
-//! (identifier) @id {
+//! @id [Identifier] {
 //!   node new_node
 //!   attr (new_node) type = "push_symbol", symbol = (source-text @id), is_reference, source_node = @id
 //! }
 //! ```
 //!
-//! A _push scoped symbol_ node requires a `scope` attribute.  Its value must be a reference to an `exported`
-//! node that you've already created. (This is the exported scope node that will be pushed onto the scope
-//! stack.)  For instance:
+//! A _push scoped symbol_ node requires a `scope` attribute. Its value must be a reference to an
+//! `exported` node that you've already created. (This is the exported scope node that will be
+//! pushed onto the scope stack.) For instance:
 //!
 //! ``` skip
-//! (identifier) @id {
+//! @id [Identifier] {
 //!   node new_exported_scope_node
 //!   attr (new_exported_scope_node) is_exported
 //!   node new_push_scoped_symbol_node
@@ -122,8 +116,8 @@
 //! }
 //! ```
 //!
-//! Nodes of type `scope` allow an optional `is_exported` attribute, that is required to use the scope
-//! in a `push_scoped_symbol` node.
+//! Nodes of type `scope` allow an optional `is_exported` attribute, that is required to use the
+//! scope in a `push_scoped_symbol` node.
 //!
 //!
 //! ### Annotating nodes with location information
@@ -135,7 +129,7 @@
 //! To do this, add a `source_node` attribute, whose value is a syntax node capture:
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //! }
@@ -145,28 +139,28 @@
 //! (the entirety of the function definition) and for the _name_ of the definition (the content of
 //! the function's `name`).
 //!
-//! Adding the `empty_source_span` attribute will use an empty source span located at the start of the
-//! span of the `source_node`. This can be useful when a proper reference or definition is desired,
-//! and thus `source_node` is required, but the span of the available source node is too large. For
-//! example, a module definition which is located at the start of the program, but does span the
-//! whole program:
+//! Adding the `empty_source_span` attribute will use an empty source span located at the start of
+//! the span of the `source_node`. This can be useful when a proper reference or definition is
+//! desired, and thus `source_node` is required, but the span of the available source node is too
+//! large. For example, a module definition which is located at the start of the program, but does
+//! span the whole program:
 //!
 //! ``` skip
-//! (program)@prog {
+//! @unit [SourceUnit] {
 //!   ; ...
 //!   node mod_def
-//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @prog, empty_source_span
+//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @unit, empty_source_span
 //!   ; ...
 //! }
 //! ```
 //!
 //! ### Annotating nodes with syntax type information
 //!
-//! You can annotate any stack graph node with information about its syntax type. To do this, add a `syntax_type`
-//! attribute, whose value is a string indicating the syntax type.
+//! You can annotate any stack graph node with information about its syntax type. To do this, add a
+//! `syntax_type` attribute, whose value is a string indicating the syntax type.
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   node def
 //!   ; ...
 //!   attr (def) syntax_type = "function"
@@ -175,12 +169,12 @@
 //!
 //! ### Annotating definitions with definiens information
 //!
-//! You cannot annotate definitions with a definiens, which is the thing the definition covers. For example, for
-//! a function definition, the definiens would be the function body. To do this, add a `definiens_node` attribute,
-//! whose value is a syntax node that spans the definiens.
+//! You cannot annotate definitions with a definiens, which is the thing the definition covers. For
+//! example, for a function definition, the definiens would be the function body. To do this, add a
+//! `definiens_node` attribute, whose value is a syntax node that spans the definiens.
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id body: (_) @body) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ... @body [FunctionBody] ...] {
 //!   node def
 //!   ; ...
 //!   attr (def) definiens_node = @body
@@ -194,7 +188,7 @@
 //! To connect two stack graph nodes, use the `edge` statement to add an edge between them:
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   node body
@@ -206,7 +200,7 @@
 //! you can add a `precedence` attribute to each edge to indicate which paths are prioritized:
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   node body
@@ -225,7 +219,7 @@
 //! ``` skip
 //! global ROOT_NODE
 //!
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   edge ROOT_NODE -> def
@@ -240,7 +234,7 @@
 //! a scope node with a kind as follows:
 //!
 //! ``` skip
-//! (function_definition name: (identifier) @id) @func {
+//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
 //!   ; ...
 //!   node param_scope
 //!   attr (param_scope) debug_kind = "param_scope"
@@ -267,13 +261,13 @@
 //! ``` skip
 //! global FILE_PATH
 //!
-//! (program)@prog {
+//! @unit [SourceUnit] {
 //!   ; ...
 //!   let dir = (path-dir FILE_PATH)
 //!   let stem = (path-filestem FILE_PATH)
 //!   let mod_name = (path-join dir stem)
 //!   node mod_def
-//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @prog
+//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @unit
 //!   ; ...
 //! }
 //! ```
@@ -283,12 +277,12 @@
 //! ``` skip
 //! global FILE_PATH
 //!
-//! (import name:(_)@name)@import {
+//! @import [PathImport ... @path [StringLiteral]]
 //!   ; ...
 //!   let dir = (path-dir FILE_PATH)
-//!   let mod_name = (path-normalize (path-join dir (Source-text @name)))
+//!   let mod_name = (path-normalize (path-join dir (source-text @path)))
 //!   node mod_def
-//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @prog
+//!   attr mod_def type = "pop_symbol", symbol = mod_name, is_definition, source_node = @import
 //!   ; ...
 //! }
 //! ```

@@ -5,7 +5,7 @@
 // Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
 // ------------------------------------------------------------------------------------------------
 
-//! Define tree-sitter-graph functions
+//! Define metaslang_graph_builder functions
 
 use metaslang_cst::KindTypes;
 
