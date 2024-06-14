@@ -7,9 +7,7 @@ use semver::Version;
 
 use super::parse::parse_source_file;
 use super::CommandError;
-use crate::bindings::{
-    ExecutionConfig, File as GraphBuilderFile, Functions, NoCancellation, Variables,
-};
+use crate::bindings::graph_builder::{self, ExecutionConfig, File, Functions, Variables};
 
 pub fn execute(
     file_path_string: &str,
@@ -33,7 +31,7 @@ pub fn execute(
     }
 
     let tree = parse_output.create_tree_cursor();
-    let graph = msgb.execute(&tree, &execution_config, &NoCancellation)?;
+    let graph = msgb.execute(&tree, &execution_config, &graph_builder::NoCancellation)?;
 
     if output_json {
         graph.display_json(None)?;
@@ -44,15 +42,13 @@ pub fn execute(
     Ok(())
 }
 
-pub(crate) fn parse_graph_builder(
-    msgb_path_string: &str,
-) -> Result<GraphBuilderFile, CommandError> {
+pub(crate) fn parse_graph_builder(msgb_path_string: &str) -> Result<File, CommandError> {
     let msgb_path = PathBuf::from(&msgb_path_string)
         .canonicalize()
         .map_err(|_| CommandError::FileNotFound(msgb_path_string.to_string()))?;
 
     let msgb_source = fs::read_to_string(&msgb_path)?;
-    GraphBuilderFile::from_str(&msgb_source).map_err(|parser_error| {
+    File::from_str(&msgb_source).map_err(|parser_error| {
         let error_message = parser_error
             .display_pretty(&msgb_path, &msgb_source)
             .to_string();

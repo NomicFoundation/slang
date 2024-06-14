@@ -1,23 +1,17 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
-pub use metaslang_graph_builder::functions::Parameters;
-pub use metaslang_graph_builder::graph::{Edge, GraphNode, GraphNodeRef, Value};
-use metaslang_graph_builder::{ast, functions, stack_graph};
-pub use metaslang_graph_builder::{
-    CancellationError, CancellationFlag, ExecutionConfig, ExecutionError, NoCancellation,
-    ParseError, Variables,
-};
-use stack_graphs::graph::StackGraph;
-use stack_graphs::partial::PartialPaths;
-use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
+pub mod graph_builder {
+    use metaslang_graph_builder::{ast, functions, graph};
 
-use crate::cst::KindTypes;
+    use crate::cst::KindTypes;
 
-pub type File = ast::File<KindTypes>;
-pub type Functions = functions::Functions<KindTypes>;
-pub type Graph = metaslang_graph_builder::graph::Graph<KindTypes>;
-type Builder<'a> = stack_graph::Builder<'a, KindTypes>;
+    pub type File = ast::File<KindTypes>;
+    pub type Functions = functions::Functions<KindTypes>;
+    pub type Graph = graph::Graph<KindTypes>;
+
+    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
+}
 
 use std::collections::{BTreeSet, HashMap};
 use std::fmt;
@@ -25,11 +19,17 @@ use std::fmt::Debug;
 use std::iter::once;
 use std::path::PathBuf;
 
+use metaslang_graph_builder::stack_graph;
 use semver::Version;
+use stack_graphs::graph::StackGraph;
+use stack_graphs::partial::PartialPaths;
+use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 use thiserror::Error;
 
+use crate::cst::KindTypes;
 use crate::cursor::Cursor;
 
+type Builder<'a> = stack_graph::Builder<'a, KindTypes>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 
 #[derive(Error, Debug)]
@@ -46,21 +46,16 @@ pub enum BindingsError {
 
 pub struct Bindings {
     version: Version,
-    graph_builder_file: File,
-    functions: Functions,
+    graph_builder_file: graph_builder::File,
+    functions: graph_builder::Functions,
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor>,
 }
 
-pub fn create_for(version: Version) -> Bindings {
-    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE)
-}
-
 impl Bindings {
-    #[allow(dead_code)]
-    pub(crate) fn create(version: Version, msgb_source: &str) -> Self {
-        let graph_builder_file =
-            File::from_str(msgb_source).expect("Bindings stack graph builder parse error");
+    pub fn create(version: Version) -> Self {
+        let graph_builder_file = graph_builder::File::from_str(binding_rules::BINDING_RULES_SOURCE)
+            .expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = stack_graph::default_functions();
         let cursors = HashMap::new();
@@ -92,13 +87,16 @@ impl Bindings {
         Ok(())
     }
 
-    fn get_globals_for_file(&self, file_path: &str) -> Result<Variables<'static>, BindingsError> {
+    fn get_globals_for_file(
+        &self,
+        file_path: &str,
+    ) -> Result<graph_builder::Variables<'static>, BindingsError> {
         let path = PathBuf::from(&file_path).canonicalize()?;
         let root_path = path.parent().ok_or(BindingsError::UnknownError(
             "Cannot compute the ROOT_PATH".to_owned(),
         ))?;
 
-        let mut globals = Variables::new();
+        let mut globals = graph_builder::Variables::new();
         globals
             .add(
                 stack_graph::ROOT_PATH_VAR.into(),

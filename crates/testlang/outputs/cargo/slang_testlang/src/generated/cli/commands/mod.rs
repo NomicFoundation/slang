@@ -24,7 +24,7 @@ pub enum CommandError {
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    ExecutionFailed(#[from] crate::bindings::ExecutionError),
+    ExecutionFailed(#[from] metaslang_graph_builder::ExecutionError),
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
