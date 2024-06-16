@@ -21,4 +21,4 @@ Tree:
       - (leading_trivia꞉ Whitespace): " " # (15..16)
       - (open_brace꞉ OpenBrace): "{" # (16..17)
       - (members꞉ ContractMembers): [] # (17..17)
-      - (UNRECOGNIZED): "" # (17..17)
+      - (MISSING): "" # (17..17)

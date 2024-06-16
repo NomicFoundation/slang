@@ -25,6 +25,7 @@ where
     L: Lexer,
     F: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
+    #[allow(clippy::too_many_lines)]
     fn parse(&self, language: &L, input: &str) -> ParseOutput {
         let mut stream = ParserContext::new(input);
         let mut result = self(language, &mut stream);
@@ -60,13 +61,21 @@ where
         match result {
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
-            ParserResult::NoMatch(no_match) => ParseOutput {
-                parse_tree: cst::Node::terminal(TerminalKind::UNRECOGNIZED, input.to_string()),
-                errors: vec![ParseError::new(
-                    TextIndex::ZERO..input.into(),
-                    no_match.expected_terminals,
-                )],
-            },
+            ParserResult::NoMatch(no_match) => {
+                let kind = if input.is_empty() {
+                    TerminalKind::MISSING
+                } else {
+                    TerminalKind::UNRECOGNIZED
+                };
+
+                ParseOutput {
+                    parse_tree: cst::Node::terminal(kind, input.to_string()),
+                    errors: vec![ParseError::new(
+                        TextIndex::ZERO..input.into(),
+                        no_match.expected_terminals,
+                    )],
+                }
+            }
             some_match => {
                 let (nodes, expected_terminals) = match some_match {
                     ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
@@ -107,10 +116,12 @@ where
                     } else {
                         start
                     };
-                    let skipped_node = cst::Node::terminal(
-                        TerminalKind::UNRECOGNIZED,
-                        input[start.utf8..].to_string(),
-                    );
+                    let kind = if input[start.utf8..].is_empty() {
+                        TerminalKind::MISSING
+                    } else {
+                        TerminalKind::UNRECOGNIZED
+                    };
+                    let skipped_node = cst::Node::terminal(kind, input[start.utf8..].to_string());
                     let mut new_children = topmost_node.children.clone();
                     new_children.push(Edge::anonymous(skipped_node));
 

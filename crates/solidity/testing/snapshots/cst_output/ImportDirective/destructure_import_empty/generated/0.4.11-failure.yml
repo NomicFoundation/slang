@@ -22,7 +22,7 @@ Tree:
       - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # ' {} from "foo"' (37..51)
           - (leading_trivia꞉ Whitespace): " " # (37..38)
           - (open_brace꞉ OpenBrace): "{" # (38..39)
-          - (UNRECOGNIZED): "" # (39..39)
+          - (MISSING): "" # (39..39)
           - (close_brace꞉ CloseBrace): "}" # (39..40)
           - (leading_trivia꞉ Whitespace): " " # (40..41)
           - (from_keyword꞉ FromKeyword): "from" # (41..45)

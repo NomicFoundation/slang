@@ -146,7 +146,7 @@ Tree:
                                       - (leading_trivia꞉ Whitespace): " " # (195..196)
                                       - (name꞉ Identifier): "sequence" # (196..204)
                                       - (leading_trivia꞉ Whitespace): " " # (204..205)
-                              - (UNRECOGNIZED): "" # (205..205)
+                              - (MISSING): "" # (205..205)
                               - (close_brace꞉ CloseBrace): "}" # (205..206)
                               - (trailing_trivia꞉ EndOfLine): "\n" # (206..207)
                   - (leading_trivia꞉ Whitespace): "\t" # (207..208)

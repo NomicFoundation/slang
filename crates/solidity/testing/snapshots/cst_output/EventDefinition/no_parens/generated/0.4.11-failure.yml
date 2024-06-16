@@ -18,6 +18,6 @@ Tree:
       - (event_keyword꞉ EventKeyword): "event" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (name꞉ Identifier): "MyEvent" # (6..13)
-      - (UNRECOGNIZED): "" # (13..13)
+      - (MISSING): "" # (13..13)
       - (semicolon꞉ Semicolon): ";" # (13..14)
       - (trailing_trivia꞉ EndOfLine): "\n" # (14..15)

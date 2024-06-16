@@ -29,7 +29,7 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (16..18)
                   - (item꞉ Identifier): "field" # (18..23)
               - (attributes꞉ StateVariableAttributes): [] # (23..23)
-              - (UNRECOGNIZED): "" # (23..23)
+              - (MISSING): "" # (23..23)
               - (semicolon꞉ Semicolon): ";" # (23..24)
               - (trailing_trivia꞉ EndOfLine): "\n" # (24..25)
       - (close_brace꞉ CloseBrace): "}" # (25..26)

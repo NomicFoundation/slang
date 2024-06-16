@@ -283,7 +283,7 @@ Tree:
                           - (item꞉ Expression): # "some." (522..527)
                               - (variant꞉ Identifier): "some" # (522..526)
                               - (period꞉ Period): "." # (526..527)
-                          - (UNRECOGNIZED): "" # (527..527)
+                          - (MISSING): "" # (527..527)
                           - (Comma): "," # (527..528)
                           - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # " next.arg" (528..537)
                               - (operand꞉ Expression): # " next" (528..533)
