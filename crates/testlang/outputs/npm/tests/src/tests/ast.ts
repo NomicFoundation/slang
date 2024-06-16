@@ -126,7 +126,7 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
 
   const [contractKeyword, skippedTerminal] = cst.children();
   expectTerminal(contractKeyword, TerminalKind.TreeKeyword, "tree");
-  expectTerminal(skippedTerminal, TerminalKind.SKIPPED, "");
+  expectTerminal(skippedTerminal, TerminalKind.UNRECOGNIZED, "");
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);

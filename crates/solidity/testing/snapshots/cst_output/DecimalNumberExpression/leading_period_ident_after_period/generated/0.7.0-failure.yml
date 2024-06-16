@@ -16,4 +16,4 @@ Errors: # 1 total
 Tree:
   - (DecimalNumberExpression): # ".1.a\n" (0..5)
       - (literal꞉ DecimalLiteral): ".1" # (0..2)
-      - (SKIPPED): ".a\n" # (2..5)
+      - (UNRECOGNIZED): ".a\n" # (2..5)

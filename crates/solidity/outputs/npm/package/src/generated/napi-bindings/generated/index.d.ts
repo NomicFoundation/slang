@@ -360,7 +360,7 @@ export namespace kinds {
     WhileKeyword = "WhileKeyword",
   }
   export enum TerminalKind {
-    SKIPPED = "SKIPPED",
+    UNRECOGNIZED = "UNRECOGNIZED",
     AbicoderKeyword = "AbicoderKeyword",
     AbstractKeyword = "AbstractKeyword",
     AddressKeyword = "AddressKeyword",

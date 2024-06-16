@@ -54,7 +54,7 @@ impl SeparatedHelper {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
                             accum.push(Edge::anonymous(cst::Node::terminal(
-                                TerminalKind::SKIPPED,
+                                TerminalKind::UNRECOGNIZED,
                                 input.content(skipped_range.utf8()),
                             )));
                             input.emit(ParseError {

@@ -28,7 +28,7 @@ export namespace kinds {
     Stub3 = "Stub3",
   }
   export enum TerminalKind {
-    SKIPPED = "SKIPPED",
+    UNRECOGNIZED = "UNRECOGNIZED",
     Stub1 = "Stub1",
     Stub2 = "Stub2",
     Stub3 = "Stub3",

@@ -34,4 +34,4 @@ Tree:
           - (item꞉ FunctionAttribute) ► (variant꞉ ModifierInvocation) ► (name꞉ IdentifierPath): # " virtual" (22..30)
               - (leading_trivia꞉ Whitespace): " " # (22..23)
               - (item꞉ Identifier): "virtual" # (23..30)
-      - (SKIPPED): " override returns (uint256) {\n\treturn 1;\n}\n" # (30..73)
+      - (UNRECOGNIZED): " override returns (uint256) {\n\treturn 1;\n}\n" # (30..73)

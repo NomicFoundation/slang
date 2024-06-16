@@ -61,7 +61,7 @@ where
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
             ParserResult::NoMatch(no_match) => ParseOutput {
-                parse_tree: cst::Node::terminal(TerminalKind::SKIPPED, input.to_string()),
+                parse_tree: cst::Node::terminal(TerminalKind::UNRECOGNIZED, input.to_string()),
                 errors: vec![ParseError::new(
                     TextIndex::ZERO..input.into(),
                     no_match.expected_terminals,
@@ -107,8 +107,10 @@ where
                     } else {
                         start
                     };
-                    let skipped_node =
-                        cst::Node::terminal(TerminalKind::SKIPPED, input[start.utf8..].to_string());
+                    let skipped_node = cst::Node::terminal(
+                        TerminalKind::UNRECOGNIZED,
+                        input[start.utf8..].to_string(),
+                    );
                     let mut new_children = topmost_node.children.clone();
                     new_children.push(Edge::anonymous(skipped_node));
 
@@ -123,13 +125,13 @@ where
                     let parse_tree = cst::Node::Nonterminal(topmost_node);
                     let errors = stream.into_errors();
 
-                    // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
+                    // Sanity check: Make sure that succesful parse is equivalent to not having any UNRECOGNIZED nodes
                     debug_assert_eq!(
                         errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
                             .all(|node| node
-                                .as_terminal_with_kind(TerminalKind::SKIPPED)
+                                .as_terminal_with_kind(TerminalKind::UNRECOGNIZED)
                                 .is_none())
                     );
 

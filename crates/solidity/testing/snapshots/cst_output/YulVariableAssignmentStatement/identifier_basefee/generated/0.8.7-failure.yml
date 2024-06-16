@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "basefee := 0\n" # (0..13)
+  - (UNRECOGNIZED): "basefee := 0\n" # (0..13)

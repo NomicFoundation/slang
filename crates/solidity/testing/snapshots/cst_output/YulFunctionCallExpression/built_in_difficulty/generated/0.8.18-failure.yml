@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "difficulty()\n" # (0..13)
+  - (UNRECOGNIZED): "difficulty()\n" # (0..13)

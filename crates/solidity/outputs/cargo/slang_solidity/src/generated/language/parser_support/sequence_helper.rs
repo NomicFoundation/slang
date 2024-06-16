@@ -152,7 +152,7 @@ impl SequenceHelper {
                     debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
                     running.nodes.push(Edge::anonymous(cst::Node::terminal(
-                        TerminalKind::SKIPPED,
+                        TerminalKind::UNRECOGNIZED,
                         std::mem::take(&mut running.skipped),
                     )));
                     running.nodes.extend(next.nodes);

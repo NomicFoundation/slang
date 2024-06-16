@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "sload := 0\n" # (0..11)
+  - (UNRECOGNIZED): "sload := 0\n" # (0..11)

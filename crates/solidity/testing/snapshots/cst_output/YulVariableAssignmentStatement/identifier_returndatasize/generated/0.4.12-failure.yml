@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "returndatasize := 0\n" # (0..20)
+  - (UNRECOGNIZED): "returndatasize := 0\n" # (0..20)

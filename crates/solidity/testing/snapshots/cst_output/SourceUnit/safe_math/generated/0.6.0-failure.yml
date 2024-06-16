@@ -80,7 +80,7 @@ Tree:
                       - (trailing_trivia꞉ EndOfLine): "\n" # (98..99)
                       - (statements꞉ Statements): [] # (99..99)
                       - (leading_trivia꞉ Whitespace): "    " # (99..103)
-                      - (SKIPPED): "unchecked {\n      uint256 c = a + b;\n      if (c <..." # (103..208)
+                      - (UNRECOGNIZED): "unchecked {\n      uint256 c = a + b;\n      if (c <..." # (103..208)
                       - (close_brace꞉ CloseBrace): "}" # (208..209)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (209..210)
           - (close_brace꞉ CloseBrace): "}" # (210..211)

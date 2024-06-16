@@ -18,5 +18,5 @@ Tree:
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (statements꞉ Statements): [] # (1..1)
       - (leading_trivia꞉ Whitespace): " " # (1..2)
-      - (SKIPPED): "unchecked { x = 1; } " # (2..23)
+      - (UNRECOGNIZED): "unchecked { x = 1; } " # (2..23)
       - (close_brace꞉ CloseBrace): "}" # (23..24)

@@ -410,7 +410,7 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TerminalKind {
     // Built-in:
-    SKIPPED,
+    UNRECOGNIZED,
 
     // Generated:
     AbicoderKeyword,

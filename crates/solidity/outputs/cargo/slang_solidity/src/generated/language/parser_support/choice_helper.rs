@@ -141,7 +141,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .iter()
         .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
-            cst::Node::Terminal(terminal) if terminal.kind != TerminalKind::SKIPPED => {
+            cst::Node::Terminal(terminal) if terminal.kind != TerminalKind::UNRECOGNIZED => {
                 Some(terminal.text.len())
             }
             _ => None,

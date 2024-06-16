@@ -59,6 +59,6 @@ Tree:
                           - (leading_trivia꞉ Whitespace): " " # (58..59)
                           - (variant꞉ InternalKeyword): "internal" # (59..67)
           - (leading_trivia꞉ Whitespace): " " # (67..68)
-          - (SKIPPED): "pure returns (bool, uint256) {\n    unchecked {\n   ..." # (68..210)
+          - (UNRECOGNIZED): "pure returns (bool, uint256) {\n    unchecked {\n   ..." # (68..210)
           - (close_brace꞉ CloseBrace): "}" # (210..211)
           - (trailing_trivia꞉ EndOfLine): "\n" # (211..212)

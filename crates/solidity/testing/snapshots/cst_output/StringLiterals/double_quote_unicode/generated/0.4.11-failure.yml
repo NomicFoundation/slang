@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '"Fireworks 🎆"\n' # (0..17)
+  - (UNRECOGNIZED): '"Fireworks 🎆"\n' # (0..17)

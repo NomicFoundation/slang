@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): ":= success\n" # (0..11)
+  - (UNRECOGNIZED): ":= success\n" # (0..11)

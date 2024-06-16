@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "auto" # (0..4)
+  - (UNRECOGNIZED): "auto" # (0..4)
