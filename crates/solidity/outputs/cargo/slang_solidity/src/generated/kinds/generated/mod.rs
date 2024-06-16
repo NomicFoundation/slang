@@ -411,6 +411,7 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
+    MISSING,
 
     // Generated:
     AbicoderKeyword,
@@ -789,6 +790,10 @@ impl metaslang_cst::TerminalKind for TerminalKind {
             | Self::SingleLineComment
             | Self::SingleLineNatSpecComment
             | Self::Whitespace)
+    }
+
+    fn is_valid(&self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
     }
 }
 

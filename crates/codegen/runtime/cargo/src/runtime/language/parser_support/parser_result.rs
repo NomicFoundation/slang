@@ -139,7 +139,8 @@ impl Match {
             .iter()
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
             .all(|node| {
-                node.as_terminal_with_kind(TerminalKind::UNRECOGNIZED)
+                node.as_terminal()
+                    .filter(|tok| !tok.kind.is_valid())
                     .is_none()
             })
     }
@@ -215,9 +216,7 @@ impl IncompleteMatch {
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
             .try_fold(0u8, |mut acc, node| {
                 match node {
-                    Node::Terminal(tok)
-                        if tok.kind != TerminalKind::UNRECOGNIZED && !tok.kind.is_trivia() =>
-                    {
+                    Node::Terminal(tok) if tok.kind.is_valid() && !tok.kind.is_trivia() => {
                         acc += 1;
                     }
                     _ => {}

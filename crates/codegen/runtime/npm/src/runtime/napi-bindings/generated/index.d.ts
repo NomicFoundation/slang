@@ -29,6 +29,7 @@ export namespace kinds {
   }
   export enum TerminalKind {
     UNRECOGNIZED = "UNRECOGNIZED",
+    MISSING = "MISSING",
     Stub1 = "Stub1",
     Stub2 = "Stub2",
     Stub3 = "Stub3",

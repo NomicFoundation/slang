@@ -79,6 +79,7 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
+    MISSING,
 
     // Generated:
     Stub1,
@@ -89,6 +90,10 @@ pub enum TerminalKind {
 impl metaslang_cst::TerminalKind for TerminalKind {
     fn is_trivia(&self) -> bool {
         false
+    }
+
+    fn is_valid(&self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
     }
 }
 

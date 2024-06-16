@@ -46,6 +46,7 @@ export namespace kinds {
   }
   export enum TerminalKind {
     UNRECOGNIZED = "UNRECOGNIZED",
+    MISSING = "MISSING",
     Bang = "Bang",
     CloseBracket = "CloseBracket",
     DelimitedIdentifier = "DelimitedIdentifier",

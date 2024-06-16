@@ -3,8 +3,9 @@
 use std::mem;
 use std::ops::ControlFlow;
 
+use metaslang_cst::TerminalKind as _;
+
 use crate::cst;
-use crate::kinds::TerminalKind;
 use crate::language::parser_support::context::{Marker, ParserContext};
 use crate::language::parser_support::ParserResult;
 use crate::parse_error::ParseError;
@@ -141,9 +142,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .iter()
         .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
-            cst::Node::Terminal(terminal) if terminal.kind != TerminalKind::UNRECOGNIZED => {
-                Some(terminal.text.len())
-            }
+            cst::Node::Terminal(terminal) if terminal.kind.is_valid() => Some(terminal.text.len()),
             _ => None,
         })
         .sum()

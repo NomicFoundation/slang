@@ -2,6 +2,8 @@
 
 use std::rc::Rc;
 
+use metaslang_cst::TerminalKind as _;
+
 use crate::cst::{self, Edge};
 use crate::kinds::TerminalKind;
 use crate::language::lexer::Lexer;
@@ -125,13 +127,14 @@ where
                     let parse_tree = cst::Node::Nonterminal(topmost_node);
                     let errors = stream.into_errors();
 
-                    // Sanity check: Make sure that succesful parse is equivalent to not having any UNRECOGNIZED nodes
+                    // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes
                     debug_assert_eq!(
                         errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
                             .all(|node| node
-                                .as_terminal_with_kind(TerminalKind::UNRECOGNIZED)
+                                .as_terminal()
+                                .filter(|tok| !tok.kind.is_valid())
                                 .is_none())
                     );
 

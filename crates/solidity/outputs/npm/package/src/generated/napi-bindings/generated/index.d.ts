@@ -361,6 +361,7 @@ export namespace kinds {
   }
   export enum TerminalKind {
     UNRECOGNIZED = "UNRECOGNIZED",
+    MISSING = "MISSING",
     AbicoderKeyword = "AbicoderKeyword",
     AbstractKeyword = "AbstractKeyword",
     AddressKeyword = "AddressKeyword",
