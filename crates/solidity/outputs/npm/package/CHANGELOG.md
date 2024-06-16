@@ -1,5 +1,11 @@
 # changelog
 
+## 0.15.1
+
+### Patch Changes
+
+-   [#1012](https://github.com/NomicFoundation/slang/pull/1012) [`9ca51b4`](https://github.com/NomicFoundation/slang/commit/9ca51b431e6d9e52b537683bf618d8852103936b) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - expose `QueryMatch` to public API
+
 ## 0.15.0
 
 ### Minor Changes
