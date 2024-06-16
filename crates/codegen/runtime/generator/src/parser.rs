@@ -18,7 +18,7 @@ use grammar::{
     PrecedenceParserDefinitionRef, ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
 
-use crate::parser::codegen::KeywordScannerAtomic;
+use crate::parser::codegen::KeywordItemAtom;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Default, Clone)]
@@ -141,7 +141,7 @@ impl ParserAccumulatorState {
 
                 let mut keyword_trie = Trie::new();
                 for (name, def) in &context.keyword_scanner_defs {
-                    match KeywordScannerAtomic::try_from_def(def) {
+                    match KeywordItemAtom::try_from_def(def) {
                         Some(atomic) => keyword_trie.insert(atomic.value(), atomic.clone()),
                         None => {
                             acc.keyword_compound_scanners

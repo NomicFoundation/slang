@@ -93,9 +93,9 @@ impl KeywordScannerDefinitionCodegen for model::KeywordValue {
 /// only work with single atom values and keyword promotion needs to additionally account for
 /// keyword reservation, rather than just literal presence.
 #[derive(Clone)]
-pub struct KeywordScannerAtomic(Rc<model::KeywordItem>);
+pub struct KeywordItemAtom(Rc<model::KeywordItem>);
 
-impl KeywordScannerAtomic {
+impl KeywordItemAtom {
     /// Wraps the keyword scanner definition if it is a single atom value.
     pub fn try_from_def(def: &Rc<model::KeywordItem>) -> Option<Self> {
         match def.definitions[..] {
@@ -108,7 +108,7 @@ impl KeywordScannerAtomic {
     }
 }
 
-impl std::ops::Deref for KeywordScannerAtomic {
+impl std::ops::Deref for KeywordItemAtom {
     type Target = Rc<model::KeywordItem>;
 
     fn deref(&self) -> &Self::Target {
@@ -116,21 +116,22 @@ impl std::ops::Deref for KeywordScannerAtomic {
     }
 }
 
-impl KeywordScannerAtomic {
+impl KeywordItemAtom {
     pub fn definition(&self) -> &model::KeywordDefinition {
         self.0
             .definitions
             .first()
-            .expect("KeywordScannerAtomic should have exactly one definition")
+            .expect("KeywordItemAtom should have exactly one definition")
     }
 
+    /// The single atom value that this keyword item matches.
     pub fn value(&self) -> &str {
         match self.definition() {
             model::KeywordDefinition {
                 value: model::KeywordValue::Atom { atom },
                 ..
             } => atom,
-            _ => unreachable!("KeywordScannerAtomic should have a single atom value"),
+            _ => unreachable!("KeywordItemAtom should have a single atom value"),
         }
     }
 }
