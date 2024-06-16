@@ -147,10 +147,10 @@ impl ScannerExt for model::Scanner {
             model::Scanner::Choice { scanners: nodes } => choice_to_scanner_code(nodes),
 
             model::Scanner::Range {
-                inclusive_start: from,
-                inclusive_end: to,
+                inclusive_start: start,
+                inclusive_end: end,
             } => {
-                quote! { scan_char_range!(input, #from..=#to) }
+                quote! { scan_char_range!(input, #start..=#end) }
             }
             model::Scanner::Atom { atom } => {
                 let chars = atom.chars();
