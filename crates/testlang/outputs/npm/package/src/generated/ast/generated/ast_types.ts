@@ -2,8 +2,8 @@
 
 import * as assert from "node:assert";
 import { ast_internal } from "../../napi-bindings/generated";
-import { NonterminalNode, TerminalNode } from "../../cst";
-import { NonterminalKind, TerminalKind } from "../../kinds";
+import { NodeType, NonterminalNode, TerminalNode } from "../../cst";
+import { NonterminalKind } from "../../kinds";
 
 /*
  * Sequences:
@@ -203,12 +203,13 @@ export class TreeNodeChild {
   private readonly fetch: () => TreeNode | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
     switch (variant.kind) {
       case NonterminalKind.TreeNode:
         return new TreeNode(variant as NonterminalNode);
-
-      case TerminalKind.DelimitedIdentifier:
-        return variant as TerminalNode;
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -229,6 +230,10 @@ export class Expression {
     () => {
       const variant = ast_internal.selectChoice(this.cst);
 
+      if (variant.type == NodeType.Terminal) {
+        return variant as TerminalNode;
+      }
+
       switch (variant.kind) {
         case NonterminalKind.AdditionExpression:
           return new AdditionExpression(variant as NonterminalNode);
@@ -236,10 +241,6 @@ export class Expression {
           return new NegationExpression(variant as NonterminalNode);
         case NonterminalKind.MemberAccessExpression:
           return new MemberAccessExpression(variant as NonterminalNode);
-
-        case TerminalKind.StringLiteral:
-        case TerminalKind.Identifier:
-          return variant as TerminalNode;
 
         default:
           assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -260,13 +261,7 @@ export class Literal {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
-    switch (variant.kind) {
-      case TerminalKind.StringLiteral:
-        return variant as TerminalNode;
-
-      default:
-        assert.fail(`Unexpected variant: ${variant.kind}`);
-    }
+    return variant as TerminalNode;
   });
 
   public constructor(public readonly cst: NonterminalNode) {

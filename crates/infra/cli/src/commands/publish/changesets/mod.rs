@@ -61,7 +61,7 @@ pub fn publish_changesets() -> Result<()> {
     // Update Cargo workspace:
 
     println!("Updating Cargo workspace version.");
-    CargoWorkspace::update_version(&package_version, &updated_version)?;
+    CargoWorkspace::update_version(&updated_version)?;
 
     // Update Cargo lock file:
 

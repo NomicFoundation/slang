@@ -324,18 +324,17 @@ checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
 name = "codegen_ebnf"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "codegen_language_definition",
  "derive-new",
  "indexmap",
- "strum_macros",
 ]
 
 [[package]]
 name = "codegen_language_definition"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "codegen_language_internal_macros",
@@ -346,6 +345,7 @@ dependencies = [
  "quote",
  "semver",
  "serde",
+ "strum",
  "strum_macros",
  "syn",
  "thiserror",
@@ -353,7 +353,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_internal_macros"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "itertools",
  "proc-macro2",
@@ -363,14 +363,14 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_macros"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "codegen_language_definition",
 ]
 
 [[package]]
 name = "codegen_language_tests"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -382,12 +382,14 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_cargo"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "ariadne",
+ "clap",
  "codegen_runtime_generator",
  "metaslang_cst",
+ "metaslang_graph_builder",
  "napi",
  "napi-derive",
  "semver",
@@ -400,25 +402,24 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_generator"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "anyhow",
  "codegen_language_definition",
  "indexmap",
  "infra_utils",
- "itertools",
  "once_cell",
  "proc-macro2",
  "quote",
  "semver",
  "serde",
- "strum_macros",
+ "strum",
 ]
 
 [[package]]
 name = "codegen_runtime_node_addon"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "metaslang_cst",
  "napi",
@@ -434,7 +435,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_npm"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
@@ -443,7 +444,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_spec"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -456,7 +457,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_testing"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1039,7 +1040,7 @@ checksum = "b248f5224d1d606005e02c97f5aa4e88eeb230488bcc03bc9ca4d7991399f2b5"
 
 [[package]]
 name = "infra_cli"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1059,7 +1060,7 @@ dependencies = [
 
 [[package]]
 name = "infra_utils"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1186,7 +1187,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_cst"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "nom",
  "serde",
@@ -1195,7 +1196,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_graph_builder"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "env_logger",
  "indoc",
@@ -1927,7 +1928,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -1935,6 +1936,7 @@ dependencies = [
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_cst",
+ "metaslang_graph_builder",
  "semver",
  "serde",
  "serde_json",
@@ -1946,7 +1948,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_node_addon"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "metaslang_cst",
  "napi",
@@ -1962,12 +1964,13 @@ dependencies = [
 
 [[package]]
 name = "slang_testlang"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_cst",
+ "metaslang_graph_builder",
  "semver",
  "serde",
  "strum",
@@ -1978,7 +1981,7 @@ dependencies = [
 
 [[package]]
 name = "slang_testlang_node_addon"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "metaslang_cst",
  "napi",
@@ -2019,7 +2022,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2036,7 +2039,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_language"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2045,7 +2048,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_package"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
@@ -2055,7 +2058,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_spec"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "codegen_spec",
@@ -2065,7 +2068,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sanctuary"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -2085,11 +2088,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "0.14.2"
+version = "0.15.0"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -2238,7 +2241,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_cargo_tests"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "semver",
  "slang_testlang",
@@ -2246,7 +2249,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_language"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2255,7 +2258,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_npm_package"
-version = "0.14.2"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",

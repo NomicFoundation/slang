@@ -1,20 +1,18 @@
-use std::fs;
-use std::path::PathBuf;
 use std::process::ExitCode;
 
-use anyhow::{Context, Result};
-use clap::{Parser as ClapParser, Subcommand};
-use semver::Version;
-use slang_solidity::kinds::NonterminalKind;
-use slang_solidity::language::Language;
+use clap::Parser as ClapParser;
+use slang_solidity::cli::Commands;
 
 // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
 // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
 // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
+    #[cfg(feature = "__experimental_bindings_api")]
+    use metaslang_graph_builder as _;
     use {
-        ariadne as _, metaslang_cst as _, serde as _, strum as _, strum_macros as _, thiserror as _,
+        ariadne as _, metaslang_cst as _, semver as _, serde as _, serde_json as _, strum as _,
+        strum_macros as _, thiserror as _,
     };
 }
 
@@ -26,61 +24,8 @@ struct Cli {
     command: Commands,
 }
 
-#[derive(Subcommand, Debug)]
-enum Commands {
-    /// Parses a Solidity (*.sol) source file, and outputs any syntax errors, or a JSON concrete syntax tree
-    Parse {
-        /// File path to the Solidity (*.sol) source file to parse
-        file_path: String,
-
-        /// The Solidity language version to use for parsing
-        #[arg(short, long)]
-        version: Version,
-
-        /// Print the concrete syntax tree as JSON
-        #[clap(long)]
-        json: bool,
-    },
-}
-
-fn main() -> Result<ExitCode> {
-    match Cli::parse().command {
-        Commands::Parse {
-            file_path,
-            version,
-            json,
-        } => execute_parse_command(&file_path, version, json),
-    }
-}
-
-fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -> Result<ExitCode> {
-    let file_path = PathBuf::from(&file_path_string)
-        .canonicalize()
-        .with_context(|| format!("Failed to find file path: {file_path_string:?}"))?;
-
-    let input = fs::read_to_string(file_path)?;
-    let language = Language::new(version)?;
-    let output = language.parse(NonterminalKind::SourceUnit, &input);
-
-    let errors = output.errors();
-    for error in errors {
-        const COLOR: bool = true;
-        let report = slang_solidity::diagnostic::render(error, file_path_string, &input, COLOR);
-        eprintln!("{report}");
-    }
-
-    if json {
-        let root_node = output.tree();
-        let json = serde_json::to_string_pretty(&root_node)?;
-        println!("{json}");
-    }
-
-    if errors.is_empty() {
-        Ok(ExitCode::SUCCESS)
-    } else {
-        eprintln!("Couldn't parse the Solidity source file.");
-        Ok(ExitCode::FAILURE)
-    }
+fn main() -> ExitCode {
+    Cli::parse().command.execute()
 }
 
 #[test]

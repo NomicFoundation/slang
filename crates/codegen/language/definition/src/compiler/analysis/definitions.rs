@@ -4,7 +4,10 @@ use std::rc::Rc;
 use crate::compiler::analysis::{Analysis, ItemMetadata};
 use crate::compiler::version_set::VersionSet;
 use crate::internals::Spanned;
-use crate::model::{Identifier, SpannedItem, SpannedVersionSpecifier};
+use crate::model::{
+    Identifier, SpannedField, SpannedItem, SpannedOperatorModel, SpannedPrecedenceOperator,
+    SpannedVersionSpecifier,
+};
 
 pub(crate) fn analyze_definitions(analysis: &mut Analysis) {
     collect_top_level_items(analysis);
@@ -84,6 +87,15 @@ fn check_precedence_items(analysis: &mut Analysis) {
             }
 
             current_expressions.insert(name);
+
+            // Make sure all operators have the same structure, as they are represented using the same AST type:
+            let first_op = &precedence_expression.operators[0];
+            for second_op in precedence_expression.operators.iter().skip(1) {
+                if !compare_operators(analysis, first_op, second_op) {
+                    analysis.errors.add(name, &Errors::OperatorMismatch);
+                    continue;
+                }
+            }
         }
 
         for primary_expression in &item.primary_expressions {
@@ -96,6 +108,76 @@ fn check_precedence_items(analysis: &mut Analysis) {
             }
         }
     }
+}
+
+fn compare_operators(
+    analysis: &mut Analysis,
+    first_op: &SpannedPrecedenceOperator,
+    second_op: &SpannedPrecedenceOperator,
+) -> bool {
+    match (&*first_op.model, &*second_op.model) {
+        // Allow it if they are both prefixes:
+        (SpannedOperatorModel::Prefix, SpannedOperatorModel::Prefix)
+        // Allow it if they are both suffixes:
+        | (SpannedOperatorModel::Postfix, SpannedOperatorModel::Postfix)
+        // Allow it if they are both binary (regardless of associativity):
+        | (
+            SpannedOperatorModel::BinaryLeftAssociative
+            | SpannedOperatorModel::BinaryRightAssociative,
+            SpannedOperatorModel::BinaryLeftAssociative
+            | SpannedOperatorModel::BinaryRightAssociative,
+        ) => {}
+        _ => return false,
+    };
+
+    // Must have the same number of fields:
+    if first_op.fields.len() != second_op.fields.len() {
+        return false;
+    }
+
+    for ((first_key, first_field), (second_key, second_field)) in
+        first_op.fields.iter().zip(second_op.fields.iter())
+    {
+        // Must have the same labels:
+        if first_key != second_key {
+            return false;
+        }
+
+        let (
+            // Allow it if both are required:
+            (
+                SpannedField::Required { reference: first_ref },
+                SpannedField::Required { reference: second_ref },
+            )
+            // Allow it if both are optional (regardless of enablement):
+            | (
+                SpannedField::Optional { reference: first_ref, enabled: _ },
+                SpannedField::Optional { reference: second_ref, enabled: _ },
+            )
+        ) = (first_field, second_field)
+        else {
+            return false;
+        };
+
+        // Allow it if they both reference the same exact kind:
+        if first_ref == second_ref {
+            continue;
+        }
+
+        // Otherwise, allow it if both are terminals:
+        match (
+            &analysis.metadata[&**first_ref].item,
+            &analysis.metadata[&**second_ref].item,
+        ) {
+            (
+                SpannedItem::Keyword { .. } | SpannedItem::Token { .. },
+                SpannedItem::Keyword { .. } | SpannedItem::Token { .. },
+            ) => {}
+            _ => return false,
+        }
+    }
+
+    true
 }
 
 fn get_item_name(item: &SpannedItem) -> &Spanned<Identifier> {
@@ -169,4 +251,6 @@ enum Errors<'err> {
     ExistingVariant(&'err Identifier),
     #[error("An expression with the name '{0}' already exists.")]
     ExistingExpression(&'err Identifier),
+    #[error("All operators under the same expression must have the same model and type.")]
+    OperatorMismatch,
 }

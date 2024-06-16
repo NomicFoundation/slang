@@ -14,6 +14,8 @@ pub struct Language {
     pub name: Identifier,
 
     pub documentation_dir: PathBuf,
+    pub binding_rules_file: PathBuf,
+
     pub root_item: Identifier,
 
     pub leading_trivia: TriviaParser,
@@ -126,4 +128,19 @@ pub struct Topic {
     pub lexical_context: Option<Identifier>,
 
     pub items: Vec<Item>,
+}
+
+#[derive(
+    Clone, Copy, Debug, strum_macros::AsRefStr, strum_macros::EnumIter, strum_macros::VariantNames,
+)]
+#[strum(serialize_all = "snake_case")]
+pub enum BuiltInLabel {
+    Item,
+    Variant,
+    Separator,
+    Operand,
+    LeftOperand,
+    RightOperand,
+    LeadingTrivia,
+    TrailingTrivia,
 }

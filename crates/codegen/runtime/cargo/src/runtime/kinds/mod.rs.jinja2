@@ -1,0 +1,150 @@
+#[cfg(feature = "slang_napi_interfaces")]
+use napi_derive::napi;
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum NonterminalKind {
+    {%- if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for variant in model.kinds.nonterminal_kinds -%}
+            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+            {{ variant }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl metaslang_cst::NonterminalKind for NonterminalKind {}
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[strum(serialize_all = "snake_case")]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum EdgeLabel {
+    // Built-in:
+    {% for label in model.kinds.built_in_labels -%}
+        {{ label | pascal_case }},
+    {%- endfor %}
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {% for variant in model.kinds.labels -%}
+            {{ variant | pascal_case }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl metaslang_cst::EdgeLabel for EdgeLabel {}
+
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum TerminalKind {
+    // Built-in:
+    SKIPPED,
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for variant in model.kinds.terminal_kinds -%}
+            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+            {{ variant }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl metaslang_cst::TerminalKind for TerminalKind {
+    fn is_trivia(&self) -> bool {
+        {%- if rendering_in_stubs -%}
+            false
+        {%- else -%}
+            matches!(
+                self,
+                {%- for variant in model.kinds.trivia_scanner_names -%}
+                    | Self::{{ variant }}
+                {%- endfor -%}
+            )
+        {%- endif -%}
+    }
+}
+
+/// The lexical context of the scanner.
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
+    {%- if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for context_name in model.kinds.lexical_contexts %}
+            {{ context_name }},
+        {%- endfor %}
+    {%- endif -%}
+}
+
+/// Marker trait for type-level [`LexicalContext`] variants.
+pub(crate) trait IsLexicalContext {
+    /// Returns a run-time [`LexicalContext`] value.
+    fn value() -> LexicalContext;
+}
+
+#[allow(non_snake_case)]
+pub(crate) mod LexicalContextType {
+    {%- if not rendering_in_stubs -%}
+        {%- for context_name in model.kinds.lexical_contexts %}
+            pub struct {{ context_name }};
+
+            impl super::IsLexicalContext for {{ context_name }} {
+                fn value() -> super::LexicalContext {
+                    super::LexicalContext::{{ context_name }}
+                }
+            }
+        {%- endfor %}
+    {%- endif -%}
+}

@@ -7,8 +7,9 @@ publish = false
 
 [dev-dependencies]
 semver = { workspace = true }
-slang_testlang = { workspace = true }
+slang_testlang = { workspace = true, features = [
+  "__experimental_bindings_api",
+] }
 
 [lints]
 workspace = true
-

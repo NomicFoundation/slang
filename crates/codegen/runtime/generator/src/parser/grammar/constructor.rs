@@ -5,7 +5,9 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
-use codegen_language_definition::model::{self, FieldsErrorRecovery, Identifier, Item};
+use codegen_language_definition::model::{
+    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item,
+};
 use indexmap::IndexMap;
 use once_cell::sync::Lazy;
 
@@ -664,21 +666,6 @@ trait LabeledExt<T> {
     fn anonymous(node: T) -> Self;
     fn with_ident_name(name: Identifier, node: T) -> Self;
     fn with_builtin_label(name: BuiltInLabel, node: T) -> Self;
-}
-
-#[allow(dead_code)]
-#[derive(strum_macros::AsRefStr)]
-#[strum(serialize_all = "snake_case")]
-enum BuiltInLabel {
-    // _SLANG_INTERNAL_RESERVED_NODE_LABELS_ (keep in sync)
-    Item,
-    Variant,
-    Separator,
-    Operand,
-    LeftOperand,
-    RightOperand,
-    LeadingTrivia,
-    TrailingTrivia,
 }
 
 impl<T> LabeledExt<T> for Labeled<T> {
