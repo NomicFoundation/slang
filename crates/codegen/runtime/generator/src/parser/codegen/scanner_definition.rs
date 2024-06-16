@@ -70,7 +70,7 @@ impl ScannerDefinition for model::TokenItem {
     }
 }
 
-pub(crate) trait ScannerExt {
+pub(crate) trait ScannerCodegen {
     /// Quotes the matching Rust scanner code.
     fn to_scanner_code(&self) -> TokenStream;
     /// Whether the scanner is an atom, and if so, returns the atom.
@@ -87,7 +87,7 @@ struct VersionedScanner<'a> {
     enabled: Option<&'a model::VersionSpecifier>,
 }
 
-impl ScannerExt for VersionedScanner<'_> {
+impl ScannerCodegen for VersionedScanner<'_> {
     fn to_scanner_code(&self) -> TokenStream {
         let scanner = self.scanner.to_scanner_code();
         self.enabled
@@ -109,7 +109,7 @@ impl<'a> VersionedScanner<'a> {
     }
 }
 
-impl ScannerExt for model::Scanner {
+impl ScannerCodegen for model::Scanner {
     fn to_scanner_code(&self) -> TokenStream {
         match self {
             model::Scanner::Optional { scanner } => {
@@ -191,7 +191,7 @@ impl ScannerExt for model::Scanner {
     }
 }
 
-fn choice_to_scanner_code<T: ScannerExt>(nodes: &[T]) -> TokenStream {
+fn choice_to_scanner_code<T: ScannerCodegen>(nodes: &[T]) -> TokenStream {
     let mut scanners = vec![];
     let mut non_literal_scanners = vec![];
     for node in nodes {
