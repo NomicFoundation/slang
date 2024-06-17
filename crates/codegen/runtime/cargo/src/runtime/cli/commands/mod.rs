@@ -17,4 +17,7 @@ pub enum CommandError {
 
     #[error("Parsing failed: {0}")]
     ParseFailed(String),
+
+    #[error("Unknown error: {0}")]
+    Unknown(String),
 }

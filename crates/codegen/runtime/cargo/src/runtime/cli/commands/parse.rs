@@ -19,7 +19,7 @@ pub fn execute(file_path_string: &str, version: Version, json: bool) -> Result<(
     .map(|_| ())
 }
 
-pub(crate) fn parse_source_file<F>(
+pub fn parse_source_file<F>(
     file_path_string: &str,
     version: Version,
     run_before_checking: F,
