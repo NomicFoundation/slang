@@ -10,5 +10,5 @@ pub use generated::*;
 mod supress_cli_dependencies {
     #[cfg(feature = "__experimental_bindings_api")]
     use regex as _;
-    use {anyhow as _, ariadne as _, clap as _, serde_json as _};
+    use {ariadne as _, clap as _, serde_json as _};
 }

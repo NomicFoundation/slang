@@ -82,6 +82,18 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 handle,
             })
     }
+
+    pub fn cursor_to_handle(&self, cursor: &Cursor<KT>) -> Option<Handle<'_, KT>> {
+        for (handle, handle_cursor) in &self.cursors {
+            if handle_cursor == cursor {
+                return Some(Handle {
+                    owner: self,
+                    handle: *handle,
+                });
+            }
+        }
+        None
+    }
 }
 
 pub struct Handle<'a, KT: KindTypes + 'static> {

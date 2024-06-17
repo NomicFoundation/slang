@@ -33,7 +33,7 @@ required-features = ["cli"]
 
 [features]
 default = ["cli"]
-cli = ["dep:anyhow", "dep:clap", "dep:serde_json", "__private_ariadne"]
+cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # This is meant to be used by the CLI or internally only.
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
@@ -46,7 +46,6 @@ infra_utils = { workspace = true }               # __REMOVE_THIS_LINE_DURING_CAR
 solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 
 [dependencies]
-anyhow = { workspace = true, optional = true }
 ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true, optional = true }

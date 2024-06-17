@@ -2,10 +2,9 @@ use core::fmt;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
-use anyhow::Result;
 use regex::Regex;
 use semver::Version;
-use slang_solidity::bindings;
+use slang_solidity::bindings::{self, Bindings};
 use slang_solidity::cli::commands;
 use slang_solidity::cli::commands::CommandError;
 use slang_solidity::cursor::Cursor;
@@ -13,7 +12,10 @@ use slang_solidity::kinds::TerminalKind;
 use slang_solidity::query::Query;
 use thiserror::Error;
 
-pub fn execute_check_assertions(file_path_string: &str, version: Version) -> Result<()> {
+pub fn execute_check_assertions(
+    file_path_string: &str,
+    version: Version,
+) -> Result<(), CommandError> {
     let mut bindings = bindings::create(version.clone());
     let parse_output = commands::parse::parse_source_file(file_path_string, version, |_| ())?;
     let tree_cursor = parse_output.create_tree_cursor();
@@ -22,10 +24,105 @@ pub fn execute_check_assertions(file_path_string: &str, version: Version) -> Res
 
     let assertions =
         collect_assertions(tree_cursor).map_err(|e| CommandError::Unknown(e.to_string()))?;
-    for assertion in assertions.iter() {
-        println!("{assertion}");
-    }
+
+    check_assertions(&bindings, &assertions)?;
+
     Ok(())
+}
+
+fn check_assertions(bindings: &Bindings, assertions: &Assertions) -> Result<(), CommandError> {
+    let mut count = 0;
+    let mut success = 0;
+
+    for assertion in assertions.definitions.values() {
+        count += 1;
+
+        let Assertion::Definition { id: _, cursor } = assertion else {
+            unreachable!("{assertion} is not a definition assertion");
+        };
+
+        let Some(handle) = bindings.cursor_to_handle(cursor) else {
+            eprintln!("{assertion} failed: not found");
+            continue;
+        };
+        if !handle.is_definition() {
+            eprintln!("{assertion} failed: not a definition");
+            continue;
+        }
+
+        success += 1;
+    }
+
+    for assertion in &assertions.references {
+        count += 1;
+
+        let Assertion::Reference { id, cursor } = assertion else {
+            unreachable!("{assertion} is not a reference assertion");
+        };
+
+        let Some(handle) = bindings.cursor_to_handle(cursor) else {
+            eprintln!("{assertion} failed: not found");
+            continue;
+        };
+        if !handle.is_reference() {
+            eprintln!("{assertion} failed: not a reference");
+            continue;
+        }
+
+        let Some(def_handle) = handle.jump_to_definition() else {
+            // couldn't jump to definition
+            if id.is_some() {
+                // but a binding resolution was expected
+                eprintln!("{assertion} failed: not resolved");
+            } else {
+                // and we asserted an unresolved reference -> good
+                success += 1;
+            }
+            continue;
+        };
+        let Some(id) = id else {
+            // expected an unresolved reference
+            eprintln!(
+                "{assertion} failed: reference did resolve to {}",
+                DisplayCursor(&def_handle.get_cursor().unwrap())
+            );
+            continue;
+        };
+
+        let Some(Assertion::Definition {
+            id: _,
+            cursor: def_cursor,
+        }) = assertions.definitions.get(id)
+        else {
+            eprintln!("{assertion} failed: definition assertion not found");
+            continue;
+        };
+        if let Some(ref_def_cursor) = def_handle.get_cursor() {
+            if ref_def_cursor != *def_cursor {
+                eprintln!(
+                    "{assertion} failed: resolved to unexpected {}",
+                    DisplayCursor(&ref_def_cursor)
+                );
+                continue;
+            }
+        } else {
+            eprintln!("{assertion} failed: jumped to definition did not resolve to a cursor");
+            continue;
+        }
+
+        success += 1;
+    }
+
+    if count > success {
+        eprintln!();
+        Err(CommandError::Unknown(format!(
+            "Failed {failed} of {count} bindings assertions",
+            failed = count - success
+        )))
+    } else {
+        println!("{count} binding assertions OK");
+        Ok(())
+    }
 }
 
 #[derive(Debug, Error)]
@@ -84,10 +181,6 @@ impl Assertions {
             }
         }
     }
-
-    fn iter(&self) -> impl Iterator<Item = &Assertion> {
-        self.definitions.values().chain(self.references.iter())
-    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -116,12 +209,20 @@ impl fmt::Display for Assertion {
                 cursor
             }
         };
-        let offset = cursor.text_offset();
-        let range = cursor.text_range();
+        write!(f, " {}", DisplayCursor(cursor))
+    }
+}
+
+struct DisplayCursor<'a>(&'a Cursor);
+
+impl<'a> fmt::Display for DisplayCursor<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let offset = self.0.text_offset();
+        let range = self.0.text_range();
         write!(
             f,
-            " `{}` at {}:{} [{}..{}]",
-            cursor.node().unparse(),
+            "`{}` at {}:{} [{}..{}]",
+            self.0.node().unparse(),
             offset.line + 1,
             offset.column + 1,
             range.start,
