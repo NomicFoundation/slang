@@ -147,7 +147,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] {
   edge @function.lexical_scope -> @param.defs
-  edge @function.defs -> @param.defs
 }
 
 ;; Connect the function to the contract/interface/library they belong to
@@ -162,7 +161,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ]
 ] {
   edge @unit_member.lexical_scope -> @function.defs
-  edge @unit_member.defs -> @function.defs
   edge @function.lexical_scope -> @unit_member.lexical_scope
 }
 
@@ -174,7 +172,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Connect the function body to the function definition
 @function [FunctionDefinition ... @body body: [FunctionBody] ...] {
   edge @body.lexical_scope -> @function.lexical_scope
-  edge @function.defs -> @body.defs
 }
 
 
@@ -185,6 +182,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @block [Block] {
   node @block.lexical_scope
   node @block.defs
+  edge @block.lexical_scope -> @block.defs
 }
 
 @stmt [Statement] {
@@ -199,7 +197,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @body [FunctionBody @block variant: [Block]] {
   edge @block.lexical_scope -> @body.lexical_scope
-  edge @body.defs -> @block.defs
 }
 
 
