@@ -1,10 +1,6 @@
 use std::process::ExitCode;
 
 use clap::Subcommand;
-use semver::Version;
-use slang_solidity::cli::commands;
-use slang_solidity::cli::commands::CommandError;
-use thiserror::Error;
 
 #[derive(Subcommand, Debug)]
 pub enum LocalCommands {
@@ -19,16 +15,6 @@ pub enum LocalCommands {
     },
 }
 
-#[derive(Error, Debug)]
-pub enum LocalCommandError {
-    #[error(transparent)]
-    Command(#[from] CommandError),
-
-    #[cfg(feature = "__experimental_bindings_api")]
-    #[error(transparent)]
-    Assertion(#[from] crate::assertions::AssertionError),
-}
-
 impl LocalCommands {
     #[cfg(not(feature = "__experimental_bindings_api"))]
     pub fn execute(self) -> ExitCode {
@@ -37,7 +23,7 @@ impl LocalCommands {
 
     #[cfg(feature = "__experimental_bindings_api")]
     pub fn execute(self) -> ExitCode {
-        let result: Result<(), LocalCommandError> = match self {
+        let result: anyhow::Result<()> = match self {
             Self::CheckAssertions { file_path, version } => {
                 check_assertions_command::execute(&file_path, version)
             }
@@ -54,12 +40,12 @@ impl LocalCommands {
 
 #[cfg(feature = "__experimental_bindings_api")]
 mod check_assertions_command {
-    use slang_solidity::bindings;
+    use anyhow::Result;
+    use semver::Version;
+    use slang_solidity::cli::commands;
+    use slang_solidity::{assertions, bindings};
 
-    use super::{commands, LocalCommandError, Version};
-    use crate::assertions;
-
-    pub fn execute(file_path_string: &str, version: Version) -> Result<(), LocalCommandError> {
+    pub fn execute(file_path_string: &str, version: Version) -> Result<()> {
         let mut bindings = bindings::create(version.clone());
         let parse_output = commands::parse::parse_source_file(file_path_string, version, |_| ())?;
         let tree_cursor = parse_output.create_tree_cursor();

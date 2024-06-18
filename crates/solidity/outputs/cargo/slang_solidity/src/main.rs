@@ -9,16 +9,16 @@ use slang_solidity::cli;
 // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
-    #[cfg(feature = "__experimental_bindings_api")]
-    use metaslang_bindings as _;
+    #[cfg(not(feature = "__experimental_bindings_api"))]
+    use anyhow as _;
     use {
         ariadne as _, metaslang_cst as _, semver as _, serde as _, serde_json as _, strum as _,
         strum_macros as _, thiserror as _,
     };
+    #[cfg(feature = "__experimental_bindings_api")]
+    use {metaslang_bindings as _, regex as _};
 }
 
-#[cfg(feature = "__experimental_bindings_api")]
-mod assertions;
 mod commands;
 
 use commands::LocalCommands;

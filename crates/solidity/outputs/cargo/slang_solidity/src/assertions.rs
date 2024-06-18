@@ -3,11 +3,12 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use regex::Regex;
-use slang_solidity::bindings::Bindings;
-use slang_solidity::cursor::Cursor;
-use slang_solidity::kinds::TerminalKind;
-use slang_solidity::query::Query;
 use thiserror::Error;
+
+use crate::bindings::Bindings;
+use crate::cursor::Cursor;
+use crate::kinds::TerminalKind;
+use crate::query::Query;
 
 #[derive(Debug, Error)]
 pub enum AssertionError {

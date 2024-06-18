@@ -8,7 +8,8 @@ pub use generated::*;
 // https://github.com/rust-lang/cargo/issues/1982
 #[cfg(feature = "cli")]
 mod supress_cli_dependencies {
-    #[cfg(feature = "__experimental_bindings_api")]
-    use regex as _;
-    use {ariadne as _, clap as _, serde_json as _};
+    use {anyhow as _, ariadne as _, clap as _, serde_json as _};
 }
+
+#[cfg(feature = "__experimental_bindings_api")]
+pub mod assertions;
