@@ -3,7 +3,9 @@
 #[allow(clippy::needless_raw_string_hashes)]
 #[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
-    attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
+    global ROOT_NODE
+
+attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
 attribute node_symbol = node         => symbol = (source-text node), source_node = node
 attribute pop_symbol = symbol        => type = "pop_symbol", symbol = symbol

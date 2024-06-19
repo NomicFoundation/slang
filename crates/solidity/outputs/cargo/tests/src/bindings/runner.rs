@@ -6,7 +6,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use metaslang_graph_builder::graph::Graph;
+use metaslang_graph_builder::graph::{Graph, Value};
 use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use slang_solidity::assertions::{check_assertions, collect_assertions};
 use slang_solidity::bindings;
@@ -48,16 +48,25 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
 fn output_graph(parse_output: &ParseOutput, output_path: &PathBuf) -> Result<()> {
     let graph_builder = File::from_str(bindings::get_binding_rules())?;
 
+    let tree = parse_output.create_tree_cursor();
+    let mut graph = Graph::new();
+    let root_node = graph.add_graph_node();
+    let variable_name = "ROOT_NODE".to_string();
+    graph[root_node]
+        .attributes
+        .add("__variable".into(), variable_name)
+        .unwrap();
+
     let functions = Functions::stdlib();
-    let variables = Variables::new();
+    let mut variables = Variables::new();
+    variables.add("ROOT_NODE".into(), root_node.into())?;
     let execution_config = ExecutionConfig::new(&functions, &variables).debug_attributes(
         "__location".into(),
         "__variable".into(),
         "__match".into(),
     );
 
-    let tree = parse_output.create_tree_cursor();
-    let graph = graph_builder.execute(&tree, &execution_config, &NoCancellation)?;
+    graph_builder.execute_into(&mut graph, &tree, &execution_config, &NoCancellation)?;
 
     fs::write(output_path, format!("{}", print_graph_as_mermaid(&graph)))?;
 
@@ -81,16 +90,14 @@ fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
                 let source = gn
                     .attributes
                     .get("__match")
-                    .unwrap()
-                    .as_syntax_node_ref()
-                    .unwrap();
-                let location = gn.attributes.get("__location").unwrap();
+                    .and_then(|source| source.as_syntax_node_ref().ok());
+                let location = gn.attributes.get("__location");
 
                 let node_label = format!(
                     "\"`**{node_label}** @{source}\n{variable}\n{location}`\"",
-                    source = source.location(),
-                    variable = gn.attributes.get("__variable").unwrap(),
-                    location = location,
+                    source = source.map(|s| s.location()).unwrap_or_default(),
+                    variable = gn.attributes.get("__variable").unwrap_or(&Value::Null),
+                    location = location.unwrap_or(&Value::Null),
                 );
                 let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());
                 match node_type {

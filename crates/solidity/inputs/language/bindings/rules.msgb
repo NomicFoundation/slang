@@ -1,3 +1,5 @@
+global ROOT_NODE
+
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
 attribute node_symbol = node         => symbol = (source-text node), source_node = node
