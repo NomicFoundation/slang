@@ -13,15 +13,6 @@ attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
 attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
 attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
 
-;; Generalities
-;; - we will define two nodes for all meaningful CST nodes
-;;   - a lexical_scope node which will connect "upwards" towards the root of the CST
-;;   - a defs node to access the definitions reachable from each node (usually connecting "downwards")
-;; - the pair will not be created for every CST node, as there is a lot of redundancy in the tree
-;; - identifier nodes that are part of the definition of an artifact
-;;   will create graph nodes with the node_definition attributes
-;; - identifier nodes that are references will create graph nodes with the node_reference attributes
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -32,107 +23,85 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @source_unit.defs
 }
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Contract definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@contract [ContractDefinition] {
-  node @contract.lexical_scope
-  node @contract.defs
+@definition (
+      [ContractDefinition]
+    | [InterfaceDefinition]
+    | [LibraryDefinition]
+    | [StructDefinition]
+    | [EnumDefinition]
+    | [FunctionDefinition]
+    | [ConstantDefinition]
+    | [ErrorDefinition]
+    | [UserDefinedValueTypeDefinition]
+    | [EventDefinition]
+) {
+  ;; All these nodes provide named definitions
+  node @definition.lexical_scope
+  node @definition.defs
 }
+
+;; Top-level definitions
+@source_unit [SourceUnit ... [SourceUnitMembers
+    ...
+    [SourceUnitMember @unit_member (
+          [ContractDefinition]
+        | [InterfaceDefinition]
+        | [LibraryDefinition]
+        | [StructDefinition]
+        | [EnumDefinition]
+        | [FunctionDefinition]
+        | [ConstantDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+        | [EventDefinition]
+    )]
+    ...
+] ...] {
+  edge @unit_member.lexical_scope -> @source_unit.lexical_scope
+
+  ;; ... are available in the lexical scope
+  edge @source_unit.lexical_scope -> @unit_member.defs
+
+  ;; ... and are exported in the file
+  edge @source_unit.defs -> @unit_member.defs
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Named definitions (contracts, functions, libraries, etc.)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @contract [ContractDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @contract.lexical_scope -> def
   edge @contract.defs -> def
-}
-
-;; Connect the contract to its containing source unit
-@source_unit [SourceUnit ... [SourceUnitMembers
-    ...
-    [SourceUnitMember @contract [ContractDefinition]]
-    ...
-] ...] {
-  edge @source_unit.defs -> @contract.defs
-  edge @contract.lexical_scope -> @source_unit.lexical_scope
-}
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Interface definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@interface [InterfaceDefinition] {
-  node @interface.lexical_scope
-  node @interface.defs
 }
 
 @interface [InterfaceDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @interface.lexical_scope -> def
   edge @interface.defs -> def
-}
-
-;; Connect the interface to its containing source unit
-@source_unit [SourceUnit [SourceUnitMembers
-    ...
-    [SourceUnitMember @interface [InterfaceDefinition]]
-    ...
-]] {
-  edge @source_unit.defs -> @interface.defs
-  edge @interface.lexical_scope -> @source_unit.lexical_scope
-}
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Library definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@library [LibraryDefinition] {
-  node @library.lexical_scope
-  node @library.defs
 }
 
 @library [LibraryDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @library.lexical_scope -> def
   edge @library.defs -> def
-}
-
-;; Connect the library to its containing source unit
-@source_unit [SourceUnit [SourceUnitMembers
-    ...
-    [SourceUnitMember @library [LibraryDefinition]]
-    ...
-]] {
-  edge @source_unit.defs -> @library.defs
-  edge @library.lexical_scope -> @source_unit.lexical_scope
-}
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Function definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@function [FunctionDefinition] {
-  node @function.lexical_scope
-  node @function.defs
 }
 
 @function [FunctionDefinition ... name: [FunctionName ... @name [Identifier] ...] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @function.lexical_scope -> def
   edge @function.defs -> def
 }
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @param [Parameter] {
   node @param.lexical_scope
@@ -147,13 +116,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @param.defs -> def
 }
 
-;; Connect the parameters to the functions they belong to
 @function [FunctionDefinition
     ...
     parameters: [_ ... parameters: [Parameters ... @param item: [Parameter] ...] ...]
     ...
 ] {
+  ;; Parameters are available in the function scope
   edge @function.lexical_scope -> @param.defs
+  attr (@function.lexical_scope -> @param.defs) precedence = 1
 }
 
 ;; Connect the function to the contract/interface/library they belong to
@@ -167,13 +137,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
   ]
 ] {
-  edge @unit_member.lexical_scope -> @function.defs
   edge @function.lexical_scope -> @unit_member.lexical_scope
 }
 
 @body [FunctionBody] {
   node @body.lexical_scope
-  node @body.defs
 }
 
 ;; Connect the function body to the function definition
@@ -195,6 +163,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @stmt [Statement] {
   node @stmt.lexical_scope
   node @stmt.defs
+  edge @stmt.lexical_scope -> @stmt.defs
 }
 
 @block [Block ... statements: [_ ... @stmt [Statement]...] ...] {
@@ -215,7 +184,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @stmt.lexical_scope -> def
   edge @stmt.defs -> def
 }
 
@@ -249,7 +217,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @state_var.lexical_scope -> def
   edge @state_var.defs -> def
 }
 
@@ -263,9 +230,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
   ]
 ] {
-  edge @unit_member.lexical_scope -> @state_var.defs
-  edge @unit_member.defs -> @state_var.defs
   edge @state_var.lexical_scope -> @unit_member.lexical_scope
+  edge @unit_member.lexical_scope -> @state_var.defs
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,7 +263,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ]
 ] {
   edge @unit_member.lexical_scope -> @struct.defs
-  edge @unit_member.defs -> @struct.defs
 }
 
 @member [StructMember] {
@@ -338,6 +303,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @stmt [Statement ... variant: [_ ... @expr [Expression] ...] ...] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement ... variant: [VariableDeclarationStatement
+    ...
+    value: [VariableDeclarationValue ... @expr [Expression] ...]
+    ...
+] ...] {
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
 

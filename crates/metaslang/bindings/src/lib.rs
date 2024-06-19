@@ -12,7 +12,9 @@ use metaslang_graph_builder::functions::Functions;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
-use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
+use stack_graphs::stitching::{
+    Appendable, ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig,
+};
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
@@ -121,19 +123,29 @@ impl<KT: KindTypes + 'static> Handle<'_, KT> {
     }
 
     pub fn jump_to_definition(&self) -> Option<Self> {
-        let mut paths = PartialPaths::new();
-        let mut results = BTreeSet::new();
+        let mut partials = PartialPaths::new();
+        let mut reference_paths = Vec::new();
         if self.is_reference() {
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut paths, None),
+                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut partials, None),
                 once(self.handle),
                 StitcherConfig::default(),
                 &stack_graphs::NoCancellation,
                 |_graph, _paths, path| {
-                    results.insert(path.end_node);
+                    reference_paths.push(path.clone());
                 },
             )
             .expect("should never be cancelled");
+        }
+
+        let mut results = BTreeSet::new();
+        for reference_path in &reference_paths {
+            if reference_paths
+                .iter()
+                .all(|other| !other.shadows(&mut partials, reference_path))
+            {
+                results.insert(reference_path.end_node());
+            }
         }
         if results.len() > 1 {
             println!("WARN: More than one definition found for {self:?}");

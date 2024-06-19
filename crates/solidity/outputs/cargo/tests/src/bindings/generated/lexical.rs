@@ -15,6 +15,11 @@ fn params() -> Result<()> {
 }
 
 #[test]
+fn shadowing() -> Result<()> {
+    run("lexical", "shadowing.sol")
+}
+
+#[test]
 fn state_vars() -> Result<()> {
     run("lexical", "state_vars.sol")
 }
