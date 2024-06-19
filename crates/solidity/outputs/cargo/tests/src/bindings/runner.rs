@@ -4,7 +4,6 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::paths::FileWalker;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::graph::Graph;
@@ -15,21 +14,10 @@ use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
 
-#[test]
-pub fn run_all() -> Result<()> {
-    let data_dir =
-        CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings");
-
-    for file in FileWalker::from_directory(data_dir).find(["*.sol"])? {
-        run(file.file_name().unwrap().to_str().unwrap())?;
-    }
-
-    Ok(())
-}
-
-fn run(file_name: &str) -> Result<()> {
-    let data_dir =
-        CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings");
+pub fn run(group_name: &str, file_name: &str) -> Result<()> {
+    let data_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
+        .join("bindings")
+        .join(group_name);
     let input_path = data_dir.join(file_name);
     let input = fs::read_to_string(&input_path)?;
 

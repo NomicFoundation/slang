@@ -10,5 +10,11 @@ fn main() -> Result<()> {
         &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("cst_output"),
         &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
             .join("src/cst_output/generated"),
+    )?;
+
+    lang_def.generate_bindings_tests(
+        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings"),
+        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
+            .join("src/bindings/generated"),
     )
 }
