@@ -25,4 +25,3 @@ toml = { workspace = true }
 
 [lints]
 workspace = true
-

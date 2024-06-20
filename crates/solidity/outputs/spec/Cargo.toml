@@ -14,4 +14,3 @@ solidity_language = { workspace = true }
 
 [lints]
 workspace = true
-

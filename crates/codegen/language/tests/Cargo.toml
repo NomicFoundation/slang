@@ -15,4 +15,3 @@ trybuild = { workspace = true }
 
 [lints]
 workspace = true
-

@@ -10,7 +10,7 @@ use std::iter::Peekable;
 use std::path::Path;
 use std::str::Chars;
 
-use metaslang_cst::query::CaptureQuantifier::{self, *};
+use metaslang_cst::query::CaptureQuantifier::{self, One, OneOrMore, ZeroOrMore, ZeroOrOne};
 use metaslang_cst::query::{Query, QueryError};
 use metaslang_cst::KindTypes;
 use regex::Regex;

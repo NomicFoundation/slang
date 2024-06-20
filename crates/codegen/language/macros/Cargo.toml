@@ -13,4 +13,3 @@ codegen_language_definition = { workspace = true }
 
 [lints]
 workspace = true
-

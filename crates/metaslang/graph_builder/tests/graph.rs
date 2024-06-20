@@ -8,6 +8,10 @@
 use indoc::indoc;
 use metaslang_graph_builder::graph::{Graph, Value};
 use metaslang_graph_builder::Identifier;
+use {
+    env_logger as _, log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
+    thiserror as _,
+};
 
 #[derive(
     Clone,
@@ -50,8 +54,8 @@ fn can_iterate_graph_nodes() {
     let node0 = graph.add_graph_node();
     let node1 = graph.add_graph_node();
     let node2 = graph.add_graph_node();
-    let nodes = graph.iter_nodes().collect::<Vec<_>>();
-    assert_eq!(nodes, vec![node0, node1, node2]);
+    let all = graph.iter_nodes().collect::<Vec<_>>();
+    assert_eq!(all, vec![node0, node1, node2]);
 }
 
 #[test]
