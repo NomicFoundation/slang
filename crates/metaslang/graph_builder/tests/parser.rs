@@ -5,9 +5,15 @@
 // Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
 // ------------------------------------------------------------------------------------------------
 
+#![allow(clippy::too_many_lines)] // long snapshots
+
 use metaslang_cst::query::CaptureQuantifier::*;
 use metaslang_graph_builder::ast::*;
 use metaslang_graph_builder::{Identifier, Location, ParseError};
+use {
+    env_logger as _, indoc as _, log as _, regex as _, serde_json as _, smallvec as _,
+    string_interner as _, thiserror as _,
+};
 
 #[derive(
     Clone,
@@ -542,9 +548,10 @@ fn cannot_parse_nullable_regex() {
           node n
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -979,9 +986,11 @@ fn cannot_parse_if_some_list_capture() {
           }
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1042,9 +1051,11 @@ fn cannot_parse_for_in_optional_capture() {
           }
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1061,9 +1072,11 @@ fn cannot_parse_scan_of_nonlocal_call_expression() {
         }
       }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1081,9 +1094,11 @@ fn cannot_parse_scan_of_nonlocal_variable() {
         }
       }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1261,7 +1276,7 @@ fn can_parse_global_with_default() {
         vec![Global {
             name: "PKG_NAME".into(),
             quantifier: One,
-            default: Some("".into()),
+            default: Some(String::new()),
             location: Location { row: 1, column: 15 },
         }]
     );
@@ -1293,9 +1308,11 @@ fn cannot_parse_undeclared_global() {
           edge n -> root
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1453,9 +1470,11 @@ fn cannot_parse_global_with_unknown_quantifier() {
           node root
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1467,9 +1486,11 @@ fn cannot_parse_hiding_global() {
           node root
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1481,9 +1502,11 @@ fn cannot_parse_set_global() {
           set root = #null
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1541,9 +1564,11 @@ fn cannot_parse_multiple_patterns() {
         {
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]
@@ -1556,7 +1581,7 @@ fn query_parse_errors_have_file_location() {
     let err = match File::<KindTypes>::from_str(source) {
         Ok(_) => panic!("Parse succeeded unexpectedly"),
         Err(ParseError::QueryError(e)) => e,
-        Err(e) => panic!("Unexpected error: {}", e),
+        Err(e) => panic!("Unexpected error: {e}"),
     };
     assert_eq!(err.row, 2, "expected row 2, got {}", err.row);
     assert_eq!(err.column, 8, "expected column 8, got {}", err.column);
@@ -1577,7 +1602,7 @@ fn multiline_query_parse_errors_have_file_location() {
     let err = match File::<KindTypes>::from_str(source) {
         Ok(_) => panic!("Parse succeeded unexpectedly"),
         Err(ParseError::QueryError(e)) => e,
-        Err(e) => panic!("Unexpected error: {}", e),
+        Err(e) => panic!("Unexpected error: {e}"),
     };
     assert_eq!(err.row, 3, "expected row 3, got {}", err.row);
     assert_eq!(err.column, 8, "expected column 8, got {}", err.column);
@@ -1590,9 +1615,11 @@ fn cannot_parse_unused_capture() {
         [ FunctionDefinition @name Name: [ Identifier ] ] {
         }
     "#;
-    if File::<KindTypes>::from_str(source).is_ok() {
-        panic!("Parse succeeded unexpectedly");
-    }
+
+    assert!(
+        File::<KindTypes>::from_str(source).is_err(),
+        "Parse succeeded unexpectedly"
+    );
 }
 
 #[test]

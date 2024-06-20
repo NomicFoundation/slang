@@ -439,7 +439,6 @@ version = "0.15.1"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
- "infra_utils",
 ]
 
 [[package]]

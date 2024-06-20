@@ -69,17 +69,6 @@ pub(crate) trait Lexer {
     /// Returns valid grouping delimiters in the given lexical context.
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)];
 
-    /// Peeks the next terminal, including trivia. Does not advance the input.
-    fn peek_terminal<LexCtx: IsLexicalContext>(
-        &self,
-        input: &mut ParserContext<'_>,
-    ) -> Option<ScannedTerminal> {
-        let start = input.position();
-        let terminal = self.next_terminal::<LexCtx>(input);
-        input.set_position(start);
-        terminal
-    }
-
     /// Peeks the next significant (i.e. non-trivia) terminal. Does not advance the input.
     fn peek_terminal_with_trivia<LexCtx: IsLexicalContext>(
         &self,
