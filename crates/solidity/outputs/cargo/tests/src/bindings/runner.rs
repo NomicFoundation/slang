@@ -45,25 +45,29 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
     Ok(())
 }
 
+const ROOT_NODE_VAR: &str = "ROOT_NODE";
+const VARIABLE_DEBUG_ATTR: &str = "__variable";
+const LOCATION_DEBUG_ATTR: &str = "__location";
+const MATCH_DEBUG_ATTR: &str = "__match";
+
 fn output_graph(parse_output: &ParseOutput, output_path: &PathBuf) -> Result<()> {
     let graph_builder = File::from_str(bindings::get_binding_rules())?;
 
     let tree = parse_output.create_tree_cursor();
     let mut graph = Graph::new();
     let root_node = graph.add_graph_node();
-    let variable_name = "ROOT_NODE".to_string();
     graph[root_node]
         .attributes
-        .add("__variable".into(), variable_name)
+        .add(VARIABLE_DEBUG_ATTR.into(), ROOT_NODE_VAR.to_string())
         .unwrap();
 
     let functions = Functions::stdlib();
     let mut variables = Variables::new();
-    variables.add("ROOT_NODE".into(), root_node.into())?;
+    variables.add(ROOT_NODE_VAR.into(), root_node.into())?;
     let execution_config = ExecutionConfig::new(&functions, &variables).debug_attributes(
-        "__location".into(),
-        "__variable".into(),
-        "__match".into(),
+        LOCATION_DEBUG_ATTR.into(),
+        VARIABLE_DEBUG_ATTR.into(),
+        MATCH_DEBUG_ATTR.into(),
     );
 
     graph_builder.execute_into(&mut graph, &tree, &execution_config, &NoCancellation)?;
@@ -89,14 +93,14 @@ fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
                 };
                 let source = gn
                     .attributes
-                    .get("__match")
+                    .get(MATCH_DEBUG_ATTR)
                     .and_then(|source| source.as_syntax_node_ref().ok());
-                let location = gn.attributes.get("__location");
+                let location = gn.attributes.get(LOCATION_DEBUG_ATTR);
 
                 let node_label = format!(
                     "\"`**{node_label}** @{source}\n{variable}\n{location}`\"",
                     source = source.map(|s| s.location()).unwrap_or_default(),
-                    variable = gn.attributes.get("__variable").unwrap_or(&Value::Null),
+                    variable = gn.attributes.get(VARIABLE_DEBUG_ATTR).unwrap_or(&Value::Null),
                     location = location.unwrap_or(&Value::Null),
                 );
                 let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());
