@@ -410,7 +410,8 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TerminalKind {
     // Built-in:
-    SKIPPED,
+    UNRECOGNIZED,
+    MISSING,
 
     // Generated:
     AbicoderKeyword,
@@ -789,6 +790,10 @@ impl metaslang_cst::TerminalKind for TerminalKind {
             | Self::SingleLineComment
             | Self::SingleLineNatSpecComment
             | Self::Whitespace)
+    }
+
+    fn is_valid(&self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
     }
 }
 

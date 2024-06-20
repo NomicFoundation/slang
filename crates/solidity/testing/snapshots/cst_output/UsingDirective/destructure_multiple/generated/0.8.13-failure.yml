@@ -23,7 +23,7 @@ Tree:
               - (item꞉ UsingDeconstructionSymbol) ► (name꞉ IdentifierPath): # "add" (7..10)
                   - (item꞉ Identifier): "add" # (7..10)
           - (leading_trivia꞉ Whitespace): " " # (10..11)
-          - (SKIPPED): "as +, sub, mul, div as /" # (11..35)
+          - (UNRECOGNIZED): "as +, sub, mul, div as /" # (11..35)
           - (close_brace꞉ CloseBrace): "}" # (35..36)
       - (leading_trivia꞉ Whitespace): " " # (36..37)
       - (for_keyword꞉ ForKeyword): "for" # (37..40)

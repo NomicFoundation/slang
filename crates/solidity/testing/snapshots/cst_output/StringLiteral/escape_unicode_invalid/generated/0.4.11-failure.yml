@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '"\u123"\n' # (0..8)
+  - (UNRECOGNIZED): '"\u123"\n' # (0..8)

@@ -61,4 +61,4 @@ Tree:
               - (semicolon꞉ Semicolon): ";" # (54..55)
               - (trailing_trivia꞉ EndOfLine): "\n" # (55..56)
       - (leading_trivia꞉ EndOfLine): "\n" # (56..57)
-      - (SKIPPED): "using EnvelopeUtils for Envelope global;\nusing Tra..." # (57..793)
+      - (UNRECOGNIZED): "using EnvelopeUtils for Envelope global;\nusing Tra..." # (57..793)

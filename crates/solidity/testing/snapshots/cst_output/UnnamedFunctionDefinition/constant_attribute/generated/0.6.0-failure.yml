@@ -16,4 +16,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "// Split into `view` and `pure` in 0.4.16\nfunction..." # (0..66)
+  - (UNRECOGNIZED): "// Split into `view` and `pure` in 0.4.16\nfunction..." # (0..66)

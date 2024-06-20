@@ -41,7 +41,7 @@ Tree:
                       - (leading_trivia꞉ Whitespace): " " # (41..42)
                       - (open_paren꞉ OpenParen): "(" # (42..43)
                       - (parameters꞉ Parameters): [] # (43..43)
-                      - (SKIPPED): "byte" # (43..47)
+                      - (UNRECOGNIZED): "byte" # (43..47)
                       - (close_paren꞉ CloseParen): ")" # (47..48)
                   - (attributes꞉ FunctionTypeAttributes): # " internal pure" (48..62)
                       - (item꞉ FunctionTypeAttribute): # " internal" (48..57)

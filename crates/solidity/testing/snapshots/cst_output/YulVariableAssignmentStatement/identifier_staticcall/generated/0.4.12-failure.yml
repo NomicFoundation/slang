@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "staticcall := 0\n" # (0..16)
+  - (UNRECOGNIZED): "staticcall := 0\n" # (0..16)

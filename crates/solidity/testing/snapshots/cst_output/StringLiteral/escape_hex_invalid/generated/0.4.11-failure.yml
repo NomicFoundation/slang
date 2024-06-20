@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '"\x1"\n' # (0..6)
+  - (UNRECOGNIZED): '"\x1"\n' # (0..6)

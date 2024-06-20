@@ -38,4 +38,4 @@ Tree:
               - (parameters꞉ Parameters): [] # (13..13)
               - (close_paren꞉ CloseParen): ")" # (13..14)
           - (attributes꞉ FunctionAttributes): [] # (14..14)
-      - (SKIPPED): " override(some.ident unexpected tokens, ISomeInter..." # (14..560)
+      - (UNRECOGNIZED): " override(some.ident unexpected tokens, ISomeInter..." # (14..560)

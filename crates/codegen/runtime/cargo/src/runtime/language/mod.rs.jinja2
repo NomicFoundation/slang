@@ -270,7 +270,7 @@ impl Lexer for Language {
                 // Skip a character if possible and if we didn't recognize a terminal
                 None if input.peek().is_some() => {
                     let _ = input.next();
-                    Some(ScannedTerminal::Single(TerminalKind::SKIPPED))
+                    Some(ScannedTerminal::Single(TerminalKind::UNRECOGNIZED))
                 },
                 None => None,
             }

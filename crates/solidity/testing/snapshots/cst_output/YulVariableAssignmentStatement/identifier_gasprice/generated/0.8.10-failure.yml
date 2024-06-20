@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "gasprice := 0\n" # (0..14)
+  - (UNRECOGNIZED): "gasprice := 0\n" # (0..14)

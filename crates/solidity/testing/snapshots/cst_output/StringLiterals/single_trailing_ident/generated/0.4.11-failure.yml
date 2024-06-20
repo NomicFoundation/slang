@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): '"foo"bar\n' # (0..9)
+  - (UNRECOGNIZED): '"foo"bar\n' # (0..9)

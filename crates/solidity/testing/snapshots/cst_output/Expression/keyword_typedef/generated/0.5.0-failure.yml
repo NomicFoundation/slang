@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "typedef" # (0..7)
+  - (UNRECOGNIZED): "typedef" # (0..7)

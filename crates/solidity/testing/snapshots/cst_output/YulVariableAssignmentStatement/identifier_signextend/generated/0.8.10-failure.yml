@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "signextend := 0\n" # (0..16)
+  - (UNRECOGNIZED): "signextend := 0\n" # (0..16)

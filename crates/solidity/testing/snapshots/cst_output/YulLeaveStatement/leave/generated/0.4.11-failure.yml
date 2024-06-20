@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "leave" # (0..5)
+  - (UNRECOGNIZED): "leave" # (0..5)

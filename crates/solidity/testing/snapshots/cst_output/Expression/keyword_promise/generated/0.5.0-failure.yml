@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "promise" # (0..7)
+  - (UNRECOGNIZED): "promise" # (0..7)

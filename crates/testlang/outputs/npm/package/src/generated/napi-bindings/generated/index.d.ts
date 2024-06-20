@@ -45,7 +45,8 @@ export namespace kinds {
     Semicolon = "Semicolon",
   }
   export enum TerminalKind {
-    SKIPPED = "SKIPPED",
+    UNRECOGNIZED = "UNRECOGNIZED",
+    MISSING = "MISSING",
     Bang = "Bang",
     CloseBracket = "CloseBracket",
     DelimitedIdentifier = "DelimitedIdentifier",

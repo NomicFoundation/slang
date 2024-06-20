@@ -20,4 +20,4 @@ Tree:
           - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo" (3..7)
               - (leading_trivia꞉ Whitespace): " " # (3..4)
               - (item꞉ Identifier): "Foo" # (4..7)
-      - (SKIPPED): "{value: 10}\n" # (7..19)
+      - (UNRECOGNIZED): "{value: 10}\n" # (7..19)

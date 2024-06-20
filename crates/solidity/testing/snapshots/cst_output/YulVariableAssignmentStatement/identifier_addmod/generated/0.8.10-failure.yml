@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "addmod := 0\n" # (0..12)
+  - (UNRECOGNIZED): "addmod := 0\n" # (0..12)
