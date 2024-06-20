@@ -13,4 +13,3 @@ semver = { workspace = true }
 
 [lints]
 workspace = true
-

@@ -85,17 +85,23 @@ impl<T: KindTypes + 'static> ASTNode<T> {
 
     fn create_matcher(&self, cursor: Cursor<T>) -> MatcherRef<T> {
         match self {
-            Self::Capture(matcher) => Box::new(CaptureMatcher::<T>::new(matcher.clone(), cursor)),
+            Self::Capture(matcher) => {
+                Box::new(CaptureMatcher::<T>::new(Rc::clone(matcher), cursor))
+            }
             Self::NodeMatch(matcher) => {
-                Box::new(NodeMatchMatcher::<T>::new(matcher.clone(), cursor))
+                Box::new(NodeMatchMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
-            Self::Sequence(matcher) => Box::new(SequenceMatcher::<T>::new(matcher.clone(), cursor)),
+            Self::Sequence(matcher) => {
+                Box::new(SequenceMatcher::<T>::new(Rc::clone(matcher), cursor))
+            }
             Self::Alternatives(matcher) => {
-                Box::new(AlternativesMatcher::<T>::new(matcher.clone(), cursor))
+                Box::new(AlternativesMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
-            Self::Optional(matcher) => Box::new(OptionalMatcher::<T>::new(matcher.clone(), cursor)),
+            Self::Optional(matcher) => {
+                Box::new(OptionalMatcher::<T>::new(Rc::clone(matcher), cursor))
+            }
             Self::OneOrMore(matcher) => {
-                Box::new(OneOrMoreMatcher::<T>::new(matcher.clone(), cursor))
+                Box::new(OneOrMoreMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
             Self::Ellipsis => Box::new(EllipsisMatcher::<T>::new(cursor)),
         }

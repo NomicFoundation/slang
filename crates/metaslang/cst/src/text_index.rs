@@ -31,10 +31,7 @@ impl TextIndex {
             ('\r', Some('\n')) => {
                 // Ignore for now, we will increment the line number whe we process the \n
             }
-            ('\n', _)
-            | ('\r', _)
-            | (/* line separator */ '\u{2028}', _)
-            | (/* paragraph separator */ '\u{2029}', _) => {
+            ('\n' | '\r' | '\u{2028}' | '\u{2029}', _) => {
                 self.line += 1;
                 self.column = 0;
             }
@@ -69,7 +66,7 @@ impl<T: AsRef<str>> From<T> for TextIndex {
         let mut iter = s.as_ref().chars().peekable();
         while let Some(c) = iter.next() {
             let n = iter.peek();
-            result.advance(c, n)
+            result.advance(c, n);
         }
         result
     }

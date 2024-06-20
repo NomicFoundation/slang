@@ -4,11 +4,10 @@
 // We should remove it and replace the grammar construction in the super `parser`
 // module with the one from the new DSLv2 in the `constructor` module.
 
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use codegen_language_definition::model::{self, Identifier};
-use semver::Version;
 
 pub mod constructor;
 pub mod parser_definition;
@@ -22,10 +21,6 @@ pub use scanner_definition::*;
 pub use visitor::*;
 
 pub struct Grammar {
-    pub name: String,
-    pub versions: BTreeSet<Version>,
-    pub leading_trivia_parser: TriviaParserDefinitionRef,
-    pub trailing_trivia_parser: TriviaParserDefinitionRef,
     pub elements: HashMap<Identifier, GrammarElement>,
 }
 

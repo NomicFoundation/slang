@@ -8,8 +8,8 @@ env = {
 
   // Rust:
   "RUST_BACKTRACE": "full",
-  "RUST_STABLE_VERSION": "1.76.0", // __RUST_STABLE_VERSION_MARKER__ (keep in sync)
-  "RUST_NIGHTLY_VERSION": "nightly-2024-02-21", // __RUST_NIGHTLY_VERSION_MARKER__ (keep in sync)
+  "RUST_STABLE_VERSION": "1.79.0", // __RUST_STABLE_VERSION_MARKER__ (keep in sync)
+  "RUST_NIGHTLY_VERSION": "nightly-2024-06-17", // __RUST_NIGHTLY_VERSION_MARKER__ (keep in sync)
   "RUSTC_WRAPPER": "${HERMIT_ENV}/bin/sccache",
   "SCCACHE_DIR": "${HERMIT_ENV}/.hermit/sccache",
 

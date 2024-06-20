@@ -1,7 +1,7 @@
 //! Defines a translation of DSL v2 model into [`Grammar`], which is used for generating the parser and the CST.
 
 use std::cell::OnceCell;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -100,10 +100,6 @@ impl Grammar {
             .map(|(name, elem)| (name.clone(), elem.clone()));
 
         Grammar {
-            name: lang.name.to_string(),
-            versions: BTreeSet::from_iter(lang.versions.clone()),
-            leading_trivia_parser: Rc::clone(&leading_trivia),
-            trailing_trivia_parser: Rc::clone(&trailing_trivia),
             elements: resolved_items
                 .chain(
                     [leading_trivia, trailing_trivia]

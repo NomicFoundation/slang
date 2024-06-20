@@ -24,3 +24,6 @@ categories = ["compilers", "parsing", "parser-implementations"]
 nom = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
+
+[lints]
+workspace = true

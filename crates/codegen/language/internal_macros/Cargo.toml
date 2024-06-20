@@ -16,4 +16,3 @@ syn = { workspace = true }
 
 [lints]
 workspace = true
-

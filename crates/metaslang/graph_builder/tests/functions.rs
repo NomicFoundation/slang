@@ -11,6 +11,7 @@ use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::{
     ExecutionConfig, ExecutionError, Identifier, NoCancellation, Variables,
 };
+use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _, thiserror as _};
 
 #[derive(
     Clone,
@@ -65,14 +66,15 @@ fn execute(dsl_source: &str) -> Result<String, ExecutionError> {
 fn check_execution(dsl_source: &str, expected_graph: &str) {
     match execute(dsl_source) {
         Ok(actual_graph) => assert_eq!(actual_graph, expected_graph),
-        Err(e) => panic!("Could not execute file: {}", e),
+        Err(e) => panic!("Could not execute file: {e}"),
     }
 }
 
 fn fail_execution(dsl_source: &str) {
-    if execute(dsl_source).is_ok() {
-        panic!("Execution succeeded unexpectedly");
-    }
+    assert!(
+        execute(dsl_source).is_err(),
+        "Execution succeeded unexpectedly"
+    );
 }
 
 #[test]

@@ -21,7 +21,7 @@ pub struct RunController {
 
 #[derive(Clone, Debug, PartialEq, ValueEnum)]
 enum BinaryName {
-    /// Runs the public 'slang_solidity' crate shipped to Cargo users.
+    /// Runs the public `slang_solidity` crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
     /// Runs the Solidity parser against source files from the Sanctuary repositories.
