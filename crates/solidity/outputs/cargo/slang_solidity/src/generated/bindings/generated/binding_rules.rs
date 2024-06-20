@@ -19,7 +19,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @source_unit [SourceUnit] {
+  ;; All lexical_scope nodes eventually connect to the file's root scope
   node @source_unit.lexical_scope
+
+  ;; This provides all the exported symbols from the file
   node @source_unit.defs
 }
 
@@ -35,12 +38,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     | [UserDefinedValueTypeDefinition]
     | [EventDefinition]
 ) {
-  ;; All these nodes provide named definitions
+  ;; All these CST nodes provide named definitions
   node @definition.lexical_scope
   node @definition.defs
 }
 
-;; Top-level definitions
+;; Top-level definitions...
 @source_unit [SourceUnit ... [SourceUnitMembers
     ...
     [SourceUnitMember @unit_member (
@@ -59,7 +62,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] ...] {
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
 
-  ;; ... are available in the lexical scope
+  ;; ... are available in the file's lexical scope
   edge @source_unit.lexical_scope -> @unit_member.defs
 
   ;; ... and are exported in the file
@@ -99,6 +102,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @function.defs -> def
 }
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,42 +116,66 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @param.lexical_scope -> def
   edge @param.defs -> def
 }
 
-@function [FunctionDefinition
+@function [FunctionDefinition ... parameters: [ParametersDeclaration
     ...
-    parameters: [_ ... parameters: [Parameters ... @param item: [Parameter] ...] ...]
+    [Parameters ... @param item: [Parameter] ...]
     ...
-] {
-  ;; Parameters are available in the function scope
+] ...] {
+  edge @param.lexical_scope -> @function.lexical_scope
+
+  ;; Input parameters are available in the function scope
   edge @function.lexical_scope -> @param.defs
   attr (@function.lexical_scope -> @param.defs) precedence = 1
 }
 
-;; Connect the function to the contract/interface/library they belong to
-[SourceUnitMember @unit_member variant: [_
+@function [FunctionDefinition ... returns: [ReturnsDeclaration
     ...
-    members: [_
-        ...
-        item: [_ @function variant: [FunctionDefinition]]
-        ...
-    ]
+    [Parameters ... @param item: [Parameter] ...]
     ...
-  ]
-] {
-  edge @function.lexical_scope -> @unit_member.lexical_scope
+] ...] {
+  edge @param.lexical_scope -> @function.lexical_scope
+
+  ;; Return parameters are available in the function scope
+  edge @function.lexical_scope -> @param.defs
+  attr (@function.lexical_scope -> @param.defs) precedence = 1
 }
 
-@body [FunctionBody] {
-  node @body.lexical_scope
+;; Connect function's lexical scope with the enclosing
+;; contract/interface/library, and make the function itself available in the
+;; enclosing contract/interface/library scope.
+;; NB. free-functions (ie. those defined at the file's level) are already
+;; covered above
+
+@contract [ContractDefinition ... members: [ContractMembers
+    ...
+    item: [ContractMember @function variant: [FunctionDefinition]]
+    ...
+] ...] {
+  edge @function.lexical_scope -> @contract.lexical_scope
+  edge @contract.lexical_scope -> @function.defs
 }
 
-;; Connect the function body to the function definition
-@function [FunctionDefinition ... @body body: [FunctionBody] ...] {
-  edge @body.lexical_scope -> @function.lexical_scope
+@interface [InterfaceDefinition ... members: [InterfaceMembers
+    ...
+    item: [ContractMember @function variant: [FunctionDefinition]]
+    ...
+] ...] {
+  edge @function.lexical_scope -> @interface.lexical_scope
+  edge @interface.lexical_scope -> @function.defs
 }
+
+@library [LibraryDefinition ... members: [LibraryMembers
+    ...
+    item: [ContractMember @function variant: [FunctionDefinition]]
+    ...
+] ...] {
+  edge @function.lexical_scope -> @library.lexical_scope
+  edge @library.lexical_scope -> @function.defs
+}
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -157,27 +185,31 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @block [Block] {
   node @block.lexical_scope
   node @block.defs
-  edge @block.lexical_scope -> @block.defs
 }
 
 @stmt [Statement] {
   node @stmt.lexical_scope
   node @stmt.defs
-  edge @stmt.lexical_scope -> @stmt.defs
 }
 
-@block [Block ... statements: [_ ... @stmt [Statement]...] ...] {
+@block [Block ... [Statements ... @stmt [Statement]...] ...] {
   edge @stmt.lexical_scope -> @block.lexical_scope
-  edge @block.defs -> @stmt.defs
+  edge @block.lexical_scope -> @stmt.defs
+  attr (@block.lexical_scope -> @stmt.defs) precedence = 1
 }
 
-@body [FunctionBody @block variant: [Block]] {
-  edge @block.lexical_scope -> @body.lexical_scope
+@stmt [Statement @block variant: [Block]] {
+  edge @block.lexical_scope -> @stmt.lexical_scope
+}
+
+;; Connect the function body's block lexical scope to the function
+@function [FunctionDefinition ... [FunctionBody @block [Block]] ...] {
+  edge @block.lexical_scope -> @function.lexical_scope
 }
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Declaration Statements
+;;; Declaration Statements introducing variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @stmt [Statement [VariableDeclarationStatement ... @name name: [Identifier] ...]] {
@@ -187,19 +219,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @stmt.defs -> def
 }
 
-@stmt [Statement [TupleDeconstructionStatement
+@stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
     ...
-    [TupleDeconstructionElements
-        ...
-        item: [_ member: [_ variant: [_ ... @name name: [Identifier]]]]
-        ...
-    ]
+    [TupleDeconstructionElement [TupleMember variant: [_ ... @name name: [Identifier]]]]
     ...
-]] {
+] ...]] {
   node def
   attr (def) node_definition = @name
 
-  edge @stmt.lexical_scope -> def
   edge @stmt.defs -> def
 }
 
@@ -220,19 +247,18 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @state_var.defs -> def
 }
 
-[SourceUnitMember @unit_member variant: [_
+;; NB. Even though the grammar allows it, state variables can only be declared
+;; inside contracts, and not interfaces or libraries. So, we will only bind
+;; contract state variables.
+@contract [ContractDefinition ... members: [ContractMembers
     ...
-    members: [_
-        ...
-        item: [_ @state_var variant: [StateVariableDefinition]]
-        ...
-    ]
+    item: [ContractMember @state_var variant: [StateVariableDefinition]]
     ...
-  ]
-] {
-  edge @state_var.lexical_scope -> @unit_member.lexical_scope
-  edge @unit_member.lexical_scope -> @state_var.defs
+] ...] {
+  edge @state_var.lexical_scope -> @contract.lexical_scope
+  edge @contract.lexical_scope -> @state_var.defs
 }
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Structure definitions
@@ -247,22 +273,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @struct.lexical_scope -> def
   edge @struct.defs -> def
-}
-
-;; Connect the struct to the contract/interface/library they belong to
-[SourceUnitMember @unit_member variant: [_
-    ...
-    members: [_
-        ...
-        item: [_ @struct variant: [StructDefinition]]
-        ...
-    ]
-    ...
-  ]
-] {
-  edge @unit_member.lexical_scope -> @struct.defs
 }
 
 @member [StructMember] {
@@ -280,7 +291,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> def
 }
 
-;; TODO: missing connection between the struct field declarations and the struct
+;; TODO: connect lexical scope of structs to the rest of the source unit and
+;; make them available in the parent scope (either top-level, or
+;; contract/interface/library).
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,6 +319,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
 
+;; Expressions used for variable declarations
 @stmt [Statement ... variant: [VariableDeclarationStatement
     ...
     value: [VariableDeclarationValue ... @expr [Expression] ...]
@@ -313,6 +327,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] ...] {
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
+
+
+;;; Member access expressions
 
 @member [MemberAccess] {
   node @member.lexical_scope

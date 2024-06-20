@@ -100,7 +100,10 @@ fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
                 let node_label = format!(
                     "\"`**{node_label}** @{source}\n{variable}\n{location}`\"",
                     source = source.map(|s| s.location()).unwrap_or_default(),
-                    variable = gn.attributes.get(VARIABLE_DEBUG_ATTR).unwrap_or(&Value::Null),
+                    variable = gn
+                        .attributes
+                        .get(VARIABLE_DEBUG_ATTR)
+                        .unwrap_or(&Value::Null),
                     location = location.unwrap_or(&Value::Null),
                 );
                 let node_type = gn.attributes.get("type").and_then(|x| x.as_str().ok());

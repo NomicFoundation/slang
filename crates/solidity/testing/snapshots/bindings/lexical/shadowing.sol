@@ -11,7 +11,8 @@ contract Foo {
         {
             uint x = 20;
             //   ^def:4
-            return x;
+            return x + y;
+            //         ^ref:3
             //     ^ref:4
         }
     }
