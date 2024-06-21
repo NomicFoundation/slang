@@ -245,11 +245,13 @@
 //!
 
 mod cancellation;
+mod functions;
 
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 pub use cancellation::{CancellationFlag, NoCancellation};
+pub use functions::default_functions;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::ast::File as GraphBuilderFile;

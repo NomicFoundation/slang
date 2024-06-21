@@ -2213,6 +2213,7 @@ dependencies = [
  "codegen_language_definition",
  "codegen_testing",
  "infra_utils",
+ "metaslang_bindings",
  "metaslang_graph_builder",
  "once_cell",
  "regex",
