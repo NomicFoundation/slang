@@ -122,7 +122,7 @@ impl ScannerContextCollector {
             .items()
             .filter_map(|(_, item)| item.try_as_keyword_scanner_definition_ref())
         {
-            let (lex_ctxt, _) = resolved.original(&kw_scanner_def.name);
+            let lex_ctxt = resolved.lex_ctx(&kw_scanner_def.name);
 
             self.scanner_contexts
                 .entry(lex_ctxt.clone())

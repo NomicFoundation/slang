@@ -165,8 +165,9 @@ impl ResolveCtx {
 }
 
 impl Resolution {
-    pub fn original(&self, name: &Identifier) -> &(Identifier, Item) {
-        &self.items[name]
+    /// Returns the lexical context in which the item was defined.
+    pub fn lex_ctx(&self, name: &Identifier) -> &Identifier {
+        &self.items[name].0
     }
 
     /// Returns the resolved items.
