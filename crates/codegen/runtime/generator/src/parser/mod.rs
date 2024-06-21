@@ -68,16 +68,22 @@ impl ParserModel {
         // Collect all scanner contexts and their scanners
         let mut acc = ScannerContextCollector::default();
         resolved.to_grammar().accept_visitor(&mut acc);
+        let lexer_model = acc.into_model(&resolved);
 
         // Combine everything into the final model
-        acc.into_model(&resolved, parser_fns)
+        ParserModel {
+            scanner_functions: lexer_model.scanner_functions,
+            scanner_contexts: lexer_model.scanner_contexts,
+            keyword_compound_scanners: lexer_model.keyword_compound_scanners,
+            parser_functions: parser_fns.parser_functions,
+            trivia_parser_functions: parser_fns.trivia_parser_functions,
+        }
     }
 }
 
 #[derive(Default)]
 struct ScannerContextCollector {
     scanner_contexts: BTreeMap<Identifier, ScannerContextCollectorState>,
-
     /// Makes sure to codegen the scanner functions that are referenced by other scanners.
     top_level_scanner_names: BTreeSet<Identifier>,
     /// The current context of a parent scanner/parser being processed.
@@ -103,8 +109,8 @@ impl ScannerContextCollector {
             .expect("context must be set with `set_current_context`")
     }
 
-    // TODO: Separate it to a function that combines the accumulated state with the parser_fns
-    fn into_model(mut self, resolved: &Resolution, parser_fns: ParserFunctions) -> ParserModel {
+    // Transforms the accumulated state into the final model.
+    fn into_model(mut self, resolved: &Resolution) -> LexerModel {
         // Lookup table for all scanners; used to generate trie scanners.
         let all_scanners: BTreeMap<_, _> = resolved
             .items()
@@ -202,14 +208,11 @@ impl ScannerContextCollector {
             })
             .collect();
 
-        ParserModel {
-            // These are derived from the accumulated state
+        // These are derived from the accumulated state
+        LexerModel {
             scanner_contexts: contexts,
             scanner_functions,
             keyword_compound_scanners,
-            // These are directly collected from the flat resolved items
-            parser_functions: parser_fns.parser_functions,
-            trivia_parser_functions: parser_fns.trivia_parser_functions,
         }
     }
 }
@@ -265,6 +268,13 @@ impl GrammarVisitor for ScannerContextCollector {
             _ => {}
         };
     }
+}
+
+/// Represents a final model used for generating lexer/scanner code.
+struct LexerModel {
+    scanner_functions: BTreeMap<Identifier, RustCode>,
+    scanner_contexts: BTreeMap<Identifier, ScannerContextModel>,
+    keyword_compound_scanners: BTreeMap<Identifier, RustCode>,
 }
 
 /// Collects all parser functions from the resolved grammar.
