@@ -9,14 +9,15 @@ use std::rc::Rc;
 
 use codegen_language_definition::model::{self, Identifier};
 
-pub mod constructor;
 pub mod parser_definition;
 pub mod precedence_parser_definition;
+pub mod resolver;
 pub mod scanner_definition;
 pub mod visitor;
 
 pub use parser_definition::*;
 pub use precedence_parser_definition::*;
+pub use resolver::ResolveCtx;
 pub use scanner_definition::*;
 pub use visitor::*;
 
@@ -35,7 +36,7 @@ impl Grammar {
 }
 
 #[allow(clippy::enum_variant_names)] // this will be removed soon
-#[derive(Clone)]
+#[derive(Clone, strum_macros::EnumTryAs)]
 pub enum GrammarElement {
     ScannerDefinition(ScannerDefinitionRef),
     KeywordScannerDefinition(Rc<model::KeywordItem>),
