@@ -4,6 +4,7 @@
 #[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
+global VERSION
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -133,7 +134,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @function [FunctionDefinition ... returns: [ReturnsDeclaration
     ...
-    [Parameters ... @param item: [Parameter] ...]
+    [ParametersDeclaration ... [Parameters ... @param item: [Parameter] ...] ...]
     ...
 ] ...] {
   edge @param.lexical_scope -> @function.lexical_scope
@@ -192,14 +193,29 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @stmt.defs
 }
 
+;; FIXME: For C99 scoping, we should link each statement's lexical_scope to the
+;; previous lexical_scope, and to the statement's defs (to make the def
+;; available to the statement itself).
+;; Only the first statement in the block connects to the block's lexical_scope.
+
 @block [Block ... [Statements ... @stmt [Statement]...] ...] {
   edge @stmt.lexical_scope -> @block.lexical_scope
+
+  ;; FIXME: doesn't work for C99 scoping
   edge @block.lexical_scope -> @stmt.defs
   attr (@block.lexical_scope -> @stmt.defs) precedence = 1
+
+  ;; Hoist statement definitions (< 0.5.0)
+  if (version-matches VERSION "< 0.5.0") {
+    edge @block.defs -> @stmt.defs
+  }
 }
 
 @stmt [Statement @block variant: [Block]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
+
+  ;; Hoist block definitions (< 0.5.0)
+  edge @stmt.defs -> @block.defs
 }
 
 ;; Connect the function body's block lexical scope to the function
