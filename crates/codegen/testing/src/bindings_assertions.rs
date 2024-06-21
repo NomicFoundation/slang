@@ -8,7 +8,7 @@ use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::FileWalker;
 
-pub fn generate_bindings_tests(
+pub fn generate_bindings_assertions_tests(
     _language: &Language,
     data_dir: &Path,
     output_dir: &Path,
@@ -88,7 +88,7 @@ fn generate_unit_test_file(
     let unit_tests_str = test_files
         .iter()
         .fold(String::new(), |mut buffer, test_file| {
-            let test_name = test_file.strip_suffix(".sol").unwrap();
+            let test_name = test_file.strip_suffix(".sol").unwrap().to_snake_case();
             writeln!(
                 buffer,
                 r#"
@@ -106,7 +106,7 @@ fn generate_unit_test_file(
         "
             use anyhow::Result;
 
-            use crate::bindings::runner::run;
+            use crate::bindings_assertions::runner::run;
 
             {unit_tests_str}
         "

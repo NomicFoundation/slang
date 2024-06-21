@@ -9,7 +9,6 @@ use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::graph::{Graph, Value};
 use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use semver::Version;
-use slang_solidity::assertions::{check_assertions, collect_assertions};
 use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
@@ -17,10 +16,10 @@ use slang_solidity::parse_output::ParseOutput;
 
 pub fn run(group_name: &str, file_name: &str) -> Result<()> {
     let data_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
-        .join("bindings")
+        .join("bindings_output")
         .join(group_name);
     let input_path = data_dir.join(file_name);
-    let input = fs::read_to_string(&input_path)?;
+    let input = fs::read_to_string(input_path)?;
 
     // TODO: de-hardcode this and parse with different versions?
     let version = Language::SUPPORTED_VERSIONS.last().unwrap();
@@ -33,15 +32,6 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
     let output_path = output_dir.join(format!("{file_name}.mmd"));
     create_dir_all(&output_dir)?;
     output_graph(version, &parse_output, &output_path)?;
-
-    let mut bindings = bindings::create(version.clone());
-    bindings.add_file(
-        input_path.to_str().unwrap(),
-        parse_output.create_tree_cursor(),
-    );
-
-    let assertions = collect_assertions(parse_output.create_tree_cursor())?;
-    check_assertions(&bindings, &assertions)?;
 
     Ok(())
 }

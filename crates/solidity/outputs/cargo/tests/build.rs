@@ -12,9 +12,16 @@ fn main() -> Result<()> {
             .join("src/cst_output/generated"),
     )?;
 
-    lang_def.generate_bindings_tests(
-        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings"),
+    lang_def.generate_bindings_output_tests(
+        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings_output"),
         &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
-            .join("src/bindings/generated"),
+            .join("src/bindings_output/generated"),
+    )?;
+
+    lang_def.generate_bindings_assertions_tests(
+        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
+            .join("bindings_assertions"),
+        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
+            .join("src/bindings_assertions/generated"),
     )
 }

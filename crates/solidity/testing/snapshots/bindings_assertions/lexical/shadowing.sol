@@ -1,3 +1,5 @@
+pragma solidity >= 0.5.0;
+
 contract Foo {
     uint x = 10;
     //   ^def:1

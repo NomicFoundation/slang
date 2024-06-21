@@ -2,7 +2,12 @@
 
 use anyhow::Result;
 
-use crate::bindings::runner::run;
+use crate::bindings_assertions::runner::run;
+
+#[test]
+fn hoisting_scopes() -> Result<()> {
+    run("lexical", "hoisting_scopes.sol")
+}
 
 #[test]
 fn local_vars() -> Result<()> {
