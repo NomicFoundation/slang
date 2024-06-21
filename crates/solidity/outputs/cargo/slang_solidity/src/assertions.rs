@@ -7,7 +7,6 @@ use thiserror::Error;
 
 use crate::bindings::Bindings;
 use crate::cursor::Cursor;
-use crate::kinds::TerminalKind;
 use crate::query::Query;
 
 #[derive(Debug, Error)]
@@ -262,14 +261,9 @@ fn search_asserted_node_backwards(mut cursor: Cursor, anchor_column: usize) -> O
             continue;
         }
 
-        // Skip over trivia and other comments (allows defining multiple
-        // assertions for the same line of code in multiple single line
-        // comments)
-        if cursor.node().is_terminal_with_kinds(&[
-            TerminalKind::Whitespace,
-            TerminalKind::EndOfLine,
-            TerminalKind::SingleLineComment,
-        ]) {
+        // Skip over trivia, to allow defining multiple assertions for the same
+        // line of code in multiple single line comments
+        if cursor.node().is_trivia() {
             continue;
         }
 
