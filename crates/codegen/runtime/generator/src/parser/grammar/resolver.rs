@@ -274,7 +274,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
                         .set(resolve_precedence(item.deref().clone(), &lex_ctx, ctx))
                         .unwrap();
                 }
-                _ => unreachable!("Only nonterminals can be resolved here"),
+                _ => unreachable!("{ident}: Only nonterminals can be resolved here"),
             };
 
             ctx.resolved.get(ident).cloned().unwrap()
@@ -291,7 +291,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
                 Item::Token { item } => item as Rc<_>,
                 Item::Trivia { item } => item as Rc<_>,
                 Item::Fragment { item } => item as Rc<_>,
-                _ => unreachable!("Only terminals can be resolved here"),
+                _ => unreachable!("{ident}: Only terminals can be resolved here"),
             };
 
             let resolved = GrammarElement::ScannerDefinition(named_scanner);
@@ -502,7 +502,10 @@ fn resolve_precedence(
         })
         .collect();
     let primary_expression = Box::new(match primaries.len() {
-        0 => panic!("Precedence operator has no primary expressions"),
+        0 => panic!(
+            "Precedence operator {item} has no primary expressions",
+            item = item.name
+        ),
         _ => ParserDefinitionNode::Choice(Labeled::with_builtin_label(
             BuiltInLabel::Variant,
             primaries,
