@@ -5,8 +5,8 @@ codegen_language_macros::compile!(Language(
     documentation_dir = "crates/solidity/inputs/language/docs",
     binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
     root_item = SourceUnit,
-    // TODO(#638): For now this is on par with the DSL v1 definition to minimize the fallout.
-    // We should replace this with the new definition from #629.
+    // TODO(#1020): Define the end-of-file trivia explicitly rather than
+    // implicitly reusing the leading trivia in the generater parser code.
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
         Trivia(EndOfLine),

@@ -10,7 +10,6 @@ pub enum TriviaParser {
     Choice { parsers: Vec<TriviaParser> },
 
     Optional { parser: Box<TriviaParser> },
-    // TODO(#638): Remove this, once we adapt the DSL v1 codegen model to the new v2 definition.
     OneOrMore { parser: Box<TriviaParser> },
     ZeroOrMore { parser: Box<TriviaParser> },
 
