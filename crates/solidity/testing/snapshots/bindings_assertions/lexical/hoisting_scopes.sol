@@ -5,9 +5,8 @@ contract Foo {
   function bar() returns (int x) {
     //                        ^def:1
     x = y + z;
-    // FIXME: the following two references should resolve
-//  *ref:1
-    //      *ref:3
+//  ^ref:1
+    //      ^ref:3
     //  ^ref:2
     int y = 5;
     //  ^def:2
