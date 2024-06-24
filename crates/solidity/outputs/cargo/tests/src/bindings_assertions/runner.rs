@@ -46,7 +46,8 @@ fn check_assertions_with_version(
         if version_req.matches(version) {
             assert!(
                 result.is_ok(),
-                "Version {version}, bindings assertions expected to pass but failed"
+                "Version {version}, bindings assertions expected to pass but failed:\n{errors}",
+                errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
             );
         } else {
             assert!(
@@ -57,7 +58,8 @@ fn check_assertions_with_version(
     } else {
         assert!(
             result.is_ok(),
-            "Failed bindings assertions in version {version} (no version requirements found)"
+            "Failed bindings assertions in version {version} (no version requirements found):\n{errors}",
+            errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
         );
     }
 

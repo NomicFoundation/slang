@@ -17,8 +17,12 @@ pub enum AssertionError {
     #[error("Duplicate assertion definition {0}")]
     DuplicateDefinition(String),
 
-    #[error("Failed {0} of {1} bindings assertions")]
-    FailedAssertions(usize, usize),
+    #[error("Failed {failed} of {total} bindings assertions: {errors:?}")]
+    FailedAssertions {
+        failed: usize,
+        total: usize,
+        errors: Vec<String>,
+    },
 }
 
 pub fn check_assertions(
@@ -26,7 +30,7 @@ pub fn check_assertions(
     assertions: &Assertions,
 ) -> Result<(), AssertionError> {
     let mut count = 0;
-    let mut success = 0;
+    let mut failures: Vec<String> = Vec::new();
 
     for assertion in assertions.definitions.values() {
         count += 1;
@@ -36,15 +40,13 @@ pub fn check_assertions(
         };
 
         let Some(handle) = bindings.cursor_to_handle(cursor) else {
-            eprintln!("{assertion} failed: not found");
+            failures.push(format!("{assertion} failed: not found"));
             continue;
         };
         if !handle.is_definition() {
-            eprintln!("{assertion} failed: not a definition");
+            failures.push(format!("{assertion} failed: not a definition"));
             continue;
         }
-
-        success += 1;
     }
 
     for assertion in &assertions.references {
@@ -55,11 +57,11 @@ pub fn check_assertions(
         };
 
         let Some(handle) = bindings.cursor_to_handle(cursor) else {
-            eprintln!("{assertion} failed: not found");
+            failures.push(format!("{assertion} failed: not found"));
             continue;
         };
         if !handle.is_reference() {
-            eprintln!("{assertion} failed: not a reference");
+            failures.push(format!("{assertion} failed: not a reference"));
             continue;
         }
 
@@ -67,19 +69,16 @@ pub fn check_assertions(
             // couldn't jump to definition
             if id.is_some() {
                 // but a binding resolution was expected
-                eprintln!("{assertion} failed: not resolved");
-            } else {
-                // and we asserted an unresolved reference -> good
-                success += 1;
+                failures.push(format!("{assertion} failed: not resolved"));
             }
             continue;
         };
         let Some(id) = id else {
             // expected an unresolved reference
-            eprintln!(
+            failures.push(format!(
                 "{assertion} failed: reference did resolve to {}",
                 DisplayCursor(&def_handle.get_cursor().unwrap())
-            );
+            ));
             continue;
         };
 
@@ -88,31 +87,36 @@ pub fn check_assertions(
             cursor: def_cursor,
         }) = assertions.definitions.get(id)
         else {
-            eprintln!("{assertion} failed: definition assertion not found");
+            failures.push(format!(
+                "{assertion} failed: definition assertion not found"
+            ));
             continue;
         };
         if let Some(ref_def_cursor) = def_handle.get_cursor() {
             if ref_def_cursor != *def_cursor {
-                eprintln!(
+                failures.push(format!(
                     "{assertion} failed: resolved to unexpected {}",
                     DisplayCursor(&ref_def_cursor)
-                );
+                ));
                 continue;
             }
         } else {
-            eprintln!("{assertion} failed: jumped to definition did not resolve to a cursor");
+            failures.push(format!(
+                "{assertion} failed: jumped to definition did not resolve to a cursor"
+            ));
             continue;
         }
-
-        success += 1;
     }
 
-    if count > success {
-        eprintln!();
-        Err(AssertionError::FailedAssertions(count - success, count))
-    } else {
+    if failures.is_empty() {
         println!("{count} binding assertions OK");
         Ok(())
+    } else {
+        Err(AssertionError::FailedAssertions {
+            total: count,
+            failed: failures.len(),
+            errors: failures,
+        })
     }
 }
 
