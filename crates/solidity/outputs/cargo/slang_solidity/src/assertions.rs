@@ -3,6 +3,7 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use regex::Regex;
+use semver::{Version, VersionReq};
 use thiserror::Error;
 
 use crate::bindings::Bindings;
@@ -13,6 +14,9 @@ use crate::query::Query;
 pub enum AssertionError {
     #[error("Invalid assertion at {0}:{1}")]
     InvalidAssertion(usize, usize),
+
+    #[error("Invalid version requierement at line {0}: `{1}`")]
+    InvalidVersionReq(usize, String),
 
     #[error("Duplicate assertion definition {0}")]
     DuplicateDefinition(String),
@@ -28,6 +32,7 @@ pub enum AssertionError {
 pub fn check_assertions(
     bindings: &Bindings,
     assertions: &Assertions,
+    version: &Version,
 ) -> Result<(), AssertionError> {
     let mut count = 0;
     let mut failures: Vec<String> = Vec::new();
@@ -52,8 +57,19 @@ pub fn check_assertions(
     for assertion in &assertions.references {
         count += 1;
 
-        let Assertion::Reference { id, cursor } = assertion else {
+        let Assertion::Reference {
+            id,
+            cursor,
+            version_req,
+        } = assertion
+        else {
             unreachable!("{assertion} is not a reference assertion");
+        };
+
+        let expect_success = if let Some(version_req) = version_req {
+            version_req.matches(version)
+        } else {
+            true
         };
 
         let Some(handle) = bindings.cursor_to_handle(cursor) else {
@@ -67,18 +83,20 @@ pub fn check_assertions(
 
         let Some(def_handle) = handle.jump_to_definition() else {
             // couldn't jump to definition
-            if id.is_some() {
+            if id.is_some() && expect_success {
                 // but a binding resolution was expected
                 failures.push(format!("{assertion} failed: not resolved"));
             }
             continue;
         };
         let Some(id) = id else {
-            // expected an unresolved reference
-            failures.push(format!(
-                "{assertion} failed: reference did resolve to {}",
-                DisplayCursor(&def_handle.get_cursor().unwrap())
-            ));
+            if expect_success {
+                // expected an unresolved reference
+                failures.push(format!(
+                    "{assertion} failed: reference did resolve to {}",
+                    DisplayCursor(&def_handle.get_cursor().unwrap())
+                ));
+            }
             continue;
         };
 
@@ -94,10 +112,12 @@ pub fn check_assertions(
         };
         if let Some(ref_def_cursor) = def_handle.get_cursor() {
             if ref_def_cursor != *def_cursor {
-                failures.push(format!(
-                    "{assertion} failed: resolved to unexpected {}",
-                    DisplayCursor(&ref_def_cursor)
-                ));
+                if expect_success {
+                    failures.push(format!(
+                        "{assertion} failed: resolved to unexpected {}",
+                        DisplayCursor(&ref_def_cursor)
+                    ));
+                }
                 continue;
             }
         } else {
@@ -105,6 +125,11 @@ pub fn check_assertions(
                 "{assertion} failed: jumped to definition did not resolve to a cursor"
             ));
             continue;
+        }
+        if !expect_success {
+            failures.push(format!(
+                "{assertion} succeeded but was expected to fail in version {version}"
+            ));
         }
     }
 
@@ -171,8 +196,15 @@ impl Assertions {
 
 #[derive(Clone, Debug, PartialEq)]
 enum Assertion {
-    Definition { id: String, cursor: Cursor },
-    Reference { id: Option<String>, cursor: Cursor },
+    Definition {
+        id: String,
+        cursor: Cursor,
+    },
+    Reference {
+        id: Option<String>,
+        cursor: Cursor,
+        version_req: Option<VersionReq>,
+    },
 }
 
 impl fmt::Display for Assertion {
@@ -183,15 +215,19 @@ impl fmt::Display for Assertion {
                 write!(f, "Definition {id}")?;
                 cursor
             }
-            Self::Reference { id: None, cursor } => {
-                write!(f, "Unresolved Reference")?;
-                cursor
-            }
             Self::Reference {
-                id: Some(id),
+                id,
                 cursor,
+                version_req,
             } => {
-                write!(f, "Reference {id}")?;
+                if let Some(id) = id {
+                    write!(f, "Reference {id}")?;
+                } else {
+                    write!(f, "Unresolved Reference")?;
+                }
+                if let Some(version_req) = version_req {
+                    write!(f, " in versions {version_req}")?;
+                }
                 cursor
             }
         };
@@ -218,7 +254,9 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 }
 
 fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, AssertionError> {
-    let assertion_regex = Regex::new(r"[\^](ref|def):([0-9a-zA-Z_-]+|!)").unwrap();
+    let assertion_regex =
+        Regex::new(r"[\^](?<type>ref|def):(?<id>[0-9a-zA-Z_-]+|!)([\t ]*\((?<version>[^)]+)\))?")
+            .unwrap();
     let comment_offset = comment.text_offset();
     let comment_col = comment_offset.column;
     let comment_str = comment.node().unparse();
@@ -227,9 +265,21 @@ fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, Asse
         return Ok(None);
     };
 
-    let assertion_id = captures.get(2).unwrap().as_str();
-    let assertion_type = captures.get(1).unwrap().as_str();
+    let assertion_id = captures.name("id").unwrap().as_str();
+    let assertion_type = captures.name("type").unwrap().as_str();
     let assertion_col = comment_col + captures.get(0).unwrap().start();
+    let version_req = match captures.name("version") {
+        Some(version) => {
+            let Ok(version_req) = VersionReq::parse(version.as_str()) else {
+                return Err(AssertionError::InvalidVersionReq(
+                    comment_offset.line + 1,
+                    version.as_str().to_owned(),
+                ));
+            };
+            Some(version_req)
+        }
+        None => None,
+    };
 
     if let Some(cursor) = search_asserted_node_backwards(comment.clone(), assertion_col) {
         let assertion = match assertion_type {
@@ -240,7 +290,11 @@ fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, Asse
                 } else {
                     Some(assertion_id.to_owned())
                 };
-                Assertion::Reference { id, cursor }
+                Assertion::Reference {
+                    id,
+                    cursor,
+                    version_req,
+                }
             }
             "def" => Assertion::Definition {
                 id: assertion_id.to_owned(),

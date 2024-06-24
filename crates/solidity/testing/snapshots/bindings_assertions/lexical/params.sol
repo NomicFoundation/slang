@@ -15,7 +15,7 @@ contract Foo {
         //                            ^def:2
         //            ^def:3
         y = x + 5;
-    //      ^ref:3
+        //  ^ref:3
     //  ^ref:2
     }
 }
