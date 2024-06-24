@@ -191,31 +191,53 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @stmt [Statement] {
   node @stmt.lexical_scope
   node @stmt.defs
-}
 
-;; FIXME: For C99 scoping, we should link each statement's lexical_scope to the
-;; previous lexical_scope, and to the statement's defs (to make the def
-;; available to the statement itself).
-;; Only the first statement in the block connects to the block's lexical_scope.
-
-@block [Block ... [Statements ... @stmt [Statement]...] ...] {
-  edge @stmt.lexical_scope -> @block.lexical_scope
-
-  ;; FIXME: doesn't work for C99 scoping
-  edge @block.lexical_scope -> @stmt.defs
-  attr (@block.lexical_scope -> @stmt.defs) precedence = 1
-
-  ;; Hoist statement definitions (< 0.5.0)
-  if (version-matches VERSION "< 0.5.0") {
-    edge @block.defs -> @stmt.defs
+  if (version-matches VERSION ">= 0.5.0") {
+    ;; For Solidity >= 0.5.0, definitions are immediately available in the
+    ;; statement scope. For < 0.5.0 this is also true, but resolved through the
+    ;; enclosing block's lexical scope.
+    edge @stmt.lexical_scope -> @stmt.defs
+    attr (@stmt.lexical_scope -> @stmt.defs) precedence = 1
   }
 }
 
+;; The first statement in a block
+@block [Block ... [Statements @stmt [Statement] ...] ...] {
+  if (version-matches VERSION ">= 0.5.0") {
+    edge @stmt.lexical_scope -> @block.lexical_scope
+  }
+}
+
+;; Two consecutive statements
+[Statements ... @left_stmt [Statement] @right_stmt [Statement] ...] {
+  if (version-matches VERSION ">= 0.5.0") {
+    edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
+  }
+}
+
+@block [Block ... [Statements ... @stmt [Statement]...] ...] {
+  ;; Hoist statement definitions for Solidity < 0.5.0
+  if (version-matches VERSION "< 0.5.0") {
+    ;; definitions are carried over to the block
+    edge @block.defs -> @stmt.defs
+
+    ;; resolution happens in the context of the block
+    edge @stmt.lexical_scope -> @block.lexical_scope
+
+    ;; and the statement definitions are available block's scope
+    edge @block.lexical_scope -> @stmt.defs
+    attr (@block.lexical_scope -> @stmt.defs) precedence = 1
+  }
+}
+
+;; Statements of type block
 @stmt [Statement @block variant: [Block]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
 
   ;; Hoist block definitions (< 0.5.0)
-  edge @stmt.defs -> @block.defs
+  if (version-matches VERSION "< 0.5.0") {
+    edge @stmt.defs -> @block.defs
+  }
 }
 
 ;; Connect the function body's block lexical scope to the function

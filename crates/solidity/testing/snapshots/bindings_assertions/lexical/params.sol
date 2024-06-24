@@ -10,4 +10,12 @@ contract Foo {
         return z + 2;
         //     ^ref:!
     }
+
+    function quux(int x) returns (int y) {
+        //                            ^def:2
+        //            ^def:3
+        y = x + 5;
+    //      ^ref:3
+    //  ^ref:2
+    }
 }

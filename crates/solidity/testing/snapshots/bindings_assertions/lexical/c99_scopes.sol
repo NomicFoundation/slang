@@ -19,8 +19,13 @@ contract Foo {
         }
     }
 
-    function another_func() returns (uint) {
-        return x;
-        //     ^ref:1
+    function another_func() returns (uint y) {
+        //                                ^def:5
+        y = x + w;
+        //      ^ref:!
+        //  ^ref:1
+     // ^ref:5
+        uint w = 5;
+        //   ^def:6
     }
 }

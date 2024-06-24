@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_assertions::runner::run;
 
 #[test]
+fn c_99_scopes() -> Result<()> {
+    run("lexical", "c99_scopes.sol")
+}
+
+#[test]
 fn hoisting_scopes() -> Result<()> {
     run("lexical", "hoisting_scopes.sol")
 }
@@ -17,11 +22,6 @@ fn local_vars() -> Result<()> {
 #[test]
 fn params() -> Result<()> {
     run("lexical", "params.sol")
-}
-
-#[test]
-fn shadowing() -> Result<()> {
-    run("lexical", "shadowing.sol")
 }
 
 #[test]
