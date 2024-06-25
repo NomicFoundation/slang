@@ -8,27 +8,27 @@ References and definitions:
     │          ┬  
     │          ╰── def: 2
     │ 
-  5 │     function bar() returns (uint) {
+  4 │     function bar() returns (uint) {
     │              ─┬─  
     │               ╰─── def: 3
-  6 │         return x;
+  5 │         return x;
     │                ┬  
     │                ╰── ref: 2
     │ 
- 10 │     function baz() returns (int) {
+  8 │     function baz() returns (int) {
     │              ─┬─  
     │               ╰─── def: 4
- 11 │         return y;
+  9 │         return y;
     │                ┬  
     │                ╰── unresolved
     │ 
- 16 │ contract Bar {
+ 13 │ contract Bar {
     │          ─┬─  
     │           ╰─── def: 5
- 17 │     function quux() returns (uint) {
+ 14 │     function quux() returns (uint) {
     │              ──┬─  
     │                ╰─── def: 6
- 18 │         return x;
+ 15 │         return x;
     │                ┬  
     │                ╰── unresolved
 ────╯

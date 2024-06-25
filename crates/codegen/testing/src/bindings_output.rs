@@ -9,7 +9,7 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::FileWalker;
 
 pub fn generate_bindings_output_tests(
-    _language: &Language,
+    language: &Language,
     data_dir: &Path,
     output_dir: &Path,
 ) -> Result<()> {
@@ -17,7 +17,7 @@ pub fn generate_bindings_output_tests(
 
     let mut fs = CodegenFileSystem::new(data_dir)?;
 
-    generate_mod_file(&mut fs, &output_dir.join("mod.rs"), &tests)?;
+    generate_mod_file(language, &mut fs, &output_dir.join("mod.rs"), &tests)?;
 
     for (group_name, test_files) in &tests {
         generate_unit_test_file(
@@ -58,6 +58,7 @@ fn collect_bindings_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<S
 }
 
 fn generate_mod_file(
+    language: &Language,
     fs: &mut CodegenFileSystem,
     mod_file_path: &Path,
     bindings_tests: &BTreeMap<String, BTreeSet<String>>,
@@ -70,9 +71,28 @@ fn generate_mod_file(
                 buffer
             });
 
+    let version_breaks = language.collect_breaking_versions();
+    let version_breaks_len = version_breaks.len();
+    let version_breaks_str = version_breaks
+        .iter()
+        .fold(String::new(), |mut buffer, version| {
+            writeln!(
+                buffer,
+                "Version::new({}, {}, {}),",
+                version.major, version.minor, version.patch
+            )
+            .unwrap();
+            buffer
+        });
+
     let contents = format!(
         "
+            use semver::Version;
             {module_declarations_str}
+
+            pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
+                {version_breaks_str}
+            ];
         ",
     );
 
