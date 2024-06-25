@@ -1,0 +1,23 @@
+References and definitions: 
+    ╭─[params.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── def: 1
+  2 │     function bar(uint z) returns (uint) {
+    │              ─┬─      ┬  
+    │               ╰────────── def: 2
+    │                       │  
+    │                       ╰── def: 3
+    │ 
+  5 │         return z + 1;
+    │                ┬  
+    │                ╰── ref: 3
+    │ 
+  9 │     function baz() returns (int) {
+    │              ─┬─  
+    │               ╰─── def: 4
+ 10 │         return z + 2;
+    │                ┬  
+    │                ╰── unresolved
+────╯

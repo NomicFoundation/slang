@@ -1,0 +1,26 @@
+References and definitions: 
+    ╭─[local_vars.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── def: 1
+  2 │     function bar() returns (uint) {
+    │              ─┬─  
+    │               ╰─── def: 2
+  3 │         uint x = 10;
+    │              ┬  
+    │              ╰── def: 3
+    │ 
+  6 │         return x + 2;
+    │                ┬  
+    │                ╰── ref: 3
+    │ 
+ 10 │     function baz() returns (int) {
+    │              ─┬─  
+    │               ╰─── def: 4
+ 11 │         return w + x;
+    │                ┬   ┬  
+    │                ╰────── unresolved
+    │                    │  
+    │                    ╰── unresolved
+────╯

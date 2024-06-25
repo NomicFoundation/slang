@@ -162,3 +162,11 @@ impl<KT: KindTypes + 'static> Debug for Handle<'_, KT> {
         f.debug_tuple("BindingsHandle").field(&self.handle).finish()
     }
 }
+
+impl<KT: KindTypes + 'static> PartialEq for Handle<'_, KT> {
+    fn eq(&self, other: &Self) -> bool {
+        let our_owner: *const Bindings<KT> = self.owner;
+        let other_owner: *const Bindings<KT> = other.owner;
+        our_owner == other_owner && self.handle == other.handle
+    }
+}

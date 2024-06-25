@@ -1,0 +1,34 @@
+References and definitions: 
+    ╭─[state_vars.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── def: 1
+  2 │     uint x;
+    │          ┬  
+    │          ╰── def: 2
+    │ 
+  5 │     function bar() returns (uint) {
+    │              ─┬─  
+    │               ╰─── def: 3
+  6 │         return x;
+    │                ┬  
+    │                ╰── ref: 2
+    │ 
+ 10 │     function baz() returns (int) {
+    │              ─┬─  
+    │               ╰─── def: 4
+ 11 │         return y;
+    │                ┬  
+    │                ╰── unresolved
+    │ 
+ 16 │ contract Bar {
+    │          ─┬─  
+    │           ╰─── def: 5
+ 17 │     function quux() returns (uint) {
+    │              ──┬─  
+    │                ╰─── def: 6
+ 18 │         return x;
+    │                ┬  
+    │                ╰── unresolved
+────╯

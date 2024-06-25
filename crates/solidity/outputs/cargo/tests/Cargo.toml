@@ -13,6 +13,7 @@ solidity_language = { workspace = true }
 
 [dev-dependencies]
 anyhow = { workspace = true }
+ariadne = { workspace = true }
 codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
