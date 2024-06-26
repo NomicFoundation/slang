@@ -500,10 +500,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.type -> @name.ref
 }
 
+;; General case for nested expressions
 @expr [Expression ... variant: [_ ... @child [Expression] ...] ...] {
   edge @child.lexical_scope -> @expr.lexical_scope
 }
 
+;; Expressions as statements
 @stmt [Statement ... variant: [_ ... @expr [Expression] ...] ...] {
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
@@ -525,7 +527,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   edge @expr.lexical_scope -> @state_var.lexical_scope
 }
-
 
 ;;; Member access expressions
 
@@ -554,6 +555,43 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @member.lexical_scope -> member
   edge member -> @expr.type
+}
+
+;;; Function call expressions
+
+@args [ArgumentsDeclaration] {
+  node @args.lexical_scope
+}
+
+@args [ArgumentsDeclaration [PositionalArgumentsDeclaration
+    ...
+    [PositionalArguments ... @argument [Expression] ...]
+    ...
+]] {
+  edge @argument.lexical_scope -> @args.lexical_scope
+}
+
+@named_arg [NamedArgument ... @name [Identifier] [Colon] @value [Expression]] {
+  node @named_arg.lexical_scope
+
+  edge @value.lexical_scope -> @named_arg.lexical_scope
+
+  node ref
+  attr (ref) node_reference = @name
+  ;; TODO: bind the named argument to the parameters definition of the function
+  ;; (is this possible given that function references are expressions?)
+}
+
+@args [ArgumentsDeclaration [NamedArgumentsDeclaration
+    ...
+    [NamedArgumentGroup ... [NamedArguments ... @argument [NamedArgument] ...] ...]
+    ...
+]] {
+  edge @argument.lexical_scope -> @args.lexical_scope
+}
+
+@funcall [Expression [FunctionCallExpression ... @args [ArgumentsDeclaration]]] {
+  edge @args.lexical_scope -> @funcall.lexical_scope
 }
 
 "#####;

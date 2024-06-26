@@ -56,7 +56,7 @@ References and definitions:
     │                      ╰───────── def: 11
  22 │         return uint(defaultChoice);
     │                     ──────┬──────  
-    │                           ╰──────── unresolved
+    │                           ╰──────── ref: 8
     │ 
  25 │     function getLargestValue() public pure returns (ActionChoices) {
     │              ───────┬───────                        ──────┬──────  

@@ -2,6 +2,7 @@
 
 use semver::Version;
 mod enums;
+mod expressions;
 mod lexical;
 
 pub const VERSION_BREAKS: [Version; 33] = [

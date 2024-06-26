@@ -1,0 +1,29 @@
+References and definitions: 
+   ╭─[funcalls_named_args.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function someFunc(int x) returns (int) {
+   │              ────┬───     ┬  
+   │                  ╰─────────── def: 2
+   │                           │  
+   │                           ╰── def: 3
+ 3 │         return divide({ dividend: x, divisor: 3 });
+   │                ───┬──   ────┬───  ┬  ───┬───  
+   │                   ╰─────────────────────────── ref: 4
+   │                             │     │     │     
+   │                             ╰───────────────── unresolved
+   │                                   │     │     
+   │                                   ╰─────────── ref: 3
+   │                                         │     
+   │                                         ╰───── unresolved
+   │ 
+ 5 │     function divide(int dividend, int divisor) returns (int);
+   │              ───┬──     ────┬───      ───┬───  
+   │                 ╰────────────────────────────── def: 4
+   │                             │            │     
+   │                             ╰────────────────── def: 5
+   │                                          │     
+   │                                          ╰───── def: 6
+───╯
