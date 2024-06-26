@@ -1,6 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use semver::Version;
+mod enums;
 mod lexical;
 
 pub const VERSION_BREAKS: [Version; 33] = [
