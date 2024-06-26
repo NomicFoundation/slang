@@ -35,11 +35,8 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
         let language = Language::new(version.clone())?;
 
         let parse_output = language.parse(Language::ROOT_KIND, &input);
-        if !parse_output.is_valid() {
-            continue;
-        }
 
-        let graph_output = output_graph(version, &parse_output)?;
+        let graph_output = output_graph(version, file_name, &parse_output)?;
         match last_graph_output {
             Some(ref last) if last == &graph_output => (),
             _ => {
@@ -60,15 +57,6 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
         }
     }
 
-    assert!(
-        last_graph_output.is_some(),
-        "Failed to generate a graph output for all breaking versions"
-    );
-    assert!(
-        last_bindings_output.is_some(),
-        "Failed to generate a bindings output for all breaking versions"
-    );
-
     Ok(())
 }
 
@@ -79,7 +67,7 @@ const VARIABLE_DEBUG_ATTR: &str = "__variable";
 const LOCATION_DEBUG_ATTR: &str = "__location";
 const MATCH_DEBUG_ATTR: &str = "__match";
 
-fn output_graph(version: &Version, parse_output: &ParseOutput) -> Result<String> {
+fn output_graph(version: &Version, file_name: &str, parse_output: &ParseOutput) -> Result<String> {
     let graph_builder = File::from_str(bindings::get_binding_rules())?;
 
     let tree = parse_output.create_tree_cursor();
@@ -102,7 +90,19 @@ fn output_graph(version: &Version, parse_output: &ParseOutput) -> Result<String>
 
     graph_builder.execute_into(&mut graph, &tree, &execution_config, &NoCancellation)?;
 
-    Ok(format!("{}", print_graph_as_mermaid(&graph)))
+    let title = format!(
+        "{file_name}{note}",
+        note = if parse_output.is_valid() {
+            ""
+        } else {
+            " - Parsing failed, graph may be incomplete"
+        }
+    );
+    Ok(format!(
+        "---\ntitle: {}\n---\n{}",
+        title,
+        print_graph_as_mermaid(&graph)
+    ))
 }
 
 fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {
@@ -170,6 +170,10 @@ fn output_bindings(
         0,
     )
     .with_config(Config::default().with_color(false));
+
+    if !parse_output.is_valid() {
+        builder = builder.with_note("WARNING: Parsing failed. Results may be incomplete.");
+    }
 
     let mut definitions: Vec<Handle<'_>> = Vec::new();
 

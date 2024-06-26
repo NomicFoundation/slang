@@ -1,0 +1,46 @@
+References and definitions: 
+    ╭─[sample.sol:1:1]
+    │
+  4 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  5 │     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
+    │          ──────┬──────   ───┬──  ───┬───  ─────┬────  ────┬───  
+    │                ╰──────────────────────────────────────────────── def: 2
+    │                             │       │          │          │     
+    │                             ╰─────────────────────────────────── def: 3
+    │                                     │          │          │     
+    │                                     ╰─────────────────────────── def: 4
+    │                                                │          │     
+    │                                                ╰──────────────── def: 5
+    │                                                           │     
+    │                                                           ╰───── def: 6
+    │ 
+  7 │     ActionChoices choice;
+    │     ──────┬────── ───┬──  
+    │           ╰─────────────── ref: 2
+    │                      │    
+    │                      ╰──── def: 7
+  8 │     ActionChoices constant defaultChoice = ActionChoices.GoStraight;
+    │     ──────┬──────          ──────┬──────   ──────┬────── ─────┬────  
+    │           ╰────────────────────────────────────────────────────────── ref: 2
+    │                                  │               │            │      
+    │                                  ╰─────────────────────────────────── def: 8
+    │                                                  │            │      
+    │                                                  ╰─────────────────── ref: 2
+    │                                                               │      
+    │                                                               ╰────── ref: 5
+    │ 
+ 10 │     function setGoStraight() public {
+    │              ──────┬──────  
+    │                    ╰──────── def: 9
+ 11 │         choice = ActionChoices.GoStraight;
+    │         ───┬──   ──────┬────── ─────┬────  
+    │            ╰─────────────────────────────── ref: 7
+    │                        │            │      
+    │                        ╰─────────────────── ref: 2
+    │                                     │      
+    │                                     ╰────── ref: 5
+    │ 
+    │ Note: WARNING: Parsing failed. Results may be incomplete.
+────╯
