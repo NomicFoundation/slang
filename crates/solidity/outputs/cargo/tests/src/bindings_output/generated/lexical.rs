@@ -6,15 +6,15 @@ use crate::bindings_output::runner::run;
 
 #[test]
 fn local_vars() -> Result<()> {
-    run("lexical", "local_vars.sol")
+    run("lexical", "local_vars")
 }
 
 #[test]
 fn params() -> Result<()> {
-    run("lexical", "params.sol")
+    run("lexical", "params")
 }
 
 #[test]
 fn state_vars() -> Result<()> {
-    run("lexical", "state_vars.sol")
+    run("lexical", "state_vars")
 }

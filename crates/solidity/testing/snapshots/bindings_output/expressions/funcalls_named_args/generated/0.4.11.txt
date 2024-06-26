@@ -1,5 +1,7 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
 References and definitions: 
-   ╭─[funcalls_named_args.sol:1:1]
+   ╭─[crates/solidity/testing/snapshots/bindings_output/expressions/funcalls_named_args/input.sol:1:1]
    │
  1 │ contract Test {
    │          ──┬─  

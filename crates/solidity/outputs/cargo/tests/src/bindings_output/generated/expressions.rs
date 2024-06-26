@@ -6,15 +6,15 @@ use crate::bindings_output::runner::run;
 
 #[test]
 fn funcalls() -> Result<()> {
-    run("expressions", "funcalls.sol")
+    run("expressions", "funcalls")
 }
 
 #[test]
 fn funcalls_named_args() -> Result<()> {
-    run("expressions", "funcalls_named_args.sol")
+    run("expressions", "funcalls_named_args")
 }
 
 #[test]
 fn type_expr() -> Result<()> {
-    run("expressions", "type_expr.sol")
+    run("expressions", "type_expr")
 }

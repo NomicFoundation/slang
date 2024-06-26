@@ -6,20 +6,20 @@ use crate::bindings_output::runner::run;
 
 #[test]
 fn decls() -> Result<()> {
-    run("enums", "decls.sol")
+    run("enums", "decls")
 }
 
 #[test]
 fn in_params() -> Result<()> {
-    run("enums", "in_params.sol")
+    run("enums", "in_params")
 }
 
 #[test]
 fn in_state_vars() -> Result<()> {
-    run("enums", "in_state_vars.sol")
+    run("enums", "in_state_vars")
 }
 
 #[test]
 fn sample() -> Result<()> {
-    run("enums", "sample.sol")
+    run("enums", "sample")
 }

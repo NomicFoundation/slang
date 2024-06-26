@@ -6,7 +6,7 @@ use anyhow::{bail, Result};
 use codegen_language_definition::model::Language;
 use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
-use infra_utils::paths::FileWalker;
+use infra_utils::paths::{FileWalker, PathExtensions};
 
 pub fn generate_bindings_output_tests(
     language: &Language,
@@ -19,11 +19,11 @@ pub fn generate_bindings_output_tests(
 
     generate_mod_file(language, &mut fs, &output_dir.join("mod.rs"), &tests)?;
 
-    for (group_name, test_files) in &tests {
+    for (group_name, test_names) in &tests {
         generate_unit_test_file(
             &mut fs,
             group_name,
-            test_files,
+            test_names,
             &output_dir.join(format!("{0}.rs", group_name.to_snake_case())),
         )?;
     }
@@ -34,7 +34,17 @@ pub fn generate_bindings_output_tests(
 fn collect_bindings_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<String>>> {
     let mut tests = BTreeMap::<String, BTreeSet<String>>::new();
 
-    for file in FileWalker::from_directory(data_dir).find(["**/*.sol"])? {
+    for file in FileWalker::from_directory(data_dir).find_all()? {
+        if let Ok(generated_dir) = file.generated_dir() {
+            assert!(
+                generated_dir.unwrap_parent().join("input.sol").exists(),
+                "Each snapshot should have a matching input.sol test file: {file:?}",
+            );
+
+            // skip generated files
+            continue;
+        }
+
         let parts: Vec<_> = file
             .strip_prefix(data_dir)?
             .iter()
@@ -42,14 +52,14 @@ fn collect_bindings_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<S
             .collect();
 
         match parts[..] {
-            [group_name, test_file] => {
+            [group_name, test_name, "input.sol"] => {
                 tests
                     .entry(group_name.to_owned())
                     .or_default()
-                    .insert(test_file.to_owned());
+                    .insert(test_name.to_owned());
             }
             _ => {
-                bail!("Invalid test input. Should be in the form of '<tests-dir>/GROUP_NAME/TEST_FILE.sol', but found: {file:?}");
+                bail!("Invalid test input. Should be in the form of '<tests-dir>/GROUP_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
         };
     }
@@ -107,14 +117,13 @@ fn generate_unit_test_file(
 ) -> Result<()> {
     let unit_tests_str = test_files
         .iter()
-        .fold(String::new(), |mut buffer, test_file| {
-            let test_name = test_file.strip_suffix(".sol").unwrap().to_snake_case();
+        .fold(String::new(), |mut buffer, test_name| {
             writeln!(
                 buffer,
                 r#"
                     #[test]
                     fn {test_name}() -> Result<()> {{
-                        run("{group_name}", "{test_file}")
+                        run("{group_name}", "{test_name}")
                     }}
                 "#
             )
