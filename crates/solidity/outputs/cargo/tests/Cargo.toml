@@ -19,7 +19,7 @@ infra_utils = { workspace = true }
 once_cell = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }
-slang_solidity = { workspace = true, features = ["__private_ariadne"] }
+slang_solidity = { workspace = true, features = ["__private_ariadne", "__experimental_bindings_api"] }
 solidity_language = { workspace = true }
 strum_macros = { workspace = true }
 

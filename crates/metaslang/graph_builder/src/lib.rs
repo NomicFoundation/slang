@@ -98,6 +98,8 @@ pub mod graph;
 mod parser;
 mod variables;
 
+pub mod stack_graph;
+
 use std::borrow::Borrow;
 use std::hash::Hash;
 use std::ops::Deref;

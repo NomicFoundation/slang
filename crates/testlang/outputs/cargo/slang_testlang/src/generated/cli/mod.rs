@@ -45,6 +45,17 @@ pub enum Commands {
         #[clap(long)]
         debug: bool,
     },
+
+    // This is only intended for internal development
+    #[cfg(feature = "__experimental_bindings_api")]
+    Bindings {
+        /// File path to the source file to parse
+        file_path: String,
+
+        /// The language version to use for parsing
+        #[arg(short, long)]
+        version: Version,
+    },
 }
 
 impl Commands {
@@ -63,6 +74,10 @@ impl Commands {
                 json,
                 debug,
             } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
+            #[cfg(feature = "__experimental_bindings_api")]
+            Commands::Bindings { file_path, version } => {
+                commands::bindings::execute(&file_path, version)
+            }
         };
         match command_result {
             Ok(()) => ExitCode::SUCCESS,

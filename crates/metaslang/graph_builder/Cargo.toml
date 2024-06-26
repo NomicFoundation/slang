@@ -23,10 +23,12 @@ categories = ["compilers", "parsing", "parser-implementations"]
 [dependencies]
 log = { workspace = true }
 metaslang_cst = { workspace = true }
+once_cell = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 smallvec = { workspace = true, features = ["union"] }
+stack-graphs = { workspace = true }
 string-interner = { workspace = true, features = [
   "std",
   "inline-more",
