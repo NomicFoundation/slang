@@ -13,3 +13,8 @@ fn funcalls() -> Result<()> {
 fn funcalls_named_args() -> Result<()> {
     run("expressions", "funcalls_named_args.sol")
 }
+
+#[test]
+fn type_expr() -> Result<()> {
+    run("expressions", "type_expr.sol")
+}

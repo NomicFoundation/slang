@@ -65,7 +65,7 @@ References and definitions:
     │                                                           ╰──────── ref: 2
  26 │         return type(ActionChoices).max;
     │                     ──────┬──────  ─┬─  
-    │                           ╰───────────── unresolved
+    │                           ╰───────────── ref: 2
     │                                     │   
     │                                     ╰─── unresolved
     │ 
@@ -76,7 +76,7 @@ References and definitions:
     │                                                            ╰──────── ref: 2
  30 │         return type(ActionChoices).min;
     │                     ──────┬──────  ─┬─  
-    │                           ╰───────────── unresolved
+    │                           ╰───────────── ref: 2
     │                                     │   
     │                                     ╰─── unresolved
 ────╯

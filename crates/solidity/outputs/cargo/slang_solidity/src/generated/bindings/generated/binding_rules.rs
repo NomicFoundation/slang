@@ -332,11 +332,26 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Declaration Statements introducing variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@stmt [Statement [VariableDeclarationStatement ... @name name: [Identifier] ...]] {
+@stmt [Statement [VariableDeclarationStatement
+    ...
+    [VariableDeclarationType @var_type [TypeName]]
+    ...
+    @name name: [Identifier]
+    ...
+]] {
   node def
   attr (def) node_definition = @name
 
   edge @stmt.defs -> def
+  edge @var_type.type -> @stmt.lexical_scope
+
+  ;; TODO: this '@typeof' path sounds ok, but think we're still missing some
+  ;; parts to make it work
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @var_type.type
 }
 
 @stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
@@ -592,6 +607,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @funcall [Expression [FunctionCallExpression ... @args [ArgumentsDeclaration]]] {
   edge @args.lexical_scope -> @funcall.lexical_scope
+}
+
+;;; Type expressions
+
+@type_expr [Expression [TypeExpression ... @type [TypeName] ...]] {
+  edge @type.type -> @type_expr.lexical_scope
 }
 
 "#####;

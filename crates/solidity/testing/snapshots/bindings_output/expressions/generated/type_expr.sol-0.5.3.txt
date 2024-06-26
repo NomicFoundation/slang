@@ -1,0 +1,33 @@
+References and definitions: 
+   ╭─[type_expr.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     enum Answer { Yes, No }
+   │          ───┬──   ─┬─  ─┬  
+   │             ╰────────────── def: 2
+   │                    │    │  
+   │                    ╰─────── def: 3
+   │                         │  
+   │                         ╰── def: 4
+ 3 │     function testFunc() {
+   │              ────┬───  
+   │                  ╰───── def: 5
+ 4 │         string name = type(Test).name;
+   │                ──┬─        ──┬─  ──┬─  
+   │                  ╰───────────────────── def: 6
+   │                              │     │   
+   │                              ╰───────── ref: 1
+   │                                    │   
+   │                                    ╰─── unresolved
+ 5 │         Answer first = type(Answer).min;
+   │         ───┬── ──┬──        ───┬──  ─┬─  
+   │            ╰───────────────────────────── ref: 2
+   │                  │             │     │   
+   │                  ╰─────────────────────── def: 7
+   │                                │     │   
+   │                                ╰───────── ref: 2
+   │                                      │   
+   │                                      ╰─── unresolved
+───╯
