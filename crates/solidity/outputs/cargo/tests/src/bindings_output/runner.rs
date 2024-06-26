@@ -25,6 +25,9 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
     let input_path = data_dir.join(file_name);
     let input = fs::read_to_string(&input_path)?;
 
+    let output_dir = data_dir.join("generated");
+    create_dir_all(&output_dir)?;
+
     let mut last_graph_output = None;
     let mut last_bindings_output = None;
 
@@ -32,10 +35,9 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
         let language = Language::new(version.clone())?;
 
         let parse_output = language.parse(Language::ROOT_KIND, &input);
-        assert!(parse_output.is_valid());
-
-        let output_dir = data_dir.join("generated");
-        create_dir_all(&output_dir)?;
+        if !parse_output.is_valid() {
+            continue;
+        }
 
         let graph_output = output_graph(version, &parse_output)?;
         match last_graph_output {
@@ -57,6 +59,15 @@ pub fn run(group_name: &str, file_name: &str) -> Result<()> {
             }
         }
     }
+
+    assert!(
+        last_graph_output.is_some(),
+        "Failed to generate a graph output for all breaking versions"
+    );
+    assert!(
+        last_bindings_output.is_some(),
+        "Failed to generate a bindings output for all breaking versions"
+    );
 
     Ok(())
 }
