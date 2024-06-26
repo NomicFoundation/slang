@@ -141,6 +141,40 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Type names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@type_name [TypeName] {
+  node @type_name.type
+}
+
+@id_path [IdentifierPath] {
+  node @id_path.ref
+}
+
+@type_name [TypeName @id_path [IdentifierPath]] {
+  edge @id_path.ref -> @type_name.type
+}
+
+[IdentifierPath ... @name [Identifier]] {
+  node @name.ref
+  attr (@name.ref) node_reference = @name
+}
+
+@id_path [IdentifierPath (leading_trivia:[_])* @name [Identifier] ...] {
+  edge @name.ref -> @id_path.ref
+}
+
+[IdentifierPath ... @left_name [Identifier] [Period] @right_name [Identifier] ...] {
+  node member
+  attr (member) push_symbol = "."
+
+  edge @right_name.ref -> member
+  edge member -> @left_name.ref
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -149,11 +183,23 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @param.defs
 }
 
-@param [Parameter ... @name [Identifier]] {
+@param [Parameter ... @type_name [TypeName] ...] {
+  edge @type_name.type -> @param.lexical_scope
+}
+
+@param [Parameter ... @type_name [TypeName] ... @name [Identifier]] {
   node def
   attr (def) node_definition = @name
 
   edge @param.defs -> def
+
+  ;; TODO: this '@typeof' path sounds ok, but think we're still missing some
+  ;; parts to make it work
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @type_name.type
 }
 
 @function [FunctionDefinition ... parameters: [ParametersDeclaration
@@ -302,40 +348,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (def) node_definition = @name
 
   edge @stmt.defs -> def
-}
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Type names
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@type_name [TypeName] {
-  node @type_name.type
-}
-
-@id_path [IdentifierPath] {
-  node @id_path.ref
-}
-
-@type_name [TypeName @id_path [IdentifierPath]] {
-  edge @id_path.ref -> @type_name.type
-}
-
-[IdentifierPath ... @name [Identifier]] {
-  node @name.ref
-  attr (@name.ref) node_reference = @name
-}
-
-@id_path [IdentifierPath (leading_trivia:[_])* @name [Identifier] ...] {
-  edge @name.ref -> @id_path.ref
-}
-
-[IdentifierPath ... @left_name [Identifier] [Period] @right_name [Identifier] ...] {
-  node member
-  attr (member) push_symbol = "."
-
-  edge @right_name.ref -> member
-  edge member -> @left_name.ref
 }
 
 

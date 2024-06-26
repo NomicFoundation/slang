@@ -10,6 +10,11 @@ fn decls() -> Result<()> {
 }
 
 #[test]
+fn in_params() -> Result<()> {
+    run("enums", "in_params.sol")
+}
+
+#[test]
 fn in_state_vars() -> Result<()> {
     run("enums", "in_state_vars.sol")
 }

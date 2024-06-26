@@ -46,7 +46,7 @@ References and definitions:
     │              ────┬────                        ──────┬──────  
     │                  ╰─────────────────────────────────────────── def: 10
     │                                                     │        
-    │                                                     ╰──────── unresolved
+    │                                                     ╰──────── ref: 2
  18 │         return choice;
     │                ───┬──  
     │                   ╰──── ref: 7
@@ -62,7 +62,7 @@ References and definitions:
     │              ───────┬───────                        ──────┬──────  
     │                     ╰────────────────────────────────────────────── def: 12
     │                                                           │        
-    │                                                           ╰──────── unresolved
+    │                                                           ╰──────── ref: 2
  26 │         return type(ActionChoices).max;
     │                     ──────┬──────  ─┬─  
     │                           ╰───────────── unresolved
@@ -73,7 +73,7 @@ References and definitions:
     │              ────────┬───────                        ──────┬──────  
     │                      ╰────────────────────────────────────────────── def: 13
     │                                                            │        
-    │                                                            ╰──────── unresolved
+    │                                                            ╰──────── ref: 2
  30 │         return type(ActionChoices).min;
     │                     ──────┬──────  ─┬─  
     │                           ╰───────────── unresolved
