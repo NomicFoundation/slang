@@ -29,55 +29,70 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Definition entities that can appear at the source unit level
 ;; We define them individually to get better variable names when debugging
+;; For all of the following:
+;; - lexical_scope is the node that connect upwards for binding resolution
+;; - def provides the definition entry for the entity (aka. the name)
+;; - members is for internal use and it's where the nested definitions are found
 
 @contract [ContractDefinition] {
   node @contract.lexical_scope
-  node @contract.defs
+  node @contract.def
+  node @contract.members
+
+  edge @contract.lexical_scope -> @contract.members
 }
 
 @interface [InterfaceDefinition] {
   node @interface.lexical_scope
-  node @interface.defs
+  node @interface.def
+  node @interface.members
+
+  edge @interface.lexical_scope -> @interface.members
 }
 
 @library [LibraryDefinition] {
   node @library.lexical_scope
-  node @library.defs
+  node @library.def
+  node @library.members
+
+  edge @library.lexical_scope -> @library.members
 }
 
 @struct [StructDefinition] {
   node @struct.lexical_scope
-  node @struct.defs
+  node @struct.def
+  node @struct.members
 }
 
 @enum [EnumDefinition] {
   node @enum.lexical_scope
-  node @enum.defs
+  node @enum.def
+  node @enum.members
 }
 
 @function [FunctionDefinition] {
   node @function.lexical_scope
-  node @function.defs
+  node @function.def
 }
 
 @constant [ConstantDefinition] {
   node @constant.lexical_scope
-  node @constant.defs
+  node @constant.def
 }
 
 @error [ErrorDefinition] {
   node @error.lexical_scope
-  node @error.defs
+  node @error.def
 }
 
 @value_type [UserDefinedValueTypeDefinition] {
   node @value_type.lexical_scope
-  node @value_type.defs
+  node @value_type.def
 }
 
 @event [EventDefinition] {
   node @event.lexical_scope
-  node @event.defs
+  node @event.def
 }
 
 ;; Top-level definitions...
@@ -100,10 +115,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
 
   ;; ... are available in the file's lexical scope
-  edge @source_unit.lexical_scope -> @unit_member.defs
+  edge @source_unit.lexical_scope -> @unit_member.def
 
   ;; ... and are exported in the file
-  edge @source_unit.defs -> @unit_member.defs
+  edge @source_unit.defs -> @unit_member.def
 }
 
 
@@ -115,28 +130,48 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @contract.defs -> def
+  edge @contract.def -> def
+
+  ;; Contract members are reachable from the parent scope through the .def
+  ;; entry, by going through at "." symbol
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  edge member -> @contract.members
 }
 
 @interface [InterfaceDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @interface.defs -> def
+  edge @interface.def -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  edge member -> @interface.members
 }
 
 @library [LibraryDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @library.defs -> def
+  edge @library.def -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  edge member -> @library.members
 }
 
 @function [FunctionDefinition ... name: [FunctionName ... @name [Identifier] ...] ...] {
   node def
   attr (def) node_definition = @name
 
-  edge @function.defs -> def
+  edge @function.def -> def
 }
 
 
@@ -145,24 +180,38 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @type_name [TypeName] {
-  node @type_name.type
+  ;; This node should connect to the parent lexical scope to resolve the type
+  node @type_name.type_ref
+
+  ;; This represents the output of the type, ie. the node to which a variable
+  ;; that is of this type should connect through a @typeof node
+  node @type_name.output
 }
 
 @id_path [IdentifierPath] {
-  node @id_path.ref
+  node @id_path.left
+  node @id_path.right
 }
 
 @type_name [TypeName @id_path [IdentifierPath]] {
-  edge @id_path.ref -> @type_name.type
+  ;; For an identifier path used as a type, the left-most element is the one
+  ;; that connects to the parent lexical scope, because the name resolution
+  ;; starts at the left of the identifier.
+  edge @id_path.left -> @type_name.type_ref
+
+  ;; Conversely, the complete type is found at the right-most name, and that's
+  ;; where users of this type should link to (eg. a variable declaration).
+  edge @type_name.output -> @id_path.right
 }
 
-[IdentifierPath ... @name [Identifier]] {
+;; The identifier path constructs a path of nodes connected from right to left
+[IdentifierPath ... @name [Identifier] ...] {
   node @name.ref
   attr (@name.ref) node_reference = @name
 }
 
-@id_path [IdentifierPath (leading_trivia:[_])* @name [Identifier] ...] {
-  edge @name.ref -> @id_path.ref
+@id_path [IdentifierPath ... @name [Identifier] (trailing_trivia:[_])*] {
+  edge @id_path.right -> @name.ref
 }
 
 [IdentifierPath ... @left_name [Identifier] [Period] @right_name [Identifier] ...] {
@@ -173,6 +222,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> @left_name.ref
 }
 
+@id_path [IdentifierPath (leading_trivia:[_])* @name [Identifier] ...] {
+  edge @name.ref -> @id_path.left
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Functions
@@ -180,26 +233,24 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @param [Parameter] {
   node @param.lexical_scope
-  node @param.defs
+  node @param.def
 }
 
 @param [Parameter ... @type_name [TypeName] ...] {
-  edge @type_name.type -> @param.lexical_scope
+  edge @type_name.type_ref -> @param.lexical_scope
 }
 
 @param [Parameter ... @type_name [TypeName] ... @name [Identifier]] {
   node def
   attr (def) node_definition = @name
 
-  edge @param.defs -> def
+  edge @param.def -> def
 
-  ;; TODO: this '@typeof' path sounds ok, but think we're still missing some
-  ;; parts to make it work
   node typeof
-  attr (typeof) pop_symbol = "@typeof"
+  attr (typeof) push_symbol = "@typeof"
 
   edge def -> typeof
-  edge typeof -> @type_name.type
+  edge typeof -> @type_name.output
 }
 
 @function [FunctionDefinition ... parameters: [ParametersDeclaration
@@ -210,8 +261,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @param.lexical_scope -> @function.lexical_scope
 
   ;; Input parameters are available in the function scope
-  edge @function.lexical_scope -> @param.defs
-  attr (@function.lexical_scope -> @param.defs) precedence = 1
+  edge @function.lexical_scope -> @param.def
+  attr (@function.lexical_scope -> @param.def) precedence = 1
 }
 
 @function [FunctionDefinition ... returns: [ReturnsDeclaration
@@ -222,8 +273,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @param.lexical_scope -> @function.lexical_scope
 
   ;; Return parameters are available in the function scope
-  edge @function.lexical_scope -> @param.defs
-  attr (@function.lexical_scope -> @param.defs) precedence = 1
+  edge @function.lexical_scope -> @param.def
+  attr (@function.lexical_scope -> @param.def) precedence = 1
 }
 
 ;; Connect function's lexical scope with the enclosing
@@ -238,7 +289,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @function.lexical_scope -> @contract.lexical_scope
-  edge @contract.lexical_scope -> @function.defs
+  edge @contract.members -> @function.def
 }
 
 @interface [InterfaceDefinition ... members: [InterfaceMembers
@@ -247,7 +298,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @function.lexical_scope -> @interface.lexical_scope
-  edge @interface.lexical_scope -> @function.defs
+  edge @interface.members -> @function.def
 }
 
 @library [LibraryDefinition ... members: [LibraryMembers
@@ -256,7 +307,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @function.lexical_scope -> @library.lexical_scope
-  edge @library.lexical_scope -> @function.defs
+  edge @library.members -> @function.def
 }
 
 
@@ -343,26 +394,46 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (def) node_definition = @name
 
   edge @stmt.defs -> def
-  edge @var_type.type -> @stmt.lexical_scope
+  edge @var_type.type_ref -> @stmt.lexical_scope
 
-  ;; TODO: this '@typeof' path sounds ok, but think we're still missing some
-  ;; parts to make it work
   node typeof
-  attr (typeof) pop_symbol = "@typeof"
+  attr (typeof) push_symbol = "@typeof"
 
   edge def -> typeof
-  edge typeof -> @var_type.type
+  edge typeof -> @var_type.output
 }
 
 @stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
     ...
-    [TupleDeconstructionElement [TupleMember variant: [_ ... @name name: [Identifier]]]]
+    [TupleDeconstructionElement [TupleMember variant: [UntypedTupleMember ... @name name: [Identifier]]]]
     ...
 ] ...]] {
   node def
   attr (def) node_definition = @name
 
   edge @stmt.defs -> def
+}
+
+@stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
+    ...
+    [TupleDeconstructionElement [TupleMember variant: [TypedTupleMember
+        ...
+        @member_type type_name: [TypeName]
+        ...
+        @name name: [Identifier]]]]
+    ...
+] ...]] {
+  node def
+  attr (def) node_definition = @name
+
+  edge @stmt.defs -> def
+  edge @member_type.type_ref -> @stmt.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @member_type.output
 }
 
 
@@ -372,7 +443,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @state_var [StateVariableDefinition] {
   node @state_var.lexical_scope
-  node @state_var.defs
+  node @state_var.def
 }
 
 @state_var [StateVariableDefinition
@@ -385,16 +456,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @state_var.defs -> def
-  edge @type_name.type -> @state_var.lexical_scope
+  edge @state_var.def -> def
+  edge @type_name.type_ref -> @state_var.lexical_scope
 
-  ;; TODO: this '@typeof' path sounds ok, but think we're still missing some
-  ;; parts to make it work
   node typeof
-  attr (typeof) pop_symbol = "@typeof"
+  attr (typeof) push_symbol = "@typeof"
 
   edge def -> typeof
-  edge typeof -> @type_name.type
+  edge typeof -> @type_name.output
 }
 
 ;; NB. Even though the grammar allows it, state variables can only be declared
@@ -406,7 +475,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @state_var.lexical_scope -> @contract.lexical_scope
-  edge @contract.lexical_scope -> @state_var.defs
+  edge @contract.lexical_scope -> @state_var.def
 }
 
 
@@ -415,26 +484,27 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @enum [EnumDefinition ... @name name: [Identifier] ...] {
-  node @name.def
-  attr (@name.def) node_definition = @name
+  node def
+  attr (def) node_definition = @name
 
-  edge @enum.defs -> @name.def
+  edge @enum.def -> def
+
+  node member
+  attr (member) pop_symbol = "."
+
+  edge def -> member
+  edge member -> @enum.members
 }
 
-[EnumDefinition
-    ...
-    @name name: [_]
+@enum [EnumDefinition
     ...
     members: [EnumMembers ... @item [Identifier] ...]
     ...
 ] {
-  node member
-  attr (member) pop_symbol = "."
-  edge @name.def -> member
-
   node def
   attr (def) node_definition = @item
-  edge member -> def
+
+  edge @enum.members -> def
 }
 
 ;; Make the enum available to the enclosing contract/interface/library.
@@ -446,7 +516,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @enum variant: [EnumDefinition]]
     ...
 ] ...] {
-  edge @contract.lexical_scope -> @enum.defs
+  edge @contract.members -> @enum.def
 }
 
 @interface [InterfaceDefinition ... members: [InterfaceMembers
@@ -454,7 +524,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @enum variant: [EnumDefinition]]
     ...
 ] ...] {
-  edge @interface.lexical_scope -> @enum.defs
+  edge @interface.members -> @enum.def
 }
 
 @library [LibraryDefinition ... members: [LibraryMembers
@@ -462,7 +532,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @enum variant: [EnumDefinition]]
     ...
 ] ...] {
-  edge @library.lexical_scope -> @enum.defs
+  edge @library.members -> @enum.def
 }
 
 
@@ -474,27 +544,73 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
 
-  edge @struct.defs -> def
-}
+  edge @struct.def -> def
 
-@member [StructMember] {
-  node @member.lexical_scope
-  node @member.defs
-}
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
 
-@member item: [StructMember ... @name name: [Identifier] ...] {
   node member
   attr (member) pop_symbol = "."
-  edge @member.defs -> member
 
-  node def
-  attr (def) node_definition = @name
-  edge member -> def
+  edge def -> type_def
+  edge type_def -> member
+  edge member -> @struct.members
 }
 
-;; TODO: connect lexical scope of structs to the rest of the source unit and
-;; make them available in the parent scope (either top-level, or
-;; contract/interface/library).
+@struct [StructDefinition ... [StructMembers ... @member item: [StructMember] ...] ...] {
+  node @member.lexical_scope
+  edge @member.lexical_scope -> @struct.lexical_scope
+}
+
+@struct [StructDefinition ... [StructMembers
+    ...
+    @member item: [StructMember ... @type_name [TypeName] ... @name name: [Identifier] ...]
+    ...
+] ...] {
+  node def
+  attr (def) node_definition = @name
+
+  edge @struct.members -> def
+
+  edge @type_name.type_ref -> @member.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @type_name.output
+}
+
+;; Make the struct available to the enclosing contract/interface/library.
+;; NB. top-level enums (ie. those defined at the file's level) are already
+;; covered above
+
+@contract [ContractDefinition ... members: [ContractMembers
+    ...
+    item: [ContractMember @struct variant: [StructDefinition]]
+    ...
+] ...] {
+  edge @struct.lexical_scope -> @contract.lexical_scope
+  edge @contract.members -> @struct.def
+}
+
+@interface [InterfaceDefinition ... members: [InterfaceMembers
+    ...
+    item: [ContractMember @struct variant: [StructDefinition]]
+    ...
+] ...] {
+  edge @struct.lexical_scope -> @interface.lexical_scope
+  edge @interface.members -> @struct.def
+}
+
+@library [LibraryDefinition ... members: [LibraryMembers
+    ...
+    item: [ContractMember @struct variant: [StructDefinition]]
+    ...
+] ...] {
+  edge @struct.lexical_scope -> @library.lexical_scope
+  edge @library.members -> @struct.def
+}
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -503,16 +619,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @expr [Expression] {
   node @expr.lexical_scope
-  ;; this represents an 'output' scope for the expression
-  node @expr.type
-}
-
-@expr [Expression ... @name variant: [Identifier]] {
-  node @name.ref
-  attr (@name.ref) node_reference = @name
-
-  edge @name.ref -> @expr.lexical_scope
-  edge @expr.type -> @name.ref
+  ;; this is an output scope for use in member access
+  node @expr.output
 }
 
 ;; General case for nested expressions
@@ -543,34 +651,43 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.lexical_scope -> @state_var.lexical_scope
 }
 
-;;; Member access expressions
 
-@member [MemberAccess] {
-  node @member.lexical_scope
-}
 
-@member [MemberAccess @name [Identifier]] {
+;;; Identifier expressions
+
+@expr [Expression ... @name variant: [Identifier]] {
   node ref
   attr (ref) node_reference = @name
 
-  edge ref -> @member.lexical_scope
+  edge ref -> @expr.lexical_scope
+  edge @expr.output -> ref
 }
 
-;; FIXME: I think we're missing an output 'type' for this expression, which
-;; would allow chaining of member access expressions.
-[MemberAccessExpression
+
+;;; Member access expressions
+
+;; TODO: implement variant for `.address` member
+@expr [Expression ... [MemberAccessExpression
     ...
-    @expr operand: [Expression]
+    @operand operand: [Expression]
     ...
-    @member member: [MemberAccess]
+    member: [MemberAccess @name [Identifier]]
     ...
-] {
+...]] {
+  node ref
+  attr (ref) node_reference = @name
+
   node member
   attr (member) push_symbol = "."
 
-  edge @member.lexical_scope -> member
-  edge member -> @expr.type
+  edge ref -> member
+  edge member -> @operand.output
+
+  edge @expr.output -> ref
 }
+
+;; TODO: implement `.output` link for other expression variants
+
 
 ;;; Function call expressions
 
@@ -609,10 +726,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @args.lexical_scope -> @funcall.lexical_scope
 }
 
+
 ;;; Type expressions
 
 @type_expr [Expression [TypeExpression ... @type [TypeName] ...]] {
-  edge @type.type -> @type_expr.lexical_scope
+  edge @type.type_ref -> @type_expr.lexical_scope
 }
 
 "#####;

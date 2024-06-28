@@ -4,6 +4,7 @@ use semver::Version;
 mod enums;
 mod expressions;
 mod lexical;
+mod structs;
 
 pub const VERSION_BREAKS: [Version; 33] = [
     Version::new(0, 4, 11),
