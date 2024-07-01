@@ -1,5 +1,11 @@
 # changelog
 
+## 0.15.2
+
+### Patch Changes
+
+-   [#1015](https://github.com/NomicFoundation/slang/pull/1015) [`369ee30`](https://github.com/NomicFoundation/slang/commit/369ee309325ef57c7cd6f29e2f7adc4f9ec09c88) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - upgrade to rust `1.79.0`.
+
 ## 0.15.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/slang-linux-x64-musl",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "Platform-specific binaries for @nomicfoundation/slang.",
   "homepage": "https://nomicfoundation.github.io/slang/",
   "license": "MIT",

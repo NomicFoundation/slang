@@ -1,5 +1,5 @@
 [workspace.package]
-version = "0.15.1"
+version = "0.15.2"
 rust-version = "1.79.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
@@ -46,39 +46,39 @@ members = [
 #
 # Internal
 #
-codegen_ebnf = { path = "crates/codegen/ebnf", version = "0.15.1" }
-codegen_language_definition = { path = "crates/codegen/language/definition", version = "0.15.1" }
-codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "0.15.1" }
-codegen_language_macros = { path = "crates/codegen/language/macros", version = "0.15.1" }
-codegen_language_tests = { path = "crates/codegen/language/tests", version = "0.15.1" }
-codegen_runtime_cargo = { path = "crates/codegen/runtime/cargo", version = "0.15.1" }
-codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "0.15.1" }
-codegen_runtime_node_addon = { path = "crates/codegen/runtime/node_addon", version = "0.15.1" }
-codegen_runtime_npm = { path = "crates/codegen/runtime/npm", version = "0.15.1" }
-codegen_spec = { path = "crates/codegen/spec", version = "0.15.1" }
-codegen_testing = { path = "crates/codegen/testing", version = "0.15.1" }
+codegen_ebnf = { path = "crates/codegen/ebnf", version = "0.15.2" }
+codegen_language_definition = { path = "crates/codegen/language/definition", version = "0.15.2" }
+codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "0.15.2" }
+codegen_language_macros = { path = "crates/codegen/language/macros", version = "0.15.2" }
+codegen_language_tests = { path = "crates/codegen/language/tests", version = "0.15.2" }
+codegen_runtime_cargo = { path = "crates/codegen/runtime/cargo", version = "0.15.2" }
+codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "0.15.2" }
+codegen_runtime_node_addon = { path = "crates/codegen/runtime/node_addon", version = "0.15.2" }
+codegen_runtime_npm = { path = "crates/codegen/runtime/npm", version = "0.15.2" }
+codegen_spec = { path = "crates/codegen/spec", version = "0.15.2" }
+codegen_testing = { path = "crates/codegen/testing", version = "0.15.2" }
 
-infra_cli = { path = "crates/infra/cli", version = "0.15.1" }
-infra_utils = { path = "crates/infra/utils", version = "0.15.1" }
+infra_cli = { path = "crates/infra/cli", version = "0.15.2" }
+infra_utils = { path = "crates/infra/utils", version = "0.15.2" }
 
-metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "0.15.1" }
-metaslang_cst = { path = "crates/metaslang/cst", version = "0.15.1" }
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "0.15.2" }
+metaslang_cst = { path = "crates/metaslang/cst", version = "0.15.2" }
 
-slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity", version = "0.15.1" }
-slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon", version = "0.15.1" }
-solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "0.15.1" }
-solidity_language = { path = "crates/solidity/inputs/language", version = "0.15.1" }
-solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "0.15.1" }
-solidity_spec = { path = "crates/solidity/outputs/spec", version = "0.15.1" }
-solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary", version = "0.15.1" }
-solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "0.15.1" }
-solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "0.15.1" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity", version = "0.15.2" }
+slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon", version = "0.15.2" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "0.15.2" }
+solidity_language = { path = "crates/solidity/inputs/language", version = "0.15.2" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "0.15.2" }
+solidity_spec = { path = "crates/solidity/outputs/spec", version = "0.15.2" }
+solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary", version = "0.15.2" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "0.15.2" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "0.15.2" }
 
-slang_testlang = { path = "crates/testlang/outputs/cargo/slang_testlang", version = "0.15.1" }
-slang_testlang_node_addon = { path = "crates/testlang/outputs/cargo/slang_testlang_node_addon", version = "0.15.1" }
-testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests", version = "0.15.1" }
-testlang_language = { path = "crates/testlang/inputs/language", version = "0.15.1" }
-testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version = "0.15.1" }
+slang_testlang = { path = "crates/testlang/outputs/cargo/slang_testlang", version = "0.15.2" }
+slang_testlang_node_addon = { path = "crates/testlang/outputs/cargo/slang_testlang_node_addon", version = "0.15.2" }
+testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests", version = "0.15.2" }
+testlang_language = { path = "crates/testlang/inputs/language", version = "0.15.2" }
+testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version = "0.15.2" }
 
 #
 # External
