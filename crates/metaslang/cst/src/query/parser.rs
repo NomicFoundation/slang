@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use nom::branch::alt;
-use nom::bytes::complete::{is_not, tag, take_while, take_while1, take_while_m_n};
+use nom::bytes::complete::{is_not, take_while, take_while1, take_while_m_n};
 use nom::character::complete::{char, multispace0, multispace1, satisfy};
 use nom::combinator::{all_consuming, map_opt, map_res, opt, recognize, success, value, verify};
 use nom::error::VerboseError;
@@ -51,7 +51,7 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
 pub(super) fn parse_matcher_alternatives<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    separated_list1(token('|'), parse_matcher_sequence::<T>)
+    separated_list1(token('|'), parse_quantified_matcher::<T>)
         .map(|mut children| {
             if children.len() == 1 {
                 children.pop().unwrap()
@@ -65,35 +65,36 @@ pub(super) fn parse_matcher_alternatives<T: KindTypes>(
 pub(super) fn parse_matcher_sequence<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    many1(parse_quantified_matcher::<T>)
-        .map(|mut children| {
-            if children.len() == 1 {
-                children.pop().unwrap()
-            } else {
-                ASTNode::Sequence(Rc::new(SequenceASTNode { children }))
-            }
-        })
+    many1(parse_sequence_item::<T>)
+        .map(|children| ASTNode::Sequence(Rc::new(SequenceASTNode { children })))
         .parse(i)
+}
+
+pub(super) fn parse_sequence_item<T: KindTypes>(
+    i: &str,
+) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    alt((
+        token('.').map(|_| ASTNode::Anchor),
+        parse_quantified_matcher::<T>,
+    ))
+    .parse(i)
 }
 
 pub(super) fn parse_quantified_matcher<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    alt((
-        ellipsis_token.map(|_| ASTNode::Ellipsis), // Cannot be quantified
-        pair(
-            parse_bound_matcher,
-            parse_trailing_quantifier, // admits epsilon
-        )
-        .map(|(child, quantifier)| match quantifier {
-            CaptureQuantifier::ZeroOrOne => ASTNode::Optional(Rc::new(OptionalASTNode { child })),
-            CaptureQuantifier::ZeroOrMore => ASTNode::Optional(Rc::new(OptionalASTNode {
-                child: ASTNode::OneOrMore(Rc::new(OneOrMoreASTNode { child })),
-            })),
-            CaptureQuantifier::OneOrMore => ASTNode::OneOrMore(Rc::new(OneOrMoreASTNode { child })),
-            CaptureQuantifier::One => child,
-        }),
-    ))
+    pair(
+        parse_bound_matcher,
+        parse_trailing_quantifier, // admits epsilon
+    )
+    .map(|(child, quantifier)| match quantifier {
+        CaptureQuantifier::ZeroOrOne => ASTNode::Optional(Rc::new(OptionalASTNode { child })),
+        CaptureQuantifier::ZeroOrMore => ASTNode::Optional(Rc::new(OptionalASTNode {
+            child: ASTNode::OneOrMore(Rc::new(OneOrMoreASTNode { child })),
+        })),
+        CaptureQuantifier::OneOrMore => ASTNode::OneOrMore(Rc::new(OneOrMoreASTNode { child })),
+        CaptureQuantifier::One => child,
+    })
     .parse(i)
 }
 
@@ -287,10 +288,6 @@ fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
         char('"'),
     )
     .parse(i)
-}
-
-fn ellipsis_token(i: &str) -> IResult<&str, &str, VerboseError<&str>> {
-    terminated(tag("..."), multispace0).parse(i)
 }
 
 fn token<'input>(c: char) -> impl Parser<&'input str, char, VerboseError<&'input str>> {

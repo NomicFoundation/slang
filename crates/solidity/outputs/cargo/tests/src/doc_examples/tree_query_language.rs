@@ -73,7 +73,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-4]
-    [MultiplicativeExpression left_operand:[_] [_] ...]
+    [MultiplicativeExpression left_operand:[_] [_]]
     // --8<-- [end:query-syntax-4]
     "
         .remove_mkdoc_snippet_markers(),
@@ -84,7 +84,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-5]
-    [MultiplicativeExpression ... [Expression [StringExpression]] ...]
+    [MultiplicativeExpression [Expression [StringExpression]]]
     // --8<-- [end:query-syntax-5]
     "
         .remove_mkdoc_snippet_markers(),
@@ -107,7 +107,7 @@ fn capturing_nodes() {
     let query = Query::parse(
         &"
     // --8<-- [start:capturing-nodes-1]
-	[StructDefinition ... @struct_name name:[Identifier] ...]
+	[StructDefinition @struct_name name:[Identifier]]
     // --8<-- [end:capturing-nodes-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -120,21 +120,14 @@ fn capturing_nodes() {
         &"
     // --8<-- [start:capturing-nodes-2]
 	[ContractDefinition
-		...
 		@contract_name name:[Identifier]
-		...
 		members:[ContractMembers
-			...
 			[ContractMember
 				[EventDefinition
-					...
 					@event_name name:[Identifier]
-					...
 				]
 			]
-			...
 		]
-		...
 	]
     // --8<-- [end:capturing-nodes-2]
     "
@@ -154,7 +147,7 @@ fn quantification() {
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-1]
-	[SourceUnit ... (leading_trivia:[_])+]
+	[SourceUnit (leading_trivia:[_])+]
     // --8<-- [end:quantification-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -171,11 +164,8 @@ fn quantification() {
         &"
     // --8<-- [start:quantification-2]
 	[ContractDefinition
-		...
 		(@docline [SingleLineNatSpecComment])+
-		...
 		@name name:[_]
-		...
 	]
     // --8<-- [end:quantification-2]
     "
@@ -196,20 +186,13 @@ fn quantification() {
         &"
     // --8<-- [start:quantification-3]
 	[FunctionCallExpression
-		...
 		arguments:[ArgumentsDeclaration
 			variant:[PositionalArgumentsDeclaration
-				...
 				arguments:[PositionalArguments
-					...
 					(@arg [Expression variant:[StringExpression]])?
-					...
 				]
-				...
 			]
-			...
 		]
-		...
 	]
     // --8<-- [end:quantification-3]
     "
@@ -236,11 +219,11 @@ fn alternations() {
         &"
     // --8<-- [start:alternations-1]
 	[FunctionCallExpression
+    .
 		operand:[Expression
 			(@function variant:[Identifier]
 			| @method variant:[MemberAccessExpression])
 		]
-		...
 	]
     // --8<-- [end:alternations-1]
     "

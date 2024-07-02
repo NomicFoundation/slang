@@ -58,8 +58,8 @@ test("using queries", async () => {
     // --8<-- [start:multiple-patterns]
     const names = [];
 
-    const struct_def = Query.parse("[StructDefinition ... @name [Identifier] ...]");
-    const enum_def = Query.parse("[EnumDefinition ... @name [Identifier] ...]");
+    const struct_def = Query.parse("[StructDefinition @name [Identifier]]");
+    const enum_def = Query.parse("[EnumDefinition @name [Identifier]]");
     const matches = cursor.query([struct_def, enum_def]);
 
     let match = null;
@@ -89,7 +89,7 @@ test("using queries", async () => {
 
     const names = [];
 
-    const query = Query.parse("[TypedTupleMember ... @type type_name:[_] ...]");
+    const query = Query.parse("[TypedTupleMember @type type_name:[_]]");
     const matches = cursor.query([query]);
 
     let match = null;
@@ -137,18 +137,8 @@ test("using queries", async () => {
     // --8<-- [start:tx-origin]
     const query = Query.parse(`
     @txorigin [MemberAccessExpression
-      ...
-      [Expression
-        ...
-        @start ["tx"]
-        ...
-      ]
-      ...
-      [MemberAccess
-        ...
-        ["origin"]
-        ...
-      ]
+      [Expression @start ["tx"]]
+      [MemberAccess ["origin"]]
     ]`);
     const matches = cursor.query([query]);
 

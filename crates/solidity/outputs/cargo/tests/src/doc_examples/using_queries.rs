@@ -64,8 +64,8 @@ fn using_queries() -> Result<()> {
         // --8<-- [start:multiple-patterns]
         let mut names = vec![];
 
-        let struct_def = Query::parse("[StructDefinition ... @name [Identifier] ...]").unwrap();
-        let enum_def = Query::parse("[EnumDefinition ... @name [Identifier] ...]").unwrap();
+        let struct_def = Query::parse("[StructDefinition @name [Identifier]]").unwrap();
+        let enum_def = Query::parse("[EnumDefinition @name [Identifier]]").unwrap();
 
         for r#match in cursor.query(vec![struct_def, enum_def]) {
             let index = r#match.query_number;
@@ -96,7 +96,7 @@ fn using_queries() -> Result<()> {
 
         let mut names = vec![];
 
-        let query = Query::parse("[TypedTupleMember ... @type type_name:[_] ...]").unwrap();
+        let query = Query::parse("[TypedTupleMember @type type_name:[_]]").unwrap();
 
         for r#match in cursor.query(vec![query]) {
             let captures = r#match.captures;
@@ -144,18 +144,8 @@ fn tx_origin_query() -> Result<()> {
     // --8<-- [start:tx-origin]
     let query = Query::parse(
         r#"@txorigin [MemberAccessExpression
-                ...
-                [Expression
-                    ...
-                    @start ["tx"]
-                    ...
-                ]
-                ...
-                [MemberAccess
-                    ...
-                    ["origin"]
-                    ...
-                ]
+                [Expression @start ["tx"]]
+                [MemberAccess ["origin"]]
             ]"#,
     )
     .unwrap();

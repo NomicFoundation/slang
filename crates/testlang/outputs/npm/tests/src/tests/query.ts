@@ -8,7 +8,7 @@ test("simple query", () => {
   const tree_source = `tree [A [B C] D];`;
   const parse_output = language.parse(NonterminalKind.Tree, tree_source);
 
-  const query_source = `[TreeNodeChild ... @id [DelimitedIdentifier]]`;
+  const query_source = `[TreeNodeChild @id [DelimitedIdentifier]]`;
   const query = Query.parse(query_source);
 
   const matches = parse_output.createTreeCursor().query([query]);

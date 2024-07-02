@@ -18,11 +18,11 @@ fn builds_a_graph() {
             node @tree_node.def
         }
 
-        @tree [Tree ... @root node: [TreeNode] ...] {
+        @tree [Tree @root node: [TreeNode]] {
             edge @root.def -> @tree.def
         }
 
-        @parent [TreeNode ... members: [_ ... [_ @child variant: [TreeNode]] ...] ...] {
+        @parent [TreeNode members: [_ [_ @child variant: [TreeNode]]]] {
             edge @child.def -> @parent.def
         }
     ";

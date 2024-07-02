@@ -16,8 +16,8 @@ fn test_text_escaping() {
 }
 
 #[test]
-fn test_ellipsis() {
-    run_parser_test(r#"[_ ...]"#, r#"[_ ...]"#);
+fn test_anchor() {
+    run_parser_test(r#"[_ . [_]]"#, r#"[_ . [_]]"#);
 }
 
 #[test]
@@ -52,12 +52,9 @@ fn test_zero_or_more_canonicalisation() {
 // Test the error message on parse failure
 #[test]
 fn test_parsing_error() {
-    let result = Query::parse(r#"@root [_ ..."#);
+    let result = Query::parse(r#"@root [_ ."#);
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(e) => assert_eq!(
-            e.message,
-            "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
-        ),
+        Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_ .\n"),
     }
 }

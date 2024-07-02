@@ -81,7 +81,7 @@ impl<T: KindTypes> Query<T> {
                         capture_quantifiers,
                     )?;
                 }
-                ASTNode::Ellipsis => {}
+                ASTNode::Anchor => {}
             }
             Ok(())
         }
@@ -113,7 +113,7 @@ pub enum ASTNode<T: KindTypes> {
     Alternatives(Rc<AlternativesASTNode<T>>),
     Sequence(Rc<SequenceASTNode<T>>),
     OneOrMore(Rc<OneOrMoreASTNode<T>>),
-    Ellipsis,
+    Anchor,
 }
 
 impl<T: KindTypes> ASTNode<T> {
@@ -167,7 +167,7 @@ impl<T: KindTypes> fmt::Display for ASTNode<T> {
             Self::OneOrMore(one_or_more) => {
                 write!(f, "({})+", one_or_more.child)
             }
-            Self::Ellipsis => write!(f, "..."),
+            Self::Anchor => write!(f, "."),
         }
     }
 }

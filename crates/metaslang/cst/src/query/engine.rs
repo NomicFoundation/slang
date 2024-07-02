@@ -79,7 +79,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
             Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
             Self::OneOrMore(matcher) => matcher.child.can_match(cursor),
             Self::Optional(_) => true,
-            Self::Ellipsis => true,
+            Self::Anchor => true,
         }
     }
 
@@ -103,7 +103,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
             Self::OneOrMore(matcher) => {
                 Box::new(OneOrMoreMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
-            Self::Ellipsis => Box::new(EllipsisMatcher::<T>::new(cursor)),
+            Self::Anchor => unreachable!("Cannot create a matcher for an anchor"),
         }
     }
 }
@@ -325,20 +325,57 @@ impl<T: KindTypes + 'static> Matcher<T> for NodeMatchMatcher<T> {
     }
 }
 
+enum SequenceItem {
+    ChildMatcher(usize),
+    Ellipsis,
+}
+
 struct SequenceMatcher<T: KindTypes> {
     matcher: Rc<SequenceASTNode<T>>,
     children: Vec<MatcherRef<T>>,
     cursor: Cursor<T>,
     is_initialised: bool,
+    template: Vec<SequenceItem>,
 }
 
-impl<T: KindTypes> SequenceMatcher<T> {
+impl<T: KindTypes + 'static> SequenceMatcher<T> {
     fn new(matcher: Rc<SequenceASTNode<T>>, cursor: Cursor<T>) -> Self {
+        let (mut template, last_anchor) = matcher.children.iter().enumerate().fold(
+            (Vec::new(), false),
+            |(mut acc, last_anchor), (index, child)| {
+                if matches!(child, ASTNode::Anchor) {
+                    if last_anchor {
+                        unreachable!("Found two consecutive anchors")
+                    }
+                    (acc, true)
+                } else {
+                    if !last_anchor {
+                        acc.push(SequenceItem::Ellipsis);
+                    }
+                    acc.push(SequenceItem::ChildMatcher(index));
+                    (acc, false)
+                }
+            },
+        );
+        if !last_anchor {
+            template.push(SequenceItem::Ellipsis);
+        }
         Self {
             matcher,
             children: vec![],
             cursor,
             is_initialised: false,
+            template,
+        }
+    }
+
+    fn create_matcher(&self, index: usize, cursor: Cursor<T>) -> MatcherRef<T> {
+        let item = &self.template[index];
+        match item {
+            SequenceItem::Ellipsis => Box::new(EllipsisMatcher::new(cursor)),
+            SequenceItem::ChildMatcher(index) => {
+                self.matcher.children[*index].create_matcher(cursor)
+            }
         }
     }
 }
@@ -349,17 +386,16 @@ impl<T: KindTypes + 'static> Matcher<T> for SequenceMatcher<T> {
             self.is_initialised = true;
 
             let child_cursor = self.cursor.clone();
-            let child = self.matcher.children[0].create_matcher(child_cursor);
+            let child = self.create_matcher(0, child_cursor);
             self.children.push(child);
         }
 
         while !self.children.is_empty() {
             if let Some(child_cursor) = self.children.last_mut().unwrap().next() {
-                if self.children.len() == self.matcher.children.len() {
+                if self.children.len() == self.template.len() {
                     return Some(child_cursor);
                 }
-
-                let child = self.matcher.children[self.children.len()].create_matcher(child_cursor);
+                let child = self.create_matcher(self.children.len(), child_cursor);
                 self.children.push(child);
             } else {
                 self.children.pop();
