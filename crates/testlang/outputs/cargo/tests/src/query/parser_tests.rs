@@ -52,9 +52,27 @@ fn test_zero_or_more_canonicalisation() {
 // Test the error message on parse failure
 #[test]
 fn test_parsing_error() {
-    let result = Query::parse(r#"@root [_ ."#);
+    let result = Query::parse(r#"@root [_"#);
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_ .\n"),
+        Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_\n"),
+    }
+}
+
+#[test]
+fn test_fails_parsing_ellipsis() {
+    let result = Query::parse(r#"[_ ...]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: ..]\n"),
+    }
+}
+
+#[test]
+fn test_fails_consecutive_anchors() {
+    let result = Query::parse(r#"[_ . .]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: .]\n"),
     }
 }

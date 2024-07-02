@@ -2,8 +2,10 @@ use std::rc::Rc;
 
 use nom::branch::alt;
 use nom::bytes::complete::{is_not, take_while, take_while1, take_while_m_n};
-use nom::character::complete::{char, multispace0, multispace1, satisfy};
-use nom::combinator::{all_consuming, map_opt, map_res, opt, recognize, success, value, verify};
+use nom::character::complete::{char, multispace0, multispace1, none_of, satisfy};
+use nom::combinator::{
+    all_consuming, cut, map_opt, map_res, opt, peek, recognize, success, value, verify,
+};
 use nom::error::VerboseError;
 use nom::multi::{fold_many0, many1, separated_list1};
 use nom::sequence::{delimited, pair, preceded, terminated};
@@ -73,11 +75,13 @@ pub(super) fn parse_matcher_sequence<T: KindTypes>(
 pub(super) fn parse_sequence_item<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    alt((
-        token('.').map(|_| ASTNode::Anchor),
-        parse_quantified_matcher::<T>,
-    ))
-    .parse(i)
+    alt((parse_anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
+}
+
+pub(super) fn parse_anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    pair(token('.'), cut(peek(none_of(". \t\r\n"))))
+        .map(|_| ASTNode::Anchor)
+        .parse(i)
 }
 
 pub(super) fn parse_quantified_matcher<T: KindTypes>(
