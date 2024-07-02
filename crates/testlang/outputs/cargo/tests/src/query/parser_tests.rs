@@ -54,7 +54,7 @@ fn test_zero_or_more_canonicalisation() {
 fn test_parsing_error() {
     let result = Query::parse(r#"@root [_"#);
     match result {
-        Ok(_) => panic!("Expected error"),
+        Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_\n"),
     }
 }
@@ -63,7 +63,7 @@ fn test_parsing_error() {
 fn test_fails_parsing_ellipsis() {
     let result = Query::parse(r#"[_ ...]"#);
     match result {
-        Ok(_) => panic!("Expected error"),
+        Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: ..]\n"),
     }
 }
@@ -72,7 +72,16 @@ fn test_fails_parsing_ellipsis() {
 fn test_fails_consecutive_anchors() {
     let result = Query::parse(r#"[_ . .]"#);
     match result {
-        Ok(_) => panic!("Expected error"),
+        Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: .]\n"),
+    }
+}
+
+#[test]
+fn test_fails_single_anchor() {
+    let result = Query::parse(r#"[_ .]"#);
+    match result {
+        Ok(_) => panic!("Expected parse failure"),
+        Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: .]\nAlt at: [_ .]\n"),
     }
 }

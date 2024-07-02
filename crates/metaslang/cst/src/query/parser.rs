@@ -67,9 +67,15 @@ pub(super) fn parse_matcher_alternatives<T: KindTypes>(
 pub(super) fn parse_matcher_sequence<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    many1(parse_sequence_item::<T>)
-        .map(|children| ASTNode::Sequence(Rc::new(SequenceASTNode { children })))
-        .parse(i)
+    verify(
+        many1(parse_sequence_item::<T>),
+        |children: &[ASTNode<T>]| {
+            // It doesn't make sense for a sequence to be a single anchor
+            children.len() > 1 || !matches!(children[0], ASTNode::Anchor)
+        },
+    )
+    .map(|children| ASTNode::Sequence(Rc::new(SequenceASTNode { children })))
+    .parse(i)
 }
 
 pub(super) fn parse_sequence_item<T: KindTypes>(
@@ -79,6 +85,7 @@ pub(super) fn parse_sequence_item<T: KindTypes>(
 }
 
 pub(super) fn parse_anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    // An anchor is a single '.' character, and cannot be followed by another anchor
     pair(token('.'), cut(peek(none_of(". \t\r\n"))))
         .map(|_| ASTNode::Anchor)
         .parse(i)
