@@ -88,3 +88,9 @@ fn test_fails_single_anchor() {
         ),
     }
 }
+
+#[test]
+fn test_fails_anchors_at_edge_of_alt_option() {
+    let result = Query::parse(r#"([TreeNode] | . [DelimitedIdentifier])+"#);
+    assert!(result.is_err(), "Expected parse failure");
+}
