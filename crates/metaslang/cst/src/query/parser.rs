@@ -53,7 +53,7 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
 pub(super) fn parse_matcher_alternatives<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    separated_list1(token('|'), parse_quantified_matcher::<T>)
+    separated_list1(token('|'), parse_matcher_alt_sequence::<T>)
         .map(|mut children| {
             if children.len() == 1 {
                 children.pop().unwrap()
@@ -74,21 +74,45 @@ pub(super) fn parse_matcher_sequence<T: KindTypes>(
             children.len() > 1 || !matches!(children[0], ASTNode::Anchor)
         },
     )
-    .map(|children| ASTNode::Sequence(Rc::new(SequenceASTNode { children })))
+    .map(|children| {
+        ASTNode::Sequence(Rc::new(SequenceASTNode {
+            children,
+            anchored: false,
+        }))
+    })
+    .parse(i)
+}
+
+pub(super) fn parse_matcher_alt_sequence<T: KindTypes>(
+    i: &str,
+) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    verify(
+        many1(parse_sequence_item::<T>),
+        |children: &[ASTNode<T>]| {
+            // Alternative sequences cannot start or end with an anchor, because
+            // those anchors are implicit
+            !matches!(children[0], ASTNode::Anchor)
+                && !matches!(children[children.len() - 1], ASTNode::Anchor)
+        },
+    )
+    .map(|mut children| {
+        if children.len() == 1 {
+            // Alternative sequences of length 1 can be simplified to the child pattern
+            children.pop().unwrap()
+        } else {
+            ASTNode::Sequence(Rc::new(SequenceASTNode {
+                children,
+                anchored: true,
+            }))
+        }
+    })
     .parse(i)
 }
 
 pub(super) fn parse_sequence_item<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    alt((parse_anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
-}
-
-pub(super) fn parse_anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    // An anchor is a single '.' character, and cannot be followed by another anchor
-    pair(token('.'), cut(peek(none_of(". \t\r\n"))))
-        .map(|_| ASTNode::Anchor)
-        .parse(i)
+    alt((anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
 }
 
 pub(super) fn parse_quantified_matcher<T: KindTypes>(
@@ -303,4 +327,11 @@ fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
 
 fn token<'input>(c: char) -> impl Parser<&'input str, char, VerboseError<&'input str>> {
     terminated(char(c), multispace0)
+}
+
+fn anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    // An anchor is a single '.' character, and cannot be followed by another anchor
+    pair(token('.'), cut(peek(none_of(". \t\r\n"))))
+        .map(|_| ASTNode::Anchor)
+        .parse(i)
 }

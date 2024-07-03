@@ -341,10 +341,13 @@ struct SequenceMatcher<T: KindTypes> {
 impl<T: KindTypes + 'static> SequenceMatcher<T> {
     fn new(matcher: Rc<SequenceASTNode<T>>, cursor: Cursor<T>) -> Self {
         // Produce a template of instructions to create the matchers for the
-        // sequence by inserting ellipsis matchers in between each of the child
-        // matchers, unless it's explicitly disabled by an anchor token.
+        // sequence by inserting ellipsis matchers at the start, end, and in
+        // between each of the child matchers, unless it's explicitly disabled
+        // by an anchor token.
+        // If the sequence is anchored (eg. option in alt or quantified
+        // group sequence) then the starting and ending anchors are implicit.
         let (mut template, last_anchor) = matcher.children.iter().enumerate().fold(
-            (Vec::new(), false),
+            (Vec::new(), matcher.anchored),
             |(mut acc, last_anchor), (index, child)| {
                 if matches!(child, ASTNode::Anchor) {
                     if last_anchor {
@@ -360,7 +363,7 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
                 }
             },
         );
-        if !last_anchor {
+        if !last_anchor && !matcher.anchored {
             template.push(SequenceItem::Ellipsis);
         }
         Self {

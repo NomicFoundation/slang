@@ -256,6 +256,8 @@ pub struct NodeMatchASTNode<T: KindTypes> {
 #[derive(Debug)]
 pub struct SequenceASTNode<T: KindTypes> {
     pub children: Vec<ASTNode<T>>,
+    // if true, the sequence has implicit beginning and ending anchors
+    pub anchored: bool,
 }
 
 #[derive(Debug)]

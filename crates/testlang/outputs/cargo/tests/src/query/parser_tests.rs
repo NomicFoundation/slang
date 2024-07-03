@@ -70,7 +70,7 @@ fn test_fails_parsing_ellipsis() {
 
 #[test]
 fn test_fails_consecutive_anchors() {
-    let result = Query::parse(r#"[_ . .]"#);
+    let result = Query::parse(r#"[_ [DelimitedIdentifier] . .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: .]\n"),

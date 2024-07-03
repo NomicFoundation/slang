@@ -260,3 +260,18 @@ fn test_nested() {
         },
     );
 }
+
+#[test]
+fn test_alternatives() {
+    run_query_test(
+        &common_test_tree(),
+        "(@x node:[_] | @y [DelimitedIdentifier] . @z [DelimitedIdentifier])",
+        query_matches! {
+            {x: ["A"]}
+            {y: ["A"], z: ["B"]}
+            {y: ["B"], z: ["C"]}
+            {y: ["D"], z: ["E"]}
+            {x: ["E"]}
+        },
+    )
+}
