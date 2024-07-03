@@ -273,5 +273,5 @@ fn test_alternatives() {
             {y: ["D"], z: ["E"]}
             {x: ["E"]}
         },
-    )
+    );
 }
