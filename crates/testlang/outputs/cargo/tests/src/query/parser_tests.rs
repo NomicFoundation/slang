@@ -82,6 +82,9 @@ fn test_fails_single_anchor() {
     let result = Query::parse(r#"[_ .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
-        Err(e) => assert_eq!(e.message, "Parse error:\nexpected ']' at: .]\nAlt at: [_ .]\n"),
+        Err(e) => assert_eq!(
+            e.message,
+            "Parse error:\nexpected ']' at: .]\nAlt at: [_ .]\n"
+        ),
     }
 }

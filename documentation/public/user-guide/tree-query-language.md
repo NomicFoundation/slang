@@ -6,8 +6,8 @@ A _query_ is a pattern that matches a
 certain set of nodes in a tree. The expression to match a given node
 consists of a pair of brackets (`[]`) containing two things: the node's kind, and
 optionally, a series of other patterns that match the node's children. For
-example, this pattern would match any `MultiplicativeExpression` node whose children
-are exactly two `Expression` nodes, with an `Asterisk` node in between (no whitespace):
+example, this pattern would match any `MultiplicativeExpression` node that has
+two children `Expression` nodes, with an `Asterisk` node in between:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-1"
@@ -36,7 +36,7 @@ node with two children, one of any kind labeled `left_operand` and one of any ki
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-4"
 ```
 
-Children can also be elided. For example, this would produce multiple matches for a
+Children can be elided. For example, this would produce multiple matches for a
 `MultiplicativeExpression` where at least _one_ of the children is an expression of a `StringExpression` variant, where each match
 is associated with each of the `StringExpression` children:
 
@@ -106,4 +106,29 @@ This pattern would match a set of possible keyword terminals, capturing them as 
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-2"
+```
+
+### Anchoring
+
+By using anchors '.', you can constrain a pattern to only match the first or the last child nodes.
+
+For example, the following pattern would match only the first parameter
+declaration in a function definition:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-1"
+```
+
+And conversely the following will match only the last parameter:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-2"
+```
+
+If the anchor is used in between two patterns it constrains matches on both
+patterns to occur consecutively, ie. without any other sibling node in between. For
+example, this pattern matches pairs of consecutive statements:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-3"
 ```

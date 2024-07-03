@@ -123,9 +123,7 @@ fn capturing_nodes() {
 		@contract_name name:[Identifier]
 		members:[ContractMembers
 			[ContractMember
-				[EventDefinition
-					@event_name name:[Identifier]
-				]
+				[EventDefinition @event_name name:[Identifier]]
 			]
 		]
 	]
@@ -273,5 +271,107 @@ fn alternations() {
             .node()
             .unparse(),
         "break"
+    );
+}
+
+#[test]
+fn anchoring() {
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:anchoring-1]
+  [FunctionDefinition
+    [ParametersDeclaration
+      [Parameters . @first_param [Parameter]]
+    ]
+  ]
+    // --8<-- [end:anchoring-1]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(
+        &query,
+        NonterminalKind::FunctionDefinition,
+        "function test(int x, int y);",
+    );
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 1);
+    assert_eq!(
+        matches[0].captures.get("first_param").unwrap()[0]
+            .node()
+            .unparse(),
+        "int x"
+    );
+
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:anchoring-2]
+  [FunctionDefinition
+    [ParametersDeclaration
+      [Parameters @last_param [Parameter] .]
+    ]
+  ]
+    // --8<-- [end:anchoring-2]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(
+        &query,
+        NonterminalKind::FunctionDefinition,
+        "function test(int x, int y);",
+    );
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 1);
+    assert_eq!(
+        matches[0].captures.get("last_param").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y"
+    );
+
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:anchoring-3]
+  [Statements
+    @stmt1 [Statement] . @stmt2 [Statement]
+  ]
+    // --8<-- [end:anchoring-3]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(&query, NonterminalKind::Statements, "int x; int y; x + y;");
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 2);
+    assert_eq!(
+        matches[0].captures.get("stmt1").unwrap()[0]
+            .node()
+            .unparse(),
+        "int x;"
+    );
+    assert_eq!(
+        matches[0].captures.get("stmt2").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y;"
+    );
+    assert_eq!(
+        matches[1].captures.get("stmt1").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y;"
+    );
+    assert_eq!(
+        matches[1].captures.get("stmt2").unwrap()[0]
+            .node()
+            .unparse(),
+        " x + y;"
     );
 }

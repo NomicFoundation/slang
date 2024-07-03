@@ -340,6 +340,9 @@ struct SequenceMatcher<T: KindTypes> {
 
 impl<T: KindTypes + 'static> SequenceMatcher<T> {
     fn new(matcher: Rc<SequenceASTNode<T>>, cursor: Cursor<T>) -> Self {
+        // Produce a template of instructions to create the matchers for the
+        // sequence by inserting ellipsis matchers in between each of the child
+        // matchers, unless it's explicitly disabled by an anchor token.
         let (mut template, last_anchor) = matcher.children.iter().enumerate().fold(
             (Vec::new(), false),
             |(mut acc, last_anchor), (index, child)| {
@@ -553,6 +556,8 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
     }
 }
 
+/// Matches any number of sibling nodes and is used in between other matchers
+/// when matching sequences, unless an explicit anchor is added.
 struct EllipsisMatcher<T: KindTypes> {
     cursor: Cursor<T>,
     has_returned_initial_empty_value: bool,
