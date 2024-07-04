@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "implements" # (0..10)
+  - (UNRECOGNIZED): "implements" # (0..10)

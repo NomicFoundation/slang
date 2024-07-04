@@ -37,7 +37,10 @@ string-interner = { workspace = true, features = [
 thiserror = { workspace = true }
 
 [dev-dependencies]
-indoc = { workspace = true }
 env_logger = { workspace = true }
+indoc = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
+
+[lints]
+workspace = true

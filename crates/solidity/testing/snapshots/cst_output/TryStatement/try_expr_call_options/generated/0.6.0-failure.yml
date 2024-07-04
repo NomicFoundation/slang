@@ -44,6 +44,6 @@ Tree:
               - (item꞉ Statement) ► (variant꞉ ExpressionStatement) ► (expression꞉ Expression): # " x" (11..13)
                   - (leading_trivia꞉ Whitespace): " " # (11..12)
                   - (variant꞉ Identifier): "x" # (12..13)
-          - (SKIPPED): ": 1 " # (13..17)
+          - (UNRECOGNIZED): ": 1 " # (13..17)
           - (close_brace꞉ CloseBrace): "}" # (17..18)
-      - (SKIPPED): " {\n  bar();\n} catch {\n}\n" # (18..42)
+      - (UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)

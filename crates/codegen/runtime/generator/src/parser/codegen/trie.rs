@@ -5,8 +5,9 @@ use codegen_language_definition::model::KeywordDefinition;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::codegen::versioned::{Versioned as _, VersionedQuote as _};
-use crate::parser::grammar::{KeywordScannerAtomic, ScannerDefinitionRef};
+use crate::parser::codegen::versioned::VersionedQuote as _;
+use crate::parser::codegen::KeywordItemAtom;
+use crate::parser::grammar::ScannerDefinitionRef;
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<T: Payload> {
@@ -93,7 +94,7 @@ impl<T: Payload> Trie<T> {
 /// Used together with [`Trie`]. Represents the payload of a trie node and can be used to customize
 /// the emitted code.
 ///
-/// Implemented for [`ScannerDefinitionRef`] and [`KeywordScannerAtomic`], allows to create
+/// Implemented for [`ScannerDefinitionRef`] and [`KeywordItemAtom`], allows to create
 /// tries for both literal scanner definitions and keyword scanners.
 pub trait Payload {
     fn to_leaf_code(&self) -> TokenStream;
@@ -104,7 +105,7 @@ impl Payload for ScannerDefinitionRef {
     fn to_leaf_code(&self) -> TokenStream {
         let kind = format_ident!("{}", self.name());
 
-        self.node().version_specifier().to_conditional_code(
+        self.version_specifier().to_conditional_code(
             quote! { Some(TerminalKind::#kind) },
             Some(Self::default_case()),
         )
@@ -115,9 +116,9 @@ impl Payload for ScannerDefinitionRef {
     }
 }
 
-impl Payload for KeywordScannerAtomic {
+impl Payload for KeywordItemAtom {
     fn to_leaf_code(&self) -> TokenStream {
-        let kind = format_ident!("{}", self.name());
+        let kind = format_ident!("{}", self.name);
 
         let KeywordDefinition {
             enabled, reserved, ..

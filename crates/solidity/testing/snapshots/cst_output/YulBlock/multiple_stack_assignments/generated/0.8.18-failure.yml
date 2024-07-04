@@ -40,6 +40,6 @@ Tree:
               - (variant꞉ YulDecimalLiteral): "3" # (12..13)
               - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
       - (leading_trivia꞉ Whitespace): "  " # (14..16)
-      - (SKIPPED): ":= success\n  := success\n  := success\n" # (16..53)
+      - (UNRECOGNIZED): ":= success\n  := success\n  := success\n" # (16..53)
       - (close_brace꞉ CloseBrace): "}" # (53..54)
       - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)

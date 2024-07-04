@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "msize := 0\n" # (0..11)
+  - (UNRECOGNIZED): "msize := 0\n" # (0..11)

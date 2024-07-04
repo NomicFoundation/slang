@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "1.a\n" # (0..4)
+  - (UNRECOGNIZED): "1.a\n" # (0..4)

@@ -17,6 +17,6 @@ Tree:
   - (VariableDeclarationStatement): # "uint ufixed;\n" (0..13)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
-      - (SKIPPED): "ufixed" # (5..11)
+      - (UNRECOGNIZED): "ufixed" # (5..11)
       - (semicolon꞉ Semicolon): ";" # (11..12)
       - (trailing_trivia꞉ EndOfLine): "\n" # (12..13)

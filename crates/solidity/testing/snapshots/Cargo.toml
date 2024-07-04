@@ -7,4 +7,3 @@ publish = false
 
 [lints]
 workspace = true
-

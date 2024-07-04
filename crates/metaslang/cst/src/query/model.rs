@@ -14,9 +14,6 @@ pub struct Query<T: KindTypes> {
 
 impl<T: KindTypes> Query<T> {
     pub fn parse(text: &str) -> Result<Self, QueryError> {
-        let ast_node = ASTNode::parse(text)?;
-
-        let mut capture_quantifiers = BTreeMap::new();
         fn collect_capture_quantifiers<T: KindTypes>(
             ast_node: &ASTNode<T>,
             quantifier: CaptureQuantifier,
@@ -88,6 +85,10 @@ impl<T: KindTypes> Query<T> {
             }
             Ok(())
         }
+
+        let ast_node = ASTNode::parse(text)?;
+
+        let mut capture_quantifiers = BTreeMap::new();
 
         collect_capture_quantifiers(&ast_node, CaptureQuantifier::One, &mut capture_quantifiers)?;
 

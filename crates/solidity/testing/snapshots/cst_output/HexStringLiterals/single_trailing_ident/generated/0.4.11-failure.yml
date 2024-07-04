@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): 'hex"12"b\n' # (0..9)
+  - (UNRECOGNIZED): 'hex"12"b\n' # (0..9)

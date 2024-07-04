@@ -22,4 +22,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "// Make sure that error recovery won't lead to mis..." # (0..171)
+  - (UNRECOGNIZED): "// Make sure that error recovery won't lead to mis..." # (0..171)

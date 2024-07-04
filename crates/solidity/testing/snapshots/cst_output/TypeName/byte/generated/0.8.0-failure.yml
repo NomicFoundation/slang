@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "byte" # (0..4)
+  - (UNRECOGNIZED): "byte" # (0..4)

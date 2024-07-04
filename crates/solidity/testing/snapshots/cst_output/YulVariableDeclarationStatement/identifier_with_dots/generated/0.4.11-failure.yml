@@ -18,4 +18,4 @@ Tree:
       - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
       - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (names꞉ YulIdentifier): "a" # (4..5)
-      - (SKIPPED): ".b.c := 1\n" # (5..15)
+      - (UNRECOGNIZED): ".b.c := 1\n" # (5..15)

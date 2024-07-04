@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "define" # (0..6)
+  - (UNRECOGNIZED): "define" # (0..6)

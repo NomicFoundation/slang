@@ -35,6 +35,6 @@ Tree:
                   - (leading_trivia꞉ Whitespace): " " # (14..15)
                   - (variant꞉ Identifier): "some" # (15..19)
       - (leading_trivia꞉ Whitespace): " " # (19..20)
-      - (SKIPPED): "invalid tokens\n\n" # (20..36)
+      - (UNRECOGNIZED): "invalid tokens\n\n" # (20..36)
       - (semicolon꞉ Semicolon): ";" # (36..37)
       - (trailing_trivia꞉ EndOfLine): "\n" # (37..38)

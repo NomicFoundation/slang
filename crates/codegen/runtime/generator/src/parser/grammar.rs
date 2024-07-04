@@ -1,30 +1,23 @@
-//! Definitions of the [`GrammarElement`]s and the grammar itself ([`Grammar`]).
+//! Definitions of the [`GrammarElement`]s and the grammar itself ([`Grammar`]) used by the parser generator.
 
-// TODO(#638): This is a leftover module from the original DSLv1 implementation.
-// We should remove it and replace the grammar construction in the super `parser`
-// module with the one from the new DSLv2 in the `constructor` module.
+use std::collections::HashMap;
+use std::rc::Rc;
 
-use std::collections::{BTreeSet, HashMap};
+use codegen_language_definition::model::{self, Identifier};
 
-use codegen_language_definition::model::Identifier;
-use semver::Version;
-
-pub mod constructor;
 pub mod parser_definition;
 pub mod precedence_parser_definition;
+pub mod resolver;
 pub mod scanner_definition;
 pub mod visitor;
 
 pub use parser_definition::*;
 pub use precedence_parser_definition::*;
+pub use resolver::ResolveCtx;
 pub use scanner_definition::*;
 pub use visitor::*;
 
 pub struct Grammar {
-    pub name: String,
-    pub versions: BTreeSet<Version>,
-    pub leading_trivia_parser: TriviaParserDefinitionRef,
-    pub trailing_trivia_parser: TriviaParserDefinitionRef,
     pub elements: HashMap<Identifier, GrammarElement>,
 }
 
@@ -39,10 +32,10 @@ impl Grammar {
 }
 
 #[allow(clippy::enum_variant_names)] // this will be removed soon
-#[derive(Clone)]
+#[derive(Clone, strum_macros::EnumTryAs)]
 pub enum GrammarElement {
     ScannerDefinition(ScannerDefinitionRef),
-    KeywordScannerDefinition(KeywordScannerDefinitionRef),
+    KeywordScannerDefinition(Rc<model::KeywordItem>),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
@@ -76,7 +69,7 @@ impl Visitable for GrammarElement {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         match self {
             Self::ScannerDefinition(scanner) => scanner.accept_visitor(visitor),
-            Self::KeywordScannerDefinition(scanner) => scanner.accept_visitor(visitor),
+            Self::KeywordScannerDefinition(_) => {}
             Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
             Self::ParserDefinition(parser) => parser.accept_visitor(visitor),
             Self::PrecedenceParserDefinition(precedence_parser) => {

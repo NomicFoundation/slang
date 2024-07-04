@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "gas := 0\n" # (0..9)
+  - (UNRECOGNIZED): "gas := 0\n" # (0..9)

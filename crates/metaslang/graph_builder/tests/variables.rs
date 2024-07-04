@@ -6,6 +6,11 @@
 // ------------------------------------------------------------------------------------------------
 
 use metaslang_graph_builder::Variables;
+use {
+    env_logger as _, indoc as _, log as _, metaslang_cst as _, regex as _, serde as _,
+    serde_json as _, smallvec as _, string_interner as _, strum as _, strum_macros as _,
+    thiserror as _,
+};
 
 #[test]
 fn can_create_nested_variables() {

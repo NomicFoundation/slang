@@ -1,156 +1,23 @@
 //! Defines a translation of DSL v2 model into [`Grammar`], which is used for generating the parser and the CST.
 
 use std::cell::OnceCell;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
 
 use codegen_language_definition::model::{
-    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item,
+    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item, Language,
 };
 use indexmap::IndexMap;
 use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
-    DelimitedRecoveryTerminalThreshold, Grammar, GrammarElement, KeywordScannerDefinition, Labeled,
-    ParserDefinition, ParserDefinitionNode, PrecedenceParserDefinition,
-    PrecedenceParserDefinitionNode, ScannerDefinition, ScannerDefinitionNode,
+    DelimitedRecoveryTerminalThreshold, Grammar, GrammarElement, Labeled, ParserDefinition,
+    ParserDefinitionNode, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
     TriviaParserDefinition,
 };
 
-impl Grammar {
-    /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
-    pub fn from_dsl_v2(lang: &model::Language) -> Grammar {
-        // Collect language items into a lookup table to speed up resolution
-        let items: HashMap<_, _> = lang
-            .topics()
-            .flat_map(|topic| {
-                topic.items.iter().map(|item| {
-                    (
-                        item.name().clone(),
-                        (topic.lexical_context.clone(), item.clone()),
-                    )
-                })
-            })
-            .collect();
-
-        let mut resolved = HashMap::new();
-        let mut ctx = ResolveCtx {
-            items: &items,
-            resolved: &mut resolved,
-        };
-
-        let leading_trivia = Rc::new(NamedTriviaParser {
-            name: Identifier::from("LeadingTrivia"),
-            def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
-        }) as Rc<dyn TriviaParserDefinition>;
-
-        let trailing_trivia = Rc::new(NamedTriviaParser {
-            name: Identifier::from("TrailingTrivia"),
-            def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
-        }) as Rc<dyn TriviaParserDefinition>;
-
-        for (_lex_ctx, item) in items.values() {
-            resolve_grammar_element(item.name(), &mut ctx);
-        }
-
-        // TODO(#638): To make sure the unused (not referred to) keywords are included in the scanner literal trie,
-        // we replicate the DSL v1 behaviour of introducing a synthetic parser that is only meant to group
-        // keywords by their lexical context.
-        let mut keywords_per_ctxt = HashMap::new();
-        for (ident, (lex_ctx, item)) in &items {
-            let lex_ctx = lex_ctx.clone().unwrap_or(Identifier::from("Default"));
-            if let Item::Keyword { .. } = item {
-                keywords_per_ctxt
-                    .entry(lex_ctx)
-                    .or_insert_with(Vec::new)
-                    .push(ident);
-            }
-        }
-        for (lex_ctx, mut keywords) in keywords_per_ctxt {
-            keywords.sort_unstable_by_key(|kw| kw.as_str());
-
-            let parser_name = Identifier::from(format!("{lex_ctx}AllKeywords"));
-            let all_keywords = model::EnumItem {
-                name: parser_name.clone(),
-                enabled: None,
-                variants: keywords
-                    .iter()
-                    .map(|&ident| model::EnumVariant {
-                        reference: ident.clone(),
-                        enabled: None,
-                    })
-                    .collect(),
-            };
-
-            let def = resolve_choice(all_keywords, &mut ctx);
-            ctx.resolved.insert(
-                parser_name.clone(),
-                GrammarElement::ParserDefinition(Rc::new(NamedParserThunk {
-                    name: parser_name,
-                    context: lex_ctx,
-                    is_inline: true,
-                    def: OnceCell::from(def),
-                })),
-            );
-        }
-
-        let resolved_items = ctx
-            .resolved
-            .iter()
-            .map(|(name, elem)| (name.clone(), elem.clone()));
-
-        Grammar {
-            name: lang.name.to_string(),
-            versions: BTreeSet::from_iter(lang.versions.clone()),
-            leading_trivia_parser: Rc::clone(&leading_trivia),
-            trailing_trivia_parser: Rc::clone(&trailing_trivia),
-            elements: resolved_items
-                .chain(
-                    [leading_trivia, trailing_trivia]
-                        .into_iter()
-                        .map(|elem| (elem.name().clone(), elem.into())),
-                )
-                .collect(),
-        }
-    }
-}
-
-#[derive(Debug)]
-struct NamedScanner {
-    name: Identifier,
-    def: ScannerDefinitionNode,
-}
-
-impl ScannerDefinition for NamedScanner {
-    fn name(&self) -> &Identifier {
-        &self.name
-    }
-    fn node(&self) -> &ScannerDefinitionNode {
-        &self.def
-    }
-}
-
-#[derive(Debug)]
-struct NamedKeywordScanner {
-    name: Identifier,
-    identifier_scanner_name: Identifier,
-    defs: Vec<model::KeywordDefinition>,
-}
-
-impl KeywordScannerDefinition for NamedKeywordScanner {
-    fn name(&self) -> &Identifier {
-        &self.name
-    }
-
-    fn definitions(&self) -> &[model::KeywordDefinition] {
-        &self.defs
-    }
-
-    fn identifier_scanner(&self) -> &Identifier {
-        &self.identifier_scanner_name
-    }
-}
+static DEFAULT_LEX_CTXT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
 
 #[derive(Debug)]
 struct NamedTriviaParser {
@@ -164,8 +31,7 @@ impl TriviaParserDefinition for NamedTriviaParser {
     }
 
     fn context(&self) -> &Identifier {
-        static DEFAULT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
-        &DEFAULT
+        &DEFAULT_LEX_CTXT
     }
 
     fn node(&self) -> &ParserDefinitionNode {
@@ -239,55 +105,130 @@ impl ParserThunk {
     }
 }
 
-struct ResolveCtx<'a> {
-    items: &'a HashMap<Identifier, (Option<Identifier>, Item)>,
-    resolved: &'a mut HashMap<Identifier, GrammarElement>,
+pub struct ResolveCtx {
+    items: HashMap<Identifier, (Identifier, Item)>,
+    resolved: HashMap<Identifier, GrammarElement>,
 }
 
-#[allow(clippy::too_many_lines)] // FIXME(#638): Simplify me when we simplify the v2-to-v1 interface
-fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
-    let (lex_ctx, elem) = ctx.items.get(ident).expect("Missing item");
+pub struct Resolution {
+    /// Original items as defined by the DSL v2.
+    items: HashMap<Identifier, (Identifier, Item)>,
+    resolved: HashMap<Identifier, GrammarElement>,
+}
 
-    let lex_ctx = lex_ctx
-        .clone()
-        .unwrap_or_else(|| Identifier::from("Default"));
+impl ResolveCtx {
+    pub fn resolve(lang: &Language) -> Resolution {
+        // Collect language items into a lookup table to speed up resolution
+        let items: HashMap<_, _> = lang
+            .topics()
+            .flat_map(|topic| {
+                topic.items.iter().map(|item| {
+                    let lex_ctxt = topic.lexical_context.as_ref().unwrap_or(&DEFAULT_LEX_CTXT);
 
-    // The nonterminals are mutually recursive (so will be the resolution of their definitions),
-    // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
-    let inserted_thunk = match (elem, ctx.resolved.contains_key(ident)) {
-        (
-            Item::Struct { .. }
-            | Item::Enum { .. }
-            | Item::Repeated { .. }
-            | Item::Separated { .. },
-            false,
-        ) => {
+                    (item.name().clone(), (lex_ctxt.clone(), item.clone()))
+                })
+            })
+            .collect();
+
+        let mut ctx = ResolveCtx {
+            items,
+            resolved: HashMap::new(),
+        };
+
+        for item in lang.items() {
+            resolve_grammar_element(item.name(), &mut ctx);
+        }
+
+        // Trivia is defined separately from the main grammar
+        let leading_trivia = Rc::new(NamedTriviaParser {
+            name: Identifier::from("LeadingTrivia"),
+            def: resolve_trivia(lang.leading_trivia.clone(), TriviaKind::Leading, &mut ctx),
+        });
+
+        let trailing_trivia = Rc::new(NamedTriviaParser {
+            name: Identifier::from("TrailingTrivia"),
+            def: resolve_trivia(lang.trailing_trivia.clone(), TriviaKind::Trailing, &mut ctx),
+        });
+
+        for trivia in [leading_trivia, trailing_trivia] {
+            ctx.resolved.insert(
+                trivia.name().clone(),
+                GrammarElement::TriviaParserDefinition(trivia),
+            );
+        }
+
+        Resolution {
+            items: ctx.items,
+            resolved: ctx.resolved,
+        }
+    }
+}
+
+impl Resolution {
+    /// Returns the lexical context in which the item was defined.
+    pub fn lex_ctx(&self, name: &Identifier) -> &Identifier {
+        &self.items[name].0
+    }
+
+    /// Returns the resolved items.
+    pub fn items(&self) -> impl Iterator<Item = (&Identifier, &GrammarElement)> {
+        self.resolved.iter()
+    }
+
+    /// Collects the already resolved item into a [`Grammar`].
+    pub fn to_grammar(&self) -> Grammar {
+        Grammar {
+            elements: self
+                .resolved
+                .iter()
+                .map(|(name, elem)| (name.clone(), elem.clone()))
+                .collect(),
+        }
+    }
+}
+
+/// Inserts a thunk for the given item in a context to be resolved later and returns it if it was inserted.
+fn insert_parser_thunk(
+    item: &Item,
+    lex_ctx: &Identifier,
+    ctx: &mut ResolveCtx,
+) -> Option<ParserThunk> {
+    match (item, ctx.resolved.contains_key(item.name())) {
+        (Item::Precedence { .. }, false) => {
+            let thunk = Rc::new(NamedPrecedenceParserThunk {
+                name: item.name().clone(),
+                context: lex_ctx.clone(),
+                def: OnceCell::new(),
+            });
+            ctx.resolved.insert(
+                item.name().clone(),
+                (Rc::clone(&thunk) as Rc<dyn PrecedenceParserDefinition>).into(),
+            );
+            Some(ParserThunk::Precedence(thunk))
+        }
+        (item, false) if item.is_nonterminal() => {
             let thunk = Rc::new(NamedParserThunk {
-                name: ident.clone(),
+                name: item.name().clone(),
                 context: lex_ctx.clone(),
                 is_inline: false,
                 def: OnceCell::new(),
             });
             ctx.resolved.insert(
-                ident.clone(),
+                item.name().clone(),
                 (Rc::clone(&thunk) as Rc<dyn ParserDefinition>).into(),
             );
             Some(ParserThunk::Regular(thunk))
         }
-        (Item::Precedence { .. }, false) => {
-            let thunk = Rc::new(NamedPrecedenceParserThunk {
-                name: ident.clone(),
-                context: lex_ctx.clone(),
-                def: OnceCell::new(),
-            });
-            ctx.resolved.insert(
-                ident.clone(),
-                (Rc::clone(&thunk) as Rc<dyn PrecedenceParserDefinition>).into(),
-            );
-            Some(ParserThunk::Precedence(thunk))
-        }
         _ => None,
-    };
+    }
+}
+
+fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
+    let (lex_ctx, elem) = ctx.items.get(ident).cloned().expect("Missing item");
+
+    // The nonterminals are mutually recursive (so will be the resolution of their definitions),
+    // so make sure to insert a thunk for nonterminals to resolve to break the cycle.
+    let inserted_thunk = insert_parser_thunk(&elem, &lex_ctx, ctx);
 
     match (inserted_thunk, ctx.resolved.get(ident)) {
         // Already resolved
@@ -334,7 +275,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
                         .set(resolve_precedence(item.deref().clone(), &lex_ctx, ctx))
                         .unwrap();
                 }
-                _ => unreachable!("Only nonterminals can be resolved here"),
+                _ => unreachable!("{ident}: Only nonterminals can be resolved here"),
             };
 
             ctx.resolved.get(ident).cloned().unwrap()
@@ -342,34 +283,19 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
         // First time resolving a terminal named `ident`
         (None, None) => {
             let named_scanner = match elem {
-                Item::Trivia { item } => NamedScanner {
-                    name: ident.clone(),
-                    def: resolve_scanner(item.scanner.clone(), ctx),
-                },
-                Item::Fragment { item } => NamedScanner {
-                    name: ident.clone(),
-                    def: resolve_fragment(item.deref().clone(), ctx),
-                },
-                Item::Token { item } => NamedScanner {
-                    name: ident.clone(),
-                    def: resolve_token(item.deref().clone(), ctx),
-                },
                 Item::Keyword { item } => {
-                    let kw_scanner = NamedKeywordScanner {
-                        name: ident.clone(),
-                        identifier_scanner_name: item.identifier.clone(),
-                        defs: item.definitions.clone(),
-                    };
-
                     // Keywords are special scanners and are handled separately
-                    let resolved = GrammarElement::KeywordScannerDefinition(Rc::new(kw_scanner));
+                    let resolved = GrammarElement::KeywordScannerDefinition(item as Rc<_>);
                     ctx.resolved.insert(ident.clone(), resolved.clone());
                     return resolved;
                 }
-                _ => unreachable!("Only terminals can be resolved here"),
+                Item::Token { item } => item as Rc<_>,
+                Item::Trivia { item } => item as Rc<_>,
+                Item::Fragment { item } => item as Rc<_>,
+                _ => unreachable!("{ident}: Only terminals can be resolved here"),
             };
 
-            let resolved = GrammarElement::ScannerDefinition(Rc::new(named_scanner));
+            let resolved = GrammarElement::ScannerDefinition(named_scanner);
             ctx.resolved.insert(ident.clone(), resolved.clone());
 
             resolved
@@ -377,76 +303,10 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
     }
 }
 
-fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
-    match scanner {
-        model::Scanner::Optional { scanner } => {
-            ScannerDefinitionNode::Optional(Box::new(resolve_scanner(*scanner, ctx)))
-        }
-        model::Scanner::ZeroOrMore { scanner } => {
-            ScannerDefinitionNode::ZeroOrMore(Box::new(resolve_scanner(*scanner, ctx)))
-        }
-        model::Scanner::OneOrMore { scanner } => {
-            ScannerDefinitionNode::OneOrMore(Box::new(resolve_scanner(*scanner, ctx)))
-        }
-        model::Scanner::Sequence { scanners } => ScannerDefinitionNode::Sequence(
-            scanners
-                .into_iter()
-                .map(|scanner| resolve_scanner(scanner, ctx))
-                .collect(),
-        ),
-        model::Scanner::Choice { scanners } => ScannerDefinitionNode::Choice(
-            scanners
-                .into_iter()
-                .map(|scanner| resolve_scanner(scanner, ctx))
-                .collect(),
-        ),
-        model::Scanner::Not { chars } => ScannerDefinitionNode::NoneOf(chars.into_iter().collect()),
-        model::Scanner::TrailingContext {
-            scanner,
-            not_followed_by,
-        } => ScannerDefinitionNode::NotFollowedBy(
-            Box::new(resolve_scanner(*scanner, ctx)),
-            Box::new(resolve_scanner(*not_followed_by, ctx)),
-        ),
-        model::Scanner::Range {
-            inclusive_start,
-            inclusive_end,
-        } => ScannerDefinitionNode::CharRange(inclusive_start, inclusive_end),
-        model::Scanner::Atom { atom } => ScannerDefinitionNode::Literal(atom),
-        model::Scanner::Fragment { reference } => match resolve_grammar_element(&reference, ctx) {
-            GrammarElement::ScannerDefinition(parser) => {
-                ScannerDefinitionNode::ScannerDefinition(parser)
-            }
-            _ => panic!("Expected {reference} to be a ScannerDefinition"),
-        },
-    }
-}
-
-fn resolve_fragment(
-    fragment: model::FragmentItem,
-    ctx: &mut ResolveCtx<'_>,
-) -> ScannerDefinitionNode {
-    resolve_scanner(fragment.scanner, ctx).versioned(fragment.enabled)
-}
-
-fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
-    let resolved_defs: Vec<_> = token
-        .definitions
-        .into_iter()
-        .map(|def| resolve_scanner(def.scanner, ctx).versioned(def.enabled))
-        .collect();
-
-    match resolved_defs.len() {
-        0 => panic!("Token {} has no definitions", token.name),
-        1 => resolved_defs.into_iter().next().unwrap(),
-        _ => ScannerDefinitionNode::Choice(resolved_defs),
-    }
-}
-
 fn resolve_trivia(
     parser: model::TriviaParser,
     kind: TriviaKind,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> ParserDefinitionNode {
     match parser {
         model::TriviaParser::Optional { parser } => {
@@ -487,7 +347,7 @@ fn resolve_trivia(
     }
 }
 
-fn resolve_field(field: model::Field, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_field(field: model::Field, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     match field {
         model::Field::Required { reference } => {
             resolve_grammar_element(&reference, ctx).into_parser_def_node()
@@ -504,7 +364,7 @@ fn resolve_sequence_like(
     enabled: Option<model::VersionSpecifier>,
     fields: IndexMap<Identifier, model::Field>,
     error_recovery: Option<FieldsErrorRecovery>,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> ParserDefinitionNode {
     let (terminator, delimiters) = match error_recovery {
         Some(FieldsErrorRecovery {
@@ -585,7 +445,7 @@ fn resolve_sequence_like(
     .versioned(enabled)
 }
 
-fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let variants = item
         .variants
         .into_iter()
@@ -600,7 +460,7 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         .versioned(item.enabled)
 }
 
-fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
     let repeated = Labeled::with_builtin_label(BuiltInLabel::Item, reference);
@@ -612,7 +472,7 @@ fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> Pars
     }
 }
 
-fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let reference = resolve_grammar_element(&item.reference, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
@@ -631,7 +491,7 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
 fn resolve_precedence(
     item: model::PrecedenceItem,
     lex_ctx: &Identifier,
-    ctx: &mut ResolveCtx<'_>,
+    ctx: &mut ResolveCtx,
 ) -> PrecedenceParserDefinitionNode {
     let primaries: Vec<_> = item
         .primary_expressions
@@ -643,7 +503,10 @@ fn resolve_precedence(
         })
         .collect();
     let primary_expression = Box::new(match primaries.len() {
-        0 => panic!("Precedence operator has no primary expressions"),
+        0 => panic!(
+            "Precedence operator {item} has no primary expressions",
+            item = item.name
+        ),
         _ => ParserDefinitionNode::Choice(Labeled::with_builtin_label(
             BuiltInLabel::Variant,
             primaries,
@@ -770,16 +633,6 @@ trait VersionWrapped {
 }
 
 impl VersionWrapped for ParserDefinitionNode {
-    fn versioned(self, enabled: Option<model::VersionSpecifier>) -> Self {
-        if let Some(enabled) = enabled {
-            Self::Versioned(Box::new(self), enabled)
-        } else {
-            self
-        }
-    }
-}
-
-impl VersionWrapped for ScannerDefinitionNode {
     fn versioned(self, enabled: Option<model::VersionSpecifier>) -> Self {
         if let Some(enabled) = enabled {
             Self::Versioned(Box::new(self), enabled)

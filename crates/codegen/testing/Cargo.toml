@@ -13,4 +13,3 @@ infra_utils = { workspace = true }
 
 [lints]
 workspace = true
-

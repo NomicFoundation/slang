@@ -144,7 +144,7 @@ impl ParserDefinitionNodeCodegen for ParserDefinitionNode {
 
             // Keyword scanner uses the promotion inside the parse_terminal
             Self::KeywordScannerDefinition(scanner_definition) => {
-                let kind = format_ident!("{name}", name = scanner_definition.name());
+                let kind = format_ident!("{name}", name = scanner_definition.name);
 
                 let parse_terminal = if is_trivia {
                     format_ident!("parse_terminal")

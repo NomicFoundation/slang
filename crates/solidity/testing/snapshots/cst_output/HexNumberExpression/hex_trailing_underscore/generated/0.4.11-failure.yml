@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "0x1_" # (0..4)
+  - (UNRECOGNIZED): "0x1_" # (0..4)

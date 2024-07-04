@@ -4,9 +4,7 @@ use std::rc::Rc;
 use codegen_language_definition::model::{self, Identifier};
 
 use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
-use crate::parser::grammar::{
-    KeywordScannerDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
-};
+use crate::parser::grammar::{PrecedenceParserDefinitionRef, ScannerDefinitionRef};
 
 /// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
 #[derive(Clone, Debug)]
@@ -82,7 +80,7 @@ pub enum ParserDefinitionNode {
     Sequence(Vec<Labeled<Self>>),
     Choice(Labeled<Vec<Self>>),
     ScannerDefinition(ScannerDefinitionRef),
-    KeywordScannerDefinition(KeywordScannerDefinitionRef),
+    KeywordScannerDefinition(Rc<model::KeywordItem>),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),

@@ -78,7 +78,8 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TerminalKind {
     // Built-in:
-    SKIPPED,
+    UNRECOGNIZED,
+    MISSING,
 
     // Generated:
     Stub1,
@@ -89,6 +90,10 @@ pub enum TerminalKind {
 impl metaslang_cst::TerminalKind for TerminalKind {
     fn is_trivia(&self) -> bool {
         false
+    }
+
+    fn is_valid(&self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
     }
 }
 

@@ -33,7 +33,7 @@ Tree:
                   - (item꞉ Identifier): "a" # (101..102)
                   - (separator꞉ Period): "." # (102..103)
                   - (item꞉ Identifier): "b" # (103..104)
-              - (SKIPPED): "('\n        }')" # (104..118)
+              - (UNRECOGNIZED): "('\n        }')" # (104..118)
               - (semicolon꞉ Semicolon): ";" # (118..119)
               - (trailing_trivia꞉ EndOfLine): "\n" # (119..120)
       - (close_brace꞉ CloseBrace): "}" # (120..121)

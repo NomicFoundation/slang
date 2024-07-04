@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "stop := 0\n" # (0..10)
+  - (UNRECOGNIZED): "stop := 0\n" # (0..10)

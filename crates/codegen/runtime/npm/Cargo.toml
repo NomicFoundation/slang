@@ -10,4 +10,6 @@ description = "TypeScript runtime copied over by codegen"
 [build-dependencies]
 anyhow = { workspace = true }
 codegen_runtime_generator = { workspace = true }
-infra_utils = { workspace = true }
+
+[lints]
+workspace = true

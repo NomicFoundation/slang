@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "constructor () virtual {}\n" # (0..26)
+  - (UNRECOGNIZED): "constructor () virtual {}\n" # (0..26)

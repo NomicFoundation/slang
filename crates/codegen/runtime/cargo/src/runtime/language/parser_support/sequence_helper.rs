@@ -149,8 +149,13 @@ impl SequenceHelper {
                     });
                     debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
+                    let kind = if running.skipped.is_empty() {
+                        TerminalKind::MISSING
+                    } else {
+                        TerminalKind::UNRECOGNIZED
+                    };
                     running.nodes.push(Edge::anonymous(cst::Node::terminal(
-                        TerminalKind::SKIPPED,
+                        kind,
                         std::mem::take(&mut running.skipped),
                     )));
                     running.nodes.extend(next.nodes);

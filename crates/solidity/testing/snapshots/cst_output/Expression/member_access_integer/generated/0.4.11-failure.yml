@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "5.fromUint()\n" # (0..13)
+  - (UNRECOGNIZED): "5.fromUint()\n" # (0..13)

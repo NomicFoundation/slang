@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SKIPPED): "revert := 0\n" # (0..12)
+  - (UNRECOGNIZED): "revert := 0\n" # (0..12)
