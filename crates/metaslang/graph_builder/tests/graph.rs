@@ -9,8 +9,8 @@ use indoc::indoc;
 use metaslang_graph_builder::graph::{Graph, Value};
 use metaslang_graph_builder::Identifier;
 use {
-    env_logger as _, log as _, once_cell as _, regex as _, serde_json as _, smallvec as _,
-    stack_graphs as _, string_interner as _, thiserror as _,
+    env_logger as _, log as _, once_cell as _, regex as _, semver as _, serde_json as _,
+    smallvec as _, stack_graphs as _, string_interner as _, thiserror as _,
 };
 
 #[derive(

@@ -1340,6 +1340,7 @@ dependencies = [
  "metaslang_cst",
  "once_cell",
  "regex",
+ "semver",
  "serde",
  "serde_json",
  "smallvec",

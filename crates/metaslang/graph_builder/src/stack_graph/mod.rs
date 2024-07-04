@@ -247,5 +247,5 @@
 mod builder;
 mod cancellation;
 
-pub use builder::{BuildError, Builder, FILE_PATH_VAR, VERSION_VAR};
+pub use builder::{BuildError, Builder, Globals};
 pub use cancellation::{CancellationFlag, NoCancellation};

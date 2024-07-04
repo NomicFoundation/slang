@@ -63,7 +63,10 @@ impl Bindings {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor) -> Result<(), BindingsError> {
-        let globals = self.get_globals_for_file(file_path);
+        let globals = stack_graph::Globals {
+            version: &self.version,
+            file_path,
+        };
         let file = self.stack_graph.get_or_create_file(file_path);
 
         let mut builder = Builder::new(
@@ -73,26 +76,11 @@ impl Bindings {
             file,
             tree_cursor,
         );
-        builder.build(&globals, &stack_graph::NoCancellation, |handle, cursor| {
+        builder.build(globals, &stack_graph::NoCancellation, |handle, cursor| {
             self.cursors.insert(handle, cursor.clone());
         })?;
 
         Ok(())
-    }
-
-    fn get_globals_for_file(&self, file_path: &str) -> graph_builder::Variables<'static> {
-        let mut globals = graph_builder::Variables::new();
-        globals
-            .add(stack_graph::FILE_PATH_VAR.into(), file_path.into())
-            .expect("failed to add FILE_PATH variable");
-        globals
-            .add(
-                stack_graph::VERSION_VAR.into(),
-                self.version.to_string().into(),
-            )
-            .expect("failed to add VERSION_VAR variable");
-
-        globals
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_>> + '_ {

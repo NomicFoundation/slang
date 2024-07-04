@@ -12,6 +12,7 @@ use std::path::Path;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
 use once_cell::sync::Lazy;
+use semver::Version;
 use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
@@ -83,6 +84,11 @@ pub const VERSION_VAR: &str = "VERSION";
 
 use crate::ast::File as GraphBuilderFile;
 
+pub struct Globals<'a> {
+    pub version: &'a Version,
+    pub file_path: &'a str,
+}
+
 pub struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
@@ -114,23 +120,33 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         }
     }
 
+    fn build_global_variables(&mut self, globals: Globals<'_>) -> Variables<'a> {
+        let mut variables = Variables::new();
+        variables
+            .add(FILE_PATH_VAR.into(), globals.file_path.into())
+            .expect("failed to add FILE_PATH variable");
+        variables
+            .add(VERSION_VAR.into(), globals.version.to_string().into())
+            .expect("failed to add VERSION_VAR variable");
+
+        let root_node = self.inject_node(NodeID::root());
+        variables
+            .add(ROOT_NODE_VAR.into(), root_node.into())
+            .expect("Failed to set ROOT_NODE");
+
+        variables
+    }
+
     /// Executes this builder.
     pub fn build(
         &mut self,
-        globals: &'a Variables<'a>,
+        globals: Globals<'_>,
         cancellation_flag: &dyn CancellationFlag,
         on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>) -> (),
     ) -> Result<(), BuildError> {
-        let mut globals = Variables::nested(globals);
+        let variables = self.build_global_variables(globals);
 
-        if globals.get(&ROOT_NODE_VAR.into()).is_none() {
-            let root_node = self.inject_node(NodeID::root());
-            globals
-                .add(ROOT_NODE_VAR.into(), root_node.into())
-                .expect("Failed to set ROOT_NODE");
-        }
-
-        let config = ExecutionConfig::new(self.functions, &globals)
+        let config = ExecutionConfig::new(self.functions, &variables)
             .lazy(true)
             .debug_attributes(
                 [DEBUG_ATTR_PREFIX, "msgb_location"]
