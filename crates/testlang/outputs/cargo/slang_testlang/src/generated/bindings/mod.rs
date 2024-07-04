@@ -52,7 +52,7 @@ impl Bindings {
         let graph_builder_file = graph_builder::File::from_str(binding_rules::BINDING_RULES_SOURCE)
             .expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = stack_graph::default_functions();
+        let functions = graph_builder::Functions::stdlib();
         let cursors = HashMap::new();
 
         Self {

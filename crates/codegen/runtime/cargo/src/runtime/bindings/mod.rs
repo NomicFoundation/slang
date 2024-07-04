@@ -50,7 +50,7 @@ impl Bindings {
         let graph_builder_file = graph_builder::File::from_str(binding_rules::BINDING_RULES_SOURCE)
             .expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = stack_graph::default_functions();
+        let functions = graph_builder::Functions::stdlib();
         let cursors = HashMap::new();
 
         Self {
@@ -80,10 +80,7 @@ impl Bindings {
         Ok(())
     }
 
-    fn get_globals_for_file(
-        &self,
-        file_path: &str,
-    ) -> graph_builder::Variables<'static> {
+    fn get_globals_for_file(&self, file_path: &str) -> graph_builder::Variables<'static> {
         let mut globals = graph_builder::Variables::new();
         globals
             .add(stack_graph::FILE_PATH_VAR.into(), file_path.into())
