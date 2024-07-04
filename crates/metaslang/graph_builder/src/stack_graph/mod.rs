@@ -18,7 +18,7 @@
 //! [graph construction DSL]: https://docs.rs/metaslang_graph_builder/*/
 //!
 //! To process a particular source language, you'll need to first get the CST from the source, using
-//! the parser constructed from the language definition that uses the metaslang_cst crate.
+//! the parser constructed from the language definition that uses the `metaslang_cst` crate.
 //!
 //! You will then need to create _stack graph construction rules_ for your language.  These rules
 //! are implemented using metaslang's [graph construction DSL][], which is based from tree-sitter's
@@ -292,6 +292,6 @@ mod builder;
 mod cancellation;
 mod functions;
 
-pub use builder::{BuildError, Builder, FILE_PATH_VAR, ROOT_PATH_VAR, VERSION_VAR};
+pub use builder::{BuildError, Builder, FILE_PATH_VAR, VERSION_VAR};
 pub use cancellation::{CancellationFlag, NoCancellation};
 pub use functions::default_functions;

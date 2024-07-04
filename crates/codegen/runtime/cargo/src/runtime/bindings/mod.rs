@@ -17,7 +17,6 @@ use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 use std::fmt::Debug;
 use std::iter::once;
-use std::path::PathBuf;
 
 use metaslang_graph_builder::stack_graph;
 use semver::Version;
@@ -34,12 +33,6 @@ type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 
 #[derive(Error, Debug)]
 pub enum BindingsError {
-    #[error(transparent)]
-    IoError(#[from] std::io::Error),
-
-    #[error("Unknown error condition: {0}")]
-    UnknownError(String),
-
     #[error(transparent)]
     BuildError(#[from] metaslang_graph_builder::stack_graph::BuildError),
 }
@@ -70,7 +63,7 @@ impl Bindings {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor) -> Result<(), BindingsError> {
-        let globals = self.get_globals_for_file(file_path)?;
+        let globals = self.get_globals_for_file(file_path);
         let file = self.stack_graph.get_or_create_file(file_path);
 
         let mut builder = Builder::new(
@@ -90,19 +83,8 @@ impl Bindings {
     fn get_globals_for_file(
         &self,
         file_path: &str,
-    ) -> Result<graph_builder::Variables<'static>, BindingsError> {
-        let path = PathBuf::from(&file_path).canonicalize()?;
-        let root_path = path.parent().ok_or(BindingsError::UnknownError(
-            "Cannot compute the ROOT_PATH".to_owned(),
-        ))?;
-
+    ) -> graph_builder::Variables<'static> {
         let mut globals = graph_builder::Variables::new();
-        globals
-            .add(
-                stack_graph::ROOT_PATH_VAR.into(),
-                root_path.to_str().unwrap().into(),
-            )
-            .expect("failed to add ROOT_PATH variable");
         globals
             .add(stack_graph::FILE_PATH_VAR.into(), file_path.into())
             .expect("failed to add FILE_PATH variable");
@@ -113,7 +95,7 @@ impl Bindings {
             )
             .expect("failed to add VERSION_VAR variable");
 
-        Ok(globals)
+        globals
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_>> + '_ {

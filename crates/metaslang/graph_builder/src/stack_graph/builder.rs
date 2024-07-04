@@ -76,14 +76,8 @@ static PRECEDENCE_ATTR: &str = "precedence";
 // Global variables
 /// Name of the variable used to pass the root node.
 pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
-/// Name of the variable used to pass the jump-to-scope node.
-pub const JUMP_TO_SCOPE_NODE_VAR: &str = "JUMP_TO_SCOPE_NODE";
 /// Name of the variable used to pass the file path.
-/// If a root path is given, it should be a descendant the root path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
-/// Name of the variable used to pass the root path.
-/// If given, should be an ancestor of the file path.
-pub const ROOT_PATH_VAR: &str = "ROOT_PATH";
 /// Version of the language being processed, to apply different semantic rules
 pub const VERSION_VAR: &str = "VERSION";
 
@@ -135,11 +129,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
                 .add(ROOT_NODE_VAR.into(), root_node.into())
                 .expect("Failed to set ROOT_NODE");
         }
-
-        let jump_to_scope_node = self.inject_node(NodeID::jump_to());
-        globals
-            .add(JUMP_TO_SCOPE_NODE_VAR.into(), jump_to_scope_node.into())
-            .expect("Failed to set JUMP_TO_SCOPE_NODE");
 
         let config = ExecutionConfig::new(self.functions, &globals)
             .lazy(true)

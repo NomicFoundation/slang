@@ -11,8 +11,8 @@ use metaslang_cst::query::CaptureQuantifier::*;
 use metaslang_graph_builder::ast::*;
 use metaslang_graph_builder::{Identifier, Location, ParseError};
 use {
-    env_logger as _, indoc as _, log as _, regex as _, serde_json as _, smallvec as _,
-    string_interner as _, thiserror as _,
+    env_logger as _, indoc as _, log as _, once_cell as _, regex as _, serde_json as _,
+    smallvec as _, stack_graphs as _, string_interner as _, thiserror as _,
 };
 
 #[derive(

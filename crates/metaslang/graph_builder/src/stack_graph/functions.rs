@@ -6,7 +6,7 @@
 // Please see the LICENSE file in the root of this crate for license details.
 // ------------------------------------------------------------------------------------------------
 
-//! Define metaslang_graph_builder functions
+//! Define `metaslang_graph_builder` functions
 
 use metaslang_cst::KindTypes;
 
