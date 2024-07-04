@@ -46,7 +46,7 @@ pub enum Commands {
         debug: bool,
     },
 
-    // This is only intended for internal development
+    /// This is only intended for internal development
     #[cfg(feature = "__experimental_bindings_api")]
     Bindings {
         /// File path to the source file to parse

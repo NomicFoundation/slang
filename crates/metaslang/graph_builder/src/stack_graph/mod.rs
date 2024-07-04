@@ -1,8 +1,9 @@
 // -*- coding: utf-8 -*-
 // ------------------------------------------------------------------------------------------------
 // Copyright © 2021, stack-graphs authors.
-// Licensed under either of Apache License, Version 2.0, or MIT license, at your option.
-// Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
+// Copyright © 2024, slang authors.
+// Licensed under MIT license
+// Please see the LICENSE file in the root of this crate for license details.
 // ------------------------------------------------------------------------------------------------
 
 //! This module lets you construct [stack graphs][] using this crate's [graph construction DSL][].
