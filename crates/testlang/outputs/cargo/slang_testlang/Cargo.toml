@@ -18,7 +18,6 @@ metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
-stack-graphs = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
@@ -27,4 +26,4 @@ thiserror = { workspace = true }
 workspace = true
 
 [features]
-__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder", "dep:stack-graphs"]
+__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder"]

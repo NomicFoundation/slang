@@ -22,7 +22,6 @@ napi-derive = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
-stack-graphs = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
@@ -36,7 +35,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder", "dep:stack-graphs"]
+__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder"]
 
 [lints]
 workspace = true
