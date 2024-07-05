@@ -21,29 +21,6 @@ pub enum Commands {
         json: bool,
     },
 
-    // This is only intended for internal development
-    #[cfg(feature = "__experimental_bindings_api")]
-    /// Parses a source file and builds a graph executing the instructions from the builder file (*.msgb)
-    BuildGraph {
-        /// File path to the source file to parse
-        file_path: String,
-
-        /// The language version to use for parsing
-        #[arg(short, long)]
-        version: Version,
-
-        /// The graph buider (.msgb) file to use
-        msgb_path: String,
-
-        /// Print the graph as JSON
-        #[clap(long)]
-        json: bool,
-
-        /// Include debug info (location, variable and match) in the built graph
-        #[clap(long)]
-        debug: bool,
-    },
-
     /// This is only intended for internal development
     #[cfg(feature = "__experimental_bindings_api")]
     Bindings {
@@ -64,14 +41,6 @@ impl Commands {
                 version,
                 json,
             } => commands::parse::execute(&file_path, version, json),
-            #[cfg(feature = "__experimental_bindings_api")]
-            Commands::BuildGraph {
-                file_path,
-                version,
-                msgb_path,
-                json,
-                debug,
-            } => commands::build_graph::execute(&file_path, version, &msgb_path, json, debug),
             #[cfg(feature = "__experimental_bindings_api")]
             Commands::Bindings { file_path, version } => {
                 commands::bindings::execute(&file_path, version)

@@ -15,7 +15,6 @@ testlang_language = { workspace = true }
 [dependencies]
 metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
-metaslang_graph_builder = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 strum = { workspace = true }
@@ -26,4 +25,4 @@ thiserror = { workspace = true }
 workspace = true
 
 [features]
-__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder"]
+__experimental_bindings_api = ["dep:metaslang_bindings"]

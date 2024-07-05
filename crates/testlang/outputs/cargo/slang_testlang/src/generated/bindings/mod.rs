@@ -3,18 +3,6 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
-pub mod graph_builder {
-    use metaslang_graph_builder::{ast, functions, graph};
-
-    use crate::cst::KindTypes;
-
-    pub type File = ast::File<KindTypes>;
-    pub type Functions = functions::Functions<KindTypes>;
-    pub type Graph = graph::Graph<KindTypes>;
-
-    pub use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
-}
-
 use metaslang_bindings;
 pub use metaslang_bindings::BindingsError;
 use semver::Version;

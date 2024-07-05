@@ -405,7 +405,6 @@ dependencies = [
  "codegen_runtime_generator",
  "metaslang_bindings",
  "metaslang_cst",
- "metaslang_graph_builder",
  "napi",
  "napi-derive",
  "semver",
@@ -2121,7 +2120,6 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "metaslang_graph_builder",
  "semver",
  "serde",
  "serde_json",
@@ -2156,7 +2154,6 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "metaslang_graph_builder",
  "semver",
  "serde",
  "strum",
@@ -2476,6 +2473,7 @@ dependencies = [
 name = "testlang_cargo_tests"
 version = "0.15.1"
 dependencies = [
+ "metaslang_graph_builder",
  "semver",
  "slang_testlang",
 ]
