@@ -403,6 +403,7 @@ dependencies = [
  "ariadne",
  "clap",
  "codegen_runtime_generator",
+ "metaslang_bindings",
  "metaslang_cst",
  "metaslang_graph_builder",
  "napi",
@@ -1322,6 +1323,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "metaslang_bindings"
+version = "0.15.1"
+dependencies = [
+ "metaslang_cst",
+ "metaslang_graph_builder",
+ "once_cell",
+ "semver",
+ "stack-graphs",
+ "thiserror",
+]
+
+[[package]]
 name = "metaslang_cst"
 version = "0.15.1"
 dependencies = [
@@ -1338,13 +1351,10 @@ dependencies = [
  "indoc",
  "log",
  "metaslang_cst",
- "once_cell",
  "regex",
- "semver",
  "serde",
  "serde_json",
  "smallvec",
- "stack-graphs",
  "string-interner",
  "strum",
  "strum_macros",
@@ -2110,6 +2120,7 @@ dependencies = [
  "clap",
  "codegen_runtime_generator",
  "infra_utils",
+ "metaslang_bindings",
  "metaslang_cst",
  "metaslang_graph_builder",
  "semver",
@@ -2145,6 +2156,7 @@ dependencies = [
  "anyhow",
  "codegen_runtime_generator",
  "infra_utils",
+ "metaslang_bindings",
  "metaslang_cst",
  "metaslang_graph_builder",
  "semver",

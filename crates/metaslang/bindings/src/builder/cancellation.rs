@@ -11,11 +11,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use thiserror::Error;
-
-use crate::execution::{
+use metaslang_graph_builder::{
     CancellationError as GraphCancellationError, CancellationFlag as GraphCancellationFlag,
 };
+use thiserror::Error;
 
 /// Trait to signal that the execution is cancelled
 pub trait CancellationFlag: Sync {

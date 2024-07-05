@@ -28,7 +28,7 @@ pub enum CommandError {
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    BuildError(#[from] metaslang_graph_builder::stack_graph::BuildError),
+    BuildError(#[from] metaslang_bindings::builder::BuildError),
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]

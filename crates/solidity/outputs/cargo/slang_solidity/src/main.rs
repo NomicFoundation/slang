@@ -13,7 +13,7 @@ mod supress_api_dependencies {
         strum_macros as _, thiserror as _,
     };
     #[cfg(feature = "__experimental_bindings_api")]
-    use {metaslang_graph_builder as _, stack_graphs as _};
+    use {metaslang_bindings as _, metaslang_graph_builder as _, stack_graphs as _};
 }
 
 #[derive(ClapParser, Debug)]

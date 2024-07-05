@@ -4,8 +4,8 @@ rust-version.workspace = true
 edition.workspace = true
 publish = true
 
-name = "metaslang_graph_builder"
-description = "Construct graphs from parsed source code"
+name = "metaslang_bindings"
+description = "Computes semantic language bindings from parsed source code"
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
@@ -21,24 +21,14 @@ keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
 [dependencies]
-log = { workspace = true }
 metaslang_cst = { workspace = true }
-regex = { workspace = true }
-serde = { workspace = true }
-serde_json = { workspace = true }
-smallvec = { workspace = true, features = ["union"] }
-string-interner = { workspace = true, features = [
-  "std",
-  "inline-more",
-  "backends",
-] }
+metaslang_graph_builder = { workspace = true }
+once_cell = { workspace = true }
+semver = { workspace = true }
+stack-graphs = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
-env_logger = { workspace = true }
-indoc = { workspace = true }
-strum = { workspace = true }
-strum_macros = { workspace = true }
 
 [lints]
 workspace = true

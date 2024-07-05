@@ -37,7 +37,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # This is meant to be used by the CLI or internally only.
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__experimental_bindings_api = ["dep:metaslang_graph_builder", "dep:stack-graphs"]
+__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder", "dep:stack-graphs"]
 
 [build-dependencies] # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
@@ -48,6 +48,7 @@ solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CAR
 [dependencies]
 ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
+metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true, optional = true }
 semver = { workspace = true }

@@ -14,6 +14,7 @@ codegen_runtime_generator = { workspace = true }
 [dependencies]
 ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
+metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true, optional = true }
 napi = { workspace = true, optional = true }
@@ -35,7 +36,7 @@ cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
 # Only used by the `slang_solidity` CLI
 __private_ariadne = ["dep:ariadne"]
 # For internal development only
-__experimental_bindings_api = ["dep:metaslang_graph_builder", "dep:stack-graphs"]
+__experimental_bindings_api = ["dep:metaslang_bindings", "dep:metaslang_graph_builder", "dep:stack-graphs"]
 
 [lints]
 workspace = true

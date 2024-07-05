@@ -18,7 +18,7 @@ use std::fmt;
 use std::fmt::Debug;
 use std::iter::once;
 
-use metaslang_graph_builder::stack_graph;
+use metaslang_bindings::builder;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
@@ -28,13 +28,13 @@ use thiserror::Error;
 use crate::cst::KindTypes;
 use crate::cursor::Cursor;
 
-type Builder<'a> = stack_graph::Builder<'a, KindTypes>;
+type Builder<'a> = builder::Builder<'a, KindTypes>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 
 #[derive(Error, Debug)]
 pub enum BindingsError {
     #[error(transparent)]
-    BuildError(#[from] metaslang_graph_builder::stack_graph::BuildError),
+    BuildError(#[from] metaslang_bindings::builder::BuildError),
 }
 
 pub struct Bindings {
@@ -63,7 +63,7 @@ impl Bindings {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor) -> Result<(), BindingsError> {
-        let globals = stack_graph::Globals {
+        let globals = builder::Globals {
             version: &self.version,
             file_path,
         };
@@ -76,7 +76,7 @@ impl Bindings {
             file,
             tree_cursor,
         );
-        builder.build(globals, &stack_graph::NoCancellation, |handle, cursor| {
+        builder.build(&globals, &builder::NoCancellation, |handle, cursor| {
             self.cursors.insert(handle, cursor.clone());
         })?;
 
