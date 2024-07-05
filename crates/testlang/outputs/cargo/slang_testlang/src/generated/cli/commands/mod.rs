@@ -22,9 +22,5 @@ pub enum CommandError {
 
     #[cfg(feature = "__experimental_bindings_api")]
     #[error(transparent)]
-    BuildError(#[from] metaslang_bindings::builder::BuildError),
-
-    #[cfg(feature = "__experimental_bindings_api")]
-    #[error(transparent)]
     BindingsError(#[from] crate::bindings::BindingsError),
 }
