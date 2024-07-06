@@ -10,6 +10,11 @@ fn declaration() -> Result<()> {
 }
 
 #[test]
+fn nested() -> Result<()> {
+    run("structs", "nested")
+}
+
+#[test]
 fn sample() -> Result<()> {
     run("structs", "sample")
 }
