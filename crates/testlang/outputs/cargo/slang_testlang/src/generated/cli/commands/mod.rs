@@ -19,8 +19,4 @@ pub enum CommandError {
 
     #[error("Parsing failed: {0}")]
     ParseFailed(String),
-
-    #[cfg(feature = "__experimental_bindings_api")]
-    #[error(transparent)]
-    BindingsError(#[from] crate::bindings::BindingsError),
 }

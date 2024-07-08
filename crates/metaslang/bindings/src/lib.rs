@@ -13,16 +13,9 @@ use semver::Version;
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
-use thiserror::Error;
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
-
-#[derive(Error, Debug)]
-pub enum BindingsError {
-    #[error(transparent)]
-    BuildError(#[from] builder::BuildError),
-}
 
 pub struct Bindings<KT: KindTypes + 'static> {
     version: Version,
@@ -49,11 +42,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
     }
 
-    pub fn add_file(
-        &mut self,
-        file_path: &str,
-        tree_cursor: Cursor<KT>,
-    ) -> Result<(), BindingsError> {
+    pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let globals = builder::Globals {
             version: &self.version,
             file_path,
@@ -67,11 +56,11 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             file,
             tree_cursor,
         );
-        builder.build(&globals, &builder::NoCancellation, |handle, cursor| {
-            self.cursors.insert(handle, cursor.clone());
-        })?;
-
-        Ok(())
+        builder
+            .build(&globals, &builder::NoCancellation, |handle, cursor| {
+                self.cursors.insert(handle, cursor.clone());
+            })
+            .expect("Internal error while building bindings");
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_, KT>> + '_ {

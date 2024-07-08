@@ -11,7 +11,7 @@ pub fn execute(file_path_string: &str, version: Version) -> Result<(), CommandEr
     let parse_output = super::parse::parse_source_file(file_path_string, version, |_| ())?;
     let tree_cursor = parse_output.create_tree_cursor();
 
-    bindings.add_file(file_path_string, tree_cursor)?;
+    bindings.add_file(file_path_string, tree_cursor);
 
     print_definitions(&bindings);
     print_references(&bindings);
