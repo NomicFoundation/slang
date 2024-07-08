@@ -4,11 +4,10 @@ use std::collections::HashMap;
 
 use regex::Regex;
 use semver::{Version, VersionReq};
+use slang_solidity::bindings::Bindings;
+use slang_solidity::cursor::Cursor;
+use slang_solidity::query::Query;
 use thiserror::Error;
-
-use crate::bindings::Bindings;
-use crate::cursor::Cursor;
-use crate::query::Query;
 
 #[derive(Debug, Error)]
 pub enum AssertionError {

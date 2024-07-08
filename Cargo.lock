@@ -2120,7 +2120,6 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "regex",
  "semver",
  "serde",
  "serde_json",
@@ -2222,6 +2221,7 @@ dependencies = [
  "slang_solidity",
  "solidity_language",
  "strum_macros",
+ "thiserror",
 ]
 
 [[package]]

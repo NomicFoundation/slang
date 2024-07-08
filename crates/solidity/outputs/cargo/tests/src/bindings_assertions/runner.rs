@@ -3,10 +3,10 @@ use std::fs;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
-use slang_solidity::assertions::{check_assertions, collect_assertions};
 use slang_solidity::bindings;
 use slang_solidity::language::Language;
 
+use super::assertions::{check_assertions, collect_assertions};
 use super::generated::VERSION_BREAKS;
 
 pub fn run(group_name: &str, file_name: &str) -> Result<()> {
