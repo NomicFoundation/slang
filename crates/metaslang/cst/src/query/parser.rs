@@ -112,7 +112,7 @@ pub(super) fn parse_matcher_alt_sequence<T: KindTypes>(
 pub(super) fn parse_sequence_item<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    alt((anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
+    alt((ellipsis_token, anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
 }
 
 pub(super) fn parse_quantified_matcher<T: KindTypes>(
@@ -334,4 +334,31 @@ fn anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>
     pair(token('.'), cut(peek(none_of(". \t\r\n"))))
         .map(|_| ASTNode::Anchor)
         .parse(i)
+}
+
+fn recognize_as_failure<I: Clone, O1, O2, E: nom::error::ParseError<I>, F>(
+    mut parser: F,
+) -> impl FnMut(I) -> IResult<I, O2, E>
+where
+    F: nom::Parser<I, O1, E>,
+{
+    use nom::error::{make_error, ErrorKind};
+    use nom::Err::Failure;
+    move |input: I| {
+        let i = input.clone();
+        match parser.parse(i) {
+            Ok((_, _)) => Err(Failure(make_error(input, ErrorKind::Fail))),
+            Err(e) => Err(e),
+        }
+    }
+}
+
+fn ellipsis_token<O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
+    use nom::bytes::complete::tag;
+    use nom::error::context;
+    context(
+        "deprecated ellipsis operator",
+        recognize_as_failure(terminated(tag("..."), multispace0)),
+    )
+    .parse(i)
 }

@@ -64,7 +64,10 @@ fn test_fails_parsing_ellipsis() {
     let result = Query::parse(r#"[_ ...]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
-        Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: ..]\n"),
+        Err(e) => assert_eq!(
+            e.message,
+            "Parse error:\nFail at: ...]\nin section 'deprecated ellipsis operator', at: ...]\n"
+        ),
     }
 }
 
