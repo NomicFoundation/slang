@@ -9,7 +9,8 @@ use slang_solidity::language::Language;
 use super::assertions::{check_assertions, collect_assertions};
 use super::generated::VERSION_BREAKS;
 
-pub fn run(group_name: &str, file_name: &str) -> Result<()> {
+pub fn run(group_name: &str, test_name: &str) -> Result<()> {
+    let file_name = format!("{test_name}.sol");
     let data_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
         .join("bindings_assertions")
         .join(group_name);

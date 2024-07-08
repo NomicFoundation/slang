@@ -6,5 +6,5 @@ use crate::bindings_assertions::runner::run;
 
 #[test]
 fn in_state_vars() -> Result<()> {
-    run("enums", "in_state_vars.sol")
+    run("enums", "in_state_vars")
 }
