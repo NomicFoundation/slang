@@ -28,110 +28,156 @@ pub enum AssertionError {
     },
 }
 
+fn find_definition(bindings: &Bindings, assertion: &DefinitionAssertion) -> Result<Cursor, String> {
+    let DefinitionAssertion { cursor, .. } = assertion;
+
+    let Some(handle) = bindings.cursor_to_handle(cursor) else {
+        return Err(format!("{assertion} failed: not found"));
+    };
+    if !handle.is_definition() {
+        return Err(format!("{assertion} failed: not a definition"));
+    }
+
+    Ok(assertion.cursor.clone())
+}
+
+fn check_definitions<'a>(
+    bindings: &Bindings,
+    definitions: impl Iterator<Item = &'a DefinitionAssertion>,
+    failures: &mut Vec<String>,
+) {
+    for assertion in definitions {
+        if let Err(failure) = find_definition(bindings, assertion) {
+            failures.push(failure);
+        }
+    }
+}
+
+fn find_and_resolve_reference(
+    bindings: &Bindings,
+    assertion: &ReferenceAssertion,
+) -> Result<Option<Cursor>, String> {
+    let ReferenceAssertion { cursor, .. } = assertion;
+
+    let Some(handle) = bindings.cursor_to_handle(cursor) else {
+        return Err(format!("{assertion} failed: not found"));
+    };
+    if !handle.is_reference() {
+        return Err(format!("{assertion} failed: not a reference"));
+    }
+    Ok(handle
+        .jump_to_definition()
+        .map(|handle| handle.get_cursor().unwrap()))
+}
+
+fn lookup_referenced_definition(
+    bindings: &Bindings,
+    definitions: &HashMap<String, DefinitionAssertion>,
+    assertion: &ReferenceAssertion,
+) -> Result<Cursor, String> {
+    let ReferenceAssertion { id, .. } = assertion;
+    let Some(id) = id else {
+        return Err(format!("{assertion} failed: should not attempt to resolve"));
+    };
+    let Some(definition) = definitions.get(id) else {
+        return Err(format!("{assertion} failed: reference is undefined"));
+    };
+    find_definition(bindings, definition)
+}
+
+fn check_reference_assertion(
+    bindings: &Bindings,
+    definitions: &HashMap<String, DefinitionAssertion>,
+    version: &Version,
+    assertion: &ReferenceAssertion,
+) -> Result<(), String> {
+    let resolution = find_and_resolve_reference(bindings, assertion)?;
+
+    let ReferenceAssertion {
+        id, version_req, ..
+    } = assertion;
+
+    let version_matches = if let Some(version_req) = version_req {
+        version_req.matches(version)
+    } else {
+        true
+    };
+
+    match (version_matches, id) {
+        (true, None) => {
+            if let Some(resolved_cursor) = resolution {
+                return Err(format!(
+                    "{assertion} failed: unexpected resolution to {resolved} (should not have resolved)",
+                    resolved = DisplayCursor(&resolved_cursor)
+                ));
+            }
+        }
+        (true, Some(_)) => {
+            let Some(resolved_cursor) = resolution else {
+                return Err(format!("{assertion} failed: did not resolve"));
+            };
+            let expected_cursor = lookup_referenced_definition(bindings, definitions, assertion)?;
+            if expected_cursor != resolved_cursor {
+                return Err(format!(
+                    "{assertion} failed: unexpected resolution to {resolved} (should have resolved to {expected})",
+                    resolved = DisplayCursor(&resolved_cursor),
+                    expected = DisplayCursor(&expected_cursor)
+                ));
+            }
+        }
+        (false, None) => {
+            if resolution.is_none() {
+                return Err(format!("{assertion} failed: expected to resolve"));
+            }
+        }
+        (false, Some(_)) => {
+            if let Some(resolved_cursor) = resolution {
+                let referenced_cursor =
+                    lookup_referenced_definition(bindings, definitions, assertion)?;
+                if referenced_cursor == resolved_cursor {
+                    return Err(format!(
+                        "{assertion} failed: expected to not resolve to {resolved}",
+                        resolved = DisplayCursor(&resolved_cursor),
+                    ));
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn check_references<'a>(
+    bindings: &Bindings,
+    version: &Version,
+    references: impl Iterator<Item = &'a ReferenceAssertion>,
+    definitions: &HashMap<String, DefinitionAssertion>,
+    failures: &mut Vec<String>,
+) {
+    for assertion in references {
+        if let Err(failure) = check_reference_assertion(bindings, definitions, version, assertion) {
+            failures.push(failure);
+        }
+    }
+}
+
 pub fn check_assertions(
     bindings: &Bindings,
     assertions: &Assertions,
     version: &Version,
 ) -> Result<(), AssertionError> {
-    let mut count = 0;
     let mut failures: Vec<String> = Vec::new();
 
-    for assertion in assertions.definitions.values() {
-        count += 1;
+    check_definitions(bindings, assertions.definitions.values(), &mut failures);
+    check_references(
+        bindings,
+        version,
+        assertions.references.iter(),
+        &assertions.definitions,
+        &mut failures,
+    );
 
-        let Assertion::Definition { id: _, cursor } = assertion else {
-            unreachable!("{assertion} is not a definition assertion");
-        };
-
-        let Some(handle) = bindings.cursor_to_handle(cursor) else {
-            failures.push(format!("{assertion} failed: not found"));
-            continue;
-        };
-        if !handle.is_definition() {
-            failures.push(format!("{assertion} failed: not a definition"));
-            continue;
-        }
-    }
-
-    for assertion in &assertions.references {
-        count += 1;
-
-        let Assertion::Reference {
-            id,
-            cursor,
-            version_req,
-        } = assertion
-        else {
-            unreachable!("{assertion} is not a reference assertion");
-        };
-
-        let expect_success = if let Some(version_req) = version_req {
-            version_req.matches(version)
-        } else {
-            true
-        };
-
-        let Some(handle) = bindings.cursor_to_handle(cursor) else {
-            failures.push(format!("{assertion} failed: not found"));
-            continue;
-        };
-        if !handle.is_reference() {
-            failures.push(format!("{assertion} failed: not a reference"));
-            continue;
-        }
-
-        let Some(def_handle) = handle.jump_to_definition() else {
-            // couldn't jump to definition
-            if id.is_some() && expect_success {
-                // but a binding resolution was expected
-                failures.push(format!("{assertion} failed: not resolved"));
-            }
-            continue;
-        };
-        let Some(id) = id else {
-            if expect_success {
-                // expected an unresolved reference
-                failures.push(format!(
-                    "{assertion} failed: reference did resolve to {}",
-                    DisplayCursor(&def_handle.get_cursor().unwrap())
-                ));
-            }
-            continue;
-        };
-
-        let Some(Assertion::Definition {
-            id: _,
-            cursor: def_cursor,
-        }) = assertions.definitions.get(id)
-        else {
-            failures.push(format!(
-                "{assertion} failed: definition assertion not found"
-            ));
-            continue;
-        };
-        if let Some(ref_def_cursor) = def_handle.get_cursor() {
-            if ref_def_cursor != *def_cursor {
-                if expect_success {
-                    failures.push(format!(
-                        "{assertion} failed: resolved to unexpected {}",
-                        DisplayCursor(&ref_def_cursor)
-                    ));
-                }
-                continue;
-            }
-        } else {
-            failures.push(format!(
-                "{assertion} failed: jumped to definition did not resolve to a cursor"
-            ));
-            continue;
-        }
-        if !expect_success {
-            failures.push(format!(
-                "{assertion} succeeded but was expected to fail in version {version}"
-            ));
-        }
-    }
-
+    let count = assertions.count();
     if failures.is_empty() {
         println!("{count} binding assertions OK");
         Ok(())
@@ -154,8 +200,14 @@ pub fn collect_assertions(cursor: Cursor) -> Result<Assertions, AssertionError> 
             continue;
         };
 
-        if let Some(assertion) = find_assertion_in_comment(comment)? {
-            assertions.insert_assertion(assertion)?;
+        match find_assertion_in_comment(comment)? {
+            Some(Assertion::Definition(assertion)) => {
+                assertions.insert_definition_assertion(assertion)?;
+            }
+            Some(Assertion::Reference(assertion)) => {
+                assertions.insert_reference_assertion(assertion);
+            }
+            None => (),
         }
     }
 
@@ -163,8 +215,8 @@ pub fn collect_assertions(cursor: Cursor) -> Result<Assertions, AssertionError> 
 }
 
 pub struct Assertions {
-    definitions: HashMap<String, Assertion>,
-    references: Vec<Assertion>,
+    definitions: HashMap<String, DefinitionAssertion>,
+    references: Vec<ReferenceAssertion>,
 }
 
 impl Assertions {
@@ -175,62 +227,64 @@ impl Assertions {
         }
     }
 
-    fn insert_assertion(&mut self, assertion: Assertion) -> Result<(), AssertionError> {
-        match assertion {
-            Assertion::Definition { ref id, .. } => {
-                if self.definitions.contains_key(id) {
-                    Err(AssertionError::DuplicateDefinition(id.clone()))
-                } else {
-                    self.definitions.insert(id.clone(), assertion);
-                    Ok(())
-                }
-            }
-            Assertion::Reference { .. } => {
-                self.references.push(assertion);
-                Ok(())
-            }
+    fn count(&self) -> usize {
+        self.definitions.len() + self.references.len()
+    }
+
+    fn insert_definition_assertion(
+        &mut self,
+        assertion: DefinitionAssertion,
+    ) -> Result<(), AssertionError> {
+        let id = &assertion.id;
+        if self.definitions.contains_key(id) {
+            Err(AssertionError::DuplicateDefinition(id.clone()))
+        } else {
+            self.definitions.insert(id.clone(), assertion);
+            Ok(())
         }
+    }
+
+    fn insert_reference_assertion(&mut self, assertion: ReferenceAssertion) {
+        self.references.push(assertion);
     }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-enum Assertion {
-    Definition {
-        id: String,
-        cursor: Cursor,
-    },
-    Reference {
-        id: Option<String>,
-        cursor: Cursor,
-        version_req: Option<VersionReq>,
-    },
+struct DefinitionAssertion {
+    id: String,
+    cursor: Cursor,
 }
 
-impl fmt::Display for Assertion {
+#[derive(Clone, Debug, PartialEq)]
+struct ReferenceAssertion {
+    id: Option<String>,
+    cursor: Cursor,
+    version_req: Option<VersionReq>,
+}
+
+impl fmt::Display for DefinitionAssertion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Assert Definition {id} {cursor}",
+            id = self.id,
+            cursor = DisplayCursor(&self.cursor),
+        )
+    }
+}
+
+impl fmt::Display for ReferenceAssertion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Assert ")?;
-        let cursor = match self {
-            Self::Definition { id, cursor } => {
-                write!(f, "Definition {id}")?;
-                cursor
-            }
-            Self::Reference {
-                id,
-                cursor,
-                version_req,
-            } => {
-                if let Some(id) = id {
-                    write!(f, "Reference {id}")?;
-                } else {
-                    write!(f, "Unresolved Reference")?;
-                }
-                if let Some(version_req) = version_req {
-                    write!(f, " in versions {version_req}")?;
-                }
-                cursor
-            }
-        };
-        write!(f, " {}", DisplayCursor(cursor))
+        if let Some(id) = &self.id {
+            write!(f, "Reference {id}")?;
+        } else {
+            write!(f, "Unresolved Reference")?;
+        }
+        if let Some(version_req) = &self.version_req {
+            write!(f, " in versions {version_req}")?;
+        }
+        write!(f, " {}", DisplayCursor(&self.cursor))
     }
 }
 
@@ -250,6 +304,12 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
             range.end,
         )
     }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+enum Assertion {
+    Definition(DefinitionAssertion),
+    Reference(ReferenceAssertion),
 }
 
 fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, AssertionError> {
@@ -289,16 +349,16 @@ fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, Asse
                 } else {
                     Some(assertion_id.to_owned())
                 };
-                Assertion::Reference {
+                Assertion::Reference(ReferenceAssertion {
                     id,
                     cursor,
                     version_req,
-                }
+                })
             }
-            "def" => Assertion::Definition {
+            "def" => Assertion::Definition(DefinitionAssertion {
                 id: assertion_id.to_owned(),
                 cursor,
-            },
+            }),
             _ => unreachable!("unknown assertion type"),
         };
         Ok(Some(assertion))
