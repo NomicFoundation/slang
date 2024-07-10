@@ -1,0 +1,34 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = true
+
+name = "metaslang_bindings"
+description = "Computes semantic language bindings from parsed source code"
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+  "Nomic Foundation <packages@nomic.foundation>",
+  "Antony Blakey <antony@nomic.foundation>",
+  "Igor Matuszewski <igor@nomic.foundation>",
+  "Omar Tawfik <omar@nomic.foundation>",
+]
+
+readme = "README.md"
+license = "MIT"
+keywords = ["parser"]
+categories = ["compilers", "parsing", "parser-implementations"]
+
+[dependencies]
+metaslang_cst = { workspace = true }
+metaslang_graph_builder = { workspace = true }
+once_cell = { workspace = true }
+semver = { workspace = true }
+stack-graphs = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+
+[lints]
+workspace = true
