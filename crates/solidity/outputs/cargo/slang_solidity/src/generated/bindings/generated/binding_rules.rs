@@ -4,6 +4,7 @@
 #[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
+global FILE_PATH
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -24,6 +25,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; This provides all the exported symbols from the file
   node @source_unit.defs
+
+  node export
+  attr (export) pop_symbol = FILE_PATH
+  edge ROOT_NODE -> export
+  edge export -> @source_unit.defs
 }
 
 ;; Definition entities that can appear at the source unit level
@@ -122,6 +128,73 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; ... and are exported in the file
   edge @source_unit.defs -> @unit_member.def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Imports
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@source_unit [SourceUnit ... [SourceUnitMembers
+     ...
+     [SourceUnitMember @import [ImportDirective]]
+     ...
+] ...] {
+   node @import.defs
+   edge @source_unit.defs -> @import.defs
+   edge @source_unit.lexical_scope -> @import.defs
+}
+
+@import [ImportDirective ... [ImportClause
+    ...
+    [PathImport ... @path path: [StringLiteral]]
+    ...
+] ...] {
+  node import
+  scan (source-text @path) {
+    "^\\s*[\"'](.+)[\"']\\s*$" {
+      let resolved_path = (resolve-path FILE_PATH $1)
+      attr (import) push_symbol = resolved_path
+    }
+  }
+  edge import -> ROOT_NODE
+
+  ;; This is the "lexical" connection, which makes all symbols exported from the
+  ;; imported source unit available for resolution globally at this' source unit
+  ;; scope
+  edge @import.defs -> import
+}
+
+@import [ImportDirective ... [ImportClause
+    ...
+    [PathImport
+        ...
+        @path path: [StringLiteral]
+        alias: [ImportAlias ... @alias [Identifier] ...]
+        ...
+    ]
+    ...
+] ...] {
+  node def
+  attr (def) node_definition = @alias
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  node import
+  scan (source-text @path) {
+    "^\\s*[\"'](.+)[\"']\\s*$" {
+      let resolved_path = (resolve-path FILE_PATH $1)
+      attr (import) push_symbol = resolved_path
+    }
+  }
+  edge import -> ROOT_NODE
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> import
 }
 
 

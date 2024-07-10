@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[crates/solidity/testing/snapshots/bindings_output/imports/alias_import/input.sol:1:1]
+   │
+ 1 │ import "./other.sol" as other;
+   │                         ──┬──  
+   │                           ╰──── def: 1
+   │ 
+   │ Note: WARNING: Parsing failed. Results may be incomplete.
+───╯

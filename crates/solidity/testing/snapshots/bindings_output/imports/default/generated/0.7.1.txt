@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[crates/solidity/testing/snapshots/bindings_output/imports/default/input.sol:1:1]
+   │
+ 3 │ function foo() returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 1
+ 4 │     return bar();
+   │            ─┬─  
+   │             ╰─── unresolved
+───╯
