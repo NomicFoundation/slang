@@ -11,8 +11,7 @@ impl PathResolver for SolidityPathResolver {
             PathBuf::from(context_path_str)
                 .parent()
                 .map(|parent| parent.join(path_to_resolve))
-                // TODO: canonicalize the path maybe? this should follow symlinks
-                //.and_then(|resolved| resolved.canonicalize().ok())
+                .and_then(|resolved| resolved.canonicalize().ok())
                 .map(|resolved| resolved.to_string_lossy().to_string())
         } else {
             // TODO: for file paths this needs to try to apply a base path, and

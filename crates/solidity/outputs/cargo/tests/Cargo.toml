@@ -29,6 +29,7 @@ slang_solidity = { workspace = true, features = [
   "__private_testing_utils",
 ] }
 solidity_language = { workspace = true }
+stack-graphs = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
 
