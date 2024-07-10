@@ -9,6 +9,8 @@ use crate::bindings::{self, Bindings, Handle};
 use crate::cursor::Cursor;
 
 pub fn execute(file_path_string: &str, version: Version) -> Result<(), CommandError> {
+    // TODO: we probably want the language default path resolver here, not the default one
+    // That is if we want to keep supporting this command.
     let mut bindings = bindings::create(version.clone());
     let parse_output = super::parse::parse_source_file(file_path_string, version, |_| ())?;
     let tree_cursor = parse_output.create_tree_cursor();

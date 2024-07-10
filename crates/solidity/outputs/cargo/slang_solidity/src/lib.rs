@@ -1,5 +1,8 @@
 mod generated;
 
+#[cfg(feature = "__experimental_bindings_api")]
+pub mod resolver;
+
 pub use generated::*;
 
 // Below are dependencies used by the CLI "main.rs", but not the API `lib.rs`.
