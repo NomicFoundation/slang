@@ -4,6 +4,7 @@ use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 use std::fmt::Debug;
 use std::iter::once;
+use std::sync::Arc;
 
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
@@ -26,12 +27,28 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursors: HashMap<GraphHandle, Cursor<KT>>,
 }
 
+pub trait PathResolver {
+    fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
+}
+
+pub struct DefaultPathResolver;
+
+impl PathResolver for DefaultPathResolver {
+    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
+        Some(path_to_resolve.to_string())
+    }
+}
+
 impl<KT: KindTypes + 'static> Bindings<KT> {
-    pub fn create(version: Version, binding_rules: &str) -> Self {
+    pub fn create(
+        version: Version,
+        binding_rules: &str,
+        path_resolver: Arc<dyn PathResolver + Sync + Send>,
+    ) -> Self {
         let graph_builder_file =
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = builder::default_functions(version);
+        let functions = builder::default_functions(version, path_resolver);
         let cursors = HashMap::new();
 
         Self {
