@@ -40,7 +40,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.defs
 }
 
-@contract [ContractDefinition ... @name name: [Identifier] ...] {
+@contract [ContractDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -49,11 +49,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 ;; Connect the contract to its containing source unit
-@source_unit [SourceUnit ... [SourceUnitMembers
-    ...
+@source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract [ContractDefinition]]
-    ...
-] ...] {
+]] {
   edge @source_unit.defs -> @contract.defs
   edge @contract.lexical_scope -> @source_unit.lexical_scope
 }
@@ -68,7 +66,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @interface.defs
 }
 
-@interface [InterfaceDefinition ... @name name: [Identifier] ...] {
+@interface [InterfaceDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -78,9 +76,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Connect the interface to its containing source unit
 @source_unit [SourceUnit [SourceUnitMembers
-    ...
     [SourceUnitMember @interface [InterfaceDefinition]]
-    ...
 ]] {
   edge @source_unit.defs -> @interface.defs
   edge @interface.lexical_scope -> @source_unit.lexical_scope
@@ -96,7 +92,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @library.defs
 }
 
-@library [LibraryDefinition ... @name name: [Identifier] ...] {
+@library [LibraryDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -106,9 +102,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Connect the library to its containing source unit
 @source_unit [SourceUnit [SourceUnitMembers
-    ...
     [SourceUnitMember @library [LibraryDefinition]]
-    ...
 ]] {
   edge @source_unit.defs -> @library.defs
   edge @library.lexical_scope -> @source_unit.lexical_scope
@@ -124,7 +118,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @function.defs
 }
 
-@function [FunctionDefinition ... name: [FunctionName ... @name [Identifier] ...] ...] {
+@function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
   node def
   attr (def) node_definition = @name
 
@@ -137,7 +131,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @param.defs
 }
 
-@param [Parameter ... @name [Identifier]] {
+@param [Parameter @name [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -147,9 +141,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Connect the parameters to the functions they belong to
 @function [FunctionDefinition
-    ...
-    parameters: [_ ... parameters: [Parameters ... @param item: [Parameter] ...] ...]
-    ...
+    parameters: [_ parameters: [Parameters @param item: [Parameter]]]
 ] {
   edge @function.lexical_scope -> @param.defs
   edge @function.defs -> @param.defs
@@ -157,13 +149,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Connect the function to the contract/interface/library they belong to
 [SourceUnitMember @unit_member variant: [_
-    ...
     members: [_
-        ...
         item: [_ @function variant: [FunctionDefinition]]
-        ...
     ]
-    ...
   ]
 ] {
   edge @unit_member.lexical_scope -> @function.defs
@@ -177,7 +165,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 ;; Connect the function body to the function definition
-@function [FunctionDefinition ... @body body: [FunctionBody] ...] {
+@function [FunctionDefinition @body body: [FunctionBody]] {
   edge @body.lexical_scope -> @function.lexical_scope
   edge @function.defs -> @body.defs
 }
@@ -197,7 +185,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @stmt.defs
 }
 
-@block [Block ... statements: [_ ... @stmt [Statement]...] ...] {
+@block [Block statements: [_ @stmt [Statement]]] {
   edge @stmt.lexical_scope -> @block.lexical_scope
   edge @block.defs -> @stmt.defs
 }
@@ -212,7 +200,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Declaration Statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@stmt [Statement [VariableDeclarationStatement ... @name name: [Identifier] ...]] {
+@stmt [Statement [VariableDeclarationStatement @name name: [Identifier]]] {
   node def
   attr (def) node_definition = @name
 
@@ -221,13 +209,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @stmt [Statement [TupleDeconstructionStatement
-    ...
     [TupleDeconstructionElements
-        ...
-        item: [_ member: [_ variant: [_ ... @name name: [Identifier]]]]
-        ...
+        item: [_ member: [_ variant: [_ @name name: [Identifier]]]]
     ]
-    ...
 ]] {
   node def
   attr (def) node_definition = @name
@@ -246,7 +230,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @state_var.defs
 }
 
-@state_var [StateVariableDefinition ... @name name: [Identifier] ...] {
+@state_var [StateVariableDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -255,13 +239,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 [SourceUnitMember @unit_member variant: [_
-    ...
     members: [_
-        ...
         item: [_ @state_var variant: [StateVariableDefinition]]
-        ...
     ]
-    ...
   ]
 ] {
   edge @unit_member.lexical_scope -> @state_var.defs
@@ -278,7 +258,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @struct.defs
 }
 
-@struct [StructDefinition ... @name name: [Identifier] ...] {
+@struct [StructDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
 
@@ -288,13 +268,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Connect the struct to the contract/interface/library they belong to
 [SourceUnitMember @unit_member variant: [_
-    ...
     members: [_
-        ...
         item: [_ @struct variant: [StructDefinition]]
-        ...
     ]
-    ...
   ]
 ] {
   edge @unit_member.lexical_scope -> @struct.defs
@@ -306,7 +282,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @member.defs
 }
 
-@member item: [StructMember ... @name name: [Identifier] ...] {
+@member item: [StructMember @name name: [Identifier]] {
   node member
   attr (member) pop_symbol = "."
   edge @member.defs -> member
@@ -327,18 +303,18 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @expr.lexical_scope
 }
 
-@expr [Expression ... @name variant: [Identifier]] {
+@expr [Expression @name variant: [Identifier]] {
   node ref
   attr (ref) node_reference = @name
 
   edge ref -> @expr.lexical_scope
 }
 
-@expr [Expression ... variant: [_ ... @child [Expression] ...] ...] {
+@expr [Expression variant: [_ @child [Expression]]] {
   edge @child.lexical_scope -> @expr.lexical_scope
 }
 
-@stmt [Statement ... variant: [_ ... @expr [Expression] ...] ...] {
+@stmt [Statement variant: [_ @expr [Expression]]] {
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
 
@@ -354,11 +330,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 [MemberAccessExpression
-    ...
     @expr operand: [Expression]
-    ...
     @member member: [MemberAccess]
-    ...
 ] {
   node member
   attr (member) push_symbol = "."
