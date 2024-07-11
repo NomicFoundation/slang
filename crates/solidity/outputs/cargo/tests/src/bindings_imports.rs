@@ -22,13 +22,18 @@ fn test_bindings_are_resolved_across_imported_files() -> Result<()> {
     let two_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/two.sol");
     let two_contents = fs::read_to_string(&two_path)?;
 
+    let three_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/three.sol");
+    let three_contents = fs::read_to_string(&three_path)?;
+
     let one_parsed = language.parse(Language::ROOT_KIND, &one_contents);
     let two_parsed = language.parse(Language::ROOT_KIND, &two_contents);
+    let three_parsed = language.parse(Language::ROOT_KIND, &three_contents);
 
     let mut bindings =
         bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
     bindings.add_file(&one_path.to_string_lossy(), one_parsed.create_tree_cursor());
     bindings.add_file(&two_path.to_string_lossy(), two_parsed.create_tree_cursor());
+    bindings.add_file(&three_path.to_string_lossy(), three_parsed.create_tree_cursor());
 
     let mermaid_path =
         Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/stackgraph.mmd");

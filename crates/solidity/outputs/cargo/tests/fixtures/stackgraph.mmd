@@ -1,87 +1,148 @@
 graph TD
 	N1[ROOT]
 	N1 --> N5
-	N1 --> N33
+	N1 --> N49
+	N1 --> N65
 	N2
 	N3
 	N3 --> N6
-	N3 --> N11
+	N3 --> N7
+	N3 --> N15
 	N4
 	N4 --> N6
-	N4 --> N11
+	N4 --> N7
+	N4 --> N15
 	N5[\/home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/one.sol/]
 	N5 --> N4
 	N6
-	N6 --> N7
-	N7[\two/]
-	N7 --> N8
-	N8[\./]
-	N8 --> N9
-	N9[//home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/two.sol\]
-	N9 --> N1
-	N10
-	N10 --> N3
-	N10 --> N14
-	N11
-	N11 --> N12
-	N12[\f1/]
-	N13
-	N13 --> N10
+	N6 --> N9
+	N7
+	N7 --> N12
+	N8[//home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/two.sol\]
+	N8 --> N1
+	N9[\two/]
+	N9 --> N10
+	N10[\./]
+	N10 --> N8
+	N11[//home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/three.sol\]
+	N11 --> N1
+	N12[\three/]
+	N12 --> N13
+	N13[\./]
+	N13 --> N11
 	N14
+	N14 --> N3
+	N14 --> N18
 	N15
-	N15 --> N13
-	N16
+	N15 --> N16
+	N16[\f1/]
 	N17
-	N17 --> N10
+	N17 --> N14
 	N18
 	N19
 	N19 --> N17
-	N19 --> N20
 	N20
 	N21
-	N21 --> N19
+	N21 --> N14
 	N22
 	N23
 	N23 --> N21
+	N23 --> N24
 	N24
-	N24 --> N25
-	N25[/f2\]
-	N25 --> N26
-	N26[/.\]
-	N26 --> N28
+	N25
+	N25 --> N23
+	N26
 	N27
-	N27 --> N23
+	N27 --> N25
 	N28
-	N28 --> N29
-	N29[/two\]
+	N29
 	N29 --> N27
 	N30
-	N30 --> N21
-	N31
-	N31 --> N35
-	N32
-	N32 --> N35
-	N33[\/home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/two.sol/]
-	N33 --> N32
+	N30 --> N31
+	N31[/f2\]
+	N31 --> N32
+	N32[/.\]
+	N32 --> N34
+	N33
+	N33 --> N29
 	N34
-	N34 --> N31
-	N34 --> N38
-	N35
-	N35 --> N36
-	N36[\f2/]
+	N34 --> N35
+	N35[/two\]
+	N35 --> N33
+	N36
+	N36 --> N27
 	N37
-	N37 --> N34
+	N37 --> N25
 	N38
 	N39
 	N39 --> N37
 	N40
-	N41
-	N41 --> N34
-	N42
+	N40 --> N41
+	N41[/f3\]
+	N41 --> N42
+	N42[/.\]
+	N42 --> N44
 	N43
-	N43 --> N41
-	N43 --> N44
+	N43 --> N39
 	N44
-	N45
+	N44 --> N45
+	N45[/three\]
 	N45 --> N43
 	N46
+	N46 --> N37
+	N47
+	N47 --> N51
+	N48
+	N48 --> N51
+	N49[\/home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/two.sol/]
+	N49 --> N48
+	N50
+	N50 --> N47
+	N50 --> N54
+	N51
+	N51 --> N52
+	N52[\f2/]
+	N53
+	N53 --> N50
+	N54
+	N55
+	N55 --> N53
+	N56
+	N57
+	N57 --> N50
+	N58
+	N59
+	N59 --> N57
+	N59 --> N60
+	N60
+	N61
+	N61 --> N59
+	N62
+	N63
+	N63 --> N67
+	N64
+	N64 --> N67
+	N65[\/home/ggiraldez/Projects/slang/crates/solidity/outputs/cargo/tests/fixtures/three.sol/]
+	N65 --> N64
+	N66
+	N66 --> N63
+	N66 --> N70
+	N67
+	N67 --> N68
+	N68[\f3/]
+	N69
+	N69 --> N66
+	N70
+	N71
+	N71 --> N69
+	N72
+	N73
+	N73 --> N66
+	N74
+	N75
+	N75 --> N73
+	N75 --> N76
+	N76
+	N77
+	N77 --> N75
+	N78

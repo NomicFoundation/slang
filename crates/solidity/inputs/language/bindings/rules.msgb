@@ -140,24 +140,35 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
    edge @source_unit.lexical_scope -> @import.defs
 }
 
+;;; This is the `import <URI> [as <IDENT>]` case
+
+[ImportDirective ... [ImportClause
+    ...
+    [PathImport ... @path path: [StringLiteral] ...]
+    ...
+] ...] {
+  ;; This node represents the imported file, and is used by the two following rules
+  ;; that handle the possible syntaxes: global import and scoped with an alias
+  node @path.import
+  scan (source-text @path) {
+    "^\\s*[\"'](.+)[\"']\\s*$" {
+      let resolved_path = (resolve-path FILE_PATH $1)
+      attr (@path.import) push_symbol = resolved_path
+    }
+    ;; TODO: if there are other cases possible, we should signal it as an error
+  }
+  edge @path.import -> ROOT_NODE
+}
+
 @import [ImportDirective ... [ImportClause
     ...
     [PathImport ... @path path: [StringLiteral]]
     ...
 ] ...] {
-  node import
-  scan (source-text @path) {
-    "^\\s*[\"'](.+)[\"']\\s*$" {
-      let resolved_path = (resolve-path FILE_PATH $1)
-      attr (import) push_symbol = resolved_path
-    }
-  }
-  edge import -> ROOT_NODE
-
   ;; This is the "lexical" connection, which makes all symbols exported from the
   ;; imported source unit available for resolution globally at this' source unit
   ;; scope
-  edge @import.defs -> import
+  edge @import.defs -> @path.import
 }
 
 @import [ImportDirective ... [ImportClause
@@ -178,20 +189,49 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (member) pop_symbol = "."
   edge def -> member
 
-  node import
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+
+;;; This is the `import * as <IDENT> from <URI>` case
+
+@import [ImportDirective ... [ImportClause
+    ...
+    [NamedImport
+        ...
+        alias: [ImportAlias ... @alias [Identifier] ...]
+        ...
+        @path path: [StringLiteral]
+        ...
+    ]
+    ...
+] ...] {
+  ;; This node represents the imported file, and is used by the two following rules
+  ;; that handle the possible syntaxes: global import and scoped with an alias
+  node @path.import
   scan (source-text @path) {
     "^\\s*[\"'](.+)[\"']\\s*$" {
       let resolved_path = (resolve-path FILE_PATH $1)
-      attr (import) push_symbol = resolved_path
+      attr (@path.import) push_symbol = resolved_path
     }
+    ;; TODO: if there are other cases possible, we should signal it as an error
   }
-  edge import -> ROOT_NODE
+  edge @path.import -> ROOT_NODE
+
+  node def
+  attr (def) node_definition = @alias
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
 
   ;; Lexical connection, which makes the import available as a member through
   ;; the alias identifier
-  edge member -> import
+  edge member -> @path.import
 }
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Named definitions (contracts, functions, libraries, etc.)
