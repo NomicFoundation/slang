@@ -1976,7 +1976,7 @@ impl Language {
                 25u8,
                 25u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    if !self.version_is_at_least_0_6_0 {
+                    if !self.version_is_at_least_0_8_0 {
                         let result = self
                             .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
@@ -1995,7 +1995,7 @@ impl Language {
                 27u8 + 1,
                 27u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    if self.version_is_at_least_0_6_0 {
+                    if self.version_is_at_least_0_8_0 {
                         let result = self
                             .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,

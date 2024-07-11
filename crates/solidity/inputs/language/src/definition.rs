@@ -3359,16 +3359,16 @@ codegen_language_macros::compile!(Language(
                                 PrecedenceExpression(
                                     name = ExponentiationExpression,
                                     operators = [
-                                        // Before '0.6.0', it was left-associative:
+                                        // Before '0.8.0', it was left-associative:
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
-                                            enabled = Till("0.6.0"),
+                                            enabled = Till("0.8.0"),
                                             fields = (operator = Required(AsteriskAsterisk))
                                         ),
-                                        // In '0.6.0', it became right-associative:
+                                        // In '0.8.0', it became right-associative:
                                         PrecedenceOperator(
                                             model = BinaryRightAssociative,
-                                            enabled = From("0.6.0"),
+                                            enabled = From("0.8.0"),
                                             fields = (operator = Required(AsteriskAsterisk))
                                         )
                                     ]
