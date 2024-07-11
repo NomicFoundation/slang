@@ -6,6 +6,7 @@ edition.workspace = true
 publish = false
 
 [dev-dependencies]
+metaslang_graph_builder = { workspace = true }
 semver = { workspace = true }
 slang_testlang = { workspace = true, features = [
   "__experimental_bindings_api",

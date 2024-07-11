@@ -3,10 +3,14 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
-use metaslang_graph_builder::ast;
-pub use metaslang_graph_builder::functions::Functions;
-pub use metaslang_graph_builder::{ExecutionConfig, ExecutionError, NoCancellation, Variables};
+use metaslang_bindings;
+use semver::Version;
 
 use crate::cst::KindTypes;
 
-pub type File = ast::File<KindTypes>;
+pub type Bindings = metaslang_bindings::Bindings<KindTypes>;
+pub type Handle<'a> = metaslang_bindings::Handle<'a, KindTypes>;
+
+pub fn create(version: Version) -> Bindings {
+    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE)
+}

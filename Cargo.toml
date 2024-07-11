@@ -22,6 +22,7 @@ members = [
     "crates/infra/cli",
     "crates/infra/utils",
 
+    "crates/metaslang/bindings",
     "crates/metaslang/cst",
     "crates/metaslang/graph_builder",
 
@@ -61,6 +62,7 @@ codegen_testing = { path = "crates/codegen/testing", version = "0.15.1" }
 infra_cli = { path = "crates/infra/cli", version = "0.15.1" }
 infra_utils = { path = "crates/infra/utils", version = "0.15.1" }
 
+metaslang_bindings = { path = "crates/metaslang/bindings", version = "0.15.1" }
 metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "0.15.1" }
 metaslang_cst = { path = "crates/metaslang/cst", version = "0.15.1" }
 
@@ -89,8 +91,8 @@ cargo-edit = { version = "0.12.3" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
 cargo-zigbuild = { version = "0.18.3" }
-clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
-clap_complete = { version = "4.5.2" }
+clap = { version = "4.5.8", features = ["derive", "wrap_help"] }
+clap_complete = { version = "4.5.7" }
 console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
 env_logger = { version = "0.11.3" }
@@ -100,29 +102,29 @@ indicatif = { version = "0.17.8", features = ["in_memory"] }
 indoc = { version = "2.0.5" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
-log = { version = "0.4.14" }
+log = { version = "0.4.22" }
 markdown = { version = "0.3.0" }
-napi = { version = "2.16.6", features = ["compat-mode", "napi8", "serde-json"] }
+napi = { version = "2.16.8", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.1.3" }
-napi-derive = { version = "2.16.5" }
+napi-derive = { version = "2.16.7" }
 nom = { version = "7.1.3" }
 num-format = { version = "0.4.4" }
 once_cell = { version = "1.19.0" }
-proc-macro2 = { version = "1.0.84" }
+proc-macro2 = { version = "1.0.86" }
 quote = { version = "1.0.36" }
 rayon = { version = "1.10.0" }
-regex = { version = "1.10.4" }
-reqwest = { version = "0.12.4", features = ["blocking"] }
+regex = { version = "1.10.5" }
+reqwest = { version = "0.12.5", features = ["blocking"] }
 semver = { version = "1.0.23", features = ["serde"] }
 serde = { version = "1.0.203", features = ["derive", "rc"] }
-serde_json = { version = "1.0.117", features = ["preserve_order"] }
+serde_json = { version = "1.0.119", features = ["preserve_order"] }
 similar-asserts = { version = "1.5.0" }
 smallvec = { version = "1.7.0" }
 stack-graphs = { version = "0.13.0" }
 string-interner = { version = "0.17.0", default-features = false }
-strum = { version = "0.26.2" }
-strum_macros = { version = "0.26.2" }
-syn = { version = "2.0.66", features = [
+strum = { version = "0.26.3" }
+strum_macros = { version = "0.26.4" }
+syn = { version = "2.0.68", features = [
     "fold",
     "full",
     "extra-traits",
@@ -133,8 +135,8 @@ tempfile = { version = "3.10.1" }
 tera = { version = "1.20.0" }
 thiserror = { version = "1.0.61" }
 trybuild = { version = "1.0.96" }
-toml = { version = "0.8.13" }
-url = { version = "2.3.1" }
+toml = { version = "0.8.14" }
+url = { version = "2.4.1" }
 
 [workspace.lints.rust]
 unused_crate_dependencies = "warn"

@@ -3,7 +3,7 @@
 use thiserror::Error;
 
 #[cfg(feature = "__experimental_bindings_api")]
-pub mod build_graph;
+pub mod bindings;
 pub mod parse;
 
 #[derive(Debug, Error)]
@@ -19,8 +19,4 @@ pub enum CommandError {
 
     #[error("Parsing failed: {0}")]
     ParseFailed(String),
-
-    #[cfg(feature = "__experimental_bindings_api")]
-    #[error(transparent)]
-    ExecutionFailed(#[from] crate::bindings::ExecutionError),
 }
