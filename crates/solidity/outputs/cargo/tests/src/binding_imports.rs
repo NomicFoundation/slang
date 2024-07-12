@@ -33,7 +33,10 @@ fn test_bindings_are_resolved_across_imported_files() -> Result<()> {
         bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
     bindings.add_file(&one_path.to_string_lossy(), one_parsed.create_tree_cursor());
     bindings.add_file(&two_path.to_string_lossy(), two_parsed.create_tree_cursor());
-    bindings.add_file(&three_path.to_string_lossy(), three_parsed.create_tree_cursor());
+    bindings.add_file(
+        &three_path.to_string_lossy(),
+        three_parsed.create_tree_cursor(),
+    );
 
     let mermaid_path =
         Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/stackgraph.mmd");

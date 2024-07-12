@@ -2,10 +2,10 @@
 
 use metaslang_bindings as _;
 
+mod binding_imports;
+mod binding_rules;
 mod bindings_assertions;
-mod bindings_imports;
 mod bindings_output;
-mod bindings_rules;
 mod cst_output;
 mod doc_examples;
 mod generated;
