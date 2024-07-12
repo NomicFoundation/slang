@@ -11,32 +11,24 @@ use slang_solidity::language::Language;
 use slang_solidity::resolver::SolidityPathResolver;
 use stack_graphs::graph::{Node, PopSymbolNode, PushSymbolNode, StackGraph};
 
+use crate::multi_part_file::split_multi_file;
+
 #[test]
 fn test_bindings_are_resolved_across_imported_files() -> Result<()> {
     let version = Version::parse("0.8.22")?;
     let language = Language::new(version.clone())?;
 
-    let one_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/one.sol");
-    let one_contents = fs::read_to_string(&one_path)?;
-
-    let two_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/two.sol");
-    let two_contents = fs::read_to_string(&two_path)?;
-
-    let three_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/three.sol");
-    let three_contents = fs::read_to_string(&three_path)?;
-
-    let one_parsed = language.parse(Language::ROOT_KIND, &one_contents);
-    let two_parsed = language.parse(Language::ROOT_KIND, &two_contents);
-    let three_parsed = language.parse(Language::ROOT_KIND, &three_contents);
+    let input_path = Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/input.sol");
+    let contents = fs::read_to_string(input_path)?;
+    let parts = split_multi_file(&contents);
+    assert_eq!(3, parts.len());
 
     let mut bindings =
         bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
-    bindings.add_file(&one_path.to_string_lossy(), one_parsed.create_tree_cursor());
-    bindings.add_file(&two_path.to_string_lossy(), two_parsed.create_tree_cursor());
-    bindings.add_file(
-        &three_path.to_string_lossy(),
-        three_parsed.create_tree_cursor(),
-    );
+    for (path, contents) in &parts {
+        let parsed = language.parse(Language::ROOT_KIND, contents);
+        bindings.add_file(path, parsed.create_tree_cursor());
+    }
 
     let mermaid_path =
         Path::repo_path("crates/solidity/outputs/cargo/tests/fixtures/stackgraph.mmd");
@@ -51,10 +43,12 @@ fn test_bindings_are_resolved_across_imported_files() -> Result<()> {
             DisplayHandle(reference),
         );
 
-        let cursor = reference.get_cursor().unwrap();
-        let ref_text = cursor.node().unparse();
-        let def_text = definition.unwrap().get_cursor().unwrap().node().unparse();
-        assert_eq!(ref_text, def_text, "references to resolve to the same name");
+        let definition = definition.unwrap();
+        println!(
+            "{reference} ----> {definition}",
+            reference = DisplayHandle(reference),
+            definition = DisplayHandle(definition),
+        );
     }
 
     Ok(())

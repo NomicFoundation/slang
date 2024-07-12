@@ -127,6 +127,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 }
 
+#[derive(Clone)]
 pub struct Handle<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
     handle: GraphHandle,
