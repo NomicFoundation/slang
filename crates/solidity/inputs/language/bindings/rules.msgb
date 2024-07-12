@@ -132,7 +132,15 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @source_unit [SourceUnit ... [SourceUnitMembers
      ...
-     [SourceUnitMember @import [ImportDirective]]
+     [SourceUnitMember [ImportDirective
+         ...
+         [ImportClause @import (
+               [PathImport]
+             | [NamedImport]
+             | [ImportDeconstruction]
+         )]
+         ...
+     ]]
      ...
 ] ...] {
    node @import.defs
@@ -140,15 +148,13 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
    edge @source_unit.lexical_scope -> @import.defs
 }
 
-;;; This is the `import <URI> [as <IDENT>]` case
-
-[ImportDirective ... [ImportClause
+[ImportClause
     ...
-    [PathImport ... @path path: [StringLiteral] ...]
+    [_ ... @path path: [StringLiteral] ...]
     ...
-] ...] {
-  ;; This node represents the imported file, and is used by the two following rules
-  ;; that handle the possible syntaxes: global import and scoped with an alias
+] {
+  ;; This node represents the imported file and the @path.import node is used by
+  ;; all subsequent import rules
   node @path.import
   scan (source-text @path) {
     "^\\s*[\"'](.+)[\"']\\s*$" {
@@ -160,27 +166,22 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @path.import -> ROOT_NODE
 }
 
-@import [ImportDirective ... [ImportClause
-    ...
-    [PathImport ... @path path: [StringLiteral]]
-    ...
-] ...] {
+
+;;; `import <URI>`
+@import [PathImport ... @path path: [StringLiteral]] {
   ;; This is the "lexical" connection, which makes all symbols exported from the
   ;; imported source unit available for resolution globally at this' source unit
   ;; scope
   edge @import.defs -> @path.import
 }
 
-@import [ImportDirective ... [ImportClause
-    ...
-    [PathImport
-        ...
-        @path path: [StringLiteral]
-        alias: [ImportAlias ... @alias [Identifier] ...]
-        ...
-    ]
-    ...
-] ...] {
+;;; `import <URI> as <IDENT>`
+@import [PathImport
+   ...
+   @path path: [StringLiteral]
+   alias: [ImportAlias ... @alias [Identifier] ...]
+   ...
+] {
   node def
   attr (def) node_definition = @alias
   edge @import.defs -> def
@@ -194,32 +195,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> @path.import
 }
 
-
-;;; This is the `import * as <IDENT> from <URI>` case
-
-@import [ImportDirective ... [ImportClause
+;;; `import * as <IDENT> from <URI>`
+@import [NamedImport
     ...
-    [NamedImport
-        ...
-        alias: [ImportAlias ... @alias [Identifier] ...]
-        ...
-        @path path: [StringLiteral]
-        ...
-    ]
+    alias: [ImportAlias ... @alias [Identifier]]
     ...
-] ...] {
-  ;; This node represents the imported file, and is used by the two following rules
-  ;; that handle the possible syntaxes: global import and scoped with an alias
-  node @path.import
-  scan (source-text @path) {
-    "^\\s*[\"'](.+)[\"']\\s*$" {
-      let resolved_path = (resolve-path FILE_PATH $1)
-      attr (@path.import) push_symbol = resolved_path
-    }
-    ;; TODO: if there are other cases possible, we should signal it as an error
-  }
-  edge @path.import -> ROOT_NODE
-
+    @path path: [StringLiteral]
+    ...
+] {
   node def
   attr (def) node_definition = @alias
   edge @import.defs -> def
@@ -231,6 +214,52 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Lexical connection, which makes the import available as a member through
   ;; the alias identifier
   edge member -> @path.import
+}
+
+;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction
+    ...
+    symbols: [ImportDeconstructionSymbols ... @symbol [ImportDeconstructionSymbol] ...]
+    ...
+    @path path: [StringLiteral]
+    ...
+] {
+  ;; We define these intermediate nodes for convenience only, to make the
+  ;; queries simpler in the two rules below
+  node @symbol.def
+  edge @import.defs -> @symbol.def
+
+  node @symbol.import
+  edge @symbol.import -> @path.import
+}
+
+@symbol [ImportDeconstructionSymbol ... @name name: [Identifier]] {
+  node def
+  attr (def) node_definition = @name
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+@symbol [ImportDeconstructionSymbol
+    ...
+    @name name: [Identifier]
+    ...
+    alias: [ImportAlias ... @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

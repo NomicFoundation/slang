@@ -112,6 +112,9 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn cursor_to_handle(&self, cursor: &Cursor<KT>) -> Option<Handle<'_, KT>> {
+        // FIXME: in some cases (eg. deconstruction imports without alias) the
+        // same Cursor will point to two separate handles: a definition and a
+        // reference. This API does not support such case yet.
         for (handle, handle_cursor) in &self.cursors {
             if handle_cursor == cursor {
                 return Some(Handle {
