@@ -46,6 +46,8 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             _ => &*last_output.insert(output),
         };
 
+        assert_eq!(source, output.tree().unparse(), "source round-trip failed.");
+
         let errors = output
             .errors()
             .iter()
