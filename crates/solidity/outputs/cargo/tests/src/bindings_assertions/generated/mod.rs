@@ -4,6 +4,7 @@ mod contracts;
 mod enums;
 mod expressions;
 mod functions;
+mod imports;
 mod interfaces;
 mod scoping;
 mod variables;
