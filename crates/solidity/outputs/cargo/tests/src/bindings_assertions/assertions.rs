@@ -21,12 +21,16 @@ pub enum AssertionError {
     #[error("Duplicate assertion definition {0}")]
     DuplicateDefinition(String),
 
-    #[error("Failed {failed} of {total} bindings assertions: {errors:?}")]
+    #[error("Failed {failed} of {total} bindings assertions:\n{}", display_assertion_errors(.errors))]
     FailedAssertions {
         failed: usize,
         total: usize,
         errors: Vec<String>,
     },
+}
+
+fn display_assertion_errors(errors: &[String]) -> String {
+    errors.join("\n")
 }
 
 pub struct Assertions {
@@ -48,7 +52,7 @@ struct ReferenceAssertion {
 }
 
 impl Assertions {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             definitions: HashMap::new(),
             references: Vec::new(),
@@ -149,9 +153,11 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 ///   //  ^ref:2
 ///   //<ref:1
 ///
-pub fn collect_assertions(cursor: Cursor, version: &Version) -> Result<Assertions, AssertionError> {
-    let mut assertions = Assertions::new();
-
+pub fn collect_assertions_into(
+    assertions: &mut Assertions,
+    cursor: Cursor,
+    version: &Version,
+) -> Result<(), AssertionError> {
     let query = Query::parse("@comment [SingleLineComment]").unwrap();
     for result in cursor.query(vec![query]) {
         let captures = result.captures;
@@ -170,7 +176,7 @@ pub fn collect_assertions(cursor: Cursor, version: &Version) -> Result<Assertion
         }
     }
 
-    Ok(assertions)
+    Ok(())
 }
 
 #[derive(Clone, Debug, PartialEq)]
