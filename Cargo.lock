@@ -2287,7 +2287,6 @@ dependencies = [
  "semver",
  "slang_solidity",
  "solidity_language",
- "stack-graphs",
  "strum_macros",
  "thiserror",
 ]

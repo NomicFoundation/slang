@@ -2,7 +2,6 @@
 
 use metaslang_bindings as _;
 
-mod binding_imports;
 mod binding_rules;
 mod bindings_assertions;
 mod bindings_output;
