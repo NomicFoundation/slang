@@ -110,7 +110,8 @@ This pattern would match a set of possible keyword terminals, capturing them as 
 
 ### Anchoring
 
-By using anchors '.', you can constrain a pattern to only match the first or the last child nodes.
+By using anchors '.', you can constrain a pattern to only match the first or the
+last child nodes.
 
 For example, the following pattern would match only the first parameter
 declaration in a function definition:
@@ -126,9 +127,11 @@ And conversely the following will match only the last parameter:
 ```
 
 If the anchor is used in between two patterns it constrains matches on both
-patterns to occur consecutively, ie. without any other sibling node in between. For
-example, this pattern matches pairs of consecutive statements:
+patterns to occur consecutively, ie. without any other sibling node in between.
+For example, this pattern matches pairs of consecutive statements:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-3"
 ```
+
+Anchors will skip over trivia nodes.

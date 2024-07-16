@@ -115,6 +115,27 @@ fn common_test_tree() -> Edge {
     )
 }
 
+fn common_test_tree_with_trivia() -> Edge {
+    cst_tree!(
+        TreeNode [
+            Node: DelimitedIdentifier "A",
+            Whitespace " ",
+            DelimitedIdentifier "B",
+            Whitespace " ",
+            EndOfLine "\n",
+            DelimitedIdentifier "C",
+            TreeNodeChild [
+                Whitespace " ",
+                DelimitedIdentifier "D",
+                EndOfLine "\n",
+                Whitespace " ",
+                Node: DelimitedIdentifier "E",
+                Whitespace " ",
+            ],
+        ]
+    )
+}
+
 #[test]
 fn test_spread() {
     run_query_test(
@@ -135,6 +156,29 @@ fn test_adjacent() {
         "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
         query_matches! {
             {y1: ["A"], y2: ["B"]}
+            {y1: ["B"], y2: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_anchor_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
+        query_matches! {
+            {y1: ["A"], y2: ["B"]}
+            {y1: ["B"], y2: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_anchor_allows_matching_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNode @y1 [DelimitedIdentifier] . [EndOfLine] . @y2 [DelimitedIdentifier]]",
+        query_matches! {
             {y1: ["B"], y2: ["C"]}
         },
     );
@@ -271,6 +315,28 @@ fn test_alternatives() {
             {y: ["A"], z: ["B"]}
             {y: ["B"], z: ["C"]}
             {y: ["D"], z: ["E"]}
+            {x: ["E"]}
+        },
+    );
+}
+
+#[test]
+fn test_anchor_at_beginning_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild . @x [DelimitedIdentifier]]",
+        query_matches! {
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_anchor_at_end_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild @x [DelimitedIdentifier] .]",
+        query_matches! {
             {x: ["E"]}
         },
     );

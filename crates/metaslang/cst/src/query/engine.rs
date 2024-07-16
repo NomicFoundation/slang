@@ -103,7 +103,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
             Self::OneOrMore(matcher) => {
                 Box::new(OneOrMoreMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
-            Self::Anchor => unreachable!("Cannot create a matcher for an anchor"),
+            Self::Anchor => Box::new(AnchorMatcher::<T>::new(cursor)),
         }
     }
 }
@@ -353,6 +353,7 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
                     if last_anchor {
                         unreachable!("Found two consecutive anchors")
                     }
+                    acc.push(SequenceItem::ChildMatcher(index));
                     (acc, true)
                 } else {
                     if !last_anchor {
@@ -583,6 +584,38 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
         }
 
         if self.cursor.irrevocably_go_to_next_sibling() {
+            return Some(self.cursor.clone());
+        }
+
+        None
+    }
+
+    fn record_captures(&self, _: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
+}
+
+/// Similar to an ellipsis matcher, but skips over trivia sibling nodes only
+struct AnchorMatcher<T: KindTypes> {
+    cursor: Cursor<T>,
+    has_returned_initial_empty_value: bool,
+}
+
+impl<T: KindTypes> AnchorMatcher<T> {
+    fn new(cursor: Cursor<T>) -> Self {
+        Self {
+            cursor,
+            has_returned_initial_empty_value: false,
+        }
+    }
+}
+
+impl<T: KindTypes + 'static> Matcher<T> for AnchorMatcher<T> {
+    fn next(&mut self) -> Option<Cursor<T>> {
+        if !self.has_returned_initial_empty_value {
+            self.has_returned_initial_empty_value = true;
+            return Some(self.cursor.clone());
+        }
+
+        if self.cursor.node().is_trivia() && self.cursor.irrevocably_go_to_next_sibling() {
             return Some(self.cursor.clone());
         }
 
