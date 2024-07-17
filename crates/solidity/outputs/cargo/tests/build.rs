@@ -5,23 +5,23 @@ use solidity_language::SolidityDefinition;
 
 fn main() -> Result<()> {
     let lang_def = SolidityDefinition::create();
+    let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?;
+    let tests_crate = CargoWorkspace::locate_source_crate("solidity_cargo_tests")?;
 
     lang_def.generate_bindings_assertions_tests(
-        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
-            .join("bindings_assertions"),
-        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
-            .join("src/bindings_assertions/generated"),
+        &snapshots_crate.join("bindings_assertions"),
+        &tests_crate.join("src/bindings_assertions/generated"),
     )?;
 
     lang_def.generate_bindings_output_tests(
-        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("bindings_output"),
-        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
-            .join("src/bindings_output/generated"),
+        &snapshots_crate.join("bindings_output"),
+        &tests_crate.join("src/bindings_output/generated"),
     )?;
 
     lang_def.generate_cst_output_tests(
-        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("cst_output"),
-        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
-            .join("src/cst_output/generated"),
-    )
+        &snapshots_crate.join("cst_output"),
+        &tests_crate.join("src/cst_output/generated"),
+    )?;
+
+    Ok(())
 }
