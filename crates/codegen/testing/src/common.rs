@@ -126,3 +126,40 @@ pub(crate) fn generate_unit_test_file(
 
     fs.write_file(unit_test_file_path, contents)
 }
+
+pub(crate) fn generate_version_breaks(
+    language: &Language,
+    input_dir: &Path,
+    output_dir: &Path,
+) -> Result<()> {
+    let mut fs = CodegenFileSystem::new(input_dir)?;
+
+    let version_breaks = language.collect_breaking_versions();
+    let version_breaks_len = version_breaks.len();
+    let version_breaks_str = version_breaks
+        .iter()
+        .fold(String::new(), |mut buffer, version| {
+            writeln!(
+                buffer,
+                "Version::new({}, {}, {}),",
+                version.major, version.minor, version.patch
+            )
+            .unwrap();
+            buffer
+        });
+
+    let contents = format!(
+        "
+            use semver::Version;
+
+            pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
+                {version_breaks_str}
+            ];
+        ",
+    );
+
+    let mod_file_path = output_dir.join("mod.rs");
+    fs.write_file(mod_file_path, contents)?;
+
+    Ok(())
+}

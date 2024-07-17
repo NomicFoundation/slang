@@ -5,8 +5,14 @@ use solidity_language::SolidityDefinition;
 
 fn main() -> Result<()> {
     let lang_def = SolidityDefinition::create();
+    let lang_def_crate = CargoWorkspace::locate_source_crate("solidity_language")?;
     let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?;
     let tests_crate = CargoWorkspace::locate_source_crate("solidity_cargo_tests")?;
+
+    lang_def.generate_version_breaks(
+        &lang_def_crate.join("src"),
+        &tests_crate.join("src/generated"),
+    )?;
 
     lang_def.generate_bindings_assertions_tests(
         &snapshots_crate.join("bindings_assertions"),
