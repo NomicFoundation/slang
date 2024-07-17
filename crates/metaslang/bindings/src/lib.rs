@@ -20,7 +20,6 @@ type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 
 pub struct Bindings<KT: KindTypes + 'static> {
-    version: Version,
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
@@ -32,11 +31,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         let graph_builder_file =
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = builder::default_functions(version.clone());
+        let functions = builder::default_functions(version);
         let cursors = HashMap::new();
 
         Self {
-            version,
             graph_builder_file,
             functions,
             stack_graph,
@@ -45,10 +43,6 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let globals = builder::Globals {
-            version: &self.version,
-            file_path,
-        };
         let file = self.stack_graph.get_or_create_file(file_path);
 
         let mut builder = Builder::new(
@@ -59,7 +53,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             tree_cursor,
         );
         builder
-            .build(&globals, &builder::NoCancellation, |handle, cursor| {
+            .build(file_path, &builder::NoCancellation, |handle, cursor| {
                 self.cursors.insert(handle, cursor.clone());
             })
             .expect("Internal error while building bindings");

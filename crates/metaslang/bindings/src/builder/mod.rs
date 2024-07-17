@@ -259,7 +259,6 @@ use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::graph::{Edge, Graph, GraphNode, GraphNodeRef, Value};
 use metaslang_graph_builder::{ExecutionConfig, ExecutionError, Variables};
 use once_cell::sync::Lazy;
-use semver::Version;
 use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
@@ -320,13 +319,6 @@ static PRECEDENCE_ATTR: &str = "precedence";
 pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
-/// Version of the language being processed, to apply different semantic rules
-pub const VERSION_VAR: &str = "VERSION";
-
-pub struct Globals<'a> {
-    pub version: &'a Version,
-    pub file_path: &'a str,
-}
 
 pub struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
@@ -359,14 +351,11 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         }
     }
 
-    fn build_global_variables(&mut self, globals: &Globals<'_>) -> Variables<'a> {
+    fn build_global_variables(&mut self, file_path: &str) -> Variables<'a> {
         let mut variables = Variables::new();
         variables
-            .add(FILE_PATH_VAR.into(), globals.file_path.into())
+            .add(FILE_PATH_VAR.into(), file_path.into())
             .expect("failed to add FILE_PATH variable");
-        variables
-            .add(VERSION_VAR.into(), globals.version.to_string().into())
-            .expect("failed to add VERSION_VAR variable");
 
         let root_node = self.inject_node(NodeID::root());
         variables
@@ -379,11 +368,11 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
     /// Executes this builder.
     pub fn build(
         &mut self,
-        globals: &Globals<'_>,
+        file_path: &str,
         cancellation_flag: &dyn CancellationFlag,
         on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>),
     ) -> Result<(), BuildError> {
-        let variables = self.build_global_variables(globals);
+        let variables = self.build_global_variables(file_path);
 
         let config = ExecutionConfig::new(self.functions, &variables)
             .lazy(true)

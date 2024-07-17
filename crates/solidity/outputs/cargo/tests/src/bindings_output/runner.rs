@@ -72,7 +72,6 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 }
 
 const ROOT_NODE_VAR: &str = "ROOT_NODE";
-const VERSION_VAR: &str = "VERSION";
 
 const VARIABLE_DEBUG_ATTR: &str = "__variable";
 const LOCATION_DEBUG_ATTR: &str = "__location";
@@ -92,7 +91,6 @@ fn output_graph(version: &Version, parse_output: &ParseOutput) -> Result<String>
     let functions = builder::default_functions(version.clone());
     let mut variables = Variables::new();
     variables.add(ROOT_NODE_VAR.into(), root_node.into())?;
-    variables.add(VERSION_VAR.into(), version.to_string().into())?;
     let execution_config = ExecutionConfig::new(&functions, &variables).debug_attributes(
         LOCATION_DEBUG_ATTR.into(),
         VARIABLE_DEBUG_ATTR.into(),
