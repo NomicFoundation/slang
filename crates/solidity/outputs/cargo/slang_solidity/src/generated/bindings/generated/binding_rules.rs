@@ -47,8 +47,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @interface.lexical_scope
   node @interface.def
   node @interface.members
+  node @interface.type_members
 
   edge @interface.lexical_scope -> @interface.members
+  edge @interface.lexical_scope -> @interface.type_members
 }
 
 @library [LibraryDefinition] {
@@ -156,11 +158,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @interface.def -> def
 
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
+
   node member
   attr (member) pop_symbol = "."
-  edge def -> member
 
+  edge def -> type_def
+  edge type_def -> member
   edge member -> @interface.members
+
+  node type_member
+  attr (type_member) pop_symbol = "."
+  edge def -> type_member
+
+  edge type_member -> @interface.type_members
 }
 
 @library [LibraryDefinition ... @name name: [Identifier] ...] {
@@ -533,7 +545,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @enum variant: [EnumDefinition]]
     ...
 ] ...] {
-  edge @interface.members -> @enum.def
+  edge @interface.type_members -> @enum.def
 }
 
 @library [LibraryDefinition ... members: [LibraryMembers
@@ -609,7 +621,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @struct.lexical_scope -> @interface.lexical_scope
-  edge @interface.members -> @struct.def
+  edge @interface.type_members -> @struct.def
 }
 
 @library [LibraryDefinition ... members: [LibraryMembers

@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[crates/solidity/testing/snapshots/bindings_output/interfaces/visibility/input.sol:1:1]
+    │
+  1 │ interface Example {
+    │           ───┬───  
+    │              ╰───── def: 1
+  2 │     enum Choice { One, Two }
+    │          ───┬──   ─┬─  ─┬─  
+    │             ╰─────────────── def: 2
+    │                    │    │   
+    │                    ╰──────── def: 3
+    │                         │   
+    │                         ╰─── def: 4
+  3 │     struct Book { string author; }
+    │            ──┬─          ───┬──  
+    │              ╰─────────────────── def: 5
+    │                             │    
+    │                             ╰──── def: 6
+  4 │     function calculate() returns (Choice);
+    │              ────┬────            ───┬──  
+    │                  ╰──────────────────────── def: 7
+    │                                      │    
+    │                                      ╰──── ref: 2
+  5 │     function get_book() returns (Book);
+    │              ────┬───            ──┬─  
+    │                  ╰───────────────────── def: 8
+    │                                    │   
+    │                                    ╰─── ref: 5
+    │ 
+  8 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 9
+  9 │     Example.Choice choice = Example.Choice.One;
+    │     ───┬─── ───┬── ───┬──   ───┬─── ───┬── ─┬─  
+    │        ╰──────────────────────────────────────── ref: 1
+    │                │      │        │       │    │   
+    │                ╰──────────────────────────────── ref: 2
+    │                       │        │       │    │   
+    │                       ╰───────────────────────── def: 10
+    │                                │       │    │   
+    │                                ╰──────────────── ref: 1
+    │                                        │    │   
+    │                                        ╰──────── ref: 2
+    │                                             │   
+    │                                             ╰─── ref: 3
+ 10 │     Example.Book book;
+    │     ───┬─── ──┬─ ──┬─  
+    │        ╰─────────────── ref: 1
+    │               │    │   
+    │               ╰──────── ref: 5
+    │                    │   
+    │                    ╰─── def: 11
+────╯

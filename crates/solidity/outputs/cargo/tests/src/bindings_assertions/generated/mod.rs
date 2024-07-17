@@ -2,4 +2,5 @@
 
 mod contracts;
 mod enums;
+mod interfaces;
 mod lexical;
