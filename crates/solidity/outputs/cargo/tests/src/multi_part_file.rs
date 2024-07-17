@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use regex::Regex;
 
 /// Gets the parts in a multi-file, each separated by a path designation. If the
@@ -10,16 +8,16 @@ use regex::Regex;
 ///   // --- path: lib/foo.sol
 ///
 /// Any number of dashes greater than or equal to 3 is accepted. In the above
-/// case, the returned `HashMap` will contain a single entry with the contents
+/// case, the returned vector will contain a single entry with the contents
 /// below the separator line.
 ///
 /// Non-whitespace content is not allowed before the first separator.
 ///
-pub fn split_multi_file(contents: &str) -> HashMap<String, &str> {
+pub fn split_multi_file(contents: &str) -> Vec<(&str, &str)> {
     let separator_re = Regex::new("(?m)^// -{3,} path: (.+)\\s*$").unwrap();
-    let mut last_path: Option<String> = None;
+    let mut last_path: Option<&str> = None;
     let mut last_start = None;
-    let mut parts = HashMap::new();
+    let mut parts = Vec::new();
 
     for captures in separator_re.captures_iter(contents) {
         let separator_match = captures.get(0).unwrap();
@@ -27,7 +25,7 @@ pub fn split_multi_file(contents: &str) -> HashMap<String, &str> {
 
         let end = separator_match.start();
         if let Some(start) = last_start {
-            parts.insert(last_path.unwrap(), &contents[start..end]);
+            parts.push((last_path.unwrap(), &contents[start..end]));
         } else {
             let leading_content = &contents[..end];
             assert!(
@@ -37,13 +35,13 @@ pub fn split_multi_file(contents: &str) -> HashMap<String, &str> {
         }
 
         last_start = Some(separator_match.end());
-        last_path = Some(path_match.as_str().to_string());
+        last_path = Some(path_match.as_str());
     }
 
     if let Some(start) = last_start {
-        parts.insert(last_path.unwrap(), &contents[start..]);
+        parts.push((last_path.unwrap(), &contents[start..]));
     } else {
-        parts.insert("input.sol".to_string(), contents);
+        parts.push(("input.sol", contents));
     }
     parts
 }
@@ -65,25 +63,34 @@ contract Bar {}
     let parts = split_multi_file(multi_file_contents);
     assert_eq!(3, parts.len());
     assert_eq!(
-        parts.get("main.sol").unwrap(),
-        &r#"
+        parts[0],
+        (
+            "main.sol",
+            r#"
 import "lib/foo.sol" as foo;
 import "lib/bar.sol" as bar;
 
 "#
+        )
     );
     assert_eq!(
-        parts.get("lib/foo.sol").unwrap(),
-        &r#"
+        parts[1],
+        (
+            "lib/foo.sol",
+            r#"
 contract Foo {}
 
 "#
+        )
     );
     assert_eq!(
-        parts.get("lib/bar.sol").unwrap(),
-        &r#"
+        parts[2],
+        (
+            "lib/bar.sol",
+            r#"
 contract Bar {}
 "#
+        )
     );
 }
 
@@ -95,7 +102,8 @@ contract Foo {}
 
     let parts = split_multi_file(file_contents);
     assert_eq!(1, parts.len());
-    assert_eq!(parts.get("input.sol").unwrap(), &file_contents);
+    assert_eq!(parts[0].0, "input.sol");
+    assert_eq!(parts[0].1, file_contents);
 }
 
 #[test]
