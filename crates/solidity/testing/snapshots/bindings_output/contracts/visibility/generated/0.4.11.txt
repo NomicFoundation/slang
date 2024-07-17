@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[crates/solidity/testing/snapshots/bindings_output/contracts/visibility/input.sol:1:1]
+    │
+  1 │ contract First {
+    │          ──┬──  
+    │            ╰──── def: 1
+  2 │     enum Choice { One, Two }
+    │          ───┬──   ─┬─  ─┬─  
+    │             ╰─────────────── def: 2
+    │                    │    │   
+    │                    ╰──────── def: 3
+    │                         │   
+    │                         ╰─── def: 4
+    │ 
+  4 │     int x;
+    │         ┬  
+    │         ╰── def: 5
+  5 │     Choice choice;
+    │     ───┬── ───┬──  
+    │        ╰─────────── ref: 2
+    │               │    
+    │               ╰──── def: 6
+    │ 
+  7 │     function get_x() public returns (int) {
+    │              ──┬──  
+    │                ╰──── def: 7
+  8 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+    │ 
+ 11 │     function get_choice() public returns (Choice) {
+    │              ─────┬────                   ───┬──  
+    │                   ╰─────────────────────────────── def: 8
+    │                                              │    
+    │                                              ╰──── ref: 2
+ 12 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 6
+    │ 
+ 16 │ contract Second {
+    │          ───┬──  
+    │             ╰──── def: 9
+ 17 │     First.Choice choice;
+    │     ──┬── ───┬── ───┬──  
+    │       ╰────────────────── ref: 1
+    │              │      │    
+    │              ╰─────────── ref: 2
+    │                     │    
+    │                     ╰──── def: 10
+    │ 
+ 19 │     function get_choice() public returns (First.Choice) {
+    │              ─────┬────                   ──┬── ───┬──  
+    │                   ╰───────────────────────────────────── def: 11
+    │                                             │      │    
+    │                                             ╰─────────── ref: 1
+    │                                                    │    
+    │                                                    ╰──── ref: 2
+ 20 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 10
+────╯

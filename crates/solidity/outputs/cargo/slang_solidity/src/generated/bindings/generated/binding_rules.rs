@@ -37,8 +37,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.lexical_scope
   node @contract.def
   node @contract.members
+  node @contract.type_members
 
   edge @contract.lexical_scope -> @contract.members
+  edge @contract.lexical_scope -> @contract.type_members
 }
 
 @interface [InterfaceDefinition] {
@@ -131,13 +133,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @contract.def -> def
 
-  ;; Contract members are reachable from the parent scope through the .def
-  ;; entry, by going through at "." symbol
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
+
   node member
   attr (member) pop_symbol = "."
-  edge def -> member
 
+  edge def -> type_def
+  edge type_def -> member
   edge member -> @contract.members
+
+  node type_member
+  attr (type_member) pop_symbol = "."
+  edge def -> type_member
+
+  edge type_member -> @contract.type_members
 }
 
 @interface [InterfaceDefinition ... @name name: [Identifier] ...] {
@@ -515,7 +525,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @enum variant: [EnumDefinition]]
     ...
 ] ...] {
-  edge @contract.members -> @enum.def
+  edge @contract.type_members -> @enum.def
 }
 
 @interface [InterfaceDefinition ... members: [InterfaceMembers
@@ -590,7 +600,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ...
 ] ...] {
   edge @struct.lexical_scope -> @contract.lexical_scope
-  edge @contract.members -> @struct.def
+  edge @contract.type_members -> @struct.def
 }
 
 @interface [InterfaceDefinition ... members: [InterfaceMembers
