@@ -49,11 +49,11 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
     return match get_extension(file_path) {
         "js" | "json" | "ts" => run_prettier(file_path, contents),
         "rs" => run_rustfmt(contents),
-        "html" | "md" | "mmd" | "txt" | "yml" => {
+        "html" | "md" | "yml" => {
             // We already generate formatted content for these, so no need to run expensive formatting.
             Ok(contents.to_owned())
         }
-        "ebnf" => {
+        "ebnf" | "mmd" | "txt" => {
             // No formatters available for these (yet).
             Ok(contents.to_owned())
         }
