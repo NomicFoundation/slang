@@ -1,9 +1,10 @@
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::functions::Functions;
+use semver::Version;
 
-pub fn default_functions<KT: KindTypes + 'static>() -> Functions<KT> {
+pub fn default_functions<KT: KindTypes + 'static>(version: Version) -> Functions<KT> {
     let mut functions = Functions::stdlib();
-    version::add_version_functions(&mut functions);
+    version::add_version_functions(&mut functions, version);
     functions
 }
 
@@ -14,11 +15,16 @@ pub mod version {
     use metaslang_graph_builder::ExecutionError;
     use semver::{Version, VersionReq};
 
-    pub fn add_version_functions<KT: KindTypes + 'static>(functions: &mut Functions<KT>) {
-        functions.add("version-matches".into(), VersionMatches);
+    pub fn add_version_functions<KT: KindTypes + 'static>(
+        functions: &mut Functions<KT>,
+        version: Version,
+    ) {
+        functions.add("version-matches".into(), VersionMatches { version });
     }
 
-    struct VersionMatches;
+    struct VersionMatches {
+        version: Version,
+    }
 
     impl<KT: KindTypes> Function<KT> for VersionMatches {
         fn call(
@@ -26,23 +32,16 @@ pub mod version {
             _graph: &mut Graph<KT>,
             parameters: &mut dyn Parameters,
         ) -> Result<Value, ExecutionError> {
-            let version_str = parameters.param()?.into_string()?;
             let requirements_str = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            let Ok(version) = Version::parse(&version_str) else {
-                return Err(ExecutionError::FunctionFailed(
-                    "version-matches".into(),
-                    format!("Failed to parse version {version_str}"),
-                ));
-            };
             let Ok(requirements) = VersionReq::parse(&requirements_str) else {
                 return Err(ExecutionError::FunctionFailed(
                     "version-matches".into(),
                     format!("Failed to parse version requirements {requirements_str}"),
                 ));
             };
-            let result = requirements.matches(&version);
+            let result = requirements.matches(&self.version);
             Ok(result.into())
         }
     }

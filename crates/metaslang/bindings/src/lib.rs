@@ -32,7 +32,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         let graph_builder_file =
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = builder::default_functions();
+        let functions = builder::default_functions(version.clone());
         let cursors = HashMap::new();
 
         Self {

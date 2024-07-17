@@ -89,7 +89,7 @@ fn output_graph(version: &Version, parse_output: &ParseOutput) -> Result<String>
         .add(VARIABLE_DEBUG_ATTR.into(), ROOT_NODE_VAR.to_string())
         .unwrap();
 
-    let functions = builder::default_functions();
+    let functions = builder::default_functions(version.clone());
     let mut variables = Variables::new();
     variables.add(ROOT_NODE_VAR.into(), root_node.into())?;
     variables.add(VERSION_VAR.into(), version.to_string().into())?;

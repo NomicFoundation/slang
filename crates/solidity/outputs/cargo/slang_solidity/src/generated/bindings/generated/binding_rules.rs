@@ -4,7 +4,6 @@
 #[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
-global VERSION
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -325,7 +324,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @stmt.lexical_scope
   node @stmt.defs
 
-  if (version-matches VERSION ">= 0.5.0") {
+  if (version-matches ">= 0.5.0") {
     ;; For Solidity >= 0.5.0, definitions are immediately available in the
     ;; statement scope. For < 0.5.0 this is also true, but resolved through the
     ;; enclosing block's lexical scope.
@@ -336,21 +335,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; The first statement in a block
 @block [Block ... [Statements @stmt [Statement] ...] ...] {
-  if (version-matches VERSION ">= 0.5.0") {
+  if (version-matches ">= 0.5.0") {
     edge @stmt.lexical_scope -> @block.lexical_scope
   }
 }
 
 ;; Two consecutive statements
 [Statements ... @left_stmt [Statement] @right_stmt [Statement] ...] {
-  if (version-matches VERSION ">= 0.5.0") {
+  if (version-matches ">= 0.5.0") {
     edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
   }
 }
 
 @block [Block ... [Statements ... @stmt [Statement]...] ...] {
   ;; Hoist statement definitions for Solidity < 0.5.0
-  if (version-matches VERSION "< 0.5.0") {
+  if (version-matches "< 0.5.0") {
     ;; definitions are carried over to the block
     edge @block.defs -> @stmt.defs
 
@@ -368,7 +367,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @block.lexical_scope -> @stmt.lexical_scope
 
   ;; Hoist block definitions (< 0.5.0)
-  if (version-matches VERSION "< 0.5.0") {
+  if (version-matches "< 0.5.0") {
     edge @stmt.defs -> @block.defs
   }
 }
