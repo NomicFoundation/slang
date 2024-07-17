@@ -3,8 +3,8 @@ use std::fs;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
-use slang_solidity::bindings;
 use slang_solidity::language::Language;
+use slang_solidity::{bindings, diagnostic};
 
 use super::assertions::{check_assertions, collect_assertions};
 use super::generated::VERSION_BREAKS;
@@ -31,9 +31,6 @@ fn check_assertions_with_version(
     let language = Language::new(version.clone())?;
 
     let parse_output = language.parse(Language::ROOT_KIND, file_contents);
-    if !parse_output.is_valid() {
-        eprintln!("WARNING: Parsing failed for {file_path} with version {version}");
-    }
 
     let mut bindings = bindings::create(version.clone());
     bindings.add_file(file_path, parse_output.create_tree_cursor());
@@ -42,11 +39,21 @@ fn check_assertions_with_version(
 
     let result = check_assertions(&bindings, &assertions, version);
 
-    assert!(
-        result.is_ok(),
-        "Failed bindings assertions in version {version}:\n{errors}",
-        errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
-    );
+    if result.is_err() {
+        if !parse_output.is_valid() {
+            let report = parse_output
+                .errors()
+                .iter()
+                .map(|error| diagnostic::render(error, file_path, file_contents, false))
+                .collect::<Vec<_>>()
+                .join("\n");
+            eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
+        }
+        panic!(
+            "Failed bindings assertions in version {version}:\n{errors}",
+            errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
+        );
+    }
 
     Ok(())
 }
