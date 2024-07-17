@@ -2,23 +2,18 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{bail, Result};
-use codegen_language_definition::model::Language;
 use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::FileWalker;
 
 use crate::common::{generate_mod_file, generate_unit_test_file};
 
-pub fn generate_bindings_assertions_tests(
-    language: &Language,
-    data_dir: &Path,
-    output_dir: &Path,
-) -> Result<()> {
+pub fn generate_bindings_assertions_tests(data_dir: &Path, output_dir: &Path) -> Result<()> {
     let tests = collect_assertion_tests(data_dir)?;
 
     let mut fs = CodegenFileSystem::new(data_dir)?;
 
-    generate_mod_file(language, &mut fs, &output_dir.join("mod.rs"), &tests)?;
+    generate_mod_file(&mut fs, &output_dir.join("mod.rs"), &tests)?;
 
     for (group_name, test_files) in &tests {
         generate_unit_test_file(

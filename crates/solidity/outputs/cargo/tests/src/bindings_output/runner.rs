@@ -18,7 +18,7 @@ use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
 
-use super::generated::VERSION_BREAKS;
+use crate::generated::VERSION_BREAKS;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?

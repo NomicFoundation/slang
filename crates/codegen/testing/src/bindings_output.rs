@@ -1,22 +1,17 @@
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_language_definition::model::Language;
 use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
 
 use crate::common::{collect_snapshot_tests, generate_mod_file, generate_unit_test_file};
 
-pub fn generate_bindings_output_tests(
-    language: &Language,
-    data_dir: &Path,
-    output_dir: &Path,
-) -> Result<()> {
+pub fn generate_bindings_output_tests(data_dir: &Path, output_dir: &Path) -> Result<()> {
     let tests = collect_snapshot_tests(data_dir)?;
 
     let mut fs = CodegenFileSystem::new(data_dir)?;
 
-    generate_mod_file(language, &mut fs, &output_dir.join("mod.rs"), &tests)?;
+    generate_mod_file(&mut fs, &output_dir.join("mod.rs"), &tests)?;
 
     for (group_name, test_names) in &tests {
         generate_unit_test_file(

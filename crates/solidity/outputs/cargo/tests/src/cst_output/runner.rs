@@ -8,8 +8,8 @@ use slang_solidity::kinds::NonterminalKind;
 use slang_solidity::language::Language;
 use strum_macros::Display;
 
-use crate::cst_output::generated::VERSION_BREAKS;
 use crate::cst_output::renderer::render;
+use crate::generated::VERSION_BREAKS;
 
 #[derive(Display)]
 #[strum(serialize_all = "kebab_case")]

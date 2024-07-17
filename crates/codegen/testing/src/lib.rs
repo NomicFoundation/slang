@@ -30,12 +30,12 @@ impl TestingGeneratorExtensions for Language {
         generate_version_breaks(self, lang_def_dir, output_dir)
     }
     fn generate_bindings_assertions_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
-        generate_bindings_assertions_tests(self, data_dir, output_dir)
+        generate_bindings_assertions_tests(data_dir, output_dir)
     }
     fn generate_bindings_output_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
-        generate_bindings_output_tests(self, data_dir, output_dir)
+        generate_bindings_output_tests(data_dir, output_dir)
     }
     fn generate_cst_output_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
-        generate_cst_output_tests(self, data_dir, output_dir)
+        generate_cst_output_tests(data_dir, output_dir)
     }
 }

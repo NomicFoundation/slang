@@ -50,43 +50,16 @@ pub(crate) fn collect_snapshot_tests(
 }
 
 pub(crate) fn generate_mod_file(
-    language: &Language,
     fs: &mut CodegenFileSystem,
     mod_file_path: &Path,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
 ) -> Result<()> {
-    let module_declarations_str =
-        parser_tests
-            .keys()
-            .fold(String::new(), |mut buffer, parser_name| {
-                writeln!(buffer, "mod {0};", parser_name.to_snake_case()).unwrap();
-                buffer
-            });
-
-    let version_breaks = language.collect_breaking_versions();
-    let version_breaks_len = version_breaks.len();
-    let version_breaks_str = version_breaks
-        .iter()
-        .fold(String::new(), |mut buffer, version| {
-            writeln!(
-                buffer,
-                "Version::new({}, {}, {}),",
-                version.major, version.minor, version.patch
-            )
-            .unwrap();
+    let contents = parser_tests
+        .keys()
+        .fold(String::new(), |mut buffer, parser_name| {
+            writeln!(buffer, "mod {0};", parser_name.to_snake_case()).unwrap();
             buffer
         });
-
-    let contents = format!(
-        "
-            use semver::Version;
-            {module_declarations_str}
-
-            pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
-                {version_breaks_str}
-            ];
-        ",
-    );
 
     fs.write_file(mod_file_path, contents)
 }

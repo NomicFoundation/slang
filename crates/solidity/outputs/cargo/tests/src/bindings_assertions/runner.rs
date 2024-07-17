@@ -7,7 +7,7 @@ use slang_solidity::language::Language;
 use slang_solidity::{bindings, diagnostic};
 
 use super::assertions::{check_assertions, collect_assertions};
-use super::generated::VERSION_BREAKS;
+use crate::generated::VERSION_BREAKS;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let file_name = format!("{test_name}.sol");
