@@ -31,13 +31,12 @@ name = "slang_solidity"
 path = "src/main.rs"
 required-features = ["cli"]
 
+# __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
 [features]
 default = ["cli"]
-cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
-# This is meant to be used by the CLI or internally only.
-__private_ariadne = ["dep:ariadne"]
-# For internal development only
+cli = ["dep:ariadne", "dep:clap", "dep:serde_json"]
 __experimental_bindings_api = ["dep:metaslang_bindings"]
+__private_testing_utils = ["dep:ariadne"]
 
 [build-dependencies] # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__

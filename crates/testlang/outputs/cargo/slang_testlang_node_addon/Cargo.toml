@@ -25,9 +25,10 @@ description = "slang_testlang compiled as a cdylib crate, to be used as Node.js 
 path = "../slang_testlang/src/lib.rs"
 crate-type = ["cdylib"]
 
+# __RUST_NAPI_CRATE_FEATURES__ (keep in sync)
 [features]
-default = ["slang_napi_interfaces"]
-slang_napi_interfaces = [
+default = ["__private_napi_interfaces"]
+__private_napi_interfaces = [
   # This enables '#[napi]' attributes on the Rust types imported via [lib.path] above.
   "dep:serde_json",
 ]
