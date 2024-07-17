@@ -1,14 +1,28 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
+use metaslang_graph_builder::graph::Graph;
 use slang_solidity::bindings;
+use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
+use slang_solidity::parse_output::ParseOutput;
+use slang_solidity::resolver::SolidityPathResolver;
 
 use super::graph::render_graph;
 use super::renderer::render_bindings;
 use crate::generated::VERSION_BREAKS;
+use crate::multi_part_file::split_multi_file;
+
+pub(crate) struct ParsedPart<'a> {
+    pub path: &'a str,
+    pub contents: &'a str,
+    pub parse_output: ParseOutput,
+    pub graph: Graph<KindTypes>,
+}
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
@@ -19,27 +33,34 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let mut fs = CodegenFileSystem::new(&test_dir)?;
 
     let input_path = test_dir.join("input.sol");
-
-    let source = input_path.read_to_string()?;
+    let contents = input_path.read_to_string()?;
 
     let mut last_graph_output = None;
     let mut last_bindings_output = None;
 
     for version in &VERSION_BREAKS {
         let language = Language::new(version.clone())?;
-        let mut bindings = bindings::create(version.clone());
+        let mut bindings =
+            bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
+        let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
 
-        let parse_output = language.parse(Language::ROOT_KIND, &source);
-        let graph = bindings.add_file_returning_graph(
-            input_path.to_str().unwrap(),
-            parse_output.create_tree_cursor(),
-        );
+        let parts = split_multi_file(&contents);
+        for (path, contents) in &parts {
+            let parse_output = language.parse(Language::ROOT_KIND, contents);
+            let graph = bindings.add_file_returning_graph(path, parse_output.create_tree_cursor());
+            parsed_parts.push(ParsedPart {
+                path,
+                contents,
+                parse_output,
+                graph,
+            });
+        }
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
             // to the repository and hence we cannot verify their contents,
             // which is what `fs.write_file` does in CI.
-            let graph_output = render_graph(&graph, &parse_output, &input_path);
+            let graph_output = render_graph(&parsed_parts);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
@@ -51,7 +72,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             };
         }
 
-        let bindings_output = render_bindings(&bindings, &parse_output, &source, &input_path)?;
+        let bindings_output = render_bindings(&bindings, &parsed_parts)?;
         match last_bindings_output {
             Some(ref last) if last == &bindings_output => (),
             _ => {

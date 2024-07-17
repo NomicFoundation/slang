@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/sample/input.sol:17:5]
+    ╭─[input.sol:17:5]
     │
  17 │ ╭─▶     function getChoice() public view returns (ActionChoices) {
     ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
     │ ╰─────────── Error occurred here.
 ────╯
 References and definitions: 
-    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/sample/input.sol:1:1]
+    ╭─[input.sol:1:1]
     │
   4 │ contract Test {
     │          ──┬─  

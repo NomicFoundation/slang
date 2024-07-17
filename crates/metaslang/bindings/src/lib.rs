@@ -133,7 +133,7 @@ pub struct Handle<'a, KT: KindTypes + 'static> {
     handle: GraphHandle,
 }
 
-impl<KT: KindTypes + 'static> Handle<'_, KT> {
+impl<'a, KT: KindTypes + 'static> Handle<'a, KT> {
     pub fn is_definition(&self) -> bool {
         self.owner.stack_graph[self.handle].is_definition()
     }
@@ -146,7 +146,7 @@ impl<KT: KindTypes + 'static> Handle<'_, KT> {
         self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn get_file(&self) -> Option<&str> {
+    pub fn get_file(&self) -> Option<&'a str> {
         self.owner.stack_graph[self.handle]
             .file()
             .map(|file| self.owner.stack_graph[file].name())

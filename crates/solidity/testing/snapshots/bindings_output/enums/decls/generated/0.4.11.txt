@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/decls/input.sol:13:1]
+    ╭─[input.sol:13:1]
     │
  13 │ enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
     │ ──────────────────────────────┬──────────────────────────────  
     │                               ╰──────────────────────────────── Error occurred here.
 ────╯
 References and definitions: 
-    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/decls/input.sol:1:1]
+    ╭─[input.sol:1:1]
     │
   1 │ contract Test {
     │          ──┬─  

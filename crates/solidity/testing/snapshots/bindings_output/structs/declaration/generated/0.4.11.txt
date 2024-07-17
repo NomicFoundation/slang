@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[crates/solidity/testing/snapshots/bindings_output/structs/declaration/input.sol:1:1]
+    ╭─[input.sol:1:1]
     │
   1 │ ╭─▶ struct TopLevelStruct {
     ┆ ┆   

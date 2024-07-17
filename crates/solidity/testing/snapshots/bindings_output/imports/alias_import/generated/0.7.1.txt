@@ -1,18 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-   ╭─[crates/solidity/testing/snapshots/bindings_output/imports/alias_import/input.sol:1:1]
+   ╭─[main.sol:1:1]
    │
- 1 │ import "./other.sol" as other;
+ 2 │ import "./other.sol" as other;
    │                         ──┬──  
    │                           ╰──── def: 1
    │ 
- 3 │ function foo() returns (int) {
+ 4 │ function foo() returns (int) {
    │          ─┬─  
    │           ╰─── def: 2
- 4 │     return other.bar();
+ 5 │     return other.bar();
    │            ──┬── ─┬─  
    │              ╰──────── ref: 1
    │                   │   
-   │                   ╰─── unresolved
+   │                   ╰─── ref: 3
+───╯
+References and definitions: 
+   ╭─[other.sol:1:1]
+   │
+ 2 │ function bar() pure returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 3
 ───╯

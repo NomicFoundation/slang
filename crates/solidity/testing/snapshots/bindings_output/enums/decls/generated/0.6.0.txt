@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/decls/input.sol:1:1]
+    ╭─[input.sol:1:1]
     │
   1 │ contract Test {
     │          ──┬─  

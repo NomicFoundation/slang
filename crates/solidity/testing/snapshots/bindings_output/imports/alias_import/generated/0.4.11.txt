@@ -1,11 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[crates/solidity/testing/snapshots/bindings_output/imports/alias_import/input.sol:1:1]
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[main.sol:4:1]
    │
- 1 │ import "./other.sol" as other;
+ 4 │ ╭─▶ function foo() returns (int) {
+   ┆ ┆   
+ 7 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 2 │ import "./other.sol" as other;
    │                         ──┬──  
    │                           ╰──── def: 1
-   │ 
-   │ Note: WARNING: Parsing failed. Results may be incomplete.
 ───╯
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[other.sol:2:1]
+   │
+ 2 │ ╭─▶ function bar() pure returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+References and definitions: 
