@@ -54,7 +54,10 @@ fn check_assertions_with_version(
             errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
         );
     } else {
-        println!("Version {version}, {count} assertions OK", count = result.unwrap());
+        println!(
+            "Version {version}, {count} assertions OK",
+            count = result.unwrap()
+        );
     }
 
     Ok(())

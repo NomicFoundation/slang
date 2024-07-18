@@ -2,6 +2,7 @@ use core::fmt;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
+use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::{Version, VersionReq};
 use slang_solidity::bindings::Bindings;
@@ -171,15 +172,17 @@ enum Assertion {
     Reference(ReferenceAssertion),
 }
 
+static ASSERTION_REGEX: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"[\^](?<type>ref|def):(?<id>[0-9a-zA-Z_-]+|!)([\t ]*\((?<version>[^)]+)\))?")
+        .unwrap()
+});
+
 fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, AssertionError> {
-    let assertion_regex =
-        Regex::new(r"[\^](?<type>ref|def):(?<id>[0-9a-zA-Z_-]+|!)([\t ]*\((?<version>[^)]+)\))?")
-            .unwrap();
     let comment_offset = comment.text_offset();
     let comment_col = comment_offset.column;
     let comment_str = comment.node().unparse();
 
-    let Some(captures) = assertion_regex.captures(&comment_str) else {
+    let Some(captures) = ASSERTION_REGEX.captures(&comment_str) else {
         return Ok(None);
     };
 
