@@ -53,6 +53,8 @@ fn check_assertions_with_version(
             "Failed bindings assertions in version {version}:\n{errors}",
             errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
         );
+    } else {
+        println!("Version {version}, {count} assertions OK", count = result.unwrap());
     }
 
     Ok(())
