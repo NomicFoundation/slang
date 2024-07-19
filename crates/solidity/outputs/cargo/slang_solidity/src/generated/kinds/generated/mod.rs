@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 use napi_derive::napi;
 
 #[derive(
@@ -16,8 +16,8 @@ use napi_derive::napi;
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum NonterminalKind {
     ABICoderPragma,
     AdditiveExpression,
@@ -252,8 +252,8 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
     strum_macros::IntoStaticStr,
 )]
 #[strum(serialize_all = "snake_case")]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
     Item,
@@ -406,8 +406,8 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,

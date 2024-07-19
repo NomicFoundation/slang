@@ -7,6 +7,13 @@ publish = false
 
 description = "Cargo runtime copied over by codegen"
 
+# __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
+[features]
+default = ["cli"]
+cli = ["dep:ariadne", "dep:clap", "dep:serde_json"]
+__experimental_bindings_api = ["dep:metaslang_bindings"]
+__private_testing_utils = ["dep:ariadne"]
+
 [build-dependencies]
 anyhow = { workspace = true }
 codegen_runtime_generator = { workspace = true }
@@ -16,25 +23,12 @@ ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
-napi = { workspace = true, optional = true }
-napi-derive = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
-
-# Since the source code is copied over as-is, we need to retain exact feature set with target crate,
-# i.e `slang_solidity_node_addon`.
-[features]
-default = ["slang_napi_interfaces"]
-slang_napi_interfaces = ["dep:napi", "dep:napi-derive", "dep:serde_json"]
-cli = ["dep:clap", "dep:serde_json", "__private_ariadne"]
-# Only used by the `slang_solidity` CLI
-__private_ariadne = ["dep:ariadne"]
-# For internal development only
-__experimental_bindings_api = ["dep:metaslang_bindings"]
 
 [lints]
 workspace = true
