@@ -174,17 +174,6 @@ fn test_anchor_skips_trivia() {
 }
 
 #[test]
-fn test_anchor_allows_matching_trivia() {
-    run_query_test(
-        &common_test_tree_with_trivia(),
-        "[TreeNode @y1 [DelimitedIdentifier] . [EndOfLine] . @y2 [DelimitedIdentifier]]",
-        query_matches! {
-            {y1: ["B"], y2: ["C"]}
-        },
-    );
-}
-
-#[test]
 fn test_child() {
     run_query_test(
         &common_test_tree(),

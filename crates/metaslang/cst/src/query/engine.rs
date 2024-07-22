@@ -593,33 +593,29 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
     fn record_captures(&self, _: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
 }
 
-/// Similar to an ellipsis matcher, but skips over trivia sibling nodes only
+/// Greedily consumes all available trivia nodes
 struct AnchorMatcher<T: KindTypes> {
-    cursor: Cursor<T>,
-    has_returned_initial_empty_value: bool,
+    cursor: Option<Cursor<T>>,
 }
 
-impl<T: KindTypes> AnchorMatcher<T> {
+impl<T: KindTypes + 'static> AnchorMatcher<T> {
     fn new(cursor: Cursor<T>) -> Self {
         Self {
-            cursor,
-            has_returned_initial_empty_value: false,
+            cursor: Some(cursor),
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for AnchorMatcher<T> {
     fn next(&mut self) -> Option<Cursor<T>> {
-        if !self.has_returned_initial_empty_value {
-            self.has_returned_initial_empty_value = true;
-            return Some(self.cursor.clone());
+        if let Some(mut cursor) = self.cursor.take() {
+            while !cursor.is_completed() && cursor.node().is_trivia() {
+                cursor.irrevocably_go_to_next_sibling();
+            }
+            Some(cursor)
+        } else {
+            None
         }
-
-        if self.cursor.node().is_trivia() && self.cursor.irrevocably_go_to_next_sibling() {
-            return Some(self.cursor.clone());
-        }
-
-        None
     }
 
     fn record_captures(&self, _: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
