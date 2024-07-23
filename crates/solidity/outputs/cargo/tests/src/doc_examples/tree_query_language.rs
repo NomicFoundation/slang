@@ -145,7 +145,7 @@ fn quantification() {
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-1]
-	[SourceUnit (leading_trivia:[_])+]
+	[SourceUnit members:[_ ([_ @import [ImportDirective]])+]]
     // --8<-- [end:quantification-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -155,15 +155,15 @@ fn quantification() {
     assert_matches(
         &query,
         NonterminalKind::SourceUnit,
-        "// comment 1\n// comment 2\n/* comment 3 */",
+        "import 'test.sol';\nimport * as Utils from 'lib/utils.sol'\n\ncontract Test {}",
     );
 
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-2]
-	[ContractDefinition
-		(@docline [SingleLineNatSpecComment])+
+	[StructDefinition
 		@name name:[_]
+		members:[_ ([_ @member [Identifier]])+]
 	]
     // --8<-- [end:quantification-2]
     "
@@ -175,8 +175,10 @@ fn quantification() {
         &query,
         NonterminalKind::SourceUnit,
         "
-		/// A doc comment
-		contract A {}
+		struct Test {
+      int x;
+      int y;
+    }
 		",
     );
 
@@ -217,7 +219,6 @@ fn alternations() {
         &"
     // --8<-- [start:alternations-1]
 	[FunctionCallExpression
-    .
 		operand:[Expression
 			(@function variant:[Identifier]
 			| @method variant:[MemberAccessExpression])
@@ -279,11 +280,11 @@ fn anchoring() {
     let query = Query::parse(
         &r#"
     // --8<-- [start:anchoring-1]
-  [FunctionDefinition
-    [ParametersDeclaration
-      [Parameters . @first_param [Parameter]]
-    ]
-  ]
+	[FunctionDefinition
+		[ParametersDeclaration
+			[Parameters . @first_param [Parameter]]
+		]
+	]
     // --8<-- [end:anchoring-1]
     "#
         .remove_mkdoc_snippet_markers(),
@@ -308,11 +309,11 @@ fn anchoring() {
     let query = Query::parse(
         &r#"
     // --8<-- [start:anchoring-2]
-  [FunctionDefinition
-    [ParametersDeclaration
-      [Parameters @last_param [Parameter] .]
-    ]
-  ]
+	[FunctionDefinition
+		[ParametersDeclaration
+			[Parameters @last_param [Parameter] .]
+		]
+	]
     // --8<-- [end:anchoring-2]
     "#
         .remove_mkdoc_snippet_markers(),
@@ -337,9 +338,7 @@ fn anchoring() {
     let query = Query::parse(
         &r#"
     // --8<-- [start:anchoring-3]
-  [Statements
-    @stmt1 [Statement] . @stmt2 [Statement]
-  ]
+	[Statements @stmt1 [Statement] . @stmt2 [Statement]]
     // --8<-- [end:anchoring-3]
     "#
         .remove_mkdoc_snippet_markers(),

@@ -72,13 +72,13 @@ by a `?`, `*` or `+` operator. The `?` operator matches _zero or one_ repetition
 of a pattern, the `*` operator matches _zero or more_, and the `+` operator
 matches _one or more_.
 
-For example, this pattern would match a sequence of one or more comments at the top of the file:
+For example, this pattern would match a sequence of one or more import directives at the top of the file:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-1"
 ```
 
-This pattern would match a contract definition with at least one doc comment, capturing them:
+This pattern would match a structure definition with one or more members, capturing their names:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-2"
@@ -93,7 +93,7 @@ present:
 
 ### Alternations
 
-An alternation is written as a sequence of patterns separated by '|' and surrounded by parentheses.
+An alternation is written as a sequence of patterns separated by `|` and surrounded by parentheses.
 
 For example, this pattern would match a call to either a variable or an object property.
 In the case of a variable, capture it as `@function`, and in the case of a property, capture it as `@method`:
@@ -110,7 +110,7 @@ This pattern would match a set of possible keyword terminals, capturing them as 
 
 ### Anchoring
 
-By using anchors '.', you can constrain a pattern to only match the first or the
+By using anchors `.`, you can constrain a pattern to only match the first or the
 last child nodes.
 
 For example, the following pattern would match only the first parameter

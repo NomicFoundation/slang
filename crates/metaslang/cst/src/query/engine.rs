@@ -9,7 +9,7 @@ use super::model::{
 };
 use crate::cst::NodeKind;
 use crate::query::CaptureQuantifier;
-use crate::KindTypes;
+use crate::{KindTypes, TerminalKind as _};
 
 impl<T: KindTypes + 'static> Cursor<T> {
     pub fn query(self, queries: Vec<Query<T>>) -> QueryMatchIterator<T> {
@@ -45,6 +45,8 @@ impl<T: KindTypes + 'static> Cursor<T> {
                 }
                 NodeSelector::EdgeLabelAndNodeText { .. } => false,
             },
+
+            Node::<T>::Terminal(terminal) if terminal.kind.is_trivia() => false,
 
             Node::<T>::Terminal(terminal) => match node_selector {
                 NodeSelector::Anonymous => true,

@@ -17,7 +17,7 @@ use super::model::{
     OptionalASTNode, SequenceASTNode,
 };
 use crate::cst::NodeKind;
-use crate::{AbstractKind as _, KindTypes};
+use crate::{AbstractKind as _, KindTypes, TerminalKind as _};
 
 // ----------------------------------------------------------------------------
 // Parse errors
@@ -197,6 +197,7 @@ fn parse_node_selector<T: KindTypes>(
 ) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
     alt((
         token('_').map(|_| NodeSelector::Anonymous),
+        trivia_kind_token::<T, NodeSelector<T>>,
         kind_token.map(|node_kind| NodeSelector::NodeKind { node_kind }),
         text_token.map(|node_text| NodeSelector::NodeText { node_text }),
     ))
@@ -359,6 +360,26 @@ fn ellipsis_token<O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
     context(
         "deprecated ellipsis operator",
         recognize_as_failure(terminated(tag("..."), multispace0)),
+    )
+    .parse(i)
+}
+
+fn trivia_kind_token<T: KindTypes, O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
+    use nom::error::context;
+    context(
+        "forbidden trivia node kind",
+        recognize_as_failure(terminated(
+            map_res(raw_identifier, |id| {
+                T::TerminalKind::try_from_str(id.as_str()).and_then(|kind| {
+                    if kind.is_trivia() {
+                        Ok(kind)
+                    } else {
+                        Err("Not a trivia kind".to_string())
+                    }
+                })
+            }),
+            multispace0,
+        )),
     )
     .parse(i)
 }

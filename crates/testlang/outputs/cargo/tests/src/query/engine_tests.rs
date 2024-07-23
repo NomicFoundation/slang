@@ -174,6 +174,18 @@ fn test_anchor_skips_trivia() {
 }
 
 #[test]
+fn test_anonymous_node_matcher_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild @x [_]]",
+        query_matches! {
+            {x: ["D"]}
+            {x: ["E"]}
+        },
+    );
+}
+
+#[test]
 fn test_child() {
     run_query_test(
         &common_test_tree(),
@@ -401,8 +413,6 @@ fn test_captures_followed_by_anonymous_matchers() {
             {x: ["A"]}
             {x: ["A"]}
             {x: ["A"]}
-            {x: ["A"]} // TODO: there is an extra case here for the whitespace,
-                       // but eventually we want to ignore whitespace completely
             {x: ["B"]}
             {x: ["B"]}
             {x: ["C"]}

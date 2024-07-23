@@ -97,3 +97,15 @@ fn test_fails_anchors_at_edge_of_alt_option() {
     let result = Query::parse(r#"([TreeNode] | . [DelimitedIdentifier])+"#);
     assert!(result.is_err(), "Expected parse failure");
 }
+
+#[test]
+fn test_fails_parsing_trivia_node_selector() {
+    let result = Query::parse(r#"[EndOfLine]"#);
+    match result {
+        Ok(_) => panic!("Expected parse failure"),
+        Err(e) => assert_eq!(
+            e.message,
+            "Parse error:\nFail at: EndOfLine]\nin section 'forbidden trivia node kind', at: EndOfLine]\n"
+        ),
+    }
+}
