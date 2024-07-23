@@ -343,29 +343,26 @@ fn other_tree() -> Edge {
     )
 }
 
+// "[TreeNode ... @x [DelimitedIdentifier] ... (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])? ...]"
+
 #[test]
 fn test_grouping_interaction_with_trivia() {
     run_query_test(
         &other_tree(),
         "[TreeNode @x [DelimitedIdentifier] (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
         query_matches! {
-            {x: ["A"]}
-            {x: ["A"]}
             {x: ["A"], y: ["B"], z: ["C"]}
-            {x: ["A"]}
             {x: ["A"], y: ["C"], z: ["D"]}
             {x: ["A"]}
-            {x: ["A"]}
-            {x: ["B"]}
             {x: ["B"], y: ["C"], z: ["D"]}
             {x: ["B"]}
-            {x: ["B"]}
-            {x: ["C"]}
             {x: ["C"]}
             {x: ["D"]}
         },
     );
 }
+
+// "[TreeNode ... @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])? ...]",
 
 #[test]
 fn test_anchored_grouping_interaction_with_trivia() {
