@@ -208,7 +208,7 @@ fn quantification() {
 
     let matches: Vec<_> = iter.collect();
 
-    matches[3].captures.get("arg").unwrap();
+    matches[0].captures.get("arg").unwrap();
 }
 
 #[test]

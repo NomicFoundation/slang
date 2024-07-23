@@ -331,7 +331,7 @@ fn test_anchor_at_end_skips_trivia() {
     );
 }
 
-fn other_tree() -> Edge {
+fn flat_tree() -> Edge {
     cst_tree!(
         TreeNode [
             Node: DelimitedIdentifier "A",
@@ -343,12 +343,10 @@ fn other_tree() -> Edge {
     )
 }
 
-// "[TreeNode ... @x [DelimitedIdentifier] ... (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])? ...]"
-
 #[test]
-fn test_grouping_interaction_with_trivia() {
+fn test_ellipsis_followed_by_optional_grouping() {
     run_query_test(
-        &other_tree(),
+        &flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
         query_matches! {
             {x: ["A"], y: ["B"], z: ["C"]}
@@ -362,12 +360,10 @@ fn test_grouping_interaction_with_trivia() {
     );
 }
 
-// "[TreeNode ... @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])? ...]",
-
 #[test]
-fn test_anchored_grouping_interaction_with_trivia() {
+fn test_anchor_followed_by_optional_grouping() {
     run_query_test(
-        &other_tree(),
+        &flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
         query_matches! {
             {x: ["A"]}
@@ -376,6 +372,124 @@ fn test_anchored_grouping_interaction_with_trivia() {
             {x: ["B"], y: ["C"], z: ["D"]}
             {x: ["C"]}
             {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_non_captured_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_anonymous_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [_]]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]} // TODO: there is an extra case here for the whitespace,
+                       // but eventually we want to ignore whitespace completely
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_non_captured_optional_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]?]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_captured_optional_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] @y [DelimitedIdentifier]?]",
+        query_matches! {
+            {x: ["A"], y: ["B"]}
+            {x: ["A"], y: ["C"]}
+            {x: ["A"], y: ["D"]}
+            {x: ["A"]}
+            {x: ["B"], y: ["C"]}
+            {x: ["B"], y: ["D"]}
+            {x: ["B"]}
+            {x: ["C"], y: ["D"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+fn sample_deep_tree() -> Edge {
+    cst_tree!(
+        Tree [
+            Keyword: TreeKeyword "tree",
+            Name: Identifier "$t1",
+            Node: TreeNode [
+                OpenBracket "[",
+                Members: TreeNodeChildren [
+                    TreeNodeChild [
+                        Variant: DelimitedIdentifier "A",
+                    ],
+                    TreeNodeChild [
+                        Variant: TreeNode [
+                            OpenBracket "[",
+                            Members: TreeNodeChildren [
+                                TreeNodeChild [
+                                    Variant: DelimitedIdentifier "B"
+                                ],
+                                TreeNodeChild [
+                                    Variant: DelimitedIdentifier "C"
+                                ],
+                            ],
+                            CloseBracket "]",
+                        ]
+                    ]
+                ],
+                CloseBracket "]",
+            ],
+            Semicolon: Semicolon ";"
+        ]
+    )
+}
+
+#[test]
+fn test_deeply_nested_matchers() {
+    run_query_test(
+        &sample_deep_tree(),
+        "@parent [TreeNode members: [TreeNodeChildren [TreeNodeChild @child variant: [TreeNode]]]]",
+        query_matches! {
+            {parent: ["[A[BC]]"], child: ["[BC]"]}
         },
     );
 }

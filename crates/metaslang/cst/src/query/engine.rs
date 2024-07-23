@@ -83,27 +83,63 @@ impl<T: KindTypes + 'static> ASTNode<T> {
         }
     }
 
-    fn create_matcher(&self, cursor: Cursor<T>, needs_actual_match: bool) -> MatcherRef<T> {
+    // The `require_explicit_match` parameter modifies the behaviour of this and
+    // later matchers. If this value is true, this and later matchers should not
+    // match sibling nodes implicitly.
+    // Currently this only modifies the behaviour of the ellipsis matcher, which
+    // otherwise will attempt to consume any number of sibling nodes.
+    // In a sequence of matchers, this value is set to true by the ellipsis
+    // operator itself, to consume all available sibling nodes and prevent later
+    // ellipsis matchers from doing so.
+    // Conversely, it's set to false by the `NodeMatcher`, both when recursing
+    // into its children and for later matchers after itself, as it handles an
+    // explicit match requested by the user.
+    // All other matchers should propagate the received value forward.
+    //
+    // The whole point of propagating this flag is to prevent a weird
+    // interaction between ellipsis operators working on the same set of sibling
+    // nodes. While two consecutive ellipsis operators should never happen, we
+    // have the `OptionalMatcher` which will not consume any nodes in the nil
+    // case. This means that `... [_]? ...` will effectively work (in one case)
+    // as `... ...`. If we allow both ellipsis operators to consume any number
+    // of nodes, for a sequence of N nodes we get N+1 identical query results
+    // when the operators take turns matching each prefix and complementary
+    // suffix of the list of nodes. By only allowing the first ellipsis operator
+    // to consume an arbitrary number of nodes, we reduce the returned matches
+    // to a single one.
+    //
+    fn create_matcher(&self, cursor: Cursor<T>, require_explicit_match: bool) -> MatcherRef<T> {
         match self {
-            Self::Capture(matcher) => {
-                Box::new(CaptureMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
-            }
+            Self::Capture(matcher) => Box::new(CaptureMatcher::<T>::new(
+                Rc::clone(matcher),
+                cursor,
+                require_explicit_match,
+            )),
             Self::NodeMatch(matcher) => {
-                Box::new(NodeMatchMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
+                // By definition this matcher matches nodes explicitly
+                Box::new(NodeMatchMatcher::<T>::new(Rc::clone(matcher), cursor))
             }
-            Self::Sequence(matcher) => {
-                Box::new(SequenceMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
-            }
-            Self::Alternatives(matcher) => {
-                Box::new(AlternativesMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
-            }
-            Self::Optional(matcher) => {
-                Box::new(OptionalMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
-            }
-            Self::OneOrMore(matcher) => {
-                Box::new(OneOrMoreMatcher::<T>::new(Rc::clone(matcher), cursor, needs_actual_match))
-            }
-            Self::Anchor => Box::new(AnchorMatcher::<T>::new(cursor, needs_actual_match)),
+            Self::Sequence(matcher) => Box::new(SequenceMatcher::<T>::new(
+                Rc::clone(matcher),
+                cursor,
+                require_explicit_match,
+            )),
+            Self::Alternatives(matcher) => Box::new(AlternativesMatcher::<T>::new(
+                Rc::clone(matcher),
+                cursor,
+                require_explicit_match,
+            )),
+            Self::Optional(matcher) => Box::new(OptionalMatcher::<T>::new(
+                Rc::clone(matcher),
+                cursor,
+                require_explicit_match,
+            )),
+            Self::OneOrMore(matcher) => Box::new(OneOrMoreMatcher::<T>::new(
+                Rc::clone(matcher),
+                cursor,
+                require_explicit_match,
+            )),
+            Self::Anchor => Box::new(AnchorMatcher::<T>::new(cursor, require_explicit_match)),
         }
     }
 }
@@ -112,7 +148,7 @@ pub struct QueryMatch<T: KindTypes> {
     pub queries: Rc<Vec<Query<T>>>,
     pub query_number: usize,
     pub root_cursor: Cursor<T>,
-    // These correspond to the capture definitions in tne query
+    // These correspond to the capture definitions in the query
     pub captures: BTreeMap<String, Vec<Cursor<T>>>,
 }
 
@@ -179,6 +215,7 @@ impl<T: KindTypes + 'static> QueryMatchIterator<T> {
             while self.query_number < self.queries.len() {
                 let ast_node = &self.queries[self.query_number].ast_node;
                 if ast_node.can_match(&self.cursor) {
+                    // The first matcher in the query should allow implicit matches
                     self.matcher = Some(ast_node.create_matcher(self.cursor.clone(), false));
                     return;
                 };
@@ -216,19 +253,28 @@ impl<T: KindTypes + 'static> Iterator for QueryMatchIterator<T> {
     }
 }
 
+#[derive(Clone)]
+struct MatcherResult<T: KindTypes> {
+    // if cursor.is_completed() -> end of input
+    // if !cursor.is_completed() -> there is more input to go
+    cursor: Cursor<T>,
+
+    // Controls whether next matchers can match nodes implicitly. For matchers
+    // applied on a sequence of sibling nodes, this will be:
+    // - initially false, allowing the first found ellipsis matcher to consume
+    //   an arbitrary number of nodes
+    // - true after the execution of an ellipsis, thus preventing later ellipsis
+    //   from consuming nodes
+    // - propagated forward by other matchers, until
+    // - an actual `NodeMatcher` successfully matches a node, which then flips
+    //   this value back to false
+    require_explicit_match: bool,
+}
+
 trait Matcher<T: KindTypes> {
     // None -> failed to match, you must backtrack. DO NOT call again
-    // Some(cursor, needs_actual_match) if cursor.is_complete -> matched, end of input
-    // Some(cursor, needs_actual_match) if !cursor.is_complete -> matched, more input to go
-    //
-    // needs_actual_match indicates if we can skip further nodes (eg. with an
-    // ellipsis). If true, this is used to indicate that there already is an
-    // adjacent ellipsis operator that can skip over nodes. Further matchers
-    // need to either nil-match, ie. match without consuming any nodes and
-    // forwarding this flag, or match an actual node with a NodeMatcher. This is
-    // to resolve the interaction between two adjacent (although maybe not
-    // strictly consecutive) ellipsis matchers.
-    fn next(&mut self) -> Option<(Cursor<T>, bool)>;
+    // Some(result) -> matched, check result.cursor and pass require_explicit_match forward
+    fn next(&mut self) -> Option<MatcherResult<T>>;
     fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>);
 }
 type MatcherRef<T> = Box<dyn Matcher<T>>;
@@ -241,7 +287,9 @@ struct CaptureMatcher<T: KindTypes> {
 
 impl<T: KindTypes + 'static> CaptureMatcher<T> {
     fn new(matcher: Rc<CaptureASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
-        let child = matcher.child.create_matcher(cursor.clone(), needs_actual_match);
+        let child = matcher
+            .child
+            .create_matcher(cursor.clone(), needs_actual_match);
         Self {
             matcher,
             cursor,
@@ -251,7 +299,7 @@ impl<T: KindTypes + 'static> CaptureMatcher<T> {
 }
 
 impl<T: KindTypes> Matcher<T> for CaptureMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         self.child.next()
     }
 
@@ -272,9 +320,7 @@ struct NodeMatchMatcher<T: KindTypes> {
 }
 
 impl<T: KindTypes> NodeMatchMatcher<T> {
-    fn new(matcher: Rc<NodeMatchASTNode<T>>, cursor: Cursor<T>, _needs_actual_match: bool) -> Self {
-        // is this matcher succeeds it will always return an actual match, so we
-        // can ignore the argument
+    fn new(matcher: Rc<NodeMatchASTNode<T>>, cursor: Cursor<T>) -> Self {
         Self {
             matcher,
             child: None,
@@ -285,7 +331,7 @@ impl<T: KindTypes> NodeMatchMatcher<T> {
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for NodeMatchMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         if self.cursor.is_completed() {
             return None;
         }
@@ -303,30 +349,39 @@ impl<T: KindTypes + 'static> Matcher<T> for NodeMatchMatcher<T> {
             if let Some(child) = self.matcher.child.as_ref() {
                 let mut child_cursor = self.cursor.clone();
                 if !child_cursor.go_to_first_child() {
-                    // have child matchers, but no children
+                    // We have child matchers, but no children.
                     return None;
                 }
 
+                // Start traversing the children nodes allowing an ellipsis
+                // operator to match implicitly.
                 self.child = Some(child.create_matcher(child_cursor, false));
             } else {
-                // no child matchers
+                // We have no child matchers, we can return the result now.
                 let mut return_cursor = self.cursor.clone();
                 return_cursor.irrevocably_go_to_next_sibling();
-                return Some((return_cursor, false));
+                return Some(MatcherResult {
+                    cursor: return_cursor,
+                    require_explicit_match: false,
+                });
             }
         }
 
         if let Some(child) = self.child.as_mut() {
-            // get matches from the child matcher
-            while let Some((cursor, _)) = child.as_mut().next() {
+            // Match our children with the child matcher repeatedly.
+            while let Some(MatcherResult { cursor, .. }) = child.as_mut().next() {
                 if cursor.is_completed() {
-                    // and if found and complete, return the match *from our own cursor*
+                    // If match found and exhausted our children list, return
+                    // the match *from our own cursor*
                     let mut return_cursor = self.cursor.clone();
                     return_cursor.irrevocably_go_to_next_sibling();
-                    return Some((return_cursor, false));
+                    return Some(MatcherResult {
+                        cursor: return_cursor,
+                        require_explicit_match: false,
+                    });
                 }
             }
-            // reset the child matcher if it cannot find more matches
+            // No more matches from the child matcher, we will backtrack at this point.
             self.child = None;
         }
 
@@ -351,17 +406,20 @@ struct SequenceMatcher<T: KindTypes> {
     cursor: Cursor<T>,
     is_initialised: bool,
     template: Vec<SequenceItem>,
-    needs_actual_match: bool,
+    require_explicit_match: bool,
 }
 
 impl<T: KindTypes + 'static> SequenceMatcher<T> {
-    fn new(matcher: Rc<SequenceASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(
+        matcher: Rc<SequenceASTNode<T>>,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> Self {
         // Produce a template of instructions to create the matchers for the
         // sequence by inserting ellipsis matchers at the start, end, and in
-        // between each of the child matchers, unless it's explicitly disabled
-        // by an anchor token.
+        // between each of the child matchers, unless we find an anchor token.
         // If the sequence is anchored (eg. option in alt or quantified
-        // group sequence) then the starting and ending anchors are implicit.
+        // group sequence) then we should not add matchers at the edges.
         let (mut template, last_anchor) = matcher.children.iter().enumerate().fold(
             (Vec::new(), matcher.anchored),
             |(mut acc, last_anchor), (index, child)| {
@@ -389,39 +447,54 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
             cursor,
             is_initialised: false,
             template,
-            needs_actual_match,
+            require_explicit_match,
         }
     }
 
-    fn create_matcher(&self, index: usize, cursor: Cursor<T>, needs_actual_match: bool) -> MatcherRef<T> {
+    fn create_matcher(
+        &self,
+        index: usize,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> MatcherRef<T> {
         let item = &self.template[index];
         match item {
-            SequenceItem::Ellipsis => Box::new(EllipsisMatcher::new(cursor, needs_actual_match)),
+            SequenceItem::Ellipsis => {
+                Box::new(EllipsisMatcher::new(cursor, require_explicit_match))
+            }
             SequenceItem::ChildMatcher(index) => {
-                self.matcher.children[*index].create_matcher(cursor, needs_actual_match)
+                self.matcher.children[*index].create_matcher(cursor, require_explicit_match)
             }
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for SequenceMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         if !self.is_initialised {
             self.is_initialised = true;
 
             let child_cursor = self.cursor.clone();
-            let child = self.create_matcher(0, child_cursor, self.needs_actual_match);
+            let child = self.create_matcher(0, child_cursor, self.require_explicit_match);
             self.children.push(child);
         }
 
         while !self.children.is_empty() {
-            if let Some((child_cursor, child_needs_match)) = self.children.last_mut().unwrap().next() {
+            if let Some(child_matcher_result) = self.children.last_mut().unwrap().next() {
                 if self.children.len() == self.template.len() {
-                    return Some((child_cursor, child_needs_match));
+                    // Last child, return its result as our own
+                    return Some(child_matcher_result);
                 }
-                let child = self.create_matcher(self.children.len(), child_cursor, child_needs_match);
+                // Create the next child matcher propagating the
+                // `require_explicit_match` flag forward.
+                let child = self.create_matcher(
+                    self.children.len(),
+                    child_matcher_result.cursor,
+                    child_matcher_result.require_explicit_match,
+                );
                 self.children.push(child);
             } else {
+                // Backtrack
                 self.children.pop();
             }
         }
@@ -441,28 +514,35 @@ struct AlternativesMatcher<T: KindTypes> {
     next_child_number: usize,
     child: Option<MatcherRef<T>>,
     cursor: Cursor<T>,
-    needs_actual_match: bool,
+    require_explicit_match: bool,
 }
 
 impl<T: KindTypes> AlternativesMatcher<T> {
-    fn new(matcher: Rc<AlternativesASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(
+        matcher: Rc<AlternativesASTNode<T>>,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> Self {
         Self {
             matcher,
             next_child_number: 0,
             child: None,
             cursor,
-            needs_actual_match,
+            require_explicit_match,
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         loop {
             if self.child.is_none() {
+                // Create the next available child matcher forwarding the
+                // `require_explicit_match` flag, or give up if we have no more
                 match self.matcher.children.get(self.next_child_number) {
                     Some(child) => {
-                        let child = child.create_matcher(self.cursor.clone(), self.needs_actual_match);
+                        let child =
+                            child.create_matcher(self.cursor.clone(), self.require_explicit_match);
                         self.child = Some(child);
                         self.next_child_number += 1;
                     }
@@ -471,7 +551,7 @@ impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
             }
 
             match self.child.as_mut().unwrap().next() {
-                Some(cursor_and_needs_match) => return Some(cursor_and_needs_match),
+                Some(child_matcher_result) => return Some(child_matcher_result),
                 None => self.child = None,
             }
         }
@@ -487,42 +567,52 @@ struct OptionalMatcher<T: KindTypes> {
     child: Option<MatcherRef<T>>,
     cursor: Cursor<T>,
     have_nonempty_match: bool,
-    needs_actual_match: bool,
+    require_explicit_match: bool,
 }
 
 impl<T: KindTypes> OptionalMatcher<T> {
-    fn new(matcher: Rc<OptionalASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(
+        matcher: Rc<OptionalASTNode<T>>,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> Self {
         Self {
             matcher,
             child: None,
             cursor,
             have_nonempty_match: false,
-            needs_actual_match,
+            require_explicit_match,
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         if let Some(child) = self.child.as_mut() {
-            // this is for the second entry, when we have a child matcher created
-            match child.next() {
-                Some((cursor, child_needs_match)) => {
-                    self.have_nonempty_match = true;
-                    Some((cursor, child_needs_match))
-                }
-                None => {
-                    self.child = None;
-                    None
-                }
+            // Second visit, we have a child matcher created
+            if let Some(child_matcher_result) = child.next() {
+                self.have_nonempty_match = true;
+                Some(child_matcher_result)
+            } else {
+                self.child = None;
+                None
             }
         } else {
-            // we don't have a child matcher yet, so create it forwarding our needs_actual_match
+            // First visit, we don't have a child matcher yet, so create it
+            // forwarding our `require_explicit_match` flag
             let child_cursor = self.cursor.clone();
-            let child = self.matcher.child.create_matcher(child_cursor, self.needs_actual_match);
+            let child = self
+                .matcher
+                .child
+                .create_matcher(child_cursor, self.require_explicit_match);
             self.child = Some(child);
-            // this is the return for the empty case, so we forward needs_actual_match
-            Some((self.cursor.clone(), self.needs_actual_match))
+
+            // Return a match result for the empty case, forwarding the
+            // `require_explicit_match` flag.
+            Some(MatcherResult {
+                cursor: self.cursor.clone(),
+                require_explicit_match: self.require_explicit_match,
+            })
         }
     }
 
@@ -538,36 +628,43 @@ impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
 struct OneOrMoreMatcher<T: KindTypes> {
     matcher: Rc<OneOrMoreASTNode<T>>,
     children: Vec<MatcherRef<T>>,
-    cursor_for_next_repetition: Option<(Cursor<T>, bool)>,
+    result_for_next_repetition: Option<MatcherResult<T>>,
 }
 
 impl<T: KindTypes> OneOrMoreMatcher<T> {
-    fn new(matcher: Rc<OneOrMoreASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
-        let cursor_for_next_repetition = Some((cursor, needs_actual_match));
+    fn new(
+        matcher: Rc<OneOrMoreASTNode<T>>,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> Self {
+        let cursor_for_next_repetition = Some(MatcherResult {
+            cursor,
+            require_explicit_match,
+        });
         Self {
             matcher,
             children: vec![],
-            cursor_for_next_repetition,
+            result_for_next_repetition: cursor_for_next_repetition,
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         loop {
-            if let Some((cursor_for_next_repetition, needs_actual_match)) = self.cursor_for_next_repetition.take() {
+            if let Some(last_result) = self.result_for_next_repetition.take() {
                 let next_child = self
                     .matcher
                     .child
-                    .create_matcher(cursor_for_next_repetition, needs_actual_match);
+                    .create_matcher(last_result.cursor, last_result.require_explicit_match);
                 self.children.push(next_child);
             } else {
                 let tail = self.children.last_mut().unwrap();
-                if let Some((cursor, child_needs_match)) = tail.next() {
-                    if !cursor.is_completed() {
-                        self.cursor_for_next_repetition = Some((cursor.clone(), child_needs_match));
+                if let Some(child_matcher_result) = tail.next() {
+                    if !child_matcher_result.cursor.is_completed() {
+                        self.result_for_next_repetition = Some(child_matcher_result.clone());
                     }
-                    return Some((cursor, child_needs_match));
+                    return Some(child_matcher_result);
                 }
                 self.children.pop();
                 if self.children.is_empty() {
@@ -586,36 +683,48 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
 
 /// Matches any number of sibling nodes and is used in between other matchers
 /// when matching sequences, unless an explicit anchor is added.
+/// If `require_explicit_match` is true, then this matcher can only return a
+/// result for the empty case. This usually means that in the same sequence of
+/// siblings we found a previous ellipsis matcher which will be able to consume
+/// an arbitrary number of nodes. Then, the value is false if this is the first
+/// `EllipsisMatcher` in a sibling list, or there was an explicit match (by a
+/// `NodeMatcher`) in a previous matcher of the sequence.
 struct EllipsisMatcher<T: KindTypes> {
     cursor: Cursor<T>,
     has_returned_initial_empty_value: bool,
-    needs_actual_match: bool,
+    require_explicit_match: bool,
 }
 
 impl<T: KindTypes> EllipsisMatcher<T> {
-    fn new(cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(cursor: Cursor<T>, require_explicit_match: bool) -> Self {
         Self {
             cursor,
             has_returned_initial_empty_value: false,
-            needs_actual_match,
+            require_explicit_match,
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
+        // First visit, we always return a match for empty case
         if !self.has_returned_initial_empty_value {
             self.has_returned_initial_empty_value = true;
-            // we will be consuming nodes, so we need a later matcher to avoid that and return an actual match
-            return Some((self.cursor.clone(), true));
+            // We need later matchers to avoid consuming nodes
+            return Some(MatcherResult {
+                cursor: self.cursor.clone(),
+                require_explicit_match: true,
+            });
         }
 
-        // we only consume nodes we don't need an actual match, ie. if this is
-        // the *first* adjacent ellipsis operator; if there is another one
-        // before us, it will be consuming an arbitrary sequence of nodes
-        if !self.needs_actual_match && self.cursor.irrevocably_go_to_next_sibling() {
-            // we are consuming nodes, so we need a later matcher to avoid that and return an actual match
-            return Some((self.cursor.clone(), true));
+        // Subsequent visits: we only consume nodes if an explicit match is not
+        // required, ie. if this is the *first* ellipsis operator in a sibling
+        // sequence or there was an explicit match before us.
+        if !self.require_explicit_match && self.cursor.irrevocably_go_to_next_sibling() {
+            return Some(MatcherResult {
+                cursor: self.cursor.clone(),
+                require_explicit_match: true,
+            });
         }
 
         None
@@ -627,25 +736,28 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
 /// Greedily consumes all available trivia nodes
 struct AnchorMatcher<T: KindTypes> {
     cursor: Option<Cursor<T>>,
-    needs_actual_match: bool,
+    require_explicit_match: bool,
 }
 
 impl<T: KindTypes + 'static> AnchorMatcher<T> {
-    fn new(cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(cursor: Cursor<T>, require_explicit_match: bool) -> Self {
         Self {
             cursor: Some(cursor),
-            needs_actual_match,
+            require_explicit_match,
         }
     }
 }
 
 impl<T: KindTypes + 'static> Matcher<T> for AnchorMatcher<T> {
-    fn next(&mut self) -> Option<(Cursor<T>, bool)> {
+    fn next(&mut self) -> Option<MatcherResult<T>> {
         if let Some(mut cursor) = self.cursor.take() {
             while !cursor.is_completed() && cursor.node().is_trivia() {
                 cursor.irrevocably_go_to_next_sibling();
             }
-            Some((cursor, self.needs_actual_match))
+            Some(MatcherResult {
+                cursor,
+                require_explicit_match: self.require_explicit_match,
+            })
         } else {
             None
         }
