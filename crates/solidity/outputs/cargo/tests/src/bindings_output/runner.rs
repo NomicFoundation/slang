@@ -3,6 +3,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
+use slang_solidity::bindings;
 use slang_solidity::language::Language;
 
 use super::graph::render_graph;
@@ -26,14 +27,19 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let language = Language::new(version.clone())?;
+        let mut bindings = bindings::create(version.clone());
 
         let parse_output = language.parse(Language::ROOT_KIND, &source);
+        let graph = bindings.add_file_returning_graph(
+            input_path.to_str().unwrap(),
+            parse_output.create_tree_cursor(),
+        );
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
             // to the repository and hence we cannot verify their contents,
             // which is what `fs.write_file` does in CI.
-            let graph_output = render_graph(version, &parse_output, &input_path);
+            let graph_output = render_graph(&graph, &parse_output, &input_path);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
@@ -45,7 +51,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             };
         }
 
-        let bindings_output = render_bindings(version, &parse_output, &source, &input_path)?;
+        let bindings_output = render_bindings(&bindings, &parse_output, &source, &input_path)?;
         match last_bindings_output {
             Some(ref last) if last == &bindings_output => (),
             _ => {

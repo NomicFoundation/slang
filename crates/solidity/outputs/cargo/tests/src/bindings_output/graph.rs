@@ -1,9 +1,8 @@
 use std::fmt;
 use std::path::Path;
 
+use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::{Graph, Value};
-use semver::Version;
-use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::parse_output::ParseOutput;
 
@@ -12,20 +11,20 @@ const LOCATION_DEBUG_ATTR: &str = "debug_msgb_location";
 const MATCH_DEBUG_ATTR: &str = "debug_msgb_match_node";
 
 pub(crate) fn render_graph(
-    version: &Version,
+    graph: &Graph<KindTypes>,
     parse_output: &ParseOutput,
     source_path: &Path,
 ) -> String {
-    let mut bindings = bindings::create(version.clone());
-    let tree = parse_output.create_tree_cursor();
-    let graph = bindings.add_file_returning_graph(source_path.to_str().unwrap(), tree);
-
     let note = if parse_output.is_valid() {
         ""
     } else {
-        "%% WARNING: Parsing failed, graph may be incomplete\n"
+        "PARSING FAILED: "
     };
-    format!("{note}{graph}", graph = print_graph_as_mermaid(&graph))
+    let title = source_path.strip_repo_root().unwrap().to_str().unwrap();
+    format!(
+        "---\ntitle: {note}{title}\n---\n{graph}",
+        graph = print_graph_as_mermaid(graph)
+    )
 }
 
 fn print_graph_as_mermaid(graph: &Graph<KindTypes>) -> impl fmt::Display + '_ {

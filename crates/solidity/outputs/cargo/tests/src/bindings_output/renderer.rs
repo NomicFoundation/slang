@@ -4,22 +4,15 @@ use std::path::Path;
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use infra_utils::paths::PathExtensions;
-use semver::Version;
-use slang_solidity::bindings::{self, Handle};
+use slang_solidity::bindings::{Bindings, Handle};
 use slang_solidity::parse_output::ParseOutput;
 
 pub(crate) fn render_bindings(
-    version: &Version,
+    bindings: &Bindings,
     parse_output: &ParseOutput,
     source: &str,
     source_path: &Path,
 ) -> Result<String> {
-    let mut bindings = bindings::create(version.clone());
-    bindings.add_file(
-        source_path.to_str().unwrap(),
-        parse_output.create_tree_cursor(),
-    );
-
     let source_id = source_path.strip_repo_root()?.unwrap_str();
     let mut builder: ReportBuilder<'_, (&str, Range<usize>)> = Report::build(
         ReportKind::Custom("References and definitions", Color::Unset),
