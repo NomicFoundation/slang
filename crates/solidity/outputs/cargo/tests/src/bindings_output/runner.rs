@@ -33,7 +33,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             // Don't run this in CI, since the graph outputs are not committed
             // to the repository and hence we cannot verify their contents,
             // which is what `fs.write_file` does in CI.
-            let graph_output = render_graph(version, &parse_output)?;
+            let graph_output = render_graph(version, &parse_output, &input_path);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {

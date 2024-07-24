@@ -43,6 +43,20 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        _ = self.add_file_internal(file_path, tree_cursor);
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
+    pub fn add_file_returning_graph(
+        &mut self,
+        file_path: &str,
+        tree_cursor: Cursor<KT>,
+    ) -> metaslang_graph_builder::graph::Graph<KT> {
+        let builder = self.add_file_internal(file_path, tree_cursor);
+        builder.graph()
+    }
+
+    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> Builder<'_, KT> {
         let file = self.stack_graph.get_or_create_file(file_path);
 
         let mut builder = Builder::new(
@@ -57,6 +71,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 self.cursors.insert(handle, cursor.clone());
             })
             .expect("Internal error while building bindings");
+        builder
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_, KT>> + '_ {

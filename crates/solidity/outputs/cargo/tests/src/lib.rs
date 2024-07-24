@@ -1,5 +1,7 @@
 #![cfg(test)]
 
+use metaslang_bindings as _;
+
 mod bindings_assertions;
 mod bindings_output;
 mod bindings_rules;

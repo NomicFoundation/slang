@@ -362,7 +362,27 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             .add(ROOT_NODE_VAR.into(), root_node.into())
             .expect("Failed to set ROOT_NODE");
 
+        #[cfg(feature = "__private_testing_utils")]
+        {
+            // For debugging purposes only
+            self.graph[root_node]
+                .attributes
+                .add(
+                    [DEBUG_ATTR_PREFIX, "msgb_variable"]
+                        .concat()
+                        .as_str()
+                        .into(),
+                    ROOT_NODE_VAR.to_string(),
+                )
+                .expect("Failed to set ROOT_NODE variable name for debugging");
+        }
+
         variables
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
+    pub(crate) fn graph(self) -> Graph<KT> {
+        self.graph
     }
 
     /// Executes this builder.
