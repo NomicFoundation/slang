@@ -70,14 +70,14 @@ pub(super) fn parse_matcher_sequence<T: KindTypes>(
     verify(
         many1(parse_sequence_item::<T>),
         |children: &[ASTNode<T>]| {
-            // It doesn't make sense for a sequence to be a single anchor
+            // It doesn't make sense for a sequence to be a single adjacency operator
             children.len() > 1 || !matches!(children[0], ASTNode::Anchor)
         },
     )
     .map(|children| {
         ASTNode::Sequence(Rc::new(SequenceASTNode {
             children,
-            anchored: false,
+            adjacent: false,
         }))
     })
     .parse(i)
@@ -102,7 +102,7 @@ pub(super) fn parse_matcher_alt_sequence<T: KindTypes>(
         } else {
             ASTNode::Sequence(Rc::new(SequenceASTNode {
                 children,
-                anchored: true,
+                adjacent: true,
             }))
         }
     })

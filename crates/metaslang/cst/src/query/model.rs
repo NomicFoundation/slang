@@ -256,8 +256,10 @@ pub struct NodeMatchASTNode<T: KindTypes> {
 #[derive(Debug)]
 pub struct SequenceASTNode<T: KindTypes> {
     pub children: Vec<ASTNode<T>>,
-    // if true, the sequence has implicit beginning and ending anchors
-    pub anchored: bool,
+    // By default sequences can match any number of nodes at the beginning and
+    // end of it. Setting this value to true prevents it and instead forces
+    // strict adjacency at the edges.
+    pub adjacent: bool,
 }
 
 #[derive(Debug)]

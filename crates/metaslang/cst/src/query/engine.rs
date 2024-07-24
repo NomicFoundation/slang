@@ -141,7 +141,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
                 cursor,
                 require_explicit_match,
             )),
-            Self::Anchor => Box::new(AnchorMatcher::<T>::new(cursor, require_explicit_match)),
+            Self::Anchor => Box::new(AdjacencyMatcher::<T>::new(cursor, require_explicit_match)),
         }
     }
 }
@@ -419,20 +419,21 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
     ) -> Self {
         // Produce a template of instructions to create the matchers for the
         // sequence by inserting ellipsis matchers at the start, end, and in
-        // between each of the child matchers, unless we find an anchor token.
-        // If the sequence is anchored (eg. option in alt or quantified
-        // group sequence) then we should not add matchers at the edges.
-        let (mut template, last_anchor) = matcher.children.iter().enumerate().fold(
-            (Vec::new(), matcher.anchored),
-            |(mut acc, last_anchor), (index, child)| {
+        // between each of the child matchers, unless we find an (anchor)
+        // adjacency operator. If the sequence is adjacent (eg. option in alt or
+        // quantified group sequence) then we should not add matchers at the
+        // edges.
+        let (mut template, last_adjacent) = matcher.children.iter().enumerate().fold(
+            (Vec::new(), matcher.adjacent),
+            |(mut acc, last_adjacent), (index, child)| {
                 if matches!(child, ASTNode::Anchor) {
-                    if last_anchor {
-                        unreachable!("Found two consecutive anchors")
+                    if last_adjacent {
+                        unreachable!("Found two consecutive adjacency operators")
                     }
                     acc.push(SequenceItem::ChildMatcher(index));
                     (acc, true)
                 } else {
-                    if !last_anchor {
+                    if !last_adjacent {
                         acc.push(SequenceItem::Ellipsis);
                     }
                     acc.push(SequenceItem::ChildMatcher(index));
@@ -440,7 +441,7 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
                 }
             },
         );
-        if !last_anchor && !matcher.anchored {
+        if !last_adjacent && !matcher.adjacent {
             template.push(SequenceItem::Ellipsis);
         }
         Self {
@@ -684,7 +685,7 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
 }
 
 /// Matches any number of sibling nodes and is used in between other matchers
-/// when matching sequences, unless an explicit anchor is added.
+/// when matching sequences, unless an explicit adjacency operator is added.
 /// If `require_explicit_match` is true, then this matcher can only return a
 /// result for the empty case. This usually means that in the same sequence of
 /// siblings we found a previous ellipsis matcher which will be able to consume
@@ -736,12 +737,12 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
 }
 
 /// Greedily consumes all available trivia nodes
-struct AnchorMatcher<T: KindTypes> {
+struct AdjacencyMatcher<T: KindTypes> {
     cursor: Option<Cursor<T>>,
     require_explicit_match: bool,
 }
 
-impl<T: KindTypes + 'static> AnchorMatcher<T> {
+impl<T: KindTypes + 'static> AdjacencyMatcher<T> {
     fn new(cursor: Cursor<T>, require_explicit_match: bool) -> Self {
         Self {
             cursor: Some(cursor),
@@ -750,7 +751,7 @@ impl<T: KindTypes + 'static> AnchorMatcher<T> {
     }
 }
 
-impl<T: KindTypes + 'static> Matcher<T> for AnchorMatcher<T> {
+impl<T: KindTypes + 'static> Matcher<T> for AdjacencyMatcher<T> {
     fn next(&mut self) -> Option<MatcherResult<T>> {
         if let Some(mut cursor) = self.cursor.take() {
             while !cursor.is_completed() && cursor.node().is_trivia() {
