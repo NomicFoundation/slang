@@ -8,7 +8,7 @@ pub mod parse_output;
 pub mod query;
 pub mod text_index;
 
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 pub mod napi_interface;
 
 #[cfg(feature = "cli")]

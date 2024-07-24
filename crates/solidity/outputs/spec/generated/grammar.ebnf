@@ -1352,13 +1352,13 @@ MultiplicativeExpression = (* left_operand: *) Expression
                            (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-(* Deprecated in 0.6.0 *)
+(* Deprecated in 0.8.0 *)
 ExponentiationExpression = (* left_operand: *) Expression
                            (* operator: *) ASTERISK_ASTERISK
                            (* right_operand: *) Expression;
 
 (* Right-associative binary operator *)
-(* Introduced in 0.6.0 *)
+(* Introduced in 0.8.0 *)
 ExponentiationExpression = (* left_operand: *) Expression
                            (* operator: *) ASTERISK_ASTERISK
                            (* right_operand: *) Expression;
