@@ -288,10 +288,14 @@ struct CaptureMatcher<T: KindTypes> {
 }
 
 impl<T: KindTypes + 'static> CaptureMatcher<T> {
-    fn new(matcher: Rc<CaptureASTNode<T>>, cursor: Cursor<T>, needs_actual_match: bool) -> Self {
+    fn new(
+        matcher: Rc<CaptureASTNode<T>>,
+        cursor: Cursor<T>,
+        require_explicit_match: bool,
+    ) -> Self {
         let child = matcher
             .child
-            .create_matcher(cursor.clone(), needs_actual_match);
+            .create_matcher(cursor.clone(), require_explicit_match);
         Self {
             matcher,
             cursor,
@@ -640,14 +644,14 @@ impl<T: KindTypes> OneOrMoreMatcher<T> {
         cursor: Cursor<T>,
         require_explicit_match: bool,
     ) -> Self {
-        let cursor_for_next_repetition = Some(MatcherResult {
+        let result_for_next_repetition = Some(MatcherResult {
             cursor,
             require_explicit_match,
         });
         Self {
             matcher,
             children: vec![],
-            result_for_next_repetition: cursor_for_next_repetition,
+            result_for_next_repetition,
         }
     }
 }
@@ -685,7 +689,7 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
 }
 
 /// Matches any number of sibling nodes and is used in between other matchers
-/// when matching sequences, unless an explicit adjacency operator is added.
+/// when matching sequences, unless an explicit adjacency operator is found.
 /// If `require_explicit_match` is true, then this matcher can only return a
 /// result for the empty case. This usually means that in the same sequence of
 /// siblings we found a previous ellipsis matcher which will be able to consume
@@ -736,7 +740,7 @@ impl<T: KindTypes + 'static> Matcher<T> for EllipsisMatcher<T> {
     fn record_captures(&self, _: &mut BTreeMap<String, Vec<Cursor<T>>>) {}
 }
 
-/// Greedily consumes all available trivia nodes
+/// Greedily consumes available trivia nodes only
 struct AdjacencyMatcher<T: KindTypes> {
     cursor: Option<Cursor<T>>,
     require_explicit_match: bool,
