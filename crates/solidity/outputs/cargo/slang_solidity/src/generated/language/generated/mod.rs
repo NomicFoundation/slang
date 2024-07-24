@@ -10,7 +10,7 @@
     unused_imports
 )]
 
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 use napi_derive::napi;
 use semver::Version;
 
@@ -28,12 +28,12 @@ use crate::language::scanner_macros::{
     scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
     scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
 };
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 use crate::napi_interface::parse_output::ParseOutput as NAPIParseOutput;
 use crate::parse_output::ParseOutput;
 
 #[derive(Debug)]
-#[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
+#[cfg_attr(feature = "__private_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_11: bool,
@@ -77,12 +77,12 @@ pub enum Error {
     #[error("Unsupported language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 
-    #[cfg(feature = "slang_napi_interfaces")]
+    #[cfg(feature = "__private_napi_interfaces")]
     #[error("Invalid semantic version '{0}'.")]
     InvalidSemanticVersion(String),
 }
 
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 impl From<Error> for napi::Error {
     fn from(value: Error) -> Self {
         napi::Error::from_reason(value.to_string())
@@ -1976,7 +1976,7 @@ impl Language {
                 25u8,
                 25u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    if !self.version_is_at_least_0_6_0 {
+                    if !self.version_is_at_least_0_8_0 {
                         let result = self
                             .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
@@ -1995,7 +1995,7 @@ impl Language {
                 27u8 + 1,
                 27u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    if self.version_is_at_least_0_6_0 {
+                    if self.version_is_at_least_0_8_0 {
                         let result = self
                             .parse_terminal_with_trivia::<LexicalContextType::Default>(
                                 input,
@@ -13508,7 +13508,7 @@ impl Lexer for Language {
     }
 }
 
-#[cfg(feature = "slang_napi_interfaces")]
+#[cfg(feature = "__private_napi_interfaces")]
 // NAPI-exposed functions have to accept owned values.
 #[allow(clippy::needless_pass_by_value)]
 #[napi(namespace = "language")]

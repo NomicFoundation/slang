@@ -6,6 +6,13 @@ publish = false
 
 name = "slang_testlang"
 
+# __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
+[features]
+default = ["cli"]
+cli = ["dep:ariadne", "dep:clap", "dep:serde_json"]
+__experimental_bindings_api = ["dep:metaslang_bindings"]
+__private_testing_utils = ["dep:ariadne"]
+
 [build-dependencies]
 anyhow = { workspace = true }
 codegen_runtime_generator = { workspace = true }
@@ -13,16 +20,16 @@ infra_utils = { workspace = true }
 testlang_language = { workspace = true }
 
 [dependencies]
+ariadne = { workspace = true, optional = true }
+clap = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
 
 [lints]
 workspace = true
-
-[features]
-__experimental_bindings_api = ["dep:metaslang_bindings"]
