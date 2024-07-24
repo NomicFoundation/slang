@@ -44,6 +44,10 @@ is associated with each of the `StringExpression` children:
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-5"
 ```
 
+Trivia nodes (whitespace, comments, etc.) will be skipped over when running a
+query. Furthermore, trivia nodes cannot be explicitly (or implicitly with `_`)
+matched by queries.
+
 ### Capturing Nodes
 
 When matching patterns, you may want to process specific nodes within the
@@ -108,10 +112,10 @@ This pattern would match a set of possible keyword terminals, capturing them as 
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-2"
 ```
 
-### Anchoring
+### Adjacency
 
-By using anchors `.`, you can constrain a pattern to only match the first or the
-last child nodes.
+By using the adjacency operator `.` you can constrain a pattern to only match
+the first or the last child nodes.
 
 For example, the following pattern would match only the first parameter
 declaration in a function definition:
@@ -126,12 +130,10 @@ And conversely the following will match only the last parameter:
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-2"
 ```
 
-If the anchor is used in between two patterns it constrains matches on both
-patterns to occur consecutively, ie. without any other sibling node in between.
-For example, this pattern matches pairs of consecutive statements:
+If the adjacency operator is used in between two patterns it constrains matches
+on both patterns to occur consecutively, ie. without any other sibling node in
+between. For example, this pattern matches pairs of consecutive statements:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-3"
 ```
-
-Anchors will skip over trivia nodes.
