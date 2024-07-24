@@ -16,7 +16,7 @@ fn test_text_escaping() {
 }
 
 #[test]
-fn test_anchor() {
+fn test_adjacency() {
     run_parser_test(r#"[_ . [_]]"#, r#"[_ . [_]]"#);
 }
 
@@ -72,7 +72,7 @@ fn test_fails_parsing_ellipsis() {
 }
 
 #[test]
-fn test_fails_consecutive_anchors() {
+fn test_fails_consecutive_adjacency_operators() {
     let result = Query::parse(r#"[_ [DelimitedIdentifier] . .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
@@ -81,7 +81,7 @@ fn test_fails_consecutive_anchors() {
 }
 
 #[test]
-fn test_fails_single_anchor() {
+fn test_fails_sole_adjacency() {
     let result = Query::parse(r#"[_ .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
@@ -93,7 +93,7 @@ fn test_fails_single_anchor() {
 }
 
 #[test]
-fn test_fails_anchors_at_edge_of_alt_option() {
+fn test_fails_adjacency_at_edge_of_alt_option() {
     let result = Query::parse(r#"([TreeNode] | . [DelimitedIdentifier])+"#);
     assert!(result.is_err(), "Expected parse failure");
 }

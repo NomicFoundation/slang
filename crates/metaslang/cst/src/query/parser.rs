@@ -71,7 +71,7 @@ pub(super) fn parse_matcher_sequence<T: KindTypes>(
         many1(parse_sequence_item::<T>),
         |children: &[ASTNode<T>]| {
             // It doesn't make sense for a sequence to be a single adjacency operator
-            children.len() > 1 || !matches!(children[0], ASTNode::Anchor)
+            children.len() > 1 || !matches!(children[0], ASTNode::Adjacency)
         },
     )
     .map(|children| {
@@ -89,10 +89,11 @@ pub(super) fn parse_matcher_alt_sequence<T: KindTypes>(
     verify(
         many1(parse_sequence_item::<T>),
         |children: &[ASTNode<T>]| {
-            // Alternative sequences cannot start or end with an anchor, because
-            // those anchors are implicit
-            !matches!(children[0], ASTNode::Anchor)
-                && !matches!(children[children.len() - 1], ASTNode::Anchor)
+            // Alternative sequences cannot start or end with an adjacency
+            // operator, because it is implicitly adjacent to the previous and
+            // next matchers
+            !matches!(children[0], ASTNode::Adjacency)
+                && !matches!(children[children.len() - 1], ASTNode::Adjacency)
         },
     )
     .map(|mut children| {
@@ -112,7 +113,12 @@ pub(super) fn parse_matcher_alt_sequence<T: KindTypes>(
 pub(super) fn parse_sequence_item<T: KindTypes>(
     i: &str,
 ) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    alt((ellipsis_token, anchor::<T>, parse_quantified_matcher::<T>)).parse(i)
+    alt((
+        ellipsis_token,
+        adjacency_operator::<T>,
+        parse_quantified_matcher::<T>,
+    ))
+    .parse(i)
 }
 
 pub(super) fn parse_quantified_matcher<T: KindTypes>(
@@ -330,10 +336,11 @@ fn token<'input>(c: char) -> impl Parser<&'input str, char, VerboseError<&'input
     terminated(char(c), multispace0)
 }
 
-fn anchor<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
-    // An anchor is a single '.' character, and cannot be followed by another anchor
+fn adjacency_operator<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+    // An adjacency operator is a single '.' character, and cannot be followed
+    // by another adjacency operator
     pair(token('.'), cut(peek(none_of(". \t\r\n"))))
-        .map(|_| ASTNode::Anchor)
+        .map(|_| ASTNode::Adjacency)
         .parse(i)
 }
 

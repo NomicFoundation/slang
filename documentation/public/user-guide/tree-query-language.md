@@ -121,13 +121,13 @@ For example, the following pattern would match only the first parameter
 declaration in a function definition:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-1"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-1"
 ```
 
 And conversely the following will match only the last parameter:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-2"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-2"
 ```
 
 If the adjacency operator is used in between two patterns it constrains matches
@@ -135,5 +135,5 @@ on both patterns to occur consecutively, ie. without any other sibling node in
 between. For example, this pattern matches pairs of consecutive statements:
 
 ```{ .scheme }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:anchoring-3"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-3"
 ```

@@ -276,16 +276,16 @@ fn alternations() {
 }
 
 #[test]
-fn anchoring() {
+fn adjacency() {
     let query = Query::parse(
         &r#"
-    // --8<-- [start:anchoring-1]
+    // --8<-- [start:adjacency-1]
 	[FunctionDefinition
 		[ParametersDeclaration
 			[Parameters . @first_param [Parameter]]
 		]
 	]
-    // --8<-- [end:anchoring-1]
+    // --8<-- [end:adjacency-1]
     "#
         .remove_mkdoc_snippet_markers(),
     )
@@ -308,13 +308,13 @@ fn anchoring() {
 
     let query = Query::parse(
         &r#"
-    // --8<-- [start:anchoring-2]
+    // --8<-- [start:adjacency-2]
 	[FunctionDefinition
 		[ParametersDeclaration
 			[Parameters @last_param [Parameter] .]
 		]
 	]
-    // --8<-- [end:anchoring-2]
+    // --8<-- [end:adjacency-2]
     "#
         .remove_mkdoc_snippet_markers(),
     )
@@ -337,9 +337,9 @@ fn anchoring() {
 
     let query = Query::parse(
         &r#"
-    // --8<-- [start:anchoring-3]
+    // --8<-- [start:adjacency-3]
 	[Statements @stmt1 [Statement] . @stmt2 [Statement]]
-    // --8<-- [end:anchoring-3]
+    // --8<-- [end:adjacency-3]
     "#
         .remove_mkdoc_snippet_markers(),
     )

@@ -162,7 +162,7 @@ fn test_adjacent() {
 }
 
 #[test]
-fn test_anchor_skips_trivia() {
+fn test_adjacency_skips_trivia() {
     run_query_test(
         &common_test_tree_with_trivia(),
         "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
@@ -322,7 +322,7 @@ fn test_alternatives() {
 }
 
 #[test]
-fn test_anchor_at_beginning_skips_trivia() {
+fn test_adjacency_at_beginning_skips_trivia() {
     run_query_test(
         &common_test_tree_with_trivia(),
         "[TreeNodeChild . @x [DelimitedIdentifier]]",
@@ -333,7 +333,7 @@ fn test_anchor_at_beginning_skips_trivia() {
 }
 
 #[test]
-fn test_anchor_at_end_skips_trivia() {
+fn test_adjacency_at_end_skips_trivia() {
     run_query_test(
         &common_test_tree_with_trivia(),
         "[TreeNodeChild @x [DelimitedIdentifier] .]",
@@ -373,7 +373,7 @@ fn test_ellipsis_followed_by_optional_grouping() {
 }
 
 #[test]
-fn test_anchor_followed_by_optional_grouping() {
+fn test_adjacency_followed_by_optional_grouping() {
     run_query_test(
         &flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",

@@ -81,7 +81,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
             Self::Sequence(matcher) => matcher.children[0].can_match(cursor),
             Self::OneOrMore(matcher) => matcher.child.can_match(cursor),
             Self::Optional(_) => true,
-            Self::Anchor => true,
+            Self::Adjacency => true,
         }
     }
 
@@ -141,7 +141,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
                 cursor,
                 require_explicit_match,
             )),
-            Self::Anchor => Box::new(AdjacencyMatcher::<T>::new(cursor, require_explicit_match)),
+            Self::Adjacency => Box::new(AdjacencyMatcher::<T>::new(cursor, require_explicit_match)),
         }
     }
 }
@@ -419,14 +419,14 @@ impl<T: KindTypes + 'static> SequenceMatcher<T> {
     ) -> Self {
         // Produce a template of instructions to create the matchers for the
         // sequence by inserting ellipsis matchers at the start, end, and in
-        // between each of the child matchers, unless we find an (anchor)
-        // adjacency operator. If the sequence is adjacent (eg. option in alt or
+        // between each of the child matchers, unless we find an adjacency
+        // operator. If the sequence is adjacent (eg. option in alt or
         // quantified group sequence) then we should not add matchers at the
         // edges.
         let (mut template, last_adjacent) = matcher.children.iter().enumerate().fold(
             (Vec::new(), matcher.adjacent),
             |(mut acc, last_adjacent), (index, child)| {
-                if matches!(child, ASTNode::Anchor) {
+                if matches!(child, ASTNode::Adjacency) {
                     if last_adjacent {
                         unreachable!("Found two consecutive adjacency operators")
                     }
