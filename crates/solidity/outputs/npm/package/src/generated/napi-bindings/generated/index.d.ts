@@ -102,7 +102,6 @@ export namespace kinds {
     MappingKeyType = "MappingKeyType",
     MappingType = "MappingType",
     MappingValue = "MappingValue",
-    MemberAccess = "MemberAccess",
     MemberAccessExpression = "MemberAccessExpression",
     ModifierAttribute = "ModifierAttribute",
     ModifierAttributes = "ModifierAttributes",

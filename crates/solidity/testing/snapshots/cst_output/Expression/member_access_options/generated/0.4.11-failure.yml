@@ -18,5 +18,5 @@ Tree:
       - (variant꞉ MemberAccessExpression): # "foo.deposit" (0..11)
           - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
           - (period꞉ Period): "." # (3..4)
-          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "deposit" # (4..11)
+          - (member꞉ Identifier): "deposit" # (4..11)
       - (UNRECOGNIZED): "{value: 100}\n" # (11..24)

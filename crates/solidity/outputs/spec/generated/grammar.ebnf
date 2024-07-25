@@ -1414,7 +1414,12 @@ CallOptionsExpression = (* operand: *) Expression
 (* Postfix unary operator *)
 MemberAccessExpression = (* operand: *) Expression
                          (* period: *) PERIOD
-                         (* member: *) MemberAccess;
+                         (* member: *) IDENTIFIER;
+
+(* Postfix unary operator *)
+MemberAccessExpression = (* operand: *) Expression
+                         (* period: *) PERIOD
+                         (* member: *) ADDRESS_KEYWORD;
 
 (* Postfix unary operator *)
 IndexAccessExpression = (* operand: *) Expression
@@ -1422,9 +1427,6 @@ IndexAccessExpression = (* operand: *) Expression
                         (* start: *) Expression?
                         (* end: *) IndexAccessEnd?
                         (* close_bracket: *) CLOSE_BRACKET;
-
-MemberAccess = (* variant: *) IDENTIFIER
-             | (* variant: *) ADDRESS_KEYWORD;
 
 IndexAccessEnd = (* colon: *) COLON
                  (* end: *) Expression?;

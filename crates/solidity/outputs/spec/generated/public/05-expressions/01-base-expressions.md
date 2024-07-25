@@ -116,19 +116,13 @@
 
 ```
 
-<pre ebnf-snippet="MemberAccessExpression" style="display: none;"><span class="cm">(* Postfix unary operator *)</span><br /><a href="#MemberAccessExpression"><span class="k">MemberAccessExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#Expression"><span class="k">Expression</span></a><br /><span class="o">                         </span><span class="cm">(* period: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><br /><span class="o">                         </span><span class="cm">(* member: *)</span><span class="o"> </span><a href="#MemberAccess"><span class="k">MemberAccess</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="MemberAccessExpression" style="display: none;"><span class="cm">(* Postfix unary operator *)</span><br /><a href="#MemberAccessExpression"><span class="k">MemberAccessExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#Expression"><span class="k">Expression</span></a><br /><span class="o">                         </span><span class="cm">(* period: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><br /><span class="o">                         </span><span class="cm">(* member: *)</span><span class="o"> </span><a href="../06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">;</span><br /><br /><span class="cm">(* Postfix unary operator *)</span><br /><a href="#MemberAccessExpression"><span class="k">MemberAccessExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#Expression"><span class="k">Expression</span></a><br /><span class="o">                         </span><span class="cm">(* period: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><br /><span class="o">                         </span><span class="cm">(* member: *)</span><span class="o"> </span><a href="../../01-file-structure/08-keywords#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #IndexAccessExpression }
 
 ```
 
 <pre ebnf-snippet="IndexAccessExpression" style="display: none;"><span class="cm">(* Postfix unary operator *)</span><br /><a href="#IndexAccessExpression"><span class="k">IndexAccessExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#Expression"><span class="k">Expression</span></a><br /><span class="o">                        </span><span class="cm">(* open_bracket: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#OpenBracket"><span class="k">OPEN_BRACKET</span></a><br /><span class="o">                        </span><span class="cm">(* start: *)</span><span class="o"> </span><a href="#Expression"><span class="k">Expression</span></a><span class="o">?</span><br /><span class="o">                        </span><span class="cm">(* end: *)</span><span class="o"> </span><a href="#IndexAccessEnd"><span class="k">IndexAccessEnd</span></a><span class="o">?</span><br /><span class="o">                        </span><span class="cm">(* close_bracket: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#CloseBracket"><span class="k">CLOSE_BRACKET</span></a><span class="o">;</span></pre>
-
-```{ .ebnf #MemberAccess }
-
-```
-
-<pre ebnf-snippet="MemberAccess" style="display: none;"><a href="#MemberAccess"><span class="k">MemberAccess</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">             | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../01-file-structure/08-keywords#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #IndexAccessEnd }
 

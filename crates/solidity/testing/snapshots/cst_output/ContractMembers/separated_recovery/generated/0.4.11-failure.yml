@@ -64,7 +64,7 @@ Errors: # 10 total
        │                                                               ╰────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:51]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -72,7 +72,7 @@ Errors: # 10 total
         │                                                      ╰───── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:66]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -88,7 +88,7 @@ Errors: # 10 total
         │                                                                                          ╰───────── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:12:39]
         │
      12 │ function nested_lists() override(some., next.arg, next.one, ultimate);
@@ -118,7 +118,7 @@ Tree:
                           - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "some.ident" (24..34)
                               - (operand꞉ Expression) ► (variant꞉ Identifier): "some" # (24..28)
                               - (period꞉ Period): "." # (28..29)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "ident" # (29..34)
+                              - (member꞉ Identifier): "ident" # (29..34)
                       - (leading_trivia꞉ Whitespace): " " # (34..35)
                       - (UNRECOGNIZED): "unexpected tokens, ISomeInterface, Other" # (35..75)
                       - (close_paren꞉ CloseParen): ")" # (75..76)
@@ -137,9 +137,9 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): "  " # (86..88)
                                   - (variant꞉ Identifier): "msg" # (88..91)
                               - (period꞉ Period): "." # (91..92)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (92..98)
+                              - (member꞉ Identifier): "sender" # (92..98)
                           - (period꞉ Period): "." # (98..99)
-                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (99..103)
+                          - (member꞉ Identifier): "call" # (99..103)
                       - (UNRECOGNIZED): "{do: 1, arg: 1 }()" # (103..121)
                       - (semicolon꞉ Semicolon): ";" # (121..122)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (122..123)
@@ -150,9 +150,9 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): "  " # (123..125)
                                   - (variant꞉ Identifier): "msg" # (125..128)
                               - (period꞉ Period): "." # (128..129)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (129..135)
+                              - (member꞉ Identifier): "sender" # (129..135)
                           - (period꞉ Period): "." # (135..136)
-                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (136..140)
+                          - (member꞉ Identifier): "call" # (136..140)
                       - (UNRECOGNIZED): "{, empty: 1, parse: 2 }()" # (140..165)
                       - (semicolon꞉ Semicolon): ";" # (165..166)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (166..167)
@@ -163,9 +163,9 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): "  " # (167..169)
                                   - (variant꞉ Identifier): "msg" # (169..172)
                               - (period꞉ Period): "." # (172..173)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (173..179)
+                              - (member꞉ Identifier): "sender" # (173..179)
                           - (period꞉ Period): "." # (179..180)
-                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (180..184)
+                          - (member꞉ Identifier): "call" # (180..184)
                       - (UNRECOGNIZED): "{arg: 1, missing_expr: , no_semicolon, , }()" # (184..228)
                       - (semicolon꞉ Semicolon): ";" # (228..229)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (229..230)
@@ -176,9 +176,9 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): "  " # (230..232)
                                   - (variant꞉ Identifier): "msg" # (232..235)
                               - (period꞉ Period): "." # (235..236)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (236..242)
+                              - (member꞉ Identifier): "sender" # (236..242)
                           - (period꞉ Period): "." # (242..243)
-                          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "call" # (243..247)
+                          - (member꞉ Identifier): "call" # (243..247)
                       - (UNRECOGNIZED): "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # (247..304)
                       - (semicolon꞉ Semicolon): ";" # (304..305)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (305..306)
@@ -206,7 +206,7 @@ Tree:
                           - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "some.ident" (336..346)
                               - (operand꞉ Expression) ► (variant꞉ Identifier): "some" # (336..340)
                               - (period꞉ Period): "." # (340..341)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "ident" # (341..346)
+                              - (member꞉ Identifier): "ident" # (341..346)
                           - (separator꞉ Comma): "," # (346..347)
                       - (leading_trivia꞉ Whitespace): " " # (347..348)
                       - (leading_trivia꞉ MultiLineComment): "/* empty */" # (348..359)
@@ -236,7 +236,7 @@ Tree:
                           - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "some.ident" (422..432)
                               - (operand꞉ Expression) ► (variant꞉ Identifier): "some" # (422..426)
                               - (period꞉ Period): "." # (426..427)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "ident" # (427..432)
+                              - (member꞉ Identifier): "ident" # (427..432)
                           - (separator꞉ Comma): "," # (432..433)
                           - (item꞉ Expression): # " next." (433..439)
                               - (leading_trivia꞉ Whitespace): " " # (433..434)
@@ -255,7 +255,7 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): " " # (460..461)
                                   - (variant꞉ Identifier): "next" # (461..465)
                               - (period꞉ Period): "." # (465..466)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "one" # (466..469)
+                              - (member꞉ Identifier): "one" # (466..469)
                           - (separator꞉ Comma): "," # (469..470)
                       - (leading_trivia꞉ Whitespace): " " # (470..471)
                       - (UNRECOGNIZED): "final, ultimate" # (471..486)
@@ -290,14 +290,14 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): " " # (528..529)
                                   - (variant꞉ Identifier): "next" # (529..533)
                               - (period꞉ Period): "." # (533..534)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "arg" # (534..537)
+                              - (member꞉ Identifier): "arg" # (534..537)
                           - (separator꞉ Comma): "," # (537..538)
                           - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # " next.one" (538..547)
                               - (operand꞉ Expression): # " next" (538..543)
                                   - (leading_trivia꞉ Whitespace): " " # (538..539)
                                   - (variant꞉ Identifier): "next" # (539..543)
                               - (period꞉ Period): "." # (543..544)
-                              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "one" # (544..547)
+                              - (member꞉ Identifier): "one" # (544..547)
                           - (separator꞉ Comma): "," # (547..548)
                           - (item꞉ Expression): # " ultimate" (548..557)
                               - (leading_trivia꞉ Whitespace): " " # (548..549)
