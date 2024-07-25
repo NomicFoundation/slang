@@ -2,19 +2,24 @@
 
 use anyhow::Result;
 
-use crate::bindings_output::runner::run;
+use crate::bindings_assertions::runner::run;
+
+#[test]
+fn destructuring() -> Result<()> {
+    run("variables", "destructuring")
+}
 
 #[test]
 fn local_vars() -> Result<()> {
-    run("lexical", "local_vars")
+    run("variables", "local_vars")
 }
 
 #[test]
 fn params() -> Result<()> {
-    run("lexical", "params")
+    run("variables", "params")
 }
 
 #[test]
 fn state_vars() -> Result<()> {
-    run("lexical", "state_vars")
+    run("variables", "state_vars")
 }

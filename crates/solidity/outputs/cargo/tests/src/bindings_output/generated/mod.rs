@@ -4,6 +4,6 @@ mod contracts;
 mod enums;
 mod expressions;
 mod interfaces;
-mod lexical;
 mod libraries;
 mod structs;
+mod variables;

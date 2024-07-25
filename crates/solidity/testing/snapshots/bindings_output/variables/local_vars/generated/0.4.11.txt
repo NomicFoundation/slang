@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-   ╭─[crates/solidity/testing/snapshots/bindings_output/lexical/local_vars/input.sol:1:1]
+   ╭─[crates/solidity/testing/snapshots/bindings_output/variables/local_vars/input.sol:1:1]
    │
  1 │ contract Foo {
    │          ─┬─  
@@ -12,16 +12,12 @@ References and definitions:
  3 │         uint x = 10;
    │              ┬  
    │              ╰── def: 3
- 4 │         return x + 2;
-   │                ┬  
-   │                ╰── ref: 3
-   │ 
- 7 │     function baz() returns (int) {
-   │              ─┬─  
-   │               ╰─── def: 4
- 8 │         return w + x;
+ 4 │         uint w = 2;
+   │              ┬  
+   │              ╰── def: 4
+ 5 │         return x + w;
    │                ┬   ┬  
-   │                ╰────── unresolved
+   │                ╰────── ref: 3
    │                    │  
-   │                    ╰── unresolved
+   │                    ╰── ref: 4
 ───╯
