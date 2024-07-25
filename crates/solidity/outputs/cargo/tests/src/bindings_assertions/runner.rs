@@ -39,25 +39,27 @@ fn check_assertions_with_version(
 
     let result = check_assertions(&bindings, &assertions, version);
 
-    if result.is_err() {
-        if !parse_output.is_valid() {
-            let report = parse_output
-                .errors()
-                .iter()
-                .map(|error| diagnostic::render(error, file_path, file_contents, false))
-                .collect::<Vec<_>>()
-                .join("\n");
-            eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
+    if !parse_output.is_valid() {
+        let report = parse_output
+            .errors()
+            .iter()
+            .map(|error| diagnostic::render(error, file_path, file_contents, false))
+            .collect::<Vec<_>>()
+            .join("\n");
+        eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
+    }
+
+    match result {
+        Ok(count) => {
+            assert!(count > 0, "No assertions found with version {version}");
+            println!("Version {version}, {count} assertions OK");
         }
-        panic!(
-            "Failed bindings assertions in version {version}:\n{errors}",
-            errors = result.err().map(|x| x.to_string()).unwrap_or_default(),
-        );
-    } else {
-        println!(
-            "Version {version}, {count} assertions OK",
-            count = result.unwrap()
-        );
+        Err(err) => {
+            panic!(
+                "Failed bindings assertions in version {version}:\n{errors}",
+                errors = err.to_string(),
+            );
+        }
     }
 
     Ok(())

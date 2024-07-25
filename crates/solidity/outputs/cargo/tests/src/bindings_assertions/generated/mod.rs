@@ -2,6 +2,7 @@
 
 mod contracts;
 mod enums;
+mod expressions;
 mod functions;
 mod interfaces;
 mod scoping;

@@ -672,6 +672,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.lexical_scope -> @state_var.lexical_scope
 }
 
+;; Tuple expressions
+@tuple_expr [Expression [TupleExpression
+    ...
+    items: [TupleValues ... [TupleValue @expr [Expression]] ...]
+    ...
+]] {
+  edge @expr.lexical_scope -> @tuple_expr.lexical_scope
+}
 
 
 ;;; Identifier expressions
@@ -753,5 +761,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @type_expr [Expression [TypeExpression ... @type [TypeName] ...]] {
   edge @type.type_ref -> @type_expr.lexical_scope
 }
+
+
 
 "#####;
