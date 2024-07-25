@@ -35,7 +35,7 @@ fn check_assertions_with_version(
     let mut bindings = bindings::create(version.clone());
     bindings.add_file(file_path, parse_output.create_tree_cursor());
 
-    let assertions = collect_assertions(parse_output.create_tree_cursor())?;
+    let assertions = collect_assertions(parse_output.create_tree_cursor(), version)?;
 
     let result = check_assertions(&bindings, &assertions, version);
 
@@ -55,10 +55,7 @@ fn check_assertions_with_version(
             println!("Version {version}, {count} assertions OK");
         }
         Err(err) => {
-            panic!(
-                "Failed bindings assertions in version {version}:\n{errors}",
-                errors = err.to_string(),
-            );
+            panic!("Failed bindings assertions in version {version}:\n{err}");
         }
     }
 

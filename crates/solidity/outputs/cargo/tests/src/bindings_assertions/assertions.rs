@@ -142,7 +142,7 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 /// '1'; and that the CST identifier node `y` should be a binding reference that
 /// is unresolved for version at or above 0.5.0.
 ///
-pub fn collect_assertions(cursor: Cursor) -> Result<Assertions, AssertionError> {
+pub fn collect_assertions(cursor: Cursor, version: &Version) -> Result<Assertions, AssertionError> {
     let mut assertions = Assertions::new();
 
     let query = Query::parse("@comment [SingleLineComment]").unwrap();
@@ -152,7 +152,7 @@ pub fn collect_assertions(cursor: Cursor) -> Result<Assertions, AssertionError> 
             continue;
         };
 
-        match find_assertion_in_comment(comment)? {
+        match find_assertion_in_comment(comment, version)? {
             Some(Assertion::Definition(assertion)) => {
                 assertions.insert_definition_assertion(assertion)?;
             }
@@ -177,7 +177,10 @@ static ASSERTION_REGEX: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 
-fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, AssertionError> {
+fn find_assertion_in_comment(
+    comment: &Cursor,
+    version: &Version,
+) -> Result<Option<Assertion>, AssertionError> {
     let comment_offset = comment.text_offset();
     let comment_col = comment_offset.column;
     let comment_str = comment.node().unparse();
@@ -225,6 +228,12 @@ fn find_assertion_in_comment(comment: &Cursor) -> Result<Option<Assertion>, Asse
         };
         Ok(Some(assertion))
     } else {
+        // Assertion target may not be parseable with the current version
+        if let Some(version_req) = version_req {
+            if !version_req.matches(version) {
+                return Ok(None);
+            }
+        }
         Err(AssertionError::InvalidAssertion(
             comment_offset.line + 1,
             assertion_col + 1,
