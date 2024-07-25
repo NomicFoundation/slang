@@ -2,4 +2,6 @@
 "@nomicfoundation/slang": minor
 ---
 
-Remove the ellipsis query operator making it implicit, add an adjacency operator and make queries ignore trivia nodes.
+Tree Query Language: remove the ellipsis query `...` operator making it implicit, add an adjacency operator `.`.
+
+Tree Query Language: queries now ignore trivia nodes.
