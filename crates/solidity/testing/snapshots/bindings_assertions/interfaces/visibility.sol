@@ -12,14 +12,14 @@ interface Example {
 
 contract Test {
     Example.Choice choice = Example.Choice.One;
-//  ^ref:1
+    //<ref:1
     //      ^ref:2
     //             ^def:7
     //                      ^ref:1
     //                              ^ref:2
     //                                     ^ref:5
     Example.Book book;
-//  ^ref:1
+    //<ref:1
     //      ^ref:3
 
     function my_test() returns (int) {

@@ -16,6 +16,8 @@ library Test {
         //         ^ref:7
         //     ^ref:5
         (, Choice c) = (Choice.Yes, Choice.No);
+        //                          ^ref:1
+        //              ^ref:1
         //        ^def:8
         // ^ref:1
 

@@ -127,7 +127,7 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 ///   uint x;
 ///   //   ^def:1
 ///
-/// asserts that at the CST node above the caret symbol (same column, not
+/// asserts that at the CST node above the caret symbol `^` (same column, not
 /// necessarily in the previous line), the identifier `x` should create a
 /// binding definition, and assigns it an ID of '1'.
 ///
@@ -141,6 +141,13 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 /// should be declared as a correspoding definition assertion with identifier
 /// '1'; and that the CST identifier node `y` should be a binding reference that
 /// is unresolved for version at or above 0.5.0.
+///
+/// For assertion targets that are located at the column where the comment
+/// begins the alternative anchor `<` can be used. For example:
+///
+///   x = y + 1;
+///   //  ^ref:2
+///   //<ref:1
 ///
 pub fn collect_assertions(cursor: Cursor, version: &Version) -> Result<Assertions, AssertionError> {
     let mut assertions = Assertions::new();
@@ -173,7 +180,7 @@ enum Assertion {
 }
 
 static ASSERTION_REGEX: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"[\^](?<type>ref|def):(?<id>[0-9a-zA-Z_-]+|!)([\t ]*\((?<version>[^)]+)\))?")
+    Regex::new(r"(?<anchor>[\^]|[<])(?<type>ref|def):(?<id>[0-9a-zA-Z_-]+|!)([\t ]*\((?<version>[^)]+)\))?")
         .unwrap()
 });
 
@@ -191,7 +198,13 @@ fn find_assertion_in_comment(
 
     let assertion_id = captures.name("id").unwrap().as_str();
     let assertion_type = captures.name("type").unwrap().as_str();
-    let assertion_col = comment_col + captures.get(0).unwrap().start();
+    let assertion_anchor = captures.name("anchor").unwrap();
+    let assertion_col = comment_col
+        + if assertion_anchor.as_str() == "^" {
+            assertion_anchor.start()
+        } else {
+            0
+        };
     let version_req = match captures.name("version") {
         Some(version) => {
             let Ok(version_req) = VersionReq::parse(version.as_str()) else {

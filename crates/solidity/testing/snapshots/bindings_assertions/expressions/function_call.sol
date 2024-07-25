@@ -11,7 +11,7 @@ contract Test {
         //      ^ref:5
         //  ^def:3
         pointless(z, x);
-    //  ^ref:4
+        //<ref:4
         //           ^ref:1
         //        ^ref:3
     }

@@ -3,7 +3,7 @@ contract First {
     enum Choice { One, Two }
     //   ^def:2
     Choice choice;
-//  ^ref:2
+    //<ref:2
     //     ^def:3
     function get_choice() public returns (Choice) {
         //   ^def:4
@@ -14,7 +14,7 @@ contract First {
 
 contract Second {
     First.Choice choice;
-//  ^ref:1
+    //<ref:1
     //    ^ref:2
     //           ^def:5
 
