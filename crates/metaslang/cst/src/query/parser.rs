@@ -365,7 +365,7 @@ fn ellipsis_token<O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
     use nom::bytes::complete::tag;
     use nom::error::context;
     context(
-        "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. For more information, check the [Tree Query Language](https://nomicfoundation.github.io/slang/user-guide/tree-query-language/) guide.",
+        "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/user-guide/tree-query-language/",
         recognize_as_failure(terminated(tag("..."), multispace0)),
     )
     .parse(i)
@@ -374,7 +374,7 @@ fn ellipsis_token<O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
 fn trivia_kind_token<T: KindTypes, O>(i: &str) -> IResult<&str, O, VerboseError<&str>> {
     use nom::error::context;
     context(
-        "Matching trivia nodes directly is forbidden. For more information, check the [Tree Query Language](https://nomicfoundation.github.io/slang/user-guide/tree-query-language/) guide.",
+        "Matching trivia nodes directly is forbidden. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/user-guide/tree-query-language/",
         recognize_as_failure(terminated(
             map_res(raw_identifier, |id| {
                 T::TerminalKind::try_from_str(id.as_str()).and_then(|kind| {
