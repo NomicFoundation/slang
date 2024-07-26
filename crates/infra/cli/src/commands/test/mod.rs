@@ -49,9 +49,5 @@ fn test_cargo() -> Result<()> {
 }
 
 fn test_npm() -> Result<()> {
-    Command::new("npm")
-        .args(["run", "test"])
-        .flag("--workspaces")
-        .flag("--if-present")
-        .run()
+    Command::new("jest").run()
 }
