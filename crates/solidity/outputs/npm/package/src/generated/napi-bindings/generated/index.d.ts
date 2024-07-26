@@ -213,7 +213,6 @@ export namespace kinds {
     YulPath = "YulPath",
     YulPathComponent = "YulPathComponent",
     YulPaths = "YulPaths",
-    YulReturnVariables = "YulReturnVariables",
     YulReturnsDeclaration = "YulReturnsDeclaration",
     YulStackAssignmentStatement = "YulStackAssignmentStatement",
     YulStatement = "YulStatement",
@@ -225,6 +224,7 @@ export namespace kinds {
     YulVariableAssignmentStatement = "YulVariableAssignmentStatement",
     YulVariableDeclarationStatement = "YulVariableDeclarationStatement",
     YulVariableDeclarationValue = "YulVariableDeclarationValue",
+    YulVariableNames = "YulVariableNames",
   }
   export enum EdgeLabel {
     Item = "Item",
@@ -310,7 +310,6 @@ export namespace kinds {
     MinusGreaterThan = "MinusGreaterThan",
     ModifierKeyword = "ModifierKeyword",
     Name = "Name",
-    Names = "Names",
     NewKeyword = "NewKeyword",
     OpenBrace = "OpenBrace",
     OpenBracket = "OpenBracket",

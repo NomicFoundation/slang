@@ -1641,18 +1641,18 @@ YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
 YulParameters = ((* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*)?;
 
 YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
-                        (* variables: *) YulReturnVariables;
+                        (* variables: *) YulVariableNames;
 
-YulReturnVariables = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
+YulVariableNames = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
 
 YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
-                                  (* names: *) YUL_IDENTIFIER
+                                  (* variables: *) YulVariableNames
                                   (* value: *) YulVariableDeclarationValue?;
 
 YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
                               (* expression: *) YulExpression;
 
-YulVariableAssignmentStatement = (* names: *) YulPaths
+YulVariableAssignmentStatement = (* variables: *) YulPaths
                                  (* assignment: *) YulAssignmentOperator
                                  (* expression: *) YulExpression;
 

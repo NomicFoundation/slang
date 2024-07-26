@@ -1600,7 +1600,7 @@ impl Selector {
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(EdgeLabel::LetKeyword)?),
-            Some(self.select(EdgeLabel::Names)?),
+            Some(self.select(EdgeLabel::Variables)?),
             self.try_select(EdgeLabel::Value),
         ])
     }
@@ -1622,7 +1622,7 @@ impl Selector {
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(EdgeLabel::Names)?),
+            Some(self.select(EdgeLabel::Variables)?),
             Some(self.select(EdgeLabel::Assignment)?),
             Some(self.select(EdgeLabel::Expression)?),
         ])

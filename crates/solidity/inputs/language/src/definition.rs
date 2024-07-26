@@ -4202,11 +4202,11 @@ codegen_language_macros::compile!(Language(
                             name = YulReturnsDeclaration,
                             fields = (
                                 minus_greater_than = Required(MinusGreaterThan),
-                                variables = Required(YulReturnVariables)
+                                variables = Required(YulVariableNames)
                             )
                         ),
                         Separated(
-                            name = YulReturnVariables,
+                            name = YulVariableNames,
                             reference = YulIdentifier,
                             separator = Comma
                         ),
@@ -4214,7 +4214,7 @@ codegen_language_macros::compile!(Language(
                             name = YulVariableDeclarationStatement,
                             fields = (
                                 let_keyword = Required(YulLetKeyword),
-                                names = Required(YulIdentifier),
+                                variables = Required(YulVariableNames),
                                 value = Optional(reference = YulVariableDeclarationValue)
                             )
                         ),
@@ -4228,7 +4228,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = YulVariableAssignmentStatement,
                             fields = (
-                                names = Required(YulPaths),
+                                variables = Required(YulPaths),
                                 assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )
