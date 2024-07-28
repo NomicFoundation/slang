@@ -71,16 +71,16 @@ impl Cli {
 impl AppCommand {
     pub fn execute(&self) -> Result<()> {
         match self {
-            AppCommand::Setup(command) => command.execute(),
-            AppCommand::Check(command) => command.execute(),
-            AppCommand::Test(command) => command.execute(),
-            AppCommand::Lint(command) => command.execute(),
-            AppCommand::Ci(command) => command.execute(),
-            AppCommand::Run(command) => command.execute(),
-            AppCommand::Watch(command) => command.execute(),
-            AppCommand::Perf(command) => command.execute(),
-            AppCommand::Publish(command) => command.execute(),
-            AppCommand::Completions(command) => command.execute(),
+            AppCommand::Setup(controller) => controller.execute(),
+            AppCommand::Check(controller) => controller.execute(),
+            AppCommand::Test(controller) => controller.execute(),
+            AppCommand::Lint(controller) => controller.execute(),
+            AppCommand::Ci(controller) => controller.execute(),
+            AppCommand::Run(controller) => controller.execute(),
+            AppCommand::Watch(controller) => controller.execute(),
+            AppCommand::Perf(controller) => controller.execute(),
+            AppCommand::Publish(controller) => controller.execute(),
+            AppCommand::Completions(controller) => controller.execute(),
         }
     }
 }
