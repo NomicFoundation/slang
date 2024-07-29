@@ -10,7 +10,7 @@ Tree:
       - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "5.fromUint" (0..10)
           - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "5" # (0..1)
           - (period꞉ Period): "." # (1..2)
-          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "fromUint" # (2..10)
+          - (member꞉ Identifier): "fromUint" # (2..10)
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (10..13)
           - (open_paren꞉ OpenParen): "(" # (10..11)
           - (arguments꞉ PositionalArguments): [] # (11..11)

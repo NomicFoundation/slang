@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "chainid := 0\n" (0..13)
-      - (names꞉ YulPaths): # "chainid" (0..7)
+      - (variables꞉ YulPaths): # "chainid" (0..7)
           - (item꞉ YulPath): # "chainid" (0..7)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "chainid" # (0..7)
       - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)

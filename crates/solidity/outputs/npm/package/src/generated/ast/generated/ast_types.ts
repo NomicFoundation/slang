@@ -2865,7 +2865,7 @@ export class MemberAccessExpression {
     return {
       operand: new Expression($operand as NonterminalNode),
       period: $period as TerminalNode,
-      member: new MemberAccess($member as NonterminalNode),
+      member: $member as TerminalNode,
     };
   });
 
@@ -2881,7 +2881,7 @@ export class MemberAccessExpression {
     return this.fetch().period;
   }
 
-  public get member(): MemberAccess {
+  public get member(): TerminalNode {
     return this.fetch().member;
   }
 }
@@ -3335,7 +3335,7 @@ export class YulReturnsDeclaration {
 
     return {
       minusGreaterThan: $minusGreaterThan as TerminalNode,
-      variables: new YulReturnVariables($variables as NonterminalNode),
+      variables: new YulVariableNames($variables as NonterminalNode),
     };
   });
 
@@ -3347,18 +3347,18 @@ export class YulReturnsDeclaration {
     return this.fetch().minusGreaterThan;
   }
 
-  public get variables(): YulReturnVariables {
+  public get variables(): YulVariableNames {
     return this.fetch().variables;
   }
 }
 
 export class YulVariableDeclarationStatement {
   private readonly fetch = once(() => {
-    const [$letKeyword, $names, $value] = ast_internal.selectSequence(this.cst);
+    const [$letKeyword, $variables, $value] = ast_internal.selectSequence(this.cst);
 
     return {
       letKeyword: $letKeyword as TerminalNode,
-      names: $names as TerminalNode,
+      variables: new YulVariableNames($variables as NonterminalNode),
       value: $value === null ? undefined : new YulVariableDeclarationValue($value as NonterminalNode),
     };
   });
@@ -3371,8 +3371,8 @@ export class YulVariableDeclarationStatement {
     return this.fetch().letKeyword;
   }
 
-  public get names(): TerminalNode {
-    return this.fetch().names;
+  public get variables(): YulVariableNames {
+    return this.fetch().variables;
   }
 
   public get value(): YulVariableDeclarationValue | undefined {
@@ -3405,10 +3405,10 @@ export class YulVariableDeclarationValue {
 
 export class YulVariableAssignmentStatement {
   private readonly fetch = once(() => {
-    const [$names, $assignment, $expression] = ast_internal.selectSequence(this.cst);
+    const [$variables, $assignment, $expression] = ast_internal.selectSequence(this.cst);
 
     return {
-      names: new YulPaths($names as NonterminalNode),
+      variables: new YulPaths($variables as NonterminalNode),
       assignment: new YulAssignmentOperator($assignment as NonterminalNode),
       expression: new YulExpression($expression as NonterminalNode),
     };
@@ -3418,8 +3418,8 @@ export class YulVariableAssignmentStatement {
     assertKind(this.cst.kind, NonterminalKind.YulVariableAssignmentStatement);
   }
 
-  public get names(): YulPaths {
-    return this.fetch().names;
+  public get variables(): YulPaths {
+    return this.fetch().variables;
   }
 
   public get assignment(): YulAssignmentOperator {
@@ -4734,22 +4734,6 @@ export class Expression {
   }
 }
 
-export class MemberAccess {
-  private readonly fetch: () => TerminalNode = once(() => {
-    const variant = ast_internal.selectChoice(this.cst);
-
-    return variant as TerminalNode;
-  });
-
-  public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.MemberAccess);
-  }
-
-  public get variant(): TerminalNode {
-    return this.fetch();
-  }
-}
-
 export class ArgumentsDeclaration {
   private readonly fetch: () => PositionalArgumentsDeclaration | NamedArgumentsDeclaration = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
@@ -5831,7 +5815,7 @@ export class YulParameters {
   }
 }
 
-export class YulReturnVariables {
+export class YulVariableNames {
   private readonly fetch = once(() => {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
@@ -5839,7 +5823,7 @@ export class YulReturnVariables {
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulReturnVariables);
+    assertKind(this.cst.kind, NonterminalKind.YulVariableNames);
   }
 
   public get items(): readonly TerminalNode[] {

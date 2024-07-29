@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "sha3 := 0\n" (0..10)
-      - (names꞉ YulPaths): # "sha3" (0..4)
+      - (variables꞉ YulPaths): # "sha3" (0..4)
           - (item꞉ YulPath): # "sha3" (0..4)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "sha3" # (0..4)
       - (assignment꞉ YulAssignmentOperator): # " :=" (4..7)

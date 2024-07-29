@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let x, y, z                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - (YulVariableDeclarationStatement): # "let x, y, z\n" (0..12)
+      - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
+      - (variables꞉ YulVariableNames): # " x, y, z\n" (3..12)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (item꞉ YulIdentifier): "x" # (4..5)
+          - (separator꞉ Comma): "," # (5..6)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (item꞉ YulIdentifier): "y" # (7..8)
+          - (separator꞉ Comma): "," # (8..9)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (item꞉ YulIdentifier): "z" # (10..11)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)

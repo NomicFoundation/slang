@@ -10,7 +10,7 @@ Tree:
       - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "foo.deposit" (0..11)
           - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
           - (period꞉ Period): "." # (3..4)
-          - (member꞉ MemberAccess) ► (variant꞉ Identifier): "deposit" # (4..11)
+          - (member꞉ Identifier): "deposit" # (4..11)
       - (open_brace꞉ OpenBrace): "{" # (11..12)
       - (options꞉ CallOptions): # "value: 100" (12..22)
           - (item꞉ NamedArgument): # "value: 100" (12..22)

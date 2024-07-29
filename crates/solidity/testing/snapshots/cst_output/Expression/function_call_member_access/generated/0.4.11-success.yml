@@ -14,4 +14,4 @@ Tree:
               - (arguments꞉ PositionalArguments): [] # (2..2)
               - (close_paren꞉ CloseParen): ")" # (2..3)
       - (period꞉ Period): "." # (3..4)
-      - (member꞉ MemberAccess) ► (variant꞉ Identifier): "y" # (4..5)
+      - (member꞉ Identifier): "y" # (4..5)

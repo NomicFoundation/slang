@@ -35,7 +35,7 @@ Tree:
                   - (leading_trivia꞉ Whitespace): " " # (31..32)
                   - (variant꞉ Identifier): "abi" # (32..35)
               - (period꞉ Period): "." # (35..36)
-              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "decode" # (36..42)
+              - (member꞉ Identifier): "decode" # (36..42)
           - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(data, (uint32, uint32[]))" (42..68)
               - (open_paren꞉ OpenParen): "(" # (42..43)
               - (arguments꞉ PositionalArguments): # "data, (uint32, uint32[])" (43..67)

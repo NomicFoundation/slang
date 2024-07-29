@@ -32,6 +32,7 @@ members = [
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
+    "crates/solidity/testing/perf",
     "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
@@ -72,6 +73,7 @@ solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version =
 solidity_language = { path = "crates/solidity/inputs/language", version = "0.15.1" }
 solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "0.15.1" }
 solidity_spec = { path = "crates/solidity/outputs/spec", version = "0.15.1" }
+solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "0.15.1" }
 solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary", version = "0.15.1" }
 solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "0.15.1" }
 solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "0.15.1" }
@@ -87,6 +89,9 @@ testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version =
 #
 anyhow = { version = "1.0.86", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
+# Currently 'bencher' backend API is under development/unstable.
+# They recommend always running with the latest CLI version from 'main' until it is stabilized.
+bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 cargo-edit = { version = "0.12.3" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
@@ -96,6 +101,8 @@ clap_complete = { version = "4.5.7" }
 console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
 env_logger = { version = "0.11.3" }
+iai-callgrind = { version = "0.12.0" }
+iai-callgrind-runner = { version = "0.12.0" }
 ignore = { version = "0.4.22" }
 indexmap = { version = "2.2.6", features = ["serde"] }
 indicatif = { version = "0.17.8", features = ["in_memory"] }
@@ -140,7 +147,7 @@ tera = { version = "1.20.0" }
 thiserror = { version = "1.0.61" }
 toml = { version = "0.8.14" }
 trybuild = { version = "1.0.96" }
-url = { version = "2.4.1" }
+url = { version = "2.4.1", features = ["serde"] }
 
 [workspace.lints.rust]
 unused_crate_dependencies = "warn"

@@ -111,7 +111,6 @@ pub enum NonterminalKind {
     MappingKeyType,
     MappingType,
     MappingValue,
-    MemberAccess,
     MemberAccessExpression,
     ModifierAttribute,
     ModifierAttributes,
@@ -222,7 +221,6 @@ pub enum NonterminalKind {
     YulPath,
     YulPathComponent,
     YulPaths,
-    YulReturnVariables,
     YulReturnsDeclaration,
     YulStackAssignmentStatement,
     YulStatement,
@@ -234,6 +232,7 @@ pub enum NonterminalKind {
     YulVariableAssignmentStatement,
     YulVariableDeclarationStatement,
     YulVariableDeclarationValue,
+    YulVariableNames,
 }
 
 impl metaslang_cst::NonterminalKind for NonterminalKind {}
@@ -341,7 +340,6 @@ pub enum EdgeLabel {
     MinusGreaterThan,
     ModifierKeyword,
     Name,
-    Names,
     NewKeyword,
     OpenBrace,
     OpenBracket,
