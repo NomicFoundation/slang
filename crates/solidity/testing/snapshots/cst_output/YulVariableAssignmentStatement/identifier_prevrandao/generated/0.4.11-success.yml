@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "prevrandao := 0\n" (0..16)
-      - (names꞉ YulPaths): # "prevrandao" (0..10)
+      - (variables꞉ YulPaths): # "prevrandao" (0..10)
           - (item꞉ YulPath): # "prevrandao" (0..10)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "prevrandao" # (0..10)
       - (assignment꞉ YulAssignmentOperator): # " :=" (10..13)

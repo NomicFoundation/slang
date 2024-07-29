@@ -43,3 +43,16 @@ fn keyword_ufixed8x0() -> Result<()> {
 fn keyword_ufixed8x8() -> Result<()> {
     run("YulVariableDeclarationStatement", "keyword_ufixed8x8")
 }
+
+#[test]
+fn multiple_variables() -> Result<()> {
+    run("YulVariableDeclarationStatement", "multiple_variables")
+}
+
+#[test]
+fn multiple_variables_with_value() -> Result<()> {
+    run(
+        "YulVariableDeclarationStatement",
+        "multiple_variables_with_value",
+    )
+}

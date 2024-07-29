@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ let x, y, z := foo()                                                             │ 0..20
+
+Errors: []
+
+Tree:
+  - (YulVariableDeclarationStatement): # "let x, y, z := foo()\n" (0..21)
+      - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
+      - (variables꞉ YulVariableNames): # " x, y, z" (3..11)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (item꞉ YulIdentifier): "x" # (4..5)
+          - (separator꞉ Comma): "," # (5..6)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (item꞉ YulIdentifier): "y" # (7..8)
+          - (separator꞉ Comma): "," # (8..9)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (item꞉ YulIdentifier): "z" # (10..11)
+      - (value꞉ YulVariableDeclarationValue): # " := foo()\n" (11..21)
+          - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)
+              - (leading_trivia꞉ Whitespace): " " # (11..12)
+              - (variant꞉ ColonEqual): ":=" # (12..14)
+          - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " foo()\n" (14..21)
+              - (operand꞉ YulExpression) ► (variant꞉ YulPath): # " foo" (14..18)
+                  - (item꞉ YulPathComponent): # " foo" (14..18)
+                      - (leading_trivia꞉ Whitespace): " " # (14..15)
+                      - (variant꞉ YulIdentifier): "foo" # (15..18)
+              - (open_paren꞉ OpenParen): "(" # (18..19)
+              - (arguments꞉ YulArguments): [] # (19..19)
+              - (close_paren꞉ CloseParen): ")" # (19..20)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (20..21)
