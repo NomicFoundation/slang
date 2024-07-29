@@ -1,5 +1,14 @@
-[profile.dev.build-override]
+[profile.bench]
+build-override = { debug = true }
 debug = true
+incremental = true
+strip = false
+
+[profile.dev]
+build-override = { debug = true }
+debug = true
+incremental = true
+strip = false
 
 [profile.release]
 incremental = true
