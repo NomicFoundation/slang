@@ -2276,15 +2276,19 @@ version = "0.15.1"
 dependencies = [
  "Inflector",
  "anyhow",
+ "ariadne",
  "codegen_language_definition",
  "codegen_testing",
  "infra_utils",
+ "metaslang_bindings",
+ "metaslang_graph_builder",
  "once_cell",
  "regex",
  "semver",
  "slang_solidity",
  "solidity_language",
  "strum_macros",
+ "thiserror",
 ]
 
 [[package]]
