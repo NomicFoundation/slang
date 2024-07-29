@@ -111,7 +111,6 @@ pub enum NonterminalKind {
     MappingKeyType,
     MappingType,
     MappingValue,
-    MemberAccess,
     MemberAccessExpression,
     ModifierAttribute,
     ModifierAttributes,

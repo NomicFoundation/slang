@@ -2135,16 +2135,44 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 NonterminalKind::MemberAccessExpression,
                 37u8,
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::Period,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::Period,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Member, self.member_access(input))?;
-                    seq.finish()
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem_labeled(
+                            EdgeLabel::Period,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Period,
+                            ),
+                        )?;
+                        seq.elem_labeled(
+                            EdgeLabel::Member,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Identifier,
+                            ),
+                        )?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem_labeled(
+                            EdgeLabel::Period,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Period,
+                            ),
+                        )?;
+                        seq.elem_labeled(
+                            EdgeLabel::Member,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::AddressKeyword,
+                            ),
+                        )?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
@@ -3350,25 +3378,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(NonterminalKind::MappingValue)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn member_access(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                input,
-                TerminalKind::Identifier,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                input,
-                TerminalKind::AddressKeyword,
-            );
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::MemberAccess)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9306,7 +9315,6 @@ impl Language {
             NonterminalKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             NonterminalKind::MappingType => Self::mapping_type.parse(self, input),
             NonterminalKind::MappingValue => Self::mapping_value.parse(self, input),
-            NonterminalKind::MemberAccess => Self::member_access.parse(self, input),
             NonterminalKind::MemberAccessExpression => {
                 Self::member_access_expression.parse(self, input)
             }

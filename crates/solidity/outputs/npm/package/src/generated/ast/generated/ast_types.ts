@@ -2865,7 +2865,7 @@ export class MemberAccessExpression {
     return {
       operand: new Expression($operand as NonterminalNode),
       period: $period as TerminalNode,
-      member: new MemberAccess($member as NonterminalNode),
+      member: $member as TerminalNode,
     };
   });
 
@@ -2881,7 +2881,7 @@ export class MemberAccessExpression {
     return this.fetch().period;
   }
 
-  public get member(): MemberAccess {
+  public get member(): TerminalNode {
     return this.fetch().member;
   }
 }
@@ -4730,22 +4730,6 @@ export class Expression {
     | StringExpression
     | ElementaryType
     | TerminalNode {
-    return this.fetch();
-  }
-}
-
-export class MemberAccess {
-  private readonly fetch: () => TerminalNode = once(() => {
-    const variant = ast_internal.selectChoice(this.cst);
-
-    return variant as TerminalNode;
-  });
-
-  public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.MemberAccess);
-  }
-
-  public get variant(): TerminalNode {
     return this.fetch();
   }
 }
