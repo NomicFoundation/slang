@@ -44,19 +44,19 @@
 
 ```
 
-<pre ebnf-snippet="YulReturnsDeclaration" style="display: none;"><a href="#YulReturnsDeclaration"><span class="k">YulReturnsDeclaration</span></a><span class="o"> = </span><span class="cm">(* minus_greater_than: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#MinusGreaterThan"><span class="k">MINUS_GREATER_THAN</span></a><br /><span class="o">                        </span><span class="cm">(* variables: *)</span><span class="o"> </span><a href="#YulReturnVariables"><span class="k">YulReturnVariables</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulReturnsDeclaration" style="display: none;"><a href="#YulReturnsDeclaration"><span class="k">YulReturnsDeclaration</span></a><span class="o"> = </span><span class="cm">(* minus_greater_than: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#MinusGreaterThan"><span class="k">MINUS_GREATER_THAN</span></a><br /><span class="o">                        </span><span class="cm">(* variables: *)</span><span class="o"> </span><a href="#YulVariableNames"><span class="k">YulVariableNames</span></a><span class="o">;</span></pre>
 
-```{ .ebnf #YulReturnVariables }
+```{ .ebnf #YulVariableNames }
 
 ```
 
-<pre ebnf-snippet="YulReturnVariables" style="display: none;"><a href="#YulReturnVariables"><span class="k">YulReturnVariables</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulVariableNames" style="display: none;"><a href="#YulVariableNames"><span class="k">YulVariableNames</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulVariableDeclarationStatement }
 
 ```
 
-<pre ebnf-snippet="YulVariableDeclarationStatement" style="display: none;"><a href="#YulVariableDeclarationStatement"><span class="k">YulVariableDeclarationStatement</span></a><span class="o"> = </span><span class="cm">(* let_keyword: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulLetKeyword"><span class="k">YUL_LET_KEYWORD</span></a><br /><span class="o">                                  </span><span class="cm">(* names: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                                  </span><span class="cm">(* value: *)</span><span class="o"> </span><a href="#YulVariableDeclarationValue"><span class="k">YulVariableDeclarationValue</span></a><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulVariableDeclarationStatement" style="display: none;"><a href="#YulVariableDeclarationStatement"><span class="k">YulVariableDeclarationStatement</span></a><span class="o"> = </span><span class="cm">(* let_keyword: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulLetKeyword"><span class="k">YUL_LET_KEYWORD</span></a><br /><span class="o">                                  </span><span class="cm">(* variables: *)</span><span class="o"> </span><a href="#YulVariableNames"><span class="k">YulVariableNames</span></a><br /><span class="o">                                  </span><span class="cm">(* value: *)</span><span class="o"> </span><a href="#YulVariableDeclarationValue"><span class="k">YulVariableDeclarationValue</span></a><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulVariableDeclarationValue }
 
@@ -68,7 +68,7 @@
 
 ```
 
-<pre ebnf-snippet="YulVariableAssignmentStatement" style="display: none;"><a href="#YulVariableAssignmentStatement"><span class="k">YulVariableAssignmentStatement</span></a><span class="o"> = </span><span class="cm">(* names: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulPaths"><span class="k">YulPaths</span></a><br /><span class="o">                                 </span><span class="cm">(* assignment: *)</span><span class="o"> </span><a href="#YulAssignmentOperator"><span class="k">YulAssignmentOperator</span></a><br /><span class="o">                                 </span><span class="cm">(* expression: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulExpression"><span class="k">YulExpression</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulVariableAssignmentStatement" style="display: none;"><a href="#YulVariableAssignmentStatement"><span class="k">YulVariableAssignmentStatement</span></a><span class="o"> = </span><span class="cm">(* variables: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulPaths"><span class="k">YulPaths</span></a><br /><span class="o">                                 </span><span class="cm">(* assignment: *)</span><span class="o"> </span><a href="#YulAssignmentOperator"><span class="k">YulAssignmentOperator</span></a><br /><span class="o">                                 </span><span class="cm">(* expression: *)</span><span class="o"> </span><a href="../02-yul-expressions#YulExpression"><span class="k">YulExpression</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #YulStackAssignmentStatement }
 

@@ -3452,13 +3452,22 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
-                                    operators = [PrecedenceOperator(
-                                        model = Postfix,
-                                        fields = (
-                                            period = Required(Period),
-                                            member = Required(MemberAccess)
+                                    operators = [
+                                        PrecedenceOperator(
+                                            model = Postfix,
+                                            fields = (
+                                                period = Required(Period),
+                                                member = Required(Identifier)
+                                            )
+                                        ),
+                                        PrecedenceOperator(
+                                            model = Postfix,
+                                            fields = (
+                                                period = Required(Period),
+                                                member = Required(AddressKeyword)
+                                            )
                                         )
-                                    )]
+                                    ]
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
@@ -3498,13 +3507,6 @@ codegen_language_macros::compile!(Language(
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
-                            ]
-                        ),
-                        Enum(
-                            name = MemberAccess,
-                            variants = [
-                                EnumVariant(reference = Identifier),
-                                EnumVariant(reference = AddressKeyword)
                             ]
                         ),
                         Struct(
@@ -4202,11 +4204,11 @@ codegen_language_macros::compile!(Language(
                             name = YulReturnsDeclaration,
                             fields = (
                                 minus_greater_than = Required(MinusGreaterThan),
-                                variables = Required(YulReturnVariables)
+                                variables = Required(YulVariableNames)
                             )
                         ),
                         Separated(
-                            name = YulReturnVariables,
+                            name = YulVariableNames,
                             reference = YulIdentifier,
                             separator = Comma
                         ),
@@ -4214,7 +4216,7 @@ codegen_language_macros::compile!(Language(
                             name = YulVariableDeclarationStatement,
                             fields = (
                                 let_keyword = Required(YulLetKeyword),
-                                names = Required(YulIdentifier),
+                                variables = Required(YulVariableNames),
                                 value = Optional(reference = YulVariableDeclarationValue)
                             )
                         ),
@@ -4228,7 +4230,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = YulVariableAssignmentStatement,
                             fields = (
-                                names = Required(YulPaths),
+                                variables = Required(YulPaths),
                                 assignment = Required(YulAssignmentOperator),
                                 expression = Required(YulExpression)
                             )

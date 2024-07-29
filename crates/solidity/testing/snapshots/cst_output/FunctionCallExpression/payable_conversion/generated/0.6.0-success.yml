@@ -14,6 +14,6 @@ Tree:
               - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "msg.sender" (8..18)
                   - (operand꞉ Expression) ► (variant꞉ Identifier): "msg" # (8..11)
                   - (period꞉ Period): "." # (11..12)
-                  - (member꞉ MemberAccess) ► (variant꞉ Identifier): "sender" # (12..18)
+                  - (member꞉ Identifier): "sender" # (12..18)
           - (close_paren꞉ CloseParen): ")" # (18..19)
           - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

@@ -2135,16 +2135,44 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 NonterminalKind::MemberAccessExpression,
                 37u8,
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::Period,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::Period,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Member, self.member_access(input))?;
-                    seq.finish()
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem_labeled(
+                            EdgeLabel::Period,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Period,
+                            ),
+                        )?;
+                        seq.elem_labeled(
+                            EdgeLabel::Member,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Identifier,
+                            ),
+                        )?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem_labeled(
+                            EdgeLabel::Period,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::Period,
+                            ),
+                        )?;
+                        seq.elem_labeled(
+                            EdgeLabel::Member,
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::AddressKeyword,
+                            ),
+                        )?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
@@ -3350,25 +3378,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(NonterminalKind::MappingValue)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn member_access(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                input,
-                TerminalKind::Identifier,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                input,
-                TerminalKind::AddressKeyword,
-            );
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::MemberAccess)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6742,24 +6751,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_return_variables(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Yul>(
-            input,
-            self,
-            |input| {
-                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulIdentifier,
-                )
-                .with_label(EdgeLabel::Item)
-            },
-            TerminalKind::Comma,
-            EdgeLabel::Separator,
-        )
-        .with_kind(NonterminalKind::YulReturnVariables)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
@@ -6769,7 +6760,7 @@ impl Language {
                     TerminalKind::MinusGreaterThan,
                 ),
             )?;
-            seq.elem_labeled(EdgeLabel::Variables, self.yul_return_variables(input))?;
+            seq.elem_labeled(EdgeLabel::Variables, self.yul_variable_names(input))?;
             seq.finish()
         })
         .with_kind(NonterminalKind::YulReturnsDeclaration)
@@ -6896,7 +6887,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_variable_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(EdgeLabel::Names, self.yul_paths(input))?;
+            seq.elem_labeled(EdgeLabel::Variables, self.yul_paths(input))?;
             seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
             seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
             seq.finish()
@@ -6914,13 +6905,7 @@ impl Language {
                     TerminalKind::YulLetKeyword,
                 ),
             )?;
-            seq.elem_labeled(
-                EdgeLabel::Names,
-                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulIdentifier,
-                ),
-            )?;
+            seq.elem_labeled(EdgeLabel::Variables, self.yul_variable_names(input))?;
             seq.elem_labeled(
                 EdgeLabel::Value,
                 OptionalHelper::transform(self.yul_variable_declaration_value(input)),
@@ -6938,6 +6923,24 @@ impl Language {
             seq.finish()
         })
         .with_kind(NonterminalKind::YulVariableDeclarationValue)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_variable_names(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
+            input,
+            self,
+            |input| {
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulIdentifier,
+                )
+                .with_label(EdgeLabel::Item)
+            },
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
+        )
+        .with_kind(NonterminalKind::YulVariableNames)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9306,7 +9309,6 @@ impl Language {
             NonterminalKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             NonterminalKind::MappingType => Self::mapping_type.parse(self, input),
             NonterminalKind::MappingValue => Self::mapping_value.parse(self, input),
-            NonterminalKind::MemberAccess => Self::member_access.parse(self, input),
             NonterminalKind::MemberAccessExpression => {
                 Self::member_access_expression.parse(self, input)
             }
@@ -9485,7 +9487,6 @@ impl Language {
             NonterminalKind::YulPath => Self::yul_path.parse(self, input),
             NonterminalKind::YulPathComponent => Self::yul_path_component.parse(self, input),
             NonterminalKind::YulPaths => Self::yul_paths.parse(self, input),
-            NonterminalKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
             NonterminalKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
@@ -9507,6 +9508,7 @@ impl Language {
             NonterminalKind::YulVariableDeclarationValue => {
                 Self::yul_variable_declaration_value.parse(self, input)
             }
+            NonterminalKind::YulVariableNames => Self::yul_variable_names.parse(self, input),
         }
     }
 }

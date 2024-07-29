@@ -29,7 +29,7 @@ Tree:
                   - (leading_trivia꞉ Whitespace): " " # (22..23)
                   - (variant꞉ Identifier): "abi" # (23..26)
               - (period꞉ Period): "." # (26..27)
-              - (member꞉ MemberAccess) ► (variant꞉ Identifier): "decode" # (27..33)
+              - (member꞉ Identifier): "decode" # (27..33)
           - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(data, (uint32, uint32))" (33..57)
               - (open_paren꞉ OpenParen): "(" # (33..34)
               - (arguments꞉ PositionalArguments): # "data, (uint32, uint32)" (34..56)

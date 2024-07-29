@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "selfbalance := 0\n" (0..17)
-      - (names꞉ YulPaths): # "selfbalance" (0..11)
+      - (variables꞉ YulPaths): # "selfbalance" (0..11)
           - (item꞉ YulPath): # "selfbalance" (0..11)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "selfbalance" # (0..11)
       - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)

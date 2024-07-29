@@ -15,7 +15,6 @@ const config: Config = {
 
   cacheDirectory: "<rootDir>/target/jest/cache",
   slowTestThreshold: 5,
-  verbose: true,
 
   clearMocks: true,
   resetMocks: true,

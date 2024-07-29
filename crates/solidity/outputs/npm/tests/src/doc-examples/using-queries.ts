@@ -138,7 +138,7 @@ test("using queries", async () => {
     const query = Query.parse(`
     @txorigin [MemberAccessExpression
       [Expression @start ["tx"]]
-      [MemberAccess ["origin"]]
+      ["origin"]
     ]`);
     const matches = cursor.query([query]);
 

@@ -313,20 +313,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.lexical_scope -> @stmt.lexical_scope
 }
 
-@member [MemberAccess] {
-  node @member.lexical_scope
-}
-
-@member [MemberAccess @name [Identifier]] {
-  node ref
-  attr (ref) node_reference = @name
-
-  edge ref -> @member.lexical_scope
-}
-
 [MemberAccessExpression
     @expr operand: [Expression]
-    @member member: [MemberAccess]
+    @member member: [Identifier]
 ] {
   node member
   attr (member) push_symbol = "."

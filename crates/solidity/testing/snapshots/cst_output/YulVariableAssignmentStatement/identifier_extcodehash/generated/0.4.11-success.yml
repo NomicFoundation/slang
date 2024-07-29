@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "extcodehash := 0\n" (0..17)
-      - (names꞉ YulPaths): # "extcodehash" (0..11)
+      - (variables꞉ YulPaths): # "extcodehash" (0..11)
           - (item꞉ YulPath): # "extcodehash" (0..11)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "extcodehash" # (0..11)
       - (assignment꞉ YulAssignmentOperator): # " :=" (11..14)

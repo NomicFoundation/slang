@@ -145,7 +145,7 @@ fn tx_origin_query() -> Result<()> {
     let query = Query::parse(
         r#"@txorigin [MemberAccessExpression
                 [Expression @start ["tx"]]
-                [MemberAccess ["origin"]]
+                ["origin"]
             ]"#,
     )
     .unwrap();

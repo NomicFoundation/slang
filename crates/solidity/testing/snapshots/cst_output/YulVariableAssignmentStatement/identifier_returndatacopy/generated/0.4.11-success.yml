@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - (YulVariableAssignmentStatement): # "returndatacopy := 0\n" (0..20)
-      - (names꞉ YulPaths): # "returndatacopy" (0..14)
+      - (variables꞉ YulPaths): # "returndatacopy" (0..14)
           - (item꞉ YulPath): # "returndatacopy" (0..14)
               - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "returndatacopy" # (0..14)
       - (assignment꞉ YulAssignmentOperator): # " :=" (14..17)
