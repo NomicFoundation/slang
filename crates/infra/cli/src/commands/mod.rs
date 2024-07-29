@@ -2,6 +2,7 @@ mod check;
 mod ci;
 mod completions;
 mod lint;
+mod perf;
 mod publish;
 mod run;
 mod setup;
@@ -15,6 +16,7 @@ use crate::commands::check::CheckController;
 use crate::commands::ci::CiController;
 use crate::commands::completions::CompletionController;
 use crate::commands::lint::LintController;
+use crate::commands::perf::PerfController;
 use crate::commands::publish::PublishController;
 use crate::commands::run::RunController;
 use crate::commands::setup::SetupController;
@@ -52,6 +54,8 @@ pub enum AppCommand {
     Run(RunController),
     /// Watch for repository file changes, and run the specified workflows as needed.
     Watch(WatchController),
+    /// Executes performance benchmarks, and reports the results.
+    Perf(PerfController),
     /// Publish different artifacts from this repository.
     Publish(PublishController),
     /// Generate shell completions for this CLI.
@@ -74,6 +78,7 @@ impl AppCommand {
             AppCommand::Ci(command) => command.execute(),
             AppCommand::Run(command) => command.execute(),
             AppCommand::Watch(command) => command.execute(),
+            AppCommand::Perf(command) => command.execute(),
             AppCommand::Publish(command) => command.execute(),
             AppCommand::Completions(command) => command.execute(),
         }

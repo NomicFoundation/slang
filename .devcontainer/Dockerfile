@@ -24,7 +24,7 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 RUN sudo apt-get update \
-  && sudo apt-get install --yes pkg-config \
+  && sudo apt-get install --yes "pkg-config" "valgrind" \
   && rm -rf /var/lib/apt/lists/*
 
 # Setup default Bash and Zsh for local development inside the image:
