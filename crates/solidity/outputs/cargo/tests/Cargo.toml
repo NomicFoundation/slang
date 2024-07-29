@@ -13,9 +13,13 @@ solidity_language = { workspace = true }
 
 [dev-dependencies]
 anyhow = { workspace = true }
+ariadne = { workspace = true }
 codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
+metaslang_bindings = { workspace = true, features = [
+  "__private_testing_utils",
+] }
 metaslang_graph_builder = { workspace = true }
 once_cell = { workspace = true }
 regex = { workspace = true }
@@ -26,6 +30,7 @@ slang_solidity = { workspace = true, features = [
 ] }
 solidity_language = { workspace = true }
 strum_macros = { workspace = true }
+thiserror = { workspace = true }
 
 [lints]
 workspace = true

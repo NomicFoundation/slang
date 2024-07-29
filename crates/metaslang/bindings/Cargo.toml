@@ -30,5 +30,8 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 
+[features]
+__private_testing_utils = []
+
 [lints]
 workspace = true

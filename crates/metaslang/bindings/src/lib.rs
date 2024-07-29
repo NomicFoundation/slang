@@ -12,13 +12,14 @@ use metaslang_graph_builder::functions::Functions;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 use stack_graphs::partial::PartialPaths;
-use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
+use stack_graphs::stitching::{
+    Appendable, ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig,
+};
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 
 pub struct Bindings<KT: KindTypes + 'static> {
-    version: Version,
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
@@ -30,11 +31,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         let graph_builder_file =
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = Functions::stdlib();
+        let functions = builder::default_functions(version);
         let cursors = HashMap::new();
 
         Self {
-            version,
             graph_builder_file,
             functions,
             stack_graph,
@@ -43,10 +43,20 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let globals = builder::Globals {
-            version: &self.version,
-            file_path,
-        };
+        _ = self.add_file_internal(file_path, tree_cursor);
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
+    pub fn add_file_returning_graph(
+        &mut self,
+        file_path: &str,
+        tree_cursor: Cursor<KT>,
+    ) -> metaslang_graph_builder::graph::Graph<KT> {
+        let builder = self.add_file_internal(file_path, tree_cursor);
+        builder.graph()
+    }
+
+    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> Builder<'_, KT> {
         let file = self.stack_graph.get_or_create_file(file_path);
 
         let mut builder = Builder::new(
@@ -57,10 +67,11 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             tree_cursor,
         );
         builder
-            .build(&globals, &builder::NoCancellation, |handle, cursor| {
+            .build(file_path, &builder::NoCancellation, |handle, cursor| {
                 self.cursors.insert(handle, cursor.clone());
             })
             .expect("Internal error while building bindings");
+        builder
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_, KT>> + '_ {
@@ -81,6 +92,18 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 owner: self,
                 handle,
             })
+    }
+
+    pub fn cursor_to_handle(&self, cursor: &Cursor<KT>) -> Option<Handle<'_, KT>> {
+        for (handle, handle_cursor) in &self.cursors {
+            if handle_cursor == cursor {
+                return Some(Handle {
+                    owner: self,
+                    handle: *handle,
+                });
+            }
+        }
+        None
     }
 }
 
@@ -109,19 +132,29 @@ impl<KT: KindTypes + 'static> Handle<'_, KT> {
     }
 
     pub fn jump_to_definition(&self) -> Option<Self> {
-        let mut paths = PartialPaths::new();
-        let mut results = BTreeSet::new();
+        let mut partials = PartialPaths::new();
+        let mut reference_paths = Vec::new();
         if self.is_reference() {
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut paths, None),
+                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut partials, None),
                 once(self.handle),
                 StitcherConfig::default(),
                 &stack_graphs::NoCancellation,
                 |_graph, _paths, path| {
-                    results.insert(path.end_node);
+                    reference_paths.push(path.clone());
                 },
             )
             .expect("should never be cancelled");
+        }
+
+        let mut results = BTreeSet::new();
+        for reference_path in &reference_paths {
+            if reference_paths
+                .iter()
+                .all(|other| !other.shadows(&mut partials, reference_path))
+            {
+                results.insert(reference_path.end_node());
+            }
         }
         if results.len() > 1 {
             println!("WARN: More than one definition found for {self:?}");
@@ -136,5 +169,13 @@ impl<KT: KindTypes + 'static> Handle<'_, KT> {
 impl<KT: KindTypes + 'static> Debug for Handle<'_, KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("BindingsHandle").field(&self.handle).finish()
+    }
+}
+
+impl<KT: KindTypes + 'static> PartialEq for Handle<'_, KT> {
+    fn eq(&self, other: &Self) -> bool {
+        let our_owner: *const Bindings<KT> = self.owner;
+        let other_owner: *const Bindings<KT> = other.owner;
+        our_owner == other_owner && self.handle == other.handle
     }
 }
