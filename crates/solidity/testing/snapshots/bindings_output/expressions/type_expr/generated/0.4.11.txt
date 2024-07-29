@@ -1,5 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+   ╭─[crates/solidity/testing/snapshots/bindings_output/expressions/type_expr/input.sol:4:23]
+   │
+ 4 │         string name = type(Test).name;
+   │                       ───────┬───────  
+   │                              ╰───────── Error occurred here.
+───╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+   ╭─[crates/solidity/testing/snapshots/bindings_output/expressions/type_expr/input.sol:5:24]
+   │
+ 5 │         Answer first = type(Answer).min;
+   │                        ────────┬───────  
+   │                                ╰───────── Error occurred here.
+───╯
 References and definitions: 
    ╭─[crates/solidity/testing/snapshots/bindings_output/expressions/type_expr/input.sol:1:1]
    │
@@ -24,6 +39,4 @@ References and definitions:
    │            ╰────────── ref: 2
    │                  │    
    │                  ╰──── def: 7
-   │ 
-   │ Note: WARNING: Parsing failed. Results may be incomplete.
 ───╯

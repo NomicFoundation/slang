@@ -1,5 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or Semicolon or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/sample/input.sol:26:16]
+    │
+ 26 │         return type(ActionChoices).max;
+    │                ───────────┬───────────  
+    │                           ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or Semicolon or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[crates/solidity/testing/snapshots/bindings_output/enums/sample/input.sol:30:16]
+    │
+ 30 │         return type(ActionChoices).min;
+    │                ───────────┬───────────  
+    │                           ╰───────────── Error occurred here.
+────╯
 References and definitions: 
     ╭─[crates/solidity/testing/snapshots/bindings_output/enums/sample/input.sol:1:1]
     │
@@ -71,6 +86,4 @@ References and definitions:
     │                      ╰────────────────────────────────────────────── def: 13
     │                                                            │        
     │                                                            ╰──────── ref: 2
-    │ 
-    │ Note: WARNING: Parsing failed. Results may be incomplete.
 ────╯

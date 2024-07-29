@@ -5,6 +5,7 @@ use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use infra_utils::paths::PathExtensions;
 use slang_solidity::bindings::{Bindings, Handle};
+use slang_solidity::diagnostic;
 use slang_solidity::parse_output::ParseOutput;
 
 pub(crate) fn render_bindings(
@@ -13,17 +14,28 @@ pub(crate) fn render_bindings(
     source: &str,
     source_path: &Path,
 ) -> Result<String> {
+    let mut buffer: Vec<u8> = Vec::new();
     let source_id = source_path.strip_repo_root()?.unwrap_str();
+
+    if !parse_output.is_valid() {
+        let mut report = parse_output
+            .errors()
+            .iter()
+            .map(|error| diagnostic::render(error, source_id, source, false))
+            .collect::<Vec<_>>()
+            .join("\n")
+            .into_bytes();
+        buffer.extend_from_slice("Parse errors:\n".as_bytes());
+        buffer.append(&mut report);
+        buffer.push(b'\n');
+    }
+
     let mut builder: ReportBuilder<'_, (&str, Range<usize>)> = Report::build(
         ReportKind::Custom("References and definitions", Color::Unset),
         source_id,
         0,
     )
     .with_config(Config::default().with_color(false));
-
-    if !parse_output.is_valid() {
-        builder = builder.with_note("WARNING: Parsing failed. Results may be incomplete.");
-    }
 
     let mut definitions: Vec<Handle<'_>> = Vec::new();
 
@@ -69,7 +81,6 @@ pub(crate) fn render_bindings(
     }
 
     let report = builder.finish();
-    let mut buffer = Vec::new();
     report.write((source_id, Source::from(source)), &mut buffer)?;
 
     let result = String::from_utf8(buffer)?;
