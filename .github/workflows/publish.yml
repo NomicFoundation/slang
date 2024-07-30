@@ -1,0 +1,133 @@
+name: "publish"
+
+on:
+  # Run using manual triggers from GitHub UI:
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch: {}
+
+  # Run on pushes to 'main' branch':
+  push:
+    branches:
+      - "main"
+
+# Wait for any other publish workflows in-progress to complete, before starting a new one:
+concurrency:
+  group: "${{ github.workflow }}"
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    # Only run on the main repo (not forks), and only on the 'main' branch:
+    if: "${{ github.repository == 'NomicFoundation/slang' && github.ref_name == 'main' }}"
+    uses: "./.github/workflows/ci.yml"
+
+  buildDocs:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "ci"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra check mkdocs"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra check mkdocs"
+
+      - name: "Configure Pages"
+        uses: "actions/configure-pages@1f0c5cde4bc74cd7e1254d0cb4de8d49e9068c7d"
+
+      - name: "Upload Artifacts"
+        uses: "actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa"
+        with:
+          path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
+
+  deployDocs:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "buildDocs"
+
+    permissions:
+      pages: "write" # to deploy to Pages
+      id-token: "write" # to verify the deployment originates from an appropriate source
+
+    steps:
+      - name: "Deploy Pages"
+        id: "deployment"
+        uses: "actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e"
+
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"
+
+  consumeChangesets:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "ci"
+
+    permissions:
+      contents: "write" # to create new branches and releases
+      pull-requests: "write" # to create new pull requests for changesets
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra publish changesets"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra publish changesets"
+          env: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Create/Update Changesets Pull Request"
+        id: "runChangesets"
+        uses: "changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9"
+        with:
+          title: "Bump Slang Version"
+          commit: "Bump Slang Version"
+          createGithubReleases: false
+          version: "git stash pop" # Stash created by 'infra publish changesets'
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    outputs:
+      hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
+
+  artifacts:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "consumeChangesets"
+
+    if: "${{ needs.consumeChangesets.outputs.hasChangesets == 'false' }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra publish npm"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra publish npm"
+          env: |
+            NPM_TOKEN=${{ secrets.NPM_TOKEN }}
+
+      - name: "infra publish cargo"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra publish cargo"
+          env: |
+            CARGO_REGISTRY_TOKEN=${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: "infra publish github-release"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra publish github-release"
+          env: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
