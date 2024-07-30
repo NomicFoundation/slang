@@ -2,9 +2,11 @@ use std::rc::Rc;
 
 use nom::branch::alt;
 use nom::bytes::complete::{is_not, tag, take_while, take_while1, take_while_m_n};
-use nom::character::complete::{char, multispace0, multispace1, satisfy};
-use nom::combinator::{all_consuming, map_opt, map_res, opt, recognize, success, value, verify};
-use nom::error::VerboseError;
+use nom::character::complete::{alpha1, char, multispace0, multispace1, satisfy};
+use nom::combinator::{
+    all_consuming, cut, map_opt, map_res, opt, peek, recognize, success, value, verify,
+};
+use nom::error::{context, VerboseError};
 use nom::multi::{fold_many0, many1, separated_list1};
 use nom::sequence::{delimited, pair, preceded, terminated};
 use nom::{Finish, IResult, Parser};
@@ -217,9 +219,17 @@ fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<
 }
 
 fn edge_label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeLabel, VerboseError<&str>> {
-    terminated(
-        map_res(raw_identifier, |id| T::EdgeLabel::try_from_str(id.as_str())),
-        token(':'),
+    context(
+        "parsing edge label",
+        terminated(
+            preceded(
+                peek(alpha1),
+                cut(map_res(cut(raw_identifier), |id| {
+                    T::EdgeLabel::try_from_str(id.as_str())
+                })),
+            ),
+            token(':'),
+        ),
     )
     .parse(i)
 }
