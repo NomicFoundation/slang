@@ -149,11 +149,17 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 ///   //  ^ref:2
 ///   //<ref:1
 ///
-pub fn collect_assertions(mut cursor: Cursor, version: &Version) -> Result<Assertions, AssertionError> {
+pub fn collect_assertions(
+    mut cursor: Cursor,
+    version: &Version,
+) -> Result<Assertions, AssertionError> {
     let mut assertions = Assertions::new();
 
     loop {
-        if cursor.node().is_terminal_with_kind(TerminalKind::SingleLineComment) {
+        if cursor
+            .node()
+            .is_terminal_with_kind(TerminalKind::SingleLineComment)
+        {
             match find_assertion_in_comment(&cursor, version)? {
                 Some(Assertion::Definition(assertion)) => {
                     assertions.insert_definition_assertion(assertion)?;
