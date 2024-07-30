@@ -9,7 +9,7 @@ use nom::combinator::{
 use nom::error::{context, VerboseError};
 use nom::multi::{fold_many0, many1, separated_list1};
 use nom::sequence::{delimited, pair, preceded, terminated};
-use nom::{Finish, IResult, Parser};
+use nom::{Finish, IResult, Offset, Parser};
 use thiserror::Error;
 
 use super::model::{
@@ -17,6 +17,7 @@ use super::model::{
     OptionalASTNode, SequenceASTNode,
 };
 use crate::cst::NodeKind;
+use crate::text_index::TextIndex;
 use crate::{AbstractKind as _, KindTypes};
 
 // ----------------------------------------------------------------------------
@@ -43,11 +44,36 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
         .parse(input)
         .finish()
         .map(|(_, query)| query)
-        .map_err(|e| QueryError {
-            message: e.to_string(),
-            row: 0,
-            column: 0,
+        .map_err(|e| {
+            let text_index = compute_row_and_column(e.errors[0].0, input);
+            QueryError {
+                message: e.to_string(),
+                row: text_index.line,
+                column: text_index.column,
+            }
         })
+}
+
+fn compute_row_and_column(target: &str, from: &str) -> TextIndex {
+    let target_offset = from.offset(target);
+    let mut text_index = TextIndex::ZERO;
+    let mut from_iter = from.chars();
+    let Some(mut c) = from_iter.next() else {
+        return text_index;
+    };
+    let mut next_c = from_iter.next();
+    loop {
+        if text_index.utf8 >= target_offset {
+            break;
+        }
+        text_index.advance(c, next_c.as_ref());
+        c = match next_c {
+            Some(ch) => ch,
+            None => break,
+        };
+        next_c = from_iter.next();
+    }
+    text_index
 }
 
 pub(super) fn parse_matcher_alternatives<T: KindTypes>(

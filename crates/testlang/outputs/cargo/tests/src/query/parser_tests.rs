@@ -55,9 +55,12 @@ fn test_parsing_error() {
     let result = Query::parse(r#"@root [_ ..."#);
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(e) => assert_eq!(
-            e.message,
-            "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
-        ),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
+            );
+            assert_eq!((e.row, e.column), (0, 12));
+        }
     }
 }
