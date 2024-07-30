@@ -205,15 +205,21 @@ fn capture_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
 }
 
 fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<&str>> {
-    terminated(
-        map_res(raw_identifier, |id| {
-            T::TerminalKind::try_from_str(id.as_str())
-                .map(NodeKind::Terminal)
-                .or_else(|_| {
-                    T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
-                })
-        }),
-        multispace0,
+    context(
+        "parsing node kind",
+        terminated(
+            preceded(
+                peek(alpha1),
+                cut(map_res(raw_identifier, |id| {
+                    T::TerminalKind::try_from_str(id.as_str())
+                        .map(NodeKind::Terminal)
+                        .or_else(|_| {
+                            T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
+                        })
+                })),
+            ),
+            multispace0,
+        ),
     )
     .parse(i)
 }
