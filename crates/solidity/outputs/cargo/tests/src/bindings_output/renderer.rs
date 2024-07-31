@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity::bindings::{Bindings, Handle};
+use slang_solidity::bindings::{Bindings, Definition};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
@@ -13,7 +13,7 @@ pub(crate) fn render_bindings(
 ) -> Result<String> {
     let mut buffer: Vec<u8> = Vec::new();
 
-    let mut definitions: Vec<Handle<'_>> = Vec::new();
+    let mut definitions: Vec<Definition<'_>> = Vec::new();
     for definition in bindings.all_definitions() {
         if definition.get_cursor().is_some() {
             definitions.push(definition);

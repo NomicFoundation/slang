@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::{Version, VersionReq};
-use slang_solidity::bindings::{Bindings, Handle};
+use slang_solidity::bindings::{Bindings, Definition};
 use slang_solidity::cursor::Cursor;
 use slang_solidity::query::Query;
 use thiserror::Error;
@@ -339,18 +339,14 @@ fn check_definitions<'a>(
 fn find_definition<'a>(
     bindings: &'a Bindings,
     assertion: &DefinitionAssertion<'_>,
-) -> Result<Handle<'a>, String> {
+) -> Result<Definition<'a>, String> {
     let DefinitionAssertion { cursor, .. } = assertion;
 
-    let handles = bindings.cursor_to_handles(cursor);
-    if handles.is_empty() {
+    let Some(definition) = bindings.definition_at(cursor) else {
         return Err(format!("{assertion} failed: not found"));
-    }
-    let Some(handle) = handles.into_iter().find(|h| h.is_definition()) else {
-        return Err(format!("{assertion} failed: not a definition"));
     };
 
-    Ok(handle)
+    Ok(definition)
 }
 
 fn check_references<'a>(
@@ -438,25 +434,21 @@ fn check_reference_assertion(
 fn find_and_resolve_reference<'a>(
     bindings: &'a Bindings,
     assertion: &ReferenceAssertion<'_>,
-) -> Result<Option<Handle<'a>>, String> {
+) -> Result<Option<Definition<'a>>, String> {
     let ReferenceAssertion { cursor, .. } = assertion;
 
-    let handles = bindings.cursor_to_handles(cursor);
-    if handles.is_empty() {
+    let Some(reference) = bindings.reference_at(cursor) else {
         return Err(format!("{assertion} failed: not found"));
-    }
-
-    let Some(handle) = handles.iter().find(|h| h.is_reference()) else {
-        return Err(format!("{assertion} failed: not a reference"));
     };
-    Ok(handle.jump_to_definition())
+
+    Ok(reference.jump_to_definition())
 }
 
 fn lookup_referenced_definition<'a>(
     bindings: &'a Bindings,
     definitions: &HashMap<String, DefinitionAssertion<'_>>,
     assertion: &ReferenceAssertion<'_>,
-) -> Result<Handle<'a>, String> {
+) -> Result<Definition<'a>, String> {
     let ReferenceAssertion { id, .. } = assertion;
     let Some(id) = id else {
         return Err(format!("{assertion} failed: should not attempt to resolve"));

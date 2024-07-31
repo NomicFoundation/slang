@@ -3,7 +3,7 @@ use core::fmt;
 use semver::Version;
 
 use super::CommandError;
-use crate::bindings::{self, Bindings, Handle};
+use crate::bindings::{self, Bindings, Definition, Reference};
 use crate::cursor::Cursor;
 
 pub fn execute(file_path_string: &str, version: Version) -> Result<(), CommandError> {
@@ -49,7 +49,7 @@ impl<'a> fmt::Display for DisplayRange<'a> {
     }
 }
 
-struct DisplayDefinition<'a>(&'a Handle<'a>);
+struct DisplayDefinition<'a>(&'a Definition<'a>);
 
 impl<'a> fmt::Display for DisplayDefinition<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -68,7 +68,7 @@ impl<'a> fmt::Display for DisplayDefinition<'a> {
     }
 }
 
-struct DisplayReference<'a>(&'a Handle<'a>);
+struct DisplayReference<'a>(&'a Reference<'a>);
 
 impl<'a> fmt::Display for DisplayReference<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -91,55 +91,90 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         builder
     }
 
-    pub fn all_definitions(&self) -> impl Iterator<Item = Handle<'_, KT>> + '_ {
+    pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
         self.stack_graph
             .iter_nodes()
             .filter(|handle| self.stack_graph[*handle].is_definition())
-            .map(|handle| Handle {
+            .map(|handle| Definition {
                 owner: self,
                 handle,
             })
     }
 
-    pub fn all_references(&self) -> impl Iterator<Item = Handle<'_, KT>> + '_ {
+    pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
         self.stack_graph
             .iter_nodes()
             .filter(|handle| self.stack_graph[*handle].is_reference())
-            .map(|handle| Handle {
+            .map(|handle| Reference {
                 owner: self,
                 handle,
             })
     }
 
-    pub fn cursor_to_handles(&self, cursor: &Cursor<KT>) -> Vec<Handle<'_, KT>> {
-        let mut handles = Vec::new();
+    pub fn definition_at(&self, cursor: &Cursor<KT>) -> Option<Definition<'_, KT>> {
         for (handle, handle_cursor) in &self.cursors {
-            if handle_cursor == cursor {
-                handles.push(Handle {
+            if handle_cursor == cursor && self.stack_graph[*handle].is_definition() {
+                return Some(Definition {
                     owner: self,
                     handle: *handle,
                 });
             }
         }
-        handles
+        None
+    }
+
+    pub fn reference_at(&self, cursor: &Cursor<KT>) -> Option<Reference<'_, KT>> {
+        for (handle, handle_cursor) in &self.cursors {
+            if handle_cursor == cursor && self.stack_graph[*handle].is_reference() {
+                return Some(Reference {
+                    owner: self,
+                    handle: *handle,
+                });
+            }
+        }
+        None
     }
 }
 
 #[derive(Clone)]
-pub struct Handle<'a, KT: KindTypes + 'static> {
+pub struct Definition<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
     handle: GraphHandle,
 }
 
-impl<'a, KT: KindTypes + 'static> Handle<'a, KT> {
-    pub fn is_definition(&self) -> bool {
-        self.owner.stack_graph[self.handle].is_definition()
+impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
+    pub fn get_cursor(&self) -> Option<Cursor<KT>> {
+        self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn is_reference(&self) -> bool {
-        self.owner.stack_graph[self.handle].is_reference()
+    pub fn get_file(&self) -> Option<&'a str> {
+        self.owner.stack_graph[self.handle]
+            .file()
+            .map(|file| self.owner.stack_graph[file].name())
     }
+}
 
+impl<KT: KindTypes + 'static> Debug for Definition<'_, KT> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("BindingsHandle").field(&self.handle).finish()
+    }
+}
+
+impl<KT: KindTypes + 'static> PartialEq for Definition<'_, KT> {
+    fn eq(&self, other: &Self) -> bool {
+        let our_owner: *const Bindings<KT> = self.owner;
+        let other_owner: *const Bindings<KT> = other.owner;
+        our_owner == other_owner && self.handle == other.handle
+    }
+}
+
+#[derive(Clone)]
+pub struct Reference<'a, KT: KindTypes + 'static> {
+    owner: &'a Bindings<KT>,
+    handle: GraphHandle,
+}
+
+impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     pub fn get_cursor(&self) -> Option<Cursor<KT>> {
         self.owner.cursors.get(&self.handle).cloned()
     }
@@ -150,11 +185,7 @@ impl<'a, KT: KindTypes + 'static> Handle<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub fn jump_to_definition(&self) -> Option<Self> {
-        if !self.is_reference() {
-            return None;
-        }
-
+    pub fn jump_to_definition(&self) -> Option<Definition<'a, KT>> {
         let mut partials = PartialPaths::new();
         let mut reference_paths = Vec::new();
         ForwardPartialPathStitcher::find_all_complete_partial_paths(
@@ -184,20 +215,20 @@ impl<'a, KT: KindTypes + 'static> Handle<'a, KT> {
             );
             results.sort_by(|a, b| b.edges.len().cmp(&a.edges.len()));
         }
-        results.first().map(|path| Handle {
+        results.first().map(|path| Definition {
             owner: self.owner,
             handle: path.end_node(),
         })
     }
 }
 
-impl<KT: KindTypes + 'static> Debug for Handle<'_, KT> {
+impl<KT: KindTypes + 'static> Debug for Reference<'_, KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("BindingsHandle").field(&self.handle).finish()
     }
 }
 
-impl<KT: KindTypes + 'static> PartialEq for Handle<'_, KT> {
+impl<KT: KindTypes + 'static> PartialEq for Reference<'_, KT> {
     fn eq(&self, other: &Self) -> bool {
         let our_owner: *const Bindings<KT> = self.owner;
         let other_owner: *const Bindings<KT> = other.owner;
