@@ -50,7 +50,12 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
         }
 
         bindings.add_file(file_path, parse_output.create_tree_cursor());
-        collect_assertions_into(&mut assertions, parse_output.create_tree_cursor(), version)?;
+        collect_assertions_into(
+            &mut assertions,
+            parse_output.create_tree_cursor(),
+            file_path,
+            version,
+        )?;
     }
 
     let result = check_assertions(&bindings, &assertions, version);
