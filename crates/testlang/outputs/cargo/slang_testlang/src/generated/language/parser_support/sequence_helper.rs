@@ -118,8 +118,18 @@ impl SequenceHelper {
                     }));
                 }
 
-                (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) =>
-                    unreachable!("Error recovery happens outside precedence parsing"),
+                (ParserResult::PrattOperatorMatch(running), ParserResult::SkippedUntil(skipped)) => {
+                    let nodes: Vec<_> = std::mem::take(&mut running.elements)
+                            .into_iter()
+                            .flat_map(PrattElement::into_nodes)
+                            .chain(skipped.nodes)
+                            .collect();
+
+                    self.result = State::Running(ParserResult::SkippedUntil(SkippedUntil {
+                        nodes,
+                        ..skipped
+                    }));
+                }
 
                 // Try to recover until we hit an expected boundary terminal.
                 // If the sequence is unwinding, then a subsequent non-empty match must mean that
