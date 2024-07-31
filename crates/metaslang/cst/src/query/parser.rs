@@ -230,9 +230,9 @@ fn capture_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
-fn anonymous_selector<'input, T: KindTypes>(
-    input: &'input str,
-) -> IResult<&'input str, NodeSelector<T>, VerboseError<&'input str>> {
+fn anonymous_selector<T: KindTypes>(
+    input: &str,
+) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
     // match a single _ character followed by whitespace or any other
     // non-alphanumeric symbol; otherwise this would eat the initial underscore
     // in an identifier such as `_foo`
