@@ -189,6 +189,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
   edge @import.defs -> def
 
   node member
@@ -210,6 +211,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
   edge @import.defs -> def
 
   node member
@@ -241,6 +243,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @symbol [ImportDeconstructionSymbol ... @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @symbol
   edge @symbol.def -> def
 
   node import
@@ -258,6 +261,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @alias
+  attr (def) definiens_node = @symbol
   edge @symbol.def -> def
 
   node import
@@ -274,6 +278,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @contract [ContractDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @contract
 
   edge @contract.def -> def
 
@@ -297,6 +302,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @interface [InterfaceDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @interface
 
   edge @interface.def -> def
 
@@ -320,6 +326,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @library [LibraryDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @library
 
   edge @library.def -> def
 
@@ -333,6 +340,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @function [FunctionDefinition ... name: [FunctionName ... @name [Identifier] ...] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @function
 
   edge @function.def -> def
 }
@@ -406,6 +414,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @param [Parameter ... @type_name [TypeName] ... @name [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @param
 
   edge @param.def -> def
 
@@ -546,7 +555,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Declaration Statements introducing variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@stmt [Statement [VariableDeclarationStatement
+@stmt [Statement @var_decl [VariableDeclarationStatement
     ...
     [VariableDeclarationType @var_type [TypeName]]
     ...
@@ -555,6 +564,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @var_decl
 
   edge @stmt.defs -> def
   edge @var_type.type_ref -> @stmt.lexical_scope
@@ -568,26 +578,36 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
     ...
-    [TupleDeconstructionElement [TupleMember variant: [UntypedTupleMember ... @name name: [Identifier]]]]
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [UntypedTupleMember
+            ...
+            @name name: [Identifier]]
+        ]
+    ]
     ...
 ] ...]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
 
   edge @stmt.defs -> def
 }
 
 @stmt [Statement [TupleDeconstructionStatement ... [TupleDeconstructionElements
     ...
-    [TupleDeconstructionElement [TupleMember variant: [TypedTupleMember
-        ...
-        @member_type type_name: [TypeName]
-        ...
-        @name name: [Identifier]]]]
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [TypedTupleMember
+            ...
+            @member_type type_name: [TypeName]
+            ...
+            @name name: [Identifier]]
+        ]
+    ]
     ...
 ] ...]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
 
   edge @stmt.defs -> def
   edge @member_type.type_ref -> @stmt.lexical_scope
@@ -618,6 +638,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @state_var
 
   edge @state_var.def -> def
   edge @type_name.type_ref -> @state_var.lexical_scope
@@ -649,6 +670,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @enum [EnumDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @enum
 
   edge @enum.def -> def
 
@@ -666,6 +688,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @item
+  attr (def) definiens_node = @item
 
   edge @enum.members -> def
 }
@@ -706,6 +729,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @struct [StructDefinition ... @name name: [Identifier] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @struct
 
   edge @struct.def -> def
 
@@ -732,6 +756,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] ...] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @member
 
   edge @struct.members -> def
 
