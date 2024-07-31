@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use nom::branch::alt;
 use nom::bytes::complete::{is_not, tag, take_while, take_while1, take_while_m_n};
-use nom::character::complete::{alpha1, char, multispace0, multispace1, satisfy};
+use nom::character::complete::{char, multispace0, multispace1, satisfy};
 use nom::combinator::{
     all_consuming, cut, map_opt, map_res, opt, peek, recognize, success, value, verify,
 };
@@ -54,10 +54,10 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
         })
 }
 
-fn compute_row_and_column(target: &str, from: &str) -> TextIndex {
-    let target_offset = from.offset(target);
+fn compute_row_and_column(target: &str, input: &str) -> TextIndex {
+    let target_offset = input.offset(target);
     let mut text_index = TextIndex::ZERO;
-    let mut from_iter = from.chars();
+    let mut from_iter = input.chars();
     let Some(mut c) = from_iter.next() else {
         return text_index;
     };
@@ -188,7 +188,7 @@ fn parse_node_selector<T: KindTypes>(
     input: &str,
 ) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
     alt((
-        token('_').map(|_| NodeSelector::Anonymous),
+        anonymous_selector,
         kind_token.map(|node_kind| NodeSelector::NodeKind { node_kind }),
         text_token.map(|node_text| NodeSelector::NodeText { node_text }),
     ))
@@ -230,12 +230,29 @@ fn capture_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
+fn anonymous_selector<'input, T: KindTypes>(
+    input: &'input str,
+) -> IResult<&'input str, NodeSelector<T>, VerboseError<&'input str>> {
+    // match a single _ character followed by whitespace or any other
+    // non-alphanumeric symbol; otherwise this would eat the initial underscore
+    // in an identifier such as `_foo`
+    terminated(
+        terminated(
+            char('_'),
+            peek(satisfy(|c| c != '_' && !c.is_alphanumeric())),
+        ),
+        multispace0,
+    )
+    .map(|_| NodeSelector::Anonymous)
+    .parse(input)
+}
+
 fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<&str>> {
     context(
         "parsing node kind",
         terminated(
             preceded(
-                peek(alpha1),
+                peek(satisfy(|c| c.is_alphabetic() || c == '_')),
                 cut(map_res(raw_identifier, |id| {
                     T::TerminalKind::try_from_str(id.as_str())
                         .map(NodeKind::Terminal)
@@ -255,7 +272,7 @@ fn edge_label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeLabel, Verbos
         "parsing edge label",
         terminated(
             preceded(
-                peek(alpha1),
+                peek(satisfy(|c| c.is_alphabetic() || c == '_')),
                 cut(map_res(cut(raw_identifier), |id| {
                     T::EdgeLabel::try_from_str(id.as_str())
                 })),

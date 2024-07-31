@@ -102,3 +102,18 @@ fn test_parsing_error_with_invalid_node_kind() {
         }
     }
 }
+
+#[test]
+fn test_parsing_error_with_kind_beginning_with_underscore() {
+    let result = Query::parse(r#"[Tree ... [_tree_node] ...]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+            e.message,
+            "Parse error:\nMapRes at: _tree_node] ...]\nin section 'parsing node kind', at: _tree_node] ...]\n",
+            );
+            assert_eq!((e.row, e.column), (0, 11));
+        }
+    }
+}
