@@ -64,3 +64,41 @@ fn test_parsing_error() {
         }
     }
 }
+
+// See https://github.com/NomicFoundation/slang/issues/1042
+#[test]
+fn test_parsing_error_with_invalid_edge_label() {
+    let result = Query::parse(
+        r#"
+[Tree
+    ...
+    @name Name: [_]
+    ...
+]"#,
+    );
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\nMapRes at: Name: [_]\n    ...\n]\nin section 'parsing edge label', at: Name: [_]\n    ...\n]\n",
+            );
+            assert_eq!((e.row, e.column), (3, 10));
+        }
+    }
+}
+
+#[test]
+fn test_parsing_error_with_invalid_node_kind() {
+    let result = Query::parse(r#"[Tree ... [tree_node] ...]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+            e.message,
+            "Parse error:\nMapRes at: tree_node] ...]\nin section 'parsing node kind', at: tree_node] ...]\n",
+            );
+            assert_eq!((e.row, e.column), (0, 11));
+        }
+    }
+}
