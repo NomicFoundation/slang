@@ -25,6 +25,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     functions: Functions<KT>,
     pub stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
+    definiens: HashMap<GraphHandle, Cursor<KT>>,
 }
 
 pub trait PathResolver {
@@ -49,13 +50,13 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = builder::default_functions(version, path_resolver);
-        let cursors = HashMap::new();
 
         Self {
             graph_builder_file,
             functions,
             stack_graph,
-            cursors,
+            cursors: HashMap::new(),
+            definiens: HashMap::new(),
         }
     }
 
@@ -84,10 +85,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             tree_cursor,
         );
         builder
-            .build(file_path, &builder::NoCancellation, |handle, cursor| {
-                self.cursors.insert(handle, cursor.clone());
-            })
+            .build(&builder::NoCancellation)
             .expect("Internal error while building bindings");
+        self.cursors.extend(builder.extract_cursors());
+        self.definiens.extend(builder.extract_definiens());
         builder
     }
 
@@ -145,6 +146,10 @@ pub struct Definition<'a, KT: KindTypes + 'static> {
 impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     pub fn get_cursor(&self) -> Option<Cursor<KT>> {
         self.owner.cursors.get(&self.handle).cloned()
+    }
+
+    pub fn get_definiens_cursor(&self) -> Option<Cursor<KT>> {
+        self.owner.definiens.get(&self.handle).cloned()
     }
 
     pub fn get_file(&self) -> Option<&'a str> {
