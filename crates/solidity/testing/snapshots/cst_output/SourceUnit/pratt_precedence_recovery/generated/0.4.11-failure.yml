@@ -1,0 +1,64 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract A {                                                                     │ 0..12
+  2  │ 	function a() {                                                                  │ 13..28
+  3  │ 		2 + (                                                                          │ 29..36
+  4  │ 	}                                                                               │ 37..39
+  5  │ }                                                                                │ 40..41
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol:4:2]
+       │
+     4 │     }
+       │     │ 
+       │     ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {\n\tfunction a() {\n\t\t2 + (\n\t}\n}\n" (0..42)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {\n\tfunction a() {\n\t\t2 + (\n\t}\n}\n" (0..42)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (name꞉ Identifier): "A" # (9..10)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (open_brace꞉ OpenBrace): "{" # (11..12)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (12..13)
+          - (members꞉ ContractMembers): # "\tfunction a() {\n\t\t2 + (\n\t}\n" (13..40)
+              - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "\tfunction a() {\n\t\t2 + (\n\t}\n" (13..40)
+                  - (leading_trivia꞉ Whitespace): "\t" # (13..14)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (14..22)
+                  - (name꞉ FunctionName): # " a" (22..24)
+                      - (leading_trivia꞉ Whitespace): " " # (22..23)
+                      - (variant꞉ Identifier): "a" # (23..24)
+                  - (parameters꞉ ParametersDeclaration): # "()" (24..26)
+                      - (open_paren꞉ OpenParen): "(" # (24..25)
+                      - (parameters꞉ Parameters): [] # (25..25)
+                      - (close_paren꞉ CloseParen): ")" # (25..26)
+                  - (attributes꞉ FunctionAttributes): [] # (26..26)
+                  - (body꞉ FunctionBody) ► (variant꞉ Block): # " {\n\t\t2 + (\n\t}\n" (26..40)
+                      - (leading_trivia꞉ Whitespace): " " # (26..27)
+                      - (open_brace꞉ OpenBrace): "{" # (27..28)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (28..29)
+                      - (statements꞉ Statements): # "\t\t2 + (\n\t" (29..38)
+                          - (item꞉ Statement) ► (variant꞉ ExpressionStatement) ► (expression꞉ Expression): # "\t\t2 + (\n\t" (29..38)
+                              - (variant꞉ DecimalNumberExpression): # "\t\t2" (29..32)
+                                  - (leading_trivia꞉ Whitespace): "\t\t" # (29..31)
+                                  - (literal꞉ DecimalLiteral): "2" # (31..32)
+                              - (AdditiveExpression): # " +" (32..34)
+                                  - (leading_trivia꞉ Whitespace): " " # (32..33)
+                                  - (operator꞉ Plus): "+" # (33..34)
+                              - (variant꞉ TupleExpression): # " (\n\t" (34..38)
+                                  - (leading_trivia꞉ Whitespace): " " # (34..35)
+                                  - (open_paren꞉ OpenParen): "(" # (35..36)
+                                  - (trailing_trivia꞉ EndOfLine): "\n" # (36..37)
+                                  - (items꞉ TupleValues): # "" (37..37)
+                                      - (item꞉ TupleValue): [] # (37..37)
+                                  - (leading_trivia꞉ Whitespace): "\t" # (37..38)
+                      - (MISSING): "" # (38..38)
+                      - (close_brace꞉ CloseBrace): "}" # (38..39)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (39..40)
+          - (close_brace꞉ CloseBrace): "}" # (40..41)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (41..42)
