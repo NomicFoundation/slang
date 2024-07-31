@@ -98,6 +98,11 @@ fn partial_definition() -> Result<()> {
 }
 
 #[test]
+fn pratt_precedence_recovery() -> Result<()> {
+    run("SourceUnit", "pratt_precedence_recovery")
+}
+
+#[test]
 fn safe_math() -> Result<()> {
     run("SourceUnit", "safe_math")
 }
