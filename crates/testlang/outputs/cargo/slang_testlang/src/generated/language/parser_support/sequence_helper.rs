@@ -122,6 +122,7 @@ impl SequenceHelper {
                     let nodes: Vec<_> = std::mem::take(&mut running.elements)
                             .into_iter()
                             .flat_map(PrattElement::into_nodes)
+                            .chain(skipped.nodes)
                             .collect();
 
                     self.result = State::Running(ParserResult::SkippedUntil(SkippedUntil {
