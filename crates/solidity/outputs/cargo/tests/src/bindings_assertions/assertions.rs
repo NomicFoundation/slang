@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::{Version, VersionReq};
-use slang_solidity::bindings::Bindings;
+use slang_solidity::bindings::{Bindings, Handle};
 use slang_solidity::cursor::Cursor;
 use slang_solidity::query::Query;
 use thiserror::Error;
@@ -342,12 +342,13 @@ fn find_definition<'a>(
 ) -> Result<Handle<'a>, String> {
     let DefinitionAssertion { cursor, .. } = assertion;
 
-    let Some(handle) = bindings.cursor_to_handle(cursor) else {
+    let handles = bindings.cursor_to_handles(cursor);
+    if handles.is_empty() {
         return Err(format!("{assertion} failed: not found"));
-    };
-    if !handle.is_definition() {
-        return Err(format!("{assertion} failed: not a definition"));
     }
+    let Some(handle) = handles.into_iter().find(|h| h.is_definition()) else {
+        return Err(format!("{assertion} failed: not a definition"));
+    };
 
     Ok(handle)
 }
@@ -440,12 +441,14 @@ fn find_and_resolve_reference<'a>(
 ) -> Result<Option<Handle<'a>>, String> {
     let ReferenceAssertion { cursor, .. } = assertion;
 
-    let Some(handle) = bindings.cursor_to_handle(cursor) else {
+    let handles = bindings.cursor_to_handles(cursor);
+    if handles.is_empty() {
         return Err(format!("{assertion} failed: not found"));
-    };
-    if !handle.is_reference() {
-        return Err(format!("{assertion} failed: not a reference"));
     }
+
+    let Some(handle) = handles.iter().find(|h| h.is_reference()) else {
+        return Err(format!("{assertion} failed: not a reference"));
+    };
     Ok(handle.jump_to_definition())
 }
 

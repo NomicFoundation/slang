@@ -1,6 +1,6 @@
 pub mod builder;
 
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Debug;
 use std::iter::once;
@@ -111,19 +111,17 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             })
     }
 
-    pub fn cursor_to_handle(&self, cursor: &Cursor<KT>) -> Option<Handle<'_, KT>> {
-        // FIXME: in some cases (eg. deconstruction imports without alias) the
-        // same Cursor will point to two separate handles: a definition and a
-        // reference. This API does not support such case yet.
+    pub fn cursor_to_handles(&self, cursor: &Cursor<KT>) -> Vec<Handle<'_, KT>> {
+        let mut handles = Vec::new();
         for (handle, handle_cursor) in &self.cursors {
             if handle_cursor == cursor {
-                return Some(Handle {
+                handles.push(Handle {
                     owner: self,
                     handle: *handle,
                 });
             }
         }
-        None
+        handles
     }
 }
 
@@ -153,36 +151,42 @@ impl<'a, KT: KindTypes + 'static> Handle<'a, KT> {
     }
 
     pub fn jump_to_definition(&self) -> Option<Self> {
-        let mut partials = PartialPaths::new();
-        let mut reference_paths = Vec::new();
-        if self.is_reference() {
-            ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut partials, None),
-                once(self.handle),
-                StitcherConfig::default(),
-                &stack_graphs::NoCancellation,
-                |_graph, _paths, path| {
-                    reference_paths.push(path.clone());
-                },
-            )
-            .expect("should never be cancelled");
+        if !self.is_reference() {
+            return None;
         }
 
-        let mut results = BTreeSet::new();
+        let mut partials = PartialPaths::new();
+        let mut reference_paths = Vec::new();
+        ForwardPartialPathStitcher::find_all_complete_partial_paths(
+            &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut partials, None),
+            once(self.handle),
+            StitcherConfig::default(),
+            &stack_graphs::NoCancellation,
+            |_graph, _paths, path| {
+                reference_paths.push(path.clone());
+            },
+        )
+        .expect("should never be cancelled");
+
+        let mut results = Vec::new();
         for reference_path in &reference_paths {
             if reference_paths
                 .iter()
                 .all(|other| !other.shadows(&mut partials, reference_path))
             {
-                results.insert(reference_path.end_node());
+                results.push(reference_path);
             }
         }
         if results.len() > 1 {
-            println!("WARN: More than one definition found for {self:?}");
+            println!(
+                "WARN: More than one definition found for {}, will return the longest path",
+                self.handle.display(&self.owner.stack_graph)
+            );
+            results.sort_by(|a, b| b.edges.len().cmp(&a.edges.len()));
         }
-        results.first().map(|handle| Handle {
+        results.first().map(|path| Handle {
             owner: self.owner,
-            handle: *handle,
+            handle: path.end_node(),
         })
     }
 }
