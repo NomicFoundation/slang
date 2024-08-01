@@ -81,7 +81,7 @@ fn test_parsing_error_with_invalid_edge_label() {
         Err(e) => {
             assert_eq!(
                 e.message,
-                "Parse error:\nMapRes at: Name: [_]\n    ...\n]\nin section 'parsing edge label', at: Name: [_]\n    ...\n]\n",
+                "Parse error:\n'Name' is not a valid edge label at: Name: [_]\n    ...\n]\n",
             );
             assert_eq!((e.row, e.column), (3, 10));
         }
@@ -95,8 +95,8 @@ fn test_parsing_error_with_invalid_node_kind() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(
-            e.message,
-            "Parse error:\nMapRes at: tree_node] ...]\nin section 'parsing node kind', at: tree_node] ...]\n",
+                e.message,
+                "Parse error:\n'tree_node' is not a valid node kind at: tree_node] ...]\n",
             );
             assert_eq!((e.row, e.column), (0, 11));
         }
@@ -110,8 +110,8 @@ fn test_parsing_error_with_kind_beginning_with_underscore() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(
-            e.message,
-            "Parse error:\nMapRes at: _tree_node] ...]\nin section 'parsing node kind', at: _tree_node] ...]\n",
+                e.message,
+                "Parse error:\n'_tree_node' is not a valid node kind at: _tree_node] ...]\n",
             );
             assert_eq!((e.row, e.column), (0, 11));
         }
