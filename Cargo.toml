@@ -96,15 +96,15 @@ cargo-edit = { version = "0.12.3" }
 cargo-emit = { version = "0.2.1" }
 cargo-xwin = { version = "0.14.2" }
 cargo-zigbuild = { version = "0.18.3" }
-clap = { version = "4.5.8", features = ["derive", "wrap_help"] }
-clap_complete = { version = "4.5.7" }
+clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
+clap_complete = { version = "4.5.12" }
 console = { version = "0.15.8" }
 derive-new = { version = "0.6.0" }
-env_logger = { version = "0.11.3" }
-iai-callgrind = { version = "0.12.0" }
+env_logger = { version = "0.11.5" }
+iai-callgrind = { version = "0.12.1" }
 iai-callgrind-runner = { version = "0.12.0" }
 ignore = { version = "0.4.22" }
-indexmap = { version = "2.2.6", features = ["serde"] }
+indexmap = { version = "2.3.0", features = ["serde"] }
 indicatif = { version = "0.17.8", features = ["in_memory"] }
 indoc = { version = "2.0.5" }
 Inflector = { version = "0.11.4" }
@@ -113,7 +113,7 @@ log = { version = "0.4.22" }
 markdown = { version = "0.3.0" }
 napi = { version = "2.16.8", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.1.3" }
-napi-derive = { version = "2.16.7" }
+napi-derive = { version = "2.16.10" }
 nom = { version = "7.1.3" }
 num-format = { version = "0.4.4" }
 once_cell = { version = "1.19.0" }
@@ -123,8 +123,8 @@ rayon = { version = "1.10.0" }
 regex = { version = "1.10.5" }
 reqwest = { version = "0.12.5", features = ["blocking"] }
 semver = { version = "1.0.23", features = ["serde"] }
-serde = { version = "1.0.203", features = ["derive", "rc"] }
-serde_json = { version = "1.0.119", features = ["preserve_order"] }
+serde = { version = "1.0.204", features = ["derive", "rc"] }
+serde_json = { version = "1.0.121", features = ["preserve_order"] }
 similar-asserts = { version = "1.5.0" }
 smallvec = { version = "1.7.0", features = ["union"] }
 stack-graphs = { version = "0.13.0" }
@@ -135,7 +135,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.68", features = [
+syn = { version = "2.0.72", features = [
     "fold",
     "full",
     "extra-traits",
@@ -144,9 +144,9 @@ syn = { version = "2.0.68", features = [
 ] }
 tempfile = { version = "3.10.1" }
 tera = { version = "1.20.0" }
-thiserror = { version = "1.0.61" }
-toml = { version = "0.8.14" }
-trybuild = { version = "1.0.96" }
+thiserror = { version = "1.0.63" }
+toml = { version = "0.8.19" }
+trybuild = { version = "1.0.99" }
 url = { version = "2.4.1", features = ["serde"] }
 
 [workspace.lints.rust]
