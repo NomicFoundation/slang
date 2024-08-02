@@ -235,16 +235,23 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; the source unit)
   edge @type_name.left -> @contract.parent_scope
 
+  ;; Make base members accesible as our own members
   node member
   attr (member) push_symbol = "."
 
   node typeof
   attr (typeof) push_symbol = "@typeof"
 
-  ;; Make base members accesible in our lexical scope
-  edge @contract.lexical_scope -> member
+  edge @contract.members -> member
   edge member -> typeof
   edge typeof -> @type_name.right
+
+  ;; Make base contract defs (eg. enums and structs) accessible as our own
+  node type_member
+  attr (type_member) push_symbol = "."
+
+  edge @contract.type_members -> type_member
+  edge type_member -> @type_name.right
 }
 
 @contract [ContractDefinition [ContractMembers
