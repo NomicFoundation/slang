@@ -1,13 +1,16 @@
+use std::fmt;
 use std::rc::Rc;
 
 use nom::branch::alt;
 use nom::bytes::complete::{is_not, tag, take_while, take_while1, take_while_m_n};
 use nom::character::complete::{char, multispace0, multispace1, satisfy};
-use nom::combinator::{all_consuming, map_opt, map_res, opt, recognize, success, value, verify};
-use nom::error::VerboseError;
+use nom::combinator::{
+    all_consuming, cut, map_opt, map_res, opt, peek, recognize, success, value, verify,
+};
+use nom::error::{ErrorKind, FromExternalError, ParseError};
 use nom::multi::{fold_many0, many1, separated_list1};
 use nom::sequence::{delimited, pair, preceded, terminated};
-use nom::{Finish, IResult, Parser};
+use nom::{Finish, IResult, Offset, Parser};
 use thiserror::Error;
 
 use super::model::{
@@ -15,6 +18,7 @@ use super::model::{
     OptionalASTNode, SequenceASTNode,
 };
 use crate::cst::NodeKind;
+use crate::text_index::TextIndex;
 use crate::{AbstractKind as _, KindTypes};
 
 // ----------------------------------------------------------------------------
@@ -33,6 +37,75 @@ impl std::fmt::Display for QueryError {
     }
 }
 
+struct QueryParserError<I> {
+    errors: Vec<(I, QueryParserErrorKind)>,
+}
+
+enum QueryParserErrorKind {
+    Char(char),
+    Nom(ErrorKind),
+    Syntax(QuerySyntaxError),
+}
+
+enum QuerySyntaxError {
+    EdgeLabel(String),
+    NodeKind(String),
+    EscapedUnicode,
+}
+
+impl<I> ParseError<I> for QueryParserError<I> {
+    fn from_error_kind(input: I, kind: ErrorKind) -> Self {
+        QueryParserError {
+            errors: vec![(input, QueryParserErrorKind::Nom(kind))],
+        }
+    }
+
+    fn append(input: I, kind: ErrorKind, mut other: Self) -> Self {
+        other.errors.push((input, QueryParserErrorKind::Nom(kind)));
+        other
+    }
+
+    fn from_char(input: I, c: char) -> Self {
+        QueryParserError {
+            errors: vec![(input, QueryParserErrorKind::Char(c))],
+        }
+    }
+}
+
+impl<I> FromExternalError<I, QuerySyntaxError> for QueryParserError<I> {
+    fn from_external_error(input: I, _kind: ErrorKind, e: QuerySyntaxError) -> Self {
+        QueryParserError {
+            errors: vec![(input, QueryParserErrorKind::Syntax(e))],
+        }
+    }
+}
+
+impl fmt::Display for QuerySyntaxError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            QuerySyntaxError::EdgeLabel(label) => write!(f, "'{label}' is not a valid edge label"),
+            QuerySyntaxError::NodeKind(kind) => write!(f, "'{kind}' is not a valid node kind"),
+            QuerySyntaxError::EscapedUnicode => {
+                write!(f, "Invalid escaped Unicode character")
+            }
+        }
+    }
+}
+
+impl<I: fmt::Display> fmt::Display for QueryParserError<I> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "Parse error:")?;
+        for (input, error) in &self.errors {
+            match error {
+                QueryParserErrorKind::Nom(e) => writeln!(f, "{e:?} at: {input}")?,
+                QueryParserErrorKind::Char(c) => writeln!(f, "expected '{c}' at: {input}")?,
+                QueryParserErrorKind::Syntax(e) => writeln!(f, "{e} at: {input}")?,
+            }
+        }
+        Ok(())
+    }
+}
+
 // ----------------------------------------------------------------------------
 // Parser
 
@@ -41,16 +114,41 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
         .parse(input)
         .finish()
         .map(|(_, query)| query)
-        .map_err(|e| QueryError {
-            message: e.to_string(),
-            row: 0,
-            column: 0,
+        .map_err(|e| {
+            let text_index = compute_row_and_column(e.errors[0].0, input);
+            QueryError {
+                message: e.to_string(),
+                row: text_index.line,
+                column: text_index.column,
+            }
         })
 }
 
-pub(super) fn parse_matcher_alternatives<T: KindTypes>(
+fn compute_row_and_column(target: &str, input: &str) -> TextIndex {
+    let target_offset = input.offset(target);
+    let mut text_index = TextIndex::ZERO;
+    let mut from_iter = input.chars();
+    let Some(mut c) = from_iter.next() else {
+        return text_index;
+    };
+    let mut next_c = from_iter.next();
+    loop {
+        if text_index.utf8 >= target_offset {
+            break;
+        }
+        text_index.advance(c, next_c.as_ref());
+        c = match next_c {
+            Some(ch) => ch,
+            None => break,
+        };
+        next_c = from_iter.next();
+    }
+    text_index
+}
+
+fn parse_matcher_alternatives<T: KindTypes>(
     i: &str,
-) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+) -> IResult<&str, ASTNode<T>, QueryParserError<&str>> {
     separated_list1(token('|'), parse_matcher_sequence::<T>)
         .map(|mut children| {
             if children.len() == 1 {
@@ -62,9 +160,9 @@ pub(super) fn parse_matcher_alternatives<T: KindTypes>(
         .parse(i)
 }
 
-pub(super) fn parse_matcher_sequence<T: KindTypes>(
+fn parse_matcher_sequence<T: KindTypes>(
     i: &str,
-) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+) -> IResult<&str, ASTNode<T>, QueryParserError<&str>> {
     many1(parse_quantified_matcher::<T>)
         .map(|mut children| {
             if children.len() == 1 {
@@ -76,9 +174,9 @@ pub(super) fn parse_matcher_sequence<T: KindTypes>(
         .parse(i)
 }
 
-pub(super) fn parse_quantified_matcher<T: KindTypes>(
+fn parse_quantified_matcher<T: KindTypes>(
     i: &str,
-) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+) -> IResult<&str, ASTNode<T>, QueryParserError<&str>> {
     alt((
         ellipsis_token.map(|_| ASTNode::Ellipsis), // Cannot be quantified
         pair(
@@ -97,9 +195,7 @@ pub(super) fn parse_quantified_matcher<T: KindTypes>(
     .parse(i)
 }
 
-pub(super) fn parse_bound_matcher<T: KindTypes>(
-    i: &str,
-) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+fn parse_bound_matcher<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, QueryParserError<&str>> {
     pair(
         opt(capture_name_token),
         alt((
@@ -114,7 +210,7 @@ pub(super) fn parse_bound_matcher<T: KindTypes>(
     .parse(i)
 }
 
-pub(super) fn parse_edge<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, VerboseError<&str>> {
+fn parse_edge<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, QueryParserError<&str>> {
     pair(opt(edge_label_token::<T>), parse_node)
         .map(|(label, (node_selector, child))| {
             let node_selector = match (label, node_selector) {
@@ -147,7 +243,7 @@ pub(super) fn parse_edge<T: KindTypes>(i: &str) -> IResult<&str, ASTNode<T>, Ver
 #[allow(clippy::type_complexity)]
 fn parse_node<T: KindTypes>(
     i: &str,
-) -> IResult<&str, (NodeSelector<T>, Option<ASTNode<T>>), VerboseError<&str>> {
+) -> IResult<&str, (NodeSelector<T>, Option<ASTNode<T>>), QueryParserError<&str>> {
     delimited(
         token('['),
         pair(parse_node_selector, opt(parse_matcher_sequence::<T>)), // NOTE: not matching alternatives here
@@ -158,9 +254,9 @@ fn parse_node<T: KindTypes>(
 
 fn parse_node_selector<T: KindTypes>(
     input: &str,
-) -> IResult<&str, NodeSelector<T>, VerboseError<&str>> {
+) -> IResult<&str, NodeSelector<T>, QueryParserError<&str>> {
     alt((
-        token('_').map(|_| NodeSelector::Anonymous),
+        anonymous_selector,
         kind_token.map(|node_kind| NodeSelector::NodeKind { node_kind }),
         text_token.map(|node_text| NodeSelector::NodeText { node_text }),
     ))
@@ -175,7 +271,7 @@ pub enum CaptureQuantifier {
     OneOrMore,
 }
 
-fn parse_trailing_quantifier(i: &str) -> IResult<&str, CaptureQuantifier, VerboseError<&str>> {
+fn parse_trailing_quantifier(i: &str) -> IResult<&str, CaptureQuantifier, QueryParserError<&str>> {
     alt((
         value(CaptureQuantifier::ZeroOrOne, token('?')),
         value(CaptureQuantifier::ZeroOrMore, token('*')),
@@ -185,7 +281,7 @@ fn parse_trailing_quantifier(i: &str) -> IResult<&str, CaptureQuantifier, Verbos
     .parse(i)
 }
 
-fn raw_identifier(i: &str) -> IResult<&str, String, VerboseError<&str>> {
+fn raw_identifier(i: &str) -> IResult<&str, String, QueryParserError<&str>> {
     let identifier_head = satisfy(|c| c.is_alphabetic());
     let is_identifier_tail = |c: char| c == '_' || c.is_alphanumeric();
     recognize(alt((
@@ -198,33 +294,59 @@ fn raw_identifier(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     .parse(i)
 }
 
-fn capture_name_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
+fn capture_name_token(i: &str) -> IResult<&str, String, QueryParserError<&str>> {
     terminated(preceded(char('@'), raw_identifier), multispace0).parse(i)
 }
 
-fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, VerboseError<&str>> {
+fn anonymous_selector<T: KindTypes>(
+    input: &str,
+) -> IResult<&str, NodeSelector<T>, QueryParserError<&str>> {
+    // match a single _ character followed by whitespace or any other
+    // non-alphanumeric symbol; otherwise this would eat the initial underscore
+    // in an identifier such as `_foo`
     terminated(
-        map_res(raw_identifier, |id| {
-            T::TerminalKind::try_from_str(id.as_str())
-                .map(NodeKind::Terminal)
-                .or_else(|_| {
-                    T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
-                })
-        }),
+        terminated(
+            char('_'),
+            peek(satisfy(|c| c != '_' && !c.is_alphanumeric())),
+        ),
+        multispace0,
+    )
+    .map(|_| NodeSelector::Anonymous)
+    .parse(input)
+}
+
+fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, QueryParserError<&str>> {
+    terminated(
+        preceded(
+            peek(satisfy(|c| c.is_alphabetic() || c == '_')),
+            cut(map_res(raw_identifier, |id| {
+                T::TerminalKind::try_from_str(id.as_str())
+                    .map(NodeKind::Terminal)
+                    .or_else(|_| {
+                        T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
+                    })
+                    .or(Err(QuerySyntaxError::NodeKind(id)))
+            })),
+        ),
         multispace0,
     )
     .parse(i)
 }
 
-fn edge_label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeLabel, VerboseError<&str>> {
+fn edge_label_token<T: KindTypes>(i: &str) -> IResult<&str, T::EdgeLabel, QueryParserError<&str>> {
     terminated(
-        map_res(raw_identifier, |id| T::EdgeLabel::try_from_str(id.as_str())),
+        preceded(
+            peek(satisfy(|c| c.is_alphabetic() || c == '_')),
+            cut(map_res(cut(raw_identifier), |id| {
+                T::EdgeLabel::try_from_str(id.as_str()).or(Err(QuerySyntaxError::EdgeLabel(id)))
+            })),
+        ),
         token(':'),
     )
     .parse(i)
 }
 
-fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
+fn text_token(i: &str) -> IResult<&str, String, QueryParserError<&str>> {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     enum Fragment<'a> {
         EscapedChar(char),
@@ -247,7 +369,9 @@ fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
                         ),
                     ),
                     // converted from hex
-                    move |hex| u32::from_str_radix(hex, 16),
+                    move |hex| {
+                        u32::from_str_radix(hex, 16).or(Err(QuerySyntaxError::EscapedUnicode))
+                    },
                 ),
                 // converted to a char
                 std::char::from_u32,
@@ -289,10 +413,10 @@ fn text_token(i: &str) -> IResult<&str, String, VerboseError<&str>> {
     .parse(i)
 }
 
-fn ellipsis_token(i: &str) -> IResult<&str, &str, VerboseError<&str>> {
+fn ellipsis_token(i: &str) -> IResult<&str, &str, QueryParserError<&str>> {
     terminated(tag("..."), multispace0).parse(i)
 }
 
-fn token<'input>(c: char) -> impl Parser<&'input str, char, VerboseError<&'input str>> {
+fn token<'input>(c: char) -> impl Parser<&'input str, char, QueryParserError<&'input str>> {
     terminated(char(c), multispace0)
 }

@@ -55,9 +55,65 @@ fn test_parsing_error() {
     let result = Query::parse(r#"@root [_ ..."#);
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(e) => assert_eq!(
-            e.message,
-            "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
-        ),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\nexpected ']' at: \nAlt at: [_ ...\nAlt at: @root [_ ...\n"
+            );
+            assert_eq!((e.row, e.column), (0, 12));
+        }
+    }
+}
+
+// See https://github.com/NomicFoundation/slang/issues/1042
+#[test]
+fn test_parsing_error_with_invalid_edge_label() {
+    let result = Query::parse(
+        r#"
+[Tree
+    ...
+    @name Name: [_]
+    ...
+]"#,
+    );
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\n'Name' is not a valid edge label at: Name: [_]\n    ...\n]\n",
+            );
+            assert_eq!((e.row, e.column), (3, 10));
+        }
+    }
+}
+
+#[test]
+fn test_parsing_error_with_invalid_node_kind() {
+    let result = Query::parse(r#"[Tree ... [tree_node] ...]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\n'tree_node' is not a valid node kind at: tree_node] ...]\n",
+            );
+            assert_eq!((e.row, e.column), (0, 11));
+        }
+    }
+}
+
+#[test]
+fn test_parsing_error_with_kind_beginning_with_underscore() {
+    let result = Query::parse(r#"[Tree ... [_tree_node] ...]"#);
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(e) => {
+            assert_eq!(
+                e.message,
+                "Parse error:\n'_tree_node' is not a valid node kind at: _tree_node] ...]\n",
+            );
+            assert_eq!((e.row, e.column), (0, 11));
+        }
     }
 }
