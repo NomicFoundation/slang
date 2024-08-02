@@ -62,6 +62,16 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
    edge @source_unit.lexical_scope -> @import.defs
 }
 
+;; Contracts need access to the parent scope to resolve bases. This is purely
+;; for convenience, as contracts can only appear in SourceUnits so we could
+;; potentially connect this directly when connecting to the base contract
+;; identifiers (but that would make the query longer)
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition]]
+]] {
+  edge @contract.parent_scope -> @source_unit.lexical_scope
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Imports
@@ -176,6 +186,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @contract [ContractDefinition] {
   node @contract.lexical_scope
+  node @contract.parent_scope
   node @contract.def
   node @contract.members
   node @contract.type_members
@@ -215,6 +226,25 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (type_member) pop_symbol = "."
   edge def -> type_member
   edge type_member -> @contract.type_members
+}
+
+@contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
+    [InheritanceType @type_name [IdentifierPath]]
+]]] {
+  ;; Resolve contract bases names through the parent scope of the contract (aka
+  ;; the source unit)
+  edge @type_name.left -> @contract.parent_scope
+
+  node member
+  attr (member) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  ;; Make base members accesible in our lexical scope
+  edge @contract.lexical_scope -> member
+  edge member -> typeof
+  edge typeof -> @type_name.right
 }
 
 @contract [ContractDefinition [ContractMembers

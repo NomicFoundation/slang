@@ -10,6 +10,11 @@ fn fallback_receive() -> Result<()> {
 }
 
 #[test]
+fn inheritance() -> Result<()> {
+    run("contracts", "inheritance")
+}
+
+#[test]
 fn visibility() -> Result<()> {
     run("contracts", "visibility")
 }
