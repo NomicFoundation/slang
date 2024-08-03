@@ -1,0 +1,58 @@
+name: "benchmark"
+
+on:
+  # Run using manual triggers from GitHub UI:
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch: {}
+
+  # Run on pushes to any branch:
+  push: {}
+
+# Queue up benchmark workflows for the same branch, so that results are reported in order:
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref_name }}"
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    # Only run on the main repo (not forks):
+    if: "${{ github.repository == 'NomicFoundation/slang' }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+        # Docker privileged mode is required for running Valgrind in CI:
+      - name: "Add 'privileged: true' to 'devcontainer.json'"
+        uses: "actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea"
+        with:
+          script: |
+            const assert = require("assert");
+            const fs = require("fs/promises");
+
+            const devcontainerPath = "./.devcontainer/devcontainer.json";
+
+            const input = await fs.readFile(devcontainerPath, "utf8");
+            assert.equal(input[0], "{", "devcontainer file must start with a '{' character.");
+
+            const output = input.replace("{", "{ \"privileged\": true,");
+            await fs.writeFile(devcontainerPath, output);
+
+      - name: "infra perf benchmark"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra perf benchmark"
+          env: |
+            BENCHER_API_TOKEN=${{ secrets.BENCHER_API_TOKEN }}
+
+      - name: "Upload Benchmarking Data"
+        uses: "actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029"
+        with:
+          name: "benchmarking-data"
+          path: "target/iai"
+          if-no-files-found: "error"
