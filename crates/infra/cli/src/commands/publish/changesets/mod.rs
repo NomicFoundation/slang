@@ -81,9 +81,15 @@ pub fn publish_changesets() -> Result<()> {
         }
     }
 
+    Command::new("git")
+        .args(["stash", "push"])
+        .flag("--include-untracked")
+        .property("--message", "applied changesets")
+        .run()?;
+
     println!();
-    println!("Source files are now updated.");
-    println!("The calling CI workflow will now publish them in a pull request.");
+    println!("Source files are now updated with the new version, and stored in a 'git stash'.");
+    println!("The calling CI workflow will now use this stash to create a PR if needed.");
     println!();
 
     Ok(())

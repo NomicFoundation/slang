@@ -80,7 +80,6 @@ fn run_iai_bench(package_name: &str, bench_name: &str) -> Result<()> {
         .property("--project", "slang")
         .property("--adapter", "rust_iai_callgrind")
         .property("--testbed", testbed)
-        .flag("--html")
         .arg(cargo_command)
         .run()?;
 
