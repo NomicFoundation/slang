@@ -5864,7 +5864,7 @@ impl Language {
     fn yul_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             if !self.version_is_at_least_0_5_5 {
-                let result = self.yul_colon_equal(input);
+                let result = self.yul_colon_and_equal(input);
                 choice.consider(input, result)?;
             }
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
@@ -6369,7 +6369,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_colon_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn yul_colon_and_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_5 {
             SequenceHelper::run(|mut seq| {
                 seq.elem_labeled(
@@ -6391,7 +6391,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(NonterminalKind::YulColonEqual)
+        .with_kind(NonterminalKind::YulColonAndEqual)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6418,6 +6418,32 @@ impl Language {
             seq.finish()
         })
         .with_kind(NonterminalKind::YulDefaultCase)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_equal_and_colon(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::Equal,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TerminalKind::Equal,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Colon,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TerminalKind::Colon,
+                    ),
+                )?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(NonterminalKind::YulEqualAndColon)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6767,11 +6793,40 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_stack_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.yul_equal_and_colon(input);
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::EqualColon,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_label(EdgeLabel::Variant)
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(NonterminalKind::YulStackAssignmentOperator)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_stack_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem_labeled(EdgeLabel::Assignment, self.yul_assignment_operator(input))?;
-                seq.elem_labeled(EdgeLabel::Expression, self.yul_expression(input))?;
+                seq.elem_labeled(
+                    EdgeLabel::Assignment,
+                    self.yul_stack_assignment_operator(input),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Variable,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TerminalKind::YulIdentifier,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -9463,11 +9518,12 @@ impl Language {
             NonterminalKind::YulBlock => Self::yul_block.parse(self, input),
             NonterminalKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
             NonterminalKind::YulBuiltInFunction => Self::yul_built_in_function.parse(self, input),
-            NonterminalKind::YulColonEqual => Self::yul_colon_equal.parse(self, input),
+            NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input),
             NonterminalKind::YulContinueStatement => {
                 Self::yul_continue_statement.parse(self, input)
             }
             NonterminalKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
+            NonterminalKind::YulEqualAndColon => Self::yul_equal_and_colon.parse(self, input),
             NonterminalKind::YulExpression => Self::yul_expression.parse(self, input),
             NonterminalKind::YulForStatement => Self::yul_for_statement.parse(self, input),
             NonterminalKind::YulFunctionCallExpression => {
@@ -9489,6 +9545,9 @@ impl Language {
             NonterminalKind::YulPaths => Self::yul_paths.parse(self, input),
             NonterminalKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
+            }
+            NonterminalKind::YulStackAssignmentOperator => {
+                Self::yul_stack_assignment_operator.parse(self, input)
             }
             NonterminalKind::YulStackAssignmentStatement => {
                 Self::yul_stack_assignment_statement.parse(self, input)
@@ -11092,7 +11151,14 @@ impl Lexer for Language {
                         }
                         None => Some(TerminalKind::Colon),
                     },
-                    Some('=') => Some(TerminalKind::Equal),
+                    Some('=') => match input.next() {
+                        Some(':') => Some(TerminalKind::EqualColon),
+                        Some(_) => {
+                            input.undo();
+                            Some(TerminalKind::Equal)
+                        }
+                        None => Some(TerminalKind::Equal),
+                    },
                     Some('{') => Some(TerminalKind::OpenBrace),
                     Some('}') => Some(TerminalKind::CloseBrace),
                     Some(_) => {

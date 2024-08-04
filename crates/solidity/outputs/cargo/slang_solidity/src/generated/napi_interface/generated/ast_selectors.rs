@@ -192,10 +192,11 @@ pub fn select_sequence(
         NonterminalKind::YulVariableAssignmentStatement => {
             selector.yul_variable_assignment_statement_sequence()?
         }
+        NonterminalKind::YulColonAndEqual => selector.yul_colon_and_equal_sequence()?,
         NonterminalKind::YulStackAssignmentStatement => {
             selector.yul_stack_assignment_statement_sequence()?
         }
-        NonterminalKind::YulColonEqual => selector.yul_colon_equal_sequence()?,
+        NonterminalKind::YulEqualAndColon => selector.yul_equal_and_colon_sequence()?,
         NonterminalKind::YulIfStatement => selector.yul_if_statement_sequence()?,
         NonterminalKind::YulForStatement => selector.yul_for_statement_sequence()?,
         NonterminalKind::YulSwitchStatement => selector.yul_switch_statement_sequence()?,
@@ -1630,23 +1631,34 @@ impl Selector {
 }
 
 impl Selector {
-    fn yul_stack_assignment_statement_sequence(
-        &mut self,
-    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
-        Ok(vec![
-            Some(self.select(EdgeLabel::Assignment)?),
-            Some(self.select(EdgeLabel::Expression)?),
-        ])
-    }
-}
-
-impl Selector {
-    fn yul_colon_equal_sequence(
+    fn yul_colon_and_equal_sequence(
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
             Some(self.select(EdgeLabel::Colon)?),
             Some(self.select(EdgeLabel::Equal)?),
+        ])
+    }
+}
+
+impl Selector {
+    fn yul_stack_assignment_statement_sequence(
+        &mut self,
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
+        Ok(vec![
+            Some(self.select(EdgeLabel::Assignment)?),
+            Some(self.select(EdgeLabel::Variable)?),
+        ])
+    }
+}
+
+impl Selector {
+    fn yul_equal_and_colon_sequence(
+        &mut self,
+    ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
+        Ok(vec![
+            Some(self.select(EdgeLabel::Equal)?),
+            Some(self.select(EdgeLabel::Colon)?),
         ])
     }
 }

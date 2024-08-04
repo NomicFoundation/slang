@@ -532,6 +532,9 @@ COLON_EQUAL = ":=";
 
 EQUAL = "=";
 
+(* Deprecated in 0.5.0 *)
+EQUAL_COLON = "=:";
+
 EQUAL_EQUAL = "==";
 
 EQUAL_GREATER_THAN = "=>";
@@ -1658,16 +1661,24 @@ YulVariableAssignmentStatement = (* variables: *) YulPaths
                                  (* assignment: *) YulAssignmentOperator
                                  (* expression: *) YulExpression;
 
-(* Deprecated in 0.5.0 *)
-YulStackAssignmentStatement = (* assignment: *) YulAssignmentOperator
-                              (* expression: *) YulExpression;
-
-YulAssignmentOperator = (* variant: *) YulColonEqual (* Deprecated in 0.5.5 *)
+YulAssignmentOperator = (* variant: *) YulColonAndEqual (* Deprecated in 0.5.5 *)
                       | (* variant: *) COLON_EQUAL;
 
 (* Deprecated in 0.5.5 *)
-YulColonEqual = (* colon: *) COLON
-                (* equal: *) EQUAL;
+YulColonAndEqual = (* colon: *) COLON
+                   (* equal: *) EQUAL;
+
+(* Deprecated in 0.5.0 *)
+YulStackAssignmentStatement = (* assignment: *) YulStackAssignmentOperator
+                              (* variable: *) YUL_IDENTIFIER;
+
+(* Deprecated in 0.5.0 *)
+YulStackAssignmentOperator = (* variant: *) YulEqualAndColon
+                           | (* variant: *) EQUAL_COLON;
+
+(* Deprecated in 0.5.0 *)
+YulEqualAndColon = (* equal: *) EQUAL
+                   (* colon: *) COLON;
 
 YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
                  (* condition: *) YulExpression
