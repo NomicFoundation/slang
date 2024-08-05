@@ -78,5 +78,5 @@ fn check_npm() -> Result<()> {
 }
 
 fn check_mkdocs() -> Result<()> {
-    Mkdocs::build()
+    Mkdocs::check()
 }

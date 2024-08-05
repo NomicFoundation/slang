@@ -1,36 +1,44 @@
 use std::path::Path;
 
 use anyhow::Result;
+use clap::Parser;
 use infra_utils::commands::Command;
-use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 
-use crate::commands::publish::DryRun;
 use crate::toolchains::napi::{
     NapiCompiler, NapiConfig, NapiPackageKind, NapiProfile, NapiResolver,
 };
+use crate::utils::DryRun;
 
-pub fn publish_npm(dry_run: DryRun) -> Result<()> {
-    let resolver = NapiResolver::Solidity;
+#[derive(Clone, Debug, Parser)]
+pub struct NpmController {
+    #[command(flatten)]
+    dry_run: DryRun,
+}
 
-    NapiCompiler::run(resolver, NapiProfile::Release)?;
+impl NpmController {
+    pub fn execute(&self) -> Result<()> {
+        let resolver = NapiResolver::Solidity;
 
-    // Publish platform-specific packages first, as the main package now depends on their latest version:
+        NapiCompiler::run(resolver, NapiProfile::Release)?;
 
-    for platform_dir in resolver.platforms_dir().collect_children()? {
-        let platform = platform_dir.unwrap_name().to_owned();
-        publish_package(
-            resolver,
-            &platform_dir,
-            &NapiPackageKind::Platform(platform),
-            dry_run,
-        )?;
+        // Publish platform-specific packages first, as the main package now depends on their latest version:
+
+        for platform_dir in resolver.platforms_dir().collect_children()? {
+            let platform = platform_dir.unwrap_name().to_owned();
+            publish_package(
+                resolver,
+                &platform_dir,
+                &NapiPackageKind::Platform(platform),
+                self.dry_run,
+            )?;
+        }
+
+        //  Then publish the main package, that depends on the previously published platform-specific packages:
+
+        let package_dir = resolver.main_package_dir();
+        publish_package(resolver, &package_dir, &NapiPackageKind::Main, self.dry_run)
     }
-
-    //  Then publish the main package, that depends on the previously published platform-specific packages:
-
-    let package_dir = resolver.main_package_dir();
-    publish_package(resolver, &package_dir, &NapiPackageKind::Main, dry_run)
 }
 
 fn publish_package(
@@ -58,8 +66,7 @@ fn publish_package(
         .args(["publish", output_dir.unwrap_str()])
         .property("--access", "public");
 
-    if dry_run.is_yes() || !GitHub::is_running_in_ci() {
-        println!("Doing a dry run, since we are not running in CI or a dry run was requested.");
+    if dry_run.get() {
         command = command.flag("--dry-run");
     }
 

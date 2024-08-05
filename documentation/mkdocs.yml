@@ -11,8 +11,8 @@ site_description: >
   Written in Rust and distributed in multiple languages.
 
 repo_name: "NomicFoundation/slang"
-repo_url: "https://github.com/NomicFoundation/slang"
-site_url: "https://NomicFoundation.github.io/slang"
+repo_url: "https://github.com/NomicFoundation/slang/"
+site_url: "https://NomicFoundation.github.io/slang/"
 edit_uri: "edit/main/documentation/public"
 
 docs_dir: "./public"
@@ -59,6 +59,10 @@ extra:
       link: "https://twitter.com/nomicfoundation/"
     - icon: "fontawesome/solid/link"
       link: "https://nomic.foundation/"
+  version:
+    provider: "mike"
+    alias: true
+    default: "latest"
 
 #
 # Extensions:
@@ -93,6 +97,8 @@ plugins:
   - "literate-nav":
       nav_file: ".navigation.md" # use a dot file name, to be excluded from public pages
       markdown_extensions: []
+  - "mike":
+      canonical_version: "latest"
   - "minify":
       minify_html: true
       minify_js: true
