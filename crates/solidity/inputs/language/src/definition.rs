@@ -1907,6 +1907,13 @@ codegen_language_macros::compile!(Language(
                             definitions = [TokenDefinition(scanner = Atom("="))]
                         ),
                         Token(
+                            name = EqualColon,
+                            definitions = [TokenDefinition(
+                                enabled = Till("0.5.0"),
+                                scanner = Atom("=:")
+                            )]
+                        ),
+                        Token(
                             name = EqualEqual,
                             definitions = [TokenDefinition(scanner = Atom("=="))]
                         ),
@@ -4235,25 +4242,38 @@ codegen_language_macros::compile!(Language(
                                 expression = Required(YulExpression)
                             )
                         ),
-                        Struct(
-                            name = YulStackAssignmentStatement,
-                            enabled = Till("0.5.0"),
-                            fields = (
-                                assignment = Required(YulAssignmentOperator),
-                                expression = Required(YulExpression)
-                            )
-                        ),
                         Enum(
                             name = YulAssignmentOperator,
                             variants = [
-                                EnumVariant(reference = YulColonEqual, enabled = Till("0.5.5")),
+                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5")),
                                 EnumVariant(reference = ColonEqual)
                             ]
                         ),
                         Struct(
-                            name = YulColonEqual,
+                            name = YulColonAndEqual,
                             enabled = Till("0.5.5"),
                             fields = (colon = Required(Colon), equal = Required(Equal))
+                        ),
+                        Struct(
+                            name = YulStackAssignmentStatement,
+                            enabled = Till("0.5.0"),
+                            fields = (
+                                assignment = Required(YulStackAssignmentOperator),
+                                variable = Required(YulIdentifier)
+                            )
+                        ),
+                        Enum(
+                            name = YulStackAssignmentOperator,
+                            enabled = Till("0.5.0"),
+                            variants = [
+                                EnumVariant(reference = YulEqualAndColon),
+                                EnumVariant(reference = EqualColon)
+                            ]
+                        ),
+                        Struct(
+                            name = YulEqualAndColon,
+                            enabled = Till("0.5.0"),
+                            fields = (equal = Required(Equal), colon = Required(Colon))
                         ),
                         Struct(
                             name = YulIfStatement,
