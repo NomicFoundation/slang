@@ -99,8 +99,6 @@ plugins:
       markdown_extensions: []
   - "mike":
       canonical_version: "latest"
-      # css_dir: "./assets/stylesheets"
-      # javascript_dir: ""./assets/javascripts"
   - "minify":
       minify_html: true
       minify_js: true
