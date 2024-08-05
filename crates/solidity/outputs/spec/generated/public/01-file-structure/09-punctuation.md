@@ -82,6 +82,12 @@
 
 <pre ebnf-snippet="Equal" style="display: none;"><a href="#Equal"><span class="k">EQUAL</span></a><span class="o"> = </span><span class="s2">"="</span><span class="o">;</span></pre>
 
+```{ .ebnf #EqualColon }
+
+```
+
+<pre ebnf-snippet="EqualColon" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#EqualColon"><span class="k">EQUAL_COLON</span></a><span class="o"> = </span><span class="s2">"=:"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #EqualEqual }
 
 ```

@@ -3431,30 +3431,7 @@ export class YulVariableAssignmentStatement {
   }
 }
 
-export class YulStackAssignmentStatement {
-  private readonly fetch = once(() => {
-    const [$assignment, $expression] = ast_internal.selectSequence(this.cst);
-
-    return {
-      assignment: new YulAssignmentOperator($assignment as NonterminalNode),
-      expression: new YulExpression($expression as NonterminalNode),
-    };
-  });
-
-  public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulStackAssignmentStatement);
-  }
-
-  public get assignment(): YulAssignmentOperator {
-    return this.fetch().assignment;
-  }
-
-  public get expression(): YulExpression {
-    return this.fetch().expression;
-  }
-}
-
-export class YulColonEqual {
+export class YulColonAndEqual {
   private readonly fetch = once(() => {
     const [$colon, $equal] = ast_internal.selectSequence(this.cst);
 
@@ -3465,7 +3442,7 @@ export class YulColonEqual {
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulColonEqual);
+    assertKind(this.cst.kind, NonterminalKind.YulColonAndEqual);
   }
 
   public get colon(): TerminalNode {
@@ -3474,6 +3451,52 @@ export class YulColonEqual {
 
   public get equal(): TerminalNode {
     return this.fetch().equal;
+  }
+}
+
+export class YulStackAssignmentStatement {
+  private readonly fetch = once(() => {
+    const [$assignment, $variable] = ast_internal.selectSequence(this.cst);
+
+    return {
+      assignment: new YulStackAssignmentOperator($assignment as NonterminalNode),
+      variable: $variable as TerminalNode,
+    };
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulStackAssignmentStatement);
+  }
+
+  public get assignment(): YulStackAssignmentOperator {
+    return this.fetch().assignment;
+  }
+
+  public get variable(): TerminalNode {
+    return this.fetch().variable;
+  }
+}
+
+export class YulEqualAndColon {
+  private readonly fetch = once(() => {
+    const [$equal, $colon] = ast_internal.selectSequence(this.cst);
+
+    return {
+      equal: $equal as TerminalNode,
+      colon: $colon as TerminalNode,
+    };
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulEqualAndColon);
+  }
+
+  public get equal(): TerminalNode {
+    return this.fetch().equal;
+  }
+
+  public get colon(): TerminalNode {
+    return this.fetch().colon;
   }
 }
 
@@ -4930,7 +4953,7 @@ export class YulStatement {
 }
 
 export class YulAssignmentOperator {
-  private readonly fetch: () => YulColonEqual | TerminalNode = once(() => {
+  private readonly fetch: () => YulColonAndEqual | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     if (variant.type == NodeType.Terminal) {
@@ -4938,8 +4961,8 @@ export class YulAssignmentOperator {
     }
 
     switch (variant.kind) {
-      case NonterminalKind.YulColonEqual:
-        return new YulColonEqual(variant as NonterminalNode);
+      case NonterminalKind.YulColonAndEqual:
+        return new YulColonAndEqual(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4950,7 +4973,33 @@ export class YulAssignmentOperator {
     assertKind(this.cst.kind, NonterminalKind.YulAssignmentOperator);
   }
 
-  public get variant(): YulColonEqual | TerminalNode {
+  public get variant(): YulColonAndEqual | TerminalNode {
+    return this.fetch();
+  }
+}
+
+export class YulStackAssignmentOperator {
+  private readonly fetch: () => YulEqualAndColon | TerminalNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
+    switch (variant.kind) {
+      case NonterminalKind.YulEqualAndColon:
+        return new YulEqualAndColon(variant as NonterminalNode);
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.YulStackAssignmentOperator);
+  }
+
+  public get variant(): YulEqualAndColon | TerminalNode {
     return this.fetch();
   }
 }
