@@ -2,14 +2,14 @@ use std::iter::once;
 use std::path::Path;
 
 use anyhow::Result;
+use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::git::TemporaryChangeset;
-use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 
-use crate::commands::publish::DryRun;
+use crate::utils::DryRun;
 
 const USER_FACING_CRATES: &[&str] = &[
     // Sorted by dependency order (from dependencies to dependents):
@@ -19,36 +19,44 @@ const USER_FACING_CRATES: &[&str] = &[
     "slang_solidity",
 ];
 
-pub fn publish_cargo(dry_run: DryRun) -> Result<()> {
-    let mut changeset = TemporaryChangeset::new(
-        "infra/cargo-publish",
-        "prepare Cargo packages for publishing",
-    )?;
+#[derive(Clone, Debug, Parser)]
+pub struct CargoController {
+    #[command(flatten)]
+    dry_run: DryRun,
+}
 
-    let mut changed_crates = vec![];
+impl CargoController {
+    pub fn execute(&self) -> Result<()> {
+        let mut changeset = TemporaryChangeset::new(
+            "infra/cargo-publish",
+            "prepare Cargo packages for publishing",
+        )?;
 
-    for crate_name in USER_FACING_CRATES {
-        if prepare_for_publish(crate_name, &mut changeset)? {
-            changed_crates.push(crate_name);
+        let mut changed_crates = vec![];
+
+        for crate_name in USER_FACING_CRATES {
+            if prepare_for_publish(crate_name, &mut changeset)? {
+                changed_crates.push(crate_name);
+            }
         }
+
+        if changed_crates.is_empty() {
+            println!("No crates to publish.");
+            return Ok(());
+        }
+
+        update_cargo_lock(&mut changeset)?;
+
+        changeset.commit_changes()?;
+
+        for crate_name in &changed_crates {
+            run_cargo_publish(crate_name, self.dry_run)?;
+        }
+
+        changeset.revert_changes()?;
+
+        Ok(())
     }
-
-    if changed_crates.is_empty() {
-        println!("No crates to publish.");
-        return Ok(());
-    }
-
-    update_cargo_lock(&mut changeset)?;
-
-    changeset.commit_changes()?;
-
-    for crate_name in &changed_crates {
-        run_cargo_publish(crate_name, dry_run)?;
-    }
-
-    changeset.revert_changes()?;
-
-    Ok(())
 }
 
 fn prepare_for_publish(crate_name: &str, changeset: &mut TemporaryChangeset) -> Result<bool> {
@@ -120,10 +128,7 @@ fn run_cargo_publish(crate_name: &str, dry_run: DryRun) -> Result<()> {
         .property("--package", crate_name)
         .flag("--all-features");
 
-    if dry_run.is_yes() || !GitHub::is_running_in_ci() {
-        println!(
-            "Attempting a dry run, since we are not running in CI or a dry run was requested."
-        );
+    if dry_run.get() {
         command = command.flag("--dry-run");
     }
 

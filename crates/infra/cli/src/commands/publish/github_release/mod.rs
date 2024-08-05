@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
+use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
@@ -8,34 +9,41 @@ use itertools::Itertools;
 use markdown::{Block, Span};
 use semver::Version;
 
-use crate::commands::publish::DryRun;
+use crate::utils::DryRun;
 
-pub fn publish_github_release(dry_run: DryRun) -> Result<()> {
-    let current_version = CargoWorkspace::local_version()?;
-    println!("Current version: {current_version}");
+#[derive(Clone, Debug, Parser)]
+pub struct GithubReleaseController {
+    #[command(flatten)]
+    dry_run: DryRun,
+}
 
-    let previous_version = GitHub::latest_release_version()?;
-    println!("Latest published version: {previous_version}");
+impl GithubReleaseController {
+    pub fn execute(&self) -> Result<()> {
+        let current_version = CargoWorkspace::local_version()?;
+        println!("Current version: {current_version}");
 
-    if current_version == previous_version {
-        println!("Skipping release, since the workspace version is already published.");
-        return Ok(());
+        let previous_version = GitHub::latest_release_version()?;
+        println!("Latest published version: {previous_version}");
+
+        if current_version == previous_version {
+            println!("Skipping release, since the workspace version is already published.");
+            return Ok(());
+        }
+
+        let notes = extract_latest_changelogs(&current_version, &previous_version)?;
+        let tag_name = format!("v{current_version}");
+
+        println!("Creating release '{tag_name}' with contents:");
+        println!();
+        println!("{}", notes.lines().map(|l| format!("  │ {l}")).join("\n"));
+        println!();
+
+        if self.dry_run.get() {
+            return Ok(());
+        }
+
+        GitHub::create_new_release(tag_name, notes)
     }
-
-    let notes = extract_latest_changelogs(&current_version, &previous_version)?;
-    let tag_name = format!("v{current_version}");
-
-    println!("Creating release '{tag_name}' with contents:");
-    println!();
-    println!("{}", notes.lines().map(|l| format!("  │ {l}")).join("\n"));
-    println!();
-
-    if dry_run.is_yes() || !GitHub::is_running_in_ci() {
-        println!("Skipping release, since we are not running in CI or a dry run was requested.");
-        return Ok(());
-    }
-
-    GitHub::create_new_release(tag_name, notes)
 }
 
 fn extract_latest_changelogs(

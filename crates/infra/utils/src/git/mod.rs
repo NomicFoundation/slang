@@ -62,8 +62,6 @@ impl TemporaryChangeset {
         Command::new("git").arg("diff").flag("--cached").run()?;
 
         Command::new("git")
-            .property("-c", "user.name=github-actions")
-            .property("-c", "user.email=github-actions@users.noreply.github.com")
             .arg("commit")
             .property("--message", &self.message)
             .run()?;

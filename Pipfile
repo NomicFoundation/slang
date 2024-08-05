@@ -8,9 +8,10 @@ name = "pypi"
 pipenv = "==2024.0.1"
 
 # Used for the published GitHub pages site:
-mkdocs = "==1.5.3"
+mike = "==2.1.2"
+mkdocs = "==1.6.0"
 mkdocs-literate-nav = "==0.6.1"
-mkdocs-material = "==9.5.17"
+mkdocs-material = "==9.5.31"
 mkdocs-minify-plugin = "==0.8.0"
 mkdocs-pymdownx-material-extras = "==2.5.6"
 
