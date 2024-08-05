@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::cargo::CargoWorkspace;
+use infra_utils::cargo::CargoWorkspaceCommands;
+use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
 use strum::IntoEnumIterator;
 
@@ -47,18 +48,24 @@ impl OrderedCommand for CheckCommand {
 
 fn check_cargo() -> Result<()> {
     // 'cargo clippy' will run both 'cargo check', and 'clippy' lints:
-    CargoWorkspace::get_command("clippy")?
+    Command::new("cargo")
+        .arg("clippy")
+        .flag("--workspace")
+        .flag("--all-features")
         .flag("--all-targets")
+        .flag("--no-deps")
+        .add_build_rustflags()
         .run()
 }
 
 fn check_rustdoc() -> Result<()> {
-    CargoWorkspace::get_command("doc")?
+    Command::new("cargo")
+        .arg("doc")
+        .flag("--workspace")
+        .flag("--all-features")
         .flag("--no-deps")
         .flag("--document-private-items")
-        .flag("--lib")
-        .flag("--bins")
-        .flag("--examples")
+        .add_build_rustflags()
         .run()
 }
 

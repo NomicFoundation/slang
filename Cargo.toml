@@ -94,6 +94,7 @@ ariadne = { version = "0.2.0" }
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 cargo-edit = { version = "0.12.3" }
 cargo-emit = { version = "0.2.1" }
+cargo-nextest = { version = "0.9.72" }
 cargo-xwin = { version = "0.14.2" }
 cargo-zigbuild = { version = "0.18.3" }
 clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
