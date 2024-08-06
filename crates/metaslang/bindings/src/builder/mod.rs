@@ -247,7 +247,6 @@
 mod cancellation;
 mod functions;
 
-use std::collections::hash_map::Drain;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
@@ -321,7 +320,7 @@ pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
-pub struct Builder<'a, KT: KindTypes> {
+pub(crate) struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
     stack_graph: &'a mut StackGraph,
@@ -332,6 +331,12 @@ pub struct Builder<'a, KT: KindTypes> {
     injected_node_count: usize,
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definiens: HashMap<Handle<Node>, Cursor<KT>>,
+}
+
+pub(crate) struct BuildResult<KT: KindTypes> {
+    pub graph: Graph<KT>,
+    pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
+    pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -386,13 +391,11 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         variables
     }
 
-    #[cfg(feature = "__private_testing_utils")]
-    pub(crate) fn graph(self) -> Graph<KT> {
-        self.graph
-    }
-
     /// Executes this builder.
-    pub fn build(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
+    pub fn build(
+        mut self,
+        cancellation_flag: &dyn CancellationFlag,
+    ) -> Result<BuildResult<KT>, BuildError> {
         let variables = self.build_global_variables();
 
         let config = ExecutionConfig::new(self.functions, &variables)
@@ -419,7 +422,13 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             &(cancellation_flag as &dyn CancellationFlag),
         )?;
 
-        self.load(cancellation_flag)
+        self.load(cancellation_flag)?;
+
+        Ok(BuildResult {
+            graph: self.graph,
+            cursors: self.cursors,
+            definiens: self.definiens,
+        })
     }
 
     /// Create a graph node to represent the stack graph node. It is the callers responsibility to
@@ -429,14 +438,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         self.remapped_nodes.insert(node.index(), id);
         self.injected_node_count += 1;
         node
-    }
-
-    pub fn extract_cursors(&mut self) -> Drain<'_, Handle<Node>, Cursor<KT>> {
-        self.cursors.drain()
-    }
-
-    pub fn extract_definiens(&mut self) -> Drain<'_, Handle<Node>, Cursor<KT>> {
-        self.definiens.drain()
     }
 }
 

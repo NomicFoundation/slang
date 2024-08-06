@@ -6,6 +6,7 @@ use std::fmt::Debug;
 use std::iter::once;
 use std::sync::Arc;
 
+use builder::BuildResult;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::ast::File;
@@ -19,6 +20,7 @@ use stack_graphs::stitching::{
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
+type CursorID = usize;
 
 pub struct Bindings<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
@@ -26,6 +28,8 @@ pub struct Bindings<KT: KindTypes + 'static> {
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
     definiens: HashMap<GraphHandle, Cursor<KT>>,
+    cursor_to_definitions: HashMap<CursorID, GraphHandle>,
+    cursor_to_references: HashMap<CursorID, GraphHandle>,
 }
 
 pub trait PathResolver {
@@ -57,6 +61,8 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             stack_graph,
             cursors: HashMap::new(),
             definiens: HashMap::new(),
+            cursor_to_definitions: HashMap::new(),
+            cursor_to_references: HashMap::new(),
         }
     }
 
@@ -70,26 +76,36 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let builder = self.add_file_internal(file_path, tree_cursor);
-        builder.graph()
+        let result = self.add_file_internal(file_path, tree_cursor);
+        result.graph
     }
 
-    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> Builder<'_, KT> {
+    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
         let file = self.stack_graph.get_or_create_file(file_path);
 
-        let mut builder = Builder::new(
+        let builder = Builder::new(
             &self.graph_builder_file,
             &self.functions,
             &mut self.stack_graph,
             file,
             tree_cursor,
         );
-        builder
+        let mut result = builder
             .build(&builder::NoCancellation)
             .expect("Internal error while building bindings");
-        self.cursors.extend(builder.extract_cursors());
-        self.definiens.extend(builder.extract_definiens());
-        builder
+
+        for (handle, cursor) in result.cursors.drain() {
+            let cursor_id = cursor.node().id();
+            if self.stack_graph[handle].is_definition() {
+                self.cursor_to_definitions.insert(cursor_id, handle);
+            } else {
+                self.cursor_to_references.insert(cursor_id, handle);
+            }
+            self.cursors.insert(handle, cursor);
+        }
+        self.definiens.extend(result.definiens.drain());
+
+        result
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
@@ -113,27 +129,23 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn definition_at(&self, cursor: &Cursor<KT>) -> Option<Definition<'_, KT>> {
-        for (handle, handle_cursor) in &self.cursors {
-            if handle_cursor == cursor && self.stack_graph[*handle].is_definition() {
-                return Some(Definition {
-                    owner: self,
-                    handle: *handle,
-                });
-            }
-        }
-        None
+        let cursor_id = cursor.node().id();
+        self.cursor_to_definitions
+            .get(&cursor_id)
+            .map(|handle| Definition {
+                owner: self,
+                handle: *handle,
+            })
     }
 
     pub fn reference_at(&self, cursor: &Cursor<KT>) -> Option<Reference<'_, KT>> {
-        for (handle, handle_cursor) in &self.cursors {
-            if handle_cursor == cursor && self.stack_graph[*handle].is_reference() {
-                return Some(Reference {
-                    owner: self,
-                    handle: *handle,
-                });
-            }
-        }
-        None
+        let cursor_id = cursor.node().id();
+        self.cursor_to_references
+            .get(&cursor_id)
+            .map(|handle| Reference {
+                owner: self,
+                handle: *handle,
+            })
     }
 }
 
