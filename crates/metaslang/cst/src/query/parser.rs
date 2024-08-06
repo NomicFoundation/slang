@@ -310,7 +310,6 @@ fn parse_node_selector<T: KindTypes>(
 ) -> IResult<&str, NodeSelector<T>, QueryParserError<&str>> {
     alt((
         anonymous_selector,
-        trivia_kind_token::<T, NodeSelector<T>>,
         kind_token.map(|node_kind| NodeSelector::NodeKind { node_kind }),
         text_token.map(|node_text| NodeSelector::NodeText { node_text }),
     ))
@@ -376,14 +375,21 @@ fn kind_token<T: KindTypes>(i: &str) -> IResult<&str, NodeKind<T>, QueryParserEr
     terminated(
         preceded(
             peek(satisfy(|c| c.is_alphabetic() || c == '_')),
-            cut(map_res(raw_identifier, |id| {
-                T::TerminalKind::try_from_str(id.as_str())
-                    .map(NodeKind::Terminal)
-                    .or_else(|_| {
-                        T::NonterminalKind::try_from_str(id.as_str()).map(NodeKind::Nonterminal)
-                    })
-                    .or(Err(QuerySyntaxError::NodeKind(id)))
-            })),
+            cut(map_res(
+                raw_identifier,
+                |id| match T::TerminalKind::try_from_str(id.as_str()) {
+                    Ok(kind) => {
+                        if kind.is_trivia() {
+                            Err(QuerySyntaxError::ForbiddenTriviaKind)
+                        } else {
+                            Ok(NodeKind::Terminal(kind))
+                        }
+                    }
+                    Err(_) => T::NonterminalKind::try_from_str(id.as_str())
+                        .map(NodeKind::Nonterminal)
+                        .or(Err(QuerySyntaxError::NodeKind(id))),
+                },
+            )),
         ),
         multispace0,
     )
@@ -507,27 +513,6 @@ fn ellipsis_token<O>(i: &str) -> IResult<&str, O, QueryParserError<&str>> {
     recognize_as_failure(
         QuerySyntaxError::DeprecatedEllipsis,
         terminated(tag("..."), multispace0),
-    )
-    .parse(i)
-}
-
-fn trivia_kind_token<T: KindTypes, O>(i: &str) -> IResult<&str, O, QueryParserError<&str>> {
-    recognize_as_failure(
-        QuerySyntaxError::ForbiddenTriviaKind,
-        terminated(
-            map_res(raw_identifier, |id| {
-                T::TerminalKind::try_from_str(id.as_str())
-                    .or(Err(QuerySyntaxError::NodeKind(id.clone())))
-                    .and_then(|kind| {
-                        if kind.is_trivia() {
-                            Ok(kind)
-                        } else {
-                            Err(QuerySyntaxError::NodeKind(id))
-                        }
-                    })
-            }),
-            multispace0,
-        ),
     )
     .parse(i)
 }
