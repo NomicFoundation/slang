@@ -23,7 +23,7 @@ type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 pub struct Bindings<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
-    pub stack_graph: StackGraph,
+    stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
     definiens: HashMap<GraphHandle, Cursor<KT>>,
 }
