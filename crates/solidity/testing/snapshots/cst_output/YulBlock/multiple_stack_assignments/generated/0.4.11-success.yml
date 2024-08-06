@@ -5,18 +5,18 @@ Source: >
   2  │   1                                                                              │ 2..5
   3  │   2                                                                              │ 6..9
   4  │   3                                                                              │ 10..13
-  5  │   := success                                                                     │ 14..26
-  6  │   := success                                                                     │ 27..39
-  7  │   := success                                                                     │ 40..52
+  5  │   =: success                                                                     │ 14..26
+  6  │   =: success                                                                     │ 27..39
+  7  │   =: success                                                                     │ 40..52
   8  │ }                                                                                │ 53..54
 
 Errors: []
 
 Tree:
-  - (YulBlock): # "{\n  1\n  2\n  3\n  := success\n  := success\n  := succe..." (0..55)
+  - (YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
-      - (statements꞉ YulStatements): # "  1\n  2\n  3\n  := success\n  := success\n  := success..." (2..53)
+      - (statements꞉ YulStatements): # "  1\n  2\n  3\n  =: success\n  =: success\n  =: success..." (2..53)
           - (item꞉ YulStatement) ► (variant꞉ YulExpression) ► (variant꞉ YulLiteral): # "  1\n" (2..6)
               - (leading_trivia꞉ Whitespace): "  " # (2..4)
               - (variant꞉ YulDecimalLiteral): "1" # (4..5)
@@ -29,32 +29,26 @@ Tree:
               - (leading_trivia꞉ Whitespace): "  " # (10..12)
               - (variant꞉ YulDecimalLiteral): "3" # (12..13)
               - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
-          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  := success\n" (14..27)
-              - (assignment꞉ YulAssignmentOperator): # "  :=" (14..18)
+          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  =: success\n" (14..27)
+              - (assignment꞉ YulStackAssignmentOperator): # "  =:" (14..18)
                   - (leading_trivia꞉ Whitespace): "  " # (14..16)
-                  - (variant꞉ ColonEqual): ":=" # (16..18)
-              - (expression꞉ YulExpression) ► (variant꞉ YulPath): # " success\n" (18..27)
-                  - (item꞉ YulPathComponent): # " success\n" (18..27)
-                      - (leading_trivia꞉ Whitespace): " " # (18..19)
-                      - (variant꞉ YulIdentifier): "success" # (19..26)
-                      - (trailing_trivia꞉ EndOfLine): "\n" # (26..27)
-          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  := success\n" (27..40)
-              - (assignment꞉ YulAssignmentOperator): # "  :=" (27..31)
+                  - (variant꞉ EqualColon): "=:" # (16..18)
+              - (leading_trivia꞉ Whitespace): " " # (18..19)
+              - (variable꞉ YulIdentifier): "success" # (19..26)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (26..27)
+          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  =: success\n" (27..40)
+              - (assignment꞉ YulStackAssignmentOperator): # "  =:" (27..31)
                   - (leading_trivia꞉ Whitespace): "  " # (27..29)
-                  - (variant꞉ ColonEqual): ":=" # (29..31)
-              - (expression꞉ YulExpression) ► (variant꞉ YulPath): # " success\n" (31..40)
-                  - (item꞉ YulPathComponent): # " success\n" (31..40)
-                      - (leading_trivia꞉ Whitespace): " " # (31..32)
-                      - (variant꞉ YulIdentifier): "success" # (32..39)
-                      - (trailing_trivia꞉ EndOfLine): "\n" # (39..40)
-          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  := success\n" (40..53)
-              - (assignment꞉ YulAssignmentOperator): # "  :=" (40..44)
+                  - (variant꞉ EqualColon): "=:" # (29..31)
+              - (leading_trivia꞉ Whitespace): " " # (31..32)
+              - (variable꞉ YulIdentifier): "success" # (32..39)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (39..40)
+          - (item꞉ YulStatement) ► (variant꞉ YulStackAssignmentStatement): # "  =: success\n" (40..53)
+              - (assignment꞉ YulStackAssignmentOperator): # "  =:" (40..44)
                   - (leading_trivia꞉ Whitespace): "  " # (40..42)
-                  - (variant꞉ ColonEqual): ":=" # (42..44)
-              - (expression꞉ YulExpression) ► (variant꞉ YulPath): # " success\n" (44..53)
-                  - (item꞉ YulPathComponent): # " success\n" (44..53)
-                      - (leading_trivia꞉ Whitespace): " " # (44..45)
-                      - (variant꞉ YulIdentifier): "success" # (45..52)
-                      - (trailing_trivia꞉ EndOfLine): "\n" # (52..53)
+                  - (variant꞉ EqualColon): "=:" # (42..44)
+              - (leading_trivia꞉ Whitespace): " " # (44..45)
+              - (variable꞉ YulIdentifier): "success" # (45..52)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (52..53)
       - (close_brace꞉ CloseBrace): "}" # (53..54)
       - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)

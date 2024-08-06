@@ -7,18 +7,51 @@ on:
     inputs:
       chain:
         description: "Name of the chain/sanctuary to run against, e.g. 'ethereum' or 'tron'."
-        default: "ethereum"
-        required: true
         type: "string"
+        required: true
+        default: "ethereum"
       network:
         description: "Name of the sub-network to run against, e.g. 'mainnet' or 'testnet'."
-        default: "mainnet"
-        required: true
         type: "string"
+        required: true
+        default: "mainnet"
 
 jobs:
-  ci:
-    uses: "./.github/workflows/_jobs_sanctuary.yml"
-    with:
-      chain: "${{ inputs.chain }}"
-      network: "${{ inputs.network }}"
+  sanctuary:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    strategy:
+      fail-fast: false # Continue running all shards even if some fail.
+      matrix:
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+
+    env:
+      SHARDS_COUNT: 16 # Length of the 'shard_index' array above.
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra run solidity_testing_sanctuary"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra run solidity_testing_sanctuary run --release --bin solidity_testing_sanctuary -- --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.chain }} ${{ inputs.network }}"

@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ = : success                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - (YulStackAssignmentStatement): # "= : success\n" (0..12)
+      - (assignment꞉ YulStackAssignmentOperator) ► (variant꞉ YulEqualAndColon): # "= :" (0..3)
+          - (equal꞉ Equal): "=" # (0..1)
+          - (leading_trivia꞉ Whitespace): " " # (1..2)
+          - (colon꞉ Colon): ":" # (2..3)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
+      - (variable꞉ YulIdentifier): "success" # (4..11)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)

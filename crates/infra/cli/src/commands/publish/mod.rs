@@ -1,71 +1,52 @@
 mod cargo;
 mod changesets;
 mod github_release;
+mod mkdocs;
 mod npm;
 
 use anyhow::Result;
-use clap::{Parser, ValueEnum};
-use infra_utils::terminal::Terminal;
+use clap::{Parser, Subcommand};
 
-use crate::commands::publish::cargo::publish_cargo;
-use crate::commands::publish::changesets::publish_changesets;
-use crate::commands::publish::github_release::publish_github_release;
-use crate::commands::publish::npm::publish_npm;
-use crate::utils::ClapExtensions;
+use crate::commands::publish::cargo::CargoController;
+use crate::commands::publish::changesets::ChangesetsController;
+use crate::commands::publish::github_release::GithubReleaseController;
+use crate::commands::publish::mkdocs::MkdocsController;
+use crate::commands::publish::npm::NpmController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PublishController {
+    #[command(subcommand)]
     command: PublishCommand,
-
-    #[arg(long)]
-    dry_run: bool,
 }
 
-#[derive(Clone, Copy)]
-enum DryRun {
-    Yes,
-    No,
-}
-
-impl DryRun {
-    fn is_yes(self) -> bool {
-        matches!(self, DryRun::Yes)
-    }
-}
-
-impl From<bool> for DryRun {
-    fn from(value: bool) -> Self {
-        if value {
-            DryRun::Yes
-        } else {
-            DryRun::No
-        }
-    }
-}
-
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum PublishCommand {
+#[derive(Clone, Debug, Subcommand)]
+pub enum PublishCommand {
     /// Consume pending changesets, update changelogs and package versions, then send a PR.
-    Changesets,
+    Changesets(ChangesetsController),
+    /// Publish the documentation to GitHub pages.
+    Mkdocs(MkdocsController),
     /// Publish source packages to [npmjs.com].
-    Npm,
+    Npm(NpmController),
     /// Publish source crates to [crates.io].
-    Cargo,
+    Cargo(CargoController),
     /// Publish a new release in the GitHub repository.
-    GithubRelease,
+    GithubRelease(GithubReleaseController),
 }
 
 impl PublishController {
     pub fn execute(&self) -> Result<()> {
-        Terminal::step(format!("publish {name}", name = self.command.clap_name()));
+        self.command.execute()
+    }
+}
 
-        let dry_run = DryRun::from(self.dry_run);
-
-        match self.command {
-            PublishCommand::Changesets => publish_changesets(),
-            PublishCommand::Npm => publish_npm(dry_run),
-            PublishCommand::Cargo => publish_cargo(dry_run),
-            PublishCommand::GithubRelease => publish_github_release(dry_run),
+impl PublishCommand {
+    pub fn execute(&self) -> Result<()> {
+        match self {
+            PublishCommand::Changesets(controller) => controller.execute(),
+            PublishCommand::Mkdocs(controller) => controller.execute(),
+            PublishCommand::Npm(controller) => controller.execute(),
+            PublishCommand::Cargo(controller) => controller.execute(),
+            PublishCommand::GithubRelease(controller) => controller.execute(),
         }
     }
 }

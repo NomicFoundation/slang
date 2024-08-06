@@ -1,0 +1,18 @@
+name: "cache/save"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Repossess files from devcontainer user"
+      shell: "bash"
+      run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
+
+    - name: "Save Cache"
+      uses: "actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9"
+      with:
+        # __SLANG_CI_CACHE_PATHS__ (keep in sync)
+        key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
+        path: |
+          ~/.cache/hermit/
+          ~/.local/share/virtualenvs/
+          .hermit/

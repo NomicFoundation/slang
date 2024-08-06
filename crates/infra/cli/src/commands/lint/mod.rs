@@ -7,6 +7,7 @@ use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use infra_utils::terminal::Terminal;
 
+use crate::toolchains::pipenv::PipEnv;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
@@ -143,9 +144,7 @@ fn run_yamllint() -> Result<()> {
             path
         });
 
-    return Command::new("python3")
-        .property("-m", "pipenv")
-        .args(["run", "yamllint"])
+    return PipEnv::run("yamllint")
         .flag("--strict")
         .property("--config-file", config_file.unwrap_str())
         .run_xargs(yaml_files);

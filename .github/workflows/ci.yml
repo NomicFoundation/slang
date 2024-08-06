@@ -1,24 +1,58 @@
 name: "ci"
 
 on:
+  # Run when invoked from other workflows:
+  workflow_call: {}
+
   # Run using manual triggers from GitHub UI:
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
   workflow_dispatch: {}
 
-  # Run on every pull request (external branches):
+  # Run on every pull request:
   pull_request: {}
 
-  # Run on pushes to internal branches:
-  # Except 'main', which is handled by 'deploy.yml'.
+  # Run on pushes to any branch except 'main', which is handled by the 'publish' workflow:
   push:
     branches-ignore:
       - "main"
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
+  group: "${{ github.workflow }}-${{ github.ref_name }}"
   cancel-in-progress: true
 
 jobs:
   ci:
-    uses: "./.github/workflows/_jobs_ci.yml"
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332"
+
+      # Cache is updated in this workflow, and reused in subsequent workflows.
+      # Always start with a fresh cache when running on the main branch.
+      - name: "Restore Cache"
+        if: "${{ github.ref_name != 'main' }}"
+        uses: "./.github/actions/cache/restore"
+
+      #
+      # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
+      #
+
+      - name: "infra check"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra check"
+
+      - name: "infra test"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra test"
+
+      - name: "infra lint"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra lint"
+
+      - name: "Save Cache"
+        uses: "./.github/actions/cache/save"

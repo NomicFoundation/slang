@@ -12,9 +12,10 @@ pub struct CiController;
 impl CiController {
     #[allow(clippy::unused_self)] // For symmetry with other commands
     pub fn execute(&self) -> Result<()> {
-        // Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
-
+        // Note: setup is ran implicitly during devcontainer initialization:
         SetupController::default().execute()?;
+
+        // Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
         CheckController::default().execute()?;
         TestController::default().execute()?;
         LintController::default().execute()?;
