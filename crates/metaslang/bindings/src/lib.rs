@@ -194,6 +194,25 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
+    /// Attempt to resolve the reference and find its definition. If the
+    /// reference cannot be resolved in the current state of the bindings (eg.
+    /// you may still need to add an imported file), this function will return
+    /// `None`. Otherwise, it will always return the definition with the
+    /// longest, not shadowed, path in the underlying stack graph. This is to
+    /// ensure that we always get the actual definition of some identifier
+    /// reference, and not an intermediate result such as an import alias.
+    ///
+    /// There are multiple reasons why a reference may resolve to more than one
+    /// definition in well formed and valid code. For example:
+    ///
+    /// 1. Variable shadowing: this should be resolved in the rules file by
+    ///    setting the precedence attribute to the appropriate edges.
+    ///
+    /// 2. Destructuring imports (with or without aliases): these are
+    ///    represented in the graph as intermediate definition nodes along the
+    ///    path to the actual definition; hence why this function will return
+    ///    the longest path available.
+    ///
     pub fn jump_to_definition(&self) -> Option<Definition<'a, KT>> {
         let mut partials = PartialPaths::new();
         let mut reference_paths = Vec::new();

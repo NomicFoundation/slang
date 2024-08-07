@@ -10,8 +10,6 @@ impl PathResolver for TestsPathResolver {
             normalize_path(path_to_resolve, get_parent_path(context_path))
         } else {
             // Direct import: this path will be used as-is
-            // TODO: implement the VFS concept and use a resolver callback if
-            // the path is not already present
             Some(path_to_resolve.to_string())
         }
     }
