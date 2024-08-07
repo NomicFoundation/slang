@@ -21,16 +21,12 @@ pub enum AssertionError {
     #[error("Duplicate assertion definition {0}")]
     DuplicateDefinition(String),
 
-    #[error("Failed {failed} of {total} bindings assertions:\n{}", display_assertion_errors(.errors))]
+    #[error("Failed {failed} of {total} bindings assertions:\n{errors:#?}")]
     FailedAssertions {
         failed: usize,
         total: usize,
         errors: Vec<String>,
     },
-}
-
-fn display_assertion_errors(errors: &[String]) -> String {
-    errors.join("\n")
 }
 
 pub struct Assertions<'a> {
