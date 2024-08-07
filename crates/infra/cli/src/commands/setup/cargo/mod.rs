@@ -1,8 +1,7 @@
-use anyhow::Result;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
-pub fn setup_cargo() -> Result<()> {
+pub fn setup_cargo() {
     // The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'
     // installs the 'minimal' profile of the '$RUST_STABLE_VERSION' toolchain.
     // This includes the following components:
@@ -13,46 +12,41 @@ pub fn setup_cargo() -> Result<()> {
     //
     // Which are enough to run infra scripts.
     // But we need these additional optional components for local development:
-    rustup_add_components(env!("RUST_STABLE_VERSION"), ["clippy"])?;
+    rustup_add_components(env!("RUST_STABLE_VERSION"), ["clippy"]);
     if !GitHub::is_running_in_ci() {
         rustup_add_components(
             env!("RUST_STABLE_VERSION"),
             ["rust-analyzer", "rust-docs", "rust-src"],
-        )?;
+        );
     }
 
     // Additionally, we also need 'rustfmt nightly', as we use experimental options.
     // So let's install the '$RUST_NIGHTLY_VERSION' toolchain along with the 'rustfmt' component.
-    rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"))?;
-    rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt"])?;
+    rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"));
+    rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt"]);
 
     // Make sure we have the latest dependencies:
-    run_cargo_fetch()?;
-
-    Ok(())
+    run_cargo_fetch();
 }
 
-fn rustup_install_toolchain(toolchain: &str) -> Result<()> {
+fn rustup_install_toolchain(toolchain: &str) {
     Command::new("rustup")
         .arg("install")
         .flag("--no-self-update")
         .property("--profile", "minimal")
         .arg(toolchain)
-        .run()
+        .run();
 }
 
-fn rustup_add_components(
-    toolchain: &str,
-    components: impl IntoIterator<Item = impl Into<String>>,
-) -> Result<()> {
+fn rustup_add_components(toolchain: &str, components: impl IntoIterator<Item = impl Into<String>>) {
     Command::new("rustup")
         .args(["component", "add"])
         .property("--toolchain", toolchain)
         .args(components)
-        .run()
+        .run();
 }
 
-fn run_cargo_fetch() -> Result<()> {
+fn run_cargo_fetch() {
     let mut command = Command::new("cargo").arg("fetch");
 
     if GitHub::is_running_in_ci() {
@@ -61,5 +55,5 @@ fn run_cargo_fetch() -> Result<()> {
         command = command.flag("--locked");
     }
 
-    command.run()
+    command.run();
 }

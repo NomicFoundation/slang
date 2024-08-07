@@ -24,7 +24,7 @@ impl PipEnv {
         Command::new("pip3")
             .arg("install")
             .arg(format!("pipenv{version}"))
-            .run()?;
+            .run();
 
         let mut command = Command::new("python3")
             .property("-m", "pipenv")
@@ -34,7 +34,7 @@ impl PipEnv {
             command = command.flag("--deploy");
         }
 
-        command.run()?;
+        command.run();
 
         Ok(())
     }

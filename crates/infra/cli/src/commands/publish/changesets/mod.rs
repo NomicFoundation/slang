@@ -41,7 +41,7 @@ impl ChangesetsController {
         // 2) Update the CHANGELOG.md file for the NPM package.
         // 3) Bump the version in its package.json accordingly.
 
-        Command::new("changeset").arg("version").run()?;
+        Command::new("changeset").arg("version").run();
 
         let updated_version = NapiConfig::local_version(&package_dir)?;
         println!("Updated version: {updated_version}");
@@ -56,14 +56,14 @@ impl ChangesetsController {
         let package_dir = resolver.main_package_dir();
         Command::new("prettier")
             .property("--write", package_dir.unwrap_str())
-            .run()?;
+            .run();
 
         // Update NPM lock file:
 
         Command::new("npm")
             .arg("install")
             .flag("--package-lock-only")
-            .run()?;
+            .run();
 
         // Update Cargo workspace:
 
@@ -75,7 +75,7 @@ impl ChangesetsController {
         Command::new("cargo")
             .arg("update")
             .flag("--workspace")
-            .run()?;
+            .run();
 
         // Update other CHANGELOG files:
 
@@ -92,7 +92,7 @@ impl ChangesetsController {
             .args(["stash", "push"])
             .flag("--include-untracked")
             .property("--message", "applied changesets")
-            .run()?;
+            .run();
 
         println!();
         println!("Source files are now updated with the new version, and stored in a 'git stash'.");

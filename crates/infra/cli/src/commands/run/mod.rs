@@ -1,4 +1,3 @@
-use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
@@ -33,7 +32,7 @@ enum BinaryName {
 }
 
 impl RunController {
-    pub fn execute(&self) -> Result<()> {
+    pub fn execute(&self) {
         let bin = self.bin.clap_name();
 
         Terminal::step(format!("run {bin}"));
@@ -48,6 +47,6 @@ impl RunController {
             .property("--bin", bin)
             .arg("--")
             .args(&self.args)
-            .run()
+            .run();
     }
 }

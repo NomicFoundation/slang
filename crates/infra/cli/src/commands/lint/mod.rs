@@ -49,31 +49,33 @@ impl OrderedCommand for LintCommand {
         match self {
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
-            LintCommand::MarkdownLinkCheck => run_markdown_link_check(),
-            LintCommand::MarkdownLint => run_markdown_lint(),
+            LintCommand::MarkdownLinkCheck => run_markdown_link_check()?,
+            LintCommand::MarkdownLint => run_markdown_lint()?,
             LintCommand::Rustfmt => run_rustfmt(),
-            LintCommand::Shellcheck => run_shellcheck(),
+            LintCommand::Shellcheck => run_shellcheck()?,
             LintCommand::Tsc => run_tsc(),
-            LintCommand::Yamllint => run_yamllint(),
-        }
+            LintCommand::Yamllint => run_yamllint()?,
+        };
+
+        Ok(())
     }
 }
 
-fn run_cspell() -> Result<()> {
+fn run_cspell() {
     Command::new("cspell")
         .arg("lint")
         .flag("--show-context")
         .flag("--show-suggestions")
         .flag("--dot")
         .flag("--gitignore")
-        .run()
+        .run();
 }
 
-fn run_prettier() -> Result<()> {
+fn run_prettier() {
     if GitHub::is_running_in_ci() {
-        Command::new("prettier").property("--check", ".").run()
+        Command::new("prettier").property("--check", ".").run();
     } else {
-        Command::new("prettier").property("--write", ".").run()
+        Command::new("prettier").property("--write", ".").run();
     }
 }
 
@@ -82,9 +84,11 @@ fn run_markdown_link_check() -> Result<()> {
 
     let markdown_files = FileWalker::from_repo_root().find(["**/*.md"])?;
 
-    return Command::new("markdown-link-check")
+    Command::new("markdown-link-check")
         .property("--config", config_file.unwrap_str())
         .run_xargs(markdown_files);
+
+    Ok(())
 }
 
 fn run_markdown_lint() -> Result<()> {
@@ -99,10 +103,12 @@ fn run_markdown_lint() -> Result<()> {
         command = command.flag("--fix");
     }
 
-    command.run_xargs(markdown_files)
+    command.run_xargs(markdown_files);
+
+    Ok(())
 }
 
-fn run_rustfmt() -> Result<()> {
+fn run_rustfmt() {
     let mut command = Command::new("cargo-fmt")
         .arg(format!("+{}", env!("RUST_NIGHTLY_VERSION")))
         .flag("--all")
@@ -112,7 +118,7 @@ fn run_rustfmt() -> Result<()> {
         command = command.flag("--check");
     }
 
-    command.run()
+    command.run();
 }
 
 fn run_shellcheck() -> Result<()> {
@@ -123,13 +129,15 @@ fn run_shellcheck() -> Result<()> {
             path
         });
 
-    Command::new("shellcheck").run_xargs(bash_files)
+    Command::new("shellcheck").run_xargs(bash_files);
+
+    Ok(())
 }
 
-fn run_tsc() -> Result<()> {
+fn run_tsc() {
     let root_project = Path::repo_path("tsconfig.json");
 
-    return Command::new("tsc")
+    Command::new("tsc")
         .property("--build", root_project.unwrap_str())
         .run();
 }
@@ -144,8 +152,10 @@ fn run_yamllint() -> Result<()> {
             path
         });
 
-    return PipEnv::run("yamllint")
+    PipEnv::run("yamllint")
         .flag("--strict")
         .property("--config-file", config_file.unwrap_str())
         .run_xargs(yaml_files);
+
+    Ok(())
 }
