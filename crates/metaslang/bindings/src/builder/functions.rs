@@ -93,10 +93,7 @@ mod resolver {
             {
                 Ok(resolved_path.into())
             } else {
-                Err(ExecutionError::FunctionFailed(
-                    "resolve-path".into(),
-                    format!("Error ocurred when resolving path `{path_to_resolve}` with context `{context_path}`"),
-                ))
+                Ok("__SLANG_UNRESOLVED_IMPORT_PATH__".into())
             }
         }
     }
