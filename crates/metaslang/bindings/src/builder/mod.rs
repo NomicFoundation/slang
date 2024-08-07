@@ -334,6 +334,7 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
 }
 
 pub(crate) struct BuildResult<KT: KindTypes> {
+    #[cfg(feature = "__private_testing_utils")]
     pub graph: Graph<KT>,
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
@@ -425,6 +426,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         self.load(cancellation_flag)?;
 
         Ok(BuildResult {
+            #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
             cursors: self.cursors,
             definiens: self.definiens,
