@@ -10,12 +10,12 @@ use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
-use slang_solidity::resolver::SolidityPathResolver;
 
 use super::graph::render_graph;
 use super::renderer::render_bindings;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::split_multi_file;
+use crate::resolver::TestsPathResolver;
 
 pub(crate) struct ParsedPart<'a> {
     pub path: &'a str,
@@ -41,7 +41,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     for version in &VERSION_BREAKS {
         let language = Language::new(version.clone())?;
         let mut bindings =
-            bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
+            bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
 
         let parts = split_multi_file(&contents);

@@ -1,8 +1,8 @@
 use metaslang_bindings::PathResolver;
 
-pub struct SolidityPathResolver;
+pub struct TestsPathResolver;
 
-impl PathResolver for SolidityPathResolver {
+impl PathResolver for TestsPathResolver {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String> {
         if is_relative_path(path_to_resolve) {
             // Relative import: the actual path will be computed using the

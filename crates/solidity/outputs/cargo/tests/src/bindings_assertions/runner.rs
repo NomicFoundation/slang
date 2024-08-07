@@ -5,7 +5,6 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
 use slang_solidity::language::Language;
-use slang_solidity::resolver::SolidityPathResolver;
 use slang_solidity::{bindings, diagnostic};
 
 use crate::bindings_assertions::assertions::{
@@ -13,6 +12,7 @@ use crate::bindings_assertions::assertions::{
 };
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::split_multi_file;
+use crate::resolver::TestsPathResolver;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let file_name = format!("{test_name}.sol");
@@ -31,7 +31,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let language = Language::new(version.clone())?;
     let mut bindings =
-        bindings::create_with_resolver(version.clone(), Arc::new(SolidityPathResolver {}));
+        bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
     let mut assertions = Assertions::new();
 
     let parts = split_multi_file(contents);

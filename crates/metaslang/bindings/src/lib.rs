@@ -36,14 +36,6 @@ pub trait PathResolver {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
 }
 
-pub struct DefaultPathResolver;
-
-impl PathResolver for DefaultPathResolver {
-    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
-        Some(path_to_resolve.to_string())
-    }
-}
-
 impl<KT: KindTypes + 'static> Bindings<KT> {
     pub fn create(
         version: Version,
