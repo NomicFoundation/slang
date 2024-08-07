@@ -55,6 +55,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 graph,
             });
         }
+        let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
+        let parse_status = if parse_success { "success" } else { "failure" };
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
@@ -64,7 +66,9 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
-                    let snapshot_path = test_dir.join("generated").join(format!("{version}.mmd"));
+                    let snapshot_path = test_dir
+                        .join("generated")
+                        .join(format!("{version}-{parse_status}.mmd"));
 
                     fs.write_file(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
@@ -76,7 +80,9 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         match last_bindings_output {
             Some(ref last) if last == &bindings_output => (),
             _ => {
-                let snapshot_path = test_dir.join("generated").join(format!("{version}.txt"));
+                let snapshot_path = test_dir
+                    .join("generated")
+                    .join(format!("{version}-{parse_status}.txt"));
 
                 fs.write_file(snapshot_path, &bindings_output)?;
                 last_bindings_output = Some(bindings_output);
