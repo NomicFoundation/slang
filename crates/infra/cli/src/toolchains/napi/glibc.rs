@@ -109,7 +109,7 @@ pub fn ensure_correct_glibc_for_vscode(
             .flag("--release")
             .property("--target", format!("{target_triple}.{target_glibc}"))
             .property("--target-dir", zigbuild_output.path().to_string_lossy())
-            .run()?;
+            .run();
 
         // Overwrite the existing artifact with the cross-compiled one.
         let zigbuild_output = zigbuild_output.into_path();

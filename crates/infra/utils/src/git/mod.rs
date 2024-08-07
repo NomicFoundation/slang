@@ -52,19 +52,19 @@ impl TemporaryChangeset {
         Command::new("git")
             .arg("checkout")
             .property("-b", &self.head_branch)
-            .run()?;
+            .run();
 
         Command::new("git")
             .arg("add")
             .args(local_changes.iter().map(|path| path.unwrap_str()))
-            .run()?;
+            .run();
 
-        Command::new("git").arg("diff").flag("--cached").run()?;
+        Command::new("git").arg("diff").flag("--cached").run();
 
         Command::new("git")
             .arg("commit")
             .property("--message", &self.message)
-            .run()?;
+            .run();
 
         Ok(())
     }
@@ -80,12 +80,12 @@ impl TemporaryChangeset {
         Command::new("git")
             .arg("checkout")
             .arg(&self.base_branch)
-            .run()?;
+            .run();
 
         Command::new("git")
             .arg("branch")
             .property("-D", &self.head_branch)
-            .run()?;
+            .run();
 
         Ok(())
     }

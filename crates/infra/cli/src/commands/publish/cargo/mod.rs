@@ -50,7 +50,7 @@ impl CargoController {
         changeset.commit_changes()?;
 
         for crate_name in &changed_crates {
-            run_cargo_publish(crate_name, self.dry_run)?;
+            run_cargo_publish(crate_name, self.dry_run);
         }
 
         changeset.revert_changes()?;
@@ -109,11 +109,11 @@ fn strip_publish_markers(cargo_toml_path: &Path) -> Result<bool> {
 
 fn update_cargo_lock(changeset: &mut TemporaryChangeset) -> Result<()> {
     let cargo_lock_path = Path::repo_path("Cargo.lock");
-    let old_contents = std::fs::read_to_string(&cargo_lock_path)?;
+    let old_contents = cargo_lock_path.read_to_string()?;
 
-    Command::new("cargo").arg("check").run()?;
+    Command::new("cargo").arg("check").run();
 
-    let new_contents = std::fs::read_to_string(&cargo_lock_path)?;
+    let new_contents = cargo_lock_path.read_to_string()?;
 
     if new_contents != old_contents {
         changeset.expect_change(&cargo_lock_path);
@@ -122,7 +122,7 @@ fn update_cargo_lock(changeset: &mut TemporaryChangeset) -> Result<()> {
     Ok(())
 }
 
-fn run_cargo_publish(crate_name: &str, dry_run: DryRun) -> Result<()> {
+fn run_cargo_publish(crate_name: &str, dry_run: DryRun) {
     let mut command = Command::new("cargo")
         .arg("publish")
         .property("--package", crate_name)
@@ -132,5 +132,5 @@ fn run_cargo_publish(crate_name: &str, dry_run: DryRun) -> Result<()> {
         command = command.flag("--dry-run");
     }
 
-    command.run()
+    command.run();
 }

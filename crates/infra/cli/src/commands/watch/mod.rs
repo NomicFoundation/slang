@@ -27,11 +27,9 @@ impl OrderedCommand for WatchCommand {
         Terminal::step(format!("watch {name}", name = self.clap_name()));
 
         match self {
-            WatchCommand::Mkdocs => watch_mkdocs(),
-        }
-    }
-}
+            WatchCommand::Mkdocs => Mkdocs::watch(),
+        };
 
-fn watch_mkdocs() -> Result<()> {
-    Mkdocs::watch()
+        Ok(())
+    }
 }

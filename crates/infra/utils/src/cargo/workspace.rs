@@ -44,7 +44,9 @@ impl CargoWorkspace {
                 .property("--rev", rev),
         };
 
-        command.run()
+        command.run();
+
+        Ok(())
     }
 
     pub fn is_running_inside_build_scripts() -> bool {
@@ -107,7 +109,9 @@ impl CargoWorkspace {
             .arg("set-version")
             .flag("--workspace")
             .arg(new_version.to_string())
-            .run()
+            .run();
+
+        Ok(())
     }
 }
 

@@ -32,7 +32,7 @@ impl PerfController {
                 // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
                 // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
 
-                run_iai_bench("solidity_testing_perf", "iai")?;
+                run_iai_bench("solidity_testing_perf", "iai");
             }
         };
 
@@ -62,10 +62,11 @@ fn install_perf_tools() -> Result<()> {
     Ok(())
 }
 
-fn run_iai_bench(package_name: &str, bench_name: &str) -> Result<()> {
-    if std::env::var("BENCHER_API_TOKEN").is_err() {
-        bail!("BENCHER_API_TOKEN is not set. Please set it to your Bencher API token: https://bencher.dev/console");
-    }
+fn run_iai_bench(package_name: &str, bench_name: &str) {
+    assert!(
+        std::env::var("BENCHER_API_TOKEN").is_ok(),
+        "BENCHER_API_TOKEN is not set. Please set it to your Bencher API token: https://bencher.dev/console",
+    );
 
     let cargo_command = format!("cargo bench --package {package_name} --bench {bench_name}");
 
@@ -81,7 +82,7 @@ fn run_iai_bench(package_name: &str, bench_name: &str) -> Result<()> {
         .property("--adapter", "rust_iai_callgrind")
         .property("--testbed", testbed)
         .arg(cargo_command)
-        .run()?;
+        .run();
 
     let reports_dir = Path::repo_path("target/iai")
         .join(package_name)
@@ -97,6 +98,4 @@ Reports/Logs: {reports_dir:?}
 - DHAT traces (dhat.*.out) can be viewed using the [dhat/dh_view.html] tool from the Valgrind release [https://valgrind.org/downloads/].
 
 ");
-
-    Ok(())
 }

@@ -11,11 +11,11 @@ use crate::utils::DryRun;
 pub struct Mkdocs;
 
 impl Mkdocs {
-    pub fn check() -> Result<()> {
-        mkdocs().arg("build").flag("--clean").flag("--strict").run()
+    pub fn check() {
+        mkdocs().arg("build").flag("--clean").flag("--strict").run();
     }
 
-    pub fn watch() -> Result<()> {
+    pub fn watch() {
         // _MKDOCS_WATCH_PORT_ | keep in sync with the port number defined in "$REPO_ROOT/.devcontainer/devcontainer.json"
         const PORT: usize = 5353;
 
@@ -24,11 +24,11 @@ impl Mkdocs {
             .flag("--clean")
             .flag("--watch-theme")
             .property("--dev-addr", format!("localhost:{PORT}"))
-            .run()
+            .run();
     }
 
-    pub fn publish_main_branch(dry_run: DryRun) -> Result<()> {
-        fetch_latest_remote()?;
+    pub fn publish_main_branch(dry_run: DryRun) {
+        fetch_latest_remote();
 
         let mut command = mike().args(["deploy", "main"]);
 
@@ -36,15 +36,15 @@ impl Mkdocs {
             command = command.flag("--push");
         }
 
-        command.run()
+        command.run();
     }
 
     pub fn publish_latest_release(dry_run: DryRun) -> Result<()> {
-        fetch_latest_remote()?;
+        fetch_latest_remote();
 
         let version = CargoWorkspace::local_version()?.to_string();
 
-        if mike().args(["list", &version]).run().is_ok() {
+        if mike().args(["list", &version]).evaluate().is_ok() {
             println!("Version '{version}' is already published.");
             return Ok(());
         }
@@ -57,15 +57,17 @@ impl Mkdocs {
             command = command.flag("--push");
         }
 
-        command.run()
+        command.run();
+
+        Ok(())
     }
 }
 
-fn fetch_latest_remote() -> Result<()> {
+fn fetch_latest_remote() {
     Command::new("git")
         .args(["fetch", "origin", "gh-pages"])
         .property("--depth", "1")
-        .run()
+        .run();
 }
 
 fn mkdocs() -> Command {

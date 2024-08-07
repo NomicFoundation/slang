@@ -31,9 +31,11 @@ impl OrderedCommand for TestCommand {
         Terminal::step(format!("test {name}", name = self.clap_name()));
 
         match self {
-            TestCommand::Cargo => test_cargo(),
+            TestCommand::Cargo => test_cargo()?,
             TestCommand::Npm => test_npm(),
-        }
+        };
+
+        Ok(())
     }
 }
 
@@ -49,9 +51,11 @@ fn test_cargo() -> Result<()> {
         .flag("--examples")
         .flag("--no-fail-fast")
         .add_build_rustflags()
-        .run()
+        .run();
+
+    Ok(())
 }
 
-fn test_npm() -> Result<()> {
-    Command::new("jest").run()
+fn test_npm() {
+    Command::new("jest").run();
 }

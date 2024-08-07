@@ -40,13 +40,15 @@ impl OrderedCommand for CheckCommand {
         match self {
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Rustdoc => check_rustdoc(),
-            CheckCommand::Npm => check_npm(),
+            CheckCommand::Npm => check_npm()?,
             CheckCommand::Mkdocs => check_mkdocs(),
-        }
+        };
+
+        Ok(())
     }
 }
 
-fn check_cargo() -> Result<()> {
+fn check_cargo() {
     // 'cargo clippy' will run both 'cargo check', and 'clippy' lints:
     Command::new("cargo")
         .arg("clippy")
@@ -55,10 +57,10 @@ fn check_cargo() -> Result<()> {
         .flag("--all-targets")
         .flag("--no-deps")
         .add_build_rustflags()
-        .run()
+        .run();
 }
 
-fn check_rustdoc() -> Result<()> {
+fn check_rustdoc() {
     Command::new("cargo")
         .arg("doc")
         .flag("--workspace")
@@ -66,7 +68,7 @@ fn check_rustdoc() -> Result<()> {
         .flag("--no-deps")
         .flag("--document-private-items")
         .add_build_rustflags()
-        .run()
+        .run();
 }
 
 fn check_npm() -> Result<()> {
@@ -77,6 +79,6 @@ fn check_npm() -> Result<()> {
     Ok(())
 }
 
-fn check_mkdocs() -> Result<()> {
-    Mkdocs::check()
+fn check_mkdocs() {
+    Mkdocs::check();
 }
