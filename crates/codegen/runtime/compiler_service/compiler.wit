@@ -1,0 +1,188 @@
+interface compiler-api {
+
+    type project-name = string;
+    type source-name = string;
+    type direct-import = string;
+    type version = string;
+    type generation = u64;
+
+    /// A mutable object with a changing generation number
+    resource project {
+
+        constructor(name: project-name);
+
+        // ------------------------------------------------------------
+        // Identity
+
+            name: func() -> project-name;
+
+            /// Changes whenever the set of roots or a root generation changes
+            /// Useful for doing a quick regular poll
+            generation: func() -> generation;
+
+        // ------------------------------------------------------------
+        // State
+
+            add-root: func(name: source-name, allowed-versions: option<list<version>>) -> borrow<root>;
+            remove-root: func(name: source-name);
+            get-root: func(name: source-name) -> option<borrow<root>>;
+            
+            /// Not only do you get the root name, but the generation tells you whether you
+            /// need to call get-roott and clear any cached data relating to the root.
+            root-names-and-generations: func() -> root-names-and-generations-iterable;
+
+        // ------------------------------------------------------------
+        // Responding to requests for information
+
+            resolve-import: func(context: source-name, import: direct-import, name: source-name);
+            supply-source: func(name: source-name, source: option<string>); 
+
+        // ------------------------------------------------------------
+        // Notification of changes to the environment 
+
+            source-has-changed: func(name: source-name);
+            reset-all-caches: func();
+
+    }
+
+    /// This is returned rather than the actual result from *any* lazy api call,
+    /// to indicate that more information is needed by the projet before the result
+    /// of that api call can be supplied.
+    type information-requests = list<information-request>;
+    
+    record resolve-import-request {
+        context: source-name,
+        import: direct-import,
+    }
+
+    record supply-source-request {
+        name: source-name,
+    }
+
+    variant information-request {
+        resolve-import(resolve-import-request),
+        supply-source(supply-source-request),
+    }
+
+    /// A mutable object with a changing generation number
+    resource root {
+
+        // ------------------------------------------------------------
+        // Identity
+
+            name: func() -> source-name;
+
+            /// Changes whenever any of the outputs of the root change
+            generation: func() -> generation;
+
+        // ------------------------------------------------------------
+        // Immutable properties
+
+            /// None means any version is allowed
+            allowed-versions: func() -> option<list<version>>;
+
+        // ------------------------------------------------------------
+        // Computed properties
+
+            // require a first pass parse of all files using latest allowed version
+            resolved-version: func() -> result<version, information-requests>;
+            dependency-graph: func() -> result<dependency-graph, information-requests>;
+
+            // requires a second pass parse of the file using the resolved-version
+            get-file: func(name: source-name) -> result<option<file>, information-requests>;
+
+    }
+    
+    /// A drected possible cyclic graph
+    record dependency-graph {
+        root-name: source-name,
+        edges: list<tuple<source-name, list<source-name>>> // represent as a map
+    }
+    
+    /// Used by Slang for identity checking.
+    /// We don't expect it to conform to a specific shape/format.
+    type file-id = string;
+
+    /// An immutable object with a constant generation number
+    resource file {
+
+        // ------------------------------------------------------------
+        // Identity
+
+            id: func() -> file-id;
+            generation: func() -> generation;
+            name: func() -> source-name;
+
+        // ------------------------------------------------------------
+        // Immutable properties
+
+            source: func() -> string;
+
+        // ------------------------------------------------------------
+        // Parsing - CST
+
+            cst: func() -> non-terminal-node;
+
+            // ??? maybe this should be filterable by severity
+            // ??? maybe we shoud have a `valid` method if the AST is avaliable
+
+            /// Only parse errors are generated for now, but in the
+            /// future we can add more kinds of validation.
+            diagnostics: func() -> diagnostic-iterable;
+
+        // ------------------------------------------------------------
+        // Traversal of the CST
+
+            create-cst-cursor: func() -> cursor;
+
+        // ------------------------------------------------------------
+        // Bindings
+
+            definitions: func() -> definition-iterable;
+            references: func() -> reference-iterable;
+
+            resolve-definition: func(cursor: cursor) -> option<definition>;
+
+        // ------------------------------------------------------------
+        // AST
+
+            /// The AST is only available if there are no parse errors
+            ast: func() -> result<source-unit>;
+
+    }
+
+    record definition {
+        identifier: option<cursor>,
+        definiens: option<cursor>,
+        references: reference-iterable,
+    }
+
+    record reference {
+        identifier: option<cursor>,
+        definition: option<definition>,
+    }
+
+    // ------------------------------------------------------------
+    // Iterables
+
+        resource root-names-and-generations-iterable {
+            // we surface this resource as a TS Iterable
+            next: func() -> option<tuple<source-name, generation>>;
+        }
+
+        resource diagnostic-iterarable {
+            // we surface this resource as a TS Iterable
+            next: func() -> option<diagnostic>;
+        }
+        
+        resource definition-iterable {
+            // we surface this resource as a TS Iterable
+            next: func() -> option<definition>;
+        }
+
+        resource reference-iterable {
+            // we surface this resource as a TS Iterable
+            next: func() -> option<reference>;
+        }
+
+}
