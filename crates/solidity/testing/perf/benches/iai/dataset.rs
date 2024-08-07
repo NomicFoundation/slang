@@ -219,9 +219,7 @@ pub fn run_query(trees: &Vec<Node>) {
 
     let queries = vec![Query::parse(
         "[FunctionDefinition
-            ...
             @name name: [_]
-            ...
         ]",
     )
     .unwrap()];
