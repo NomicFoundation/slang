@@ -1,5 +1,29 @@
 # changelog
 
+## 0.16.0
+
+### Minor Changes
+
+-   [#1030](https://github.com/NomicFoundation/slang/pull/1030) [`7e467ce`](https://github.com/NomicFoundation/slang/commit/7e467ce199cb07acb443da9f542fbcc74f2a5321) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Tree Query Language: queries now ignore trivia nodes.
+
+-   [#1030](https://github.com/NomicFoundation/slang/pull/1030) [`7e467ce`](https://github.com/NomicFoundation/slang/commit/7e467ce199cb07acb443da9f542fbcc74f2a5321) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Tree Query Language: remove the ellipsis query `...` operator making it implicit, add an adjacency operator `.`.
+
+### Patch Changes
+
+-   [#1015](https://github.com/NomicFoundation/slang/pull/1015) [`369ee30`](https://github.com/NomicFoundation/slang/commit/369ee309325ef57c7cd6f29e2f7adc4f9ec09c88) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - upgrade to rust `1.79.0`.
+
+-   [#1052](https://github.com/NomicFoundation/slang/pull/1052) [`54c9067`](https://github.com/NomicFoundation/slang/commit/54c9067aa6c587ff93cac6575726a9068a9bb758) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Tree Query Language: Compute row and column information for query parser errors.
+
+-   [#1048](https://github.com/NomicFoundation/slang/pull/1048) [`c408caa`](https://github.com/NomicFoundation/slang/commit/c408caae1826095cc2f2c01caf9be58ab5ff8eee) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support Yul multiple variables declaration
+
+-   [#1047](https://github.com/NomicFoundation/slang/pull/1047) [`2b32045`](https://github.com/NomicFoundation/slang/commit/2b3204549af27ea3782da2a9a2de470db13a7402) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - inline `MemberAccess` enum into the parent `MemberAccessExpression`
+
+-   [#1062](https://github.com/NomicFoundation/slang/pull/1062) [`6b05496`](https://github.com/NomicFoundation/slang/commit/6b05496cbd19b5a7f65033fb223c1bcd3d448738) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix stack assignments operator `=:`.
+
+-   [#1052](https://github.com/NomicFoundation/slang/pull/1052) [`54c9067`](https://github.com/NomicFoundation/slang/commit/54c9067aa6c587ff93cac6575726a9068a9bb758) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Tree Query Language: Improve reporting when an error occurs attempting to parse edge labels or node kinds.
+
+-   [#1037](https://github.com/NomicFoundation/slang/pull/1037) [`2a74f91`](https://github.com/NomicFoundation/slang/commit/2a74f91ed8e67fc3d315afd49f593dfef52f0e4d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix `ExponentiationExpression` associativity before `0.8.0`
+
 ## 0.15.1
 
 ### Patch Changes
