@@ -62,7 +62,7 @@ fn compile_all_targets(resolver: NapiResolver) -> Result<Vec<PathBuf>> {
     Command::new("rustup")
         .args(["target", "add"])
         .args(&targets)
-        .run()?;
+        .run();
 
     // Needed for cross-compiling windows targets:
     CargoWorkspace::install_binary("cargo-xwin")?;
@@ -127,7 +127,7 @@ fn compile_root_package(resolver: NapiResolver, node_binary: Option<&Path>) -> R
         .property("--outDir", output_dir.unwrap_str())
         .property("--declaration", "true")
         .property("--noEmit", "false")
-        .run()?;
+        .run();
 
     for file_name in &["package.json", "CHANGELOG.md", "LICENSE", "README.md"] {
         let source = package_dir.join(file_name);

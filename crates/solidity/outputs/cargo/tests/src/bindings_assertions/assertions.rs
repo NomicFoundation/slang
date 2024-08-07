@@ -7,7 +7,7 @@ use regex::Regex;
 use semver::{Version, VersionReq};
 use slang_solidity::bindings::{Bindings, Definition};
 use slang_solidity::cursor::Cursor;
-use slang_solidity::query::Query;
+use slang_solidity::kinds::TerminalKind;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -155,25 +155,28 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 ///
 pub fn collect_assertions_into<'a>(
     assertions: &mut Assertions<'a>,
-    cursor: Cursor,
+    mut cursor: Cursor,
     file: &'a str,
     version: &Version,
 ) -> Result<(), AssertionError> {
-    let query = Query::parse("@comment [SingleLineComment]").unwrap();
-    for result in cursor.query(vec![query]) {
-        let captures = result.captures;
-        let Some(comment) = captures.get("comment").and_then(|v| v.first()) else {
-            continue;
-        };
+    loop {
+        if cursor
+            .node()
+            .is_terminal_with_kind(TerminalKind::SingleLineComment)
+        {
+            match find_assertion_in_comment(&cursor, version, file)? {
+                Some(Assertion::Definition(assertion)) => {
+                    assertions.insert_definition_assertion(assertion)?;
+                }
+                Some(Assertion::Reference(assertion)) => {
+                    assertions.insert_reference_assertion(assertion);
+                }
+                None => (),
+            }
+        }
 
-        match find_assertion_in_comment(comment, version, file)? {
-            Some(Assertion::Definition(assertion)) => {
-                assertions.insert_definition_assertion(assertion)?;
-            }
-            Some(Assertion::Reference(assertion)) => {
-                assertions.insert_reference_assertion(assertion);
-            }
-            None => (),
+        if !cursor.go_to_next() {
+            break;
         }
     }
 

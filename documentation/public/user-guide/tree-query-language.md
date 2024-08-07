@@ -6,8 +6,8 @@ A _query_ is a pattern that matches a
 certain set of nodes in a tree. The expression to match a given node
 consists of a pair of brackets (`[]`) containing two things: the node's kind, and
 optionally, a series of other patterns that match the node's children. For
-example, this pattern would match any `MultiplicativeExpression` node whose children
-are exactly two `Expression` nodes, with an `Asterisk` node in between (no whitespace):
+example, this pattern would match any `MultiplicativeExpression` node that has
+two children `Expression` nodes, with an `Asterisk` node in between:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-1"
@@ -36,13 +36,17 @@ node with two children, one of any kind labeled `left_operand` and one of any ki
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-4"
 ```
 
-Children can also be elided. For example, this would produce multiple matches for a
+Children can be elided. For example, this would produce multiple matches for a
 `MultiplicativeExpression` where at least _one_ of the children is an expression of a `StringExpression` variant, where each match
 is associated with each of the `StringExpression` children:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:query-syntax-5"
 ```
+
+Trivia nodes (whitespace, comments, etc.) will be skipped over when running a
+query. Furthermore, trivia nodes cannot be explicitly (or implicitly with `_`)
+matched by queries.
 
 ### Capturing Nodes
 
@@ -72,13 +76,13 @@ by a `?`, `*` or `+` operator. The `?` operator matches _zero or one_ repetition
 of a pattern, the `*` operator matches _zero or more_, and the `+` operator
 matches _one or more_.
 
-For example, this pattern would match a sequence of one or more comments at the top of the file:
+For example, this pattern would match a sequence of one or more import directives at the top of the file:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-1"
 ```
 
-This pattern would match a contract definition with at least one doc comment, capturing them:
+This pattern would match a structure definition with one or more members, capturing their names:
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:quantification-2"
@@ -93,7 +97,7 @@ present:
 
 ### Alternations
 
-An alternation is written as a sequence of patterns separated by '|' and surrounded by parentheses.
+An alternation is written as a sequence of patterns separated by `|` and surrounded by parentheses.
 
 For example, this pattern would match a call to either a variable or an object property.
 In the case of a variable, capture it as `@function`, and in the case of a property, capture it as `@method`:
@@ -106,4 +110,30 @@ This pattern would match a set of possible keyword terminals, capturing them as 
 
 ```{ .scheme }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:alternations-2"
+```
+
+### Adjacency
+
+By using the adjacency operator `.` you can constrain a pattern to only match
+the first or the last child nodes.
+
+For example, the following pattern would match only the first parameter
+declaration in a function definition:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-1"
+```
+
+And conversely the following will match only the last parameter:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-2"
+```
+
+If the adjacency operator is used in between two patterns it constrains matches
+on both patterns to occur consecutively, ie. without any other sibling node in
+between. For example, this pattern matches pairs of consecutive statements:
+
+```{ .scheme }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/tree_query_language.rs:adjacency-3"
 ```

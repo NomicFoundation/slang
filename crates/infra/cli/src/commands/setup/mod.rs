@@ -49,8 +49,10 @@ impl OrderedCommand for SetupCommand {
             SetupCommand::Git => setup_git(),
             SetupCommand::Cargo => setup_cargo(),
             SetupCommand::Npm => setup_npm(),
-            SetupCommand::Pipenv => setup_pipenv(),
-            SetupCommand::ShellCompletions => setup_shell_completions(),
-        }
+            SetupCommand::Pipenv => setup_pipenv()?,
+            SetupCommand::ShellCompletions => setup_shell_completions()?,
+        };
+
+        Ok(())
     }
 }

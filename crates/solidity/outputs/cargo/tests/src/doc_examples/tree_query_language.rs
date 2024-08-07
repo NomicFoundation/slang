@@ -73,7 +73,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-4]
-    [MultiplicativeExpression left_operand:[_] [_] ...]
+    [MultiplicativeExpression left_operand:[_] [_]]
     // --8<-- [end:query-syntax-4]
     "
         .remove_mkdoc_snippet_markers(),
@@ -84,7 +84,7 @@ fn query_syntax() {
     let query = Query::parse(
         &"
     // --8<-- [start:query-syntax-5]
-    [MultiplicativeExpression ... [Expression [StringExpression]] ...]
+    [MultiplicativeExpression [Expression [StringExpression]]]
     // --8<-- [end:query-syntax-5]
     "
         .remove_mkdoc_snippet_markers(),
@@ -107,7 +107,7 @@ fn capturing_nodes() {
     let query = Query::parse(
         &"
     // --8<-- [start:capturing-nodes-1]
-	[StructDefinition ... @struct_name name:[Identifier] ...]
+	[StructDefinition @struct_name name:[Identifier]]
     // --8<-- [end:capturing-nodes-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -120,21 +120,12 @@ fn capturing_nodes() {
         &"
     // --8<-- [start:capturing-nodes-2]
 	[ContractDefinition
-		...
 		@contract_name name:[Identifier]
-		...
 		members:[ContractMembers
-			...
 			[ContractMember
-				[EventDefinition
-					...
-					@event_name name:[Identifier]
-					...
-				]
+				[EventDefinition @event_name name:[Identifier]]
 			]
-			...
 		]
-		...
 	]
     // --8<-- [end:capturing-nodes-2]
     "
@@ -154,7 +145,7 @@ fn quantification() {
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-1]
-	[SourceUnit ... (leading_trivia:[_])+]
+	[SourceUnit members:[_ ([_ @import [ImportDirective]])+]]
     // --8<-- [end:quantification-1]
     "
         .remove_mkdoc_snippet_markers(),
@@ -164,18 +155,15 @@ fn quantification() {
     assert_matches(
         &query,
         NonterminalKind::SourceUnit,
-        "// comment 1\n// comment 2\n/* comment 3 */",
+        "import 'test.sol';\nimport * as Utils from 'lib/utils.sol'\n\ncontract Test {}",
     );
 
     let query = Query::parse(
         &"
     // --8<-- [start:quantification-2]
-	[ContractDefinition
-		...
-		(@docline [SingleLineNatSpecComment])+
-		...
+	[StructDefinition
 		@name name:[_]
-		...
+		members:[_ ([_ @member [Identifier]])+]
 	]
     // --8<-- [end:quantification-2]
     "
@@ -187,8 +175,10 @@ fn quantification() {
         &query,
         NonterminalKind::SourceUnit,
         "
-		/// A doc comment
-		contract A {}
+		struct Test {
+      int x;
+      int y;
+    }
 		",
     );
 
@@ -196,20 +186,13 @@ fn quantification() {
         &"
     // --8<-- [start:quantification-3]
 	[FunctionCallExpression
-		...
 		arguments:[ArgumentsDeclaration
 			variant:[PositionalArgumentsDeclaration
-				...
 				arguments:[PositionalArguments
-					...
 					(@arg [Expression variant:[StringExpression]])?
-					...
 				]
-				...
 			]
-			...
 		]
-		...
 	]
     // --8<-- [end:quantification-3]
     "
@@ -227,7 +210,7 @@ fn quantification() {
 
     let matches: Vec<_> = iter.collect();
 
-    matches[3].captures.get("arg").unwrap();
+    matches[0].captures.get("arg").unwrap();
 }
 
 #[test]
@@ -240,7 +223,6 @@ fn alternations() {
 			(@function variant:[Identifier]
 			| @method variant:[MemberAccessExpression])
 		]
-		...
 	]
     // --8<-- [end:alternations-1]
     "
@@ -290,5 +272,105 @@ fn alternations() {
             .node()
             .unparse(),
         "break"
+    );
+}
+
+#[test]
+fn adjacency() {
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:adjacency-1]
+	[FunctionDefinition
+		[ParametersDeclaration
+			[Parameters . @first_param [Parameter]]
+		]
+	]
+    // --8<-- [end:adjacency-1]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(
+        &query,
+        NonterminalKind::FunctionDefinition,
+        "function test(int x, int y);",
+    );
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 1);
+    assert_eq!(
+        matches[0].captures.get("first_param").unwrap()[0]
+            .node()
+            .unparse(),
+        "int x"
+    );
+
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:adjacency-2]
+	[FunctionDefinition
+		[ParametersDeclaration
+			[Parameters @last_param [Parameter] .]
+		]
+	]
+    // --8<-- [end:adjacency-2]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(
+        &query,
+        NonterminalKind::FunctionDefinition,
+        "function test(int x, int y);",
+    );
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 1);
+    assert_eq!(
+        matches[0].captures.get("last_param").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y"
+    );
+
+    let query = Query::parse(
+        &r#"
+    // --8<-- [start:adjacency-3]
+	[Statements @stmt1 [Statement] . @stmt2 [Statement]]
+    // --8<-- [end:adjacency-3]
+    "#
+        .remove_mkdoc_snippet_markers(),
+    )
+    .unwrap();
+
+    let iter = assert_matches(&query, NonterminalKind::Statements, "int x; int y; x + y;");
+
+    let matches: Vec<_> = iter.collect();
+    assert_eq!(matches.len(), 2);
+    assert_eq!(
+        matches[0].captures.get("stmt1").unwrap()[0]
+            .node()
+            .unparse(),
+        "int x;"
+    );
+    assert_eq!(
+        matches[0].captures.get("stmt2").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y;"
+    );
+    assert_eq!(
+        matches[1].captures.get("stmt1").unwrap()[0]
+            .node()
+            .unparse(),
+        " int y;"
+    );
+    assert_eq!(
+        matches[1].captures.get("stmt2").unwrap()[0]
+            .node()
+            .unparse(),
+        " x + y;"
     );
 }

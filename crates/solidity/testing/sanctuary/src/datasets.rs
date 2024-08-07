@@ -61,13 +61,13 @@ impl DataSet {
         &self.directories
     }
 
-    pub fn checkout_directory(&self, directory: &str) -> Result<&Vec<SourceFile>> {
+    pub fn checkout_directory(&self, directory: &str) -> &Vec<SourceFile> {
         // Make sure to reset any local changes, in case some were made during local development/debugging:
         Command::new("git")
             .arg("reset")
             .flag("--hard")
             .current_dir(&self.repo_dir)
-            .run()?;
+            .run();
 
         let relative_path = format!("contracts/{network}/{directory}", network = self.network);
 
@@ -75,9 +75,9 @@ impl DataSet {
             .arg("sparse-checkout")
             .property("set", relative_path)
             .current_dir(&self.repo_dir)
-            .run()?;
+            .run();
 
-        Ok(&self.directories[directory])
+        &self.directories[directory]
     }
 }
 
@@ -94,25 +94,22 @@ fn clone_repository(chain: &Chain) -> Result<PathBuf> {
             .property("--depth", "1")
             .property("--filter", "blob:none")
             .flag("--no-checkout")
-            .run()?;
+            .run();
     }
 
     Command::new("git")
         .arg("sparse-checkout")
         .property("set", "--cone")
         .current_dir(&repo_dir)
-        .run()?;
+        .run();
 
     Command::new("git")
         .arg("checkout")
         .arg("origin/HEAD")
         .current_dir(&repo_dir)
-        .run()?;
+        .run();
 
-    Command::new("git")
-        .arg("pull")
-        .current_dir(&repo_dir)
-        .run()?;
+    Command::new("git").arg("pull").current_dir(&repo_dir).run();
 
     Ok(repo_dir)
 }

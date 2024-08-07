@@ -70,5 +70,7 @@ fn publish_package(
         command = command.flag("--dry-run");
     }
 
-    command.run()
+    command.run();
+
+    Ok(())
 }

@@ -75,7 +75,7 @@ fn main() -> Result<()> {
     for directory in directories {
         Terminal::step(format!("testing directory '{directory}'"));
 
-        let files = dataset.checkout_directory(directory)?;
+        let files = dataset.checkout_directory(directory);
 
         events.start_directory(files.len());
 

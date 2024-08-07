@@ -105,13 +105,13 @@ impl Command {
         extract_output(self, output)
     }
 
-    pub fn run(&self) -> Result<()> {
-        GitHub::collapse_group(format!("$ {self}"), || run_with_defaults(self))
+    pub fn run(&self) {
+        GitHub::collapse_group(format!("$ {self}"), || run_with_defaults(self));
     }
 
     /// A quick replacement for `xargs`.
     /// Splits files into smaller chunks, so that we don't exceed the maximum command line length.
-    pub fn run_xargs(&self, files: impl IntoIterator<Item = PathBuf>) -> Result<()> {
+    pub fn run_xargs(&self, files: impl IntoIterator<Item = PathBuf>) {
         const CHUNK_SIZE: usize = 50;
 
         GitHub::collapse_group(format!("$ {self}"), || {
@@ -123,23 +123,25 @@ impl Command {
                 .map(|chunk| chunk.collect_vec())
                 .collect_vec()
                 .into_par_iter()
-                .map(|batch| run_with_defaults(&self.clone().args(batch)))
-                .collect()
-        })
+                .for_each(|batch| run_with_defaults(&self.clone().args(batch)));
+        });
     }
 }
 
-fn run_with_defaults(command: &Command) -> Result<()> {
-    let status = spawn_with_defaults(command, Stdio::inherit)?
+fn run_with_defaults(command: &Command) {
+    let status = spawn_with_defaults(command, Stdio::inherit)
+        .unwrap()
         .wait()
-        .with_context(|| format!("Failed to wait for status: {command}"))?;
+        .with_context(|| format!("Failed to wait for status: {command}"))
+        .unwrap();
 
-    check_status(command, status).map_err(|error| {
+    check_status(command, status).unwrap_or_else(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
+
         #[allow(clippy::exit)]
         std::process::exit(1);
-    })
+    });
 }
 
 fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<Child> {

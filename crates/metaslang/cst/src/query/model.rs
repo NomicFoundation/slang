@@ -81,7 +81,7 @@ impl<T: KindTypes> Query<T> {
                         capture_quantifiers,
                     )?;
                 }
-                ASTNode::Ellipsis => {}
+                ASTNode::Adjacency => {}
             }
             Ok(())
         }
@@ -113,7 +113,7 @@ pub enum ASTNode<T: KindTypes> {
     Alternatives(Rc<AlternativesASTNode<T>>),
     Sequence(Rc<SequenceASTNode<T>>),
     OneOrMore(Rc<OneOrMoreASTNode<T>>),
-    Ellipsis,
+    Adjacency,
 }
 
 impl<T: KindTypes> ASTNode<T> {
@@ -167,7 +167,7 @@ impl<T: KindTypes> fmt::Display for ASTNode<T> {
             Self::OneOrMore(one_or_more) => {
                 write!(f, "({})+", one_or_more.child)
             }
-            Self::Ellipsis => write!(f, "..."),
+            Self::Adjacency => write!(f, "."),
         }
     }
 }
@@ -256,6 +256,10 @@ pub struct NodeMatchASTNode<T: KindTypes> {
 #[derive(Debug)]
 pub struct SequenceASTNode<T: KindTypes> {
     pub children: Vec<ASTNode<T>>,
+    // By default sequences can match any number of nodes at the beginning and
+    // end of it. Setting this value to true prevents it and instead forces
+    // strict adjacency at the edges.
+    pub adjacent: bool,
 }
 
 #[derive(Debug)]

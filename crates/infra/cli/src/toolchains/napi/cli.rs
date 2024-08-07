@@ -60,7 +60,7 @@ impl NapiCli {
             }
         };
 
-        command.run()?;
+        command.run();
 
         glibc::ensure_correct_glibc_for_vscode(resolver, output_dir, target)?;
 

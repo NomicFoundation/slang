@@ -1,7 +1,7 @@
 use std::env::var;
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Ok, Result};
 use semver::Version;
 use serde::Deserialize;
 
@@ -67,10 +67,12 @@ impl GitHub {
         std::fs::create_dir_all(notes_file.unwrap_parent())?;
         notes_file.write_string(notes)?;
 
-        return Command::new("gh")
+        Command::new("gh")
             .args(["release", "create", tag_name.as_ref()])
             .property("--title", tag_name.as_ref())
             .property("--notes-file", notes_file.unwrap_str())
             .run();
+
+        Ok(())
     }
 }

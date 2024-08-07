@@ -115,11 +115,32 @@ fn common_test_tree() -> Edge {
     )
 }
 
+fn common_test_tree_with_trivia() -> Edge {
+    cst_tree!(
+        TreeNode [
+            Node: DelimitedIdentifier "A",
+            Whitespace " ",
+            DelimitedIdentifier "B",
+            Whitespace " ",
+            EndOfLine "\n",
+            DelimitedIdentifier "C",
+            TreeNodeChild [
+                Whitespace " ",
+                DelimitedIdentifier "D",
+                EndOfLine "\n",
+                Whitespace " ",
+                Node: DelimitedIdentifier "E",
+                Whitespace " ",
+            ],
+        ]
+    )
+}
+
 #[test]
 fn test_spread() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @x1 [DelimitedIdentifier] ... @x2 [DelimitedIdentifier] ...]",
+        "[TreeNode @x1 [DelimitedIdentifier] @x2 [DelimitedIdentifier]]",
         query_matches! {
             {x1: ["A"], x2: ["B"]}
             {x1: ["A"], x2: ["C"]}
@@ -132,7 +153,7 @@ fn test_spread() {
 fn test_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @y1 [DelimitedIdentifier] @y2 [DelimitedIdentifier] ...]",
+        "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
         query_matches! {
             {y1: ["A"], y2: ["B"]}
             {y1: ["B"], y2: ["C"]}
@@ -141,10 +162,34 @@ fn test_adjacent() {
 }
 
 #[test]
+fn test_adjacency_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
+        query_matches! {
+            {y1: ["A"], y2: ["B"]}
+            {y1: ["B"], y2: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_anonymous_node_matcher_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild @x [_]]",
+        query_matches! {
+            {x: ["D"]}
+            {x: ["E"]}
+        },
+    );
+}
+
+#[test]
 fn test_child() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNodeChild ... @x [DelimitedIdentifier] ...]",
+        "[TreeNodeChild @x [DelimitedIdentifier]]",
         query_matches! {
             {x: ["D"]}
             {x: ["E"]}
@@ -156,7 +201,7 @@ fn test_child() {
 fn test_parent_and_child() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @p node:[_] ...  [TreeNodeChild ... @c [DelimitedIdentifier] ...]]",
+        "[TreeNode @p node:[_] [TreeNodeChild @c [DelimitedIdentifier]]]",
         query_matches! {
             {c: ["D"], p: ["A"]}
             {c: ["E"], p: ["A"]}
@@ -168,7 +213,7 @@ fn test_parent_and_child() {
 fn test_named() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... @x node:[DelimitedIdentifier] ...]",
+        "[TreeNode @x node:[DelimitedIdentifier]]",
         query_matches! {
             {x: ["A"]}
         },
@@ -179,7 +224,7 @@ fn test_named() {
 fn test_multilevel_adjacent() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x [DelimitedIdentifier] @y [DelimitedIdentifier] ...]",
+        "[_ @x [DelimitedIdentifier] . @y [DelimitedIdentifier]]",
         query_matches! {
             {x: ["A"], y: ["B"]}
             {x: ["B"], y: ["C"]}
@@ -192,7 +237,7 @@ fn test_multilevel_adjacent() {
 fn test_multilevel_named() {
     run_query_test(
         &common_test_tree(),
-        "[_ ... @x node:[_] ...]",
+        "[_ @x node:[_]]",
         query_matches! {
             {x: ["A"]}
             {x: ["E"]}
@@ -204,7 +249,7 @@ fn test_multilevel_named() {
 fn test_text_value() {
     run_query_test(
         &common_test_tree(),
-        r#"[TreeNode ... @z1 [DelimitedIdentifier] ["B"] @z2 [DelimitedIdentifier] ...]"#,
+        r#"[TreeNode @z1 [DelimitedIdentifier] . ["B"] . @z2 [DelimitedIdentifier]]"#,
         query_matches! {
             {z1: ["A"], z2: ["C"]}
         },
@@ -215,7 +260,7 @@ fn test_text_value() {
 fn test_one_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... (@x [DelimitedIdentifier])+ [_] ]",
+        "[TreeNode (@x [DelimitedIdentifier])+ . [_] .]",
         query_matches! {
             {x: ["A", "B", "C"]}
             {x: ["B", "C"]}
@@ -228,7 +273,7 @@ fn test_one_or_more() {
 fn test_zero_or_more() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... (@y [DelimitedIdentifier])* [_] ]",
+        "[TreeNode (@y [DelimitedIdentifier])* . [_] .]",
         query_matches! {
             {y: ["A", "B", "C"]}
             {y: ["B", "C"]}
@@ -242,7 +287,7 @@ fn test_zero_or_more() {
 fn test_optional() {
     run_query_test(
         &common_test_tree(),
-        "[TreeNode ... (@z [DelimitedIdentifier])? [_] ]",
+        "[TreeNode (@z [DelimitedIdentifier])? . [_] .]",
         query_matches! {
             {z: ["C"]}
             {}
@@ -254,9 +299,207 @@ fn test_optional() {
 fn test_nested() {
     run_query_test(
         &common_test_tree(),
-        "@root [TreeNode ... @z [DelimitedIdentifier] [_] ]",
+        "@root [TreeNode @z [DelimitedIdentifier] . [_] .]",
         query_matches! {
             {root: ["ABCDE"], z: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_alternatives() {
+    run_query_test(
+        &common_test_tree(),
+        "(@x node:[_] | @y [DelimitedIdentifier] . @z [DelimitedIdentifier])",
+        query_matches! {
+            {x: ["A"]}
+            {y: ["A"], z: ["B"]}
+            {y: ["B"], z: ["C"]}
+            {y: ["D"], z: ["E"]}
+            {x: ["E"]}
+        },
+    );
+}
+
+#[test]
+fn test_adjacency_at_beginning_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild . @x [DelimitedIdentifier]]",
+        query_matches! {
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_adjacency_at_end_skips_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild @x [DelimitedIdentifier] .]",
+        query_matches! {
+            {x: ["E"]}
+        },
+    );
+}
+
+fn flat_tree() -> Edge {
+    cst_tree!(
+        TreeNode [
+            Node: DelimitedIdentifier "A",
+            Whitespace " ",
+            DelimitedIdentifier "B",
+            DelimitedIdentifier "C",
+            DelimitedIdentifier "D",
+        ]
+    )
+}
+
+#[test]
+fn test_ellipsis_followed_by_optional_grouping() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
+        query_matches! {
+            {x: ["A"], y: ["B"], z: ["C"]}
+            {x: ["A"], y: ["C"], z: ["D"]}
+            {x: ["A"]}
+            {x: ["B"], y: ["C"], z: ["D"]}
+            {x: ["B"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_adjacency_followed_by_optional_grouping() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"], y: ["B"], z: ["C"]}
+            {x: ["B"]}
+            {x: ["B"], y: ["C"], z: ["D"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_non_captured_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_anonymous_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [_]]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_non_captured_optional_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]?]",
+        query_matches! {
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["A"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["B"]}
+            {x: ["C"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+#[test]
+fn test_captures_followed_by_captured_optional_matchers() {
+    run_query_test(
+        &flat_tree(),
+        "[TreeNode @x [DelimitedIdentifier] @y [DelimitedIdentifier]?]",
+        query_matches! {
+            {x: ["A"], y: ["B"]}
+            {x: ["A"], y: ["C"]}
+            {x: ["A"], y: ["D"]}
+            {x: ["A"]}
+            {x: ["B"], y: ["C"]}
+            {x: ["B"], y: ["D"]}
+            {x: ["B"]}
+            {x: ["C"], y: ["D"]}
+            {x: ["C"]}
+            {x: ["D"]}
+        },
+    );
+}
+
+fn sample_deep_tree() -> Edge {
+    cst_tree!(
+        Tree [
+            Keyword: TreeKeyword "tree",
+            Name: Identifier "$t1",
+            Node: TreeNode [
+                OpenBracket "[",
+                Members: TreeNodeChildren [
+                    TreeNodeChild [
+                        Variant: DelimitedIdentifier "A",
+                    ],
+                    TreeNodeChild [
+                        Variant: TreeNode [
+                            OpenBracket "[",
+                            Members: TreeNodeChildren [
+                                TreeNodeChild [
+                                    Variant: DelimitedIdentifier "B"
+                                ],
+                                TreeNodeChild [
+                                    Variant: DelimitedIdentifier "C"
+                                ],
+                            ],
+                            CloseBracket "]",
+                        ]
+                    ]
+                ],
+                CloseBracket "]",
+            ],
+            Semicolon: Semicolon ";"
+        ]
+    )
+}
+
+#[test]
+fn test_deeply_nested_matchers() {
+    run_query_test(
+        &sample_deep_tree(),
+        "@parent [TreeNode members: [TreeNodeChildren [TreeNodeChild @child variant: [TreeNode]]]]",
+        query_matches! {
+            {parent: ["[A[BC]]"], child: ["[BC]"]}
         },
     );
 }
