@@ -2,8 +2,6 @@
 
 use thiserror::Error;
 
-#[cfg(feature = "__experimental_bindings_api")]
-pub mod bindings;
 pub mod parse;
 
 #[derive(Debug, Error)]
