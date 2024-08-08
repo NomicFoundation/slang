@@ -28,7 +28,7 @@ interface compiler-api {
             get-root: func(name: source-name) -> option<borrow<root>>;
             
             /// Not only do you get the root name, but the generation tells you whether you
-            /// need to call get-roott and clear any cached data relating to the root.
+            /// need to call `get-root` and clear any cached data relating to the root.
             root-names-and-generations: func() -> root-names-and-generations-iterable;
 
         // ------------------------------------------------------------
@@ -41,7 +41,6 @@ interface compiler-api {
         // Notification of changes to the environment 
 
             source-has-changed: func(name: source-name);
-            reset-all-caches: func();
 
     }
 
@@ -147,7 +146,7 @@ interface compiler-api {
         // AST
 
             /// The AST is only available if there are no parse errors
-            ast: func() -> result<source-unit>;
+            ast: func() -> option<source-unit>;
 
     }
 
@@ -163,25 +162,21 @@ interface compiler-api {
     }
 
     // ------------------------------------------------------------
-    // Iterables
+    // Iterables - in TS surfaced as `Iterable<...>`
 
         resource root-names-and-generations-iterable {
-            // we surface this resource as a TS Iterable
             next: func() -> option<tuple<source-name, generation>>;
         }
 
         resource diagnostic-iterarable {
-            // we surface this resource as a TS Iterable
             next: func() -> option<diagnostic>;
         }
         
         resource definition-iterable {
-            // we surface this resource as a TS Iterable
             next: func() -> option<definition>;
         }
 
         resource reference-iterable {
-            // we surface this resource as a TS Iterable
             next: func() -> option<reference>;
         }
 
