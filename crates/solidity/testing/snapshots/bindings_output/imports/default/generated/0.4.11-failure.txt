@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ ╭─▶ function foo() returns (int) {
+   ┆ ┆   
+ 7 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+References and definitions: 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[other.sol:2:1]
+   │
+ 2 │ ╭─▶ function bar() pure returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+References and definitions: 

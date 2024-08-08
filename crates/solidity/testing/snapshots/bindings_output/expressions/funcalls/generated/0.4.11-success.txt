@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     int y;
+   │         ┬  
+   │         ╰── def: 2
+ 3 │     function someFunc(int x) returns (int) {
+   │              ────┬───     ┬  
+   │                  ╰─────────── def: 3
+   │                           │  
+   │                           ╰── def: 4
+ 4 │         return add(x, y);
+   │                ─┬─ ┬  ┬  
+   │                 ╰──────── ref: 5
+   │                    │  │  
+   │                    ╰───── ref: 4
+   │                       │  
+   │                       ╰── ref: 2
+   │ 
+ 6 │     function add(int, int) returns (int);
+   │              ─┬─  
+   │               ╰─── def: 5
+───╯

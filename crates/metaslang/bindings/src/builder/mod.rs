@@ -320,7 +320,7 @@ pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
-pub struct Builder<'a, KT: KindTypes> {
+pub(crate) struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
     stack_graph: &'a mut StackGraph,
@@ -329,6 +329,15 @@ pub struct Builder<'a, KT: KindTypes> {
     graph: Graph<KT>,
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
+    cursors: HashMap<Handle<Node>, Cursor<KT>>,
+    definiens: HashMap<Handle<Node>, Cursor<KT>>,
+}
+
+pub(crate) struct BuildResult<KT: KindTypes> {
+    #[cfg(feature = "__private_testing_utils")]
+    pub graph: Graph<KT>,
+    pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
+    pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -348,11 +357,14 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             graph: Graph::new(),
             remapped_nodes: HashMap::new(),
             injected_node_count: 0,
+            cursors: HashMap::new(),
+            definiens: HashMap::new(),
         }
     }
 
-    fn build_global_variables(&mut self, file_path: &str) -> Variables<'a> {
+    fn build_global_variables(&mut self) -> Variables<'a> {
         let mut variables = Variables::new();
+        let file_path = self.stack_graph[self.file].name();
         variables
             .add(FILE_PATH_VAR.into(), file_path.into())
             .expect("failed to add FILE_PATH variable");
@@ -380,19 +392,12 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         variables
     }
 
-    #[cfg(feature = "__private_testing_utils")]
-    pub(crate) fn graph(self) -> Graph<KT> {
-        self.graph
-    }
-
     /// Executes this builder.
     pub fn build(
-        &mut self,
-        file_path: &str,
+        mut self,
         cancellation_flag: &dyn CancellationFlag,
-        on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>),
-    ) -> Result<(), BuildError> {
-        let variables = self.build_global_variables(file_path);
+    ) -> Result<BuildResult<KT>, BuildError> {
+        let variables = self.build_global_variables();
 
         let config = ExecutionConfig::new(self.functions, &variables)
             .lazy(true)
@@ -418,7 +423,14 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             &(cancellation_flag as &dyn CancellationFlag),
         )?;
 
-        self.load(cancellation_flag, on_added_node)
+        self.load(cancellation_flag)?;
+
+        Ok(BuildResult {
+            #[cfg(feature = "__private_testing_utils")]
+            graph: self.graph,
+            cursors: self.cursors,
+            definiens: self.definiens,
+        })
     }
 
     /// Create a graph node to represent the stack graph node. It is the callers responsibility to
@@ -511,11 +523,7 @@ impl std::fmt::Display for DisplayBuildErrorPretty<'_> {
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
-    fn load(
-        &mut self,
-        cancellation_flag: &dyn CancellationFlag,
-        mut on_added_node: impl FnMut(Handle<Node>, &Cursor<KT>),
-    ) -> Result<(), BuildError> {
+    fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
         // By default graph ids are used for stack graph local_ids. A remapping is computed
@@ -561,13 +569,14 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             self.load_node_debug_info(node_ref, handle);
 
             // For every added graph node which links to a corresponding source
-            // node, invoke the callback so our caller can link the newly built
-            // node with the matching CST cursor.
+            // node, save the corresponding CST cursor so our caller can extract
+            // that info later.
             let node = &self.graph[node_ref];
             if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
                 let syntax_node_ref = source_node.as_syntax_node_ref()?;
                 let source_node = &self.graph[syntax_node_ref];
-                on_added_node(handle, source_node);
+
+                self.cursors.insert(handle, source_node.clone());
             }
         }
 
@@ -816,8 +825,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         Ok(())
     }
 
-    // TODO: we can probably remove this and all references to definiens since
-    // we're not gonna need it?
     fn load_definiens_info(
         &mut self,
         node_ref: GraphNodeRef,
@@ -829,10 +836,9 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             Some(definiens_node) => &self.graph[definiens_node.as_syntax_node_ref()?],
             None => return Ok(()),
         };
-        let _definiens_range = definiens_node.text_range();
-        let _source_info = self.stack_graph.source_info_mut(node_handle);
-        // TODO: map node's TextRange into a Span
-        // source_info.definiens_span = text_range_into_span(definiens_range);
+        // Save the definiens CST cursor so our caller can extract the mapping
+        // to the stack graph node later
+        self.definiens.insert(node_handle, definiens_node.clone());
         Ok(())
     }
 

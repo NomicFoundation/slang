@@ -1,14 +1,22 @@
+use std::sync::Arc;
+
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::functions::Functions;
 use semver::Version;
 
-pub fn default_functions<KT: KindTypes + 'static>(version: Version) -> Functions<KT> {
+use crate::PathResolver;
+
+pub fn default_functions<KT: KindTypes + 'static>(
+    version: Version,
+    path_resolver: Arc<dyn PathResolver + Sync + Send>,
+) -> Functions<KT> {
     let mut functions = Functions::stdlib();
     version::add_version_functions(&mut functions, version);
+    resolver::add_functions(&mut functions, path_resolver);
     functions
 }
 
-pub mod version {
+mod version {
     use metaslang_cst::KindTypes;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
     use metaslang_graph_builder::graph::{Graph, Value};
@@ -43,6 +51,50 @@ pub mod version {
             };
             let result = requirements.matches(&self.version);
             Ok(result.into())
+        }
+    }
+}
+
+mod resolver {
+    use std::sync::Arc;
+
+    use metaslang_cst::KindTypes;
+    use metaslang_graph_builder::functions::{Function, Functions, Parameters};
+    use metaslang_graph_builder::graph::{Graph, Value};
+    use metaslang_graph_builder::ExecutionError;
+
+    use crate::PathResolver;
+
+    pub fn add_functions<KT: KindTypes + 'static>(
+        functions: &mut Functions<KT>,
+        path_resolver: Arc<dyn PathResolver + Sync + Send>,
+    ) {
+        functions.add("resolve-path".into(), ResolvePath { path_resolver });
+    }
+
+    struct ResolvePath {
+        path_resolver: Arc<dyn PathResolver + Sync + Send>,
+    }
+
+    impl<KT: KindTypes> Function<KT> for ResolvePath {
+        fn call(
+            &self,
+            _graph: &mut Graph<KT>,
+            parameters: &mut dyn Parameters,
+        ) -> Result<Value, ExecutionError> {
+            let context_path = parameters.param()?.into_string()?;
+            let path_to_resolve = parameters.param()?.into_string()?;
+            parameters.finish()?;
+
+            if let Some(resolved_path) = self
+                .path_resolver
+                .as_ref()
+                .resolve_path(&context_path, &path_to_resolve)
+            {
+                Ok(resolved_path.into())
+            } else {
+                Ok("__SLANG_UNRESOLVED_IMPORT_PATH__".into())
+            }
         }
     }
 }

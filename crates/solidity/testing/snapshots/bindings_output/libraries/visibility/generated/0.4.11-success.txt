@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── def: 1
+  2 │     enum Choice { One, Two }
+    │          ───┬──   ─┬─  ─┬─  
+    │             ╰─────────────── def: 2
+    │                    │    │   
+    │                    ╰──────── def: 3
+    │                         │   
+    │                         ╰─── def: 4
+  3 │     struct Book { string author; }
+    │            ──┬─          ───┬──  
+    │              ╰─────────────────── def: 5
+    │                             │    
+    │                             ╰──── def: 6
+    │ 
+  5 │     function build_book(string memory author) public returns (Book memory) {
+    │              ─────┬────               ───┬──                  ──┬─  
+    │                   ╰───────────────────────────────────────────────── def: 7
+    │                                          │                      │   
+    │                                          ╰────────────────────────── def: 8
+    │                                                                 │   
+    │                                                                 ╰─── ref: 5
+  6 │         return Book(author);
+    │                ──┬─ ───┬──  
+    │                  ╰────────── ref: 5
+    │                        │    
+    │                        ╰──── ref: 8
+    │ 
+  9 │     function favorite_choice() public returns (Choice) {
+    │              ───────┬───────                   ───┬──  
+    │                     ╰────────────────────────────────── def: 9
+    │                                                   │    
+    │                                                   ╰──── ref: 2
+ 10 │         return Choice.One;
+    │                ───┬── ─┬─  
+    │                   ╰──────── ref: 2
+    │                        │   
+    │                        ╰─── ref: 3
+    │ 
+ 14 │ contract UsingLib {
+    │          ────┬───  
+    │              ╰───── def: 10
+ 15 │     MyLib.Choice choice;
+    │     ──┬── ───┬── ───┬──  
+    │       ╰────────────────── ref: 1
+    │              │      │    
+    │              ╰─────────── ref: 2
+    │                     │    
+    │                     ╰──── def: 11
+ 16 │     MyLib.Book book;
+    │     ──┬── ──┬─ ──┬─  
+    │       ╰────────────── ref: 1
+    │             │    │   
+    │             ╰──────── ref: 5
+    │                  │   
+    │                  ╰─── def: 12
+    │ 
+ 18 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 13
+ 19 │         book = MyLib.build_book("John Doe");
+    │         ──┬─   ──┬── ─────┬────  
+    │           ╰────────────────────── ref: 12
+    │                  │        │      
+    │                  ╰─────────────── ref: 1
+    │                           │      
+    │                           ╰────── ref: 7
+ 20 │         choice = MyLib.favorite_choice();
+    │         ───┬──   ──┬── ───────┬───────  
+    │            ╰──────────────────────────── ref: 11
+    │                    │          │         
+    │                    ╰──────────────────── ref: 1
+    │                               │         
+    │                               ╰───────── ref: 9
+────╯

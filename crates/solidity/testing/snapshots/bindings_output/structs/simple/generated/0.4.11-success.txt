@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract CrowdFunding {
+    │          ──────┬─────  
+    │                ╰─────── def: 1
+  2 │     struct Campaign {
+    │            ────┬───  
+    │                ╰───── def: 2
+  3 │         address payable beneficiary;
+    │                         ─────┬─────  
+    │                              ╰─────── def: 3
+  4 │         uint fundingGoal;
+    │              ─────┬─────  
+    │                   ╰─────── def: 4
+    │ 
+  7 │     function newCampaign(address payable beneficiary, uint goal) public {
+    │              ─────┬─────                 ─────┬─────       ──┬─  
+    │                   ╰────────────────────────────────────────────── def: 5
+    │                                               │              │   
+    │                                               ╰────────────────── def: 6
+    │                                                              │   
+    │                                                              ╰─── def: 7
+  8 │         Campaign storage c;
+    │         ────┬───         ┬  
+    │             ╰─────────────── ref: 2
+    │                          │  
+    │                          ╰── def: 8
+  9 │         c.beneficiary = beneficiary;
+    │         ┬ ─────┬─────   ─────┬─────  
+    │         ╰──────────────────────────── ref: 8
+    │                │             │       
+    │                ╰───────────────────── ref: 3
+    │                              │       
+    │                              ╰─────── ref: 6
+ 10 │         c.fundingGoal = goal;
+    │         ┬ ─────┬─────   ──┬─  
+    │         ╰───────────────────── ref: 8
+    │                │          │   
+    │                ╰────────────── ref: 4
+    │                           │   
+    │                           ╰─── ref: 7
+────╯

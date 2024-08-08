@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 2 │ import "./other.sol" as other;
+   │                         ──┬──  
+   │                           ╰──── def: 1
+   │ 
+ 4 │ function foo() returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 2
+ 5 │     return other.bar();
+   │            ──┬── ─┬─  
+   │              ╰──────── ref: 1
+   │                   │   
+   │                   ╰─── ref: 3
+───╯
+References and definitions: 
+   ╭─[other.sol:1:1]
+   │
+ 2 │ function bar() pure returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 3
+───╯

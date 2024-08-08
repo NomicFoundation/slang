@@ -4,6 +4,7 @@
 #[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
+global FILE_PATH
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -24,6 +25,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; This provides all the exported symbols from the file
   node @source_unit.defs
+
+  node export
+  attr (export) pop_symbol = FILE_PATH
+  edge ROOT_NODE -> export
+  edge export -> @source_unit.defs
 }
 
 ;; Definition entities that can appear at the source unit level
@@ -124,12 +130,135 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Imports
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@source_unit [SourceUnit [SourceUnitMembers
+     [SourceUnitMember [ImportDirective
+         [ImportClause @import (
+               [PathImport]
+             | [NamedImport]
+             | [ImportDeconstruction]
+         )]
+     ]]
+]] {
+   node @import.defs
+   edge @source_unit.defs -> @import.defs
+   edge @source_unit.lexical_scope -> @import.defs
+}
+
+[ImportClause [_ @path path: [StringLiteral]]] {
+  ;; This node represents the imported file and the @path.import node is used by
+  ;; all subsequent import rules
+  node @path.import
+  scan (source-text @path) {
+    "^\\s*[\"'](.+)[\"']\\s*$" {
+      let resolved_path = (resolve-path FILE_PATH $1)
+      attr (@path.import) push_symbol = resolved_path
+    }
+    ;; TODO: if there are other cases possible, we should signal it as an error
+  }
+  edge @path.import -> ROOT_NODE
+}
+
+
+;;; `import <URI>`
+@import [PathImport @path path: [StringLiteral] .] {
+  ;; This is the "lexical" connection, which makes all symbols exported from the
+  ;; imported source unit available for resolution globally at this' source unit
+  ;; scope
+  edge @import.defs -> @path.import
+}
+
+;;; `import <URI> as <IDENT>`
+@import [PathImport
+   @path path: [StringLiteral]
+   alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import * as <IDENT> from <URI>`
+@import [NamedImport
+    alias: [ImportAlias @alias [Identifier]]
+    @path path: [StringLiteral]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction
+    symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
+    @path path: [StringLiteral]
+] {
+  ;; We define these intermediate nodes for convenience only, to make the
+  ;; queries simpler in the two rules below
+  node @symbol.def
+  edge @import.defs -> @symbol.def
+
+  node @symbol.import
+  edge @symbol.import -> @path.import
+}
+
+@symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @symbol
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+@symbol [ImportDeconstructionSymbol
+    @name name: [Identifier]
+    alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @symbol
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Named definitions (contracts, functions, libraries, etc.)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @contract [ContractDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @contract
 
   edge @contract.def -> def
 
@@ -153,6 +282,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @interface [InterfaceDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @interface
 
   edge @interface.def -> def
 
@@ -176,6 +306,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @library [LibraryDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @library
 
   edge @library.def -> def
 
@@ -189,6 +320,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @function
 
   edge @function.def -> def
 }
@@ -262,6 +394,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @param [Parameter @type_name [TypeName] @name [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @param
 
   edge @param.def -> def
 
@@ -392,12 +525,13 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Declaration Statements introducing variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@stmt [Statement [VariableDeclarationStatement
+@stmt [Statement @var_decl [VariableDeclarationStatement
     [VariableDeclarationType @var_type [TypeName]]
     @name name: [Identifier]
 ]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @var_decl
 
   edge @stmt.defs -> def
   edge @var_type.type_ref -> @stmt.lexical_scope
@@ -410,24 +544,30 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @stmt [Statement [TupleDeconstructionStatement [TupleDeconstructionElements
-    [TupleDeconstructionElement [TupleMember variant: [UntypedTupleMember
-        @name name: [Identifier]
-    ]]]
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [UntypedTupleMember
+            @name name: [Identifier]]
+        ]
+    ]
 ]]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
 
   edge @stmt.defs -> def
 }
 
 @stmt [Statement [TupleDeconstructionStatement [TupleDeconstructionElements
-    [TupleDeconstructionElement [TupleMember variant: [TypedTupleMember
-        @member_type type_name: [TypeName]
-        @name name: [Identifier]
-    ]]]
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [TypedTupleMember
+            @member_type type_name: [TypeName]
+            @name name: [Identifier]]
+        ]
+    ]
 ]]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
 
   edge @stmt.defs -> def
   edge @member_type.type_ref -> @stmt.lexical_scope
@@ -455,6 +595,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @state_var
 
   edge @state_var.def -> def
   edge @type_name.type_ref -> @state_var.lexical_scope
@@ -484,6 +625,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @enum [EnumDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @enum
 
   edge @enum.def -> def
 
@@ -499,6 +641,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ] {
   node def
   attr (def) node_definition = @item
+  attr (def) definiens_node = @item
 
   edge @enum.members -> def
 }
@@ -533,6 +676,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @struct [StructDefinition @name name: [Identifier]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @struct
 
   edge @struct.def -> def
 
@@ -557,6 +701,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   node def
   attr (def) node_definition = @name
+  attr (def) definiens_node = @member
 
   edge @struct.members -> def
 

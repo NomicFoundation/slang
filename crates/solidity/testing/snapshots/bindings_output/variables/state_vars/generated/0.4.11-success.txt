@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {
+   │          ─┬─  
+   │           ╰─── def: 1
+ 2 │     uint x;
+   │          ┬  
+   │          ╰── def: 2
+   │ 
+ 4 │     function bar() returns (uint) {
+   │              ─┬─  
+   │               ╰─── def: 3
+ 5 │         return x;
+   │                ┬  
+   │                ╰── ref: 2
+───╯

@@ -3,6 +3,7 @@
 mod contracts;
 mod enums;
 mod expressions;
+mod imports;
 mod interfaces;
 mod libraries;
 mod structs;

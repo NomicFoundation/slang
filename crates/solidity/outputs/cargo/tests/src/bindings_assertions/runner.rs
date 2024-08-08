@@ -1,4 +1,5 @@
 use std::fs;
+use std::sync::Arc;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
@@ -6,8 +7,12 @@ use semver::Version;
 use slang_solidity::language::Language;
 use slang_solidity::{bindings, diagnostic};
 
-use super::assertions::{check_assertions, collect_assertions};
+use crate::bindings_assertions::assertions::{
+    check_assertions, collect_assertions_into, Assertions,
+};
 use crate::generated::VERSION_BREAKS;
+use crate::multi_part_file::split_multi_file;
+use crate::resolver::TestsPathResolver;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let file_name = format!("{test_name}.sol");
@@ -15,39 +20,45 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         .join("bindings_assertions")
         .join(group_name);
     let input_path = data_dir.join(file_name);
-    let input = fs::read_to_string(&input_path)?;
+    let contents = fs::read_to_string(input_path)?;
 
     for version in &VERSION_BREAKS {
-        check_assertions_with_version(version, input_path.to_str().unwrap(), &input)?;
+        check_assertions_with_version(version, &contents)?;
     }
     Ok(())
 }
 
-fn check_assertions_with_version(
-    version: &Version,
-    file_path: &str,
-    file_contents: &str,
-) -> Result<()> {
+fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let language = Language::new(version.clone())?;
+    let mut bindings =
+        bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
+    let mut assertions = Assertions::new();
 
-    let parse_output = language.parse(Language::ROOT_KIND, file_contents);
+    let parts = split_multi_file(contents);
 
-    let mut bindings = bindings::create(version.clone());
-    bindings.add_file(file_path, parse_output.create_tree_cursor());
+    for (file_path, file_contents) in &parts {
+        let parse_output = language.parse(Language::ROOT_KIND, file_contents);
 
-    let assertions = collect_assertions(parse_output.create_tree_cursor(), version)?;
+        if !parse_output.is_valid() {
+            let report = parse_output
+                .errors()
+                .iter()
+                .map(|error| diagnostic::render(error, file_path, file_contents, false))
+                .collect::<Vec<_>>()
+                .join("\n");
+            eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
+        }
+
+        bindings.add_file(file_path, parse_output.create_tree_cursor());
+        collect_assertions_into(
+            &mut assertions,
+            parse_output.create_tree_cursor(),
+            file_path,
+            version,
+        )?;
+    }
 
     let result = check_assertions(&bindings, &assertions, version);
-
-    if !parse_output.is_valid() {
-        let report = parse_output
-            .errors()
-            .iter()
-            .map(|error| diagnostic::render(error, file_path, file_contents, false))
-            .collect::<Vec<_>>()
-            .join("\n");
-        eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
-    }
 
     match result {
         Ok(count) => {

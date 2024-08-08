@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 4 │ function foo() returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 1
+ 5 │     return bar();
+   │            ─┬─  
+   │             ╰─── ref: 2
+───╯
+References and definitions: 
+   ╭─[other.sol:1:1]
+   │
+ 2 │ function bar() pure returns (int) {
+   │          ─┬─  
+   │           ╰─── def: 2
+───╯
