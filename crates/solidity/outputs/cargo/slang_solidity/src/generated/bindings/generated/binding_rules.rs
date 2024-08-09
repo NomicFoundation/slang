@@ -192,6 +192,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @contract [ContractDefinition] {
   node @contract.lexical_scope
   node @contract.parent_scope
+  node @contract.super_scope
   node @contract.def
   node @contract.members
   node @contract.type_members
@@ -231,10 +232,24 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (type_member) pop_symbol = "."
   edge def -> type_member
   edge type_member -> @contract.type_members
+
+  ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
+  ;; super_scope will later connect to the base contract defs directly
+  node super
+  attr (super) pop_symbol = "super"
+
+  node super_typeof
+  attr (super_typeof) push_symbol = "@typeof"
+
+  edge super -> super_typeof
+  edge super_typeof -> @contract.super_scope
+
+  ;; Finally make "super" available in the contract's lexical scope for function bodies to use
+  edge @contract.lexical_scope -> super
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    [InheritanceType @type_name [IdentifierPath]]
+    @type [InheritanceType @type_name [IdentifierPath]]
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
@@ -257,6 +272,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @contract.type_members -> type_member
   edge type_member -> @type_name.right
+
+  ;; The base contract defs are directly accesible through our special super scope
+  edge @contract.super_scope -> @type_name.right
+  ;; Precedence order for bases defined from right to left (ie. rightmost base has higher precedence)
+  let p = (plus 1 (named-child-index @type))
+  attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -309,6 +330,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @modifier variant: [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
+}
+
+@contract [ContractDefinition [ContractMembers [ContractMember
+    [FunctionDefinition [FunctionAttributes [FunctionAttribute
+        [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
+            @base_ident [IdentifierPath]
+        ]]]
+    ]]]
+]]] {
+  ;; Resolve overriden bases when listed in the function modifiers
+  edge @base_ident.left -> @contract.parent_scope
 }
 
 

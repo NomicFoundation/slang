@@ -15,6 +15,16 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn super_scope() -> Result<()> {
+    run("contracts", "super_scope")
+}
+
+#[test]
+fn virtual_methods() -> Result<()> {
+    run("contracts", "virtual_methods")
+}
+
+#[test]
 fn visibility() -> Result<()> {
     run("contracts", "visibility")
 }

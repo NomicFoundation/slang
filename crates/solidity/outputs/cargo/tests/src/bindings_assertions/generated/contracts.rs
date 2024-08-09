@@ -10,6 +10,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn virtual_methods() -> Result<()> {
+    run("contracts", "virtual_methods")
+}
+
+#[test]
 fn visibility() -> Result<()> {
     run("contracts", "visibility")
 }
