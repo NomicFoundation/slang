@@ -22,6 +22,7 @@ This repository maintains the source code and release process for these projects
 -   [Solidity Language Specification](https://nomicfoundation.github.io/slang/solidity-specification/)
 
 <br/>
-
-> ❗ This project is still in alpha, and is under active development.
-> If you are planning on using it, please reach out to us on [Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+ 
+ ❗ This project is still in alpha, and is under active development. If you are planning on using it, please [reach out](https://t.me/+pxApdT-Ssn5hMTFh) to us so we can help you get started.
+ 
+ [Slang Telegram group](https://t.me/+pxApdT-Ssn5hMTFh) 
