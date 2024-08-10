@@ -14,13 +14,13 @@ Written in Rust and distributed in multiple languages.
 
 -   [Announcement Post](https://medium.com/nomic-foundation-blog/slang-rethnet-2ad465fd7880)
 -   [How to write your own Solidity linter using Slang, in 25 lines of code!](https://blog.nomic.foundation/how-to-write-your-own-solidity-linter-using-slang-356e7565ad1b/)
--   [Slang Internals](https://nomicfoundation.github.io/slang/internals/)
+-   [Slang Internals](https://nomicfoundation.github.io/slang/latest/internals/)
 
 This repository maintains the source code and release process for these projects:
 
--   [Slang Rust Crate + CLI](https://nomicfoundation.github.io/slang/user-guide/rust-crate/)
--   [Slang TypeScript Package](https://nomicfoundation.github.io/slang/user-guide/npm-package/)
--   [Solidity Language Specification](https://nomicfoundation.github.io/slang/solidity-specification/)
+-   [Slang Rust Crate + CLI](https://nomicfoundation.github.io/slang/latest/user-guide/rust-crate/)
+-   [Slang TypeScript Package](https://nomicfoundation.github.io/slang/latest/user-guide/npm-package/)
+-   [Solidity Language Specification](https://nomicfoundation.github.io/slang/latest/solidity-specification/)
 
 > ❗ This project is still in alpha, and is under active development.
 > If you are planning on using it, please [reach out to us on Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
