@@ -13,5 +13,4 @@ This crate provides support for parse trees used in the Solidity compiler toolin
 > If you are planning on using it, please [reach out to us on Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
 
 -   [Slang Telegram Group](https://t.me/+pxApdT-Ssn5hMTFh)
--   [Nomic Foundation Blog](https://blog.nomic.foundation/)
 -   [We are hiring!](https://nomic.foundation/jobs)
