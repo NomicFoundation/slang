@@ -5,8 +5,10 @@ on:
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
   workflow_dispatch: {}
 
-  # Run on pushes to any branch:
-  push: {}
+  # Run on pushes to 'main' branch:
+  push:
+    branches:
+      - "main"
 
 # Queue up benchmark workflows for the same branch, so that results are reported in order:
 concurrency:

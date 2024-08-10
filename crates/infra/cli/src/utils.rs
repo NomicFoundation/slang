@@ -1,6 +1,5 @@
 use anyhow::{Ok, Result};
 use clap::{Parser, ValueEnum};
-use infra_utils::github::GitHub;
 
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
     fn execute(&self) -> Result<()>;
@@ -50,9 +49,6 @@ impl DryRun {
     pub fn get(self) -> bool {
         if self.dry_run {
             println!("Performing a dry run, since it was requested on the command line.");
-            true
-        } else if !GitHub::is_running_in_ci() {
-            println!("Performing a dry run, since we are not running in CI.");
             true
         } else {
             println!("Performing a full run. You can pass '--dry-run' to simulate the execution.");

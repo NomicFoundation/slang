@@ -1,101 +1,26 @@
-use std::path::Path;
+mod benchmark;
 
-use anyhow::{bail, Result};
-use clap::{Parser, ValueEnum};
-use infra_utils::cargo::CargoWorkspace;
-use infra_utils::commands::Command;
-use infra_utils::github::GitHub;
-use infra_utils::paths::PathExtensions;
-use infra_utils::terminal::Terminal;
+use anyhow::Result;
+use clap::{Parser, Subcommand};
 
-use crate::utils::ClapExtensions;
+use crate::commands::perf::benchmark::BenchmarkController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PerfController {
+    #[command(subcommand)]
     command: PerfCommand,
 }
 
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+#[derive(Clone, Debug, Subcommand)]
 enum PerfCommand {
     /// Run benchmark tests, and report the results to <https://bencher.dev/console>
-    Benchmark,
+    Benchmark(BenchmarkController),
 }
 
 impl PerfController {
     pub fn execute(&self) -> Result<()> {
-        Terminal::step(format!("perf {name}", name = self.command.clap_name()));
-
-        install_perf_tools()?;
-
-        match self.command {
-            PerfCommand::Benchmark => {
-                // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
-                // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
-
-                run_iai_bench("solidity_testing_perf", "iai");
-            }
-        };
-
-        Ok(())
+        match &self.command {
+            PerfCommand::Benchmark(controller) => controller.execute(),
+        }
     }
-}
-
-fn install_perf_tools() -> Result<()> {
-    match Command::new("valgrind").flag("--version").evaluate() {
-        Ok(output) if output.starts_with("valgrind-") => {
-            // Valgrind is available
-        }
-        other => {
-            bail!(
-                "valgrind needs to be installed to run perf tests.
-                It is installed by default inside our devcontainer.
-                Supported Platforms: https://valgrind.org/downloads/current.html
-                {other:?}"
-            );
-        }
-    };
-
-    CargoWorkspace::install_binary("iai-callgrind-runner")?;
-
-    CargoWorkspace::install_binary("bencher_cli")?;
-
-    Ok(())
-}
-
-fn run_iai_bench(package_name: &str, bench_name: &str) {
-    assert!(
-        std::env::var("BENCHER_API_TOKEN").is_ok(),
-        "BENCHER_API_TOKEN is not set. Please set it to your Bencher API token: https://bencher.dev/console",
-    );
-
-    let cargo_command = format!("cargo bench --package {package_name} --bench {bench_name}");
-
-    let testbed = if GitHub::is_running_in_ci() {
-        "ci"
-    } else {
-        "dev"
-    };
-
-    Command::new("bencher")
-        .arg("run")
-        .property("--project", "slang")
-        .property("--adapter", "rust_iai_callgrind")
-        .property("--testbed", testbed)
-        .arg(cargo_command)
-        .run();
-
-    let reports_dir = Path::repo_path("target/iai")
-        .join(package_name)
-        .join(bench_name);
-
-    println!("
-
-Bencher Run is complete...
-Test Results: [https://bencher.dev/console/projects/slang/reports]
-
-Reports/Logs: {reports_dir:?}
-- Callgrind flamegraphs (callgrind.*.svg) can be viewed directly in the browser.
-- DHAT traces (dhat.*.out) can be viewed using the [dhat/dh_view.html] tool from the Valgrind release [https://valgrind.org/downloads/].
-
-");
 }
