@@ -92,10 +92,7 @@ impl ParserResult {
 
             let skipped = input.content(skipped_range.utf8());
 
-            input.emit(ParseError {
-                text_range: skipped_range,
-                terminals_that_would_have_allowed_more_progress: expected_terminals.clone(),
-            });
+            input.emit(ParseError::new(skipped_range, expected_terminals.clone()));
 
             ParserResult::SkippedUntil(SkippedUntil {
                 nodes,
