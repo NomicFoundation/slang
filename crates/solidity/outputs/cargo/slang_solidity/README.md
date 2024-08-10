@@ -15,7 +15,9 @@ Written in Rust and distributed in multiple languages.
 -   [Announcement Post](https://medium.com/nomic-foundation-blog/slang-rethnet-2ad465fd7880)
 -   [User Guide](https://nomicfoundation.github.io/slang/user-guide/rust-crate/)
 
-<br/>
-
 > ❗ This project is still in alpha, and is under active development.
-> If you are planning on using it, please reach out to us on [Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+> If you are planning on using it, please [reach out to us on Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+
+-   [Slang Telegram Group](https://t.me/+pxApdT-Ssn5hMTFh)
+-   [Nomic Foundation Blog](https://blog.nomic.foundation/)
+-   [We are hiring!](https://nomic.foundation/jobs)

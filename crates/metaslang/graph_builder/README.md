@@ -21,7 +21,9 @@ This library is currently not intended to be
 This crate defines a DSL for constructing arbitrary graph
 structures from source code that has been parsed using parsers generated using `metaslang`.
 
-<br/>
-
 > ❗ This project is still in alpha, and is under active development.
-> If you are planning on using it, please reach out to us on [Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+> If you are planning on using it, please [reach out to us on Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+
+-   [Slang Telegram Group](https://t.me/+pxApdT-Ssn5hMTFh)
+-   [Nomic Foundation Blog](https://blog.nomic.foundation/)
+-   [We are hiring!](https://nomic.foundation/jobs)
