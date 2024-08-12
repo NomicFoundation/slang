@@ -9,7 +9,8 @@
 
 This crate provides support for parse trees used in the Solidity compiler tooling.
 
-<br/>
-
 > ❗ This project is still in alpha, and is under active development.
-> If you are planning on using it, please reach out to us on [Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+> If you are planning on using it, please [reach out to us on Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
+
+-   [Slang Telegram Group](https://t.me/+pxApdT-Ssn5hMTFh)
+-   [We are hiring!](https://nomic.foundation/jobs)
