@@ -62,11 +62,10 @@ impl SeparatedHelper {
                                 kind,
                                 input.content(skipped_range.utf8()),
                             )));
-                            input.emit(ParseError {
-                                text_range: skipped_range,
-                                terminals_that_would_have_allowed_more_progress: incomplete
-                                    .expected_terminals,
-                            });
+                            input.emit(ParseError::new(
+                                skipped_range,
+                                incomplete.expected_terminals,
+                            ));
 
                             match lexer.parse_terminal_with_trivia::<LexCtx>(input, separator) {
                                 ParserResult::Match(r#match) => {
