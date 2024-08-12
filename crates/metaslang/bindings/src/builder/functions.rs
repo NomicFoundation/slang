@@ -86,15 +86,18 @@ mod resolver {
             let path_to_resolve = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            if let Some(resolved_path) = self
+            let resolved_path = self
                 .path_resolver
                 .as_ref()
                 .resolve_path(&context_path, &path_to_resolve)
-            {
-                Ok(resolved_path.into())
-            } else {
-                Ok("__SLANG_UNRESOLVED_IMPORT_PATH__".into())
-            }
+                .unwrap_or_else(|| {
+                    // In case we cannot resolve the path, we return a special value that is unique
+                    // per context/path pait. This way, we can still run incrementally and resolve
+                    // other symbols in the file:
+                    format!("__SLANG_UNRESOLVED_PATH__{context_path}__{path_to_resolve}__")
+                });
+
+            Ok(resolved_path.into())
         }
     }
 }
