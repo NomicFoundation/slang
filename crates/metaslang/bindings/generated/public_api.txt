@@ -136,7 +136,7 @@ impl<'a, KT: core::clone::Clone + metaslang_cst::KindTypes + 'static> core::clon
 pub fn metaslang_bindings::Definition<'a, KT>::clone(&self) -> metaslang_bindings::Definition<'a, KT>
 impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Definition<'_, KT>
 pub fn metaslang_bindings::Definition<'_, KT>::eq(&self, other: &Self) -> bool
-impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::Definition<'_, KT>
+impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Definition<'_, KT>
 pub fn metaslang_bindings::Definition<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<'a, KT> core::marker::Freeze for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> !core::marker::Send for metaslang_bindings::Definition<'a, KT>
@@ -156,6 +156,8 @@ impl<T> alloc::borrow::ToOwned for metaslang_bindings::Definition<'a, KT> where 
 pub type metaslang_bindings::Definition<'a, KT>::Owned = T
 pub fn metaslang_bindings::Definition<'a, KT>::clone_into(&self, target: &mut T)
 pub fn metaslang_bindings::Definition<'a, KT>::to_owned(&self) -> T
+impl<T> alloc::string::ToString for metaslang_bindings::Definition<'a, KT> where T: core::fmt::Display + core::marker::Sized
+pub fn metaslang_bindings::Definition<'a, KT>::to_string(&self) -> alloc::string::String
 impl<T> core::any::Any for metaslang_bindings::Definition<'a, KT> where T: 'static + core::marker::Sized
 pub fn metaslang_bindings::Definition<'a, KT>::type_id(&self) -> core::any::TypeId
 impl<T> core::borrow::Borrow<T> for metaslang_bindings::Definition<'a, KT> where T: core::marker::Sized
@@ -171,6 +173,7 @@ impl<T> tap::tap::Tap for metaslang_bindings::Definition<'a, KT>
 impl<T> wyz::fmt::FmtForward for metaslang_bindings::Definition<'a, KT>
 pub struct metaslang_bindings::Reference<'a, KT: metaslang_cst::KindTypes + 'static>
 impl<'a, KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Reference<'a, KT>
+pub fn metaslang_bindings::Reference<'a, KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
 pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::option::Option<metaslang_bindings::Definition<'a, KT>>
@@ -178,7 +181,7 @@ impl<'a, KT: core::clone::Clone + metaslang_cst::KindTypes + 'static> core::clon
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>
 impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::eq(&self, other: &Self) -> bool
-impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::Reference<'_, KT>
+impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<'a, KT> core::marker::Freeze for metaslang_bindings::Reference<'a, KT>
 impl<'a, KT> !core::marker::Send for metaslang_bindings::Reference<'a, KT>
@@ -198,6 +201,8 @@ impl<T> alloc::borrow::ToOwned for metaslang_bindings::Reference<'a, KT> where T
 pub type metaslang_bindings::Reference<'a, KT>::Owned = T
 pub fn metaslang_bindings::Reference<'a, KT>::clone_into(&self, target: &mut T)
 pub fn metaslang_bindings::Reference<'a, KT>::to_owned(&self) -> T
+impl<T> alloc::string::ToString for metaslang_bindings::Reference<'a, KT> where T: core::fmt::Display + core::marker::Sized
+pub fn metaslang_bindings::Reference<'a, KT>::to_string(&self) -> alloc::string::String
 impl<T> core::any::Any for metaslang_bindings::Reference<'a, KT> where T: 'static + core::marker::Sized
 pub fn metaslang_bindings::Reference<'a, KT>::type_id(&self) -> core::any::TypeId
 impl<T> core::borrow::Borrow<T> for metaslang_bindings::Reference<'a, KT> where T: core::marker::Sized

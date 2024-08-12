@@ -249,7 +249,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    @type [InheritanceType @type_name [IdentifierPath]]
+    [InheritanceType @type_name [IdentifierPath]]
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
@@ -275,9 +275,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; The base contract defs are directly accesible through our special super scope
   edge @contract.super_scope -> @type_name.right
-  ;; Precedence order for bases defined from right to left (ie. rightmost base has higher precedence)
-  let p = (plus 1 (named-child-index @type))
-  attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
 @contract [ContractDefinition [ContractMembers
