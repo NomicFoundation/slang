@@ -24,7 +24,7 @@ Errors: # 12 total
        │                                                        ╰───────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected Semicolon.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:2:18]
        │
      2 │   msg.sender.call{do: 1, arg: 1 }();
@@ -32,7 +32,7 @@ Errors: # 12 total
        │                           ╰────────── Error occurred here.
     ───╯
   - >
-    Error: Expected Semicolon.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:18]
        │
      3 │   msg.sender.call{, empty: 1, parse: 2 }();
@@ -145,29 +145,25 @@ Tree:
               - (open_brace꞉ OpenBrace): "{" # (84..85)
               - (trailing_trivia꞉ EndOfLine): "\n" # (85..86)
               - (statements꞉ Statements): # "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...." (86..306)
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  msg.sender.call{do: 1, arg: 1 }();\n" (86..123)
-                      - (expression꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (86..103)
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (86..98)
-                              - (operand꞉ Expression): # "  msg" (86..91)
-                                  - (leading_trivia꞉ Whitespace): "  " # (86..88)
-                                  - (variant꞉ Identifier): "msg" # (88..91)
-                              - (period꞉ Period): "." # (91..92)
-                              - (member꞉ Identifier): "sender" # (92..98)
-                          - (period꞉ Period): "." # (98..99)
-                          - (member꞉ Identifier): "call" # (99..103)
+                  - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "  msg.sender.call{do: 1, arg: 1 }();\n" (86..123)
+                      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # "  msg.sender.call" (86..103)
+                          - (leading_trivia꞉ Whitespace): "  " # (86..88)
+                          - (item꞉ Identifier): "msg" # (88..91)
+                          - (separator꞉ Period): "." # (91..92)
+                          - (item꞉ Identifier): "sender" # (92..98)
+                          - (separator꞉ Period): "." # (98..99)
+                          - (item꞉ Identifier): "call" # (99..103)
                       - (UNRECOGNIZED): "{do: 1, arg: 1 }()" # (103..121)
                       - (semicolon꞉ Semicolon): ";" # (121..122)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (122..123)
-                  - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "  msg.sender.call{, empty: 1, parse: 2 }();\n" (123..167)
-                      - (expression꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender.call" (123..140)
-                          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "  msg.sender" (123..135)
-                              - (operand꞉ Expression): # "  msg" (123..128)
-                                  - (leading_trivia꞉ Whitespace): "  " # (123..125)
-                                  - (variant꞉ Identifier): "msg" # (125..128)
-                              - (period꞉ Period): "." # (128..129)
-                              - (member꞉ Identifier): "sender" # (129..135)
-                          - (period꞉ Period): "." # (135..136)
-                          - (member꞉ Identifier): "call" # (136..140)
+                  - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "  msg.sender.call{, empty: 1, parse: 2 }();\n" (123..167)
+                      - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # "  msg.sender.call" (123..140)
+                          - (leading_trivia꞉ Whitespace): "  " # (123..125)
+                          - (item꞉ Identifier): "msg" # (125..128)
+                          - (separator꞉ Period): "." # (128..129)
+                          - (item꞉ Identifier): "sender" # (129..135)
+                          - (separator꞉ Period): "." # (135..136)
+                          - (item꞉ Identifier): "call" # (136..140)
                       - (UNRECOGNIZED): "{, empty: 1, parse: 2 }()" # (140..165)
                       - (semicolon꞉ Semicolon): ";" # (165..166)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (166..167)

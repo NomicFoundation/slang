@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:13]
        │
      1 │ { unchecked { x = 1; } }
@@ -17,10 +17,10 @@ Tree:
   - (Block): # "{ unchecked { x = 1; } }" (0..24)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (statements꞉ Statements): # " unchecked " (1..12)
-          - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # " unchecked " (1..12)
-              - (expression꞉ Expression): # " unchecked" (1..11)
+          - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # " unchecked " (1..12)
+              - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " unchecked" (1..11)
                   - (leading_trivia꞉ Whitespace): " " # (1..2)
-                  - (variant꞉ Identifier): "unchecked" # (2..11)
+                  - (item꞉ Identifier): "unchecked" # (2..11)
               - (leading_trivia꞉ Whitespace): " " # (11..12)
       - (UNRECOGNIZED): "{ x = 1; } " # (12..23)
       - (close_brace꞉ CloseBrace): "}" # (23..24)
