@@ -1,7 +1,8 @@
 {
-  // Keep recommendations list in-sync with "$REPO_ROOT/.devcontainer/devcontainer.json"
+  // __SLANG_VSCODE_EXTENSIONS_RECOMMENDATIONS__ (keep in sync)
   "recommendations": [
     // Language Support
+    "dtsvet.vscode-wasm",
     "igochkov.vscode-ebnf",
     "NomicFoundation.hardhat-solidity",
     "redhat.vscode-yaml",

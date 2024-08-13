@@ -414,6 +414,7 @@ dependencies = [
  "codegen_runtime_generator",
  "metaslang_bindings",
  "metaslang_cst",
+ "paste",
  "semver",
  "serde",
  "serde_json",
@@ -1210,6 +1211,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "tempfile",
+ "tera",
  "toml",
 ]
 
@@ -1231,6 +1233,7 @@ dependencies = [
  "serde",
  "serde_json",
  "similar-asserts",
+ "tempfile",
  "tera",
  "toml",
  "url",
@@ -1610,6 +1613,12 @@ checksum = "c705f256449c60da65e11ff6626e0c16a0a0b96aaa348de61376b249bc340f41"
 dependencies = [
  "regex",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "percent-encoding"
@@ -2185,6 +2194,7 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
+ "paste",
  "semver",
  "serde",
  "serde_json",
@@ -2221,6 +2231,7 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
+ "paste",
  "semver",
  "serde",
  "serde_json",

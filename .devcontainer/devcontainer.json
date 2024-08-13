@@ -14,9 +14,10 @@
   },
   "customizations": {
     "vscode": {
-      // Keep extensions list in-sync with "$REPO_ROOT/.vscode/extensions.json"
+      // __SLANG_VSCODE_EXTENSIONS_RECOMMENDATIONS__ (keep in sync)
       "extensions": [
         // Language Support
+        "dtsvet.vscode-wasm",
         "igochkov.vscode-ebnf",
         "NomicFoundation.hardhat-solidity",
         "redhat.vscode-yaml",

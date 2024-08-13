@@ -3,6 +3,8 @@
 #[cfg(feature = "__private_napi_interfaces")]
 use napi_derive::napi;
 
+// This needs to stay in sync with the wit-bindgen output
+#[repr(u8)]
 #[derive(
     Debug,
     Eq,
@@ -26,6 +28,8 @@ pub enum NonterminalKind {
 
 impl metaslang_cst::NonterminalKind for NonterminalKind {}
 
+// This needs to stay in sync with the wit-bindgen output
+#[repr(u8)]
 #[derive(
     Debug,
     Eq,
@@ -61,6 +65,8 @@ pub enum EdgeLabel {
 
 impl metaslang_cst::EdgeLabel for EdgeLabel {}
 
+// This needs to stay in sync with the wit-bindgen output
+#[repr(u8)]
 #[derive(
     Debug,
     Eq,
@@ -98,6 +104,8 @@ impl metaslang_cst::TerminalKind for TerminalKind {
 }
 
 /// The lexical context of the scanner.
+// This needs to stay in sync with the wit-bindgen output
+#[repr(u8)]
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
     Stub1,

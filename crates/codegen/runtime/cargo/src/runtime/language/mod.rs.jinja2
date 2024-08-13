@@ -34,7 +34,7 @@ use crate::parse_output::ParseOutput;
 #[cfg_attr(feature = "__private_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     {%- if not rendering_in_stubs -%}
-        {%- for version in model.breaking_versions -%}
+        {%- for version in model.breaking_language_versions -%}
             {% if loop.first %} {# The first supported version may not be referenced by the items #}
             #[allow(dead_code)]
             {% endif %}
@@ -65,7 +65,7 @@ impl From<Error> for napi::Error {
 impl Language {
     pub const SUPPORTED_VERSIONS: &'static [Version] = &[
         {%- if not rendering_in_stubs -%}
-            {% for version in model.all_versions %}
+            {% for version in model.all_language_versions %}
                 Version::new({{ version | split(pat=".") | join(sep=", ") }}),
             {% endfor %}
         {%- endif -%}
@@ -77,7 +77,7 @@ impl Language {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 {%- if not rendering_in_stubs -%}
-                    {%- for version in model.breaking_versions %}
+                    {%- for version in model.breaking_language_versions %}
                         version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                     {%- endfor -%}
                 {%- endif -%}

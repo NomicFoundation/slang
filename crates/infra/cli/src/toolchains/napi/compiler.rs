@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenTemplates;
+use infra_utils::codegen::{CodegenFileSystem, TeraWrapper};
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde::Serialize;
@@ -97,20 +97,20 @@ fn process_generated_files(resolver: NapiResolver, napi_output: &NapiCliOutput) 
     let templates_dir =
         CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi/bindings");
 
-    let mut templates = CodegenTemplates::new(&templates_dir)?;
+    let tera = TeraWrapper::new(&templates_dir)?;
+    let mut fs = CodegenFileSystem::new(&templates_dir)?;
 
     for source in &napi_output.source_files {
         let file_name = source.unwrap_name();
         let contents = source.read_to_string()?;
 
-        let destination_path = resolver.bindings_dir().join(file_name);
         let template_path = templates_dir.join(format!("{file_name}.jinja2"));
+        let destination_path = resolver.bindings_dir().join(file_name);
 
-        templates.render_single(
-            &template_path,
-            LicenseHeaderModel { contents },
-            destination_path,
-        )?;
+        let context = tera::Context::from_serialize(LicenseHeaderModel { contents })?;
+        let output = tera.render(&template_path, &context)?;
+
+        fs.write_file(&destination_path, output)?;
     }
 
     Ok(())
