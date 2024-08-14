@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_assertions::runner::run;
 
 #[test]
+fn do_while() -> Result<()> {
+    run("control", "do_while")
+}
+
+#[test]
 fn for_empty_init_or_cond() -> Result<()> {
     run("control", "for_empty_init_or_cond")
 }
@@ -27,4 +32,9 @@ fn if_else() -> Result<()> {
 #[test]
 fn return_stmt() -> Result<()> {
     run("control", "return_stmt")
+}
+
+#[test]
+fn while_stmt() -> Result<()> {
+    run("control", "while_stmt")
 }

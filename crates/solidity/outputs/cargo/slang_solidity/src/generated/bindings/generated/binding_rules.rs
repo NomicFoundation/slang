@@ -626,6 +626,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Control statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; If conditionals
+
 @stmt [Statement [IfStatement @body body: [Statement]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
   if (version-matches "< 0.5.0") {
@@ -640,9 +642,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   }
 }
 
-@stmt [Statement [ForStatement
-    @body body: [Statement]
-]] {
+;; For loops
+
+@stmt [Statement [ForStatement @body body: [Statement]]] {
   node @stmt.init_defs
 
   edge @body.lexical_scope -> @stmt.lexical_scope
@@ -669,6 +671,24 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @cond_stmt.lexical_scope -> @stmt.lexical_scope
   edge @cond_stmt.lexical_scope -> @stmt.init_defs
+}
+
+;; While loops
+
+@stmt [Statement [WhileStatement @body body: [Statement]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+  }
+}
+
+;; Do-while loops
+
+@stmt [Statement [DoWhileStatement @body body: [Statement]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+  }
 }
 
 
@@ -882,6 +902,20 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @iter_expr.lexical_scope -> @stmt.lexical_scope
   edge @iter_expr.lexical_scope -> @stmt.init_defs
+}
+
+;; Expressions in while conditions
+@stmt [Statement [WhileStatement
+    @condition condition: [Expression]
+]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
+}
+
+;; Expressions in do-while conditions
+@stmt [Statement [DoWhileStatement
+    @condition condition: [Expression]
+]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
 }
 
 ;; Expressions used for state variable declarations

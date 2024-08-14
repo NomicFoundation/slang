@@ -38,3 +38,8 @@ fn for_tuple_init() -> Result<()> {
 fn if_else() -> Result<()> {
     run("control", "if_else")
 }
+
+#[test]
+fn while_stmt() -> Result<()> {
+    run("control", "while_stmt")
+}
