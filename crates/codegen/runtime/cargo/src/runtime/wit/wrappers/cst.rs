@@ -37,7 +37,7 @@ define_rc_wrapper! { NonterminalNode {
     }
 
     fn children(&self) -> Vec<ffi::Node> {
-        todo!()
+        self._borrow_ffi().children.iter().map(|edge| edge.node.clone()._into_ffi()).collect()
     }
 
     // TODO: re-enable once we solve circular references:
