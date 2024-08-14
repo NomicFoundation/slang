@@ -10,6 +10,11 @@ fn do_while() -> Result<()> {
 }
 
 #[test]
+fn emit_event() -> Result<()> {
+    run("control", "emit_event")
+}
+
+#[test]
 fn for_empty_init_or_cond() -> Result<()> {
     run("control", "for_empty_init_or_cond")
 }

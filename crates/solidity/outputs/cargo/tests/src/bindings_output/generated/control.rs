@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn emit_event() -> Result<()> {
+    run("control", "emit_event")
+}
+
+#[test]
 fn for_empty_clauses() -> Result<()> {
     run("control", "for_empty_clauses")
 }

@@ -368,8 +368,6 @@ fn check_reference_assertion(
     version: &Version,
     assertion: &ReferenceAssertion<'_>,
 ) -> Result<(), String> {
-    let resolution = find_and_resolve_reference(bindings, assertion)?;
-
     let ReferenceAssertion {
         id, version_req, ..
     } = assertion;
@@ -378,6 +376,18 @@ fn check_reference_assertion(
         version_req.matches(version)
     } else {
         true
+    };
+
+    let resolution = match find_and_resolve_reference(bindings, assertion) {
+        Ok(resolution) => resolution,
+        Err(err) => {
+            if version_matches {
+                return Err(err);
+            }
+            // the reference was not found, but that's ok if the assertion
+            // should not match for this version
+            None
+        }
     };
 
     match (version_matches, id) {
