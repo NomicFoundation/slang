@@ -1,0 +1,5 @@
+{%- if rendering_in_stubs -%}
+    wit_bindgen::generate!(in "src/runtime/wit/interface/generated");
+{%- else -%}
+    wit_bindgen::generate!(in "src/generated/wit/interface/generated");
+{%- endif -%}

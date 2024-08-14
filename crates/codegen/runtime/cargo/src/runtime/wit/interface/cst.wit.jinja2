@@ -1,0 +1,24 @@
+interface cst {
+    use kinds.{nonterminal-kind, terminal-kind};
+    use text-index.{text-index};
+
+    variant node {
+        nonterminal(nonterminal-node),
+        terminal(terminal-node)
+    }
+
+    resource nonterminal-node {
+        kind: func() -> nonterminal-kind;
+        text-len: func() -> text-index;
+        children: func() -> list<node>;
+        // TODO: re-enable once we solve circular references:
+        // create-cursor: func(text-offset: text-index) -> cursor;
+        unparse: func() -> string;
+    }
+
+    resource terminal-node {
+        kind: func() -> terminal-kind;
+        text-len: func() -> text-index;
+        text: func() -> string;
+    }
+}

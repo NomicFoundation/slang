@@ -1,0 +1,15 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+interface text-index {
+    record text-index {
+        utf8: u32,
+        utf16: u32,
+        line: u32,
+        column: u32,
+    }
+
+    record text-range {
+        start: text-index,
+        end: text-index,
+    }
+}

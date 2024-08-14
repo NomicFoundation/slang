@@ -9,8 +9,9 @@ use regex::Regex;
 use serde_json::{Map, Value};
 use tera::Tera;
 
-use crate::codegen::JINJA_GLOB;
-use crate::paths::PathExtensions;
+use crate::paths::{FileWalker, PathExtensions};
+
+const JINJA_GLOB: &str = "**/*.jinja2";
 
 pub struct TeraWrapper {
     input_dir: PathBuf,
@@ -47,6 +48,10 @@ impl TeraWrapper {
             input_dir,
             instance,
         })
+    }
+
+    pub fn find_all_templates(&self) -> Result<impl Iterator<Item = PathBuf>> {
+        FileWalker::from_directory(&self.input_dir).find([JINJA_GLOB])
     }
 
     pub fn render(&self, template_path: &Path, context: &tera::Context) -> Result<String> {

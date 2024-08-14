@@ -1,0 +1,10 @@
+interface parse-error {
+    use diagnostic.{severity};
+    use text-index.{text-range};
+
+    resource parse-error {
+        severity: func() -> severity;
+        text-range: func() -> text-range;
+        message: func() -> string;
+    }
+}

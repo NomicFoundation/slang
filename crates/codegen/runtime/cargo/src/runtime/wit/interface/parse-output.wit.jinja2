@@ -1,0 +1,12 @@
+interface parse-output {
+    use cst.{node};
+    use cursor.{cursor};
+    use parse-error.{parse-error};
+
+    resource parse-output {
+        tree: func() -> node;
+        errors: func() -> list<parse-error>;
+        is-valid: func() -> bool;
+        create-tree-cursor: func() -> cursor;
+    }
+}

@@ -150,7 +150,7 @@ thiserror = { version = "1.0.63" }
 toml = { version = "0.8.19" }
 trybuild = { version = "1.0.99" }
 url = { version = "2.4.1", features = ["serde"] }
-wit-bindgen-cli = { version = "0.26.0" }
+wit-bindgen = { version = "0.30.0" }
 
 [workspace.lints.rust]
 unused_crate_dependencies = "warn"

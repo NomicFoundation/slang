@@ -5,8 +5,7 @@ use anyhow::Result;
 use serde::Serialize;
 
 use crate::codegen::tera::TeraWrapper;
-use crate::codegen::wit::generate_rust_bindings;
-use crate::codegen::{CodegenFileSystem, JINJA_GLOB, WIT_GLOB};
+use crate::codegen::CodegenFileSystem;
 use crate::paths::{FileWalker, PathExtensions};
 
 pub struct CodegenRuntime {
@@ -31,18 +30,11 @@ impl CodegenRuntime {
     pub fn render_stubs(&mut self, model: impl Serialize) -> Result<()> {
         let context = tera::Context::from_serialize(model)?;
 
-        for template_path in FileWalker::from_directory(&self.input_dir).find([JINJA_GLOB])? {
+        for template_path in self.tera.find_all_templates()? {
             let stub_path = Self::get_stub_path(&template_path).with_extension("");
             let output = self.tera.render(&template_path, &context)?;
 
             self.fs.write_file(&stub_path, output)?;
-        }
-
-        for wit_path in FileWalker::from_directory(&self.input_dir).find([WIT_GLOB])? {
-            let bindings_path = Self::get_stub_path(&wit_path).with_extension("rs");
-            let bindings = generate_rust_bindings(&wit_path)?;
-
-            self.fs.write_file(&bindings_path, bindings)?;
         }
 
         Ok(())
@@ -58,7 +50,7 @@ impl CodegenRuntime {
 
         let mut handled = HashSet::new();
 
-        for template_path in FileWalker::from_directory(&self.input_dir).find([JINJA_GLOB])? {
+        for template_path in self.tera.find_all_templates()? {
             let stub_path = Self::get_stub_path(&template_path).with_extension("");
             let rendered_path = self.get_output_path(&stub_path, output_dir)?;
             let rendered = self.tera.render(&template_path, &context)?;
@@ -66,25 +58,6 @@ impl CodegenRuntime {
             self.fs.write_file(&rendered_path, rendered)?;
 
             assert!(handled.insert(template_path));
-            assert!(handled.insert(stub_path));
-        }
-
-        for wit_path in FileWalker::from_directory(&self.input_dir).find([WIT_GLOB])? {
-            let stub_path = Self::get_stub_path(&wit_path).with_extension("rs");
-            let wit_output_path = self.get_output_path(&wit_path, output_dir)?;
-
-            // ".wit" files can be generated from templates:
-            if !handled.contains(&wit_path) {
-                self.fs.copy_file(&wit_path, &wit_output_path)?;
-
-                assert!(handled.insert(wit_path));
-            }
-
-            let bindings_path = self.get_output_path(&stub_path, output_dir)?;
-            let bindings = generate_rust_bindings(&wit_output_path)?;
-
-            self.fs.write_file(&bindings_path, bindings)?;
-
             assert!(handled.insert(stub_path));
         }
 

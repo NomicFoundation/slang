@@ -1,0 +1,11 @@
+interface language {
+    use kinds.{nonterminal-kind};
+    use parse-output.{parse-output};
+
+    resource language {
+        supported-versions: static func() -> list<string>;
+        new: static func(version: string) -> result<language, string>;
+        version: func() -> string;
+        parse: func(kind: nonterminal-kind, input: string) -> parse-output;
+    }
+}
