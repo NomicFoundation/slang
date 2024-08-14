@@ -522,6 +522,107 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Statements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; In the general case for statements the structure is [Statement [StmtVariant]]
+;; and we will define the scoped nodes .lexical_scope and (possibly) .defs in
+;; the Statement CST node.
+;;
+;; For expression statements, variable and tuple declarations we defined
+;; separately from the enclosing statement to be able to use them in for
+;; initialization and condition clauses directly. Also, because we intend to
+;; reuse them, all of them must have both a .lexical_scope and .defs scoped
+;; nodes.
+
+@expr_stmt [ExpressionStatement] {
+  node @expr_stmt.lexical_scope
+  node @expr_stmt.defs
+}
+
+@stmt [Statement @expr_stmt [ExpressionStatement]] {
+  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+@var_decl [VariableDeclarationStatement] {
+  node @var_decl.lexical_scope
+  node @var_decl.defs
+}
+
+@stmt [Statement @var_decl [VariableDeclarationStatement]] {
+  edge @var_decl.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @var_decl.defs
+}
+
+@tuple_decon [TupleDeconstructionStatement] {
+  node @tuple_decon.lexical_scope
+  node @tuple_decon.defs
+}
+
+@stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
+  edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @tuple_decon.defs
+}
+
+
+;;; Variable declaration and tuple deconstruction statements introduce new definitionns
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType @var_type [TypeName]]
+    @name name: [Identifier]
+] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @var_decl
+
+  edge @var_decl.defs -> def
+  edge @var_type.type_ref -> @var_decl.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @var_type.output
+}
+
+@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [UntypedTupleMember
+            @name name: [Identifier]]
+        ]
+    ]
+]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
+
+  edge @tuple_decon.defs -> def
+}
+
+@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [TypedTupleMember
+            @member_type type_name: [TypeName]
+            @name name: [Identifier]]
+        ]
+    ]
+]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
+
+  edge @tuple_decon.defs -> def
+  edge @member_type.type_ref -> @tuple_decon.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @member_type.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Control statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -539,63 +640,35 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   }
 }
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Declaration Statements introducing variables
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@stmt [Statement @var_decl [VariableDeclarationStatement
-    [VariableDeclarationType @var_type [TypeName]]
-    @name name: [Identifier]
+@stmt [Statement [ForStatement
+    @body body: [Statement]
 ]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @var_decl
+  node @stmt.init_defs
 
-  edge @stmt.defs -> def
-  edge @var_type.type_ref -> @stmt.lexical_scope
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge def -> typeof
-  edge typeof -> @var_type.output
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.init_defs
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+    edge @stmt.defs -> @stmt.init_defs
+  }
 }
 
-@stmt [Statement [TupleDeconstructionStatement [TupleDeconstructionElements
-    [TupleDeconstructionElement
-        @tuple_member [TupleMember variant: [UntypedTupleMember
-            @name name: [Identifier]]
-        ]
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization
+        @init_stmt ([ExpressionStatement]
+                  | [VariableDeclarationStatement]
+                  | [TupleDeconstructionStatement])
     ]
-]]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @tuple_member
-
-  edge @stmt.defs -> def
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.init_defs -> @init_stmt.defs
 }
 
-@stmt [Statement [TupleDeconstructionStatement [TupleDeconstructionElements
-    [TupleDeconstructionElement
-        @tuple_member [TupleMember variant: [TypedTupleMember
-            @member_type type_name: [TypeName]
-            @name name: [Identifier]]
-        ]
-    ]
-]]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @tuple_member
-
-  edge @stmt.defs -> def
-  edge @member_type.type_ref -> @stmt.lexical_scope
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge def -> typeof
-  edge typeof -> @member_type.output
+@stmt [Statement [ForStatement
+    condition: [ForStatementCondition @cond_stmt [ExpressionStatement]]
+]] {
+  edge @cond_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @cond_stmt.lexical_scope -> @stmt.init_defs
 }
 
 
@@ -774,23 +847,23 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @child.lexical_scope -> @expr.lexical_scope
 }
 
-;; Expressions as statements
-@stmt [Statement variant: [ExpressionStatement @expr [Expression]]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
+;; Expressions statements
+@expr_stmt [ExpressionStatement @expr [Expression]] {
+  edge @expr.lexical_scope -> @expr_stmt.lexical_scope
 }
 
 ;; Expressions used for variable declarations
-@stmt [Statement variant: [VariableDeclarationStatement
+@var_decl [VariableDeclarationStatement
     value: [VariableDeclarationValue @expr [Expression]]
-]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
+] {
+  edge @expr.lexical_scope -> @var_decl.lexical_scope
 }
 
 ;; Expressions used for tuple deconstruction statements
-@stmt [Statement [TupleDeconstructionStatement
+@tuple_decon [TupleDeconstructionStatement
     @expr expression: [Expression]
-]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
+] {
+  edge @expr.lexical_scope -> @tuple_decon.lexical_scope
 }
 
 ;; Expressions as if conditions
@@ -801,6 +874,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Expressions in return statements
 @stmt [Statement [ReturnStatement @expr [Expression]]] {
   edge @expr.lexical_scope -> @stmt.lexical_scope
+}
+
+;; Expressions in for iterations
+@stmt [Statement [ForStatement
+    @iter_expr iterator: [Expression]
+]] {
+  edge @iter_expr.lexical_scope -> @stmt.lexical_scope
+  edge @iter_expr.lexical_scope -> @stmt.init_defs
 }
 
 ;; Expressions used for state variable declarations
