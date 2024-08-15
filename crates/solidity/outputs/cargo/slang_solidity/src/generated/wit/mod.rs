@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#[path = "./interface/generated/mod.rs"]
+#[path = "./interface/generated/_types.rs"]
 mod interface;
 mod utils;
 mod wrappers;

@@ -1,4 +1,4 @@
-#[path = "./interface/generated/mod.rs"]
+#[path = "./interface/generated/_types.rs"]
 mod interface;
 mod utils;
 mod wrappers;
