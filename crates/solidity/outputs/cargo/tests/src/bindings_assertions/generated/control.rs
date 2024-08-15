@@ -40,6 +40,11 @@ fn return_stmt() -> Result<()> {
 }
 
 #[test]
+fn revert_stmt() -> Result<()> {
+    run("control", "revert_stmt")
+}
+
+#[test]
 fn try_stmt() -> Result<()> {
     run("control", "try_stmt")
 }

@@ -742,6 +742,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 
+;;; Revert statements
+
+@stmt [Statement [RevertStatement @error_ident [IdentifierPath]]] {
+  edge @error_ident.left -> @stmt.lexical_scope
+}
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; State Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1129,6 +1137,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; Arguments to an event in an emit statement
 @stmt [Statement [EmitStatement @args [ArgumentsDeclaration]]] {
+  edge @args.lexical_scope -> @stmt.lexical_scope
+}
+
+;; Arguments to an error in a revert statement
+@stmt [Statement [RevertStatement @args [ArgumentsDeclaration]]] {
   edge @args.lexical_scope -> @stmt.lexical_scope
 }
 
