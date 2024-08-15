@@ -1,0 +1,36 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+interface kinds {
+    enum nonterminal-kind {
+            stub1,
+            stub2,
+            stub3,
+    }
+
+    enum edge-label {
+        // Built-in:
+            %item,
+            %variant,
+            %separator,
+            %operand,
+            %left-operand,
+            %right-operand,
+            %leading-trivia,
+            %trailing-trivia,
+
+        // Generated:
+            stub1,
+            stub2,
+            stub3,
+    }
+
+    enum terminal-kind {
+        // Built-in:
+        skipped,
+
+        // Generated:
+            stub1,
+            stub2,
+            stub3,
+    }
+}

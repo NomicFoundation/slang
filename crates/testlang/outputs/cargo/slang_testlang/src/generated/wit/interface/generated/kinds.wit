@@ -1,0 +1,64 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+interface kinds {
+    enum nonterminal-kind {
+                %addition-expression,
+                %expression,
+                %literal,
+                %member-access-expression,
+                %negation-expression,
+                %separated-identifiers,
+                %source-unit,
+                %source-unit-member,
+                %source-unit-members,
+                %tree,
+                %tree-node,
+                %tree-node-child,
+                %tree-node-children,
+    }
+
+    enum edge-label {
+        // Built-in:
+            %item,
+            %variant,
+            %separator,
+            %operand,
+            %left-operand,
+            %right-operand,
+            %leading-trivia,
+            %trailing-trivia,
+
+        // Generated:
+                %close-bracket,
+                %keyword,
+                %member,
+                %members,
+                %name,
+                %node,
+                %open-bracket,
+                %operator,
+                %period,
+                %semicolon,
+    }
+
+    enum terminal-kind {
+        // Built-in:
+        skipped,
+
+        // Generated:
+                %bang,
+                %close-bracket,
+                %delimited-identifier,
+                %end-of-line,
+                %identifier,
+                %multi-line-comment,
+                %open-bracket,
+                %period,
+                %plus,
+                %semicolon,
+                %single-line-comment,
+                %string-literal,
+                %tree-keyword,
+                %whitespace,
+    }
+}

@@ -1,7 +1,8 @@
 mod file_system;
 mod formatting;
-mod templates;
+mod runtime;
 mod tera;
 
 pub use file_system::CodegenFileSystem;
-pub use templates::CodegenTemplates;
+pub use runtime::CodegenRuntime;
+pub use tera::TeraWrapper;

@@ -14,6 +14,8 @@ mod supress_api_dependencies {
         ariadne as _, metaslang_cst as _, semver as _, serde as _, serde_json as _, strum as _,
         strum_macros as _, thiserror as _,
     };
+    #[cfg(feature = "__private_wit_bindings")]
+    use {paste as _, wit_bindgen as _};
 }
 
 #[derive(ClapParser, Debug)]

@@ -10,6 +10,9 @@ pub mod parse_output;
 pub mod query;
 pub mod text_index;
 
+#[cfg(feature = "__private_wit_bindings")]
+pub mod wit;
+
 #[cfg(feature = "__private_napi_interfaces")]
 pub mod napi_interface;
 

@@ -12,6 +12,7 @@ default = ["cli"]
 cli = ["dep:ariadne", "dep:clap", "dep:serde_json"]
 __experimental_bindings_api = ["dep:metaslang_bindings"]
 __private_testing_utils = ["dep:ariadne"]
+__private_wit_bindings = ["dep:paste", "dep:wit-bindgen"]
 
 [build-dependencies]
 anyhow = { workspace = true }
@@ -24,12 +25,14 @@ ariadne = { workspace = true, optional = true }
 clap = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
+paste = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
+wit-bindgen = { workspace = true, optional = true }
 
 [lints]
 workspace = true
