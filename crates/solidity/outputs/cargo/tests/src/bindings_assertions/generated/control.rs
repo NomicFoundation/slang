@@ -40,6 +40,11 @@ fn return_stmt() -> Result<()> {
 }
 
 #[test]
+fn try_stmt() -> Result<()> {
+    run("control", "try_stmt")
+}
+
+#[test]
 fn while_stmt() -> Result<()> {
     run("control", "while_stmt")
 }

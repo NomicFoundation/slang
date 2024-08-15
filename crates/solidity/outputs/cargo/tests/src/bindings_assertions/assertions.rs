@@ -283,6 +283,11 @@ fn search_asserted_node_backwards(mut cursor: Cursor, anchor_column: usize) -> O
             Ordering::Greater => continue,
             Ordering::Less => (),
         }
+        // Skip over empty nodes which the parser may insert to fulfill the
+        // grammar (eg. commonly an empty Statements node)
+        if cursor.text_range().is_empty() {
+            continue;
+        }
 
         // Node is not found, and probably the anchor is invalid
         break;

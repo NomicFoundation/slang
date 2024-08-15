@@ -251,6 +251,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge import -> @symbol.import
 }
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Named definitions (contracts, functions, libraries, etc.)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -405,24 +406,32 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge typeof -> @type_name.output
 }
 
-@function [FunctionDefinition parameters: [ParametersDeclaration
-    [Parameters @param item: [Parameter]]
-]] {
-  edge @param.lexical_scope -> @function.lexical_scope
+@params [ParametersDeclaration] {
+  node @params.lexical_scope
+  node @params.defs
+}
+
+@params [ParametersDeclaration [Parameters @param item: [Parameter]]] {
+  edge @param.lexical_scope -> @params.lexical_scope
+  edge @params.defs -> @param.def
+}
+
+@function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @function.lexical_scope
 
   ;; Input parameters are available in the function scope
-  edge @function.lexical_scope -> @param.def
-  attr (@function.lexical_scope -> @param.def) precedence = 1
+  edge @function.lexical_scope -> @params.defs
+  attr (@function.lexical_scope -> @params.defs) precedence = 1
 }
 
 @function [FunctionDefinition returns: [ReturnsDeclaration
-    [ParametersDeclaration [Parameters @param item: [Parameter]]]
+    @return_params [ParametersDeclaration]
 ]] {
-  edge @param.lexical_scope -> @function.lexical_scope
+  edge @return_params.lexical_scope -> @function.lexical_scope
 
   ;; Return parameters are available in the function scope
-  edge @function.lexical_scope -> @param.def
-  attr (@function.lexical_scope -> @param.def) precedence = 1
+  edge @function.lexical_scope -> @return_params.defs
+  attr (@function.lexical_scope -> @return_params.defs) precedence = 1
 }
 
 ;; Connect function's lexical scope with the enclosing
@@ -699,6 +708,41 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Error handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Try-catch statements
+
+@stmt [Statement [TryStatement @body body: [Block]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [TryStatement
+    [ReturnsDeclaration @return_params [ParametersDeclaration]]
+    @body body: [Block]
+]] {
+  edge @return_params.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @return_params.defs
+  attr (@body.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    @body body: [Block]
+]]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @catch_params parameters: [ParametersDeclaration]]
+    @body body: [Block]
+]]]] {
+  edge @catch_params.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @catch_params.defs
+  attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; State Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -870,8 +914,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @event.def -> def
 }
 
-;; Make the enum available to the enclosing contract/interface/library.
-;; NB. top-level enums (ie. those defined at the file's level) are already
+;; Make the event available to the enclosing contract/interface/library.
+;; NB. top-level events (ie. those defined at the file's level) are already
 ;; covered above
 
 @contract [ContractDefinition members: [ContractMembers
@@ -890,6 +934,41 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     item: [ContractMember @event variant: [EventDefinition]]
 ]] {
   edge @library.members -> @event.def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Error definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@error [ErrorDefinition @name name: [Identifier]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @error
+
+  edge @error.def -> def
+}
+
+;; Make the error available to the enclosing contract/interface/library.
+;; NB. top-level errors (ie. those defined at the file's level) are already
+;; covered above
+
+@contract [ContractDefinition members: [ContractMembers
+    item: [ContractMember @error variant: [ErrorDefinition]]
+]] {
+  edge @contract.type_members -> @error.def
+}
+
+@interface [InterfaceDefinition members: [InterfaceMembers
+    item: [ContractMember @error variant: [ErrorDefinition]]
+]] {
+  edge @interface.type_members -> @error.def
+}
+
+@library [LibraryDefinition members: [LibraryMembers
+    item: [ContractMember @error variant: [ErrorDefinition]]
+]] {
+  edge @library.members -> @error.def
 }
 
 
@@ -957,6 +1036,13 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     @condition condition: [Expression]
 ]] {
   edge @condition.lexical_scope -> @stmt.lexical_scope
+}
+
+;; Expressions in try statements
+@stmt [Statement [TryStatement
+    @expr expression: [Expression]
+]] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
 }
 
 ;; Expressions used for state variable declarations
