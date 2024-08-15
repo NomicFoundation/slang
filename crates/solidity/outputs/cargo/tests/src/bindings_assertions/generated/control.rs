@@ -50,6 +50,11 @@ fn try_stmt() -> Result<()> {
 }
 
 #[test]
+fn unchecked() -> Result<()> {
+    run("control", "unchecked")
+}
+
+#[test]
 fn while_stmt() -> Result<()> {
     run("control", "while_stmt")
 }
