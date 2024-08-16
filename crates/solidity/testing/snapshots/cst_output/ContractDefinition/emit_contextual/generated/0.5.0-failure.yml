@@ -13,7 +13,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol:6:17]
        │
      6 │         uint256 emit;
@@ -66,8 +66,8 @@ Tree:
                   - (open_brace꞉ OpenBrace): "{" # (187..188)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (188..189)
                   - (statements꞉ Statements): # "        uint256 emit;\n        emit Deposit();\n" (189..235)
-                      - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "        uint256 emit;\n" (189..211)
-                          - (expression꞉ Expression) ► (variant꞉ ElementaryType): # "        uint256" (189..204)
+                      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "        uint256 emit;\n" (189..211)
+                          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "        uint256" (189..204)
                               - (leading_trivia꞉ Whitespace): "        " # (189..197)
                               - (variant꞉ UintKeyword): "uint256" # (197..204)
                           - (leading_trivia꞉ Whitespace): " " # (204..205)

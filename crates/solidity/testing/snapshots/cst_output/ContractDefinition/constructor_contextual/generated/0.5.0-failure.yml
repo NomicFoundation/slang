@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/constructor_contextual/input.sol:6:11]
        │
      6 │        uint256 constructor;
@@ -65,8 +65,8 @@ Tree:
                   - (open_brace꞉ OpenBrace): "{" # (158..159)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (159..160)
                   - (statements꞉ Statements): # "\t\tuint256 constructor;\n" (160..183)
-                      - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "\t\tuint256 constructor;\n" (160..183)
-                          - (expression꞉ Expression) ► (variant꞉ ElementaryType): # "\t\tuint256" (160..169)
+                      - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "\t\tuint256 constructor;\n" (160..183)
+                          - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "\t\tuint256" (160..169)
                               - (leading_trivia꞉ Whitespace): "\t\t" # (160..162)
                               - (variant꞉ UintKeyword): "uint256" # (162..169)
                           - (leading_trivia꞉ Whitespace): " " # (169..170)

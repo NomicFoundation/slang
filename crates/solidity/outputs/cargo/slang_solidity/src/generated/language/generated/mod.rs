@@ -1023,8 +1023,6 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.event_definition(input);
             choice.consider(input, result)?;
-            let result = self.state_variable_definition(input);
-            choice.consider(input, result)?;
             if self.version_is_at_least_0_8_4 {
                 let result = self.error_definition(input);
                 choice.consider(input, result)?;
@@ -1033,6 +1031,8 @@ impl Language {
                 let result = self.user_defined_value_type_definition(input);
                 choice.consider(input, result)?;
             }
+            let result = self.state_variable_definition(input);
+            choice.consider(input, result)?;
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
@@ -2535,11 +2535,11 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn for_statement_initialization(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.expression_statement(input);
+            let result = self.tuple_deconstruction_statement(input);
             choice.consider(input, result)?;
             let result = self.variable_declaration_statement(input);
             choice.consider(input, result)?;
-            let result = self.tuple_deconstruction_statement(input);
+            let result = self.expression_statement(input);
             choice.consider(input, result)?;
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4252,10 +4252,6 @@ impl Language {
                 let result = self.function_definition(input);
                 choice.consider(input, result)?;
             }
-            if self.version_is_at_least_0_7_4 {
-                let result = self.constant_definition(input);
-                choice.consider(input, result)?;
-            }
             if self.version_is_at_least_0_8_4 {
                 let result = self.error_definition(input);
                 choice.consider(input, result)?;
@@ -4270,6 +4266,10 @@ impl Language {
             }
             if self.version_is_at_least_0_8_22 {
                 let result = self.event_definition(input);
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_7_4 {
+                let result = self.constant_definition(input);
                 choice.consider(input, result)?;
             }
             choice.finish(input)
@@ -4393,12 +4393,6 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.expression_statement(input);
-            choice.consider(input, result)?;
-            let result = self.variable_declaration_statement(input);
-            choice.consider(input, result)?;
-            let result = self.tuple_deconstruction_statement(input);
-            choice.consider(input, result)?;
             let result = self.if_statement(input);
             choice.consider(input, result)?;
             let result = self.for_statement(input);
@@ -4437,6 +4431,12 @@ impl Language {
                 let result = self.unchecked_block(input);
                 choice.consider(input, result)?;
             }
+            let result = self.tuple_deconstruction_statement(input);
+            choice.consider(input, result)?;
+            let result = self.variable_declaration_statement(input);
+            choice.consider(input, result)?;
+            let result = self.expression_statement(input);
+            choice.consider(input, result)?;
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
@@ -5863,15 +5863,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            if !self.version_is_at_least_0_5_5 {
-                let result = self.yul_colon_and_equal(input);
-                choice.consider(input, result)?;
-            }
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::ColonEqual,
             );
             choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_5 {
+                let result = self.yul_colon_and_equal(input);
+                choice.consider(input, result)?;
+            }
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
@@ -6796,12 +6796,12 @@ impl Language {
     fn yul_stack_assignment_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.yul_equal_and_colon(input);
-                choice.consider(input, result)?;
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TerminalKind::EqualColon,
                 );
+                choice.consider(input, result)?;
+                let result = self.yul_equal_and_colon(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -6842,10 +6842,6 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.yul_function_definition(input);
             choice.consider(input, result)?;
-            let result = self.yul_variable_declaration_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_variable_assignment_statement(input);
-            choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
                 let result = self.yul_stack_assignment_statement(input);
                 choice.consider(input, result)?;
@@ -6868,6 +6864,10 @@ impl Language {
                 let result = self.yul_label(input);
                 choice.consider(input, result)?;
             }
+            let result = self.yul_variable_declaration_statement(input);
+            choice.consider(input, result)?;
+            let result = self.yul_variable_assignment_statement(input);
+            choice.consider(input, result)?;
             let result = self.yul_expression(input);
             choice.consider(input, result)?;
             choice.finish(input)

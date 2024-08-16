@@ -3769,11 +3769,11 @@ export class SourceUnitMember {
     | StructDefinition
     | EnumDefinition
     | FunctionDefinition
-    | ConstantDefinition
     | ErrorDefinition
     | UserDefinedValueTypeDefinition
     | UsingDirective
-    | EventDefinition = once(() => {
+    | EventDefinition
+    | ConstantDefinition = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
@@ -3793,8 +3793,6 @@ export class SourceUnitMember {
         return new EnumDefinition(variant as NonterminalNode);
       case NonterminalKind.FunctionDefinition:
         return new FunctionDefinition(variant as NonterminalNode);
-      case NonterminalKind.ConstantDefinition:
-        return new ConstantDefinition(variant as NonterminalNode);
       case NonterminalKind.ErrorDefinition:
         return new ErrorDefinition(variant as NonterminalNode);
       case NonterminalKind.UserDefinedValueTypeDefinition:
@@ -3803,6 +3801,8 @@ export class SourceUnitMember {
         return new UsingDirective(variant as NonterminalNode);
       case NonterminalKind.EventDefinition:
         return new EventDefinition(variant as NonterminalNode);
+      case NonterminalKind.ConstantDefinition:
+        return new ConstantDefinition(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3822,11 +3822,11 @@ export class SourceUnitMember {
     | StructDefinition
     | EnumDefinition
     | FunctionDefinition
-    | ConstantDefinition
     | ErrorDefinition
     | UserDefinedValueTypeDefinition
     | UsingDirective
-    | EventDefinition {
+    | EventDefinition
+    | ConstantDefinition {
     return this.fetch();
   }
 }
@@ -4017,9 +4017,9 @@ export class ContractMember {
     | StructDefinition
     | EnumDefinition
     | EventDefinition
-    | StateVariableDefinition
     | ErrorDefinition
-    | UserDefinedValueTypeDefinition = once(() => {
+    | UserDefinedValueTypeDefinition
+    | StateVariableDefinition = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
@@ -4043,12 +4043,12 @@ export class ContractMember {
         return new EnumDefinition(variant as NonterminalNode);
       case NonterminalKind.EventDefinition:
         return new EventDefinition(variant as NonterminalNode);
-      case NonterminalKind.StateVariableDefinition:
-        return new StateVariableDefinition(variant as NonterminalNode);
       case NonterminalKind.ErrorDefinition:
         return new ErrorDefinition(variant as NonterminalNode);
       case NonterminalKind.UserDefinedValueTypeDefinition:
         return new UserDefinedValueTypeDefinition(variant as NonterminalNode);
+      case NonterminalKind.StateVariableDefinition:
+        return new StateVariableDefinition(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4070,9 +4070,9 @@ export class ContractMember {
     | StructDefinition
     | EnumDefinition
     | EventDefinition
-    | StateVariableDefinition
     | ErrorDefinition
-    | UserDefinedValueTypeDefinition {
+    | UserDefinedValueTypeDefinition
+    | StateVariableDefinition {
     return this.fetch();
   }
 }
@@ -4407,9 +4407,6 @@ export class ElementaryType {
 
 export class Statement {
   private readonly fetch: () =>
-    | ExpressionStatement
-    | VariableDeclarationStatement
-    | TupleDeconstructionStatement
     | IfStatement
     | ForStatement
     | WhileStatement
@@ -4423,16 +4420,13 @@ export class Statement {
     | RevertStatement
     | AssemblyStatement
     | Block
-    | UncheckedBlock = once(() => {
+    | UncheckedBlock
+    | TupleDeconstructionStatement
+    | VariableDeclarationStatement
+    | ExpressionStatement = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
     switch (variant.kind) {
-      case NonterminalKind.ExpressionStatement:
-        return new ExpressionStatement(variant as NonterminalNode);
-      case NonterminalKind.VariableDeclarationStatement:
-        return new VariableDeclarationStatement(variant as NonterminalNode);
-      case NonterminalKind.TupleDeconstructionStatement:
-        return new TupleDeconstructionStatement(variant as NonterminalNode);
       case NonterminalKind.IfStatement:
         return new IfStatement(variant as NonterminalNode);
       case NonterminalKind.ForStatement:
@@ -4461,6 +4455,12 @@ export class Statement {
         return new Block(variant as NonterminalNode);
       case NonterminalKind.UncheckedBlock:
         return new UncheckedBlock(variant as NonterminalNode);
+      case NonterminalKind.TupleDeconstructionStatement:
+        return new TupleDeconstructionStatement(variant as NonterminalNode);
+      case NonterminalKind.VariableDeclarationStatement:
+        return new VariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.ExpressionStatement:
+        return new ExpressionStatement(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4472,9 +4472,6 @@ export class Statement {
   }
 
   public get variant():
-    | ExpressionStatement
-    | VariableDeclarationStatement
-    | TupleDeconstructionStatement
     | IfStatement
     | ForStatement
     | WhileStatement
@@ -4488,7 +4485,10 @@ export class Statement {
     | RevertStatement
     | AssemblyStatement
     | Block
-    | UncheckedBlock {
+    | UncheckedBlock
+    | TupleDeconstructionStatement
+    | VariableDeclarationStatement
+    | ExpressionStatement {
     return this.fetch();
   }
 }
@@ -4561,9 +4561,9 @@ export class StorageLocation {
 
 export class ForStatementInitialization {
   private readonly fetch: () =>
-    | ExpressionStatement
-    | VariableDeclarationStatement
     | TupleDeconstructionStatement
+    | VariableDeclarationStatement
+    | ExpressionStatement
     | TerminalNode = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
@@ -4572,12 +4572,12 @@ export class ForStatementInitialization {
     }
 
     switch (variant.kind) {
-      case NonterminalKind.ExpressionStatement:
-        return new ExpressionStatement(variant as NonterminalNode);
-      case NonterminalKind.VariableDeclarationStatement:
-        return new VariableDeclarationStatement(variant as NonterminalNode);
       case NonterminalKind.TupleDeconstructionStatement:
         return new TupleDeconstructionStatement(variant as NonterminalNode);
+      case NonterminalKind.VariableDeclarationStatement:
+        return new VariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.ExpressionStatement:
+        return new ExpressionStatement(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -4589,9 +4589,9 @@ export class ForStatementInitialization {
   }
 
   public get variant():
-    | ExpressionStatement
-    | VariableDeclarationStatement
     | TupleDeconstructionStatement
+    | VariableDeclarationStatement
+    | ExpressionStatement
     | TerminalNode {
     return this.fetch();
   }
@@ -4884,8 +4884,6 @@ export class YulStatement {
   private readonly fetch: () =>
     | YulBlock
     | YulFunctionDefinition
-    | YulVariableDeclarationStatement
-    | YulVariableAssignmentStatement
     | YulStackAssignmentStatement
     | YulIfStatement
     | YulForStatement
@@ -4894,6 +4892,8 @@ export class YulStatement {
     | YulBreakStatement
     | YulContinueStatement
     | YulLabel
+    | YulVariableDeclarationStatement
+    | YulVariableAssignmentStatement
     | YulExpression = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
 
@@ -4902,10 +4902,6 @@ export class YulStatement {
         return new YulBlock(variant as NonterminalNode);
       case NonterminalKind.YulFunctionDefinition:
         return new YulFunctionDefinition(variant as NonterminalNode);
-      case NonterminalKind.YulVariableDeclarationStatement:
-        return new YulVariableDeclarationStatement(variant as NonterminalNode);
-      case NonterminalKind.YulVariableAssignmentStatement:
-        return new YulVariableAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulStackAssignmentStatement:
         return new YulStackAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulIfStatement:
@@ -4922,6 +4918,10 @@ export class YulStatement {
         return new YulContinueStatement(variant as NonterminalNode);
       case NonterminalKind.YulLabel:
         return new YulLabel(variant as NonterminalNode);
+      case NonterminalKind.YulVariableDeclarationStatement:
+        return new YulVariableDeclarationStatement(variant as NonterminalNode);
+      case NonterminalKind.YulVariableAssignmentStatement:
+        return new YulVariableAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulExpression:
         return new YulExpression(variant as NonterminalNode);
 
@@ -4937,8 +4937,6 @@ export class YulStatement {
   public get variant():
     | YulBlock
     | YulFunctionDefinition
-    | YulVariableDeclarationStatement
-    | YulVariableAssignmentStatement
     | YulStackAssignmentStatement
     | YulIfStatement
     | YulForStatement
@@ -4947,6 +4945,8 @@ export class YulStatement {
     | YulBreakStatement
     | YulContinueStatement
     | YulLabel
+    | YulVariableDeclarationStatement
+    | YulVariableAssignmentStatement
     | YulExpression {
     return this.fetch();
   }

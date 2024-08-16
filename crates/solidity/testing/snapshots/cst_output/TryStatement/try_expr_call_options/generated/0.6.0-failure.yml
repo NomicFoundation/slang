@@ -8,7 +8,7 @@ Source: >
 
 Errors: # 2 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_expr_call_options/input.sol:1:14]
        │
      1 │ try foo() { x: 1 } {
@@ -41,9 +41,9 @@ Tree:
           - (leading_trivia꞉ Whitespace): " " # (9..10)
           - (open_brace꞉ OpenBrace): "{" # (10..11)
           - (statements꞉ Statements): # " x" (11..13)
-              - (item꞉ Statement) ► (variant꞉ ExpressionStatement) ► (expression꞉ Expression): # " x" (11..13)
+              - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " x" (11..13)
                   - (leading_trivia꞉ Whitespace): " " # (11..12)
-                  - (variant꞉ Identifier): "x" # (12..13)
+                  - (item꞉ Identifier): "x" # (12..13)
           - (UNRECOGNIZED): ": 1 " # (13..17)
           - (close_brace꞉ CloseBrace): "}" # (17..18)
       - (UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)

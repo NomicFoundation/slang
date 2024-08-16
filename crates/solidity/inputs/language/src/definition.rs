@@ -62,17 +62,17 @@ codegen_language_macros::compile!(Language(
                                     reference = FunctionDefinition,
                                     enabled = From("0.7.1")
                                 ),
-                                EnumVariant(
-                                    reference = ConstantDefinition,
-                                    enabled = From("0.7.4")
-                                ),
                                 EnumVariant(reference = ErrorDefinition, enabled = From("0.8.4")),
                                 EnumVariant(
                                     reference = UserDefinedValueTypeDefinition,
                                     enabled = From("0.8.8")
                                 ),
                                 EnumVariant(reference = UsingDirective, enabled = From("0.8.13")),
-                                EnumVariant(reference = EventDefinition, enabled = From("0.8.22"))
+                                EnumVariant(reference = EventDefinition, enabled = From("0.8.22")),
+                                EnumVariant(
+                                    reference = ConstantDefinition,
+                                    enabled = From("0.7.4")
+                                )
                             ]
                         )
                     ]
@@ -2142,12 +2142,12 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = StructDefinition),
                                 EnumVariant(reference = EnumDefinition),
                                 EnumVariant(reference = EventDefinition),
-                                EnumVariant(reference = StateVariableDefinition),
                                 EnumVariant(reference = ErrorDefinition, enabled = From("0.8.4")),
                                 EnumVariant(
                                     reference = UserDefinedValueTypeDefinition,
                                     enabled = From("0.8.8")
-                                )
+                                ),
+                                EnumVariant(reference = StateVariableDefinition)
                             ]
                         )
                     ]
@@ -2835,11 +2835,6 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Statement,
                             variants = [
-                                // Simple statements
-                                EnumVariant(reference = ExpressionStatement),
-                                EnumVariant(reference = VariableDeclarationStatement),
-                                EnumVariant(reference = TupleDeconstructionStatement),
-                                // Control statements
                                 EnumVariant(reference = IfStatement),
                                 EnumVariant(reference = ForStatement),
                                 EnumVariant(reference = WhileStatement),
@@ -2853,7 +2848,10 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = RevertStatement, enabled = From("0.8.4")),
                                 EnumVariant(reference = AssemblyStatement),
                                 EnumVariant(reference = Block),
-                                EnumVariant(reference = UncheckedBlock, enabled = From("0.8.0"))
+                                EnumVariant(reference = UncheckedBlock, enabled = From("0.8.0")),
+                                EnumVariant(reference = TupleDeconstructionStatement),
+                                EnumVariant(reference = VariableDeclarationStatement),
+                                EnumVariant(reference = ExpressionStatement)
                             ]
                         ),
                         Struct(
@@ -3028,9 +3026,9 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ForStatementInitialization,
                             variants = [
-                                EnumVariant(reference = ExpressionStatement),
-                                EnumVariant(reference = VariableDeclarationStatement),
                                 EnumVariant(reference = TupleDeconstructionStatement),
+                                EnumVariant(reference = VariableDeclarationStatement),
+                                EnumVariant(reference = ExpressionStatement),
                                 EnumVariant(reference = Semicolon)
                             ]
                         ),
@@ -4163,8 +4161,6 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(reference = YulBlock),
                                 EnumVariant(reference = YulFunctionDefinition),
-                                EnumVariant(reference = YulVariableDeclarationStatement),
-                                EnumVariant(reference = YulVariableAssignmentStatement),
                                 EnumVariant(
                                     reference = YulStackAssignmentStatement,
                                     enabled = Till("0.5.0")
@@ -4176,6 +4172,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulBreakStatement),
                                 EnumVariant(reference = YulContinueStatement),
                                 EnumVariant(reference = YulLabel, enabled = Till("0.5.0")),
+                                EnumVariant(reference = YulVariableDeclarationStatement),
+                                EnumVariant(reference = YulVariableAssignmentStatement),
                                 EnumVariant(reference = YulExpression)
                             ]
                         ),
@@ -4245,8 +4243,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulAssignmentOperator,
                             variants = [
-                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5")),
-                                EnumVariant(reference = ColonEqual)
+                                EnumVariant(reference = ColonEqual),
+                                EnumVariant(reference = YulColonAndEqual, enabled = Till("0.5.5"))
                             ]
                         ),
                         Struct(
@@ -4266,8 +4264,8 @@ codegen_language_macros::compile!(Language(
                             name = YulStackAssignmentOperator,
                             enabled = Till("0.5.0"),
                             variants = [
-                                EnumVariant(reference = YulEqualAndColon),
-                                EnumVariant(reference = EqualColon)
+                                EnumVariant(reference = EqualColon),
+                                EnumVariant(reference = YulEqualAndColon)
                             ]
                         ),
                         Struct(

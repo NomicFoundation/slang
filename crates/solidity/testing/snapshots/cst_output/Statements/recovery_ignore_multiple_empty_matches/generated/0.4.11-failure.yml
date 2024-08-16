@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 2 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:1:8]
        │
      1 │ for(int)
@@ -26,7 +26,7 @@ Tree:
       - (item꞉ Statement) ► (variant꞉ ForStatement): # "for(int)\n" (0..9)
           - (for_keyword꞉ ForKeyword): "for" # (0..3)
           - (open_paren꞉ OpenParen): "(" # (3..4)
-          - (initialization꞉ ForStatementInitialization) ► (variant꞉ ExpressionStatement) ► (expression꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (4..7)
+          - (initialization꞉ ForStatementInitialization) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (4..7)
           - (MISSING): "" # (7..7)
           - (close_paren꞉ CloseParen): ")" # (7..8)
           - (trailing_trivia꞉ EndOfLine): "\n" # (8..9)

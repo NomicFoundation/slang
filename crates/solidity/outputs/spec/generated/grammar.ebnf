@@ -22,11 +22,11 @@ SourceUnitMember = (* variant: *) PragmaDirective
                  | (* variant: *) StructDefinition (* Introduced in 0.6.0 *)
                  | (* variant: *) EnumDefinition (* Introduced in 0.6.0 *)
                  | (* variant: *) FunctionDefinition (* Introduced in 0.7.1 *)
-                 | (* variant: *) ConstantDefinition (* Introduced in 0.7.4 *)
                  | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
                  | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
                  | (* variant: *) UsingDirective (* Introduced in 0.8.13 *)
-                 | (* variant: *) EventDefinition; (* Introduced in 0.8.22 *)
+                 | (* variant: *) EventDefinition (* Introduced in 0.8.22 *)
+                 | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
 
 (* 1.3. Pragma Directives: *)
 
@@ -643,9 +643,9 @@ ContractMember = (* variant: *) UsingDirective
                | (* variant: *) StructDefinition
                | (* variant: *) EnumDefinition
                | (* variant: *) EventDefinition
-               | (* variant: *) StateVariableDefinition
                | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
-               | (* variant: *) UserDefinedValueTypeDefinition; (* Introduced in 0.8.8 *)
+               | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+               | (* variant: *) StateVariableDefinition;
 
 (* 2.2. Interfaces: *)
 
@@ -989,10 +989,7 @@ Block = (* open_brace: *) OPEN_BRACE
 
 Statements = (* item: *) Statement*;
 
-Statement = (* variant: *) ExpressionStatement
-          | (* variant: *) VariableDeclarationStatement
-          | (* variant: *) TupleDeconstructionStatement
-          | (* variant: *) IfStatement
+Statement = (* variant: *) IfStatement
           | (* variant: *) ForStatement
           | (* variant: *) WhileStatement
           | (* variant: *) DoWhileStatement
@@ -1005,7 +1002,10 @@ Statement = (* variant: *) ExpressionStatement
           | (* variant: *) RevertStatement (* Introduced in 0.8.4 *)
           | (* variant: *) AssemblyStatement
           | (* variant: *) Block
-          | (* variant: *) UncheckedBlock; (* Introduced in 0.8.0 *)
+          | (* variant: *) UncheckedBlock (* Introduced in 0.8.0 *)
+          | (* variant: *) TupleDeconstructionStatement
+          | (* variant: *) VariableDeclarationStatement
+          | (* variant: *) ExpressionStatement;
 
 (* Introduced in 0.8.0 *)
 UncheckedBlock = (* unchecked_keyword: *) UNCHECKED_KEYWORD
@@ -1085,9 +1085,9 @@ ForStatement = (* for_keyword: *) FOR_KEYWORD
                (* close_paren: *) CLOSE_PAREN
                (* body: *) Statement;
 
-ForStatementInitialization = (* variant: *) ExpressionStatement
+ForStatementInitialization = (* variant: *) TupleDeconstructionStatement
                            | (* variant: *) VariableDeclarationStatement
-                           | (* variant: *) TupleDeconstructionStatement
+                           | (* variant: *) ExpressionStatement
                            | (* variant: *) SEMICOLON;
 
 ForStatementCondition = (* variant: *) ExpressionStatement
@@ -1621,8 +1621,6 @@ YulStatements = (* item: *) YulStatement*;
 
 YulStatement = (* variant: *) YulBlock
              | (* variant: *) YulFunctionDefinition
-             | (* variant: *) YulVariableDeclarationStatement
-             | (* variant: *) YulVariableAssignmentStatement
              | (* variant: *) YulStackAssignmentStatement (* Deprecated in 0.5.0 *)
              | (* variant: *) YulIfStatement
              | (* variant: *) YulForStatement
@@ -1631,6 +1629,8 @@ YulStatement = (* variant: *) YulBlock
              | (* variant: *) YulBreakStatement
              | (* variant: *) YulContinueStatement
              | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
+             | (* variant: *) YulVariableDeclarationStatement
+             | (* variant: *) YulVariableAssignmentStatement
              | (* variant: *) YulExpression;
 
 YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
@@ -1661,8 +1661,8 @@ YulVariableAssignmentStatement = (* variables: *) YulPaths
                                  (* assignment: *) YulAssignmentOperator
                                  (* expression: *) YulExpression;
 
-YulAssignmentOperator = (* variant: *) YulColonAndEqual (* Deprecated in 0.5.5 *)
-                      | (* variant: *) COLON_EQUAL;
+YulAssignmentOperator = (* variant: *) COLON_EQUAL
+                      | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
 
 (* Deprecated in 0.5.5 *)
 YulColonAndEqual = (* colon: *) COLON
@@ -1673,8 +1673,8 @@ YulStackAssignmentStatement = (* assignment: *) YulStackAssignmentOperator
                               (* variable: *) YUL_IDENTIFIER;
 
 (* Deprecated in 0.5.0 *)
-YulStackAssignmentOperator = (* variant: *) YulEqualAndColon
-                           | (* variant: *) EQUAL_COLON;
+YulStackAssignmentOperator = (* variant: *) EQUAL_COLON
+                           | (* variant: *) YulEqualAndColon;
 
 (* Deprecated in 0.5.0 *)
 YulEqualAndColon = (* equal: *) EQUAL
