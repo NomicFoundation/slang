@@ -54,4 +54,4 @@ jobs:
       - name: "infra run solidity_testing_sanctuary"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra run solidity_testing_sanctuary run --release --bin solidity_testing_sanctuary -- --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.chain }} ${{ inputs.network }}"
+          runCmd: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.chain }} ${{ inputs.network }}"
