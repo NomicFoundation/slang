@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test_non_decl_init() public {
+   │              ─────────┬────────  
+   │                       ╰────────── def: 2
+ 3 │         int z;
+   │             ┬  
+   │             ╰── def: 3
+ 4 │         int w = 0;
+   │             ┬  
+   │             ╰── def: 4
+ 5 │         for (z = 10; z > 0; w += z) {
+   │              ┬       ┬      ┬    ┬  
+   │              ╰────────────────────── ref: 3
+   │                      │      │    │  
+   │                      ╰────────────── ref: 3
+   │                             │    │  
+   │                             ╰─────── ref: 4
+   │                                  │  
+   │                                  ╰── ref: 3
+ 6 │             z--;
+   │             ┬  
+   │             ╰── ref: 3
+───╯

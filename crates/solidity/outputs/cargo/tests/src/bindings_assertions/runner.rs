@@ -33,6 +33,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
     let mut bindings =
         bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
     let mut assertions = Assertions::new();
+    let mut skipped = 0;
 
     let parts = split_multi_file(contents);
 
@@ -50,7 +51,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
         }
 
         bindings.add_file(file_path, parse_output.create_tree_cursor());
-        collect_assertions_into(
+        skipped += collect_assertions_into(
             &mut assertions,
             parse_output.create_tree_cursor(),
             file_path,
@@ -63,7 +64,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
     match result {
         Ok(count) => {
             assert!(count > 0, "No assertions found with version {version}");
-            println!("Version {version}, {count} assertions OK");
+            println!("Version {version}, {count} assertions OK, {skipped} skipped");
         }
         Err(err) => {
             panic!("Failed bindings assertions in version {version}:\n{err}");

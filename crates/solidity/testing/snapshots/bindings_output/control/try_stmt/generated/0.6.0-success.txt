@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface DataFeed { function getData(address token) external returns (uint value); }
+    │           ────┬───            ───┬───         ──┬──                         ──┬──  
+    │               ╰──────────────────────────────────────────────────────────────────── def: 1
+    │                                  │              │                             │    
+    │                                  ╰───────────────────────────────────────────────── def: 2
+    │                                                 │                             │    
+    │                                                 ╰────────────────────────────────── def: 3
+    │                                                                               │    
+    │                                                                               ╰──── def: 4
+    │ 
+  3 │ contract FeedConsumer {
+    │          ──────┬─────  
+    │                ╰─────── def: 5
+  4 │     DataFeed feed;
+    │     ────┬─── ──┬─  
+    │         ╰────────── ref: 1
+    │                │   
+    │                ╰─── def: 6
+  5 │     uint errorCount;
+    │          ─────┬────  
+    │               ╰────── def: 7
+  6 │     uint lastValue;
+    │          ────┬────  
+    │              ╰────── def: 8
+  7 │     function rate(address token) public returns (uint value, bool success) {
+    │              ──┬─         ──┬──                       ──┬──       ───┬───  
+    │                ╰─────────────────────────────────────────────────────────── def: 9
+    │                             │                           │            │     
+    │                             ╰────────────────────────────────────────────── def: 10
+    │                                                         │            │     
+    │                                                         ╰────────────────── def: 11
+    │                                                                      │     
+    │                                                                      ╰───── def: 12
+  8 │         string memory last_reason;
+    │                       ─────┬─────  
+    │                            ╰─────── def: 13
+  9 │         try feed.getData(token) returns (uint v) {
+    │             ──┬─ ───┬─── ──┬──                ┬  
+    │               ╰────────────────────────────────── ref: 6
+    │                     │      │                  │  
+    │                     ╰──────────────────────────── ref: 2
+    │                            │                  │  
+    │                            ╰───────────────────── ref: 10
+    │                                               │  
+    │                                               ╰── def: 14
+ 10 │             lastValue = v;
+    │             ────┬────   ┬  
+    │                 ╰────────── ref: 8
+    │                         │  
+    │                         ╰── ref: 14
+ 11 │             return (v, true);
+    │                     ┬  
+    │                     ╰── ref: 14
+ 12 │         } catch Error(string memory reason) {
+    │                                     ───┬──  
+    │                                        ╰──── def: 15
+ 13 │             last_reason = reason;
+    │             ─────┬─────   ───┬──  
+    │                  ╰──────────────── ref: 13
+    │                              │    
+    │                              ╰──── ref: 15
+ 14 │             errorCount++;
+    │             ─────┬────  
+    │                  ╰────── ref: 7
+    │ 
+ 17 │             errorCount++;
+    │             ─────┬────  
+    │                  ╰────── ref: 7
+────╯

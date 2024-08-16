@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 2
+ 3 │         int x = 1;
+   │             ┬  
+   │             ╰── def: 3
+ 4 │         for (int i = 0;; i++) {
+   │                  ┬       ┬  
+   │                  ╰────────── def: 4
+   │                          │  
+   │                          ╰── ref: 4
+ 5 │             x = x * 2;
+   │             ┬   ┬  
+   │             ╰────── ref: 3
+   │                 │  
+   │                 ╰── ref: 3
+ 6 │             if (i > 10) break;
+   │                 ┬  
+   │                 ╰── ref: 4
+───╯
