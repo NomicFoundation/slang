@@ -32,78 +32,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge export -> @source_unit.defs
 }
 
-;; Definition entities that can appear at the source unit level
-;; We define them individually to get better variable names when debugging
-;; For all of the following:
-;; - lexical_scope is the node that connect upwards for binding resolution
-;; - def provides the definition entry for the entity (aka. the name)
-;; - members is for internal use and it's where the nested definitions are found
-
-@contract [ContractDefinition] {
-  node @contract.lexical_scope
-  node @contract.def
-  node @contract.members
-  node @contract.type_members
-
-  edge @contract.lexical_scope -> @contract.members
-  edge @contract.lexical_scope -> @contract.type_members
-}
-
-@interface [InterfaceDefinition] {
-  node @interface.lexical_scope
-  node @interface.def
-  node @interface.members
-  node @interface.type_members
-
-  edge @interface.lexical_scope -> @interface.members
-  edge @interface.lexical_scope -> @interface.type_members
-}
-
-@library [LibraryDefinition] {
-  node @library.lexical_scope
-  node @library.def
-  node @library.members
-
-  edge @library.lexical_scope -> @library.members
-}
-
-@struct [StructDefinition] {
-  node @struct.lexical_scope
-  node @struct.def
-  node @struct.members
-}
-
-@enum [EnumDefinition] {
-  node @enum.lexical_scope
-  node @enum.def
-  node @enum.members
-}
-
-@function [FunctionDefinition] {
-  node @function.lexical_scope
-  node @function.def
-}
-
-@constant [ConstantDefinition] {
-  node @constant.lexical_scope
-  node @constant.def
-}
-
-@error [ErrorDefinition] {
-  node @error.lexical_scope
-  node @error.def
-}
-
-@value_type [UserDefinedValueTypeDefinition] {
-  node @value_type.lexical_scope
-  node @value_type.def
-}
-
-@event [EventDefinition] {
-  node @event.lexical_scope
-  node @event.def
-}
-
 ;; Top-level definitions...
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @unit_member (
@@ -120,19 +48,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     )]
 ]] {
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
-
-  ;; ... are available in the file's lexical scope
   edge @source_unit.lexical_scope -> @unit_member.def
-
-  ;; ... and are exported in the file
   edge @source_unit.defs -> @unit_member.def
 }
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Imports
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;; ... and imports
 @source_unit [SourceUnit [SourceUnitMembers
      [SourceUnitMember [ImportDirective
          [ImportClause @import (
@@ -147,6 +67,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
    edge @source_unit.lexical_scope -> @import.defs
 }
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Imports
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 [ImportClause [_ @path path: [StringLiteral]]] {
   ;; This node represents the imported file and the @path.import node is used by
   ;; all subsequent import rules
@@ -156,11 +81,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
       let resolved_path = (resolve-path FILE_PATH $1)
       attr (@path.import) push_symbol = resolved_path
     }
-    ;; TODO: if there are other cases possible, we should signal it as an error
   }
   edge @path.import -> ROOT_NODE
 }
-
 
 ;;; `import <URI>`
 @import [PathImport @path path: [StringLiteral] .] {
@@ -253,8 +176,18 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Named definitions (contracts, functions, libraries, etc.)
+;;; Contracts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@contract [ContractDefinition] {
+  node @contract.lexical_scope
+  node @contract.def
+  node @contract.members
+  node @contract.type_members
+
+  edge @contract.lexical_scope -> @contract.members
+  edge @contract.lexical_scope -> @contract.type_members
+}
 
 @contract [ContractDefinition @name name: [Identifier]] {
   node def
@@ -263,21 +196,64 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @contract.def -> def
 
+  ;; "instance" like access path
   node type_def
   attr (type_def) pop_symbol = "@typeof"
-
   node member
   attr (member) pop_symbol = "."
-
   edge def -> type_def
   edge type_def -> member
   edge member -> @contract.members
 
+  ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
   edge def -> type_member
-
   edge type_member -> @contract.type_members
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @contract.lexical_scope
+  edge @contract.type_members -> @member.def
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [FunctionDefinition]
+        | [StateVariableDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @contract.lexical_scope
+  edge @contract.lexical_scope -> @member.def
+}
+
+@contract [ContractDefinition members: [ContractMembers
+    item: [ContractMember @function variant: [FunctionDefinition]]
+]] {
+  ;; Contract functions are also accessible for an instance of the contract
+  edge @contract.members -> @function.def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@interface [InterfaceDefinition] {
+  node @interface.lexical_scope
+  node @interface.def
+  node @interface.members
+  node @interface.type_members
+
+  edge @interface.lexical_scope -> @interface.members
+  edge @interface.lexical_scope -> @interface.type_members
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
@@ -287,21 +263,52 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @interface.def -> def
 
+  ;; "instance" like access path
   node type_def
   attr (type_def) pop_symbol = "@typeof"
-
   node member
   attr (member) pop_symbol = "."
-
   edge def -> type_def
   edge type_def -> member
   edge member -> @interface.members
 
+  ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
   edge def -> type_member
-
   edge type_member -> @interface.type_members
+}
+
+@interface [InterfaceDefinition [InterfaceMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @interface.lexical_scope
+  edge @interface.type_members -> @member.def
+}
+
+@interface [InterfaceDefinition members: [InterfaceMembers
+    item: [ContractMember @function variant: [FunctionDefinition]]
+]] {
+  edge @function.lexical_scope -> @interface.lexical_scope
+  edge @interface.members -> @function.def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Libraries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@library [LibraryDefinition] {
+  node @library.lexical_scope
+  node @library.def
+  node @library.members
+
+  edge @library.lexical_scope -> @library.members
 }
 
 @library [LibraryDefinition @name name: [Identifier]] {
@@ -318,12 +325,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> @library.members
 }
 
-@function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @function
-
-  edge @function.def -> def
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @member (
+          [FunctionDefinition]
+        | [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @library.lexical_scope
+  edge @library.members -> @member.def
 }
 
 
@@ -340,11 +352,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @type_name.output
 }
 
-@id_path [IdentifierPath] {
-  node @id_path.left
-  node @id_path.right
-}
-
 @type_name [TypeName @id_path [IdentifierPath]] {
   ;; For an identifier path used as a type, the left-most element is the one
   ;; that connects to the parent lexical scope, because the name resolution
@@ -357,6 +364,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 ;; The identifier path constructs a path of nodes connected from right to left
+@id_path [IdentifierPath] {
+  node @id_path.left
+  node @id_path.right
+}
+
 [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
@@ -380,7 +392,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Functions
+;;; Function and parameter declarations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @param [Parameter] {
@@ -416,6 +428,19 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @params.defs -> @param.def
 }
 
+@function [FunctionDefinition] {
+  node @function.lexical_scope
+  node @function.def
+}
+
+@function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @function
+
+  edge @function.def -> def
+}
+
 @function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
   edge @params.lexical_scope -> @function.lexical_scope
 
@@ -434,37 +459,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
 }
 
-;; Connect function's lexical scope with the enclosing
-;; contract/interface/library, and make the function itself available in the
-;; enclosing contract/interface/library scope.
-;; NB. free-functions (ie. those defined at the file's level) are already
-;; covered above
-
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
-]] {
-  edge @function.lexical_scope -> @contract.lexical_scope
-  edge @contract.members -> @function.def
+;; Connect the function body's block lexical scope to the function
+@function [FunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @function.lexical_scope
 }
-
-@interface [InterfaceDefinition members: [InterfaceMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
-]] {
-  edge @function.lexical_scope -> @interface.lexical_scope
-  edge @interface.members -> @function.def
-}
-
-@library [LibraryDefinition members: [LibraryMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
-]] {
-  edge @function.lexical_scope -> @library.lexical_scope
-  edge @library.members -> @function.def
-}
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Blocks
+;;; Blocks and generic statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @block [Block] {
@@ -472,30 +474,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @block.defs
 }
 
-@stmt [Statement] {
-  node @stmt.lexical_scope
-  node @stmt.defs
-
-  if (version-matches ">= 0.5.0") {
-    ;; For Solidity >= 0.5.0, definitions are immediately available in the
-    ;; statement scope. For < 0.5.0 this is also true, but resolved through the
-    ;; enclosing block's lexical scope.
-    edge @stmt.lexical_scope -> @stmt.defs
-    attr (@stmt.lexical_scope -> @stmt.defs) precedence = 1
-  }
-}
-
 ;; The first statement in a block
 @block [Block [Statements . @stmt [Statement]]] {
   if (version-matches ">= 0.5.0") {
     edge @stmt.lexical_scope -> @block.lexical_scope
-  }
-}
-
-;; Two consecutive statements
-[Statements @left_stmt [Statement] . @right_stmt [Statement]] {
-  if (version-matches ">= 0.5.0") {
-    edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
   }
 }
 
@@ -514,6 +496,26 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   }
 }
 
+;; Two consecutive statements
+[Statements @left_stmt [Statement] . @right_stmt [Statement]] {
+  if (version-matches ">= 0.5.0") {
+    edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
+  }
+}
+
+@stmt [Statement] {
+  node @stmt.lexical_scope
+  node @stmt.defs
+
+  if (version-matches ">= 0.5.0") {
+    ;; For Solidity >= 0.5.0, definitions are immediately available in the
+    ;; statement scope. For < 0.5.0 this is also true, but resolved through the
+    ;; enclosing block's lexical scope.
+    edge @stmt.lexical_scope -> @stmt.defs
+    attr (@stmt.lexical_scope -> @stmt.defs) precedence = 1
+  }
+}
+
 ;; Statements of type block
 @stmt [Statement @block variant: [Block]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
@@ -524,33 +526,40 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   }
 }
 
-;; Connect the function body's block lexical scope to the function
-@function [FunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @function.lexical_scope
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Expressions & declaration statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; In the general case for statements the structure is [Statement [StmtVariant]]
-;; and we will define the scoped nodes .lexical_scope and (possibly) .defs in
-;; the Statement CST node.
+;; In general for statements the structure is [Statement [StmtVariant]] and we
+;; will define the scoped nodes .lexical_scope and (possibly) .defs in the
+;; Statement CST node, skipping scoped nodes in the variant of the statement.
 ;;
-;; For expression statements, variable and tuple declarations we defined
-;; separately from the enclosing statement to be able to use them in for
+;; For expression statements, variable and tuple declarations we define them
+;; separately from the enclosing statement to be able to use them in `for`
 ;; initialization and condition clauses directly. Also, because we intend to
 ;; reuse them, all of them must have both a .lexical_scope and .defs scoped
-;; nodes.
+;; nodes (even though .defs doesn't make sense for ExpressionStatement)
+
+@stmt [Statement @expr_stmt [ExpressionStatement]] {
+  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+}
 
 @expr_stmt [ExpressionStatement] {
   node @expr_stmt.lexical_scope
   node @expr_stmt.defs
 }
 
-@stmt [Statement @expr_stmt [ExpressionStatement]] {
-  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+@expr_stmt [ExpressionStatement @expr [Expression]] {
+  edge @expr.lexical_scope -> @expr_stmt.lexical_scope
+}
+
+
+;;; Variable declaration statements
+
+@stmt [Statement @var_decl [VariableDeclarationStatement]] {
+  edge @var_decl.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @var_decl.defs
 }
 
 @var_decl [VariableDeclarationStatement] {
@@ -558,23 +567,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @var_decl.defs
 }
 
-@stmt [Statement @var_decl [VariableDeclarationStatement]] {
-  edge @var_decl.lexical_scope -> @stmt.lexical_scope
-  edge @stmt.defs -> @var_decl.defs
+@var_decl [VariableDeclarationStatement
+    value: [VariableDeclarationValue @expr [Expression]]
+] {
+  edge @expr.lexical_scope -> @var_decl.lexical_scope
 }
-
-@tuple_decon [TupleDeconstructionStatement] {
-  node @tuple_decon.lexical_scope
-  node @tuple_decon.defs
-}
-
-@stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
-  edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
-  edge @stmt.defs -> @tuple_decon.defs
-}
-
-
-;;; Variable declaration and tuple deconstruction statements introduce new definitionns
 
 @var_decl [VariableDeclarationStatement
     [VariableDeclarationType @var_type [TypeName]]
@@ -592,6 +589,25 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge def -> typeof
   edge typeof -> @var_type.output
+}
+
+
+;;; Tuple deconstruction statements
+
+@stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
+  edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @tuple_decon.defs
+}
+
+@tuple_decon [TupleDeconstructionStatement] {
+  node @tuple_decon.lexical_scope
+  node @tuple_decon.defs
+}
+
+@tuple_decon [TupleDeconstructionStatement
+    @expr expression: [Expression]
+] {
+  edge @expr.lexical_scope -> @tuple_decon.lexical_scope
 }
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
@@ -637,6 +653,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 ;; If conditionals
 
+@stmt [Statement [IfStatement @condition condition: [Expression]]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
+}
+
 @stmt [Statement [IfStatement @body body: [Statement]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
   if (version-matches "< 0.5.0") {
@@ -652,17 +672,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 ;; For loops
-
-@stmt [Statement [ForStatement @body body: [Statement]]] {
-  node @stmt.init_defs
-
-  edge @body.lexical_scope -> @stmt.lexical_scope
-  edge @body.lexical_scope -> @stmt.init_defs
-  if (version-matches "< 0.5.0") {
-    edge @stmt.defs -> @body.defs
-    edge @stmt.defs -> @stmt.init_defs
-  }
-}
 
 @stmt [Statement [ForStatement
     initialization: [ForStatementInitialization
@@ -682,7 +691,27 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @cond_stmt.lexical_scope -> @stmt.init_defs
 }
 
+@stmt [Statement [ForStatement @iter_expr iterator: [Expression]]] {
+  edge @iter_expr.lexical_scope -> @stmt.lexical_scope
+  edge @iter_expr.lexical_scope -> @stmt.init_defs
+}
+
+@stmt [Statement [ForStatement @body body: [Statement]]] {
+  node @stmt.init_defs
+
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.init_defs
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+    edge @stmt.defs -> @stmt.init_defs
+  }
+}
+
 ;; While loops
+
+@stmt [Statement [WhileStatement @condition condition: [Expression]]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
+}
 
 @stmt [Statement [WhileStatement @body body: [Statement]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
@@ -700,10 +729,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   }
 }
 
-;; Emit statements
-
-@stmt [Statement [EmitStatement @event_ident [IdentifierPath]]] {
-  edge @event_ident.left -> @stmt.lexical_scope
+@stmt [Statement [DoWhileStatement @condition condition: [Expression]]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
 }
 
 
@@ -712,6 +739,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Try-catch statements
+
+@stmt [Statement [TryStatement @expr expression: [Expression]]] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
+}
 
 @stmt [Statement [TryStatement @body body: [Block]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
@@ -748,11 +779,31 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @error_ident.left -> @stmt.lexical_scope
 }
 
+@stmt [Statement [RevertStatement @args [ArgumentsDeclaration]]] {
+  edge @args.lexical_scope -> @stmt.lexical_scope
+}
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Other statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; Return
+@stmt [Statement [ReturnStatement @expr [Expression]]] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Emit
+@stmt [Statement [EmitStatement
+    @event_ident [IdentifierPath]
+    @args [ArgumentsDeclaration]
+]] {
+  edge @event_ident.left -> @stmt.lexical_scope
+  edge @args.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Unchecked
 @stmt [Statement [UncheckedBlock @block block: [Block]]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
 }
@@ -785,20 +836,22 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge typeof -> @type_name.output
 }
 
-;; NB. Even though the grammar allows it, state variables can only be declared
-;; inside contracts, and not interfaces or libraries. So, we will only bind
-;; contract state variables.
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @state_var variant: [StateVariableDefinition]]
-]] {
-  edge @state_var.lexical_scope -> @contract.lexical_scope
-  edge @contract.lexical_scope -> @state_var.def
+@state_var [StateVariableDefinition
+    value: [StateVariableDefinitionValue @expr [Expression]]
+] {
+  edge @expr.lexical_scope -> @state_var.lexical_scope
 }
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Enum definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@enum [EnumDefinition] {
+  node @enum.lexical_scope
+  node @enum.def
+  node @enum.members
+}
 
 @enum [EnumDefinition @name name: [Identifier]] {
   node def
@@ -824,32 +877,16 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @enum.members -> def
 }
 
-;; Make the enum available to the enclosing contract/interface/library.
-;; NB. top-level enums (ie. those defined at the file's level) are already
-;; covered above
-
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @enum variant: [EnumDefinition]]
-]] {
-  edge @contract.type_members -> @enum.def
-}
-
-@interface [InterfaceDefinition members: [InterfaceMembers
-    item: [ContractMember @enum variant: [EnumDefinition]]
-]] {
-  edge @interface.type_members -> @enum.def
-}
-
-@library [LibraryDefinition members: [LibraryMembers
-    item: [ContractMember @enum variant: [EnumDefinition]]
-]] {
-  edge @library.members -> @enum.def
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Structure definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@struct [StructDefinition] {
+  node @struct.lexical_scope
+  node @struct.def
+  node @struct.members
+}
 
 @struct [StructDefinition @name name: [Identifier]] {
   node def
@@ -892,35 +929,15 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge typeof -> @type_name.output
 }
 
-;; Make the struct available to the enclosing contract/interface/library.
-;; NB. top-level enums (ie. those defined at the file's level) are already
-;; covered above
-
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @struct variant: [StructDefinition]]
-]] {
-  edge @struct.lexical_scope -> @contract.lexical_scope
-  edge @contract.type_members -> @struct.def
-}
-
-@interface [InterfaceDefinition members: [InterfaceMembers
-    item: [ContractMember @struct variant: [StructDefinition]]
-]] {
-  edge @struct.lexical_scope -> @interface.lexical_scope
-  edge @interface.type_members -> @struct.def
-}
-
-@library [LibraryDefinition members: [LibraryMembers
-    item: [ContractMember @struct variant: [StructDefinition]]
-]] {
-  edge @struct.lexical_scope -> @library.lexical_scope
-  edge @library.members -> @struct.def
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Event definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@event [EventDefinition] {
+  node @event.lexical_scope
+  node @event.def
+}
 
 @event [EventDefinition @name name: [Identifier]] {
   node def
@@ -930,32 +947,15 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @event.def -> def
 }
 
-;; Make the event available to the enclosing contract/interface/library.
-;; NB. top-level events (ie. those defined at the file's level) are already
-;; covered above
-
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @event variant: [EventDefinition]]
-]] {
-  edge @contract.type_members -> @event.def
-}
-
-@interface [InterfaceDefinition members: [InterfaceMembers
-    item: [ContractMember @event variant: [EventDefinition]]
-]] {
-  edge @interface.type_members -> @event.def
-}
-
-@library [LibraryDefinition members: [LibraryMembers
-    item: [ContractMember @event variant: [EventDefinition]]
-]] {
-  edge @library.members -> @event.def
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Error definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@error [ErrorDefinition] {
+  node @error.lexical_scope
+  node @error.def
+}
 
 @error [ErrorDefinition @name name: [Identifier]] {
   node def
@@ -965,26 +965,19 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @error.def -> def
 }
 
-;; Make the error available to the enclosing contract/interface/library.
-;; NB. top-level errors (ie. those defined at the file's level) are already
-;; covered above
 
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @error variant: [ErrorDefinition]]
-]] {
-  edge @contract.type_members -> @error.def
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Other named definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@constant [ConstantDefinition] {
+  node @constant.lexical_scope
+  node @constant.def
 }
 
-@interface [InterfaceDefinition members: [InterfaceMembers
-    item: [ContractMember @error variant: [ErrorDefinition]]
-]] {
-  edge @interface.type_members -> @error.def
-}
-
-@library [LibraryDefinition members: [LibraryMembers
-    item: [ContractMember @error variant: [ErrorDefinition]]
-]] {
-  edge @library.members -> @error.def
+@value_type [UserDefinedValueTypeDefinition] {
+  node @value_type.lexical_scope
+  node @value_type.def
 }
 
 
@@ -1003,71 +996,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @child.lexical_scope -> @expr.lexical_scope
 }
 
-;; Expressions statements
-@expr_stmt [ExpressionStatement @expr [Expression]] {
-  edge @expr.lexical_scope -> @expr_stmt.lexical_scope
-}
-
-;; Expressions used for variable declarations
-@var_decl [VariableDeclarationStatement
-    value: [VariableDeclarationValue @expr [Expression]]
-] {
-  edge @expr.lexical_scope -> @var_decl.lexical_scope
-}
-
-;; Expressions used for tuple deconstruction statements
-@tuple_decon [TupleDeconstructionStatement
-    @expr expression: [Expression]
-] {
-  edge @expr.lexical_scope -> @tuple_decon.lexical_scope
-}
-
-;; Expressions as if conditions
-@stmt [Statement [IfStatement @condition condition: [Expression]]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Expressions in return statements
-@stmt [Statement [ReturnStatement @expr [Expression]]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Expressions in for iterations
-@stmt [Statement [ForStatement
-    @iter_expr iterator: [Expression]
-]] {
-  edge @iter_expr.lexical_scope -> @stmt.lexical_scope
-  edge @iter_expr.lexical_scope -> @stmt.init_defs
-}
-
-;; Expressions in while conditions
-@stmt [Statement [WhileStatement
-    @condition condition: [Expression]
-]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Expressions in do-while conditions
-@stmt [Statement [DoWhileStatement
-    @condition condition: [Expression]
-]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Expressions in try statements
-@stmt [Statement [TryStatement
-    @expr expression: [Expression]
-]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Expressions used for state variable declarations
-@state_var [StateVariableDefinition
-    value: [StateVariableDefinitionValue @expr [Expression]]
-] {
-  edge @expr.lexical_scope -> @state_var.lexical_scope
-}
-
 ;; Tuple expressions
 @tuple_expr [Expression [TupleExpression
     items: [TupleValues [TupleValue @expr [Expression]]]
@@ -1075,9 +1003,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.lexical_scope -> @tuple_expr.lexical_scope
 }
 
-
-;;; Identifier expressions
-
+;; Identifier expressions
 @expr [Expression @name variant: [Identifier]] {
   node ref
   attr (ref) node_reference = @name
@@ -1086,10 +1012,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.output -> ref
 }
 
-
-;;; Member access expressions
-
-;; TODO: implement variant for `.address` member
+;; Member access expressions
 @expr [Expression [MemberAccessExpression
     @operand operand: [Expression]
     @name member: [Identifier]
@@ -1106,7 +1029,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @expr.output -> ref
 }
 
-;; TODO: implement `.output` link for other expression variants
+;; Type expressions
+@type_expr [Expression [TypeExpression @type [TypeName]]] {
+  edge @type.type_ref -> @type_expr.lexical_scope
+}
 
 
 ;;; Function call expressions
@@ -1128,9 +1054,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   node ref
   attr (ref) node_reference = @name
-  ;; TODO: bind the named argument to the parameters definition of the function
-  ;; (is this possible given that function references are expressions?)
-  ;; Ditto for events emissions (where it should be possible for sure)
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
@@ -1142,24 +1065,5 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @funcall [Expression [FunctionCallExpression @args [ArgumentsDeclaration]]] {
   edge @args.lexical_scope -> @funcall.lexical_scope
 }
-
-;; Arguments to an event in an emit statement
-@stmt [Statement [EmitStatement @args [ArgumentsDeclaration]]] {
-  edge @args.lexical_scope -> @stmt.lexical_scope
-}
-
-;; Arguments to an error in a revert statement
-@stmt [Statement [RevertStatement @args [ArgumentsDeclaration]]] {
-  edge @args.lexical_scope -> @stmt.lexical_scope
-}
-
-
-;;; Type expressions
-
-@type_expr [Expression [TypeExpression @type [TypeName]]] {
-  edge @type.type_ref -> @type_expr.lexical_scope
-}
-
-
 
 "#####;
