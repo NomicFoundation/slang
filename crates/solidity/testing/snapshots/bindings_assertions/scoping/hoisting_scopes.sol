@@ -1,4 +1,3 @@
-// Before 0.5.0 Solidity hoists all variable definitions
 contract Foo {
   function bar() returns (int x) {
     //                        ^def:1

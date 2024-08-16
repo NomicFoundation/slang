@@ -25,15 +25,13 @@ contract Second {
         //     ^ref:5
     }
     function get_first_choice() public returns (First.Choice) {
-        // Cannot access a member function through the contract type
         return First.get_choice();
         //     ^ref:1
-        //           ^ref:!
+        //           ^ref:!  -- cannot access a member function through the contract type
     }
     function other_choice() public returns (First.Choice) {
-        // Cannot access a state variable in another contract
         return First.choice;
         //     ^ref:1
-        //           ^ref:!
+        //           ^ref:!  -- cannot access a state variable in another contract
     }
 }

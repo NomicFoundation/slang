@@ -21,6 +21,9 @@ pub enum AssertionError {
     #[error("Duplicate assertion definition {0}")]
     DuplicateDefinition(String),
 
+    #[error("No assertions found in line {0}")]
+    NoAssertionsFound(usize),
+
     #[error("Failed {failed} of {total} bindings assertions:\n{errors:#?}")]
     FailedAssertions {
         failed: usize,
@@ -122,7 +125,7 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 }
 
 /// Collects bindings assertions in comments in the parsed source code
-/// accessible through the given cursor. The definitionns take the following form:
+/// accessible through the given cursor. The definitions take the following form:
 ///
 ///   uint x;
 ///   //   ^def:1
@@ -149,12 +152,16 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
 ///   //  ^ref:2
 ///   //<ref:1
 ///
+/// All single line comments should contain an assertion. It is considered an
+/// error if they don't.
+///
 pub fn collect_assertions_into<'a>(
     assertions: &mut Assertions<'a>,
     mut cursor: Cursor,
     file: &'a str,
     version: &Version,
-) -> Result<(), AssertionError> {
+) -> Result<usize, AssertionError> {
+    let mut skipped = 0;
     loop {
         if cursor
             .node()
@@ -167,7 +174,13 @@ pub fn collect_assertions_into<'a>(
                 Some(Assertion::Reference(assertion)) => {
                     assertions.insert_reference_assertion(assertion);
                 }
-                None => (),
+                Some(Assertion::Skipped) => {
+                    skipped += 1;
+                }
+                None => {
+                    let line = cursor.text_offset().line + 1;
+                    return Err(AssertionError::NoAssertionsFound(line));
+                }
             }
         }
 
@@ -176,13 +189,14 @@ pub fn collect_assertions_into<'a>(
         }
     }
 
-    Ok(())
+    Ok(skipped)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 enum Assertion<'a> {
     Definition(DefinitionAssertion<'a>),
     Reference(ReferenceAssertion<'a>),
+    Skipped,
 }
 
 static ASSERTION_REGEX: Lazy<Regex> = Lazy::new(|| {
@@ -253,7 +267,7 @@ fn find_assertion_in_comment<'a>(
         // Assertion target may not be parseable with the current version
         if let Some(version_req) = version_req {
             if !version_req.matches(version) {
-                return Ok(None);
+                return Ok(Some(Assertion::Skipped));
             }
         }
         Err(AssertionError::InvalidAssertion(
