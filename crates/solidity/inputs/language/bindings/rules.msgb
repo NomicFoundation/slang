@@ -363,6 +363,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @type_name.output -> @mapping.output
 }
 
+@type_name [TypeName @array [ArrayTypeName]] {
+  edge @array.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @array.output
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Mappings
@@ -394,6 +399,39 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge typeof_input -> index
   edge index -> typeof_output
   edge typeof_output -> @value_type.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Arrays types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@array [ArrayTypeName] {
+  node @array.lexical_scope
+  node @array.output
+}
+
+@array [ArrayTypeName @type_name [TypeName]] {
+  edge @type_name.type_ref -> @array.lexical_scope
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+
+  node index
+  attr (index) pop_symbol = "[]"
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+
+  ;; The array type exposes the `[]` operator that returns the value type
+  edge @array.output -> typeof_input
+  edge typeof_input -> index
+  edge index -> typeof_output
+  edge typeof_output -> @type_name.output
+}
+
+@array [ArrayTypeName @size index: [Expression]] {
+  edge @size.lexical_scope -> @array.lexical_scope
 }
 
 
