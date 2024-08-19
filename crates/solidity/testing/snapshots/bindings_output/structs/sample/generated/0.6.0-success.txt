@@ -33,7 +33,7 @@ References and definitions:
     │                 ╰──── def: 9
  12 │         mapping(uint => Funder) funders;
     │                         ───┬──  ───┬───  
-    │                            ╰───────────── unresolved
+    │                            ╰───────────── ref: 1
     │                                    │     
     │                                    ╰───── def: 10
     │ 
@@ -42,7 +42,7 @@ References and definitions:
     │                ╰─────── def: 11
  16 │     mapping(uint => Campaign) campaigns;
     │                     ────┬───  ────┬────  
-    │                         ╰──────────────── unresolved
+    │                         ╰──────────────── ref: 5
     │                                   │      
     │                                   ╰────── def: 12
     │ 

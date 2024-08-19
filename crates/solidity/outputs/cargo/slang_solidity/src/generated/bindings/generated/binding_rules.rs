@@ -363,6 +363,49 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @type_name.output -> @id_path.right
 }
 
+@type_name [TypeName @mapping [MappingType]] {
+  edge @mapping.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @mapping.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mappings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@mapping [MappingType] {
+  node @mapping.lexical_scope
+  node @mapping.output
+}
+
+@mapping [MappingType [MappingKey [MappingKeyType @key_ident [IdentifierPath]]]] {
+  edge @key_ident.left -> @mapping.lexical_scope
+}
+
+@mapping [MappingType [MappingValue @value_type [TypeName]]] {
+  edge @value_type.type_ref -> @mapping.lexical_scope
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+
+  node index
+  attr (index) pop_symbol = "[]"
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+
+  ;; The mapping's type exposes the `[]` operator that returns the value type
+  edge @mapping.output -> typeof_input
+  edge typeof_input -> index
+  edge index -> typeof_output
+  edge typeof_output -> @value_type.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Identifier Paths (aka. references to custom types)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; The identifier path constructs a path of nodes connected from right to left
 @id_path [IdentifierPath] {
   node @id_path.left
@@ -1042,6 +1085,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> @operand.output
 
   edge @expr.output -> ref
+}
+
+;; Index access expressions
+@expr [Expression [IndexAccessExpression
+    @operand operand: [Expression]
+]] {
+  node index
+  attr (index) push_symbol = "[]"
+
+  edge @expr.output -> index
+  edge index -> @operand.output
 }
 
 ;; Type expressions

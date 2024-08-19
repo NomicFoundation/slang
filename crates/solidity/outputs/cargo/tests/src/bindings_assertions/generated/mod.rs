@@ -8,5 +8,6 @@ mod expressions;
 mod functions;
 mod imports;
 mod interfaces;
+mod mappings;
 mod scoping;
 mod variables;

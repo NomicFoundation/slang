@@ -7,5 +7,6 @@ mod expressions;
 mod imports;
 mod interfaces;
 mod libraries;
+mod mappings;
 mod structs;
 mod variables;
