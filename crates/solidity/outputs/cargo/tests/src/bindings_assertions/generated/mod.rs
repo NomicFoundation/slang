@@ -1,5 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+mod constants;
 mod contracts;
 mod control;
 mod enums;

@@ -975,6 +975,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @constant.def
 }
 
+@constant [ConstantDefinition
+    @type_name type_name: [TypeName]
+    @name name: [Identifier]
+    @value value: [Expression]
+] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @constant
+
+  edge @constant.def -> def
+
+  edge @value.lexical_scope -> @constant.lexical_scope
+  edge @type_name.type_ref -> @constant.lexical_scope
+}
+
 @value_type [UserDefinedValueTypeDefinition] {
   node @value_type.lexical_scope
   node @value_type.def
