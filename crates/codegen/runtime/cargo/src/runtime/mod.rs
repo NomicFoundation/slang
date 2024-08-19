@@ -8,14 +8,14 @@ pub mod parse_output;
 pub mod query;
 pub mod text_index;
 
-#[cfg(feature = "__private_wit_bindings")]
-pub mod wit;
+#[cfg(feature = "__experimental_bindings_api")]
+pub mod bindings;
+
+#[cfg(feature = "__private_cli_execution")]
+pub mod cli;
 
 #[cfg(feature = "__private_napi_interfaces")]
 pub mod napi_interface;
 
-#[cfg(feature = "cli")]
-pub mod cli;
-
-#[cfg(feature = "__experimental_bindings_api")]
-pub mod bindings;
+#[cfg(feature = "__private_wit_bindings")]
+pub mod wit;

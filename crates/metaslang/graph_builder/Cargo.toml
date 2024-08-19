@@ -27,12 +27,12 @@ regex = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 smallvec = { workspace = true }
-string-interner = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
 env_logger = { workspace = true }
 indoc = { workspace = true }
+string-interner = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 
