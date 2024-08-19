@@ -218,6 +218,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
@@ -285,6 +286,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @interface.lexical_scope
@@ -332,6 +334,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
@@ -1071,9 +1074,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
-@value_type [UserDefinedValueTypeDefinition] {
-  node @value_type.lexical_scope
-  node @value_type.def
+@user_type [UserDefinedValueTypeDefinition] {
+  node @user_type.lexical_scope
+  node @user_type.def
+}
+
+@user_type [UserDefinedValueTypeDefinition @name [Identifier]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @user_type
+
+  edge @user_type.def -> def
 }
 
 

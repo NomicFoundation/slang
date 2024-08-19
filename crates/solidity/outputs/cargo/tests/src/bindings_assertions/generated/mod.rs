@@ -11,4 +11,5 @@ mod imports;
 mod interfaces;
 mod mappings;
 mod scoping;
+mod user_types;
 mod variables;
