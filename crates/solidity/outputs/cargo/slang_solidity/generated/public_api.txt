@@ -1,0 +1,1239 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+pub mod slang_solidity
+pub mod slang_solidity::bindings
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> slang_solidity::bindings::Bindings
+pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
+pub type slang_solidity::bindings::Bindings = metaslang_bindings::Bindings<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Definition<'a> = metaslang_bindings::Definition<'a, slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Reference<'a> = metaslang_bindings::Reference<'a, slang_solidity::cst::KindTypes>
+pub mod slang_solidity::cli
+pub fn slang_solidity::cli::execute()
+pub mod slang_solidity::cst
+pub enum slang_solidity::cst::KindTypes
+impl core::clone::Clone for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::clone(&self) -> slang_solidity::cst::KindTypes
+impl core::cmp::Eq for slang_solidity::cst::KindTypes
+impl core::cmp::PartialEq for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::eq(&self, other: &slang_solidity::cst::KindTypes) -> bool
+impl core::fmt::Debug for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::cst::KindTypes
+impl metaslang_cst::KindTypes for slang_solidity::cst::KindTypes
+pub type slang_solidity::cst::KindTypes::EdgeLabel = slang_solidity::kinds::EdgeLabel
+pub type slang_solidity::cst::KindTypes::NonterminalKind = slang_solidity::kinds::NonterminalKind
+pub type slang_solidity::cst::KindTypes::TerminalKind = slang_solidity::kinds::TerminalKind
+impl serde::ser::Serialize for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl core::marker::Freeze for slang_solidity::cst::KindTypes
+impl core::marker::Send for slang_solidity::cst::KindTypes
+impl core::marker::Sync for slang_solidity::cst::KindTypes
+impl core::marker::Unpin for slang_solidity::cst::KindTypes
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::cst::KindTypes
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::cst::KindTypes
+impl<Q, K> equivalent::Equivalent<K> for slang_solidity::cst::KindTypes where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::cst::KindTypes::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::cst::KindTypes where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::cst::KindTypes::equivalent(&self, key: &K) -> bool
+impl<T, U> core::convert::Into<U> for slang_solidity::cst::KindTypes where U: core::convert::From<T>
+pub fn slang_solidity::cst::KindTypes::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::cst::KindTypes where U: core::convert::Into<T>
+pub type slang_solidity::cst::KindTypes::Error = core::convert::Infallible
+pub fn slang_solidity::cst::KindTypes::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::cst::KindTypes where U: core::convert::TryFrom<T>
+pub type slang_solidity::cst::KindTypes::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::cst::KindTypes::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for slang_solidity::cst::KindTypes where T: core::clone::Clone
+pub type slang_solidity::cst::KindTypes::Owned = T
+pub fn slang_solidity::cst::KindTypes::clone_into(&self, target: &mut T)
+pub fn slang_solidity::cst::KindTypes::to_owned(&self) -> T
+impl<T> core::any::Any for slang_solidity::cst::KindTypes where T: 'static + core::marker::Sized
+pub fn slang_solidity::cst::KindTypes::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::cst::KindTypes where T: core::marker::Sized
+pub fn slang_solidity::cst::KindTypes::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::cst::KindTypes where T: core::marker::Sized
+pub fn slang_solidity::cst::KindTypes::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::cst::KindTypes
+impl<T> tap::conv::TryConv for slang_solidity::cst::KindTypes
+impl<T> tap::pipe::Pipe for slang_solidity::cst::KindTypes where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::cst::KindTypes
+impl<T> wyz::fmt::FmtForward for slang_solidity::cst::KindTypes
+pub type slang_solidity::cst::Edge = metaslang_cst::cst::Edge<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::Node = metaslang_cst::cst::Node<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::NonterminalNode = metaslang_cst::cst::NonterminalNode<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::TerminalNode = metaslang_cst::cst::TerminalNode<slang_solidity::cst::KindTypes>
+pub mod slang_solidity::cursor
+pub type slang_solidity::cursor::Cursor = metaslang_cst::cursor::Cursor<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cursor::CursorWithEdges = metaslang_cst::cursor::CursorWithEdges<slang_solidity::cst::KindTypes>
+pub mod slang_solidity::diagnostic
+#[repr(u8)] pub enum slang_solidity::diagnostic::Severity
+pub slang_solidity::diagnostic::Severity::Error = 1
+pub slang_solidity::diagnostic::Severity::Hint = 4
+pub slang_solidity::diagnostic::Severity::Information = 3
+pub slang_solidity::diagnostic::Severity::Warning = 2
+impl core::marker::Freeze for slang_solidity::diagnostic::Severity
+impl core::marker::Send for slang_solidity::diagnostic::Severity
+impl core::marker::Sync for slang_solidity::diagnostic::Severity
+impl core::marker::Unpin for slang_solidity::diagnostic::Severity
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::diagnostic::Severity
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::diagnostic::Severity
+impl<T, U> core::convert::Into<U> for slang_solidity::diagnostic::Severity where U: core::convert::From<T>
+pub fn slang_solidity::diagnostic::Severity::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::diagnostic::Severity where U: core::convert::Into<T>
+pub type slang_solidity::diagnostic::Severity::Error = core::convert::Infallible
+pub fn slang_solidity::diagnostic::Severity::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::diagnostic::Severity where U: core::convert::TryFrom<T>
+pub type slang_solidity::diagnostic::Severity::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::diagnostic::Severity::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for slang_solidity::diagnostic::Severity where T: 'static + core::marker::Sized
+pub fn slang_solidity::diagnostic::Severity::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::diagnostic::Severity where T: core::marker::Sized
+pub fn slang_solidity::diagnostic::Severity::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::diagnostic::Severity where T: core::marker::Sized
+pub fn slang_solidity::diagnostic::Severity::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::diagnostic::Severity
+pub fn slang_solidity::diagnostic::Severity::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::diagnostic::Severity
+impl<T> tap::conv::TryConv for slang_solidity::diagnostic::Severity
+impl<T> tap::pipe::Pipe for slang_solidity::diagnostic::Severity where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::diagnostic::Severity
+impl<T> wyz::fmt::FmtForward for slang_solidity::diagnostic::Severity
+pub trait slang_solidity::diagnostic::Diagnostic
+pub fn slang_solidity::diagnostic::Diagnostic::message(&self) -> alloc::string::String
+pub fn slang_solidity::diagnostic::Diagnostic::severity(&self) -> slang_solidity::diagnostic::Severity
+pub fn slang_solidity::diagnostic::Diagnostic::text_range(&self) -> metaslang_cst::text_index::TextRange
+impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parse_error::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
+pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
+pub fn slang_solidity::diagnostic::render<D: slang_solidity::diagnostic::Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> alloc::string::String
+pub mod slang_solidity::kinds
+#[repr(u8)] pub enum slang_solidity::kinds::EdgeLabel
+pub slang_solidity::kinds::EdgeLabel::AbicoderKeyword
+pub slang_solidity::kinds::EdgeLabel::AbstractKeyword
+pub slang_solidity::kinds::EdgeLabel::AddressKeyword
+pub slang_solidity::kinds::EdgeLabel::Alias
+pub slang_solidity::kinds::EdgeLabel::AnonymousKeyword
+pub slang_solidity::kinds::EdgeLabel::Arguments
+pub slang_solidity::kinds::EdgeLabel::AsKeyword
+pub slang_solidity::kinds::EdgeLabel::AssemblyKeyword
+pub slang_solidity::kinds::EdgeLabel::Assignment
+pub slang_solidity::kinds::EdgeLabel::Asterisk
+pub slang_solidity::kinds::EdgeLabel::Attributes
+pub slang_solidity::kinds::EdgeLabel::Block
+pub slang_solidity::kinds::EdgeLabel::Body
+pub slang_solidity::kinds::EdgeLabel::BreakKeyword
+pub slang_solidity::kinds::EdgeLabel::CaseKeyword
+pub slang_solidity::kinds::EdgeLabel::Cases
+pub slang_solidity::kinds::EdgeLabel::CatchClauses
+pub slang_solidity::kinds::EdgeLabel::CatchKeyword
+pub slang_solidity::kinds::EdgeLabel::Clause
+pub slang_solidity::kinds::EdgeLabel::CloseBrace
+pub slang_solidity::kinds::EdgeLabel::CloseBracket
+pub slang_solidity::kinds::EdgeLabel::CloseParen
+pub slang_solidity::kinds::EdgeLabel::Colon
+pub slang_solidity::kinds::EdgeLabel::Condition
+pub slang_solidity::kinds::EdgeLabel::ConstantKeyword
+pub slang_solidity::kinds::EdgeLabel::ConstructorKeyword
+pub slang_solidity::kinds::EdgeLabel::ContinueKeyword
+pub slang_solidity::kinds::EdgeLabel::ContractKeyword
+pub slang_solidity::kinds::EdgeLabel::DefaultKeyword
+pub slang_solidity::kinds::EdgeLabel::DoKeyword
+pub slang_solidity::kinds::EdgeLabel::Elements
+pub slang_solidity::kinds::EdgeLabel::ElseBranch
+pub slang_solidity::kinds::EdgeLabel::ElseKeyword
+pub slang_solidity::kinds::EdgeLabel::EmitKeyword
+pub slang_solidity::kinds::EdgeLabel::End
+pub slang_solidity::kinds::EdgeLabel::EnumKeyword
+pub slang_solidity::kinds::EdgeLabel::Equal
+pub slang_solidity::kinds::EdgeLabel::EqualGreaterThan
+pub slang_solidity::kinds::EdgeLabel::Error
+pub slang_solidity::kinds::EdgeLabel::ErrorKeyword
+pub slang_solidity::kinds::EdgeLabel::Event
+pub slang_solidity::kinds::EdgeLabel::EventKeyword
+pub slang_solidity::kinds::EdgeLabel::ExperimentalKeyword
+pub slang_solidity::kinds::EdgeLabel::Expression
+pub slang_solidity::kinds::EdgeLabel::FallbackKeyword
+pub slang_solidity::kinds::EdgeLabel::FalseExpression
+pub slang_solidity::kinds::EdgeLabel::Feature
+pub slang_solidity::kinds::EdgeLabel::Flags
+pub slang_solidity::kinds::EdgeLabel::ForKeyword
+pub slang_solidity::kinds::EdgeLabel::FromKeyword
+pub slang_solidity::kinds::EdgeLabel::FunctionKeyword
+pub slang_solidity::kinds::EdgeLabel::GlobalKeyword
+pub slang_solidity::kinds::EdgeLabel::Identifier
+pub slang_solidity::kinds::EdgeLabel::IfKeyword
+pub slang_solidity::kinds::EdgeLabel::ImportKeyword
+pub slang_solidity::kinds::EdgeLabel::Index
+pub slang_solidity::kinds::EdgeLabel::IndexedKeyword
+pub slang_solidity::kinds::EdgeLabel::Inheritance
+pub slang_solidity::kinds::EdgeLabel::Initialization
+pub slang_solidity::kinds::EdgeLabel::InterfaceKeyword
+pub slang_solidity::kinds::EdgeLabel::IsKeyword
+pub slang_solidity::kinds::EdgeLabel::Item
+pub slang_solidity::kinds::EdgeLabel::Items
+pub slang_solidity::kinds::EdgeLabel::Iterator
+pub slang_solidity::kinds::EdgeLabel::KeyType
+pub slang_solidity::kinds::EdgeLabel::Label
+pub slang_solidity::kinds::EdgeLabel::LeadingTrivia
+pub slang_solidity::kinds::EdgeLabel::LeaveKeyword
+pub slang_solidity::kinds::EdgeLabel::LeftOperand
+pub slang_solidity::kinds::EdgeLabel::LetKeyword
+pub slang_solidity::kinds::EdgeLabel::LibraryKeyword
+pub slang_solidity::kinds::EdgeLabel::Literal
+pub slang_solidity::kinds::EdgeLabel::MappingKeyword
+pub slang_solidity::kinds::EdgeLabel::Member
+pub slang_solidity::kinds::EdgeLabel::Members
+pub slang_solidity::kinds::EdgeLabel::MinusGreaterThan
+pub slang_solidity::kinds::EdgeLabel::ModifierKeyword
+pub slang_solidity::kinds::EdgeLabel::Name
+pub slang_solidity::kinds::EdgeLabel::NewKeyword
+pub slang_solidity::kinds::EdgeLabel::OpenBrace
+pub slang_solidity::kinds::EdgeLabel::OpenBracket
+pub slang_solidity::kinds::EdgeLabel::OpenParen
+pub slang_solidity::kinds::EdgeLabel::Operand
+pub slang_solidity::kinds::EdgeLabel::Operator
+pub slang_solidity::kinds::EdgeLabel::Options
+pub slang_solidity::kinds::EdgeLabel::Overridden
+pub slang_solidity::kinds::EdgeLabel::OverrideKeyword
+pub slang_solidity::kinds::EdgeLabel::Parameters
+pub slang_solidity::kinds::EdgeLabel::Path
+pub slang_solidity::kinds::EdgeLabel::Paths
+pub slang_solidity::kinds::EdgeLabel::PayableKeyword
+pub slang_solidity::kinds::EdgeLabel::Period
+pub slang_solidity::kinds::EdgeLabel::Pragma
+pub slang_solidity::kinds::EdgeLabel::PragmaKeyword
+pub slang_solidity::kinds::EdgeLabel::QuestionMark
+pub slang_solidity::kinds::EdgeLabel::ReceiveKeyword
+pub slang_solidity::kinds::EdgeLabel::ReturnKeyword
+pub slang_solidity::kinds::EdgeLabel::Returns
+pub slang_solidity::kinds::EdgeLabel::ReturnsKeyword
+pub slang_solidity::kinds::EdgeLabel::RevertKeyword
+pub slang_solidity::kinds::EdgeLabel::RightOperand
+pub slang_solidity::kinds::EdgeLabel::Semicolon
+pub slang_solidity::kinds::EdgeLabel::Separator
+pub slang_solidity::kinds::EdgeLabel::Sets
+pub slang_solidity::kinds::EdgeLabel::SolidityKeyword
+pub slang_solidity::kinds::EdgeLabel::Start
+pub slang_solidity::kinds::EdgeLabel::Statements
+pub slang_solidity::kinds::EdgeLabel::StorageLocation
+pub slang_solidity::kinds::EdgeLabel::StructKeyword
+pub slang_solidity::kinds::EdgeLabel::SwitchKeyword
+pub slang_solidity::kinds::EdgeLabel::Symbols
+pub slang_solidity::kinds::EdgeLabel::Target
+pub slang_solidity::kinds::EdgeLabel::ThrowKeyword
+pub slang_solidity::kinds::EdgeLabel::TrailingTrivia
+pub slang_solidity::kinds::EdgeLabel::TrueExpression
+pub slang_solidity::kinds::EdgeLabel::TryKeyword
+pub slang_solidity::kinds::EdgeLabel::TypeKeyword
+pub slang_solidity::kinds::EdgeLabel::TypeName
+pub slang_solidity::kinds::EdgeLabel::Types
+pub slang_solidity::kinds::EdgeLabel::UncheckedKeyword
+pub slang_solidity::kinds::EdgeLabel::Unit
+pub slang_solidity::kinds::EdgeLabel::UsingKeyword
+pub slang_solidity::kinds::EdgeLabel::Value
+pub slang_solidity::kinds::EdgeLabel::ValueType
+pub slang_solidity::kinds::EdgeLabel::VarKeyword
+pub slang_solidity::kinds::EdgeLabel::Variable
+pub slang_solidity::kinds::EdgeLabel::VariableType
+pub slang_solidity::kinds::EdgeLabel::Variables
+pub slang_solidity::kinds::EdgeLabel::Variant
+pub slang_solidity::kinds::EdgeLabel::Version
+pub slang_solidity::kinds::EdgeLabel::WhileKeyword
+impl core::clone::Clone for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::clone(&self) -> slang_solidity::kinds::EdgeLabel
+impl core::cmp::Eq for slang_solidity::kinds::EdgeLabel
+impl core::cmp::Ord for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::cmp(&self, other: &slang_solidity::kinds::EdgeLabel) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::eq(&self, other: &slang_solidity::kinds::EdgeLabel) -> bool
+impl core::cmp::PartialOrd for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::partial_cmp(&self, other: &slang_solidity::kinds::EdgeLabel) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::AsRef<str> for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::as_ref(&self) -> &str
+impl core::convert::From<slang_solidity::kinds::EdgeLabel> for &'static str
+pub fn &'static str::from(x: slang_solidity::kinds::EdgeLabel) -> &'static str
+impl core::convert::TryFrom<&str> for slang_solidity::kinds::EdgeLabel
+pub type slang_solidity::kinds::EdgeLabel::Error = strum::ParseError
+pub fn slang_solidity::kinds::EdgeLabel::try_from(s: &str) -> core::result::Result<slang_solidity::kinds::EdgeLabel, <Self as core::convert::TryFrom<&str>>::Error>
+impl core::fmt::Debug for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
+impl core::hash::Hash for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity::kinds::EdgeLabel
+impl core::marker::StructuralPartialEq for slang_solidity::kinds::EdgeLabel
+impl core::str::traits::FromStr for slang_solidity::kinds::EdgeLabel
+pub type slang_solidity::kinds::EdgeLabel::Err = strum::ParseError
+pub fn slang_solidity::kinds::EdgeLabel::from_str(s: &str) -> core::result::Result<slang_solidity::kinds::EdgeLabel, <Self as core::str::traits::FromStr>::Err>
+impl metaslang_cst::EdgeLabel for slang_solidity::kinds::EdgeLabel
+impl serde::ser::Serialize for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::EdgeLabel> for &'static str
+pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::EdgeLabel) -> &'static str
+impl core::marker::Freeze for slang_solidity::kinds::EdgeLabel
+impl core::marker::Send for slang_solidity::kinds::EdgeLabel
+impl core::marker::Sync for slang_solidity::kinds::EdgeLabel
+impl core::marker::Unpin for slang_solidity::kinds::EdgeLabel
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::EdgeLabel
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::EdgeLabel
+impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::compare(&self, key: &K) -> core::cmp::Ordering
+impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::equivalent(&self, key: &K) -> bool
+impl<T, U> core::convert::Into<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::From<T>
+pub fn slang_solidity::kinds::EdgeLabel::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::Into<T>
+pub type slang_solidity::kinds::EdgeLabel::Error = core::convert::Infallible
+pub fn slang_solidity::kinds::EdgeLabel::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::TryFrom<T>
+pub type slang_solidity::kinds::EdgeLabel::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::kinds::EdgeLabel::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::EdgeLabel where T: core::clone::Clone
+pub type slang_solidity::kinds::EdgeLabel::Owned = T
+pub fn slang_solidity::kinds::EdgeLabel::clone_into(&self, target: &mut T)
+pub fn slang_solidity::kinds::EdgeLabel::to_owned(&self) -> T
+impl<T> alloc::string::ToString for slang_solidity::kinds::EdgeLabel where T: core::fmt::Display + core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::to_string(&self) -> alloc::string::String
+impl<T> ariadne::draw::Fmt for slang_solidity::kinds::EdgeLabel where T: core::fmt::Display
+impl<T> core::any::Any for slang_solidity::kinds::EdgeLabel where T: 'static + core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
+pub fn slang_solidity::kinds::EdgeLabel::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::kinds::EdgeLabel
+pub fn slang_solidity::kinds::EdgeLabel::from(t: T) -> T
+impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::EdgeLabel where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
+pub fn slang_solidity::kinds::EdgeLabel::as_static_str(&self) -> &'static str
+pub fn slang_solidity::kinds::EdgeLabel::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
+impl<T> tap::conv::Conv for slang_solidity::kinds::EdgeLabel
+impl<T> tap::conv::TryConv for slang_solidity::kinds::EdgeLabel
+impl<T> tap::pipe::Pipe for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::kinds::EdgeLabel
+impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::EdgeLabel
+#[repr(u8)] pub enum slang_solidity::kinds::NonterminalKind
+pub slang_solidity::kinds::NonterminalKind::ABICoderPragma
+pub slang_solidity::kinds::NonterminalKind::AdditiveExpression
+pub slang_solidity::kinds::NonterminalKind::AddressType
+pub slang_solidity::kinds::NonterminalKind::AndExpression
+pub slang_solidity::kinds::NonterminalKind::ArgumentsDeclaration
+pub slang_solidity::kinds::NonterminalKind::ArrayExpression
+pub slang_solidity::kinds::NonterminalKind::ArrayTypeName
+pub slang_solidity::kinds::NonterminalKind::ArrayValues
+pub slang_solidity::kinds::NonterminalKind::AssemblyFlags
+pub slang_solidity::kinds::NonterminalKind::AssemblyFlagsDeclaration
+pub slang_solidity::kinds::NonterminalKind::AssemblyStatement
+pub slang_solidity::kinds::NonterminalKind::AssignmentExpression
+pub slang_solidity::kinds::NonterminalKind::BitwiseAndExpression
+pub slang_solidity::kinds::NonterminalKind::BitwiseOrExpression
+pub slang_solidity::kinds::NonterminalKind::BitwiseXorExpression
+pub slang_solidity::kinds::NonterminalKind::Block
+pub slang_solidity::kinds::NonterminalKind::BreakStatement
+pub slang_solidity::kinds::NonterminalKind::CallOptions
+pub slang_solidity::kinds::NonterminalKind::CallOptionsExpression
+pub slang_solidity::kinds::NonterminalKind::CatchClause
+pub slang_solidity::kinds::NonterminalKind::CatchClauseError
+pub slang_solidity::kinds::NonterminalKind::CatchClauses
+pub slang_solidity::kinds::NonterminalKind::ComparisonExpression
+pub slang_solidity::kinds::NonterminalKind::ConditionalExpression
+pub slang_solidity::kinds::NonterminalKind::ConstantDefinition
+pub slang_solidity::kinds::NonterminalKind::ConstructorAttribute
+pub slang_solidity::kinds::NonterminalKind::ConstructorAttributes
+pub slang_solidity::kinds::NonterminalKind::ConstructorDefinition
+pub slang_solidity::kinds::NonterminalKind::ContinueStatement
+pub slang_solidity::kinds::NonterminalKind::ContractDefinition
+pub slang_solidity::kinds::NonterminalKind::ContractMember
+pub slang_solidity::kinds::NonterminalKind::ContractMembers
+pub slang_solidity::kinds::NonterminalKind::DecimalNumberExpression
+pub slang_solidity::kinds::NonterminalKind::DoWhileStatement
+pub slang_solidity::kinds::NonterminalKind::ElementaryType
+pub slang_solidity::kinds::NonterminalKind::ElseBranch
+pub slang_solidity::kinds::NonterminalKind::EmitStatement
+pub slang_solidity::kinds::NonterminalKind::EnumDefinition
+pub slang_solidity::kinds::NonterminalKind::EnumMembers
+pub slang_solidity::kinds::NonterminalKind::EqualityExpression
+pub slang_solidity::kinds::NonterminalKind::ErrorDefinition
+pub slang_solidity::kinds::NonterminalKind::ErrorParameter
+pub slang_solidity::kinds::NonterminalKind::ErrorParameters
+pub slang_solidity::kinds::NonterminalKind::ErrorParametersDeclaration
+pub slang_solidity::kinds::NonterminalKind::EventDefinition
+pub slang_solidity::kinds::NonterminalKind::EventParameter
+pub slang_solidity::kinds::NonterminalKind::EventParameters
+pub slang_solidity::kinds::NonterminalKind::EventParametersDeclaration
+pub slang_solidity::kinds::NonterminalKind::ExperimentalFeature
+pub slang_solidity::kinds::NonterminalKind::ExperimentalPragma
+pub slang_solidity::kinds::NonterminalKind::ExponentiationExpression
+pub slang_solidity::kinds::NonterminalKind::Expression
+pub slang_solidity::kinds::NonterminalKind::ExpressionStatement
+pub slang_solidity::kinds::NonterminalKind::FallbackFunctionAttribute
+pub slang_solidity::kinds::NonterminalKind::FallbackFunctionAttributes
+pub slang_solidity::kinds::NonterminalKind::FallbackFunctionDefinition
+pub slang_solidity::kinds::NonterminalKind::ForStatement
+pub slang_solidity::kinds::NonterminalKind::ForStatementCondition
+pub slang_solidity::kinds::NonterminalKind::ForStatementInitialization
+pub slang_solidity::kinds::NonterminalKind::FunctionAttribute
+pub slang_solidity::kinds::NonterminalKind::FunctionAttributes
+pub slang_solidity::kinds::NonterminalKind::FunctionBody
+pub slang_solidity::kinds::NonterminalKind::FunctionCallExpression
+pub slang_solidity::kinds::NonterminalKind::FunctionDefinition
+pub slang_solidity::kinds::NonterminalKind::FunctionName
+pub slang_solidity::kinds::NonterminalKind::FunctionType
+pub slang_solidity::kinds::NonterminalKind::FunctionTypeAttribute
+pub slang_solidity::kinds::NonterminalKind::FunctionTypeAttributes
+pub slang_solidity::kinds::NonterminalKind::HexNumberExpression
+pub slang_solidity::kinds::NonterminalKind::HexStringLiteral
+pub slang_solidity::kinds::NonterminalKind::HexStringLiterals
+pub slang_solidity::kinds::NonterminalKind::IdentifierPath
+pub slang_solidity::kinds::NonterminalKind::IfStatement
+pub slang_solidity::kinds::NonterminalKind::ImportAlias
+pub slang_solidity::kinds::NonterminalKind::ImportClause
+pub slang_solidity::kinds::NonterminalKind::ImportDeconstruction
+pub slang_solidity::kinds::NonterminalKind::ImportDeconstructionSymbol
+pub slang_solidity::kinds::NonterminalKind::ImportDeconstructionSymbols
+pub slang_solidity::kinds::NonterminalKind::ImportDirective
+pub slang_solidity::kinds::NonterminalKind::IndexAccessEnd
+pub slang_solidity::kinds::NonterminalKind::IndexAccessExpression
+pub slang_solidity::kinds::NonterminalKind::InheritanceSpecifier
+pub slang_solidity::kinds::NonterminalKind::InheritanceType
+pub slang_solidity::kinds::NonterminalKind::InheritanceTypes
+pub slang_solidity::kinds::NonterminalKind::InterfaceDefinition
+pub slang_solidity::kinds::NonterminalKind::InterfaceMembers
+pub slang_solidity::kinds::NonterminalKind::LibraryDefinition
+pub slang_solidity::kinds::NonterminalKind::LibraryMembers
+pub slang_solidity::kinds::NonterminalKind::MappingKey
+pub slang_solidity::kinds::NonterminalKind::MappingKeyType
+pub slang_solidity::kinds::NonterminalKind::MappingType
+pub slang_solidity::kinds::NonterminalKind::MappingValue
+pub slang_solidity::kinds::NonterminalKind::MemberAccessExpression
+pub slang_solidity::kinds::NonterminalKind::ModifierAttribute
+pub slang_solidity::kinds::NonterminalKind::ModifierAttributes
+pub slang_solidity::kinds::NonterminalKind::ModifierDefinition
+pub slang_solidity::kinds::NonterminalKind::ModifierInvocation
+pub slang_solidity::kinds::NonterminalKind::MultiplicativeExpression
+pub slang_solidity::kinds::NonterminalKind::NamedArgument
+pub slang_solidity::kinds::NonterminalKind::NamedArgumentGroup
+pub slang_solidity::kinds::NonterminalKind::NamedArguments
+pub slang_solidity::kinds::NonterminalKind::NamedArgumentsDeclaration
+pub slang_solidity::kinds::NonterminalKind::NamedImport
+pub slang_solidity::kinds::NonterminalKind::NewExpression
+pub slang_solidity::kinds::NonterminalKind::NumberUnit
+pub slang_solidity::kinds::NonterminalKind::OrExpression
+pub slang_solidity::kinds::NonterminalKind::OverridePaths
+pub slang_solidity::kinds::NonterminalKind::OverridePathsDeclaration
+pub slang_solidity::kinds::NonterminalKind::OverrideSpecifier
+pub slang_solidity::kinds::NonterminalKind::Parameter
+pub slang_solidity::kinds::NonterminalKind::Parameters
+pub slang_solidity::kinds::NonterminalKind::ParametersDeclaration
+pub slang_solidity::kinds::NonterminalKind::PathImport
+pub slang_solidity::kinds::NonterminalKind::PositionalArguments
+pub slang_solidity::kinds::NonterminalKind::PositionalArgumentsDeclaration
+pub slang_solidity::kinds::NonterminalKind::PostfixExpression
+pub slang_solidity::kinds::NonterminalKind::Pragma
+pub slang_solidity::kinds::NonterminalKind::PragmaDirective
+pub slang_solidity::kinds::NonterminalKind::PrefixExpression
+pub slang_solidity::kinds::NonterminalKind::ReceiveFunctionAttribute
+pub slang_solidity::kinds::NonterminalKind::ReceiveFunctionAttributes
+pub slang_solidity::kinds::NonterminalKind::ReceiveFunctionDefinition
+pub slang_solidity::kinds::NonterminalKind::ReturnStatement
+pub slang_solidity::kinds::NonterminalKind::ReturnsDeclaration
+pub slang_solidity::kinds::NonterminalKind::RevertStatement
+pub slang_solidity::kinds::NonterminalKind::ShiftExpression
+pub slang_solidity::kinds::NonterminalKind::SourceUnit
+pub slang_solidity::kinds::NonterminalKind::SourceUnitMember
+pub slang_solidity::kinds::NonterminalKind::SourceUnitMembers
+pub slang_solidity::kinds::NonterminalKind::StateVariableAttribute
+pub slang_solidity::kinds::NonterminalKind::StateVariableAttributes
+pub slang_solidity::kinds::NonterminalKind::StateVariableDefinition
+pub slang_solidity::kinds::NonterminalKind::StateVariableDefinitionValue
+pub slang_solidity::kinds::NonterminalKind::Statement
+pub slang_solidity::kinds::NonterminalKind::Statements
+pub slang_solidity::kinds::NonterminalKind::StorageLocation
+pub slang_solidity::kinds::NonterminalKind::StringExpression
+pub slang_solidity::kinds::NonterminalKind::StringLiteral
+pub slang_solidity::kinds::NonterminalKind::StringLiterals
+pub slang_solidity::kinds::NonterminalKind::StructDefinition
+pub slang_solidity::kinds::NonterminalKind::StructMember
+pub slang_solidity::kinds::NonterminalKind::StructMembers
+pub slang_solidity::kinds::NonterminalKind::ThrowStatement
+pub slang_solidity::kinds::NonterminalKind::TryStatement
+pub slang_solidity::kinds::NonterminalKind::TupleDeconstructionElement
+pub slang_solidity::kinds::NonterminalKind::TupleDeconstructionElements
+pub slang_solidity::kinds::NonterminalKind::TupleDeconstructionStatement
+pub slang_solidity::kinds::NonterminalKind::TupleExpression
+pub slang_solidity::kinds::NonterminalKind::TupleMember
+pub slang_solidity::kinds::NonterminalKind::TupleValue
+pub slang_solidity::kinds::NonterminalKind::TupleValues
+pub slang_solidity::kinds::NonterminalKind::TypeExpression
+pub slang_solidity::kinds::NonterminalKind::TypeName
+pub slang_solidity::kinds::NonterminalKind::TypedTupleMember
+pub slang_solidity::kinds::NonterminalKind::UncheckedBlock
+pub slang_solidity::kinds::NonterminalKind::UnicodeStringLiteral
+pub slang_solidity::kinds::NonterminalKind::UnicodeStringLiterals
+pub slang_solidity::kinds::NonterminalKind::UnnamedFunctionAttribute
+pub slang_solidity::kinds::NonterminalKind::UnnamedFunctionAttributes
+pub slang_solidity::kinds::NonterminalKind::UnnamedFunctionDefinition
+pub slang_solidity::kinds::NonterminalKind::UntypedTupleMember
+pub slang_solidity::kinds::NonterminalKind::UserDefinedValueTypeDefinition
+pub slang_solidity::kinds::NonterminalKind::UsingAlias
+pub slang_solidity::kinds::NonterminalKind::UsingClause
+pub slang_solidity::kinds::NonterminalKind::UsingDeconstruction
+pub slang_solidity::kinds::NonterminalKind::UsingDeconstructionSymbol
+pub slang_solidity::kinds::NonterminalKind::UsingDeconstructionSymbols
+pub slang_solidity::kinds::NonterminalKind::UsingDirective
+pub slang_solidity::kinds::NonterminalKind::UsingOperator
+pub slang_solidity::kinds::NonterminalKind::UsingTarget
+pub slang_solidity::kinds::NonterminalKind::VariableDeclarationStatement
+pub slang_solidity::kinds::NonterminalKind::VariableDeclarationType
+pub slang_solidity::kinds::NonterminalKind::VariableDeclarationValue
+pub slang_solidity::kinds::NonterminalKind::VersionComparator
+pub slang_solidity::kinds::NonterminalKind::VersionExpression
+pub slang_solidity::kinds::NonterminalKind::VersionExpressionSet
+pub slang_solidity::kinds::NonterminalKind::VersionExpressionSets
+pub slang_solidity::kinds::NonterminalKind::VersionPragma
+pub slang_solidity::kinds::NonterminalKind::VersionRange
+pub slang_solidity::kinds::NonterminalKind::VersionSpecifiers
+pub slang_solidity::kinds::NonterminalKind::WhileStatement
+pub slang_solidity::kinds::NonterminalKind::YulArguments
+pub slang_solidity::kinds::NonterminalKind::YulAssignmentOperator
+pub slang_solidity::kinds::NonterminalKind::YulBlock
+pub slang_solidity::kinds::NonterminalKind::YulBreakStatement
+pub slang_solidity::kinds::NonterminalKind::YulBuiltInFunction
+pub slang_solidity::kinds::NonterminalKind::YulColonAndEqual
+pub slang_solidity::kinds::NonterminalKind::YulContinueStatement
+pub slang_solidity::kinds::NonterminalKind::YulDefaultCase
+pub slang_solidity::kinds::NonterminalKind::YulEqualAndColon
+pub slang_solidity::kinds::NonterminalKind::YulExpression
+pub slang_solidity::kinds::NonterminalKind::YulForStatement
+pub slang_solidity::kinds::NonterminalKind::YulFunctionCallExpression
+pub slang_solidity::kinds::NonterminalKind::YulFunctionDefinition
+pub slang_solidity::kinds::NonterminalKind::YulIfStatement
+pub slang_solidity::kinds::NonterminalKind::YulLabel
+pub slang_solidity::kinds::NonterminalKind::YulLeaveStatement
+pub slang_solidity::kinds::NonterminalKind::YulLiteral
+pub slang_solidity::kinds::NonterminalKind::YulParameters
+pub slang_solidity::kinds::NonterminalKind::YulParametersDeclaration
+pub slang_solidity::kinds::NonterminalKind::YulPath
+pub slang_solidity::kinds::NonterminalKind::YulPathComponent
+pub slang_solidity::kinds::NonterminalKind::YulPaths
+pub slang_solidity::kinds::NonterminalKind::YulReturnsDeclaration
+pub slang_solidity::kinds::NonterminalKind::YulStackAssignmentOperator
+pub slang_solidity::kinds::NonterminalKind::YulStackAssignmentStatement
+pub slang_solidity::kinds::NonterminalKind::YulStatement
+pub slang_solidity::kinds::NonterminalKind::YulStatements
+pub slang_solidity::kinds::NonterminalKind::YulSwitchCase
+pub slang_solidity::kinds::NonterminalKind::YulSwitchCases
+pub slang_solidity::kinds::NonterminalKind::YulSwitchStatement
+pub slang_solidity::kinds::NonterminalKind::YulValueCase
+pub slang_solidity::kinds::NonterminalKind::YulVariableAssignmentStatement
+pub slang_solidity::kinds::NonterminalKind::YulVariableDeclarationStatement
+pub slang_solidity::kinds::NonterminalKind::YulVariableDeclarationValue
+pub slang_solidity::kinds::NonterminalKind::YulVariableNames
+impl core::clone::Clone for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::clone(&self) -> slang_solidity::kinds::NonterminalKind
+impl core::cmp::Eq for slang_solidity::kinds::NonterminalKind
+impl core::cmp::Ord for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::cmp(&self, other: &slang_solidity::kinds::NonterminalKind) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::eq(&self, other: &slang_solidity::kinds::NonterminalKind) -> bool
+impl core::cmp::PartialOrd for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::partial_cmp(&self, other: &slang_solidity::kinds::NonterminalKind) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::AsRef<str> for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::as_ref(&self) -> &str
+impl core::convert::From<slang_solidity::kinds::NonterminalKind> for &'static str
+pub fn &'static str::from(x: slang_solidity::kinds::NonterminalKind) -> &'static str
+impl core::convert::TryFrom<&str> for slang_solidity::kinds::NonterminalKind
+pub type slang_solidity::kinds::NonterminalKind::Error = strum::ParseError
+pub fn slang_solidity::kinds::NonterminalKind::try_from(s: &str) -> core::result::Result<slang_solidity::kinds::NonterminalKind, <Self as core::convert::TryFrom<&str>>::Error>
+impl core::fmt::Debug for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
+impl core::hash::Hash for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity::kinds::NonterminalKind
+impl core::marker::StructuralPartialEq for slang_solidity::kinds::NonterminalKind
+impl core::str::traits::FromStr for slang_solidity::kinds::NonterminalKind
+pub type slang_solidity::kinds::NonterminalKind::Err = strum::ParseError
+pub fn slang_solidity::kinds::NonterminalKind::from_str(s: &str) -> core::result::Result<slang_solidity::kinds::NonterminalKind, <Self as core::str::traits::FromStr>::Err>
+impl metaslang_cst::NonterminalKind for slang_solidity::kinds::NonterminalKind
+impl serde::ser::Serialize for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::NonterminalKind> for &'static str
+pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::NonterminalKind) -> &'static str
+impl core::marker::Freeze for slang_solidity::kinds::NonterminalKind
+impl core::marker::Send for slang_solidity::kinds::NonterminalKind
+impl core::marker::Sync for slang_solidity::kinds::NonterminalKind
+impl core::marker::Unpin for slang_solidity::kinds::NonterminalKind
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::NonterminalKind
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::NonterminalKind
+impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::compare(&self, key: &K) -> core::cmp::Ordering
+impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::equivalent(&self, key: &K) -> bool
+impl<T, U> core::convert::Into<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::From<T>
+pub fn slang_solidity::kinds::NonterminalKind::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::Into<T>
+pub type slang_solidity::kinds::NonterminalKind::Error = core::convert::Infallible
+pub fn slang_solidity::kinds::NonterminalKind::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::TryFrom<T>
+pub type slang_solidity::kinds::NonterminalKind::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::kinds::NonterminalKind::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::NonterminalKind where T: core::clone::Clone
+pub type slang_solidity::kinds::NonterminalKind::Owned = T
+pub fn slang_solidity::kinds::NonterminalKind::clone_into(&self, target: &mut T)
+pub fn slang_solidity::kinds::NonterminalKind::to_owned(&self) -> T
+impl<T> alloc::string::ToString for slang_solidity::kinds::NonterminalKind where T: core::fmt::Display + core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::to_string(&self) -> alloc::string::String
+impl<T> ariadne::draw::Fmt for slang_solidity::kinds::NonterminalKind where T: core::fmt::Display
+impl<T> core::any::Any for slang_solidity::kinds::NonterminalKind where T: 'static + core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
+pub fn slang_solidity::kinds::NonterminalKind::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::kinds::NonterminalKind
+pub fn slang_solidity::kinds::NonterminalKind::from(t: T) -> T
+impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::NonterminalKind where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
+pub fn slang_solidity::kinds::NonterminalKind::as_static_str(&self) -> &'static str
+pub fn slang_solidity::kinds::NonterminalKind::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
+impl<T> tap::conv::Conv for slang_solidity::kinds::NonterminalKind
+impl<T> tap::conv::TryConv for slang_solidity::kinds::NonterminalKind
+impl<T> tap::pipe::Pipe for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::kinds::NonterminalKind
+impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::NonterminalKind
+#[repr(u16)] pub enum slang_solidity::kinds::TerminalKind
+pub slang_solidity::kinds::TerminalKind::AbicoderKeyword
+pub slang_solidity::kinds::TerminalKind::AbstractKeyword
+pub slang_solidity::kinds::TerminalKind::AddressKeyword
+pub slang_solidity::kinds::TerminalKind::AfterKeyword
+pub slang_solidity::kinds::TerminalKind::AliasKeyword
+pub slang_solidity::kinds::TerminalKind::Ampersand
+pub slang_solidity::kinds::TerminalKind::AmpersandAmpersand
+pub slang_solidity::kinds::TerminalKind::AmpersandEqual
+pub slang_solidity::kinds::TerminalKind::AnonymousKeyword
+pub slang_solidity::kinds::TerminalKind::ApplyKeyword
+pub slang_solidity::kinds::TerminalKind::AsKeyword
+pub slang_solidity::kinds::TerminalKind::AssemblyKeyword
+pub slang_solidity::kinds::TerminalKind::Asterisk
+pub slang_solidity::kinds::TerminalKind::AsteriskAsterisk
+pub slang_solidity::kinds::TerminalKind::AsteriskEqual
+pub slang_solidity::kinds::TerminalKind::AutoKeyword
+pub slang_solidity::kinds::TerminalKind::Bang
+pub slang_solidity::kinds::TerminalKind::BangEqual
+pub slang_solidity::kinds::TerminalKind::Bar
+pub slang_solidity::kinds::TerminalKind::BarBar
+pub slang_solidity::kinds::TerminalKind::BarEqual
+pub slang_solidity::kinds::TerminalKind::BoolKeyword
+pub slang_solidity::kinds::TerminalKind::BreakKeyword
+pub slang_solidity::kinds::TerminalKind::ByteKeyword
+pub slang_solidity::kinds::TerminalKind::BytesKeyword
+pub slang_solidity::kinds::TerminalKind::CallDataKeyword
+pub slang_solidity::kinds::TerminalKind::Caret
+pub slang_solidity::kinds::TerminalKind::CaretEqual
+pub slang_solidity::kinds::TerminalKind::CaseKeyword
+pub slang_solidity::kinds::TerminalKind::CatchKeyword
+pub slang_solidity::kinds::TerminalKind::CloseBrace
+pub slang_solidity::kinds::TerminalKind::CloseBracket
+pub slang_solidity::kinds::TerminalKind::CloseParen
+pub slang_solidity::kinds::TerminalKind::Colon
+pub slang_solidity::kinds::TerminalKind::ColonEqual
+pub slang_solidity::kinds::TerminalKind::Comma
+pub slang_solidity::kinds::TerminalKind::ConstantKeyword
+pub slang_solidity::kinds::TerminalKind::ConstructorKeyword
+pub slang_solidity::kinds::TerminalKind::ContinueKeyword
+pub slang_solidity::kinds::TerminalKind::ContractKeyword
+pub slang_solidity::kinds::TerminalKind::CopyOfKeyword
+pub slang_solidity::kinds::TerminalKind::DaysKeyword
+pub slang_solidity::kinds::TerminalKind::DecimalLiteral
+pub slang_solidity::kinds::TerminalKind::DefaultKeyword
+pub slang_solidity::kinds::TerminalKind::DefineKeyword
+pub slang_solidity::kinds::TerminalKind::DeleteKeyword
+pub slang_solidity::kinds::TerminalKind::DoKeyword
+pub slang_solidity::kinds::TerminalKind::DoubleQuotedHexStringLiteral
+pub slang_solidity::kinds::TerminalKind::DoubleQuotedStringLiteral
+pub slang_solidity::kinds::TerminalKind::DoubleQuotedUnicodeStringLiteral
+pub slang_solidity::kinds::TerminalKind::DoubleQuotedVersionLiteral
+pub slang_solidity::kinds::TerminalKind::ElseKeyword
+pub slang_solidity::kinds::TerminalKind::EmitKeyword
+pub slang_solidity::kinds::TerminalKind::EndOfLine
+pub slang_solidity::kinds::TerminalKind::EnumKeyword
+pub slang_solidity::kinds::TerminalKind::Equal
+pub slang_solidity::kinds::TerminalKind::EqualColon
+pub slang_solidity::kinds::TerminalKind::EqualEqual
+pub slang_solidity::kinds::TerminalKind::EqualGreaterThan
+pub slang_solidity::kinds::TerminalKind::ErrorKeyword
+pub slang_solidity::kinds::TerminalKind::EtherKeyword
+pub slang_solidity::kinds::TerminalKind::EventKeyword
+pub slang_solidity::kinds::TerminalKind::ExperimentalKeyword
+pub slang_solidity::kinds::TerminalKind::ExternalKeyword
+pub slang_solidity::kinds::TerminalKind::FallbackKeyword
+pub slang_solidity::kinds::TerminalKind::FalseKeyword
+pub slang_solidity::kinds::TerminalKind::FinalKeyword
+pub slang_solidity::kinds::TerminalKind::FinneyKeyword
+pub slang_solidity::kinds::TerminalKind::FixedKeyword
+pub slang_solidity::kinds::TerminalKind::ForKeyword
+pub slang_solidity::kinds::TerminalKind::FromKeyword
+pub slang_solidity::kinds::TerminalKind::FunctionKeyword
+pub slang_solidity::kinds::TerminalKind::GlobalKeyword
+pub slang_solidity::kinds::TerminalKind::GreaterThan
+pub slang_solidity::kinds::TerminalKind::GreaterThanEqual
+pub slang_solidity::kinds::TerminalKind::GreaterThanGreaterThan
+pub slang_solidity::kinds::TerminalKind::GreaterThanGreaterThanEqual
+pub slang_solidity::kinds::TerminalKind::GreaterThanGreaterThanGreaterThan
+pub slang_solidity::kinds::TerminalKind::GreaterThanGreaterThanGreaterThanEqual
+pub slang_solidity::kinds::TerminalKind::GweiKeyword
+pub slang_solidity::kinds::TerminalKind::HexKeyword
+pub slang_solidity::kinds::TerminalKind::HexLiteral
+pub slang_solidity::kinds::TerminalKind::HoursKeyword
+pub slang_solidity::kinds::TerminalKind::Identifier
+pub slang_solidity::kinds::TerminalKind::IfKeyword
+pub slang_solidity::kinds::TerminalKind::ImmutableKeyword
+pub slang_solidity::kinds::TerminalKind::ImplementsKeyword
+pub slang_solidity::kinds::TerminalKind::ImportKeyword
+pub slang_solidity::kinds::TerminalKind::InKeyword
+pub slang_solidity::kinds::TerminalKind::IndexedKeyword
+pub slang_solidity::kinds::TerminalKind::InlineKeyword
+pub slang_solidity::kinds::TerminalKind::IntKeyword
+pub slang_solidity::kinds::TerminalKind::InterfaceKeyword
+pub slang_solidity::kinds::TerminalKind::InternalKeyword
+pub slang_solidity::kinds::TerminalKind::IsKeyword
+pub slang_solidity::kinds::TerminalKind::LessThan
+pub slang_solidity::kinds::TerminalKind::LessThanEqual
+pub slang_solidity::kinds::TerminalKind::LessThanLessThan
+pub slang_solidity::kinds::TerminalKind::LessThanLessThanEqual
+pub slang_solidity::kinds::TerminalKind::LetKeyword
+pub slang_solidity::kinds::TerminalKind::LibraryKeyword
+pub slang_solidity::kinds::TerminalKind::MISSING
+pub slang_solidity::kinds::TerminalKind::MacroKeyword
+pub slang_solidity::kinds::TerminalKind::MappingKeyword
+pub slang_solidity::kinds::TerminalKind::MatchKeyword
+pub slang_solidity::kinds::TerminalKind::MemoryKeyword
+pub slang_solidity::kinds::TerminalKind::Minus
+pub slang_solidity::kinds::TerminalKind::MinusEqual
+pub slang_solidity::kinds::TerminalKind::MinusGreaterThan
+pub slang_solidity::kinds::TerminalKind::MinusMinus
+pub slang_solidity::kinds::TerminalKind::MinutesKeyword
+pub slang_solidity::kinds::TerminalKind::ModifierKeyword
+pub slang_solidity::kinds::TerminalKind::MultiLineComment
+pub slang_solidity::kinds::TerminalKind::MultiLineNatSpecComment
+pub slang_solidity::kinds::TerminalKind::MutableKeyword
+pub slang_solidity::kinds::TerminalKind::NewKeyword
+pub slang_solidity::kinds::TerminalKind::NullKeyword
+pub slang_solidity::kinds::TerminalKind::OfKeyword
+pub slang_solidity::kinds::TerminalKind::OpenBrace
+pub slang_solidity::kinds::TerminalKind::OpenBracket
+pub slang_solidity::kinds::TerminalKind::OpenParen
+pub slang_solidity::kinds::TerminalKind::OverrideKeyword
+pub slang_solidity::kinds::TerminalKind::PartialKeyword
+pub slang_solidity::kinds::TerminalKind::PayableKeyword
+pub slang_solidity::kinds::TerminalKind::Percent
+pub slang_solidity::kinds::TerminalKind::PercentEqual
+pub slang_solidity::kinds::TerminalKind::Period
+pub slang_solidity::kinds::TerminalKind::Plus
+pub slang_solidity::kinds::TerminalKind::PlusEqual
+pub slang_solidity::kinds::TerminalKind::PlusPlus
+pub slang_solidity::kinds::TerminalKind::PragmaKeyword
+pub slang_solidity::kinds::TerminalKind::PrivateKeyword
+pub slang_solidity::kinds::TerminalKind::PromiseKeyword
+pub slang_solidity::kinds::TerminalKind::PublicKeyword
+pub slang_solidity::kinds::TerminalKind::PureKeyword
+pub slang_solidity::kinds::TerminalKind::QuestionMark
+pub slang_solidity::kinds::TerminalKind::ReceiveKeyword
+pub slang_solidity::kinds::TerminalKind::ReferenceKeyword
+pub slang_solidity::kinds::TerminalKind::RelocatableKeyword
+pub slang_solidity::kinds::TerminalKind::ReturnKeyword
+pub slang_solidity::kinds::TerminalKind::ReturnsKeyword
+pub slang_solidity::kinds::TerminalKind::RevertKeyword
+pub slang_solidity::kinds::TerminalKind::SealedKeyword
+pub slang_solidity::kinds::TerminalKind::SecondsKeyword
+pub slang_solidity::kinds::TerminalKind::Semicolon
+pub slang_solidity::kinds::TerminalKind::SingleLineComment
+pub slang_solidity::kinds::TerminalKind::SingleLineNatSpecComment
+pub slang_solidity::kinds::TerminalKind::SingleQuotedHexStringLiteral
+pub slang_solidity::kinds::TerminalKind::SingleQuotedStringLiteral
+pub slang_solidity::kinds::TerminalKind::SingleQuotedUnicodeStringLiteral
+pub slang_solidity::kinds::TerminalKind::SingleQuotedVersionLiteral
+pub slang_solidity::kinds::TerminalKind::SizeOfKeyword
+pub slang_solidity::kinds::TerminalKind::Slash
+pub slang_solidity::kinds::TerminalKind::SlashEqual
+pub slang_solidity::kinds::TerminalKind::SolidityKeyword
+pub slang_solidity::kinds::TerminalKind::StaticKeyword
+pub slang_solidity::kinds::TerminalKind::StorageKeyword
+pub slang_solidity::kinds::TerminalKind::StringKeyword
+pub slang_solidity::kinds::TerminalKind::StructKeyword
+pub slang_solidity::kinds::TerminalKind::SupportsKeyword
+pub slang_solidity::kinds::TerminalKind::SwitchKeyword
+pub slang_solidity::kinds::TerminalKind::SzaboKeyword
+pub slang_solidity::kinds::TerminalKind::ThrowKeyword
+pub slang_solidity::kinds::TerminalKind::Tilde
+pub slang_solidity::kinds::TerminalKind::TrueKeyword
+pub slang_solidity::kinds::TerminalKind::TryKeyword
+pub slang_solidity::kinds::TerminalKind::TypeDefKeyword
+pub slang_solidity::kinds::TerminalKind::TypeKeyword
+pub slang_solidity::kinds::TerminalKind::TypeOfKeyword
+pub slang_solidity::kinds::TerminalKind::UNRECOGNIZED
+pub slang_solidity::kinds::TerminalKind::UfixedKeyword
+pub slang_solidity::kinds::TerminalKind::UintKeyword
+pub slang_solidity::kinds::TerminalKind::UncheckedKeyword
+pub slang_solidity::kinds::TerminalKind::UsingKeyword
+pub slang_solidity::kinds::TerminalKind::VarKeyword
+pub slang_solidity::kinds::TerminalKind::VersionSpecifier
+pub slang_solidity::kinds::TerminalKind::ViewKeyword
+pub slang_solidity::kinds::TerminalKind::VirtualKeyword
+pub slang_solidity::kinds::TerminalKind::WeeksKeyword
+pub slang_solidity::kinds::TerminalKind::WeiKeyword
+pub slang_solidity::kinds::TerminalKind::WhileKeyword
+pub slang_solidity::kinds::TerminalKind::Whitespace
+pub slang_solidity::kinds::TerminalKind::YearsKeyword
+pub slang_solidity::kinds::TerminalKind::YulAbstractKeyword
+pub slang_solidity::kinds::TerminalKind::YulAddKeyword
+pub slang_solidity::kinds::TerminalKind::YulAddModKeyword
+pub slang_solidity::kinds::TerminalKind::YulAddressKeyword
+pub slang_solidity::kinds::TerminalKind::YulAfterKeyword
+pub slang_solidity::kinds::TerminalKind::YulAliasKeyword
+pub slang_solidity::kinds::TerminalKind::YulAndKeyword
+pub slang_solidity::kinds::TerminalKind::YulAnonymousKeyword
+pub slang_solidity::kinds::TerminalKind::YulApplyKeyword
+pub slang_solidity::kinds::TerminalKind::YulAsKeyword
+pub slang_solidity::kinds::TerminalKind::YulAssemblyKeyword
+pub slang_solidity::kinds::TerminalKind::YulAutoKeyword
+pub slang_solidity::kinds::TerminalKind::YulBalanceKeyword
+pub slang_solidity::kinds::TerminalKind::YulBaseFeeKeyword
+pub slang_solidity::kinds::TerminalKind::YulBlobBaseFeeKeyword
+pub slang_solidity::kinds::TerminalKind::YulBlobHashKeyword
+pub slang_solidity::kinds::TerminalKind::YulBlockHashKeyword
+pub slang_solidity::kinds::TerminalKind::YulBoolKeyword
+pub slang_solidity::kinds::TerminalKind::YulBreakKeyword
+pub slang_solidity::kinds::TerminalKind::YulByteKeyword
+pub slang_solidity::kinds::TerminalKind::YulBytesKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallCodeKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallDataCopyKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallDataKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallDataLoadKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallDataSizeKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallValueKeyword
+pub slang_solidity::kinds::TerminalKind::YulCallerKeyword
+pub slang_solidity::kinds::TerminalKind::YulCaseKeyword
+pub slang_solidity::kinds::TerminalKind::YulCatchKeyword
+pub slang_solidity::kinds::TerminalKind::YulChainIdKeyword
+pub slang_solidity::kinds::TerminalKind::YulCoinBaseKeyword
+pub slang_solidity::kinds::TerminalKind::YulConstantKeyword
+pub slang_solidity::kinds::TerminalKind::YulConstructorKeyword
+pub slang_solidity::kinds::TerminalKind::YulContinueKeyword
+pub slang_solidity::kinds::TerminalKind::YulContractKeyword
+pub slang_solidity::kinds::TerminalKind::YulCopyOfKeyword
+pub slang_solidity::kinds::TerminalKind::YulCreate2Keyword
+pub slang_solidity::kinds::TerminalKind::YulCreateKeyword
+pub slang_solidity::kinds::TerminalKind::YulDaysKeyword
+pub slang_solidity::kinds::TerminalKind::YulDecimalLiteral
+pub slang_solidity::kinds::TerminalKind::YulDefaultKeyword
+pub slang_solidity::kinds::TerminalKind::YulDefineKeyword
+pub slang_solidity::kinds::TerminalKind::YulDelegateCallKeyword
+pub slang_solidity::kinds::TerminalKind::YulDeleteKeyword
+pub slang_solidity::kinds::TerminalKind::YulDifficultyKeyword
+pub slang_solidity::kinds::TerminalKind::YulDivKeyword
+pub slang_solidity::kinds::TerminalKind::YulDoKeyword
+pub slang_solidity::kinds::TerminalKind::YulElseKeyword
+pub slang_solidity::kinds::TerminalKind::YulEmitKeyword
+pub slang_solidity::kinds::TerminalKind::YulEnumKeyword
+pub slang_solidity::kinds::TerminalKind::YulEqKeyword
+pub slang_solidity::kinds::TerminalKind::YulEtherKeyword
+pub slang_solidity::kinds::TerminalKind::YulEventKeyword
+pub slang_solidity::kinds::TerminalKind::YulExpKeyword
+pub slang_solidity::kinds::TerminalKind::YulExtCodeCopyKeyword
+pub slang_solidity::kinds::TerminalKind::YulExtCodeHashKeyword
+pub slang_solidity::kinds::TerminalKind::YulExtCodeSizeKeyword
+pub slang_solidity::kinds::TerminalKind::YulExternalKeyword
+pub slang_solidity::kinds::TerminalKind::YulFallbackKeyword
+pub slang_solidity::kinds::TerminalKind::YulFalseKeyword
+pub slang_solidity::kinds::TerminalKind::YulFinalKeyword
+pub slang_solidity::kinds::TerminalKind::YulFinneyKeyword
+pub slang_solidity::kinds::TerminalKind::YulFixedKeyword
+pub slang_solidity::kinds::TerminalKind::YulForKeyword
+pub slang_solidity::kinds::TerminalKind::YulFunctionKeyword
+pub slang_solidity::kinds::TerminalKind::YulGasKeyword
+pub slang_solidity::kinds::TerminalKind::YulGasLimitKeyword
+pub slang_solidity::kinds::TerminalKind::YulGasPriceKeyword
+pub slang_solidity::kinds::TerminalKind::YulGtKeyword
+pub slang_solidity::kinds::TerminalKind::YulGweiKeyword
+pub slang_solidity::kinds::TerminalKind::YulHexKeyword
+pub slang_solidity::kinds::TerminalKind::YulHexLiteral
+pub slang_solidity::kinds::TerminalKind::YulHoursKeyword
+pub slang_solidity::kinds::TerminalKind::YulIdentifier
+pub slang_solidity::kinds::TerminalKind::YulIfKeyword
+pub slang_solidity::kinds::TerminalKind::YulImmutableKeyword
+pub slang_solidity::kinds::TerminalKind::YulImplementsKeyword
+pub slang_solidity::kinds::TerminalKind::YulImportKeyword
+pub slang_solidity::kinds::TerminalKind::YulInKeyword
+pub slang_solidity::kinds::TerminalKind::YulIndexedKeyword
+pub slang_solidity::kinds::TerminalKind::YulInlineKeyword
+pub slang_solidity::kinds::TerminalKind::YulIntKeyword
+pub slang_solidity::kinds::TerminalKind::YulInterfaceKeyword
+pub slang_solidity::kinds::TerminalKind::YulInternalKeyword
+pub slang_solidity::kinds::TerminalKind::YulInvalidKeyword
+pub slang_solidity::kinds::TerminalKind::YulIsKeyword
+pub slang_solidity::kinds::TerminalKind::YulIsZeroKeyword
+pub slang_solidity::kinds::TerminalKind::YulKeccak256Keyword
+pub slang_solidity::kinds::TerminalKind::YulLeaveKeyword
+pub slang_solidity::kinds::TerminalKind::YulLetKeyword
+pub slang_solidity::kinds::TerminalKind::YulLibraryKeyword
+pub slang_solidity::kinds::TerminalKind::YulLog0Keyword
+pub slang_solidity::kinds::TerminalKind::YulLog1Keyword
+pub slang_solidity::kinds::TerminalKind::YulLog2Keyword
+pub slang_solidity::kinds::TerminalKind::YulLog3Keyword
+pub slang_solidity::kinds::TerminalKind::YulLog4Keyword
+pub slang_solidity::kinds::TerminalKind::YulLtKeyword
+pub slang_solidity::kinds::TerminalKind::YulMCopyKeyword
+pub slang_solidity::kinds::TerminalKind::YulMLoadKeyword
+pub slang_solidity::kinds::TerminalKind::YulMSizeKeyword
+pub slang_solidity::kinds::TerminalKind::YulMStore8Keyword
+pub slang_solidity::kinds::TerminalKind::YulMStoreKeyword
+pub slang_solidity::kinds::TerminalKind::YulMacroKeyword
+pub slang_solidity::kinds::TerminalKind::YulMappingKeyword
+pub slang_solidity::kinds::TerminalKind::YulMatchKeyword
+pub slang_solidity::kinds::TerminalKind::YulMemoryKeyword
+pub slang_solidity::kinds::TerminalKind::YulMinutesKeyword
+pub slang_solidity::kinds::TerminalKind::YulModKeyword
+pub slang_solidity::kinds::TerminalKind::YulModifierKeyword
+pub slang_solidity::kinds::TerminalKind::YulMulKeyword
+pub slang_solidity::kinds::TerminalKind::YulMulModKeyword
+pub slang_solidity::kinds::TerminalKind::YulMutableKeyword
+pub slang_solidity::kinds::TerminalKind::YulNewKeyword
+pub slang_solidity::kinds::TerminalKind::YulNotKeyword
+pub slang_solidity::kinds::TerminalKind::YulNullKeyword
+pub slang_solidity::kinds::TerminalKind::YulNumberKeyword
+pub slang_solidity::kinds::TerminalKind::YulOfKeyword
+pub slang_solidity::kinds::TerminalKind::YulOrKeyword
+pub slang_solidity::kinds::TerminalKind::YulOriginKeyword
+pub slang_solidity::kinds::TerminalKind::YulOverrideKeyword
+pub slang_solidity::kinds::TerminalKind::YulPartialKeyword
+pub slang_solidity::kinds::TerminalKind::YulPayableKeyword
+pub slang_solidity::kinds::TerminalKind::YulPopKeyword
+pub slang_solidity::kinds::TerminalKind::YulPragmaKeyword
+pub slang_solidity::kinds::TerminalKind::YulPrevRandaoKeyword
+pub slang_solidity::kinds::TerminalKind::YulPrivateKeyword
+pub slang_solidity::kinds::TerminalKind::YulPromiseKeyword
+pub slang_solidity::kinds::TerminalKind::YulPublicKeyword
+pub slang_solidity::kinds::TerminalKind::YulPureKeyword
+pub slang_solidity::kinds::TerminalKind::YulReceiveKeyword
+pub slang_solidity::kinds::TerminalKind::YulReferenceKeyword
+pub slang_solidity::kinds::TerminalKind::YulRelocatableKeyword
+pub slang_solidity::kinds::TerminalKind::YulReturnDataCopyKeyword
+pub slang_solidity::kinds::TerminalKind::YulReturnDataSizeKeyword
+pub slang_solidity::kinds::TerminalKind::YulReturnKeyword
+pub slang_solidity::kinds::TerminalKind::YulReturnsKeyword
+pub slang_solidity::kinds::TerminalKind::YulRevertKeyword
+pub slang_solidity::kinds::TerminalKind::YulSDivKeyword
+pub slang_solidity::kinds::TerminalKind::YulSLoadKeyword
+pub slang_solidity::kinds::TerminalKind::YulSModKeyword
+pub slang_solidity::kinds::TerminalKind::YulSStoreKeyword
+pub slang_solidity::kinds::TerminalKind::YulSarKeyword
+pub slang_solidity::kinds::TerminalKind::YulSealedKeyword
+pub slang_solidity::kinds::TerminalKind::YulSecondsKeyword
+pub slang_solidity::kinds::TerminalKind::YulSelfBalanceKeyword
+pub slang_solidity::kinds::TerminalKind::YulSelfDestructKeyword
+pub slang_solidity::kinds::TerminalKind::YulSgtKeyword
+pub slang_solidity::kinds::TerminalKind::YulSha3Keyword
+pub slang_solidity::kinds::TerminalKind::YulShlKeyword
+pub slang_solidity::kinds::TerminalKind::YulShrKeyword
+pub slang_solidity::kinds::TerminalKind::YulSignExtendKeyword
+pub slang_solidity::kinds::TerminalKind::YulSizeOfKeyword
+pub slang_solidity::kinds::TerminalKind::YulSltKeyword
+pub slang_solidity::kinds::TerminalKind::YulStaticCallKeyword
+pub slang_solidity::kinds::TerminalKind::YulStaticKeyword
+pub slang_solidity::kinds::TerminalKind::YulStopKeyword
+pub slang_solidity::kinds::TerminalKind::YulStorageKeyword
+pub slang_solidity::kinds::TerminalKind::YulStringKeyword
+pub slang_solidity::kinds::TerminalKind::YulStructKeyword
+pub slang_solidity::kinds::TerminalKind::YulSubKeyword
+pub slang_solidity::kinds::TerminalKind::YulSuicideKeyword
+pub slang_solidity::kinds::TerminalKind::YulSupportsKeyword
+pub slang_solidity::kinds::TerminalKind::YulSwitchKeyword
+pub slang_solidity::kinds::TerminalKind::YulSzaboKeyword
+pub slang_solidity::kinds::TerminalKind::YulTLoadKeyword
+pub slang_solidity::kinds::TerminalKind::YulTStoreKeyword
+pub slang_solidity::kinds::TerminalKind::YulThrowKeyword
+pub slang_solidity::kinds::TerminalKind::YulTimestampKeyword
+pub slang_solidity::kinds::TerminalKind::YulTrueKeyword
+pub slang_solidity::kinds::TerminalKind::YulTryKeyword
+pub slang_solidity::kinds::TerminalKind::YulTypeDefKeyword
+pub slang_solidity::kinds::TerminalKind::YulTypeKeyword
+pub slang_solidity::kinds::TerminalKind::YulTypeOfKeyword
+pub slang_solidity::kinds::TerminalKind::YulUfixedKeyword
+pub slang_solidity::kinds::TerminalKind::YulUintKeyword
+pub slang_solidity::kinds::TerminalKind::YulUncheckedKeyword
+pub slang_solidity::kinds::TerminalKind::YulUsingKeyword
+pub slang_solidity::kinds::TerminalKind::YulVarKeyword
+pub slang_solidity::kinds::TerminalKind::YulViewKeyword
+pub slang_solidity::kinds::TerminalKind::YulVirtualKeyword
+pub slang_solidity::kinds::TerminalKind::YulWeeksKeyword
+pub slang_solidity::kinds::TerminalKind::YulWeiKeyword
+pub slang_solidity::kinds::TerminalKind::YulWhileKeyword
+pub slang_solidity::kinds::TerminalKind::YulXorKeyword
+pub slang_solidity::kinds::TerminalKind::YulYearsKeyword
+impl core::clone::Clone for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::clone(&self) -> slang_solidity::kinds::TerminalKind
+impl core::cmp::Eq for slang_solidity::kinds::TerminalKind
+impl core::cmp::Ord for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::cmp(&self, other: &slang_solidity::kinds::TerminalKind) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::eq(&self, other: &slang_solidity::kinds::TerminalKind) -> bool
+impl core::cmp::PartialOrd for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::partial_cmp(&self, other: &slang_solidity::kinds::TerminalKind) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::AsRef<str> for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::as_ref(&self) -> &str
+impl core::convert::From<slang_solidity::kinds::TerminalKind> for &'static str
+pub fn &'static str::from(x: slang_solidity::kinds::TerminalKind) -> &'static str
+impl core::convert::TryFrom<&str> for slang_solidity::kinds::TerminalKind
+pub type slang_solidity::kinds::TerminalKind::Error = strum::ParseError
+pub fn slang_solidity::kinds::TerminalKind::try_from(s: &str) -> core::result::Result<slang_solidity::kinds::TerminalKind, <Self as core::convert::TryFrom<&str>>::Error>
+impl core::fmt::Debug for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
+impl core::hash::Hash for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity::kinds::TerminalKind
+impl core::marker::StructuralPartialEq for slang_solidity::kinds::TerminalKind
+impl core::str::traits::FromStr for slang_solidity::kinds::TerminalKind
+pub type slang_solidity::kinds::TerminalKind::Err = strum::ParseError
+pub fn slang_solidity::kinds::TerminalKind::from_str(s: &str) -> core::result::Result<slang_solidity::kinds::TerminalKind, <Self as core::str::traits::FromStr>::Err>
+impl metaslang_cst::TerminalKind for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::is_trivia(&self) -> bool
+pub fn slang_solidity::kinds::TerminalKind::is_valid(&self) -> bool
+impl serde::ser::Serialize for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::TerminalKind> for &'static str
+pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::TerminalKind) -> &'static str
+impl core::marker::Freeze for slang_solidity::kinds::TerminalKind
+impl core::marker::Send for slang_solidity::kinds::TerminalKind
+impl core::marker::Sync for slang_solidity::kinds::TerminalKind
+impl core::marker::Unpin for slang_solidity::kinds::TerminalKind
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::TerminalKind
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::TerminalKind
+impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::compare(&self, key: &K) -> core::cmp::Ordering
+impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::equivalent(&self, key: &K) -> bool
+impl<T, U> core::convert::Into<U> for slang_solidity::kinds::TerminalKind where U: core::convert::From<T>
+pub fn slang_solidity::kinds::TerminalKind::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::TerminalKind where U: core::convert::Into<T>
+pub type slang_solidity::kinds::TerminalKind::Error = core::convert::Infallible
+pub fn slang_solidity::kinds::TerminalKind::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::TerminalKind where U: core::convert::TryFrom<T>
+pub type slang_solidity::kinds::TerminalKind::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::kinds::TerminalKind::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::TerminalKind where T: core::clone::Clone
+pub type slang_solidity::kinds::TerminalKind::Owned = T
+pub fn slang_solidity::kinds::TerminalKind::clone_into(&self, target: &mut T)
+pub fn slang_solidity::kinds::TerminalKind::to_owned(&self) -> T
+impl<T> alloc::string::ToString for slang_solidity::kinds::TerminalKind where T: core::fmt::Display + core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::to_string(&self) -> alloc::string::String
+impl<T> ariadne::draw::Fmt for slang_solidity::kinds::TerminalKind where T: core::fmt::Display
+impl<T> core::any::Any for slang_solidity::kinds::TerminalKind where T: 'static + core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
+pub fn slang_solidity::kinds::TerminalKind::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::kinds::TerminalKind
+pub fn slang_solidity::kinds::TerminalKind::from(t: T) -> T
+impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::TerminalKind where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
+pub fn slang_solidity::kinds::TerminalKind::as_static_str(&self) -> &'static str
+pub fn slang_solidity::kinds::TerminalKind::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
+impl<T> tap::conv::Conv for slang_solidity::kinds::TerminalKind
+impl<T> tap::conv::TryConv for slang_solidity::kinds::TerminalKind
+impl<T> tap::pipe::Pipe for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::kinds::TerminalKind
+impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::TerminalKind
+pub mod slang_solidity::language
+pub enum slang_solidity::language::Error
+pub slang_solidity::language::Error::UnsupportedLanguageVersion(semver::Version)
+impl core::error::Error for slang_solidity::language::Error
+impl core::fmt::Debug for slang_solidity::language::Error
+pub fn slang_solidity::language::Error::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::language::Error
+pub fn slang_solidity::language::Error::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for slang_solidity::language::Error
+impl core::marker::Send for slang_solidity::language::Error
+impl core::marker::Sync for slang_solidity::language::Error
+impl core::marker::Unpin for slang_solidity::language::Error
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::language::Error
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::language::Error
+impl<T, U> core::convert::Into<U> for slang_solidity::language::Error where U: core::convert::From<T>
+pub fn slang_solidity::language::Error::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::language::Error where U: core::convert::Into<T>
+pub type slang_solidity::language::Error::Error = core::convert::Infallible
+pub fn slang_solidity::language::Error::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::language::Error where U: core::convert::TryFrom<T>
+pub type slang_solidity::language::Error::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::language::Error::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::string::ToString for slang_solidity::language::Error where T: core::fmt::Display + core::marker::Sized
+pub fn slang_solidity::language::Error::to_string(&self) -> alloc::string::String
+impl<T> ariadne::draw::Fmt for slang_solidity::language::Error where T: core::fmt::Display
+impl<T> core::any::Any for slang_solidity::language::Error where T: 'static + core::marker::Sized
+pub fn slang_solidity::language::Error::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::language::Error where T: core::marker::Sized
+pub fn slang_solidity::language::Error::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::language::Error where T: core::marker::Sized
+pub fn slang_solidity::language::Error::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::language::Error
+pub fn slang_solidity::language::Error::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::language::Error
+impl<T> tap::conv::TryConv for slang_solidity::language::Error
+impl<T> tap::pipe::Pipe for slang_solidity::language::Error where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::language::Error
+impl<T> wyz::fmt::FmtForward for slang_solidity::language::Error
+pub struct slang_solidity::language::Language
+impl slang_solidity::language::Language
+pub const slang_solidity::language::Language::ROOT_KIND: slang_solidity::kinds::NonterminalKind
+pub const slang_solidity::language::Language::SUPPORTED_VERSIONS: &'static [semver::Version]
+pub fn slang_solidity::language::Language::new(version: semver::Version) -> core::result::Result<Self, slang_solidity::language::Error>
+pub fn slang_solidity::language::Language::parse(&self, kind: slang_solidity::kinds::NonterminalKind, input: &str) -> slang_solidity::parse_output::ParseOutput
+pub fn slang_solidity::language::Language::version(&self) -> &semver::Version
+impl core::fmt::Debug for slang_solidity::language::Language
+pub fn slang_solidity::language::Language::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for slang_solidity::language::Language
+impl core::marker::Send for slang_solidity::language::Language
+impl core::marker::Sync for slang_solidity::language::Language
+impl core::marker::Unpin for slang_solidity::language::Language
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::language::Language
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::language::Language
+impl<T, U> core::convert::Into<U> for slang_solidity::language::Language where U: core::convert::From<T>
+pub fn slang_solidity::language::Language::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::language::Language where U: core::convert::Into<T>
+pub type slang_solidity::language::Language::Error = core::convert::Infallible
+pub fn slang_solidity::language::Language::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::language::Language where U: core::convert::TryFrom<T>
+pub type slang_solidity::language::Language::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::language::Language::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for slang_solidity::language::Language where T: 'static + core::marker::Sized
+pub fn slang_solidity::language::Language::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::language::Language where T: core::marker::Sized
+pub fn slang_solidity::language::Language::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::language::Language where T: core::marker::Sized
+pub fn slang_solidity::language::Language::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::language::Language
+pub fn slang_solidity::language::Language::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::language::Language
+impl<T> tap::conv::TryConv for slang_solidity::language::Language
+impl<T> tap::pipe::Pipe for slang_solidity::language::Language where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::language::Language
+impl<T> wyz::fmt::FmtForward for slang_solidity::language::Language
+pub mod slang_solidity::parse_error
+pub struct slang_solidity::parse_error::ParseError
+impl slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> &metaslang_cst::text_index::TextRange
+impl core::clone::Clone for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::clone(&self) -> slang_solidity::parse_error::ParseError
+impl core::cmp::Eq for slang_solidity::parse_error::ParseError
+impl core::cmp::PartialEq for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::eq(&self, other: &slang_solidity::parse_error::ParseError) -> bool
+impl core::fmt::Debug for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::parse_error::ParseError
+impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parse_error::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
+pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
+impl core::marker::Freeze for slang_solidity::parse_error::ParseError
+impl core::marker::Send for slang_solidity::parse_error::ParseError
+impl core::marker::Sync for slang_solidity::parse_error::ParseError
+impl core::marker::Unpin for slang_solidity::parse_error::ParseError
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::parse_error::ParseError
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::parse_error::ParseError
+impl<Q, K> equivalent::Equivalent<K> for slang_solidity::parse_error::ParseError where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::parse_error::ParseError where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::equivalent(&self, key: &K) -> bool
+impl<T, U> core::convert::Into<U> for slang_solidity::parse_error::ParseError where U: core::convert::From<T>
+pub fn slang_solidity::parse_error::ParseError::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::parse_error::ParseError where U: core::convert::Into<T>
+pub type slang_solidity::parse_error::ParseError::Error = core::convert::Infallible
+pub fn slang_solidity::parse_error::ParseError::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::parse_error::ParseError where U: core::convert::TryFrom<T>
+pub type slang_solidity::parse_error::ParseError::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::parse_error::ParseError::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for slang_solidity::parse_error::ParseError where T: core::clone::Clone
+pub type slang_solidity::parse_error::ParseError::Owned = T
+pub fn slang_solidity::parse_error::ParseError::clone_into(&self, target: &mut T)
+pub fn slang_solidity::parse_error::ParseError::to_owned(&self) -> T
+impl<T> alloc::string::ToString for slang_solidity::parse_error::ParseError where T: core::fmt::Display + core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::to_string(&self) -> alloc::string::String
+impl<T> ariadne::draw::Fmt for slang_solidity::parse_error::ParseError where T: core::fmt::Display
+impl<T> core::any::Any for slang_solidity::parse_error::ParseError where T: 'static + core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::parse_error::ParseError where T: core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::parse_error::ParseError where T: core::marker::Sized
+pub fn slang_solidity::parse_error::ParseError::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::parse_error::ParseError
+pub fn slang_solidity::parse_error::ParseError::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::parse_error::ParseError
+impl<T> tap::conv::TryConv for slang_solidity::parse_error::ParseError
+impl<T> tap::pipe::Pipe for slang_solidity::parse_error::ParseError where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::parse_error::ParseError
+impl<T> wyz::fmt::FmtForward for slang_solidity::parse_error::ParseError
+pub mod slang_solidity::parse_output
+pub struct slang_solidity::parse_output::ParseOutput
+impl slang_solidity::parse_output::ParseOutput
+pub fn slang_solidity::parse_output::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cursor::Cursor
+pub fn slang_solidity::parse_output::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parse_error::ParseError>
+pub fn slang_solidity::parse_output::ParseOutput::is_valid(&self) -> bool
+pub fn slang_solidity::parse_output::ParseOutput::tree(&self) -> slang_solidity::cst::Node
+impl core::cmp::PartialEq for slang_solidity::parse_output::ParseOutput
+pub fn slang_solidity::parse_output::ParseOutput::eq(&self, other: &slang_solidity::parse_output::ParseOutput) -> bool
+impl core::fmt::Debug for slang_solidity::parse_output::ParseOutput
+pub fn slang_solidity::parse_output::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::parse_output::ParseOutput
+impl core::marker::Freeze for slang_solidity::parse_output::ParseOutput
+impl !core::marker::Send for slang_solidity::parse_output::ParseOutput
+impl !core::marker::Sync for slang_solidity::parse_output::ParseOutput
+impl core::marker::Unpin for slang_solidity::parse_output::ParseOutput
+impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::parse_output::ParseOutput
+impl core::panic::unwind_safe::UnwindSafe for slang_solidity::parse_output::ParseOutput
+impl<T, U> core::convert::Into<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::From<T>
+pub fn slang_solidity::parse_output::ParseOutput::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::Into<T>
+pub type slang_solidity::parse_output::ParseOutput::Error = core::convert::Infallible
+pub fn slang_solidity::parse_output::ParseOutput::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::TryFrom<T>
+pub type slang_solidity::parse_output::ParseOutput::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn slang_solidity::parse_output::ParseOutput::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for slang_solidity::parse_output::ParseOutput where T: 'static + core::marker::Sized
+pub fn slang_solidity::parse_output::ParseOutput::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
+pub fn slang_solidity::parse_output::ParseOutput::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
+pub fn slang_solidity::parse_output::ParseOutput::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for slang_solidity::parse_output::ParseOutput
+pub fn slang_solidity::parse_output::ParseOutput::from(t: T) -> T
+impl<T> tap::conv::Conv for slang_solidity::parse_output::ParseOutput
+impl<T> tap::conv::TryConv for slang_solidity::parse_output::ParseOutput
+impl<T> tap::pipe::Pipe for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
+impl<T> tap::tap::Tap for slang_solidity::parse_output::ParseOutput
+impl<T> wyz::fmt::FmtForward for slang_solidity::parse_output::ParseOutput
+pub mod slang_solidity::query
+pub type slang_solidity::query::Query = metaslang_cst::query::model::Query<slang_solidity::cst::KindTypes>
+pub type slang_solidity::query::QueryError = metaslang_cst::query::parser::QueryError
+pub type slang_solidity::query::QueryMatch = metaslang_cst::query::engine::QueryMatch<slang_solidity::cst::KindTypes>
+pub type slang_solidity::query::QueryMatchIterator = metaslang_cst::query::engine::QueryMatchIterator<slang_solidity::cst::KindTypes>
+pub mod slang_solidity::text_index
+pub use slang_solidity::text_index::TextIndex
+pub use slang_solidity::text_index::TextRange
+pub use slang_solidity::text_index::TextRangeExtensions
+pub mod slang_solidity::wit

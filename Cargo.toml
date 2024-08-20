@@ -122,10 +122,12 @@ num-format = { version = "0.4.4" }
 once_cell = { version = "1.19.0" }
 paste = { version = "1.0.15" }
 proc-macro2 = { version = "1.0.86" }
+public-api = { version = "0.37.0" }
 quote = { version = "1.0.36" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.10.5" }
 reqwest = { version = "0.12.5", features = ["blocking"] }
+rustdoc-json = { version = "0.9.2" }
 semver = { version = "1.0.23", features = ["serde"] }
 serde = { version = "1.0.204", features = ["derive", "rc"] }
 serde_json = { version = "1.0.121", features = ["preserve_order"] }

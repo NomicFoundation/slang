@@ -20,10 +20,14 @@ pub fn setup_cargo() {
         );
     }
 
-    // Additionally, we also need 'rustfmt nightly', as we use experimental options.
-    // So let's install the '$RUST_NIGHTLY_VERSION' toolchain along with the 'rustfmt' component.
+    // Additionally, we also need the following nightly components:
+    //
+    // - 'rustfmt' as we use experimental options.
+    // - 'rust-docs' for the '--json' output to document the public API.
+    //
+    // So let's install the '$RUST_NIGHTLY_VERSION' toolchain along with these components.
     rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"));
-    rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt"]);
+    rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt", "rust-docs"]);
 
     // Make sure we have the latest dependencies:
     run_cargo_fetch();
