@@ -6,6 +6,7 @@ mod contracts;
 mod control;
 mod enums;
 mod expressions;
+mod function_types;
 mod functions;
 mod imports;
 mod interfaces;

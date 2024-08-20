@@ -376,6 +376,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @type_name.output -> @array.output
 }
 
+@type_name [TypeName @ftype [FunctionType]] {
+  edge @ftype.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @ftype.output
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Mappings
@@ -441,6 +446,25 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @array [ArrayTypeName @size index: [Expression]] {
   edge @size.lexical_scope -> @array.lexical_scope
 }
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
+@ftype [FunctionType @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration @return_params [ParametersDeclaration]]] {
+  edge @return_params.lexical_scope -> @ftype.lexical_scope
+}
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
