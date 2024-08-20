@@ -9,3 +9,4 @@ mod imports;
 mod interfaces;
 mod scoping;
 mod variables;
+mod yul;

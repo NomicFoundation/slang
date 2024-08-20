@@ -803,6 +803,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @block.lexical_scope -> @stmt.lexical_scope
 }
 
+;;; Assembly
+@stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; State Variables
@@ -1059,4 +1064,102 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @funcall [Expression [FunctionCallExpression @args [ArgumentsDeclaration]]] {
   edge @args.lexical_scope -> @funcall.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Yul
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Blocks and statements
+
+@block [YulBlock] {
+  node @block.lexical_scope
+  node @block.defs
+}
+
+@block [YulBlock [YulStatements . @stmt [YulStatement]]] {
+  edge @stmt.lexical_scope -> @block.lexical_scope
+}
+
+[YulStatements @left_stmt [YulStatement] . @right_stmt [YulStatement]] {
+  edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
+  ; variable declaration are accessible from the next statement
+  edge @right_stmt.lexical_scope -> @left_stmt.defs
+}
+
+@stmt [YulStatement] {
+  node @stmt.lexical_scope
+  node @stmt.defs
+}
+
+;;; Blocks as statements
+
+@stmt [YulStatement @block variant: [YulBlock]] {
+  edge @block.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Expression as statements
+
+@stmt [YulStatement @expr_stmt [YulExpression]] {
+  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Variable declarations
+
+@stmt [YulStatement @var_decl [YulVariableDeclarationStatement]] {
+  edge @var_decl.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @var_decl.defs
+}
+
+@var_decl [YulVariableDeclarationStatement] {
+  node @var_decl.lexical_scope
+  node @var_decl.defs
+}
+
+@var_decl [YulVariableDeclarationStatement [YulVariableNames @name [YulIdentifier]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @var_decl
+
+  edge @var_decl.defs -> def
+}
+
+@var_decl [YulVariableDeclarationStatement [YulVariableDeclarationValue
+    @value [YulExpression]
+]] {
+  edge @value.lexical_scope -> @var_decl.lexical_scope
+}
+
+;;; Variable assignments
+
+@stmt [YulStatement @var_assign [YulVariableAssignmentStatement]] {
+  edge @var_assign.lexical_scope -> @stmt.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement] {
+  node @var_assign.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement [YulPaths @path [YulPath]]] {
+  edge @path.lexical_scope -> @var_assign.lexical_scope
+}
+
+@path [YulPath . [YulPathComponent @name [YulIdentifier]]] {
+  node @path.lexical_scope
+
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @path.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement @expr expression: [YulExpression]] {
+  edge @expr.lexical_scope -> @var_assign.lexical_scope
+}
+
+;;; Expressions
+
+@expr [YulExpression] {
+  node @expr.lexical_scope
 }

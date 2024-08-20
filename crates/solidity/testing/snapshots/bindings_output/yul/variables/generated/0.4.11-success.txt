@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract AssemblyVariable {
+   │          ────────┬───────  
+   │                  ╰───────── def: 1
+ 2 │     function yul_let() public returns (uint256 z) {
+   │              ───┬───                           ┬  
+   │                 ╰───────────────────────────────── def: 2
+   │                                                │  
+   │                                                ╰── def: 3
+   │ 
+ 4 │             let x := 123
+   │                 ┬  
+   │                 ╰── def: 4
+ 5 │             z := 456
+   │             ┬  
+   │             ╰── ref: 3
+───╯
