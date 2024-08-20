@@ -3,22 +3,14 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
+use infra_utils::cargo::{CargoWorkspace, UserFacingCrate};
 use infra_utils::commands::Command;
 use infra_utils::git::TemporaryChangeset;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
+use strum::IntoEnumIterator;
 
 use crate::utils::DryRun;
-
-const USER_FACING_CRATES: &[&str] = &[
-    // Sorted by dependency order (from dependencies to dependents):
-    "metaslang_cst",
-    "metaslang_graph_builder",
-    "metaslang_bindings",
-    "slang_solidity",
-    "slang_solidity_cli",
-];
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
@@ -35,8 +27,10 @@ impl CargoController {
 
         let mut changed_crates = vec![];
 
-        for crate_name in USER_FACING_CRATES {
-            if prepare_for_publish(crate_name, &mut changeset)? {
+        for crate_name in UserFacingCrate::iter() {
+            let crate_name = crate_name.to_string();
+
+            if prepare_for_publish(&crate_name, &mut changeset)? {
                 changed_crates.push(crate_name);
             }
         }
