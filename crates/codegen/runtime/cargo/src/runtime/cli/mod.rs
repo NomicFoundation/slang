@@ -1,42 +1,31 @@
-use std::process::ExitCode;
+mod commands;
 
-use clap::Subcommand;
-use semver::Version;
+use clap::{Parser, Subcommand};
 
-pub mod commands;
+use crate::cli::commands::parse::ParseCommand;
 
-#[derive(Subcommand, Debug)]
-pub enum Commands {
-    /// Parses a source file, and outputs any syntax errors, or a JSON concrete syntax tree
-    Parse {
-        /// File path to the source file to parse
-        file_path: String,
-
-        /// The language version to use for parsing
-        #[arg(short, long)]
-        version: Version,
-
-        /// Print the concrete syntax tree as JSON
-        #[clap(long)]
-        json: bool,
-    },
+#[derive(Parser, Debug)]
+#[command(next_line_help = true)]
+#[command(author, about)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
 }
 
-impl Commands {
-    pub fn execute(self) -> ExitCode {
-        let command_result = match self {
-            Commands::Parse {
-                file_path,
-                version,
-                json,
-            } => commands::parse::execute(&file_path, version, json),
-        };
-        match command_result {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(error) => {
-                eprintln!("{error}");
-                ExitCode::FAILURE
-            }
-        }
-    }
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Parses a source file, and outputs any syntax errors, or a JSON concrete syntax tree
+    Parse(ParseCommand),
+}
+
+pub fn execute() {
+    match Cli::parse().command {
+        Commands::Parse(command) => command.execute(),
+    };
+}
+
+#[test]
+fn verify_clap_cli() {
+    // Catches problems earlier in the development cycle:
+    <Cli as clap::CommandFactory>::command().debug_assert();
 }

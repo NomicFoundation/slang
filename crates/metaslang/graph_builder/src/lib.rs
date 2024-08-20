@@ -79,11 +79,8 @@
 #![allow(clippy::single_char_pattern)]
 #![allow(clippy::unused_unit)]
 
-use string_interner as _;
-#[cfg(feature = "cli")]
-use {anyhow as _, clap as _, env_logger as _, tree_sitter_config as _, tree_sitter_loader as _};
 #[cfg(test)]
-use {env_logger as _, indoc as _, strum as _, strum_macros as _};
+use {env_logger as _, indoc as _, string_interner as _, strum as _, strum_macros as _};
 
 #[cfg(doc)]
 pub mod reference;

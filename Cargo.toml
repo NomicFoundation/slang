@@ -27,6 +27,7 @@ members = [
     "crates/metaslang/graph_builder",
 
     "crates/solidity/inputs/language",
+    "crates/solidity/outputs/cargo/slang_solidity_cli",
     "crates/solidity/outputs/cargo/slang_solidity_node_addon",
     "crates/solidity/outputs/cargo/slang_solidity",
     "crates/solidity/outputs/cargo/tests",
@@ -68,6 +69,7 @@ metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "
 metaslang_cst = { path = "crates/metaslang/cst", version = "0.16.0" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/slang_solidity", version = "0.16.0" }
+slang_solidity_cli = { path = "crates/solidity/outputs/cargo/slang_solidity_cli", version = "0.16.0" }
 slang_solidity_node_addon = { path = "crates/solidity/outputs/cargo/slang_solidity_node_addon", version = "0.16.0" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "0.16.0" }
 solidity_language = { path = "crates/solidity/inputs/language", version = "0.16.0" }

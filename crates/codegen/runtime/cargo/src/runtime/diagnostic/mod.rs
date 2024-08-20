@@ -22,7 +22,10 @@ pub trait Diagnostic {
     fn message(&self) -> String;
 }
 
-#[cfg(any(feature = "cli", feature = "__private_testing_utils"))]
+#[cfg(any(
+    feature = "__private_cli_execution",
+    feature = "__private_testing_utils"
+))]
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 

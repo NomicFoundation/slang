@@ -17,6 +17,7 @@ const USER_FACING_CRATES: &[&str] = &[
     "metaslang_graph_builder",
     "metaslang_bindings",
     "slang_solidity",
+    "slang_solidity_cli",
 ];
 
 #[derive(Clone, Debug, Parser)]

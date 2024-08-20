@@ -9,9 +9,9 @@ description = "Cargo runtime copied over by codegen"
 
 # __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
 [features]
-default = ["cli"]
-cli = ["dep:ariadne", "dep:clap", "dep:serde_json"]
+default = []
 __experimental_bindings_api = ["dep:metaslang_bindings"]
+__private_cli_execution = ["dep:ariadne", "dep:clap", "dep:serde_json"]
 __private_testing_utils = ["dep:ariadne"]
 __private_wit_bindings = ["dep:paste", "dep:wit-bindgen"]
 

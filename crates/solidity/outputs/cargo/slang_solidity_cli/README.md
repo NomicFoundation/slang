@@ -1,9 +1,9 @@
-# metaslang_cst
+# slang_solidity_cli
 
 <!-- _PRODUCT_README_ (keep in sync) -->
 
 [![release](https://img.shields.io/github/v/tag/NomicFoundation/slang?label=GitHub%20Release&logo=github&sort=semver&logoColor=white)](https://github.com/NomicFoundation/slang/releases)
-[![crate](https://img.shields.io/crates/v/metaslang_cst?label=Rust%20Crate&logo=rust&logoColor=white)](https://crates.io/crates/metaslang_cst)
+[![crate](https://img.shields.io/crates/v/slang_solidity_cli?label=Rust%20Crate&logo=rust&logoColor=white)](https://crates.io/crates/slang_solidity_cli)
 
 ## Solidity compiler tooling by [@NomicFoundation](https://github.com/NomicFoundation)
 
