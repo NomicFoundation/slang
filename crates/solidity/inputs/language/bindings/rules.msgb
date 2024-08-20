@@ -1145,6 +1145,20 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @path.lexical_scope -> @var_assign.lexical_scope
 }
 
+@var_assign [YulVariableAssignmentStatement @expr expression: [YulExpression]] {
+  edge @expr.lexical_scope -> @var_assign.lexical_scope
+}
+
+;;; Expressions
+
+@expr [YulExpression] {
+  node @expr.lexical_scope
+}
+
+@expr [YulExpression @path [YulPath]] {
+  edge @path.lexical_scope -> @expr.lexical_scope
+}
+
 @path [YulPath . [YulPathComponent @name [YulIdentifier]]] {
   node @path.lexical_scope
 
@@ -1154,12 +1168,24 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge ref -> @path.lexical_scope
 }
 
-@var_assign [YulVariableAssignmentStatement @expr expression: [YulExpression]] {
-  edge @expr.lexical_scope -> @var_assign.lexical_scope
+@expr [YulExpression @funcall [YulFunctionCallExpression]] {
+  edge @funcall.lexical_scope -> @expr.lexical_scope
 }
 
-;;; Expressions
+@funcall [YulFunctionCallExpression
+  @operand operand: [YulExpression]
+  @args arguments: [YulArguments]
+] {
+  node @funcall.lexical_scope
 
-@expr [YulExpression] {
-  node @expr.lexical_scope
+  edge @operand.lexical_scope -> @funcall.lexical_scope
+  edge @args.lexical_scope -> @funcall.lexical_scope
+}
+
+@args [YulArguments] {
+  node @args.lexical_scope
+}
+
+@args [YulArguments @arg [YulExpression]] {
+  edge @arg.lexical_scope -> @args.lexical_scope
 }
