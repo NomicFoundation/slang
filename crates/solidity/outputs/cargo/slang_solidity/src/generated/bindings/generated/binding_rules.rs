@@ -1081,6 +1081,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @block [YulBlock] {
   node @block.lexical_scope
   node @block.defs
+  node @block.fundefs
+
+  edge @block.lexical_scope -> @block.fundefs
 }
 
 @block [YulBlock [YulStatements . @stmt [YulStatement]]] {
@@ -1102,6 +1105,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @stmt [YulStatement @block variant: [YulBlock]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
+}
+
+@parent_block [YulBlock [YulStatements [YulStatement @child_block [YulBlock]]]] {
+  ;; Child blocks have direct access to the parent's function definitions (to
+  ;; allow propagation to inner function definitions)
+  edge @child_block.fundefs -> @parent_block.fundefs
 }
 
 ;;; Expression as statements
@@ -1152,6 +1161,52 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @var_assign [YulVariableAssignmentStatement @expr expression: [YulExpression]] {
   edge @expr.lexical_scope -> @var_assign.lexical_scope
+}
+
+;;; Function definitions
+
+@block [YulBlock [YulStatements [YulStatement @fundef [YulFunctionDefinition]]]] {
+  ;; Function definitions are hoisted in the enclosing block
+  edge @block.fundefs -> @fundef.def
+  ;; The only definitions available in the function's lexical scope (other than
+  ;; parameters) are functions (ie. the body of the function doesn't have access
+  ;; to any outside variables)
+  edge @fundef.lexical_scope -> @block.fundefs
+}
+
+@fundef [YulFunctionDefinition
+    @name name: [YulIdentifier]
+    @body body: [YulBlock]
+] {
+  node @fundef.lexical_scope
+  node @fundef.def
+
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @fundef
+
+  edge @fundef.def -> def
+  edge @body.lexical_scope -> @fundef.lexical_scope
+}
+
+@fundef [YulFunctionDefinition [YulParametersDeclaration [YulParameters
+    @param [YulIdentifier]
+]]] {
+  node def
+  attr (def) node_definition = @param
+  attr (def) definiens_node = @param
+
+  edge @fundef.lexical_scope -> def
+}
+
+@fundef [YulFunctionDefinition [YulReturnsDeclaration [YulVariableNames
+    @return_param [YulIdentifier]
+]]] {
+  node def
+  attr (def) node_definition = @return_param
+  attr (def) definiens_node = @return_param
+
+  edge @fundef.lexical_scope -> def
 }
 
 ;;; Expressions

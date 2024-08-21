@@ -10,6 +10,16 @@ fn blocks() -> Result<()> {
 }
 
 #[test]
+fn fun_scopes() -> Result<()> {
+    run("yul", "fun_scopes")
+}
+
+#[test]
+fn functions() -> Result<()> {
+    run("yul", "functions")
+}
+
+#[test]
 fn variables() -> Result<()> {
     run("yul", "variables")
 }
