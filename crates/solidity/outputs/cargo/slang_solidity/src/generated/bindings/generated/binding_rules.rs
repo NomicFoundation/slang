@@ -1080,7 +1080,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @block [YulBlock] {
   node @block.lexical_scope
+  ; Variables defined in this block (only used to forward the init block
+  ; declarations in a for statement)
   node @block.defs
+  ; Function definitions accessible from the block (ie. defined in the block, or
+  ; accessible in the enclosing parent block)
   node @block.fundefs
 
   edge @block.lexical_scope -> @block.fundefs
@@ -1092,6 +1096,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @block [YulBlock [YulStatements @stmt [YulStatement]]] {
   edge @stmt.fun_scope -> @block.fundefs
+  edge @block.defs -> @stmt.defs
 }
 
 [YulStatements @left_stmt [YulStatement] . @right_stmt [YulStatement]] {
@@ -1245,6 +1250,23 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
   edge @body.fundefs -> @stmt.fun_scope
+}
+
+;;; For statements
+
+@stmt [YulStatement [YulForStatement
+    @init initialization: [YulBlock]
+    @cond condition: [YulExpression]
+    @iter iterator: [YulBlock]
+    @body body: [YulBlock]
+]] {
+  edge @init.lexical_scope -> @stmt.lexical_scope
+  edge @cond.lexical_scope -> @stmt.lexical_scope
+  edge @cond.lexical_scope -> @init.defs
+  edge @iter.lexical_scope -> @stmt.lexical_scope
+  edge @iter.lexical_scope -> @init.defs
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @init.defs
 }
 
 ;;; Expressions

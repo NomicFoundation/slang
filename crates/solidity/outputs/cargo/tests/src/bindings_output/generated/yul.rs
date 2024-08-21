@@ -15,6 +15,11 @@ fn functions() -> Result<()> {
 }
 
 #[test]
+fn loops() -> Result<()> {
+    run("yul", "loops")
+}
+
+#[test]
 fn variables() -> Result<()> {
     run("yul", "variables")
 }
