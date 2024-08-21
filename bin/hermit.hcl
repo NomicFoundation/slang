@@ -3,9 +3,6 @@ env = {
   "PATH": "${HERMIT_ENV}/scripts/bin:${PATH}",
   "REPO_ROOT": "${HERMIT_ENV}",
 
-  // Python:
-  "LANG": "en_US.UTF-8",
-
   // Rust:
   "RUST_BACKTRACE": "full",
   "RUST_STABLE_VERSION": "1.79.0", // __RUST_STABLE_VERSION_MARKER__ (keep in sync)

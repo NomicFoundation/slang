@@ -12,6 +12,13 @@
       "onAutoForward": "openPreview"
     }
   },
+  "containerEnv": {
+    // A lot of dependencies/packages (specifically python) assume certain
+    // environment variables are set, and will fail otherwise.
+    // Here we set some defaults if the developer environment doesn't have them:
+    "LANG": "${localEnv:LANG:en_US.UTF-8}", // default language/locale
+    "TZ": "${localEnv:TZ:UTC}" // default timezone
+  },
   "customizations": {
     "vscode": {
       // __SLANG_VSCODE_EXTENSIONS_RECOMMENDATIONS__ (keep in sync)
