@@ -1204,6 +1204,15 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @fundef.lexical_scope -> def
 }
 
+;;; (Deprecated) Stack assignment
+
+@stmt [YulStatement [YulStackAssignmentStatement @name [YulIdentifier]]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @stmt.lexical_scope
+}
+
 ;;; Expressions
 
 @expr [YulExpression] {

@@ -20,6 +20,11 @@ fn functions() -> Result<()> {
 }
 
 #[test]
+fn stack_assign() -> Result<()> {
+    run("yul", "stack_assign")
+}
+
+#[test]
 fn variables() -> Result<()> {
     run("yul", "variables")
 }
