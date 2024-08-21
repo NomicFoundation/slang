@@ -1269,6 +1269,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @body.lexical_scope -> @init.defs
 }
 
+;;; (Deprecated) Label statements
+
+@block [YulBlock [YulStatements [YulStatement @label [YulLabel @name label: [YulIdentifier]]]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @label
+
+  ; Labels are hoisted to the beginning of the block
+  edge @block.lexical_scope -> def
+}
+
 ;;; Expressions
 
 @expr [YulExpression] {

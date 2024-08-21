@@ -25,6 +25,11 @@ fn if_stmt() -> Result<()> {
 }
 
 #[test]
+fn labels() -> Result<()> {
+    run("yul", "labels")
+}
+
+#[test]
 fn stack_assign() -> Result<()> {
     run("yul", "stack_assign")
 }
