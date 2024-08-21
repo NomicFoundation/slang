@@ -126,12 +126,12 @@ export class VersionPragma {
 
 export class VersionRange {
   private readonly fetch = once(() => {
-    const [$leftOperand, $operator, $rightOperand] = ast_internal.selectSequence(this.cst);
+    const [$lower, $minus, $upper] = ast_internal.selectSequence(this.cst);
 
     return {
-      leftOperand: new VersionExpression($leftOperand as NonterminalNode),
-      operator: $operator as TerminalNode,
-      rightOperand: new VersionExpression($rightOperand as NonterminalNode),
+      lower: new VersionTerm($lower as NonterminalNode),
+      minus: $minus as TerminalNode,
+      upper: new VersionTerm($upper as NonterminalNode),
     };
   });
 
@@ -139,39 +139,39 @@ export class VersionRange {
     assertKind(this.cst.kind, NonterminalKind.VersionRange);
   }
 
-  public get leftOperand(): VersionExpression {
-    return this.fetch().leftOperand;
+  public get lower(): VersionTerm {
+    return this.fetch().lower;
   }
 
-  public get operator(): TerminalNode {
-    return this.fetch().operator;
+  public get minus(): TerminalNode {
+    return this.fetch().minus;
   }
 
-  public get rightOperand(): VersionExpression {
-    return this.fetch().rightOperand;
+  public get upper(): VersionTerm {
+    return this.fetch().upper;
   }
 }
 
-export class VersionComparator {
+export class VersionTerm {
   private readonly fetch = once(() => {
-    const [$operator, $operand] = ast_internal.selectSequence(this.cst);
+    const [$operator, $literal] = ast_internal.selectSequence(this.cst);
 
     return {
-      operator: $operator as TerminalNode,
-      operand: new VersionExpression($operand as NonterminalNode),
+      operator: $operator === null ? undefined : new VersionOperator($operator as NonterminalNode),
+      literal: new VersionLiteral($literal as NonterminalNode),
     };
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.VersionComparator);
+    assertKind(this.cst.kind, NonterminalKind.VersionTerm);
   }
 
-  public get operator(): TerminalNode {
+  public get operator(): VersionOperator | undefined {
     return this.fetch().operator;
   }
 
-  public get operand(): VersionExpression {
-    return this.fetch().operand;
+  public get literal(): VersionLiteral {
+    return this.fetch().literal;
   }
 }
 
@@ -3884,20 +3884,14 @@ export class ExperimentalFeature {
 }
 
 export class VersionExpression {
-  private readonly fetch: () => VersionRange | VersionComparator | VersionSpecifiers | TerminalNode = once(() => {
+  private readonly fetch: () => VersionRange | VersionTerm = once(() => {
     const variant = ast_internal.selectChoice(this.cst);
-
-    if (variant.type == NodeType.Terminal) {
-      return variant as TerminalNode;
-    }
 
     switch (variant.kind) {
       case NonterminalKind.VersionRange:
         return new VersionRange(variant as NonterminalNode);
-      case NonterminalKind.VersionComparator:
-        return new VersionComparator(variant as NonterminalNode);
-      case NonterminalKind.VersionSpecifiers:
-        return new VersionSpecifiers(variant as NonterminalNode);
+      case NonterminalKind.VersionTerm:
+        return new VersionTerm(variant as NonterminalNode);
 
       default:
         assert.fail(`Unexpected variant: ${variant.kind}`);
@@ -3908,7 +3902,49 @@ export class VersionExpression {
     assertKind(this.cst.kind, NonterminalKind.VersionExpression);
   }
 
-  public get variant(): VersionRange | VersionComparator | VersionSpecifiers | TerminalNode {
+  public get variant(): VersionRange | VersionTerm {
+    return this.fetch();
+  }
+}
+
+export class VersionOperator {
+  private readonly fetch: () => TerminalNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    return variant as TerminalNode;
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionOperator);
+  }
+
+  public get variant(): TerminalNode {
+    return this.fetch();
+  }
+}
+
+export class VersionLiteral {
+  private readonly fetch: () => SimpleVersionLiteral | TerminalNode = once(() => {
+    const variant = ast_internal.selectChoice(this.cst);
+
+    if (variant.type == NodeType.Terminal) {
+      return variant as TerminalNode;
+    }
+
+    switch (variant.kind) {
+      case NonterminalKind.SimpleVersionLiteral:
+        return new SimpleVersionLiteral(variant as NonterminalNode);
+
+      default:
+        assert.fail(`Unexpected variant: ${variant.kind}`);
+    }
+  });
+
+  public constructor(public readonly cst: NonterminalNode) {
+    assertKind(this.cst.kind, NonterminalKind.VersionLiteral);
+  }
+
+  public get variant(): SimpleVersionLiteral | TerminalNode {
     return this.fetch();
   }
 }
@@ -5462,7 +5498,7 @@ export class VersionExpressionSets {
   }
 }
 
-export class VersionSpecifiers {
+export class SimpleVersionLiteral {
   private readonly fetch = once(() => {
     const [items, separators] = ast_internal.selectSeparated(this.cst);
 
@@ -5470,7 +5506,7 @@ export class VersionSpecifiers {
   });
 
   public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.VersionSpecifiers);
+    assertKind(this.cst.kind, NonterminalKind.SimpleVersionLiteral);
   }
 
   public get items(): readonly TerminalNode[] {

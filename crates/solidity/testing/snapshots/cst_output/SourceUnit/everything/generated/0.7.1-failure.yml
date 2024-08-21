@@ -49,7 +49,7 @@ Tree:
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
                   - (sets꞉ VersionExpressionSets): # " 0.0.0" (15..21)
                       - (item꞉ VersionExpressionSet): # " 0.0.0" (15..21)
-                          - (item꞉ VersionExpression) ► (variant꞉ VersionSpecifiers): # " 0.0.0" (15..21)
+                          - (item꞉ VersionExpression) ► (variant꞉ VersionTerm) ► (literal꞉ VersionLiteral) ► (variant꞉ SimpleVersionLiteral): # " 0.0.0" (15..21)
                               - (leading_trivia꞉ Whitespace): " " # (15..16)
                               - (item꞉ VersionSpecifier): "0" # (16..17)
                               - (separator꞉ Period): "." # (17..18)

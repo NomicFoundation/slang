@@ -10,7 +10,7 @@ Tree:
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (sets꞉ VersionExpressionSets): # " '1.2.3'\n" (8..17)
           - (item꞉ VersionExpressionSet): # " '1.2.3'\n" (8..17)
-              - (item꞉ VersionExpression): # " '1.2.3'\n" (8..17)
+              - (item꞉ VersionExpression) ► (variant꞉ VersionTerm) ► (literal꞉ VersionLiteral): # " '1.2.3'\n" (8..17)
                   - (leading_trivia꞉ Whitespace): " " # (8..9)
                   - (variant꞉ SingleQuotedVersionLiteral): "'1.2.3'" # (9..16)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (16..17)

@@ -183,9 +183,11 @@ pub slang_solidity::kinds::EdgeLabel::LeftOperand
 pub slang_solidity::kinds::EdgeLabel::LetKeyword
 pub slang_solidity::kinds::EdgeLabel::LibraryKeyword
 pub slang_solidity::kinds::EdgeLabel::Literal
+pub slang_solidity::kinds::EdgeLabel::Lower
 pub slang_solidity::kinds::EdgeLabel::MappingKeyword
 pub slang_solidity::kinds::EdgeLabel::Member
 pub slang_solidity::kinds::EdgeLabel::Members
+pub slang_solidity::kinds::EdgeLabel::Minus
 pub slang_solidity::kinds::EdgeLabel::MinusGreaterThan
 pub slang_solidity::kinds::EdgeLabel::ModifierKeyword
 pub slang_solidity::kinds::EdgeLabel::Name
@@ -232,6 +234,7 @@ pub slang_solidity::kinds::EdgeLabel::TypeName
 pub slang_solidity::kinds::EdgeLabel::Types
 pub slang_solidity::kinds::EdgeLabel::UncheckedKeyword
 pub slang_solidity::kinds::EdgeLabel::Unit
+pub slang_solidity::kinds::EdgeLabel::Upper
 pub slang_solidity::kinds::EdgeLabel::UsingKeyword
 pub slang_solidity::kinds::EdgeLabel::Value
 pub slang_solidity::kinds::EdgeLabel::ValueType
@@ -444,6 +447,7 @@ pub slang_solidity::kinds::NonterminalKind::ReturnStatement
 pub slang_solidity::kinds::NonterminalKind::ReturnsDeclaration
 pub slang_solidity::kinds::NonterminalKind::RevertStatement
 pub slang_solidity::kinds::NonterminalKind::ShiftExpression
+pub slang_solidity::kinds::NonterminalKind::SimpleVersionLiteral
 pub slang_solidity::kinds::NonterminalKind::SourceUnit
 pub slang_solidity::kinds::NonterminalKind::SourceUnitMember
 pub slang_solidity::kinds::NonterminalKind::SourceUnitMembers
@@ -491,13 +495,14 @@ pub slang_solidity::kinds::NonterminalKind::UsingTarget
 pub slang_solidity::kinds::NonterminalKind::VariableDeclarationStatement
 pub slang_solidity::kinds::NonterminalKind::VariableDeclarationType
 pub slang_solidity::kinds::NonterminalKind::VariableDeclarationValue
-pub slang_solidity::kinds::NonterminalKind::VersionComparator
 pub slang_solidity::kinds::NonterminalKind::VersionExpression
 pub slang_solidity::kinds::NonterminalKind::VersionExpressionSet
 pub slang_solidity::kinds::NonterminalKind::VersionExpressionSets
+pub slang_solidity::kinds::NonterminalKind::VersionLiteral
+pub slang_solidity::kinds::NonterminalKind::VersionOperator
 pub slang_solidity::kinds::NonterminalKind::VersionPragma
 pub slang_solidity::kinds::NonterminalKind::VersionRange
-pub slang_solidity::kinds::NonterminalKind::VersionSpecifiers
+pub slang_solidity::kinds::NonterminalKind::VersionTerm
 pub slang_solidity::kinds::NonterminalKind::WhileStatement
 pub slang_solidity::kinds::NonterminalKind::YulArguments
 pub slang_solidity::kinds::NonterminalKind::YulAssignmentOperator

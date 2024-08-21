@@ -4221,6 +4221,24 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn simple_version_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Pragma>(
+            input,
+            self,
+            |input| {
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::VersionSpecifier,
+                )
+                .with_label(EdgeLabel::Item)
+            },
+            TerminalKind::Period,
+            EdgeLabel::Separator,
+        )
+        .with_kind(NonterminalKind::SimpleVersionLiteral)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.source_unit_members(input)
             .with_label(EdgeLabel::Members)
@@ -5570,156 +5588,15 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_comparator(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.version_expression(input);
-        let ParserResult::Match(r#match) = &result else {
-            return result;
-        };
-        match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::VersionExpression => match &node.children[..] {
-                [inner @ cst::Edge {
-                    node: cst::Node::Nonterminal(node),
-                    ..
-                }] if node.kind == NonterminalKind::VersionComparator => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
-                }
-                _ => ParserResult::no_match(vec![]),
-            },
-            _ => ParserResult::no_match(vec![]),
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn version_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let parse_left_version_range = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                NonterminalKind::VersionRange,
-                1u8,
-                1u8 + 1,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::Minus,
-                )
-                .with_label(EdgeLabel::Operator),
-            )
-        };
-        let parse_prefix_version_comparator = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                NonterminalKind::VersionComparator,
-                3u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::Caret,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::Tilde,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::Equal,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::LessThan,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::GreaterThan,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::LessThanEqual,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    let result = self
-                        .parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                            input,
-                            TerminalKind::GreaterThanEqual,
-                        )
-                        .with_label(EdgeLabel::Operator);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        let prefix_operator_parser = |input: &mut ParserContext<'_>| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_prefix_version_comparator(input);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-        };
-        let primary_expression_parser = |input: &mut ParserContext<'_>| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.version_specifiers(input);
-                choice.consider(input, result)?;
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::SingleQuotedVersionLiteral,
-                );
-                choice.consider(input, result)?;
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::DoubleQuotedVersionLiteral,
-                );
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-            .with_label(EdgeLabel::Variant)
-        };
-        let binary_operand_parser = |input: &mut ParserContext<'_>| {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
-                seq.elem(primary_expression_parser(input))?;
-                seq.finish()
-            })
-        };
-        let binary_operator_parser = |input: &mut ParserContext<'_>| {
-            ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_left_version_range(input);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            })
-        };
-        let linear_expression_parser = |input: &mut ParserContext<'_>| {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(binary_operand_parser(input))?;
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(binary_operator_parser(input))?;
-                        seq.elem(binary_operand_parser(input))?;
-                        seq.finish()
-                    })
-                }))?;
-                seq.finish()
-            })
-        };
-        PrecedenceHelper::reduce_precedence_result(
-            NonterminalKind::VersionExpression,
-            linear_expression_parser(input),
-        )
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.version_range(input);
+            choice.consider(input, result)?;
+            let result = self.version_term(input);
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
         .with_kind(NonterminalKind::VersionExpression)
     }
 
@@ -5747,6 +5624,71 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn version_literal(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.simple_version_literal(input);
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::SingleQuotedVersionLiteral,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::DoubleQuotedVersionLiteral,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonterminalKind::VersionLiteral)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_operator(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::Caret,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::Tilde,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::Equal,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::LessThan,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::GreaterThan,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::LessThanEqual,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::GreaterThanEqual,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonterminalKind::VersionOperator)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
@@ -5764,43 +5706,32 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_range(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.version_expression(input);
-        let ParserResult::Match(r#match) = &result else {
-            return result;
-        };
-        match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::VersionExpression => match &node.children[..] {
-                [inner @ cst::Edge {
-                    node: cst::Node::Nonterminal(node),
-                    ..
-                }] if node.kind == NonterminalKind::VersionRange => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
-                }
-                _ => ParserResult::no_match(vec![]),
-            },
-            _ => ParserResult::no_match(vec![]),
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem_labeled(EdgeLabel::Lower, self.version_term(input))?;
+            seq.elem_labeled(
+                EdgeLabel::Minus,
+                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::Minus,
+                ),
+            )?;
+            seq.elem_labeled(EdgeLabel::Upper, self.version_term(input))?;
+            seq.finish()
+        })
+        .with_kind(NonterminalKind::VersionRange)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_specifiers(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Pragma>(
-            input,
-            self,
-            |input| {
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::VersionSpecifier,
-                )
-                .with_label(EdgeLabel::Item)
-            },
-            TerminalKind::Period,
-            EdgeLabel::Separator,
-        )
-        .with_kind(NonterminalKind::VersionSpecifiers)
+    fn version_term(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem_labeled(
+                EdgeLabel::Operator,
+                OptionalHelper::transform(self.version_operator(input)),
+            )?;
+            seq.elem_labeled(EdgeLabel::Literal, self.version_literal(input))?;
+            seq.finish()
+        })
+        .with_kind(NonterminalKind::VersionTerm)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9416,6 +9347,9 @@ impl Language {
             NonterminalKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             NonterminalKind::RevertStatement => Self::revert_statement.parse(self, input),
             NonterminalKind::ShiftExpression => Self::shift_expression.parse(self, input),
+            NonterminalKind::SimpleVersionLiteral => {
+                Self::simple_version_literal.parse(self, input)
+            }
             NonterminalKind::SourceUnit => Self::source_unit.parse(self, input),
             NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
             NonterminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
@@ -9499,7 +9433,6 @@ impl Language {
             NonterminalKind::VariableDeclarationValue => {
                 Self::variable_declaration_value.parse(self, input)
             }
-            NonterminalKind::VersionComparator => Self::version_comparator.parse(self, input),
             NonterminalKind::VersionExpression => Self::version_expression.parse(self, input),
             NonterminalKind::VersionExpressionSet => {
                 Self::version_expression_set.parse(self, input)
@@ -9507,9 +9440,11 @@ impl Language {
             NonterminalKind::VersionExpressionSets => {
                 Self::version_expression_sets.parse(self, input)
             }
+            NonterminalKind::VersionLiteral => Self::version_literal.parse(self, input),
+            NonterminalKind::VersionOperator => Self::version_operator.parse(self, input),
             NonterminalKind::VersionPragma => Self::version_pragma.parse(self, input),
             NonterminalKind::VersionRange => Self::version_range.parse(self, input),
-            NonterminalKind::VersionSpecifiers => Self::version_specifiers.parse(self, input),
+            NonterminalKind::VersionTerm => Self::version_term.parse(self, input),
             NonterminalKind::WhileStatement => Self::while_statement.parse(self, input),
             NonterminalKind::YulArguments => Self::yul_arguments.parse(self, input),
             NonterminalKind::YulAssignmentOperator => {
