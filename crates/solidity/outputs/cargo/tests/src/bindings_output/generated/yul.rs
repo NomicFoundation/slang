@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn conditionals() -> Result<()> {
+    run("yul", "conditionals")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("yul", "functions")
 }

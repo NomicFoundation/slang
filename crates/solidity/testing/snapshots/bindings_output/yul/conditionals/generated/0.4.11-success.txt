@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyConditionals {
+    │          ──────────┬─────────  
+    │                    ╰─────────── def: 1
+  2 │     function yul_if(uint256 x) public returns (uint256 z) {
+    │              ───┬──         ┬                          ┬  
+    │                 ╰───────────────────────────────────────── def: 2
+    │                             │                          │  
+    │                             ╰───────────────────────────── def: 3
+    │                                                        │  
+    │                                                        ╰── def: 4
+    │ 
+  4 │             if lt(x, 10) { z := 99 }
+    │                   ┬        ┬  
+    │                   ╰─────────── ref: 3
+    │                            │  
+    │                            ╰── ref: 4
+    │ 
+  8 │     function yul_switch(uint256 x) public returns (uint256 z) {
+    │              ─────┬────         ┬                          ┬  
+    │                   ╰─────────────────────────────────────────── def: 5
+    │                                 │                          │  
+    │                                 ╰───────────────────────────── def: 6
+    │                                                            │  
+    │                                                            ╰── def: 7
+    │ 
+ 10 │             switch x
+    │                    ┬  
+    │                    ╰── ref: 6
+ 11 │             case 1 { z := 10 }
+    │                      ┬  
+    │                      ╰── ref: 7
+ 12 │             case 2 { z := 20 }
+    │                      ┬  
+    │                      ╰── ref: 7
+ 13 │             default { z := 0 }
+    │                       ┬  
+    │                       ╰── ref: 7
+────╯

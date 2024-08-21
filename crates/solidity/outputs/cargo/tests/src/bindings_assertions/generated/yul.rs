@@ -20,6 +20,11 @@ fn functions() -> Result<()> {
 }
 
 #[test]
+fn if_stmt() -> Result<()> {
+    run("yul", "if_stmt")
+}
+
+#[test]
 fn stack_assign() -> Result<()> {
     run("yul", "stack_assign")
 }

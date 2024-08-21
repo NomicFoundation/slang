@@ -6,7 +6,8 @@ contract AssemblyFunctions {
             {
                 function inner(x_i) -> x {
                     //   ^def:1
-                    x := add(x_i, 1)
+                    x := add(x_i, outer())
+                    //            ^ref:2
                 }
 
                 r := inner(a)

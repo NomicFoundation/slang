@@ -1090,6 +1090,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @stmt.lexical_scope -> @block.lexical_scope
 }
 
+@block [YulBlock [YulStatements @stmt [YulStatement]]] {
+  edge @stmt.fun_scope -> @block.fundefs
+}
+
 [YulStatements @left_stmt [YulStatement] . @right_stmt [YulStatement]] {
   edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
   ; variable declaration are accessible from the next statement
@@ -1099,18 +1103,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @stmt [YulStatement] {
   node @stmt.lexical_scope
   node @stmt.defs
+  ;; Functions visible in this scope (to propagate to inner function
+  ;; definitions, since the lexical scope is not accessible inside a function
+  ;; body)
+  node @stmt.fun_scope
 }
 
 ;;; Blocks as statements
 
 @stmt [YulStatement @block variant: [YulBlock]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
-}
-
-@parent_block [YulBlock [YulStatements [YulStatement @child_block [YulBlock]]]] {
-  ;; Child blocks have direct access to the parent's function definitions (to
-  ;; allow propagation to inner function definitions)
-  edge @child_block.fundefs -> @parent_block.fundefs
+  edge @block.fundefs -> @stmt.fun_scope
 }
 
 ;;; Expression as statements
@@ -1216,6 +1219,32 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (ref) node_reference = @name
 
   edge ref -> @stmt.lexical_scope
+}
+
+;;; If statements
+
+@stmt [YulStatement [YulIfStatement
+    @condition condition: [YulExpression]
+    @body body: [YulBlock]
+]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.fundefs -> @stmt.fun_scope
+}
+
+;;; Switch statements
+
+@stmt [YulStatement [YulSwitchStatement
+    @expr expression: [YulExpression]
+]] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [YulStatement [YulSwitchStatement [YulSwitchCases [YulSwitchCase
+    [_ @body body: [YulBlock]]
+]]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.fundefs -> @stmt.fun_scope
 }
 
 ;;; Expressions
