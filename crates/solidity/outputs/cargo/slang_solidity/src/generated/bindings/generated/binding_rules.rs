@@ -218,6 +218,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
@@ -285,6 +286,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @interface.lexical_scope
@@ -332,6 +334,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
@@ -362,6 +365,111 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; where users of this type should link to (eg. a variable declaration).
   edge @type_name.output -> @id_path.right
 }
+
+@type_name [TypeName @mapping [MappingType]] {
+  edge @mapping.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @mapping.output
+}
+
+@type_name [TypeName @array [ArrayTypeName]] {
+  edge @array.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @array.output
+}
+
+@type_name [TypeName @ftype [FunctionType]] {
+  edge @ftype.lexical_scope -> @type_name.type_ref
+  edge @type_name.output -> @ftype.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mappings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@mapping [MappingType] {
+  node @mapping.lexical_scope
+  node @mapping.output
+}
+
+@mapping [MappingType [MappingKey [MappingKeyType @key_ident [IdentifierPath]]]] {
+  edge @key_ident.left -> @mapping.lexical_scope
+}
+
+@mapping [MappingType [MappingValue @value_type [TypeName]]] {
+  edge @value_type.type_ref -> @mapping.lexical_scope
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+
+  node index
+  attr (index) pop_symbol = "[]"
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+
+  ;; The mapping's type exposes the `[]` operator that returns the value type
+  edge @mapping.output -> typeof_input
+  edge typeof_input -> index
+  edge index -> typeof_output
+  edge typeof_output -> @value_type.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Arrays types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@array [ArrayTypeName] {
+  node @array.lexical_scope
+  node @array.output
+}
+
+@array [ArrayTypeName @type_name [TypeName]] {
+  edge @type_name.type_ref -> @array.lexical_scope
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+
+  node index
+  attr (index) pop_symbol = "[]"
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+
+  ;; The array type exposes the `[]` operator that returns the value type
+  edge @array.output -> typeof_input
+  edge typeof_input -> index
+  edge index -> typeof_output
+  edge typeof_output -> @type_name.output
+}
+
+@array [ArrayTypeName @size index: [Expression]] {
+  edge @size.lexical_scope -> @array.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
+@ftype [FunctionType @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration @return_params [ParametersDeclaration]]] {
+  edge @return_params.lexical_scope -> @ftype.lexical_scope
+}
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Identifier Paths (aka. references to custom types)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; The identifier path constructs a path of nodes connected from right to left
 @id_path [IdentifierPath] {
@@ -975,9 +1083,32 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @constant.def
 }
 
-@value_type [UserDefinedValueTypeDefinition] {
-  node @value_type.lexical_scope
-  node @value_type.def
+@constant [ConstantDefinition
+    @type_name type_name: [TypeName]
+    @name name: [Identifier]
+    @value value: [Expression]
+] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @constant
+
+  edge @constant.def -> def
+
+  edge @value.lexical_scope -> @constant.lexical_scope
+  edge @type_name.type_ref -> @constant.lexical_scope
+}
+
+@user_type [UserDefinedValueTypeDefinition] {
+  node @user_type.lexical_scope
+  node @user_type.def
+}
+
+@user_type [UserDefinedValueTypeDefinition @name [Identifier]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @user_type
+
+  edge @user_type.def -> def
 }
 
 
@@ -1027,6 +1158,17 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge member -> @operand.output
 
   edge @expr.output -> ref
+}
+
+;; Index access expressions
+@expr [Expression [IndexAccessExpression
+    @operand operand: [Expression]
+]] {
+  node index
+  attr (index) push_symbol = "[]"
+
+  edge @expr.output -> index
+  edge index -> @operand.output
 }
 
 ;; Type expressions

@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     struct Value {
+   │            ──┬──  
+   │              ╰──── def: 2
+ 3 │         uint value;
+   │              ──┬──  
+   │                ╰──── def: 3
+   │ 
+ 5 │     mapping(uint => Value) values;
+   │                     ──┬──  ───┬──  
+   │                       ╰──────────── ref: 2
+   │                               │    
+   │                               ╰──── def: 4
+   │ 
+ 7 │     function test(uint _id) public returns (uint) {
+   │              ──┬─      ─┬─  
+   │                ╰──────────── def: 5
+   │                         │   
+   │                         ╰─── def: 6
+ 8 │         return values[_id].value;
+   │                ───┬── ─┬─  ──┬──  
+   │                   ╰─────────────── ref: 4
+   │                        │     │    
+   │                        ╰────────── ref: 6
+   │                              │    
+   │                              ╰──── ref: 3
+───╯
