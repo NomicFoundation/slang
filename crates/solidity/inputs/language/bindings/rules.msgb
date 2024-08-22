@@ -1077,12 +1077,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @block.lexical_scope
   ; Variables defined in this block (only used to forward the init block
   ; declarations in a for statement)
-  node @block.defs
+  node @block.variable_defs
   ; Function definitions accessible from the block (ie. defined in the block, or
   ; accessible in the enclosing parent block)
-  node @block.fundefs
+  node @block.function_defs
 
-  edge @block.lexical_scope -> @block.fundefs
+  edge @block.lexical_scope -> @block.function_defs
 }
 
 @block [YulBlock [YulStatements . @stmt [YulStatement]]] {
@@ -1090,8 +1090,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @block [YulBlock [YulStatements @stmt [YulStatement]]] {
-  edge @stmt.fun_scope -> @block.fundefs
-  edge @block.defs -> @stmt.defs
+  edge @stmt.function_scope -> @block.function_defs
+  edge @block.variable_defs -> @stmt.defs
 }
 
 [YulStatements @left_stmt [YulStatement] . @right_stmt [YulStatement]] {
@@ -1106,14 +1106,14 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Functions visible in this scope (to propagate to inner function
   ;; definitions, since the lexical scope is not accessible inside a function
   ;; body)
-  node @stmt.fun_scope
+  node @stmt.function_scope
 }
 
 ;;; Blocks as statements
 
 @stmt [YulStatement @block variant: [YulBlock]] {
   edge @block.lexical_scope -> @stmt.lexical_scope
-  edge @block.fundefs -> @stmt.fun_scope
+  edge @block.function_defs -> @stmt.function_scope
 }
 
 ;;; Expression as statements
@@ -1170,11 +1170,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @block [YulBlock [YulStatements [YulStatement @fundef [YulFunctionDefinition]]]] {
   ;; Function definitions are hoisted in the enclosing block
-  edge @block.fundefs -> @fundef.def
+  edge @block.function_defs -> @fundef.def
   ;; The only definitions available in the function's lexical scope (other than
   ;; parameters) are functions (ie. the body of the function doesn't have access
   ;; to any outside variables)
-  edge @fundef.lexical_scope -> @block.fundefs
+  edge @fundef.lexical_scope -> @block.function_defs
 }
 
 @fundef [YulFunctionDefinition
@@ -1212,7 +1212,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @fundef.lexical_scope -> def
 }
 
-;;; (Deprecated) Stack assignment
+;;; Stack assignment (Solidity < 0.5.0)
 
 @stmt [YulStatement [YulStackAssignmentStatement @name [YulIdentifier]]] {
   node ref
@@ -1229,7 +1229,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @condition.lexical_scope -> @stmt.lexical_scope
   edge @body.lexical_scope -> @stmt.lexical_scope
-  edge @body.fundefs -> @stmt.fun_scope
+  edge @body.function_defs -> @stmt.function_scope
 }
 
 ;;; Switch statements
@@ -1244,7 +1244,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     [_ @body body: [YulBlock]]
 ]]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
-  edge @body.fundefs -> @stmt.fun_scope
+  edge @body.function_defs -> @stmt.function_scope
 }
 
 ;;; For statements
@@ -1257,14 +1257,15 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @init.lexical_scope -> @stmt.lexical_scope
   edge @cond.lexical_scope -> @stmt.lexical_scope
-  edge @cond.lexical_scope -> @init.defs
   edge @iter.lexical_scope -> @stmt.lexical_scope
-  edge @iter.lexical_scope -> @init.defs
   edge @body.lexical_scope -> @stmt.lexical_scope
-  edge @body.lexical_scope -> @init.defs
+
+  edge @cond.lexical_scope -> @init.variable_defs
+  edge @iter.lexical_scope -> @init.variable_defs
+  edge @body.lexical_scope -> @init.variable_defs
 }
 
-;;; (Deprecated) Label statements
+;;; Label statements (Solidity < 0.5.0)
 
 @block [YulBlock [YulStatements [YulStatement @label [YulLabel @name label: [YulIdentifier]]]]] {
   node def
