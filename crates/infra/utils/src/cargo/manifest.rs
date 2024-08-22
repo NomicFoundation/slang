@@ -10,18 +10,18 @@ use crate::paths::PathExtensions;
 
 #[derive(Deserialize)]
 pub struct WorkspaceManifest {
-    pub workspace: Workspace,
+    workspace: Workspace,
 }
 
 #[derive(Deserialize)]
-pub struct Workspace {
-    pub package: WorkspacePackage,
-    pub dependencies: HashMap<String, Dependency>,
+struct Workspace {
+    package: WorkspacePackage,
+    dependencies: HashMap<String, Dependency>,
 }
 
 #[derive(Deserialize)]
-pub struct WorkspacePackage {
-    pub version: Version,
+struct WorkspacePackage {
+    version: Version,
 }
 
 #[derive(Deserialize)]
@@ -39,5 +39,18 @@ impl WorkspaceManifest {
 
         toml::from_str(&manifest_path.read_to_string()?)
             .with_context(|| format!("Failed to deserialize manifest: {manifest_path:?}"))
+    }
+
+    pub fn version(&self) -> &Version {
+        &self.workspace.package.version
+    }
+
+    pub fn dependency(&self, dependency_name: impl AsRef<str>) -> Result<&Dependency> {
+        let dependency_name = dependency_name.as_ref();
+
+        self.workspace
+            .dependencies
+            .get(dependency_name)
+            .with_context(|| format!("Cannot find dependency '{dependency_name}' in workspace."))
     }
 }
