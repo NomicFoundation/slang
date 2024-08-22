@@ -1,18 +1,16 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst;
-use crate::cursor::Cursor;
+use crate::cst::{Cursor, Node, TextIndex};
 use crate::parse_error::ParseError;
-use crate::text_index::TextIndex;
 
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
-    pub(crate) parse_tree: cst::Node,
+    pub(crate) parse_tree: Node,
     pub(crate) errors: Vec<ParseError>,
 }
 
 impl ParseOutput {
-    pub fn tree(&self) -> cst::Node {
+    pub fn tree(&self) -> Node {
         self.parse_tree.clone()
     }
 

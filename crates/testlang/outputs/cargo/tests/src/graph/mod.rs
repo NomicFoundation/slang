@@ -2,7 +2,7 @@ use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use semver::Version;
-use slang_testlang::kinds::NonterminalKind;
+use slang_testlang::cst::NonterminalKind;
 use slang_testlang::language::Language;
 
 #[test]

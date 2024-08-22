@@ -12,8 +12,8 @@ mod values;
 use std::collections::{HashMap, HashSet};
 
 use log::{debug, trace};
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::QueryMatch;
-use metaslang_cst::KindTypes;
 use statements::*;
 use store::*;
 use values::*;

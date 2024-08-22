@@ -1,8 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 interface parse-error {
+    use cst.{text-range};
     use diagnostic.{severity};
-    use text-index.{text-range};
 
     resource parse-error {
         severity: func() -> severity;

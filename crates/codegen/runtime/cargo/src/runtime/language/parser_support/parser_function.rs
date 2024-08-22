@@ -1,9 +1,6 @@
 use std::rc::Rc;
 
-use metaslang_cst::TerminalKind as _;
-
-use crate::cst::{self, Edge};
-use crate::kinds::TerminalKind;
+use crate::cst::{Edge, Node, TerminalKind, TerminalKindExtensions, TextIndex};
 use crate::language::lexer::Lexer;
 use crate::language::parser_support::context::ParserContext;
 use crate::language::parser_support::parser_result::{
@@ -11,7 +8,6 @@ use crate::language::parser_support::parser_result::{
 };
 use crate::parse_error::ParseError;
 use crate::parse_output::ParseOutput;
-use crate::text_index::TextIndex;
 
 pub trait ParserFunction<L>
 where
@@ -45,13 +41,13 @@ where
                 _ => None,
             };
 
-            if let (cst::Node::Nonterminal(nonterminal), Some(eof_trivia)) =
+            if let (Node::Nonterminal(nonterminal), Some(eof_trivia)) =
                 (&mut topmost.node, eof_trivia)
             {
                 let mut new_children = nonterminal.children.clone();
                 new_children.extend(eof_trivia);
 
-                topmost.node = cst::Node::nonterminal(nonterminal.kind, new_children);
+                topmost.node = Node::nonterminal(nonterminal.kind, new_children);
             }
         }
 
@@ -69,7 +65,7 @@ where
                 };
 
                 ParseOutput {
-                    parse_tree: cst::Node::terminal(kind, input.to_string()),
+                    parse_tree: Node::terminal(kind, input.to_string()),
                     errors: vec![ParseError::new(
                         TextIndex::ZERO..input.into(),
                         no_match.expected_terminals,
@@ -96,7 +92,7 @@ where
                 };
 
                 let topmost_node = match &nodes[..] {
-                    [Edge { node: cst::Node::Nonterminal(nonterminal), ..} ] => Rc::clone(nonterminal),
+                    [Edge { node: Node::Nonterminal(nonterminal), ..} ] => Rc::clone(nonterminal),
                     [_] => unreachable!(
                         "(Incomplete)Match at the top level of a parser is not a Nonterminal node"
                     ),
@@ -121,7 +117,7 @@ where
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
-                    let skipped_node = cst::Node::terminal(kind, input[start.utf8..].to_string());
+                    let skipped_node = Node::terminal(kind, input[start.utf8..].to_string());
                     let mut new_children = topmost_node.children.clone();
                     new_children.push(Edge::anonymous(skipped_node));
 
@@ -129,11 +125,11 @@ where
                     errors.push(ParseError::new(start..input.into(), expected_terminals));
 
                     ParseOutput {
-                        parse_tree: cst::Node::nonterminal(topmost_node.kind, new_children),
+                        parse_tree: Node::nonterminal(topmost_node.kind, new_children),
                         errors,
                     }
                 } else {
-                    let parse_tree = cst::Node::Nonterminal(topmost_node);
+                    let parse_tree = Node::Nonterminal(topmost_node);
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes

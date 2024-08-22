@@ -8,8 +8,7 @@ use infra_utils::paths::PathExtensions;
 fn using_the_parser() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::cst::Node;
-    use slang_solidity::kinds::{NonterminalKind, TerminalKind};
+    use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
     use slang_solidity::language::Language;
     // --8<-- [end:imports]
 

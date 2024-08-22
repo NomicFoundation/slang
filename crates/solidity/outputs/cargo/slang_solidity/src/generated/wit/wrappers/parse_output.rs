@@ -3,8 +3,7 @@
 use crate::wit::utils::{define_wrapper, IntoFFI};
 
 mod ffi {
-    pub use crate::wit::interface::exports::nomic_foundation::slang::cst::Node;
-    pub use crate::wit::interface::exports::nomic_foundation::slang::cursor::Cursor;
+    pub use crate::wit::interface::exports::nomic_foundation::slang::cst::{Cursor, Node};
     pub use crate::wit::interface::exports::nomic_foundation::slang::parse_error::ParseError;
     pub use crate::wit::interface::exports::nomic_foundation::slang::parse_output::{
         Guest, GuestParseOutput, ParseOutput, ParseOutputBorrow,

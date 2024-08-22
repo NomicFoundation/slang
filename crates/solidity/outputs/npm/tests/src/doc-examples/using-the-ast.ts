@@ -4,8 +4,7 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { NonterminalKind } from "@nomicfoundation/slang/kinds";
-import { NonterminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, NonterminalNode } from "@nomicfoundation/slang/cst";
 import { FunctionDefinition } from "@nomicfoundation/slang/ast";
 // --8<-- [end:imports]
 

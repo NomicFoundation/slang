@@ -3,8 +3,8 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use crate::cursor::Cursor;
+use crate::kinds::{BaseKind, KindTypes, TerminalKindExtensions};
 use crate::text_index::TextIndex;
-use crate::{AbstractKind as _, KindTypes, TerminalKind as _};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum NodeKind<T: KindTypes> {

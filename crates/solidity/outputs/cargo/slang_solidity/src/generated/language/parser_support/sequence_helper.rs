@@ -2,10 +2,7 @@
 
 use std::ops::ControlFlow;
 
-use metaslang_cst::TerminalKind as _;
-
-use crate::cst::{self, Edge};
-use crate::kinds::{EdgeLabel, TerminalKind};
+use crate::cst::{Edge, EdgeLabel, Node, TerminalKind, TerminalKindExtensions};
 use crate::language::parser_support::parser_result::{
     Match, ParserResult, PrattElement, SkippedUntil,
 };
@@ -143,8 +140,8 @@ impl SequenceHelper {
                     // Sanity check that we are recovering to the expected one.
                     let next_terminal = next.nodes.iter().try_fold(None, |acc, node| {
                         match &**node {
-                            cst::Node::Terminal(terminal) if terminal.kind.is_trivia() => Ok(acc),
-                            cst::Node::Terminal(terminal) => {
+                            Node::Terminal(terminal) if terminal.kind.is_trivia() => Ok(acc),
+                            Node::Terminal(terminal) => {
                                 match acc {
                                     None => Ok(Some(terminal.kind)),
                                     Some(..) => {
@@ -153,7 +150,7 @@ impl SequenceHelper {
                                     }
                                 }
                             }
-                            cst::Node::Nonterminal(node) => {
+                            Node::Nonterminal(node) => {
                                 debug_assert!(false, "Recovery skipped to a nonterminal: {node:?}");
                                 Err(())
                             }
@@ -166,7 +163,7 @@ impl SequenceHelper {
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
-                    running.nodes.push(Edge::anonymous(cst::Node::terminal(
+                    running.nodes.push(Edge::anonymous(Node::terminal(
                         kind,
                         std::mem::take(&mut running.skipped),
                     )));

@@ -1,6 +1,6 @@
 use napi_derive::napi;
 
-use crate::napi_interface::text_index::TextRange;
+use crate::napi_interface::cst::TextRange;
 
 /// Severity of the compiler diagnostic.
 ///
@@ -37,7 +37,7 @@ impl Diagnostic {
     }
 
     /// The character range of the source that this diagnostic applies to.
-    #[napi(ts_return_type = "text_index.TextRange")]
+    #[napi(ts_return_type = "cst.TextRange")]
     pub fn text_range(&self) -> TextRange {
         self.0.text_range().into()
     }
@@ -64,8 +64,8 @@ macro_rules! expose_diagnostic_trait_interface {
                 $crate::diagnostic::Diagnostic::severity(&self.0).into()
             }
 
-            #[napi(ts_return_type = "text_index.TextRange", catch_unwind)]
-            pub fn text_range(&self) -> $crate::napi_interface::text_index::TextRange {
+            #[napi(ts_return_type = "cst.TextRange", catch_unwind)]
+            pub fn text_range(&self) -> $crate::napi_interface::cst::TextRange {
                 $crate::diagnostic::Diagnostic::text_range(&self.0).into()
             }
 

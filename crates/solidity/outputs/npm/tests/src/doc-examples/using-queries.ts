@@ -4,9 +4,7 @@ import assert from "node:assert";
 import fs from "node:fs/promises";
 
 import { Language } from "@nomicfoundation/slang/language";
-import { NonterminalKind } from "@nomicfoundation/slang/kinds";
-import { Query, QueryMatchIterator } from "@nomicfoundation/slang/query";
-import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, NonterminalNode, Query, QueryMatchIterator, TerminalNode } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(filePath: string) {
   const inputPath = path.join(repoPath("documentation/public/user-guide/inputs"), filePath);

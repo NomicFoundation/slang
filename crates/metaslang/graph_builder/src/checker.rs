@@ -8,9 +8,9 @@
 use std::collections::HashSet;
 use std::path::Path;
 
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::CaptureQuantifier::{self, One, OneOrMore, ZeroOrMore, ZeroOrOne};
 use metaslang_cst::query::Query;
-use metaslang_cst::KindTypes;
 use thiserror::Error;
 
 use crate::excerpt::Excerpt;

@@ -8,9 +8,8 @@ use infra_utils::paths::PathExtensions;
 fn using_the_cursor() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
+    use slang_solidity::cst::{EdgeLabel, NonterminalKind, TerminalKind, TextRangeExtensions};
     use slang_solidity::language::Language;
-    use slang_solidity::text_index::TextRangeExtensions;
     // --8<-- [end:imports]
 
     let input_path = Path::repo_path("documentation/public/user-guide/inputs/using-the-cursor.sol");

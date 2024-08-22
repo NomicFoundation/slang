@@ -1,6 +1,5 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { NonterminalKind } from "@slang-private/slang-testlang/kinds";
-import { TextIndex } from "@slang-private/slang-testlang/text_index";
+import { NonterminalKind, TextIndex } from "@slang-private/slang-testlang/cst";
 import { Severity } from "@slang-private/slang-testlang/diagnostic";
 
 test("render error reports", () => {

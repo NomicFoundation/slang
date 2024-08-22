@@ -18,6 +18,7 @@ use std::io::stdout;
 use std::ops::{Index, IndexMut};
 use std::path::Path;
 
+use metaslang_cst::kinds::KindTypes;
 use serde::ser::{SerializeMap, SerializeSeq};
 use serde::{Serialize, Serializer};
 use serde_json;
@@ -29,7 +30,7 @@ use crate::{Identifier, Location};
 
 /// A graph produced by executing a graph DSL file.  Graphs include a lifetime parameter to ensure
 /// that they don't outlive the tree-sitter syntax tree that they are generated from.
-pub struct Graph<KT: metaslang_cst::KindTypes> {
+pub struct Graph<KT: KindTypes> {
     pub(crate) syntax_nodes: HashMap<SyntaxNodeID, metaslang_cst::cursor::Cursor<KT>>,
     graph_nodes: Vec<GraphNode>,
 }
@@ -37,7 +38,7 @@ pub struct Graph<KT: metaslang_cst::KindTypes> {
 pub(crate) type SyntaxNodeID = u32;
 type GraphNodeID = u32;
 
-impl<KT: metaslang_cst::KindTypes> Graph<KT> {
+impl<KT: KindTypes> Graph<KT> {
     /// Creates a new, empty graph.
     pub fn new() -> Graph<KT> {
         Graph {
@@ -72,9 +73,9 @@ impl<KT: metaslang_cst::KindTypes> Graph<KT> {
 
     /// Pretty-prints the contents of this graph.
     pub fn pretty_print<'a>(&'a self) -> impl fmt::Display + 'a {
-        struct DisplayGraph<'a, KT: metaslang_cst::KindTypes>(&'a Graph<KT>);
+        struct DisplayGraph<'a, KT: KindTypes>(&'a Graph<KT>);
 
-        impl<'a, KT: metaslang_cst::KindTypes> fmt::Display for DisplayGraph<'a, KT> {
+        impl<'a, KT: KindTypes> fmt::Display for DisplayGraph<'a, KT> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 let graph = self.0;
                 for (node_index, node) in graph.graph_nodes.iter().enumerate() {
@@ -108,27 +109,27 @@ impl<KT: metaslang_cst::KindTypes> Graph<KT> {
     }
 }
 
-impl<KT: metaslang_cst::KindTypes> Index<SyntaxNodeRef> for Graph<KT> {
+impl<KT: KindTypes> Index<SyntaxNodeRef> for Graph<KT> {
     type Output = metaslang_cst::cursor::Cursor<KT>;
     fn index(&self, node_ref: SyntaxNodeRef) -> &metaslang_cst::cursor::Cursor<KT> {
         &self.syntax_nodes[&node_ref.index]
     }
 }
 
-impl<KT: metaslang_cst::KindTypes> Index<GraphNodeRef> for Graph<KT> {
+impl<KT: KindTypes> Index<GraphNodeRef> for Graph<KT> {
     type Output = GraphNode;
     fn index(&self, index: GraphNodeRef) -> &GraphNode {
         &self.graph_nodes[index.0 as usize]
     }
 }
 
-impl<KT: metaslang_cst::KindTypes> IndexMut<GraphNodeRef> for Graph<KT> {
+impl<KT: KindTypes> IndexMut<GraphNodeRef> for Graph<KT> {
     fn index_mut(&mut self, index: GraphNodeRef) -> &mut GraphNode {
         &mut self.graph_nodes[index.0 as usize]
     }
 }
 
-impl<KT: metaslang_cst::KindTypes> Serialize for Graph<KT> {
+impl<KT: KindTypes> Serialize for Graph<KT> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.graph_nodes.len()))?;
         for (node_index, node) in self.graph_nodes.iter().enumerate() {
@@ -439,7 +440,7 @@ impl Value {
     /// Coerces this value into a syntax node, returning an error if it's some other type
     /// of value.
     #[deprecated(note = "Use the pattern graph[value.into_syntax_node_ref(graph)] instead")]
-    pub fn into_syntax_node<'a, KT: metaslang_cst::KindTypes>(
+    pub fn into_syntax_node<'a, KT: KindTypes>(
         self,
         graph: &'a Graph<KT>,
     ) -> Result<&'a metaslang_cst::cursor::Cursor<KT>, ExecutionError> {

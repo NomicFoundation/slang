@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { Language } from "@slang-private/slang-testlang/language";
-import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
 import {
   AdditionExpression,
   Expression,
@@ -13,7 +12,7 @@ import {
   TreeNodeChild,
 } from "@slang-private/slang-testlang/ast";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
-import { TerminalNode } from "@slang-private/slang-testlang/cst";
+import { NonterminalKind, TerminalKind, TerminalNode } from "@slang-private/slang-testlang/cst";
 
 test("create and use sequence types", () => {
   const source = `tree [A B C];`.trim();

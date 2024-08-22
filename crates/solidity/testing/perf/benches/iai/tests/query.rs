@@ -1,5 +1,4 @@
-use slang_solidity::query::Query;
-use slang_solidity::text_index::TextIndex;
+use slang_solidity::cst::{Query, TextIndex};
 
 use crate::tests::parser::ParsedFile;
 

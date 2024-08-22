@@ -1,7 +1,6 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::cst::Node;
-use slang_solidity::kinds::{NonterminalKind, TerminalKind};
+use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
 use slang_solidity::language::Language;
 
 #[test]

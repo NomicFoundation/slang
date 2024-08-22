@@ -4,12 +4,8 @@ package nomic-foundation:slang;
 
 world slang {
     export cst;
-    export cursor;
     export diagnostic;
-    export kinds;
     export language;
     export parse-error;
     export parse-output;
-    export query;
-    export text-index;
 }

@@ -4,8 +4,7 @@ import fs from "node:fs/promises";
 // --8<-- [start:imports]
 import assert from "node:assert";
 import { Language } from "@nomicfoundation/slang/language";
-import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
-import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, NonterminalNode, TerminalKind, TerminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the cursor", async () => {

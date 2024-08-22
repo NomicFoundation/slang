@@ -1,13 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, Edge};
-use crate::kinds::{EdgeLabel, IsLexicalContext, TerminalKind};
+use crate::cst::{Edge, EdgeLabel, IsLexicalContext, Node, TerminalKind, TextRangeExtensions};
 use crate::language::lexer::Lexer;
 use crate::language::parser_support::parser_result::{ParserResult, SkippedUntil};
 use crate::language::parser_support::recovery::skip_until_with_nested_delims;
 use crate::language::parser_support::ParserContext;
 use crate::parse_error::ParseError;
-use crate::text_index::TextRangeExtensions;
 
 pub struct SeparatedHelper;
 
@@ -60,7 +58,7 @@ impl SeparatedHelper {
                             } else {
                                 TerminalKind::UNRECOGNIZED
                             };
-                            accum.push(Edge::anonymous(cst::Node::terminal(
+                            accum.push(Edge::anonymous(Node::terminal(
                                 kind,
                                 input.content(skipped_range.utf8()),
                             )));

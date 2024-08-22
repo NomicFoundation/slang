@@ -1,8 +1,6 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { EdgeLabel, NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
-import { Cursor } from "@slang-private/slang-testlang/cursor";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
-import { NodeType } from "@slang-private/slang-testlang/cst";
+import { Cursor, EdgeLabel, NodeType, NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
 
 test("use cursor", () => {
   const source = "tree [A [B C] D];";

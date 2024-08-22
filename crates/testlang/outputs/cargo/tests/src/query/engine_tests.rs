@@ -1,10 +1,8 @@
 use std::collections::BTreeMap;
 
-use slang_testlang::cst::{Edge, Node};
-use slang_testlang::cursor::Cursor;
-use slang_testlang::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
-use slang_testlang::query::{Query, QueryMatch};
-use slang_testlang::text_index::TextIndex;
+use slang_testlang::cst::{
+    Cursor, Edge, EdgeLabel, Node, NonterminalKind, Query, QueryMatch, TerminalKind, TextIndex,
+};
 
 fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
     Edge {
