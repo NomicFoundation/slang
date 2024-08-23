@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyLoops {
+    │          ──────┬──────  
+    │                ╰──────── def: 1
+  2 │     function yul_for_loop() public returns (uint256 z) {
+    │              ──────┬─────                           ┬  
+    │                    ╰─────────────────────────────────── def: 2
+    │                                                     │  
+    │                                                     ╰── def: 3
+    │ 
+  4 │             for { let i := 0 } lt(i, 10) { i := add(i, 1) } { z := add(z, 1) }
+    │                       ┬           ┬        ┬        ┬         ┬        ┬  
+    │                       ╰─────────────────────────────────────────────────── def: 4
+    │                                   │        │        │         │        │  
+    │                                   ╰─────────────────────────────────────── ref: 4
+    │                                            │        │         │        │  
+    │                                            ╰────────────────────────────── ref: 4
+    │                                                     │         │        │  
+    │                                                     ╰───────────────────── ref: 4
+    │                                                               │        │  
+    │                                                               ╰─────────── ref: 3
+    │                                                                        │  
+    │                                                                        ╰── ref: 3
+    │ 
+  8 │     function yul_while_loop() public returns (uint256 z) {
+    │              ───────┬──────                           ┬  
+    │                     ╰──────────────────────────────────── def: 5
+    │                                                       │  
+    │                                                       ╰── def: 6
+    │ 
+ 10 │             let i := 0
+    │                 ┬  
+    │                 ╰── def: 7
+ 11 │             for {} lt(i, 5) {} {
+    │                       ┬  
+    │                       ╰── ref: 7
+ 12 │                 i := add(i, 1)
+    │                 ┬        ┬  
+    │                 ╰─────────── ref: 7
+    │                          │  
+    │                          ╰── ref: 7
+ 13 │                 z := add(z, 1)
+    │                 ┬        ┬  
+    │                 ╰─────────── ref: 6
+    │                          │  
+    │                          ╰── ref: 6
+────╯

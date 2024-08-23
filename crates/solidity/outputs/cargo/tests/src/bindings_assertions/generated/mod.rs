@@ -14,3 +14,4 @@ mod mappings;
 mod scoping;
 mod user_types;
 mod variables;
+mod yul;
