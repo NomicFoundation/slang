@@ -126,12 +126,12 @@ export class VersionPragma {
 
 export class VersionRange {
   private readonly fetch = once(() => {
-    const [$lower, $minus, $upper] = ast_internal.selectSequence(this.cst);
+    const [$start, $minus, $end] = ast_internal.selectSequence(this.cst);
 
     return {
-      lower: new VersionTerm($lower as NonterminalNode),
+      start: new VersionLiteral($start as NonterminalNode),
       minus: $minus as TerminalNode,
-      upper: new VersionTerm($upper as NonterminalNode),
+      end: new VersionLiteral($end as NonterminalNode),
     };
   });
 
@@ -139,16 +139,16 @@ export class VersionRange {
     assertKind(this.cst.kind, NonterminalKind.VersionRange);
   }
 
-  public get lower(): VersionTerm {
-    return this.fetch().lower;
+  public get start(): VersionLiteral {
+    return this.fetch().start;
   }
 
   public get minus(): TerminalNode {
     return this.fetch().minus;
   }
 
-  public get upper(): VersionTerm {
-    return this.fetch().upper;
+  public get end(): VersionLiteral {
+    return this.fetch().end;
   }
 }
 

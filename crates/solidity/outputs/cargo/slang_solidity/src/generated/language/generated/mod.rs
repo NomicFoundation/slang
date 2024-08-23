@@ -5707,7 +5707,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn version_range(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(EdgeLabel::Lower, self.version_term(input))?;
+            seq.elem_labeled(EdgeLabel::Start, self.version_literal(input))?;
             seq.elem_labeled(
                 EdgeLabel::Minus,
                 self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
@@ -5715,7 +5715,7 @@ impl Language {
                     TerminalKind::Minus,
                 ),
             )?;
-            seq.elem_labeled(EdgeLabel::Upper, self.version_term(input))?;
+            seq.elem_labeled(EdgeLabel::End, self.version_literal(input))?;
             seq.finish()
         })
         .with_kind(NonterminalKind::VersionRange)

@@ -183,7 +183,6 @@ pub slang_solidity::kinds::EdgeLabel::LeftOperand
 pub slang_solidity::kinds::EdgeLabel::LetKeyword
 pub slang_solidity::kinds::EdgeLabel::LibraryKeyword
 pub slang_solidity::kinds::EdgeLabel::Literal
-pub slang_solidity::kinds::EdgeLabel::Lower
 pub slang_solidity::kinds::EdgeLabel::MappingKeyword
 pub slang_solidity::kinds::EdgeLabel::Member
 pub slang_solidity::kinds::EdgeLabel::Members
@@ -234,7 +233,6 @@ pub slang_solidity::kinds::EdgeLabel::TypeName
 pub slang_solidity::kinds::EdgeLabel::Types
 pub slang_solidity::kinds::EdgeLabel::UncheckedKeyword
 pub slang_solidity::kinds::EdgeLabel::Unit
-pub slang_solidity::kinds::EdgeLabel::Upper
 pub slang_solidity::kinds::EdgeLabel::UsingKeyword
 pub slang_solidity::kinds::EdgeLabel::Value
 pub slang_solidity::kinds::EdgeLabel::ValueType

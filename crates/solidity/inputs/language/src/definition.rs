@@ -142,9 +142,9 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = VersionRange,
                             fields = (
-                                lower = Required(VersionTerm),
+                                start = Required(VersionLiteral),
                                 minus = Required(Minus),
-                                upper = Required(VersionTerm)
+                                end = Required(VersionLiteral)
                             )
                         ),
                         Struct(

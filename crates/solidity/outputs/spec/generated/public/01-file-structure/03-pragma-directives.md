@@ -62,7 +62,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionRange" style="display: none;"><a href="#VersionRange"><span class="k">VersionRange</span></a><span class="o"> = </span><span class="cm">(* lower: *)</span><span class="o"> </span><a href="#VersionTerm"><span class="k">VersionTerm</span></a><br /><span class="o">               </span><span class="cm">(* minus: *)</span><span class="o"> </span><a href="../09-punctuation#Minus"><span class="k">MINUS</span></a><br /><span class="o">               </span><span class="cm">(* upper: *)</span><span class="o"> </span><a href="#VersionTerm"><span class="k">VersionTerm</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionRange" style="display: none;"><a href="#VersionRange"><span class="k">VersionRange</span></a><span class="o"> = </span><span class="cm">(* start: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><br /><span class="o">               </span><span class="cm">(* minus: *)</span><span class="o"> </span><a href="../09-punctuation#Minus"><span class="k">MINUS</span></a><br /><span class="o">               </span><span class="cm">(* end: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionTerm }
 

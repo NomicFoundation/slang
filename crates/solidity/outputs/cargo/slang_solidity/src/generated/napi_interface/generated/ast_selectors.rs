@@ -275,9 +275,9 @@ impl Selector {
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(EdgeLabel::Lower)?),
+            Some(self.select(EdgeLabel::Start)?),
             Some(self.select(EdgeLabel::Minus)?),
-            Some(self.select(EdgeLabel::Upper)?),
+            Some(self.select(EdgeLabel::End)?),
         ])
     }
 }

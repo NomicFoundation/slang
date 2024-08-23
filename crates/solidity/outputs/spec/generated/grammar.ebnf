@@ -57,9 +57,9 @@ VersionExpressionSet = (* item: *) VersionExpression+;
 VersionExpression = (* variant: *) VersionRange
                   | (* variant: *) VersionTerm;
 
-VersionRange = (* lower: *) VersionTerm
+VersionRange = (* start: *) VersionLiteral
                (* minus: *) MINUS
-               (* upper: *) VersionTerm;
+               (* end: *) VersionLiteral;
 
 VersionTerm = (* operator: *) VersionOperator?
               (* literal: *) VersionLiteral;
