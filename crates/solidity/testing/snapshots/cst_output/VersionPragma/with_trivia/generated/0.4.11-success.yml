@@ -10,7 +10,7 @@ Tree:
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (sets꞉ VersionExpressionSets): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
           - (item꞉ VersionExpressionSet): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
-              - (item꞉ VersionExpression) ► (variant꞉ VersionSpecifiers): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
+              - (item꞉ VersionExpression) ► (variant꞉ VersionTerm) ► (literal꞉ VersionLiteral) ► (variant꞉ SimpleVersionLiteral): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
                   - (leading_trivia꞉ Whitespace): " " # (8..9)
                   - (leading_trivia꞉ MultiLineComment): "/* comments */" # (9..23)
                   - (leading_trivia꞉ Whitespace): " " # (23..24)

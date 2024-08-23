@@ -32,7 +32,7 @@ pub fn select_sequence(
         NonterminalKind::ExperimentalPragma => selector.experimental_pragma_sequence()?,
         NonterminalKind::VersionPragma => selector.version_pragma_sequence()?,
         NonterminalKind::VersionRange => selector.version_range_sequence()?,
-        NonterminalKind::VersionComparator => selector.version_comparator_sequence()?,
+        NonterminalKind::VersionTerm => selector.version_term_sequence()?,
         NonterminalKind::ImportDirective => selector.import_directive_sequence()?,
         NonterminalKind::PathImport => selector.path_import_sequence()?,
         NonterminalKind::NamedImport => selector.named_import_sequence()?,
@@ -275,20 +275,20 @@ impl Selector {
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(EdgeLabel::LeftOperand)?),
-            Some(self.select(EdgeLabel::Operator)?),
-            Some(self.select(EdgeLabel::RightOperand)?),
+            Some(self.select(EdgeLabel::Start)?),
+            Some(self.select(EdgeLabel::Minus)?),
+            Some(self.select(EdgeLabel::End)?),
         ])
     }
 }
 
 impl Selector {
-    fn version_comparator_sequence(
+    fn version_term_sequence(
         &mut self,
     ) -> Result<Vec<Option<Either<NonterminalNode, TerminalNode>>>> {
         Ok(vec![
-            Some(self.select(EdgeLabel::Operator)?),
-            Some(self.select(EdgeLabel::Operand)?),
+            self.try_select(EdgeLabel::Operator),
+            Some(self.select(EdgeLabel::Literal)?),
         ])
     }
 }

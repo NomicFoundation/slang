@@ -55,45 +55,28 @@ VersionExpressionSets = (* item: *) VersionExpressionSet ((* separator: *) BAR_B
 VersionExpressionSet = (* item: *) VersionExpression+;
 
 VersionExpression = (* variant: *) VersionRange
-                  | (* variant: *) VersionComparator
-                  | (* variant: *) VersionSpecifiers
-                  | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
-                  | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
+                  | (* variant: *) VersionTerm;
 
-(* Left-associative binary operator *)
-VersionRange = (* left_operand: *) VersionExpression
-               (* operator: *) MINUS
-               (* right_operand: *) VersionExpression;
+VersionRange = (* start: *) VersionLiteral
+               (* minus: *) MINUS
+               (* end: *) VersionLiteral;
 
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) CARET
-                    (* operand: *) VersionExpression;
+VersionTerm = (* operator: *) VersionOperator?
+              (* literal: *) VersionLiteral;
 
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) TILDE
-                    (* operand: *) VersionExpression;
+VersionOperator = (* variant: *) CARET
+                | (* variant: *) TILDE
+                | (* variant: *) EQUAL
+                | (* variant: *) LESS_THAN
+                | (* variant: *) GREATER_THAN
+                | (* variant: *) LESS_THAN_EQUAL
+                | (* variant: *) GREATER_THAN_EQUAL;
 
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) EQUAL
-                    (* operand: *) VersionExpression;
+VersionLiteral = (* variant: *) SimpleVersionLiteral
+               | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
+               | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
 
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) LESS_THAN
-                    (* operand: *) VersionExpression;
-
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) GREATER_THAN
-                    (* operand: *) VersionExpression;
-
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) LESS_THAN_EQUAL
-                    (* operand: *) VersionExpression;
-
-(* Prefix unary operator *)
-VersionComparator = (* operator: *) GREATER_THAN_EQUAL
-                    (* operand: *) VersionExpression;
-
-VersionSpecifiers = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
+SimpleVersionLiteral = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
 
 VERSION_SPECIFIER = «VERSION_SPECIFIER_FRAGMENT»;
 

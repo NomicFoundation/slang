@@ -132,59 +132,51 @@ codegen_language_macros::compile!(Language(
                             separator = BarBar
                         ),
                         Repeated(name = VersionExpressionSet, reference = VersionExpression),
-                        Precedence(
+                        Enum(
                             name = VersionExpression,
-                            precedence_expressions = [
-                                PrecedenceExpression(
-                                    name = VersionRange,
-                                    operators = [PrecedenceOperator(
-                                        model = BinaryLeftAssociative,
-                                        fields = (operator = Required(Minus))
-                                    )]
-                                ),
-                                PrecedenceExpression(
-                                    name = VersionComparator,
-                                    operators = [
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(Caret))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(Tilde))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(Equal))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(LessThan))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(GreaterThan))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(LessThanEqual))
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Prefix,
-                                            fields = (operator = Required(GreaterThanEqual))
-                                        )
-                                    ]
-                                )
-                            ],
-                            primary_expressions = [
-                                PrimaryExpression(reference = VersionSpecifiers),
-                                PrimaryExpression(reference = SingleQuotedVersionLiteral),
-                                PrimaryExpression(reference = DoubleQuotedVersionLiteral)
+                            variants = [
+                                EnumVariant(reference = VersionRange),
+                                EnumVariant(reference = VersionTerm)
+                            ]
+                        ),
+                        Struct(
+                            name = VersionRange,
+                            fields = (
+                                start = Required(VersionLiteral),
+                                minus = Required(Minus),
+                                end = Required(VersionLiteral)
+                            )
+                        ),
+                        Struct(
+                            name = VersionTerm,
+                            fields = (
+                                operator = Optional(reference = VersionOperator),
+                                literal = Required(VersionLiteral)
+                            )
+                        ),
+                        Enum(
+                            name = VersionOperator,
+                            variants = [
+                                EnumVariant(reference = Caret),
+                                EnumVariant(reference = Tilde),
+                                EnumVariant(reference = Equal),
+                                EnumVariant(reference = LessThan),
+                                EnumVariant(reference = GreaterThan),
+                                EnumVariant(reference = LessThanEqual),
+                                EnumVariant(reference = GreaterThanEqual)
+                            ]
+                        ),
+                        Enum(
+                            name = VersionLiteral,
+                            variants = [
+                                EnumVariant(reference = SimpleVersionLiteral),
+                                EnumVariant(reference = SingleQuotedVersionLiteral),
+                                EnumVariant(reference = DoubleQuotedVersionLiteral)
                             ]
                         ),
                         Separated(
                             // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                            name = VersionSpecifiers,
+                            name = SimpleVersionLiteral,
                             reference = VersionSpecifier,
                             separator = Period
                         ),
