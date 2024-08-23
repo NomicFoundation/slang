@@ -4,16 +4,16 @@ use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
 use slang_solidity::cst::{NonterminalKind, Query, QueryMatchIterator};
-use slang_solidity::parser::{Language, ParseOutput};
+use slang_solidity::parser::{ParseOutput, Parser};
 
 fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
     let input_path = Path::repo_path("documentation/public/user-guide/inputs").join(path.as_ref());
 
     let source = input_path.read_to_string()?;
 
-    let language = Language::new(Version::new(0, 8, 0))?;
+    let parser = Parser::new(Version::new(0, 8, 0))?;
 
-    Ok(language.parse(NonterminalKind::SourceUnit, source.trim()))
+    Ok(parser.parse(NonterminalKind::SourceUnit, source.trim()))
 }
 
 #[test]

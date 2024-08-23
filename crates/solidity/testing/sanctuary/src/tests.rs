@@ -6,7 +6,7 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use semver::Version;
 use slang_solidity::cst::NonterminalKind;
-use slang_solidity::parser::Language;
+use slang_solidity::parser::Parser;
 
 use crate::datasets::{DataSet, SourceFile};
 use crate::events::{Events, TestOutcome};
@@ -98,8 +98,8 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
         .replace("&#39;", "\"");
 
-    let language = Language::new(version.clone())?;
-    let output = language.parse(NonterminalKind::SourceUnit, &source);
+    let parser = Parser::new(version.clone())?;
+    let output = parser.parse(NonterminalKind::SourceUnit, &source);
 
     if output.is_valid() {
         events.test(TestOutcome::Passed);
@@ -134,7 +134,7 @@ fn extract_compiler_version(compiler: &str) -> Option<Version> {
         panic!("Unrecognized compiler/version: '{compiler}'");
     };
 
-    if &version < Language::SUPPORTED_VERSIONS.first().unwrap() {
+    if &version < Parser::SUPPORTED_VERSIONS.first().unwrap() {
         // Version is too early:
         return None;
     }

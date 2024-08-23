@@ -34,14 +34,14 @@ use crate::parser::ParseOutput;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "__private_napi_interfaces", napi(namespace = "parser"))]
-pub struct Language {
+pub struct Parser {
     #[allow(dead_code)]
     pub(crate) version_is_at_least_1_0_0: bool,
     pub(crate) version: Version,
 }
 
 #[derive(thiserror::Error, Debug)]
-pub enum LanguageInitializationError {
+pub enum ParserInitializationError {
     #[error("Unsupported language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 
@@ -51,13 +51,13 @@ pub enum LanguageInitializationError {
 }
 
 #[cfg(feature = "__private_napi_interfaces")]
-impl From<LanguageInitializationError> for napi::Error {
-    fn from(value: LanguageInitializationError) -> Self {
+impl From<ParserInitializationError> for napi::Error {
+    fn from(value: ParserInitializationError) -> Self {
         napi::Error::from_reason(value.to_string())
     }
 }
 
-impl Language {
+impl Parser {
     pub const SUPPORTED_VERSIONS: &'static [Version] = &[
         Version::new(1, 0, 0),
         Version::new(1, 0, 1),
@@ -67,14 +67,14 @@ impl Language {
 
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
 
-    pub fn new(version: Version) -> std::result::Result<Self, LanguageInitializationError> {
+    pub fn new(version: Version) -> std::result::Result<Self, ParserInitializationError> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 version_is_at_least_1_0_0: Version::new(1, 0, 0) <= version,
                 version,
             })
         } else {
-            Err(LanguageInitializationError::UnsupportedLanguageVersion(
+            Err(ParserInitializationError::UnsupportedLanguageVersion(
                 version,
             ))
         }
@@ -685,13 +685,13 @@ impl Language {
     }
 }
 
-impl Lexer for Language {
+impl Lexer for Parser {
     fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        Language::leading_trivia(self, input)
+        Parser::leading_trivia(self, input)
     }
 
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        Language::trailing_trivia(self, input)
+        Parser::trailing_trivia(self, input)
     }
 
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
@@ -833,11 +833,11 @@ impl Lexer for Language {
 // NAPI-exposed functions have to accept owned values.
 #[allow(clippy::needless_pass_by_value)]
 #[napi(namespace = "parser")]
-impl Language {
+impl Parser {
     #[napi(constructor, catch_unwind)]
     pub fn new_napi(version: String) -> std::result::Result<Self, napi::Error> {
         let version = Version::parse(&version)
-            .map_err(|_| LanguageInitializationError::InvalidSemanticVersion(version))?;
+            .map_err(|_| ParserInitializationError::InvalidSemanticVersion(version))?;
         Self::new(version).map_err(|e| e.into())
     }
 

@@ -8,22 +8,22 @@ use crate::parser::parser_support::parser_result::{
 };
 use crate::parser::{ParseError, ParseOutput};
 
-pub trait ParserFunction<L>
+pub trait ParserFunction<P>
 where
-    Self: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
+    Self: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
-    fn parse(&self, language: &L, input: &str) -> ParseOutput;
+    fn parse(&self, parser: &P, input: &str) -> ParseOutput;
 }
 
-impl<L, F> ParserFunction<L> for F
+impl<P, F> ParserFunction<P> for F
 where
-    L: Lexer,
-    F: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
+    P: Lexer,
+    F: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
     #[allow(clippy::too_many_lines)]
-    fn parse(&self, language: &L, input: &str) -> ParseOutput {
+    fn parse(&self, parser: &P, input: &str) -> ParseOutput {
         let mut stream = ParserContext::new(input);
-        let mut result = self(language, &mut stream);
+        let mut result = self(parser, &mut stream);
 
         // For a succesful/recovered parse, collect any remaining trivia as part of the parse result
         if let ParserResult::Match(r#match) = &mut result {
@@ -33,7 +33,7 @@ where
                 )
             };
 
-            let eof_trivia = match Lexer::leading_trivia(language, &mut stream) {
+            let eof_trivia = match Lexer::leading_trivia(parser, &mut stream) {
                 ParserResult::Match(eof_trivia) if !eof_trivia.nodes.is_empty() => {
                     Some(eof_trivia.nodes)
                 }

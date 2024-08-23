@@ -1,8 +1,8 @@
 import * as generated from "../napi-bindings/generated";
 import { DiagnosticInterface } from "../diagnostic";
 
-export const Language = generated.parser.Language;
-export type Language = generated.parser.Language;
+export const Parser = generated.parser.Parser;
+export type Parser = generated.parser.Parser;
 
 export const ParseError = generated.parser.ParseError;
 export type ParseError = generated.parser.ParseError;

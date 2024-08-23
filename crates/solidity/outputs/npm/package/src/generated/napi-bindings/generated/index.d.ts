@@ -810,7 +810,7 @@ export declare namespace cst {
   }
 }
 export declare namespace parser {
-  export class Language {
+  export class Parser {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;

@@ -1,11 +1,11 @@
 import { NonterminalKind, TerminalKind, Query } from "@slang-private/slang-testlang/cst";
-import { Language } from "@slang-private/slang-testlang/parser";
+import { Parser } from "@slang-private/slang-testlang/parser";
 import { expectTerminal } from "../utils/cst-helpers";
 
 test("simple query", () => {
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
   const tree_source = `tree [A [B C] D];`;
-  const parse_output = language.parse(NonterminalKind.Tree, tree_source);
+  const parse_output = parser.parse(NonterminalKind.Tree, tree_source);
 
   const query_source = `[TreeNodeChild @id [DelimitedIdentifier]]`;
   const query = Query.parse(query_source);

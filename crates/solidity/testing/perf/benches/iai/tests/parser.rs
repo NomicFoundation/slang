@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use slang_solidity::cst::Node;
-use slang_solidity::parser::Language;
+use slang_solidity::parser::Parser;
 
 use crate::dataset::{SourceFile, SOLC_VERSION};
 
@@ -19,12 +19,12 @@ pub fn setup() -> Vec<SourceFile> {
 }
 
 pub fn run(files: Vec<SourceFile>) -> Vec<ParsedFile> {
-    let language = Language::new(SOLC_VERSION).unwrap();
+    let parser = Parser::new(SOLC_VERSION).unwrap();
 
     let mut results = vec![];
 
     for SourceFile { path, contents } in files {
-        let parse_output = language.parse(Language::ROOT_KIND, &contents);
+        let parse_output = parser.parse(Parser::ROOT_KIND, &contents);
 
         assert!(
             parse_output.is_valid(),
