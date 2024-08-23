@@ -23,13 +23,13 @@ contract C is A {
 contract D is B, C {
     function foo() public pure override(B, C) returns (string memory) {
         return super.foo();
-        //           ^ref:3 (=0.0.0) -- TODO should resolve for (>=0.6.0)
+        //           ^ref:3
     }
 }
 
 contract E is C, B {
     function foo() public pure override(C, B) returns (string memory) {
         return super.foo();
-        //           ^ref:2 (=0.0.0) -- TODO should resolve for (>=0.6.0)
+        //           ^ref:2
     }
 }

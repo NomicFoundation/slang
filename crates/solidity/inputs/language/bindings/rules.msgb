@@ -244,7 +244,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    [InheritanceType @type_name [IdentifierPath]]
+    @type [InheritanceType @type_name [IdentifierPath]]
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
@@ -258,6 +258,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (typeof) push_symbol = "@typeof"
 
   edge @contract.members -> member
+  attr (@contract.members -> member) precedence = 0
   edge member -> typeof
   edge typeof -> @type_name.right
 
@@ -270,6 +271,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; The base contract defs are directly accesible through our special super scope
   edge @contract.super_scope -> @type_name.right
+
+  ;; Precedence order for bases defined from right to left (ie. rightmost base has higher precedence)
+  let p = (plus 1 (named-child-index @type))
+  attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -316,6 +321,10 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
+  ;; Contract's own members should have higher precedence than base clases
+  ;; See connection from @contract.members into base type's member in contract
+  ;; bases rules, where the precedence is set to 0
+  attr (@contract.members -> @function.def) precedence = 1
 }
 
 @contract [ContractDefinition members: [ContractMembers
