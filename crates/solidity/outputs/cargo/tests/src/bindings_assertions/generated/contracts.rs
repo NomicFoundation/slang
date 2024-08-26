@@ -15,6 +15,11 @@ fn virtual_methods() -> Result<()> {
 }
 
 #[test]
+fn virtual_single() -> Result<()> {
+    run("contracts", "virtual_single")
+}
+
+#[test]
 fn visibility() -> Result<()> {
     run("contracts", "visibility")
 }
