@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-package nomic-foundation:slang@0.16.0;
+package nomic-foundation:slang;
 
 world slang {
     export cst;
