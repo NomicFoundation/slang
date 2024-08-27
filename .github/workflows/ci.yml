@@ -15,17 +15,12 @@ on:
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref_name }}"
+  group: "${{ github.workflow }}-${{ github.ref_name }}-${{ github.event_name }}"
   cancel-in-progress: true
 
 jobs:
   ci:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    # Due to the "on" events above, this workflow will run on every push to any branch, and on every PR.
-    # This means that if a PR is created from a branch in the main repo, the CI jobs will run twice.
-    # This condition deduplicats it, so that it either runs on a push (to main repo or forks) or on a PR (from forks only).
-    if: "${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != 'NomicFoundation/slang') }}"
 
     steps:
       - name: "Checkout Repository"
