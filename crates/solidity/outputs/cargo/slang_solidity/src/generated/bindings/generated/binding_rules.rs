@@ -199,6 +199,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
+  attr (@contract.lexical_scope -> @contract.members) precedence = 1
   edge @contract.lexical_scope -> @contract.type_members
   edge @contract.lexical_scope -> @contract.modifiers
 }
