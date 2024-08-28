@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_assertions::runner::run;
 
 #[test]
+fn diamond() -> Result<()> {
+    run("contracts", "diamond")
+}
+
+#[test]
 fn inheritance() -> Result<()> {
     run("contracts", "inheritance")
 }
