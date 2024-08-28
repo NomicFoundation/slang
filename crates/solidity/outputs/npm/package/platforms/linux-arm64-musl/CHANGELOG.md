@@ -1,5 +1,15 @@
 # changelog
 
+## 0.17.0
+
+### Minor Changes
+
+-   [#1079](https://github.com/NomicFoundation/slang/pull/1079) [`43b389e`](https://github.com/NomicFoundation/slang/commit/43b389e9db59054774e6346dca7e71c307192ebb) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Move the Rust CLI into a separate `slang_solidity_cli` crate.
+
+### Patch Changes
+
+-   [#1086](https://github.com/NomicFoundation/slang/pull/1086) [`f749e53`](https://github.com/NomicFoundation/slang/commit/f749e536a377b1612b623eb8277abb2b59019026) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - The grammar for `VersionExpressionSet` has changed to more accurately model the allowed structure.
+
 ## 0.16.0
 
 ### Minor Changes
