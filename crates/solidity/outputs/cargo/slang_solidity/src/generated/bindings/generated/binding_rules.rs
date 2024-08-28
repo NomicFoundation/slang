@@ -184,9 +184,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.def
   node @contract.members
   node @contract.type_members
+  node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
+  edge @contract.lexical_scope -> @contract.modifiers
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -229,6 +231,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     [ContractMember @member (
           [FunctionDefinition]
         | [StateVariableDefinition]
+        | [ModifierDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
@@ -240,6 +243,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
+}
+
+@contract [ContractDefinition members: [ContractMembers
+    item: [ContractMember @modifier variant: [ModifierDefinition]]
+]] {
+  edge @contract.modifiers -> @modifier.def
 }
 
 
@@ -500,7 +509,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Function and parameter declarations
+;;; Function, parameter declarations and modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @param [Parameter] {
@@ -570,6 +579,50 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Connect the function body's block lexical scope to the function
 @function [FunctionDefinition [FunctionBody @block [Block]]] {
   edge @block.lexical_scope -> @function.lexical_scope
+}
+
+@function [FunctionDefinition [FunctionAttributes item: [FunctionAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @function.lexical_scope
+}
+
+@modifier [ModifierInvocation @name [IdentifierPath]] {
+  node @modifier.lexical_scope
+
+  edge @name.left -> @modifier.lexical_scope
+}
+
+@modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
+  edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function modifiers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@modifier [ModifierDefinition
+    @name name: [Identifier]
+    body: [FunctionBody @body [Block]]
+] {
+  node @modifier.def
+  node @modifier.lexical_scope
+
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @modifier
+
+  edge @modifier.def -> def
+  edge @body.lexical_scope -> @modifier.lexical_scope
+}
+
+@modifier [ModifierDefinition @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @modifier.lexical_scope
+
+  ;; Input parameters are available in the modifier scope
+  edge @modifier.lexical_scope -> @params.defs
+  attr (@modifier.lexical_scope -> @params.defs) precedence = 1
 }
 
 

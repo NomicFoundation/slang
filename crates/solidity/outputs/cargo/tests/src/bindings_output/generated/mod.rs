@@ -8,6 +8,7 @@ mod imports;
 mod interfaces;
 mod libraries;
 mod mappings;
+mod modifiers;
 mod structs;
 mod variables;
 mod yul;

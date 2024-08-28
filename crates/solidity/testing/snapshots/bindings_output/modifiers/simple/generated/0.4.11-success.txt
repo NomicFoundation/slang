@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract FunctionModifier {
+    │          ────────┬───────  
+    │                  ╰───────── def: 1
+  2 │     uint256 public x = 10;
+    │                    ┬  
+    │                    ╰── def: 2
+  3 │     bool public locked;
+    │                 ───┬──  
+    │                    ╰──── def: 3
+    │ 
+  5 │     modifier noReentrancy() {
+    │              ──────┬─────  
+    │                    ╰─────── def: 4
+  6 │         require(!locked, "No reentrancy");
+    │         ───┬───  ───┬──  
+    │            ╰───────────── unresolved
+    │                     │    
+    │                     ╰──── ref: 3
+    │ 
+  8 │         locked = true;
+    │         ───┬──  
+    │            ╰──── ref: 3
+  9 │         _;
+    │         ┬  
+    │         ╰── unresolved
+ 10 │         locked = false;
+    │         ───┬──  
+    │            ╰──── ref: 3
+    │ 
+ 13 │     function decrement(uint256 i) public noReentrancy {
+    │              ────┬────         ┬         ──────┬─────  
+    │                  ╰───────────────────────────────────── def: 5
+    │                                │               │       
+    │                                ╰─────────────────────── def: 6
+    │                                                │       
+    │                                                ╰─────── ref: 4
+ 14 │         x -= i;
+    │         ┬    ┬  
+    │         ╰─────── ref: 2
+    │              │  
+    │              ╰── ref: 6
+    │ 
+ 16 │         if (i > 1) {
+    │             ┬  
+    │             ╰── ref: 6
+ 17 │             decrement(i - 1);
+    │             ────┬──── ┬  
+    │                 ╰──────── ref: 5
+    │                       │  
+    │                       ╰── ref: 6
+────╯
