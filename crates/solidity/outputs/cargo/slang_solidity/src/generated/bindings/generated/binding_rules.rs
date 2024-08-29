@@ -538,6 +538,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @params [ParametersDeclaration] {
   node @params.lexical_scope
   node @params.defs
+
+  ;; This scope can be used to resolve named argument calls
+  node @params.args
+  attr (@params.args) pop_symbol = "@args"
+  edge @params.args -> @params.defs
 }
 
 @params [ParametersDeclaration [Parameters @param item: [Parameter]]] {
@@ -551,11 +556,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @function
-
-  edge @function.def -> def
+  attr (@function.def) node_definition = @name
+  attr (@function.def) definiens_node = @function
 }
 
 @function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
@@ -564,6 +566,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Input parameters are available in the function scope
   edge @function.lexical_scope -> @params.defs
   attr (@function.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @function.def -> @params.args
 }
 
 @function [FunctionDefinition returns: [ReturnsDeclaration
@@ -1239,6 +1244,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @args [ArgumentsDeclaration] {
   node @args.lexical_scope
+
+  node @args.refs
+  attr (@args.refs) push_symbol = "@args"
 }
 
 @args [ArgumentsDeclaration [PositionalArgumentsDeclaration
@@ -1252,18 +1260,31 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @value.lexical_scope -> @named_arg.lexical_scope
 
-  node ref
-  attr (ref) node_reference = @name
+  node @named_arg.ref
+  attr (@named_arg.ref) node_reference = @name
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
     [NamedArgumentGroup [NamedArguments @argument [NamedArgument]]]
 ]] {
   edge @argument.lexical_scope -> @args.lexical_scope
+  edge @argument.ref -> @args.refs
 }
 
-@funcall [Expression [FunctionCallExpression @args [ArgumentsDeclaration]]] {
+@funcall [Expression [FunctionCallExpression
+    @operand [Expression]
+    @args [ArgumentsDeclaration]
+]] {
   edge @args.lexical_scope -> @funcall.lexical_scope
+
+  ;; Connect to the output of the function name to be able to resolve named arguments
+  edge @args.refs -> @operand.output
+
+  node call
+  attr (call) push_symbol = "()"
+
+  edge @funcall.output -> call
+  edge call -> @operand.output
 }
 
 
