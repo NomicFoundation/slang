@@ -10,11 +10,6 @@ fn do_while() -> Result<()> {
 }
 
 #[test]
-fn emit_event() -> Result<()> {
-    run("control", "emit_event")
-}
-
-#[test]
 fn for_empty_init_or_cond() -> Result<()> {
     run("control", "for_empty_init_or_cond")
 }
@@ -37,11 +32,6 @@ fn if_else() -> Result<()> {
 #[test]
 fn return_stmt() -> Result<()> {
     run("control", "return_stmt")
-}
-
-#[test]
-fn revert_stmt() -> Result<()> {
-    run("control", "revert_stmt")
 }
 
 #[test]

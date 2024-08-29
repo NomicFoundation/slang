@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     enum Severity {
+    │          ────┬───  
+    │              ╰───── def: 2
+  3 │         INFO,
+    │         ──┬─  
+    │           ╰─── def: 3
+  4 │         ERROR
+    │         ──┬──  
+    │           ╰──── def: 4
+    │ 
+  7 │     event Log(
+    │           ─┬─  
+    │            ╰─── def: 5
+  8 │         string name,
+    │                ──┬─  
+    │                  ╰─── def: 6
+  9 │         Severity level
+    │         ────┬─── ──┬──  
+    │             ╰─────────── ref: 2
+    │                    │    
+    │                    ╰──── def: 7
+    │ 
+ 12 │     error Failure(
+    │           ───┬───  
+    │              ╰───── def: 8
+ 13 │         Severity severity,
+    │         ────┬─── ────┬───  
+    │             ╰────────────── ref: 2
+    │                      │     
+    │                      ╰───── def: 9
+ 14 │         string cause
+    │                ──┬──  
+    │                  ╰──── def: 10
+    │ 
+ 17 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 11
+ 18 │         emit Log({level: Severity.INFO, name: "Testing"});
+    │              ─┬─  ──┬──  ────┬─── ──┬─  ──┬─  
+    │               ╰─────────────────────────────── ref: 5
+    │                     │        │      │     │   
+    │                     ╰───────────────────────── ref: 7
+    │                              │      │     │   
+    │                              ╰──────────────── ref: 2
+    │                                     │     │   
+    │                                     ╰───────── ref: 3
+    │                                           │   
+    │                                           ╰─── ref: 6
+ 19 │         revert Failure({severity: Severity.ERROR, cause: "Testing"});
+    │                ───┬───  ────┬───  ────┬─── ──┬──  ──┬──  
+    │                   ╰────────────────────────────────────── ref: 8
+    │                             │         │      │      │    
+    │                             ╰──────────────────────────── ref: 9
+    │                                       │      │      │    
+    │                                       ╰────────────────── ref: 2
+    │                                              │      │    
+    │                                              ╰─────────── ref: 4
+    │                                                     │    
+    │                                                     ╰──── ref: 10
+────╯

@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:12:18]
+    │
+ 12 │ ╭─▶     error Failure(
+    ┆ ┆   
+ 15 │ ├─▶     );
+    │ │            
+    │ ╰──────────── Error occurred here.
+────╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:18:17]
+    │
+ 18 │         emit Log({level: Severity.INFO, name: "Testing"});
+    │                 ────────────────────┬────────────────────  
+    │                                     ╰────────────────────── Error occurred here.
+────╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:19:23]
+    │
+ 19 │         revert Failure({severity: Severity.ERROR, cause: "Testing"});
+    │                       ───────────────────────┬──────────────────────  
+    │                                              ╰──────────────────────── Error occurred here.
+────╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     enum Severity {
+    │          ────┬───  
+    │              ╰───── def: 2
+  3 │         INFO,
+    │         ──┬─  
+    │           ╰─── def: 3
+  4 │         ERROR
+    │         ──┬──  
+    │           ╰──── def: 4
+    │ 
+  7 │     event Log(
+    │           ─┬─  
+    │            ╰─── def: 5
+  8 │         string name,
+    │                ──┬─  
+    │                  ╰─── def: 6
+  9 │         Severity level
+    │         ────┬─── ──┬──  
+    │             ╰─────────── ref: 2
+    │                    │    
+    │                    ╰──── def: 7
+    │ 
+ 12 │     error Failure(
+    │     ──┬── ───┬───  
+    │       ╰──────────── unresolved
+    │              │     
+    │              ╰───── def: 8
+    │ 
+ 17 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 9
+ 18 │         emit Log({level: Severity.INFO, name: "Testing"});
+    │         ──┬─ ─┬─  
+    │           ╰─────── unresolved
+    │               │   
+    │               ╰─── def: 10
+ 19 │         revert Failure({severity: Severity.ERROR, cause: "Testing"});
+    │         ───┬── ───┬───  
+    │            ╰──────────── unresolved
+    │                   │     
+    │                   ╰───── def: 11
+────╯

@@ -7,19 +7,21 @@ References and definitions:
    │          ──┬─  
    │            ╰─── def: 1
  2 │     event TestEvent(int id);
-   │           ────┬────  
-   │               ╰────── def: 2
+   │           ────┬────     ─┬  
+   │               ╰───────────── def: 2
+   │                          │  
+   │                          ╰── def: 3
    │ 
  4 │     function test_emit() public {
    │              ────┬────  
-   │                  ╰────── def: 3
+   │                  ╰────── def: 4
  5 │         int x = 1;
    │             ┬  
-   │             ╰── def: 4
+   │             ╰── def: 5
    │ 
  7 │         emit TestEvent(x);
    │              ────┬──── ┬  
    │                  ╰──────── ref: 2
    │                        │  
-   │                        ╰── ref: 4
+   │                        ╰── ref: 5
 ───╯

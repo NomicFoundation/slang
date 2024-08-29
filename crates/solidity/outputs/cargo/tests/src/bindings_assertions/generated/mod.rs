@@ -5,6 +5,8 @@ mod constants;
 mod contracts;
 mod control;
 mod enums;
+mod errors;
+mod events;
 mod expressions;
 mod function_types;
 mod functions;

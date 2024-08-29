@@ -15,6 +15,11 @@ fn funcalls_named_args() -> Result<()> {
 }
 
 #[test]
+fn named_args() -> Result<()> {
+    run("expressions", "named_args")
+}
+
+#[test]
 fn type_expr() -> Result<()> {
     run("expressions", "type_expr")
 }
