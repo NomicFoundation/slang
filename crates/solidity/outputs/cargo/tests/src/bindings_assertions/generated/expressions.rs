@@ -10,6 +10,11 @@ fn basic() -> Result<()> {
 }
 
 #[test]
+fn call_options() -> Result<()> {
+    run("expressions", "call_options")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run("expressions", "function_call")
 }

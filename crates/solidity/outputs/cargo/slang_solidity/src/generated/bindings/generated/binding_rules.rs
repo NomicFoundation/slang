@@ -1329,6 +1329,13 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 
+;;; Call options
+
+@expr [Expression [CallOptionsExpression options: [CallOptions @named_arg [NamedArgument]]]] {
+  edge @named_arg.lexical_scope -> @expr.lexical_scope
+}
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Yul
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
