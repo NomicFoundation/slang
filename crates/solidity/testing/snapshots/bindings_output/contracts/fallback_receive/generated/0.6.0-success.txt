@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Fallback {
+    │          ────┬───  
+    │              ╰───── def: 1
+  2 │     event Log(string func, uint256 gas);
+    │           ─┬─        ──┬─          ─┬─  
+    │            ╰──────────────────────────── def: 2
+    │                        │            │   
+    │                        ╰──────────────── def: 3
+    │                                     │   
+    │                                     ╰─── def: 4
+  3 │     uint status;
+    │          ───┬──  
+    │             ╰──── def: 5
+    │ 
+  5 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
+    │                             ──┬──                                         ───┬──  
+    │                               ╰─────────────────────────────────────────────────── def: 6
+    │                                                                              │    
+    │                                                                              ╰──── def: 7
+  6 │         emit Log("fallback", status);
+    │              ─┬─             ───┬──  
+    │               ╰────────────────────── ref: 2
+    │                                 │    
+    │                                 ╰──── ref: 5
+  7 │         output = input;
+    │         ───┬──   ──┬──  
+    │            ╰──────────── ref: 7
+    │                    │    
+    │                    ╰──── ref: 6
+    │ 
+ 11 │         emit Log("receive", status);
+    │              ─┬─            ───┬──  
+    │               ╰───────────────────── ref: 2
+    │                                │    
+    │                                ╰──── ref: 5
+────╯

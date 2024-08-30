@@ -216,9 +216,25 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [EventDefinition]
         | [ErrorDefinition]
         | [UserDefinedValueTypeDefinition]
+        | [FunctionDefinition]
+        | [StateVariableDefinition]
+        | [ModifierDefinition]
+        | [FallbackFunctionDefinition]
+        | [ReceiveFunctionDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
   edge @contract.type_members -> @member.def
 }
 
@@ -229,7 +245,6 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [ModifierDefinition]
     )]
 ]] {
-  edge @member.lexical_scope -> @contract.lexical_scope
   edge @contract.lexical_scope -> @member.def
 }
 
@@ -595,6 +610,57 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
   edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Fallback and receive functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@fallback [FallbackFunctionDefinition] {
+  node @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Input parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @params.defs
+  attr (@fallback.lexical_scope -> @params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition returns: [ReturnsDeclaration
+    @return_params [ParametersDeclaration]
+]] {
+  edge @return_params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Return parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @return_params.defs
+  attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition [FallbackFunctionAttributes
+    item: [FallbackFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @fallback.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition] {
+  node @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [ReceiveFunctionAttributes
+    item: [ReceiveFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @receive.lexical_scope
 }
 
 
