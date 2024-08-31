@@ -20,6 +20,11 @@ fn named_args() -> Result<()> {
 }
 
 #[test]
+fn outputs() -> Result<()> {
+    run("expressions", "outputs")
+}
+
+#[test]
 fn type_expr() -> Result<()> {
     run("expressions", "type_expr")
 }

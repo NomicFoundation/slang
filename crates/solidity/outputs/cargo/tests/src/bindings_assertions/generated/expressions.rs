@@ -15,8 +15,18 @@ fn call_options() -> Result<()> {
 }
 
 #[test]
+fn call_output() -> Result<()> {
+    run("expressions", "call_output")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run("expressions", "function_call")
+}
+
+#[test]
+fn new_output() -> Result<()> {
+    run("expressions", "new_output")
 }
 
 #[test]

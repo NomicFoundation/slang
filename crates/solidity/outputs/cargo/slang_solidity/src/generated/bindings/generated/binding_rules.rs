@@ -199,13 +199,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @contract.def -> def
 
   ;; "instance" like access path
-  node type_def
-  attr (type_def) pop_symbol = "@typeof"
+  ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
+  ;; and () -> . for accesses through a `new` invocation
   node member
   attr (member) pop_symbol = "."
+  edge member -> @contract.members
+
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
   edge def -> type_def
   edge type_def -> member
-  edge member -> @contract.members
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge def -> call
+  edge call -> member
 
   ;; "namespace" like access path
   node type_member
@@ -527,27 +535,22 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Function, parameter declarations and modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@param [Parameter] {
+@param [Parameter @type_name [TypeName]] {
   node @param.lexical_scope
   node @param.def
-}
 
-@param [Parameter @type_name [TypeName]] {
   edge @type_name.type_ref -> @param.lexical_scope
+
+  node @param.typeof
+  attr (@param.typeof) push_symbol = "@typeof"
+  edge @param.typeof -> @type_name.output
 }
 
-@param [Parameter @type_name [TypeName] @name [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @param
+@param [Parameter @name [Identifier]] {
+  attr (@param.def) node_definition = @name
+  attr (@param.def) definiens_node = @param
 
-  edge @param.def -> def
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge def -> typeof
-  edge typeof -> @type_name.output
+  edge @param.def -> @param.typeof
 }
 
 @params [ParametersDeclaration] {
@@ -594,6 +597,18 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Return parameters are available in the function scope
   edge @function.lexical_scope -> @return_params.defs
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+;; Only functions that return a single value have an actual return type
+;; since tuples are not actual types in Solidity
+@function [FunctionDefinition returns: [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @function.def -> call
+  edge call -> @param.typeof
 }
 
 ;; Connect the function body's block lexical scope to the function
@@ -1344,6 +1359,13 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Type expressions
 @type_expr [Expression [TypeExpression @type [TypeName]]] {
   edge @type.type_ref -> @type_expr.lexical_scope
+}
+
+;; New expressions
+
+@new_expr [Expression [NewExpression @type [TypeName]]] {
+  edge @type.type_ref -> @new_expr.lexical_scope
+  edge @new_expr.output -> @type.output
 }
 
 
