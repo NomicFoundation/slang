@@ -61,5 +61,5 @@ References and definitions:
     │                ──┬── ─┬─  
     │                  ╰──────── unresolved
     │                       │   
-    │                       ╰─── ref: 6
+    │                       ╰─── ref: 2
 ────╯

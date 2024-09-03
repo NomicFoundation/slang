@@ -199,7 +199,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
-  attr (@contract.lexical_scope -> @contract.members) precedence = 1
+  ;; attr (@contract.lexical_scope -> @contract.members) precedence = 1
   edge @contract.lexical_scope -> @contract.type_members
   edge @contract.lexical_scope -> @contract.modifiers
 }
@@ -250,7 +250,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    @type [InheritanceType @type_name [IdentifierPath]]
+    @_type [InheritanceType @type_name [IdentifierPath]]
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
@@ -264,7 +264,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (typeof) push_symbol = "@typeof"
 
   edge @contract.members -> member
-  attr (@contract.members -> member) precedence = 0
+  ;; attr (@contract.members -> member) precedence = 0
   edge member -> typeof
   edge typeof -> @type_name.right
 
@@ -279,8 +279,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @contract.super_scope -> @type_name.right
 
   ;; Precedence order for bases defined from right to left (ie. rightmost base has higher precedence)
-  let p = (plus 1 (named-child-index @type))
-  attr (@contract.super_scope -> @type_name.right) precedence = p
+  ;; let p = (plus 1 (named-child-index @type))
+  ;; attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -330,7 +330,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Contract's own members should have higher precedence than base clases
   ;; See connection from @contract.members into base type's member in contract
   ;; bases rules, where the precedence is set to 0
-  attr (@contract.members -> @function.def) precedence = 1
+  ;; attr (@contract.members -> @function.def) precedence = 1
 }
 
 @contract [ContractDefinition members: [ContractMembers
@@ -659,6 +659,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; Input parameters are available in the function scope
   edge @function.lexical_scope -> @params.defs
+  ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
@@ -672,6 +673,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   ;; Return parameters are available in the function scope
   edge @function.lexical_scope -> @return_params.defs
+  ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
 }
 
@@ -815,6 +817,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
     ;; and the statement definitions are available block's scope
     edge @block.lexical_scope -> @stmt.defs
+    ;; ... shadowing declarations in enclosing scopes
     attr (@block.lexical_scope -> @stmt.defs) precedence = 1
   }
 }
@@ -835,6 +838,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     ;; statement scope. For < 0.5.0 this is also true, but resolved through the
     ;; enclosing block's lexical scope.
     edge @stmt.lexical_scope -> @stmt.defs
+    ;; Statement definitions shadow other declarations in its scope
     attr (@stmt.lexical_scope -> @stmt.defs) precedence = 1
   }
 }
@@ -1077,6 +1081,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @return_params.lexical_scope -> @stmt.lexical_scope
   edge @body.lexical_scope -> @return_params.defs
+  ;; Similar to functions, return params shadow other declarations
   attr (@body.lexical_scope -> @return_params.defs) precedence = 1
 }
 
@@ -1092,6 +1097,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]]]] {
   edge @catch_params.lexical_scope -> @stmt.lexical_scope
   edge @body.lexical_scope -> @catch_params.defs
+  ;; Similar to functions, catch params shadow other declarations
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
 }
 
