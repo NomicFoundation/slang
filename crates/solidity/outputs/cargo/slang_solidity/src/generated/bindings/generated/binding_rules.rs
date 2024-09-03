@@ -558,9 +558,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @params.defs
 
   ;; This scope can be used to resolve named argument calls
-  node @params.args
-  attr (@params.args) pop_symbol = "@args"
-  edge @params.args -> @params.defs
+  node @params.names
+  attr (@params.names) pop_symbol = "@param_names"
+  edge @params.names -> @params.defs
 }
 
 @params [ParametersDeclaration [Parameters @param item: [Parameter]]] {
@@ -586,7 +586,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (@function.lexical_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
-  edge @function.def -> @params.args
+  edge @function.def -> @params.names
 }
 
 @function [FunctionDefinition returns: [ReturnsDeclaration
@@ -1200,9 +1200,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (@event.def) node_definition = @name
   attr (@event.def) definiens_node = @event
 
-  node @event.args
-  attr (@event.args) pop_symbol = "@args"
-  edge @event.def -> @event.args
+  node @event.params
+  attr (@event.params) pop_symbol = "@param_names"
+  edge @event.def -> @event.params
 }
 
 @event [EventDefinition [EventParametersDeclaration [EventParameters
@@ -1220,7 +1220,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (def) node_definition = @name
   attr (def) definiens_node = @param
 
-  edge @event.args -> def
+  edge @event.params -> def
 }
 
 
@@ -1235,9 +1235,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (@error.def) node_definition = @name
   attr (@error.def) definiens_node = @error
 
-  node @error.args
-  attr (@error.args) pop_symbol = "@args"
-  edge @error.def -> @error.args
+  node @error.params
+  attr (@error.params) pop_symbol = "@param_names"
+  edge @error.def -> @error.params
 }
 
 @error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters
@@ -1255,7 +1255,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (def) node_definition = @name
   attr (def) definiens_node = @param
 
-  edge @error.args -> def
+  edge @error.params -> def
 }
 
 
@@ -1375,7 +1375,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @args.lexical_scope
 
   node @args.refs
-  attr (@args.refs) push_symbol = "@args"
+  attr (@args.refs) push_symbol = "@param_names"
 }
 
 @args [ArgumentsDeclaration [PositionalArgumentsDeclaration
