@@ -1,5 +1,4 @@
 contract FunctionModifier {
-    uint256 public x = 10;
     bool public locked;
 
     modifier noReentrancy() {
@@ -10,11 +9,7 @@ contract FunctionModifier {
         locked = false;
     }
 
-    function decrement(uint256 i) public noReentrancy {
-        x -= i;
-
-        if (i > 1) {
-            decrement(i - 1);
-        }
+    function decrement() public noReentrancy {
+        // ...
     }
 }

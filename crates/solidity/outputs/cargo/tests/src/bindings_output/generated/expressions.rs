@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn emit_named_args() -> Result<()> {
+    run("expressions", "emit_named_args")
+}
+
+#[test]
 fn funcalls() -> Result<()> {
     run("expressions", "funcalls")
 }
@@ -15,13 +20,18 @@ fn funcalls_named_args() -> Result<()> {
 }
 
 #[test]
-fn named_args() -> Result<()> {
-    run("expressions", "named_args")
+fn funcalls_output() -> Result<()> {
+    run("expressions", "funcalls_output")
 }
 
 #[test]
-fn outputs() -> Result<()> {
-    run("expressions", "outputs")
+fn new_output() -> Result<()> {
+    run("expressions", "new_output")
+}
+
+#[test]
+fn revert_named_args() -> Result<()> {
+    run("expressions", "revert_named_args")
 }
 
 #[test]
