@@ -52,7 +52,9 @@ impl BenchmarkController {
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str) {
-        let token = if self.dry_run.get() {
+        let dry_run = self.dry_run.get();
+
+        let token = if dry_run {
             // Use a dummy test token for dry runs:
             // https://github.com/bencherdev/bencher/issues/468
             BENCHER_TEST_TOKEN.to_string()
@@ -62,7 +64,7 @@ impl BenchmarkController {
             )
         };
 
-        let cargo_command = format!("cargo bench --package {package_name} --bench {bench_name}");
+        let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
         let testbed = if GitHub::is_running_in_ci() {
             "ci"
@@ -70,14 +72,19 @@ impl BenchmarkController {
             "dev"
         };
 
-        Command::new("bencher")
+        let mut command = Command::new("bencher")
             .arg("run")
             .property("--project", "slang")
             .property("--adapter", "rust_iai_callgrind")
             .property("--testbed", testbed)
-            .property("--token", token)
-            .arg(cargo_command)
-            .run();
+            .env("BENCHER_API_TOKEN", token);
+
+        if dry_run {
+            command = command.flag("--dry-run");
+        }
+
+        // Has to be the last argument:
+        command.arg(test_runner).run();
 
         let reports_dir = Path::repo_path("target/iai")
             .join(package_name)

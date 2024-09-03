@@ -216,14 +216,15 @@ impl Display for Command {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         let mut parts = vec![];
 
-        for (key, value) in &self.environment {
-            parts.push(format!("{key}='{value}'"));
-        }
-
         if let Some(dir) = &self.current_dir {
             parts.push("cd".to_owned());
             parts.push(dir.strip_repo_root().unwrap().unwrap_str().to_owned());
             parts.push("&&".to_owned());
+        }
+
+        for key in self.environment.keys() {
+            // Note: GitHub CI might not be able to obfuscate all secrets. Let's err on the side of caution:
+            parts.push(format!("{key}='XXX'"));
         }
 
         parts.push(self.name.clone());
