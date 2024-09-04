@@ -27,6 +27,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
     definiens: HashMap<GraphHandle, Cursor<KT>>,
+    selectors: HashMap<GraphHandle, String>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
 }
@@ -52,6 +53,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             stack_graph,
             cursors: HashMap::new(),
             definiens: HashMap::new(),
+            selectors: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
         }
@@ -95,6 +97,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             self.cursors.insert(handle, cursor);
         }
         self.definiens.extend(result.definiens.drain());
+        self.selectors.extend(result.selectors.drain());
 
         result
     }
@@ -245,29 +248,62 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     /// 3. Overriden virtual methods: a reference will find valid paths to all
     ///    available definitions in the class hierarchy.
     ///
+    // TODO: review the comments above
     pub fn jump_to_definition(&self) -> Option<Definition<'a, KT>> {
-        let definitions = self.resolve();
-        if definitions.len() > 1 {
-            println!(
-                "WARN: More than one definition found for {self}, will return the longest path",
-            );
+        let alternatives = self.resolve();
+        match alternatives.len() {
+            0 | 1 => alternatives.first().map(|path| Definition {
+                owner: self.owner,
+                handle: path.end_node(),
+            }),
+            _ => {
+                // attempt to disambiguate from all found alternatives
 
-            for (index, result) in definitions.iter().enumerate() {
-                let definition = Definition {
-                    owner: self.owner,
-                    handle: result.end_node(),
-                };
-                println!(
-                    "  {index}. {definition} (length {length})",
-                    index = index + 1,
-                    length = result.edges.len(),
-                );
+                // remove aliases
+                let alternatives = alternatives
+                    .into_iter()
+                    .filter(|path| {
+                        self.owner
+                            .selectors
+                            .get(&path.end_node())
+                            .map_or(true, |s| s != "alias")
+                    })
+                    .collect::<Vec<_>>();
+
+                match alternatives.len() {
+                    0 => {
+                        // TODO: this is an error because the actual definition
+                        // is not found, but maybe we can revert back to
+                        // returning the longest path?
+                        panic!("More than one definition found but they are all aliases")
+                    }
+                    1 => alternatives.first().map(|path| Definition {
+                        owner: self.owner,
+                        handle: path.end_node(),
+                    }),
+                    _ => {
+                        for (index, result) in alternatives.iter().enumerate() {
+                            let definition = Definition {
+                                owner: self.owner,
+                                handle: result.end_node(),
+                            };
+                            let selector = self.owner.selectors.get(&result.end_node());
+                            println!(
+                                "  {index}. {definition} (length {length}) (selector = {selector})",
+                                index = index + 1,
+                                length = result.edges.len(),
+                                selector = selector.map_or("<none>", |s| s.as_str()),
+                            );
+                        }
+
+                        panic!(concat!(
+                            "More than one non-alias definitions found and ",
+                            "disambiguation not implemented yet"
+                        ));
+                    }
+                }
             }
         }
-        definitions.first().map(|path| Definition {
-            owner: self.owner,
-            handle: path.end_node(),
-        })
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
@@ -303,7 +339,6 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
                 results.push(reference_path.clone());
             }
         }
-        results.sort_by(|a, b| b.edges.len().cmp(&a.edges.len()));
         results
     }
 }

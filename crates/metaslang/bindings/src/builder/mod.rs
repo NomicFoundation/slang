@@ -280,6 +280,7 @@ static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
 static SCOPE_ATTR: &str = "scope";
+static SELECTOR_ATTR: &str = "selector";
 static SOURCE_NODE_ATTR: &str = "source_node";
 static SYMBOL_ATTR: &str = "symbol";
 static SYNTAX_TYPE_ATTR: &str = "syntax_type";
@@ -301,6 +302,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
+        SELECTOR_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -331,6 +333,7 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
     injected_node_count: usize,
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definiens: HashMap<Handle<Node>, Cursor<KT>>,
+    selectors: HashMap<Handle<Node>, String>,
 }
 
 pub(crate) struct BuildResult<KT: KindTypes> {
@@ -338,6 +341,7 @@ pub(crate) struct BuildResult<KT: KindTypes> {
     pub graph: Graph<KT>,
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
+    pub selectors: HashMap<Handle<Node>, String>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -359,6 +363,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             injected_node_count: 0,
             cursors: HashMap::new(),
             definiens: HashMap::new(),
+            selectors: HashMap::new(),
         }
     }
 
@@ -430,6 +435,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             graph: self.graph,
             cursors: self.cursors,
             definiens: self.definiens,
+            selectors: self.selectors,
         })
     }
 
@@ -704,6 +710,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             .unwrap();
         if is_definition {
             self.load_definiens_info(node_ref, node_handle)?;
+            self.load_selector_info(node_ref, node_handle)?;
         }
         Ok(node_handle)
     }
@@ -724,6 +731,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             .unwrap();
         if is_definition {
             self.load_definiens_info(node_ref, node_handle)?;
+            self.load_selector_info(node_ref, node_handle)?;
         }
         Ok(node_handle)
     }
@@ -839,6 +847,20 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         // Save the definiens CST cursor so our caller can extract the mapping
         // to the stack graph node later
         self.definiens.insert(node_handle, definiens_node.clone());
+        Ok(())
+    }
+
+    fn load_selector_info(
+        &mut self,
+        node_ref: GraphNodeRef,
+        node_handle: Handle<Node>,
+    ) -> Result<(), BuildError> {
+        let node = &self.graph[node_ref];
+        if let Some(selector) = node.attributes.get(SELECTOR_ATTR) {
+            if !selector.is_null() {
+                self.selectors.insert(node_handle, selector.as_str()?.to_string());
+            }
+        }
         Ok(())
     }
 

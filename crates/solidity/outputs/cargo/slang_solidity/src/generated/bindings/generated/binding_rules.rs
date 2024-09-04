@@ -159,6 +159,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @symbol
+  attr (def) selector = "alias"
   edge @symbol.def -> def
 
   node import
@@ -175,6 +176,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node def
   attr (def) node_definition = @alias
   attr (def) definiens_node = @symbol
+  attr (def) selector = "alias"
   edge @symbol.def -> def
 
   node import
