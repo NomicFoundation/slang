@@ -5,11 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
-fn fallback_receive() -> Result<()> {
-    run("contracts", "fallback_receive")
+fn simple() -> Result<()> {
+    run("modifiers", "simple")
 }
 
 #[test]
-fn visibility() -> Result<()> {
-    run("contracts", "visibility")
+fn with_args() -> Result<()> {
+    run("modifiers", "with_args")
 }

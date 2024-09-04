@@ -15,11 +15,11 @@ References and definitions:
    │                ───┬──   ────┬───  ┬  ───┬───  
    │                   ╰─────────────────────────── ref: 4
    │                             │     │     │     
-   │                             ╰───────────────── unresolved
+   │                             ╰───────────────── ref: 5
    │                                   │     │     
    │                                   ╰─────────── ref: 3
    │                                         │     
-   │                                         ╰───── unresolved
+   │                                         ╰───── ref: 6
    │ 
  5 │     function divide(int dividend, int divisor) returns (int);
    │              ───┬──     ────┬───      ───┬───  

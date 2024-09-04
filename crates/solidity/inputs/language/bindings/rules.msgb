@@ -179,9 +179,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   node @contract.def
   node @contract.members
   node @contract.type_members
+  node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
+  edge @contract.lexical_scope -> @contract.modifiers
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -192,13 +194,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @contract.def -> def
 
   ;; "instance" like access path
-  node type_def
-  attr (type_def) pop_symbol = "@typeof"
+  ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
+  ;; and () -> . for accesses through a `new` invocation
   node member
   attr (member) pop_symbol = "."
+  edge member -> @contract.members
+
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
   edge def -> type_def
   edge type_def -> member
-  edge member -> @contract.members
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge def -> call
+  edge call -> member
 
   ;; "namespace" like access path
   node type_member
@@ -214,9 +224,25 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
         | [EventDefinition]
         | [ErrorDefinition]
         | [UserDefinedValueTypeDefinition]
+        | [FunctionDefinition]
+        | [StateVariableDefinition]
+        | [ModifierDefinition]
+        | [FallbackFunctionDefinition]
+        | [ReceiveFunctionDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
   edge @contract.type_members -> @member.def
 }
 
@@ -224,9 +250,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
     [ContractMember @member (
           [FunctionDefinition]
         | [StateVariableDefinition]
+        | [ModifierDefinition]
     )]
 ]] {
-  edge @member.lexical_scope -> @contract.lexical_scope
   edge @contract.lexical_scope -> @member.def
 }
 
@@ -235,6 +261,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
+}
+
+@contract [ContractDefinition members: [ContractMembers
+    item: [ContractMember @modifier variant: [ModifierDefinition]]
+]] {
+  edge @contract.modifiers -> @modifier.def
 }
 
 
@@ -495,35 +527,35 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Function and parameter declarations
+;;; Function, parameter declarations and modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@param [Parameter] {
+@param [Parameter @type_name [TypeName]] {
   node @param.lexical_scope
   node @param.def
-}
 
-@param [Parameter @type_name [TypeName]] {
   edge @type_name.type_ref -> @param.lexical_scope
+
+  node @param.typeof
+  attr (@param.typeof) push_symbol = "@typeof"
+  edge @param.typeof -> @type_name.output
 }
 
-@param [Parameter @type_name [TypeName] @name [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @param
+@param [Parameter @name [Identifier]] {
+  attr (@param.def) node_definition = @name
+  attr (@param.def) definiens_node = @param
 
-  edge @param.def -> def
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge def -> typeof
-  edge typeof -> @type_name.output
+  edge @param.def -> @param.typeof
 }
 
 @params [ParametersDeclaration] {
   node @params.lexical_scope
   node @params.defs
+
+  ;; This scope can be used to resolve named argument calls
+  node @params.names
+  attr (@params.names) pop_symbol = "@param_names"
+  edge @params.names -> @params.defs
 }
 
 @params [ParametersDeclaration [Parameters @param item: [Parameter]]] {
@@ -537,11 +569,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @function
-
-  edge @function.def -> def
+  attr (@function.def) node_definition = @name
+  attr (@function.def) definiens_node = @function
 }
 
 @function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
@@ -550,6 +579,9 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; Input parameters are available in the function scope
   edge @function.lexical_scope -> @params.defs
   attr (@function.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @function.def -> @params.names
 }
 
 @function [FunctionDefinition returns: [ReturnsDeclaration
@@ -562,9 +594,116 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
 }
 
+;; Only functions that return a single value have an actual return type
+;; since tuples are not actual types in Solidity
+@function [FunctionDefinition returns: [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @function.def -> call
+  edge call -> @param.typeof
+}
+
 ;; Connect the function body's block lexical scope to the function
 @function [FunctionDefinition [FunctionBody @block [Block]]] {
   edge @block.lexical_scope -> @function.lexical_scope
+}
+
+@function [FunctionDefinition [FunctionAttributes item: [FunctionAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @function.lexical_scope
+}
+
+@modifier [ModifierInvocation @name [IdentifierPath]] {
+  node @modifier.lexical_scope
+
+  edge @name.left -> @modifier.lexical_scope
+}
+
+@modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
+  edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Fallback and receive functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@fallback [FallbackFunctionDefinition] {
+  node @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Input parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @params.defs
+  attr (@fallback.lexical_scope -> @params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition returns: [ReturnsDeclaration
+    @return_params [ParametersDeclaration]
+]] {
+  edge @return_params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Return parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @return_params.defs
+  attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition [FallbackFunctionAttributes
+    item: [FallbackFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @fallback.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition] {
+  node @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [ReceiveFunctionAttributes
+    item: [ReceiveFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @receive.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function modifiers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@modifier [ModifierDefinition
+    @name name: [Identifier]
+    body: [FunctionBody @body [Block]]
+] {
+  node @modifier.def
+  node @modifier.lexical_scope
+
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @modifier
+
+  edge @modifier.def -> def
+  edge @body.lexical_scope -> @modifier.lexical_scope
+}
+
+@modifier [ModifierDefinition @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @modifier.lexical_scope
+
+  ;; Input parameters are available in the modifier scope
+  edge @modifier.lexical_scope -> @params.defs
+  attr (@modifier.lexical_scope -> @params.defs) precedence = 1
 }
 
 
@@ -886,6 +1025,12 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @args.lexical_scope -> @stmt.lexical_scope
 }
 
+[Statement [RevertStatement
+    @error_ident [IdentifierPath]
+    @args [ArgumentsDeclaration]
+]] {
+  edge @args.refs -> @error_ident.right
+}
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -904,6 +1049,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   edge @event_ident.left -> @stmt.lexical_scope
   edge @args.lexical_scope -> @stmt.lexical_scope
+  edge @args.refs -> @event_ident.right
 }
 
 ;;; Unchecked
@@ -1042,17 +1188,34 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Event definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@event [EventDefinition] {
+@event [EventDefinition @name name: [Identifier]] {
   node @event.lexical_scope
   node @event.def
+
+  attr (@event.def) node_definition = @name
+  attr (@event.def) definiens_node = @event
+
+  node @event.params
+  attr (@event.params) pop_symbol = "@param_names"
+  edge @event.def -> @event.params
 }
 
-@event [EventDefinition @name name: [Identifier]] {
+@event [EventDefinition [EventParametersDeclaration [EventParameters
+    [EventParameter @type_name type_name: [TypeName]]
+]]] {
+  edge @type_name.type_ref -> @event.lexical_scope
+}
+
+@event [EventDefinition [EventParametersDeclaration [EventParameters
+    @param [EventParameter
+        @name name: [Identifier]
+    ]
+]]] {
   node def
   attr (def) node_definition = @name
-  attr (def) definiens_node = @event
+  attr (def) definiens_node = @param
 
-  edge @event.def -> def
+  edge @event.params -> def
 }
 
 
@@ -1060,17 +1223,34 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;;; Error definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@error [ErrorDefinition] {
+@error [ErrorDefinition @name name: [Identifier]] {
   node @error.lexical_scope
   node @error.def
+
+  attr (@error.def) node_definition = @name
+  attr (@error.def) definiens_node = @error
+
+  node @error.params
+  attr (@error.params) pop_symbol = "@param_names"
+  edge @error.def -> @error.params
 }
 
-@error [ErrorDefinition @name name: [Identifier]] {
+@error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters
+    [ErrorParameter @type_name type_name: [TypeName]]
+]]] {
+    edge @type_name.type_ref -> @error.lexical_scope
+}
+
+@error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters
+    @param [ErrorParameter
+        @name name: [Identifier]
+    ]
+]]] {
   node def
   attr (def) node_definition = @name
-  attr (def) definiens_node = @error
+  attr (def) definiens_node = @param
 
-  edge @error.def -> def
+  edge @error.params -> def
 }
 
 
@@ -1176,11 +1356,21 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   edge @type.type_ref -> @type_expr.lexical_scope
 }
 
+;; New expressions
+
+@new_expr [Expression [NewExpression @type [TypeName]]] {
+  edge @type.type_ref -> @new_expr.lexical_scope
+  edge @new_expr.output -> @type.output
+}
+
 
 ;;; Function call expressions
 
 @args [ArgumentsDeclaration] {
   node @args.lexical_scope
+
+  node @args.refs
+  attr (@args.refs) push_symbol = "@param_names"
 }
 
 @args [ArgumentsDeclaration [PositionalArgumentsDeclaration
@@ -1194,18 +1384,38 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   edge @value.lexical_scope -> @named_arg.lexical_scope
 
-  node ref
-  attr (ref) node_reference = @name
+  node @named_arg.ref
+  attr (@named_arg.ref) node_reference = @name
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
     [NamedArgumentGroup [NamedArguments @argument [NamedArgument]]]
 ]] {
   edge @argument.lexical_scope -> @args.lexical_scope
+  edge @argument.ref -> @args.refs
 }
 
-@funcall [Expression [FunctionCallExpression @args [ArgumentsDeclaration]]] {
+@funcall [Expression [FunctionCallExpression
+    @operand [Expression]
+    @args [ArgumentsDeclaration]
+]] {
   edge @args.lexical_scope -> @funcall.lexical_scope
+
+  ;; Connect to the output of the function name to be able to resolve named arguments
+  edge @args.refs -> @operand.output
+
+  node call
+  attr (call) push_symbol = "()"
+
+  edge @funcall.output -> call
+  edge call -> @operand.output
+}
+
+
+;;; Call options
+
+@expr [Expression [CallOptionsExpression options: [CallOptions @named_arg [NamedArgument]]]] {
+  edge @named_arg.lexical_scope -> @expr.lexical_scope
 }
 
 

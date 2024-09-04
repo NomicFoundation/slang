@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     function test_new() public returns (uint) {
+    │              ────┬───  
+    │                  ╰───── def: 2
+  3 │         return new Container().cell().value;
+    │                    ────┬────   ──┬─   ──┬──  
+    │                        ╰───────────────────── ref: 3
+    │                                  │      │    
+    │                                  ╰─────────── ref: 6
+    │                                         │    
+    │                                         ╰──── ref: 5
+    │ 
+  7 │ contract Container {
+    │          ────┬────  
+    │              ╰────── def: 3
+  8 │     struct Resource {
+    │            ────┬───  
+    │                ╰───── def: 4
+  9 │         uint value;
+    │              ──┬──  
+    │                ╰──── def: 5
+    │ 
+ 12 │     function cell() public returns (Resource memory) {
+    │              ──┬─                   ────┬───  
+    │                ╰────────────────────────────── def: 6
+    │                                         │     
+    │                                         ╰───── ref: 4
+ 13 │         return Resource(1);
+    │                ────┬───  
+    │                    ╰───── ref: 4
+────╯
