@@ -374,10 +374,35 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
                 .all(|other| !other.shadows(&mut partials, reference_path))
             {
                 results.push(reference_path.clone());
+
+                if path_pushes_super(reference_path, &mut partials, &self.owner.stack_graph) {
+                    println!(
+                        "Found push `super` in path ending at {}",
+                        self.owner.to_definition(reference_path.end_node).unwrap()
+                    );
+                }
             }
         }
         results
     }
+}
+
+fn path_pushes_super(
+    path: &PartialPath,
+    partials: &mut PartialPaths,
+    stack_graph: &StackGraph,
+) -> bool {
+    for edge in path.edges.iter(partials) {
+        let source_node_handle = stack_graph.node_for_id(edge.source_node_id).unwrap();
+        let source_node = &stack_graph[source_node_handle];
+        if matches!(source_node, Node::PushScopedSymbol(_) | Node::PushSymbol(_)) {
+            let symbol = &stack_graph[source_node.symbol().unwrap()];
+            if "super" == symbol {
+                return true;
+            }
+        }
+    }
+    false
 }
 
 impl<KT: KindTypes + 'static> Display for Reference<'_, KT> {
