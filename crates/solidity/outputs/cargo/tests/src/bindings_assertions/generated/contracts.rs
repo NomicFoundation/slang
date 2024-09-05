@@ -15,8 +15,8 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
-fn virtual_methods() -> Result<()> {
-    run("contracts", "virtual_methods")
+fn linearisation_order() -> Result<()> {
+    run("contracts", "linearisation_order")
 }
 
 #[test]
