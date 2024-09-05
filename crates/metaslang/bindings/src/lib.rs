@@ -5,13 +5,13 @@ use std::fmt::{self, Display};
 use std::iter::once;
 use std::sync::Arc;
 
-use builder::BuildResult;
+use builder::{BuildResult, Selector};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use semver::Version;
-use stack_graphs::graph::StackGraph;
+use stack_graphs::graph::{Node, StackGraph};
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{
     Appendable, ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig,
@@ -27,7 +27,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
     definiens: HashMap<GraphHandle, Cursor<KT>>,
-    selectors: HashMap<GraphHandle, String>,
+    selectors: HashMap<GraphHandle, Selector>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
 }
@@ -102,24 +102,38 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         result
     }
 
-    pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
-        self.stack_graph
-            .iter_nodes()
-            .filter(|handle| self.stack_graph[*handle].is_definition())
-            .map(|handle| Definition {
+    fn to_definition(&self, handle: GraphHandle) -> Option<Definition<'_, KT>> {
+        if self.stack_graph[handle].is_definition() {
+            Some(Definition {
                 owner: self,
                 handle,
             })
+        } else {
+            None
+        }
+    }
+
+    pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
+        self.stack_graph
+            .iter_nodes()
+            .filter_map(|handle| self.to_definition(handle))
+    }
+
+    fn to_reference(&self, handle: GraphHandle) -> Option<Reference<'_, KT>> {
+        if self.stack_graph[handle].is_reference() {
+            Some(Reference {
+                owner: self,
+                handle,
+            })
+        } else {
+            None
+        }
     }
 
     pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
         self.stack_graph
             .iter_nodes()
-            .filter(|handle| self.stack_graph[*handle].is_reference())
-            .map(|handle| Reference {
-                owner: self,
-                handle,
-            })
+            .filter_map(|handle| self.to_reference(handle))
     }
 
     pub fn definition_at(&self, cursor: &Cursor<KT>) -> Option<Definition<'_, KT>> {
@@ -251,56 +265,79 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     // TODO: review the comments above
     pub fn jump_to_definition(&self) -> Option<Definition<'a, KT>> {
         let alternatives = self.resolve();
-        match alternatives.len() {
-            0 | 1 => alternatives.first().map(|path| Definition {
-                owner: self.owner,
-                handle: path.end_node(),
-            }),
-            _ => {
-                // attempt to disambiguate from all found alternatives
+        if alternatives.len() <= 1 {
+            alternatives
+                .first()
+                .and_then(|path| self.owner.to_definition(path.end_node()))
+        } else {
+            // attempt to disambiguate from all found alternatives
 
-                // remove aliases
-                let alternatives = alternatives
-                    .into_iter()
-                    .filter(|path| {
-                        self.owner
-                            .selectors
-                            .get(&path.end_node())
-                            .map_or(true, |s| s != "alias")
-                    })
-                    .collect::<Vec<_>>();
+            // remove aliases
+            let alternatives = alternatives
+                .into_iter()
+                .filter(|path| {
+                    self.owner
+                        .selectors
+                        .get(&path.end_node())
+                        .map_or(true, |s| !matches!(s, Selector::Alias))
+                })
+                .collect::<Vec<_>>();
 
-                match alternatives.len() {
-                    0 => {
-                        // TODO: this is an error because the actual definition
-                        // is not found, but maybe we can revert back to
-                        // returning the longest path?
-                        panic!("More than one definition found but they are all aliases")
-                    }
-                    1 => alternatives.first().map(|path| Definition {
-                        owner: self.owner,
-                        handle: path.end_node(),
-                    }),
-                    _ => {
-                        for (index, result) in alternatives.iter().enumerate() {
-                            let definition = Definition {
-                                owner: self.owner,
-                                handle: result.end_node(),
-                            };
-                            let selector = self.owner.selectors.get(&result.end_node());
-                            println!(
-                                "  {index}. {definition} (length {length}) (selector = {selector})",
-                                index = index + 1,
-                                length = result.edges.len(),
-                                selector = selector.map_or("<none>", |s| s.as_str()),
-                            );
+            match alternatives.len() {
+                0 => {
+                    // TODO: this is an error because the actual definition
+                    // is not found, but maybe we can revert back to
+                    // returning the longest path?
+                    panic!("More than one definition found but they are all aliases")
+                }
+                1 => alternatives.first().map(|path| Definition {
+                    owner: self.owner,
+                    handle: path.end_node(),
+                }),
+                _ => {
+                    for (index, result) in alternatives.iter().enumerate() {
+                        let definition = self.owner.to_definition(result.end_node()).unwrap();
+                        let selector = self.owner.selectors.get(&result.end_node());
+                        println!(
+                            "  {index}. {definition} (length {length}) (selector = {selector})",
+                            index = index + 1,
+                            length = result.edges.len(),
+                            selector =
+                                selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
+                        );
+                        let Some(selector) = selector else {
+                            continue;
+                        };
+
+                        if let Selector::ParentDefinitions(related) = selector {
+                            let enclosing_node = related.first().expect("at least one parent");
+                            if self.owner.stack_graph[*enclosing_node].is_definition() {
+                                let enclosing_def =
+                                    self.owner.to_definition(*enclosing_node).unwrap();
+                                println!("   Selector points to {enclosing_def}");
+                                let related_sel = self.owner.selectors.get(enclosing_node);
+                                if let Some(Selector::ParentReferences(parents)) = related_sel {
+                                    println!("      with parents:");
+                                    for parent in parents {
+                                        let parent_reference =
+                                            self.owner.to_reference(*parent).unwrap();
+                                        let parent_definition =
+                                            parent_reference.jump_to_definition().unwrap();
+                                        println!(
+                                            "        {parent_reference} -> {parent_definition}"
+                                        );
+                                    }
+                                }
+                            } else {
+                                println!("   Virtual selector doesn't point to a definition");
+                            }
                         }
-
-                        panic!(concat!(
-                            "More than one non-alias definitions found and ",
-                            "disambiguation not implemented yet"
-                        ));
                     }
+
+                    panic!(concat!(
+                        "More than one non-alias definitions found and ",
+                        "disambiguation not implemented yet"
+                    ));
                 }
             }
         }

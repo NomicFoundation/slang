@@ -281,6 +281,8 @@ static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
 static SCOPE_ATTR: &str = "scope";
 static SELECTOR_ATTR: &str = "selector";
+static SELECTOR_DEFS_ATTR: &str = "selector_defs";
+static SELECTOR_REFS_ATTR: &str = "selector_refs";
 static SOURCE_NODE_ATTR: &str = "source_node";
 static SYMBOL_ATTR: &str = "symbol";
 static SYNTAX_TYPE_ATTR: &str = "syntax_type";
@@ -293,6 +295,9 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
+        SELECTOR_ATTR,
+        SELECTOR_DEFS_ATTR,
+        SELECTOR_REFS_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -303,6 +308,8 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
         SELECTOR_ATTR,
+        SELECTOR_DEFS_ATTR,
+        SELECTOR_REFS_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -322,6 +329,15 @@ pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
+// This intermediate structure allows us to collect reference/definition nodes
+// by ID; this is needed because when building these selectors we don't
+// necessarily have all the stack graph nodes created yet.
+pub(crate) enum InternalSelector {
+    Alias,
+    ParentDefinitions(Vec<NodeID>),
+    ParentReferences(Vec<NodeID>),
+}
+
 pub(crate) struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
@@ -333,7 +349,14 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
     injected_node_count: usize,
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definiens: HashMap<Handle<Node>, Cursor<KT>>,
-    selectors: HashMap<Handle<Node>, String>,
+    selectors: HashMap<Handle<Node>, InternalSelector>,
+}
+
+#[derive(Debug)]
+pub(crate) enum Selector {
+    Alias,
+    ParentDefinitions(Vec<Handle<Node>>),
+    ParentReferences(Vec<Handle<Node>>),
 }
 
 pub(crate) struct BuildResult<KT: KindTypes> {
@@ -341,7 +364,7 @@ pub(crate) struct BuildResult<KT: KindTypes> {
     pub graph: Graph<KT>,
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
-    pub selectors: HashMap<Handle<Node>, String>,
+    pub selectors: HashMap<Handle<Node>, Selector>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -430,12 +453,39 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
 
         self.load(cancellation_flag)?;
 
+        let resolve_node_ids = |ids: Vec<NodeID>| -> Vec<Handle<Node>> {
+            ids.into_iter()
+                .map(|id| {
+                    self.stack_graph
+                        .node_for_id(id)
+                        .expect("related node for selector exists in the stack graph")
+                })
+                .collect::<Vec<_>>()
+        };
+
+        let selectors = self
+            .selectors
+            .into_iter()
+            .map(|(node_id, selector)| {
+                let selector = match selector {
+                    InternalSelector::Alias => Selector::Alias,
+                    InternalSelector::ParentDefinitions(parent_ids) => {
+                        Selector::ParentDefinitions(resolve_node_ids(parent_ids))
+                    }
+                    InternalSelector::ParentReferences(parent_ids) => {
+                        Selector::ParentReferences(resolve_node_ids(parent_ids))
+                    }
+                };
+                (node_id, selector)
+            })
+            .collect::<HashMap<_, _>>();
+
         Ok(BuildResult {
             #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
             cursors: self.cursors,
             definiens: self.definiens,
-            selectors: self.selectors,
+            selectors,
         })
     }
 
@@ -472,6 +522,10 @@ pub enum BuildError {
     ConversionError(String, String, String),
     #[error("Expected exported symbol scope in {0}, got {1}")]
     SymbolScopeError(String, String),
+    #[error("Unknown selector ‘{0}’")]
+    UnknownSelector(String),
+    #[error("Missing selector companion ‘{0}’ attribute")]
+    MissingSelectorLinks(String),
 }
 
 impl From<stack_graphs::CancellationError> for BuildError {
@@ -856,10 +910,38 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         node_handle: Handle<Node>,
     ) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
-        if let Some(selector) = node.attributes.get(SELECTOR_ATTR) {
-            if !selector.is_null() {
-                self.selectors.insert(node_handle, selector.as_str()?.to_string());
-            }
+        if let Some(selector_value) = node.attributes.get(SELECTOR_ATTR) {
+            let selector_type = selector_value.as_str()?;
+
+            let get_node_ids = |attr_name: &str| -> Result<Vec<NodeID>, BuildError> {
+                node.attributes
+                    .get(attr_name)
+                    .ok_or(BuildError::MissingSelectorLinks(attr_name.to_string()))
+                    .and_then(|attr_value| {
+                        let node_ids = attr_value
+                            .as_list()?
+                            .iter()
+                            .flat_map(|value| {
+                                value
+                                    .as_graph_node_ref()
+                                    .map(|id| self.node_id_for_graph_node(id))
+                            })
+                            .collect::<Vec<_>>();
+                        Ok(node_ids)
+                    })
+            };
+
+            let selector = match selector_type {
+                "alias" => InternalSelector::Alias,
+                "parent_defs" => {
+                    InternalSelector::ParentDefinitions(get_node_ids(SELECTOR_DEFS_ATTR)?)
+                }
+                "parent_refs" => {
+                    InternalSelector::ParentReferences(get_node_ids(SELECTOR_REFS_ATTR)?)
+                }
+                _ => return Err(BuildError::UnknownSelector(selector_type.to_string())),
+            };
+            self.selectors.insert(node_handle, selector);
         }
         Ok(())
     }

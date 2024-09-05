@@ -14,6 +14,9 @@ attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
 attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
 attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
 
+attribute selector_parent_defs = defs => selector = "parent_defs", selector_defs = defs
+attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs = refs
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -207,11 +210,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @contract
-
-  edge @contract.def -> def
+  attr (@contract.def) node_definition = @name
+  attr (@contract.def) definiens_node = @contract
 
   ;; "instance" like access path
   ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
@@ -222,18 +222,18 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
   node type_def
   attr (type_def) pop_symbol = "@typeof"
-  edge def -> type_def
+  edge @contract.def -> type_def
   edge type_def -> member
 
   node call
   attr (call) pop_symbol = "()"
-  edge def -> call
+  edge @contract.def -> call
   edge call -> member
 
   ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
-  edge def -> type_member
+  edge @contract.def -> type_member
   edge type_member -> @contract.type_members
 
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
@@ -285,6 +285,24 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
+@parent [InheritanceType @type_name [IdentifierPath]] {
+  let @parent.ref = @type_name.ref
+}
+
+;; NOTE: we use anchors here to prevent the query engine from returning all the
+;; sublists of possible parents
+@contract [ContractDefinition [InheritanceSpecifier
+    [InheritanceTypes . @parents [_]+ .]
+]] {
+  var parent_refs = []
+  for parent in @parents {
+    if (eq (node-type parent) "InheritanceType") {
+      set parent_refs = (concat parent_refs [parent.ref])
+    }
+  }
+  attr (@contract.def) selector_parent_refs = parent_refs
+}
+
 @contract [ContractDefinition [ContractMembers
     [ContractMember @member (
           [EnumDefinition]
@@ -333,6 +351,11 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; See connection from @contract.members into base type's member in contract
   ;; bases rules, where the precedence is set to 0
   ;; attr (@contract.members -> @function.def) precedence = 1
+
+  ;; Virtual here hints the disambiguation algorithm in the presence of multiple
+  ;; definitions for a method, but does not necessarily mean the function is
+  ;; marked virtual
+  attr (@function.def) selector_parent_defs = [@contract.def]
 }
 
 @contract [ContractDefinition members: [ContractMembers
@@ -594,6 +617,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 
 @id_path [IdentifierPath @name [Identifier] .] {
   edge @id_path.right -> @name.ref
+  let @id_path.ref = @name.ref
 }
 
 [IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
