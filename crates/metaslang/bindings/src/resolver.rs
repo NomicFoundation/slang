@@ -7,7 +7,7 @@ use stack_graphs::{
     stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig},
 };
 
-use crate::{builder::Selector, Bindings, Definition, GraphHandle, Reference};
+use crate::{Bindings, Definition, GraphHandle, Reference};
 
 /// The resolver executes algorithms to resolve a reference to one or more
 /// definitions. The reference may not be resolvable in the current state of the
@@ -34,7 +34,7 @@ use crate::{builder::Selector, Bindings, Definition, GraphHandle, Reference};
 ///
 pub struct Resolver<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
-    reference_handle: GraphHandle,
+    reference: Reference<'a, KT>,
     partials: PartialPaths,
     results: Vec<ResolvedPath<'a, KT>>,
 }
@@ -60,7 +60,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
     pub fn build_for(reference: &Reference<'a, KT>) -> Self {
         let mut resolver = Self {
             owner: reference.owner,
-            reference_handle: reference.handle,
+            reference: reference.clone(),
             partials: PartialPaths::new(),
             results: Vec::new(),
         };
@@ -72,7 +72,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         let mut reference_paths = Vec::new();
         ForwardPartialPathStitcher::find_all_complete_partial_paths(
             &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
-            once(self.reference_handle),
+            once(self.reference.handle),
             StitcherConfig::default(),
             &stack_graphs::NoCancellation,
             |_graph, _paths, path| {
@@ -130,9 +130,12 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         if self.results.len() > 1 {
             self.rank_results();
 
-            if self.results[1].score == self.results[0].score {
+            if (self.results[1].score - self.results[0].score).abs() < f32::EPSILON {
                 self.inspect_results();
-                panic!("Reference resolved to multiple definitions that cannot be disambiguated");
+                panic!(
+                    "Reference {reference} resolved to multiple definitions that cannot be disambiguated",
+                    reference = self.reference,
+                );
             }
 
             Some(self.results[0].definition.clone())
@@ -142,7 +145,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
     }
 
     fn rank_results(&mut self) {
-        if self.results.len() == 0 {
+        if self.results.is_empty() {
             return;
         }
         self.mark_down_aliases();
@@ -159,8 +162,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                     (min_len.min(len), max_len.max(len))
                 });
 
-        for result in self.results.iter_mut() {
+        for result in &mut self.results {
             // mark down alias definitions
+            #[allow(clippy::cast_precision_loss)]
             if result.definition.is_alias() {
                 result.score -= 100.0;
 
@@ -183,28 +187,22 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 length = result.len(),
                 selector = selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
             );
-            let Some(selector) = selector else {
-                continue;
-            };
 
-            if let Selector::ParentDefinitions(related) = selector {
-                let enclosing_node = related.first().expect("at least one parent");
-                if self.owner.stack_graph[*enclosing_node].is_definition() {
-                    let enclosing_def = self.owner.to_definition(*enclosing_node).unwrap();
-                    println!("   Selector points to {enclosing_def}");
-                    let related_sel = self.owner.selectors.get(enclosing_node);
-                    if let Some(Selector::ParentReferences(parents)) = related_sel {
-                        println!("      with parents:");
-                        for parent in parents {
-                            let parent_reference = self.owner.to_reference(*parent).unwrap();
-                            let parent_definition = parent_reference.jump_to_definition().unwrap();
-                            println!("        {parent_reference} -> {parent_definition}");
-                        }
-                    }
-                } else {
-                    println!("   Parent definition doesn't point to a definition");
-                }
-            }
+            resolve_parents(&result.definition, 0);
         }
+    }
+}
+
+fn resolve_parents<KT: KindTypes + 'static>(
+    definition: &Definition<'_, KT>,
+    level: usize,
+) {
+    // FIXME: this cannot handle recursive definitions
+    for parent in definition.resolve_parents() {
+        println!(
+            "   {indentation} -> {parent}",
+            indentation = "  ".repeat(level)
+        );
+        resolve_parents(&parent, level + 1);
     }
 }

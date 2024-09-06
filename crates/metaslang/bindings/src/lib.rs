@@ -25,6 +25,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursors: HashMap<GraphHandle, Cursor<KT>>,
     definiens: HashMap<GraphHandle, Cursor<KT>>,
     selectors: HashMap<GraphHandle, Selector>,
+    parents: HashMap<GraphHandle, Vec<GraphHandle>>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
 }
@@ -51,6 +52,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursors: HashMap::new(),
             definiens: HashMap::new(),
             selectors: HashMap::new(),
+            parents: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
         }
@@ -95,6 +97,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
         self.definiens.extend(result.definiens.drain());
         self.selectors.extend(result.selectors.drain());
+        self.parents.extend(result.parents.drain());
 
         result
     }
@@ -152,6 +155,27 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 handle: *handle,
             })
     }
+
+    fn resolve_parents(&self, handle: GraphHandle) -> Vec<Definition<'_, KT>> {
+        if let Some(parents) = self.parents.get(&handle) {
+            parents
+                .iter()
+                .filter_map(|handle| {
+                    if self.stack_graph[*handle].is_definition() {
+                        self.to_definition(*handle)
+                    } else {
+                        // TODO: what should we do if the parent reference
+                        // cannot be resolved at this point?
+                        // TODO: also, since jump_to_definition() may
+                        // recursively use this method, we need to handle cycles
+                        self.to_reference(*handle).unwrap().jump_to_definition()
+                    }
+                })
+                .collect()
+        } else {
+            Vec::new()
+        }
+    }
 }
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
@@ -199,6 +223,10 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .selectors
             .get(&self.handle)
             .map_or(false, |s| matches!(s, Selector::Alias))
+    }
+
+    pub fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
+        self.owner.resolve_parents(self.handle)
     }
 }
 
@@ -250,6 +278,10 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
         Resolver::build_for(self).all()
+    }
+
+    pub fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
+        self.owner.resolve_parents(self.handle)
     }
 }
 

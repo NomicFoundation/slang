@@ -279,10 +279,9 @@ static IS_DEFINITION_ATTR: &str = "is_definition";
 static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
+static PARENTS_ATTR: &str = "parents";
 static SCOPE_ATTR: &str = "scope";
 static SELECTOR_ATTR: &str = "selector";
-static SELECTOR_DEFS_ATTR: &str = "selector_defs";
-static SELECTOR_REFS_ATTR: &str = "selector_refs";
 static SOURCE_NODE_ATTR: &str = "source_node";
 static SYMBOL_ATTR: &str = "symbol";
 static SYNTAX_TYPE_ATTR: &str = "syntax_type";
@@ -296,8 +295,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
         SELECTOR_ATTR,
-        SELECTOR_DEFS_ATTR,
-        SELECTOR_REFS_ATTR,
+        PARENTS_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -308,15 +306,21 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
         SELECTOR_ATTR,
-        SELECTOR_DEFS_ATTR,
-        SELECTOR_REFS_ATTR,
+        PARENTS_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
-static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, SCOPE_ATTR, IS_REFERENCE_ATTR]));
+static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+    HashSet::from([
+        TYPE_ATTR,
+        SYMBOL_ATTR,
+        SCOPE_ATTR,
+        IS_REFERENCE_ATTR,
+        PARENTS_ATTR,
+    ])
+});
 static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR]));
+    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
 static SCOPE_ATTRS: Lazy<HashSet<&'static str>> =
     Lazy::new(|| HashSet::from([TYPE_ATTR, IS_EXPORTED_ATTR, IS_ENDPOINT_ATTR]));
 
@@ -329,15 +333,6 @@ pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
-// This intermediate structure allows us to collect reference/definition nodes
-// by ID; this is needed because when building these selectors we don't
-// necessarily have all the stack graph nodes created yet.
-pub(crate) enum InternalSelector {
-    Alias,
-    ParentDefinitions(Vec<NodeID>),
-    ParentReferences(Vec<NodeID>),
-}
-
 pub(crate) struct Builder<'a, KT: KindTypes> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
@@ -349,14 +344,14 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
     injected_node_count: usize,
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definiens: HashMap<Handle<Node>, Cursor<KT>>,
-    selectors: HashMap<Handle<Node>, InternalSelector>,
+    selectors: HashMap<Handle<Node>, Selector>,
+    parents: HashMap<Handle<Node>, Vec<Handle<Node>>>,
 }
 
 #[derive(Debug)]
 pub(crate) enum Selector {
     Alias,
-    ParentDefinitions(Vec<Handle<Node>>),
-    ParentReferences(Vec<Handle<Node>>),
+    C3,
 }
 
 pub(crate) struct BuildResult<KT: KindTypes> {
@@ -365,6 +360,7 @@ pub(crate) struct BuildResult<KT: KindTypes> {
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
     pub selectors: HashMap<Handle<Node>, Selector>,
+    pub parents: HashMap<Handle<Node>, Vec<Handle<Node>>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -387,6 +383,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             cursors: HashMap::new(),
             definiens: HashMap::new(),
             selectors: HashMap::new(),
+            parents: HashMap::new(),
         }
     }
 
@@ -453,39 +450,13 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
 
         self.load(cancellation_flag)?;
 
-        let resolve_node_ids = |ids: Vec<NodeID>| -> Vec<Handle<Node>> {
-            ids.into_iter()
-                .map(|id| {
-                    self.stack_graph
-                        .node_for_id(id)
-                        .expect("related node for selector exists in the stack graph")
-                })
-                .collect::<Vec<_>>()
-        };
-
-        let selectors = self
-            .selectors
-            .into_iter()
-            .map(|(node_id, selector)| {
-                let selector = match selector {
-                    InternalSelector::Alias => Selector::Alias,
-                    InternalSelector::ParentDefinitions(parent_ids) => {
-                        Selector::ParentDefinitions(resolve_node_ids(parent_ids))
-                    }
-                    InternalSelector::ParentReferences(parent_ids) => {
-                        Selector::ParentReferences(resolve_node_ids(parent_ids))
-                    }
-                };
-                (node_id, selector)
-            })
-            .collect::<HashMap<_, _>>();
-
         Ok(BuildResult {
             #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
             cursors: self.cursors,
             definiens: self.definiens,
-            selectors,
+            selectors: self.selectors,
+            parents: self.parents,
         })
     }
 
@@ -524,8 +495,8 @@ pub enum BuildError {
     SymbolScopeError(String, String),
     #[error("Unknown selector ‘{0}’")]
     UnknownSelector(String),
-    #[error("Missing selector companion ‘{0}’ attribute")]
-    MissingSelectorLinks(String),
+    #[error("Parent must be either a reference or definition")]
+    InvalidParent(GraphNodeRef),
 }
 
 impl From<stack_graphs::CancellationError> for BuildError {
@@ -612,7 +583,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             }
         }
 
-        // First create a stack graph node for each TSG node.  (The skip(...) is because the first
+        // First create a stack graph node for each MSGB node.  (The skip(...) is because the first
         // DSL nodes that we create are the proxies for the injected stack graph nodes.)
         for node_ref in self.graph.iter_nodes().skip(self.injected_node_count) {
             cancellation_flag.check("loading graph nodes")?;
@@ -627,17 +598,12 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             };
             self.load_source_info(node_ref, handle)?;
             self.load_node_debug_info(node_ref, handle);
+        }
 
-            // For every added graph node which links to a corresponding source
-            // node, save the corresponding CST cursor so our caller can extract
-            // that info later.
-            let node = &self.graph[node_ref];
-            if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
-                let syntax_node_ref = source_node.as_syntax_node_ref()?;
-                let source_node = &self.graph[syntax_node_ref];
-
-                self.cursors.insert(handle, source_node.clone());
-            }
+        // Iterate again to resolve parents attribute, which refers to other nodes in the graph
+        for node_ref in self.graph.iter_nodes().skip(self.injected_node_count) {
+            cancellation_flag.check("loading graph nodes")?;
+            self.load_parents_info(node_ref)?;
         }
 
         for node in self.stack_graph.nodes_for_file(self.file) {
@@ -862,19 +828,13 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
     ) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
 
+        // For every added graph node which links to a corresponding source
+        // node, save the corresponding CST cursor so our caller can extract
+        // that info later.
         if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
             let syntax_node_ref = source_node.as_syntax_node_ref()?;
             let source_node = &self.graph[syntax_node_ref];
-            let mut source_range = source_node.text_range();
-            if match node.attributes.get(EMPTY_SOURCE_SPAN_ATTR) {
-                Some(empty_source_span) => empty_source_span.as_boolean()?,
-                None => false,
-            } {
-                source_range.end = source_range.start;
-            }
-            let _source_info = self.stack_graph.source_info_mut(node_handle);
-            // TODO: map node's TextRange into a Span
-            // source_info.span = text_range_into_span(source_range);
+            self.cursors.insert(node_handle, source_node.clone());
         }
 
         if let Some(syntax_type) = node.attributes.get(SYNTAX_TYPE_ATTR) {
@@ -893,14 +853,13 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         node_handle: Handle<Node>,
     ) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
-        let definiens_node = match node.attributes.get(DEFINIENS_NODE_ATTR) {
-            Some(Value::Null) => return Ok(()),
-            Some(definiens_node) => &self.graph[definiens_node.as_syntax_node_ref()?],
-            None => return Ok(()),
-        };
         // Save the definiens CST cursor so our caller can extract the mapping
         // to the stack graph node later
-        self.definiens.insert(node_handle, definiens_node.clone());
+        if let Some(definiens_node) = node.attributes.get(DEFINIENS_NODE_ATTR) {
+            let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
+            let definiens_node = &self.graph[syntax_node_ref];
+            self.definiens.insert(node_handle, definiens_node.clone());
+        };
         Ok(())
     }
 
@@ -913,35 +872,45 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         if let Some(selector_value) = node.attributes.get(SELECTOR_ATTR) {
             let selector_type = selector_value.as_str()?;
 
-            let get_node_ids = |attr_name: &str| -> Result<Vec<NodeID>, BuildError> {
-                node.attributes
-                    .get(attr_name)
-                    .ok_or(BuildError::MissingSelectorLinks(attr_name.to_string()))
-                    .and_then(|attr_value| {
-                        let node_ids = attr_value
-                            .as_list()?
-                            .iter()
-                            .flat_map(|value| {
-                                value
-                                    .as_graph_node_ref()
-                                    .map(|id| self.node_id_for_graph_node(id))
-                            })
-                            .collect::<Vec<_>>();
-                        Ok(node_ids)
-                    })
-            };
-
             let selector = match selector_type {
-                "alias" => InternalSelector::Alias,
-                "parent_defs" => {
-                    InternalSelector::ParentDefinitions(get_node_ids(SELECTOR_DEFS_ATTR)?)
-                }
-                "parent_refs" => {
-                    InternalSelector::ParentReferences(get_node_ids(SELECTOR_REFS_ATTR)?)
-                }
+                "alias" => Selector::Alias,
+                "c3" => Selector::C3,
                 _ => return Err(BuildError::UnknownSelector(selector_type.to_string())),
             };
             self.selectors.insert(node_handle, selector);
+        }
+        Ok(())
+    }
+
+    fn load_parents_info(&mut self, node_ref: GraphNodeRef) -> Result<(), BuildError> {
+        let node = &self.graph[node_ref];
+        if let Some(parents) = node.attributes.get(PARENTS_ATTR) {
+            let node_id = self.node_id_for_graph_node(node_ref);
+            let node_handle = self
+                .stack_graph
+                .node_for_id(node_id)
+                .expect("node already exists in the graph");
+            let parent_handles = parents
+                .as_list()?
+                .iter()
+                .flat_map(|value| {
+                    value.as_graph_node_ref().map(|id| {
+                        self.stack_graph
+                            .node_for_id(self.node_id_for_graph_node(id))
+                            .expect("parent node exists in the stack graph")
+                    })
+                })
+                .flat_map(|parent| {
+                    // ensure parents are either definitions or references
+                    let parent_node = &self.stack_graph[parent];
+                    if !parent_node.is_definition() && !parent_node.is_reference() {
+                        Err(BuildError::InvalidParent(node_ref))
+                    } else {
+                        Ok(parent)
+                    }
+                })
+                .collect::<Vec<_>>();
+            self.parents.insert(node_handle, parent_handles);
         }
         Ok(())
     }

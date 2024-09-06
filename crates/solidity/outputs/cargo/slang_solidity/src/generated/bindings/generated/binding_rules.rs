@@ -14,9 +14,6 @@ attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
 attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
 attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
 
-attribute selector_parent_defs = defs => selector = "parent_defs", selector_defs = defs
-attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs = refs
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -162,7 +159,7 @@ attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @symbol
-  attr (def) selector = "alias"
+  attr (def) selector = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -179,7 +176,7 @@ attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs
   node def
   attr (def) node_definition = @alias
   attr (def) definiens_node = @symbol
-  attr (def) selector = "alias"
+  attr (def) selector = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -300,7 +297,7 @@ attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs
       set parent_refs = (concat parent_refs [parent.ref])
     }
   }
-  attr (@contract.def) selector_parent_refs = parent_refs
+  attr (@contract.def) parents = parent_refs
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -355,7 +352,8 @@ attribute selector_parent_refs = refs => selector = "parent_refs", selector_refs
   ;; Virtual here hints the disambiguation algorithm in the presence of multiple
   ;; definitions for a method, but does not necessarily mean the function is
   ;; marked virtual
-  attr (@function.def) selector_parent_defs = [@contract.def]
+  attr (@function.def) selector = "c3"
+  attr (@function.def) parents = [@contract.def]
 }
 
 @contract [ContractDefinition members: [ContractMembers
