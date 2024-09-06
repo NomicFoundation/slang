@@ -1,5 +1,5 @@
-pub mod builder;
-pub mod resolver;
+mod builder;
+mod resolver;
 
 use std::collections::HashMap;
 use std::fmt::{self, Debug, Display};
@@ -228,7 +228,7 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map_or(false, |s| *s == selector)
     }
 
-    pub fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
+    pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
         self.owner.resolve_parents(self.handle)
     }
 }
@@ -299,7 +299,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         Resolver::build_for(self).all()
     }
 
-    pub fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
+    pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
         self.owner.resolve_parents(self.handle)
     }
 }

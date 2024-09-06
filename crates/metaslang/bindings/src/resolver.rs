@@ -32,7 +32,7 @@ use crate::{Bindings, Definition, GraphHandle, Reference};
 /// if found (it may not be available yet). Or a topological ordering may be
 /// applied to definitions pointing to virtual methods.
 ///
-pub struct Resolver<'a, KT: KindTypes + 'static> {
+pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
     reference: Reference<'a, KT>,
     partials: PartialPaths,

@@ -248,7 +248,6 @@ mod cancellation;
 mod functions;
 
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
 
 pub use cancellation::{CancellationFlag, NoCancellation};
 pub use functions::default_functions;
@@ -475,8 +474,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
 pub enum BuildError {
     #[error("{0}")]
     Cancelled(&'static str),
-    #[error("Missing ‘type’ attribute on graph node")]
-    MissingNodeType(GraphNodeRef),
     #[error("Missing ‘symbol’ attribute on graph node")]
     MissingSymbol(GraphNodeRef),
     #[error("Missing ‘scope’ attribute on graph node")]
@@ -489,8 +486,6 @@ pub enum BuildError {
     UnknownSymbolType(String),
     #[error(transparent)]
     ExecutionError(ExecutionError),
-    #[error("Error converting shorthand ‘{0}’ on {1} with value {2}")]
-    ConversionError(String, String, String),
     #[error("Expected exported symbol scope in {0}, got {1}")]
     SymbolScopeError(String, String),
     #[error("Unknown selector ‘{0}’")]
@@ -510,45 +505,6 @@ impl From<ExecutionError> for BuildError {
         match value {
             ExecutionError::Cancelled(err) => Self::Cancelled(err.0),
             err => Self::ExecutionError(err),
-        }
-    }
-}
-
-impl BuildError {
-    pub fn display_pretty<'a>(
-        &'a self,
-        source_path: &'a Path,
-        source: &'a str,
-        tsg_path: &'a Path,
-        tsg: &'a str,
-    ) -> impl std::fmt::Display + 'a {
-        DisplayBuildErrorPretty {
-            error: self,
-            source_path,
-            source,
-            tsg_path,
-            tsg,
-        }
-    }
-}
-
-struct DisplayBuildErrorPretty<'a> {
-    error: &'a BuildError,
-    source_path: &'a Path,
-    source: &'a str,
-    tsg_path: &'a Path,
-    tsg: &'a str,
-}
-
-impl std::fmt::Display for DisplayBuildErrorPretty<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.error {
-            BuildError::ExecutionError(err) => write!(
-                f,
-                "{}",
-                err.display_pretty(self.source_path, self.source, self.tsg_path, self.tsg)
-            ),
-            err => err.fmt(f),
         }
     }
 }
