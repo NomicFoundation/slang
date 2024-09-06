@@ -296,7 +296,8 @@ inherit .enclosing_def
   var parent_refs = []
   for parent in @parents {
     if (eq (node-type parent) "InheritanceType") {
-      set parent_refs = (concat parent_refs [parent.ref])
+      ;; this is intentionally reversed because of how Solidity linearised the contract bases
+      set parent_refs = (concat [parent.ref] parent_refs)
     }
   }
   attr (@contract.def) parents = parent_refs
