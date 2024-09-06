@@ -2,7 +2,8 @@ pub mod builder;
 pub mod resolver;
 
 use std::collections::HashMap;
-use std::fmt::{self, Display};
+use std::fmt::{self, Debug, Display};
+use std::hash::Hash;
 use std::sync::Arc;
 
 use builder::{BuildResult, Selector};
@@ -158,6 +159,8 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
 
     fn resolve_parents(&self, handle: GraphHandle) -> Vec<Definition<'_, KT>> {
         if let Some(parents) = self.parents.get(&handle) {
+            // NOTE: the Builder ensures that all handles in the parents are
+            // either definitions or references
             parents
                 .iter()
                 .filter_map(|handle| {
@@ -218,11 +221,11 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub fn is_alias(&self) -> bool {
+    pub(crate) fn has_selector(&self, selector: Selector) -> bool {
         self.owner
             .selectors
             .get(&self.handle)
-            .map_or(false, |s| matches!(s, Selector::Alias))
+            .map_or(false, |s| *s == selector)
     }
 
     pub fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
@@ -247,11 +250,27 @@ impl<KT: KindTypes + 'static> Display for Definition<'_, KT> {
     }
 }
 
+impl<KT: KindTypes + 'static> Debug for Definition<'_, KT> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{self}")
+    }
+}
+
 impl<KT: KindTypes + 'static> PartialEq for Definition<'_, KT> {
     fn eq(&self, other: &Self) -> bool {
         let our_owner: *const Bindings<KT> = self.owner;
         let other_owner: *const Bindings<KT> = other.owner;
         our_owner == other_owner && self.handle == other.handle
+    }
+}
+
+impl<KT: KindTypes + 'static> Eq for Definition<'_, KT> {}
+
+impl<KT: KindTypes + 'static> Hash for Definition<'_, KT> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        let owner: *const Bindings<KT> = self.owner;
+        owner.hash(state);
+        self.handle.hash(state);
     }
 }
 

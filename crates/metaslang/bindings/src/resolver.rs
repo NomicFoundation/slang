@@ -7,6 +7,7 @@ use stack_graphs::{
     stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig},
 };
 
+use crate::builder::Selector;
 use crate::{Bindings, Definition, GraphHandle, Reference};
 
 /// The resolver executes algorithms to resolve a reference to one or more
@@ -165,7 +166,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         for result in &mut self.results {
             // mark down alias definitions
             #[allow(clippy::cast_precision_loss)]
-            if result.definition.is_alias() {
+            if result.definition.has_selector(Selector::Alias) {
                 result.score -= 100.0;
 
                 // but prioritize longer paths so that we can still return a

@@ -348,7 +348,7 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
     parents: HashMap<Handle<Node>, Vec<Handle<Node>>>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Selector {
     Alias,
     C3,
