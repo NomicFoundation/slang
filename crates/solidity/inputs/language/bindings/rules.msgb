@@ -201,7 +201,6 @@ inherit .enclosing_def
   node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
-  ;; attr (@contract.lexical_scope -> @contract.members) precedence = 1
   edge @contract.lexical_scope -> @contract.type_members
   edge @contract.lexical_scope -> @contract.modifiers
 
@@ -251,7 +250,7 @@ inherit .enclosing_def
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    @_type [InheritanceType @type_name [IdentifierPath]]
+    [InheritanceType @type_name [IdentifierPath]]
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
@@ -265,7 +264,6 @@ inherit .enclosing_def
   attr (typeof) push_symbol = "@typeof"
 
   edge @contract.members -> member
-  ;; attr (@contract.members -> member) precedence = 0
   edge member -> typeof
   edge typeof -> @type_name.right
 
@@ -278,10 +276,6 @@ inherit .enclosing_def
 
   ;; The base contract defs are directly accesible through our special super scope
   edge @contract.super_scope -> @type_name.right
-
-  ;; Precedence order for bases defined from right to left (ie. rightmost base has higher precedence)
-  ;; let p = (plus 1 (named-child-index @type))
-  ;; attr (@contract.super_scope -> @type_name.right) precedence = p
 }
 
 @parent [InheritanceType @type_name [IdentifierPath]] {
@@ -347,14 +341,9 @@ inherit .enclosing_def
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
-  ;; Contract's own members should have higher precedence than base clases
-  ;; See connection from @contract.members into base type's member in contract
-  ;; bases rules, where the precedence is set to 0
-  ;; attr (@contract.members -> @function.def) precedence = 1
 
-  ;; Virtual here hints the disambiguation algorithm in the presence of multiple
-  ;; definitions for a method, but does not necessarily mean the function is
-  ;; marked virtual
+  ;; This may prioritize this definition (when there are multiple options)
+  ;; according to the C3 linerisation ordering
   attr (@function.def) selector = "c3"
   attr (@function.def) parents = [@contract.def]
 }
