@@ -177,6 +177,14 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
     }
 
     fn inspect_results(&self) {
+        let reference = &self.reference;
+        println!("Reference {reference} has parents:");
+        for parent in reference.resolve_parents() {
+            println!("  -> {parent}");
+            resolve_parents(&parent, 1);
+        }
+
+        println!("... and resolved to definitions:");
         for (index, result) in self.results.iter().enumerate() {
             let selector = self.owner.selectors.get(&result.end_node());
             println!(
@@ -200,7 +208,7 @@ fn resolve_parents<KT: KindTypes + 'static>(
     // FIXME: this cannot handle recursive definitions
     for parent in definition.resolve_parents() {
         println!(
-            "   {indentation} -> {parent}",
+            "  {indentation}-> {parent}",
             indentation = "  ".repeat(level)
         );
         resolve_parents(&parent, level + 1);

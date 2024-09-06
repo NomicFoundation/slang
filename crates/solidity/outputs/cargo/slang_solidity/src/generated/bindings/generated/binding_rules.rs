@@ -14,6 +14,9 @@ attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
 attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
 attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
 
+;; Keeps a link to the enclosing contract definition to provide a parent for
+;; method calls (to correctly resolve virtual methods)
+inherit .enclosing_def
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -30,6 +33,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   attr (export) pop_symbol = FILE_PATH
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
+
+  let @source_unit.enclosing_def = #null
 }
 
 ;; Top-level definitions...
@@ -204,6 +209,8 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
   ;; attr (@contract.lexical_scope -> @contract.members) precedence = 1
   edge @contract.lexical_scope -> @contract.type_members
   edge @contract.lexical_scope -> @contract.modifiers
+
+  let @contract.enclosing_def = @contract.def
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -1429,6 +1436,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 @expr [Expression @name variant: [Identifier]] {
   node ref
   attr (ref) node_reference = @name
+  attr (ref) parents = [@expr.enclosing_def]
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref
@@ -1441,6 +1449,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ]] {
   node ref
   attr (ref) node_reference = @name
+  attr (ref) parents = [@expr.enclosing_def]
 
   node member
   attr (member) push_symbol = "."
