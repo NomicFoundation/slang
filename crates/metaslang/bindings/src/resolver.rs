@@ -9,11 +9,51 @@ use stack_graphs::{
 
 use crate::{builder::Selector, Bindings, Definition, GraphHandle, Reference};
 
+/// The resolver executes algorithms to resolve a reference to one or more
+/// definitions. The reference may not be resolvable in the current state of the
+/// bindings (eg. you may still need to add an imported file), so it may not be
+/// able to find any definitions, or the definitions it finds may be an
+/// incomplete set (eg. finding only an import alias, but not the actual
+/// definition). The base algorithm will omit shadowed paths (ie. those
+/// discarded by higher precedence edges) from the results, but there are other
+/// circumstances when many definitions may be found:
+///
+/// 1. Destructuring imports (with or without aliases): these are
+///    represented in the graph as intermediate definition nodes along the
+///    path to the actual definition; hence why this function will return
+///    the longest path available.
+///
+/// 2. Virtual methods: a reference should find valid paths to all available
+///    definitions in a class hierarchy.
+///
+/// The multiple definitions can be ranked by one or more secondary algorithms
+/// to be applied by this resolver. For example, an alias import definition
+/// would be downgraded, allowing the resolver to prefer the actual definition
+/// if found (it may not be available yet). Or a topological ordering may be
+/// applied to definitions pointing to virtual methods.
+///
 pub struct Resolver<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
     reference_handle: GraphHandle,
     partials: PartialPaths,
-    pub results: Vec<PartialPath>,
+    results: Vec<ResolvedPath<'a, KT>>,
+}
+
+struct ResolvedPath<'a, KT: KindTypes + 'static> {
+    pub partial_path: PartialPath,
+    pub definition: Definition<'a, KT>,
+    pub score: f32,
+    //pub pushes_super: bool,
+}
+
+impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
+    pub fn end_node(&self) -> GraphHandle {
+        self.partial_path.end_node
+    }
+
+    pub fn len(&self) -> usize {
+        self.partial_path.edges.len()
+    }
 }
 
 impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
@@ -46,18 +86,21 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 .iter()
                 .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
-                self.results.push(reference_path.clone());
-
-                if self.path_pushes_super(reference_path) {
-                    println!(
-                        "Found push `super` in path ending at {}",
-                        self.owner.to_definition(reference_path.end_node).unwrap()
-                    );
-                }
+                // TODO: we'll need this later when resolving virtual methods
+                let _pushes_super = self.path_pushes_super(reference_path);
+                self.results.push(ResolvedPath {
+                    definition: self
+                        .owner
+                        .to_definition(reference_path.end_node)
+                        .expect("path to end in a definition node"),
+                    partial_path: reference_path.clone(),
+                    score: 0.0,
+                });
             }
         }
     }
 
+    // TODO: this is very specific to Solidity; find a way to generalize the concept
     fn path_pushes_super(&mut self, path: &PartialPath) -> bool {
         for edge in path.edges.iter(&mut self.partials) {
             let source_node_handle = self
@@ -76,110 +119,90 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         false
     }
 
-    pub fn all(self) -> Vec<Definition<'a, KT>> {
+    pub fn all(&self) -> Vec<Definition<'a, KT>> {
         self.results
-            .into_iter()
-            .filter_map(|path| self.owner.to_definition(path.end_node))
+            .iter()
+            .map(|path| path.definition.clone())
             .collect()
     }
 
-    /// Attempt to resolve the reference and find its definition. If the
-    /// reference cannot be resolved in the current state of the bindings (eg.
-    /// you may still need to add an imported file), this function will return
-    /// `None`. Otherwise, it will always return the definition with the
-    /// longest, not shadowed, path in the underlying stack graph. This is to
-    /// ensure that we always get the actual definition of some identifier
-    /// reference, and not an intermediate result such as an import alias.
-    ///
-    /// There are multiple reasons why a reference may resolve to more than one
-    /// definition in well formed and valid code. For example:
-    ///
-    /// 1. Variable shadowing: this should be resolved in the rules file by
-    ///    setting the precedence attribute to the appropriate edges.
-    ///
-    /// 2. Destructuring imports (with or without aliases): these are
-    ///    represented in the graph as intermediate definition nodes along the
-    ///    path to the actual definition; hence why this function will return
-    ///    the longest path available.
-    ///
-    /// 3. Overriden virtual methods: a reference will find valid paths to all
-    ///    available definitions in the class hierarchy.
-    ///
-    pub fn first(&self) -> Option<Definition<'a, KT>> {
-        if self.results.len() <= 1 {
-            self.results
-                .first()
-                .and_then(|path| self.owner.to_definition(path.end_node))
+    pub fn first(&mut self) -> Option<Definition<'a, KT>> {
+        if self.results.len() > 1 {
+            self.rank_results();
+
+            if self.results[1].score == self.results[0].score {
+                self.inspect_results();
+                panic!("Reference resolved to multiple definitions that cannot be disambiguated");
+            }
+
+            Some(self.results[0].definition.clone())
         } else {
-            // attempt to disambiguate from all found alternatives
+            self.results.first().map(|path| path.definition.clone())
+        }
+    }
 
-            // remove aliases
-            let results = self
-                .results
+    fn rank_results(&mut self) {
+        if self.results.len() == 0 {
+            return;
+        }
+        self.mark_down_aliases();
+        self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
+    }
+
+    fn mark_down_aliases(&mut self) {
+        // compute min and max path lengths
+        let (min_len, max_len) =
+            self.results
                 .iter()
-                .filter(|path| {
-                    self.owner
-                        .selectors
-                        .get(&path.end_node)
-                        .map_or(true, |s| !matches!(s, Selector::Alias))
-                })
-                .collect::<Vec<_>>();
+                .fold((usize::MAX, usize::MIN), |(min_len, max_len), result| {
+                    let len = result.len();
+                    (min_len.min(len), max_len.max(len))
+                });
 
-            match results.len() {
-                0 => {
-                    // TODO: this is an error because the actual definition
-                    // is not found, but maybe we can revert back to
-                    // returning the longest path?
-                    panic!("More than one definition found but they are all aliases")
-                }
-                1 => results.first().map(|path| Definition {
-                    owner: self.owner,
-                    handle: path.end_node,
-                }),
-                _ => {
-                    for (index, result) in results.iter().enumerate() {
-                        let definition = self.owner.to_definition(result.end_node).unwrap();
-                        let selector = self.owner.selectors.get(&result.end_node);
-                        println!(
-                            "  {index}. {definition} (length {length}) (selector = {selector})",
-                            index = index + 1,
-                            length = result.edges.len(),
-                            selector =
-                                selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
-                        );
-                        let Some(selector) = selector else {
-                            continue;
-                        };
+        for result in self.results.iter_mut() {
+            // mark down alias definitions
+            if result.definition.is_alias() {
+                result.score -= 100.0;
 
-                        if let Selector::ParentDefinitions(related) = selector {
-                            let enclosing_node = related.first().expect("at least one parent");
-                            if self.owner.stack_graph[*enclosing_node].is_definition() {
-                                let enclosing_def =
-                                    self.owner.to_definition(*enclosing_node).unwrap();
-                                println!("   Selector points to {enclosing_def}");
-                                let related_sel = self.owner.selectors.get(enclosing_node);
-                                if let Some(Selector::ParentReferences(parents)) = related_sel {
-                                    println!("      with parents:");
-                                    for parent in parents {
-                                        let parent_reference =
-                                            self.owner.to_reference(*parent).unwrap();
-                                        let parent_definition =
-                                            parent_reference.jump_to_definition().unwrap();
-                                        println!(
-                                            "        {parent_reference} -> {parent_definition}"
-                                        );
-                                    }
-                                }
-                            } else {
-                                println!("   Virtual selector doesn't point to a definition");
-                            }
+                // but prioritize longer paths so that we can still return a
+                // result if we only have multiple aliases as possible
+                // definitions
+                result.score += (result.len() - min_len) as f32 / (1 + max_len - min_len) as f32;
+            }
+        }
+    }
+
+    fn inspect_results(&self) {
+        for (index, result) in self.results.iter().enumerate() {
+            let selector = self.owner.selectors.get(&result.end_node());
+            println!(
+                "  {index}. {definition} (score {score}, length {length}, selector {selector})",
+                index = index + 1,
+                definition = result.definition,
+                score = result.score,
+                length = result.len(),
+                selector = selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
+            );
+            let Some(selector) = selector else {
+                continue;
+            };
+
+            if let Selector::ParentDefinitions(related) = selector {
+                let enclosing_node = related.first().expect("at least one parent");
+                if self.owner.stack_graph[*enclosing_node].is_definition() {
+                    let enclosing_def = self.owner.to_definition(*enclosing_node).unwrap();
+                    println!("   Selector points to {enclosing_def}");
+                    let related_sel = self.owner.selectors.get(enclosing_node);
+                    if let Some(Selector::ParentReferences(parents)) = related_sel {
+                        println!("      with parents:");
+                        for parent in parents {
+                            let parent_reference = self.owner.to_reference(*parent).unwrap();
+                            let parent_definition = parent_reference.jump_to_definition().unwrap();
+                            println!("        {parent_reference} -> {parent_definition}");
                         }
                     }
-
-                    panic!(concat!(
-                        "More than one non-alias definitions found and ",
-                        "disambiguation not implemented yet"
-                    ));
+                } else {
+                    println!("   Parent definition doesn't point to a definition");
                 }
             }
         }

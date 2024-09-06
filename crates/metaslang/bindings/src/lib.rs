@@ -193,6 +193,13 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .file()
             .map(|file| self.owner.stack_graph[file].name())
     }
+
+    pub fn is_alias(&self) -> bool {
+        self.owner
+            .selectors
+            .get(&self.handle)
+            .map_or(false, |s| matches!(s, Selector::Alias))
+    }
 }
 
 impl<KT: KindTypes + 'static> Display for Definition<'_, KT> {
