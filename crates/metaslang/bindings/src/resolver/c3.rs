@@ -21,6 +21,11 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
     let mut queue: VecDeque<Item> = VecDeque::new();
     queue.push_back(target.clone());
 
+    // When an item cannot be resolved, we save it here along the number of
+    // items already linearised. If we fail to linearise a second time, we use
+    // this to check if progress was made to avoid infinite loops with cycles.
+    let mut checkpoint = None;
+
     while let Some(item) = queue.pop_front() {
         if linearisations.contains_key(&item) {
             continue;
@@ -32,8 +37,10 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
                 merge_set.push(parent_linearisation.clone());
             } else {
                 // Queue the parent with missing linearisation at the front to
-                // resolve it first.
-                queue.push_front(parent.clone());
+                // resolve it first (unless it's already queued)
+                if !queue.iter().any(|queued| queued == parent) {
+                    queue.push_front(parent.clone());
+                }
             }
         }
         if merge_set.len() == item_parents.len() {
@@ -47,11 +54,31 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
             let mut result = Vec::new();
             result.push(item.clone());
             result.extend(merge_result);
+
+            // Clear checkpoint if we just linearised it.
+            if matches!(checkpoint, Some((ref check_item, _)) if *check_item == item) {
+                checkpoint = None;
+            }
+
             linearisations.insert(item, result);
         } else {
             // We're missing linearisations of some parents, so re-enqueue the
             // current item at the end and try again later, after hopefully
             // recursively resolving the linearisation of the parents.
+            if let Some((ref check_item, items_linearised)) = checkpoint {
+                if *check_item == item {
+                    if items_linearised == linearisations.len() {
+                        // no progress since last checkpoint; this indicates a cycle
+                        eprintln!("Linearisation of {item} failed: cycle detected");
+                        return None;
+                    }
+                    // Update progress and re-try
+                    checkpoint = Some((item.clone(), linearisations.len()));
+                }
+            } else {
+                // Create a checkpoint on the item we couldn't yet linearise.
+                checkpoint = Some((item.clone(), linearisations.len()));
+            }
             queue.push_back(item);
         }
     }
@@ -190,5 +217,27 @@ mod tests {
         parents.insert('C', vec!['X', 'A']);
 
         assert_eq!(None, linearise(&'C', &parents));
+    }
+
+    #[test]
+    fn test_linearise_with_shallow_cycles() {
+        let mut parents = HashMap::new();
+        parents.insert('B', vec!['A']);
+        parents.insert('A', vec!['B']);
+
+        assert_eq!(None, linearise(&'A', &parents));
+        assert_eq!(None, linearise(&'B', &parents));
+    }
+
+    #[test]
+    fn test_linearise_with_deep_cycles() {
+        let mut parents = HashMap::new();
+        parents.insert('X', vec!['Y']);
+        parents.insert('Y', vec!['Z']);
+        parents.insert('Z', vec!['X']);
+
+        assert_eq!(None, linearise(&'X', &parents));
+        assert_eq!(None, linearise(&'Y', &parents));
+        assert_eq!(None, linearise(&'Z', &parents));
     }
 }
