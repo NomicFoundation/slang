@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::iter::once;
 
 use metaslang_cst::KindTypes;
@@ -235,7 +235,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         println!("Reference {reference} has parents:");
         for parent in reference.resolve_parents() {
             println!("  -> {parent}");
-            resolve_parents(&parent, 1);
+            print_parents(&parent, 1, &mut HashSet::new());
         }
 
         println!("... and resolved to definitions:");
@@ -250,18 +250,29 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 selector = selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
             );
 
-            resolve_parents(&result.definition, 0);
+            print_parents(&result.definition, 0, &mut HashSet::new());
         }
     }
 }
 
-fn resolve_parents<KT: KindTypes + 'static>(definition: &Definition<'_, KT>, level: usize) {
-    // FIXME: this cannot handle recursive definitions
+fn print_parents<'a, KT: KindTypes + 'static>(
+    definition: &Definition<'a, KT>,
+    level: usize,
+    seen: &mut HashSet<Definition<'a, KT>>,
+) {
+    seen.insert((*definition).clone());
     for parent in definition.resolve_parents() {
         println!(
             "  {indentation}-> {parent}",
             indentation = "  ".repeat(level)
         );
-        resolve_parents(&parent, level + 1);
+        if seen.contains(&parent) {
+            println!(
+                "  {indentation}-> ...",
+                indentation = "  ".repeat(level + 1)
+            );
+        } else {
+            print_parents(&parent, level + 1, seen);
+        }
     }
 }
