@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 use std::iter::once;
 
 use metaslang_cst::KindTypes;
@@ -8,6 +8,8 @@ use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, S
 
 use crate::builder::Selector;
 use crate::{Bindings, Definition, GraphHandle, Reference};
+
+mod c3;
 
 /// The resolver executes algorithms to resolve a reference to one or more
 /// definitions. The reference may not be resolvable in the current state of the
@@ -184,18 +186,24 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             // the reference does not provide an enclosing definition, so nothing to do here
             return;
         };
-        let mro = Self::linearise(context);
+        let parents = Self::resolve_parents_all(context.clone());
+        let Some(mro) = c3::linearise(context, &parents) else {
+            // linearisation failed
+            eprintln!("Linearisation of {context} failed");
+            return;
+        };
 
         // mark up methods tagged with the C3 selector according to the computed linearisation
         for result in &mut self.results {
             if result.definition.has_selector(Selector::C3) {
                 let definition_parents = result.definition.resolve_parents();
                 let Some(definition_context) = definition_parents.first() else {
-                    // this should not normally happen, but the definition is
-                    // marked with C3 but does not provide a resolvable
+                    // this should not normally happen: the definition is tagged
+                    // with the C3 selector but does not provide a resolvable
                     // enclosing definition
                     continue;
                 };
+                // find the definition context in the linearised result
                 #[allow(clippy::cast_precision_loss)]
                 if let Some(order) = mro.iter().position(|x| x == definition_context) {
                     result.score += 100.0 * (mro.len() - order) as f32;
@@ -220,104 +228,6 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             results.insert(current, current_parents);
         }
         results
-    }
-
-    fn linearise(context: &Definition<'a, KT>) -> Vec<Definition<'a, KT>> {
-        let parents = Self::resolve_parents_all(context.clone());
-        let mut linearisations: HashMap<Definition<'a, KT>, Vec<Definition<'a, KT>>> =
-            HashMap::new();
-
-        println!("Linearising {context} with {parents:#?}");
-        let mut queue: VecDeque<Definition<'a, KT>> = VecDeque::new();
-        queue.push_back(context.clone());
-
-        while let Some(current) = queue.pop_front() {
-            if linearisations.contains_key(&current) {
-                continue;
-            }
-            let current_parents = &parents[&current];
-            let mut merge_set = Vec::new();
-            for parent in current_parents {
-                if let Some(parent_linearisation) = linearisations.get(parent) {
-                    merge_set.push(parent_linearisation.clone());
-                } else {
-                    // queue the parent at the front to resolve it first
-                    queue.push_front(parent.clone());
-                }
-            }
-            if merge_set.len() == current_parents.len() {
-                merge_set.push(current_parents.clone());
-                let mut result = Vec::new();
-                result.push(current.clone());
-                result.extend(Self::merge(merge_set));
-                linearisations.insert(current, result);
-            } else {
-                // we're missing some linearisations, so re-enqueue current at the end and try again later
-                queue.push_back(current);
-            }
-        }
-
-        let result = linearisations.remove(context).unwrap_or_default();
-        println!("Linearisation result: {result:#?}");
-        result
-    }
-
-    fn merge(mut set: Vec<Vec<Definition<'a, KT>>>) -> Vec<Definition<'a, KT>> {
-        // reverse all the vector in the set
-        for subset in &mut set {
-            subset.reverse();
-        }
-
-        // find a candidate
-        let find_candidate = |set: &Vec<Vec<Definition<'a, KT>>>| -> Option<Definition<'a, KT>> {
-            for subset in set {
-                let Some(candidate) = subset.last() else {
-                    continue;
-                };
-                if set.iter().all(|subset| {
-                    let subset_len = subset.len();
-                    subset
-                        .iter()
-                        .position(|elt| elt == candidate)
-                        .unwrap_or(subset_len)
-                        + 1
-                        >= subset_len
-                }) {
-                    return Some(candidate.clone());
-                }
-            }
-            None
-        };
-
-        // remove an element from the set
-        let remove_from_set = |set: &mut Vec<Vec<Definition<'a, KT>>>,
-                               element: &Definition<'a, KT>| {
-            for subset in set {
-                if let Some(last) = subset.last() {
-                    if last == element {
-                        subset.pop();
-                    }
-                }
-            }
-        };
-
-        let mut result = Vec::new();
-        loop {
-            let found = find_candidate(&set);
-            if let Some(found) = found {
-                remove_from_set(&mut set, &found);
-                result.push(found);
-            } else {
-                break;
-            }
-        }
-        // if set is empty, we successfully merged the set
-        // otherwise, linearisation is not possible
-        if set.iter().all(|subset| subset.is_empty()) {
-            result
-        } else {
-            Vec::new()
-        }
     }
 
     fn inspect_results(&self) {
