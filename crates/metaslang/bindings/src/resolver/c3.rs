@@ -3,9 +3,11 @@ use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
 /// Produces a linearisation of a hierarchy of items using the C3 linearisation
-/// algorithm. Given an item A with parents (B1, B2) in that order, the
+/// algorithm. Given an item `A` with parents `(B1, B2)` in that order, the
 /// linearisation of A can be defined as:
+/// ```
 /// L(A) = [A] + merge(L(B1), L(B2), [B1, B2])
+/// ```
 /// The merge operation (defined below) will order the items of the vectors by
 /// taking candidates that can only appear in the first position in all of the
 /// vectors.

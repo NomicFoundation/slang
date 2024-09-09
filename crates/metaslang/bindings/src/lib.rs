@@ -169,8 +169,6 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                     } else {
                         // TODO: what should we do if the parent reference
                         // cannot be resolved at this point?
-                        // TODO: also, since jump_to_definition() may
-                        // recursively use this method, we need to handle cycles
                         self.to_reference(*handle).unwrap().jump_to_definition()
                     }
                 })
