@@ -11,7 +11,7 @@ use slang_solidity::cst::KindTypes;
 use slang_solidity::language::Language;
 use slang_solidity::parse_output::ParseOutput;
 
-use super::graph::render_graph;
+use super::graph::{render_dot_graph, render_graph};
 use super::renderer::render_bindings;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::split_multi_file;
@@ -72,6 +72,12 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
                     fs.write_file(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
+
+                    let dot_output = render_dot_graph(&parsed_parts);
+                    let dot_output_path = test_dir
+                        .join("generated")
+                        .join(format!("{version}-{parse_status}.dot"));
+                    fs.write_file(dot_output_path, &dot_output)?;
                 }
             };
         }
