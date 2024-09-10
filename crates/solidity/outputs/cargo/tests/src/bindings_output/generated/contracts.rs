@@ -15,6 +15,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn reverse_inheritance() -> Result<()> {
+    run("contracts", "reverse_inheritance")
+}
+
+#[test]
 fn super_scope() -> Result<()> {
     run("contracts", "super_scope")
 }
