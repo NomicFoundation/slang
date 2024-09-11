@@ -74,7 +74,7 @@ inherit .enclosing_def
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract [ContractDefinition]]
 ]] {
-  edge @contract.parent_scope -> @source_unit.lexical_scope
+  let @contract.parent_scope = @source_unit.lexical_scope
 }
 
 
@@ -193,11 +193,11 @@ inherit .enclosing_def
 
 @contract [ContractDefinition] {
   node @contract.lexical_scope
-  node @contract.parent_scope
   node @contract.super_scope
   node @contract.def
   node @contract.members
   node @contract.type_members
+  node @contract.virtual_members
   node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
@@ -247,6 +247,15 @@ inherit .enclosing_def
 
   ;; Finally make "super" available in the contract's lexical scope for function bodies to use
   edge @contract.lexical_scope -> super
+
+  ;; This defines the sink of edges added from base contracts when setting this
+  ;; contract as the compilation context
+  attr (@contract.def) export_node = @contract.virtual_members
+
+  ;; This defines the source side of edges added to base contracts when setting
+  ;; a contract as compilation context; this allows this contract (a base) to
+  ;; access virtual methods in any sub-contract defined in the hierarchy
+  attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_scope]
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes

@@ -6,8 +6,7 @@ use stack_graphs::graph::Node;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::builder::Selector;
-use crate::{Bindings, Definition, GraphHandle, Reference};
+use crate::{Bindings, Definition, Reference, Selector};
 
 mod c3;
 
@@ -49,10 +48,6 @@ struct ResolvedPath<'a, KT: KindTypes + 'static> {
 }
 
 impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
-    pub fn end_node(&self) -> GraphHandle {
-        self.partial_path.end_node
-    }
-
     pub fn len(&self) -> usize {
         self.partial_path.edges.len()
     }
@@ -168,7 +163,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         for result in &mut self.results {
             // mark down alias definitions
             #[allow(clippy::cast_precision_loss)]
-            if result.definition.has_selector(Selector::Alias) {
+            if matches!(result.definition.get_selector(), Some(Selector::Alias)) {
                 result.score -= 100.0;
 
                 // but prioritize longer paths so that we can still return a
@@ -195,7 +190,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
         // mark up methods tagged with the C3 selector according to the computed linearisation
         for result in &mut self.results {
-            if result.definition.has_selector(Selector::C3) {
+            if matches!(result.definition.get_selector(), Some(Selector::C3)) {
                 let definition_parents = result.definition.resolve_parents();
                 let Some(definition_context) = definition_parents.first() else {
                     // this should not normally happen: the definition is tagged
@@ -240,7 +235,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
         println!("... and resolved to definitions:");
         for (index, result) in self.results.iter().enumerate() {
-            let selector = self.owner.selectors.get(&result.end_node());
+            let selector = result.definition.get_selector();
             println!(
                 "  {index}. {definition} (score {score}, length {length}, selector {selector})",
                 index = index + 1,

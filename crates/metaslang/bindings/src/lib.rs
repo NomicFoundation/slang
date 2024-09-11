@@ -6,7 +6,7 @@ use std::fmt::{self, Debug, Display};
 use std::hash::Hash;
 use std::sync::Arc;
 
-use builder::{BuildResult, Selector};
+use builder::BuildResult;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::KindTypes;
 use metaslang_graph_builder::ast::File;
@@ -19,14 +19,33 @@ type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type CursorID = usize;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Selector {
+    Alias,
+    C3,
+}
+
+pub struct DefinitionBindingInfo<KT: KindTypes + 'static> {
+    definiens: Option<Cursor<KT>>,
+    selector: Option<Selector>,
+    parents: Vec<GraphHandle>,
+    #[allow(dead_code)]
+    export_node: Option<GraphHandle>,
+    #[allow(dead_code)]
+    import_nodes: Vec<GraphHandle>,
+}
+
+pub struct ReferenceBindingInfo {
+    parents: Vec<GraphHandle>,
+}
+
 pub struct Bindings<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
-    definiens: HashMap<GraphHandle, Cursor<KT>>,
-    selectors: HashMap<GraphHandle, Selector>,
-    parents: HashMap<GraphHandle, Vec<GraphHandle>>,
+    definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
+    references_info: HashMap<GraphHandle, ReferenceBindingInfo>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
 }
@@ -51,9 +70,8 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             functions,
             stack_graph,
             cursors: HashMap::new(),
-            definiens: HashMap::new(),
-            selectors: HashMap::new(),
-            parents: HashMap::new(),
+            definitions_info: HashMap::new(),
+            references_info: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
         }
@@ -96,9 +114,9 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             }
             self.cursors.insert(handle, cursor);
         }
-        self.definiens.extend(result.definiens.drain());
-        self.selectors.extend(result.selectors.drain());
-        self.parents.extend(result.parents.drain());
+        self.definitions_info
+            .extend(result.definitions_info.drain());
+        self.references_info.extend(result.references_info.drain());
 
         result
     }
@@ -157,25 +175,21 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             })
     }
 
-    fn resolve_parents(&self, handle: GraphHandle) -> Vec<Definition<'_, KT>> {
-        if let Some(parents) = self.parents.get(&handle) {
-            // NOTE: the Builder ensures that all handles in the parents are
-            // either definitions or references
-            parents
-                .iter()
-                .filter_map(|handle| {
-                    if self.stack_graph[*handle].is_definition() {
-                        self.to_definition(*handle)
-                    } else {
-                        // TODO: what should we do if the parent reference
-                        // cannot be resolved at this point?
-                        self.to_reference(*handle).unwrap().jump_to_definition()
-                    }
-                })
-                .collect()
-        } else {
-            Vec::new()
-        }
+    fn resolve_handles(&self, handles: &[GraphHandle]) -> Vec<Definition<'_, KT>> {
+        // NOTE: the Builder ensures that all handles in the parents are
+        // either definitions or references
+        handles
+            .iter()
+            .filter_map(|handle| {
+                if self.stack_graph[*handle].is_definition() {
+                    self.to_definition(*handle)
+                } else {
+                    // TODO: what should we do if the parent reference
+                    // cannot be resolved at this point?
+                    self.to_reference(*handle).unwrap().jump_to_definition()
+                }
+            })
+            .collect()
     }
 }
 
@@ -210,7 +224,10 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     }
 
     pub fn get_definiens_cursor(&self) -> Option<Cursor<KT>> {
-        self.owner.definiens.get(&self.handle).cloned()
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .and_then(|info| info.definiens.clone())
     }
 
     pub fn get_file(&self) -> Option<&'a str> {
@@ -219,15 +236,20 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub(crate) fn has_selector(&self, selector: Selector) -> bool {
+    pub(crate) fn get_selector(&self) -> Option<Selector> {
         self.owner
-            .selectors
+            .definitions_info
             .get(&self.handle)
-            .map_or(false, |s| *s == selector)
+            .and_then(|info| info.selector)
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
-        self.owner.resolve_parents(self.handle)
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .map(|info| &info.parents)
+            .map(|handles| self.owner.resolve_handles(handles))
+            .unwrap_or_default()
     }
 }
 
@@ -298,7 +320,12 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
-        self.owner.resolve_parents(self.handle)
+        self.owner
+            .references_info
+            .get(&self.handle)
+            .map(|info| &info.parents)
+            .map(|handles| self.owner.resolve_handles(handles))
+            .unwrap_or_default()
     }
 }
 

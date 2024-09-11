@@ -262,6 +262,8 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
+use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Selector};
+
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
 static POP_SCOPED_SYMBOL_TYPE: &str = "pop_scoped_symbol";
@@ -274,6 +276,8 @@ static SCOPE_TYPE: &str = "scope";
 static DEBUG_ATTR_PREFIX: &str = "debug_";
 static DEFINIENS_NODE_ATTR: &str = "definiens_node";
 static EMPTY_SOURCE_SPAN_ATTR: &str = "empty_source_span";
+static EXPORT_NODE_ATTR: &str = "export_node";
+static IMPORT_NODES_ATTR: &str = "import_nodes";
 static IS_DEFINITION_ATTR: &str = "is_definition";
 static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
@@ -295,6 +299,8 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         DEFINIENS_NODE_ATTR,
         SELECTOR_ATTR,
         PARENTS_ATTR,
+        EXPORT_NODE_ATTR,
+        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -306,6 +312,8 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         DEFINIENS_NODE_ATTR,
         SELECTOR_ATTR,
         PARENTS_ATTR,
+        EXPORT_NODE_ATTR,
+        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
     ])
 });
@@ -332,7 +340,7 @@ pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
-pub(crate) struct Builder<'a, KT: KindTypes> {
+pub(crate) struct Builder<'a, KT: KindTypes + 'static> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
     stack_graph: &'a mut StackGraph,
@@ -342,24 +350,16 @@ pub(crate) struct Builder<'a, KT: KindTypes> {
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
-    definiens: HashMap<Handle<Node>, Cursor<KT>>,
-    selectors: HashMap<Handle<Node>, Selector>,
-    parents: HashMap<Handle<Node>, Vec<Handle<Node>>>,
+    definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
+    references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Selector {
-    Alias,
-    C3,
-}
-
-pub(crate) struct BuildResult<KT: KindTypes> {
+pub(crate) struct BuildResult<KT: KindTypes + 'static> {
     #[cfg(feature = "__private_testing_utils")]
     pub graph: Graph<KT>,
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
-    pub definiens: HashMap<Handle<Node>, Cursor<KT>>,
-    pub selectors: HashMap<Handle<Node>, Selector>,
-    pub parents: HashMap<Handle<Node>, Vec<Handle<Node>>>,
+    pub definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
+    pub references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -380,9 +380,8 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             remapped_nodes: HashMap::new(),
             injected_node_count: 0,
             cursors: HashMap::new(),
-            definiens: HashMap::new(),
-            selectors: HashMap::new(),
-            parents: HashMap::new(),
+            definitions_info: HashMap::new(),
+            references_info: HashMap::new(),
         }
     }
 
@@ -453,9 +452,8 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
             cursors: self.cursors,
-            definiens: self.definiens,
-            selectors: self.selectors,
-            parents: self.parents,
+            definitions_info: self.definitions_info,
+            references_info: self.references_info,
         })
     }
 
@@ -558,8 +556,8 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
 
         // Iterate again to resolve parents attribute, which refers to other nodes in the graph
         for node_ref in self.graph.iter_nodes().skip(self.injected_node_count) {
-            cancellation_flag.check("loading graph nodes")?;
-            self.load_parents_info(node_ref)?;
+            cancellation_flag.check("loading graph nodes additional info")?;
+            self.load_additional_info(node_ref)?;
         }
 
         for node in self.stack_graph.nodes_for_file(self.file) {
@@ -684,10 +682,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             .stack_graph
             .add_pop_scoped_symbol_node(id, symbol, is_definition)
             .unwrap();
-        if is_definition {
-            self.load_definiens_info(node_ref, node_handle)?;
-            self.load_selector_info(node_ref, node_handle)?;
-        }
         Ok(node_handle)
     }
 
@@ -705,10 +699,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             .stack_graph
             .add_pop_symbol_node(id, symbol, is_definition)
             .unwrap();
-        if is_definition {
-            self.load_definiens_info(node_ref, node_handle)?;
-            self.load_selector_info(node_ref, node_handle)?;
-        }
         Ok(node_handle)
     }
 
@@ -803,58 +793,27 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         Ok(())
     }
 
-    fn load_definiens_info(
-        &mut self,
-        node_ref: GraphNodeRef,
-        node_handle: Handle<Node>,
-    ) -> Result<(), BuildError> {
-        let node = &self.graph[node_ref];
-        // Save the definiens CST cursor so our caller can extract the mapping
-        // to the stack graph node later
-        if let Some(definiens_node) = node.attributes.get(DEFINIENS_NODE_ATTR) {
-            let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
-            let definiens_node = &self.graph[syntax_node_ref];
-            self.definiens.insert(node_handle, definiens_node.clone());
-        };
-        Ok(())
+    fn node_handle_for_graph_node(&self, node_ref: GraphNodeRef) -> Handle<Node> {
+        self.stack_graph
+            .node_for_id(self.node_id_for_graph_node(node_ref))
+            .expect("parent node exists in the stack graph")
     }
 
-    fn load_selector_info(
-        &mut self,
-        node_ref: GraphNodeRef,
-        node_handle: Handle<Node>,
-    ) -> Result<(), BuildError> {
+    // Saves additional binding information from the loaded graph (eg. selector,
+    // definiens, import/export nodes and parents).
+    fn load_additional_info(&mut self, node_ref: GraphNodeRef) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
-        if let Some(selector_value) = node.attributes.get(SELECTOR_ATTR) {
-            let selector_type = selector_value.as_str()?;
+        let node_handle = self.node_handle_for_graph_node(node_ref);
+        let stack_graph_node = &self.stack_graph[node_handle];
 
-            let selector = match selector_type {
-                "alias" => Selector::Alias,
-                "c3" => Selector::C3,
-                _ => return Err(BuildError::UnknownSelector(selector_type.to_string())),
-            };
-            self.selectors.insert(node_handle, selector);
-        }
-        Ok(())
-    }
-
-    fn load_parents_info(&mut self, node_ref: GraphNodeRef) -> Result<(), BuildError> {
-        let node = &self.graph[node_ref];
-        if let Some(parents) = node.attributes.get(PARENTS_ATTR) {
-            let node_id = self.node_id_for_graph_node(node_ref);
-            let node_handle = self
-                .stack_graph
-                .node_for_id(node_id)
-                .expect("node already exists in the graph");
-            let parent_handles = parents
+        let parents = if let Some(parents) = node.attributes.get(PARENTS_ATTR) {
+            parents
                 .as_list()?
                 .iter()
                 .flat_map(|value| {
-                    value.as_graph_node_ref().map(|id| {
-                        self.stack_graph
-                            .node_for_id(self.node_id_for_graph_node(id))
-                            .expect("parent node exists in the stack graph")
-                    })
+                    value
+                        .as_graph_node_ref()
+                        .map(|id| self.node_handle_for_graph_node(id))
                 })
                 .flat_map(|parent| {
                     // ensure parents are either definitions or references
@@ -865,9 +824,65 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                         Ok(parent)
                     }
                 })
-                .collect::<Vec<_>>();
-            self.parents.insert(node_handle, parent_handles);
+                .collect()
+        } else {
+            Vec::new()
+        };
+
+        if stack_graph_node.is_definition() {
+            let selector = if let Some(selector_value) = node.attributes.get(SELECTOR_ATTR) {
+                Some(match selector_value.as_str()? {
+                    "alias" => Selector::Alias,
+                    "c3" => Selector::C3,
+                    other_type => return Err(BuildError::UnknownSelector(other_type.to_string())),
+                })
+            } else {
+                None
+            };
+
+            let definiens = if let Some(definiens_node) = node.attributes.get(DEFINIENS_NODE_ATTR) {
+                let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
+                let definiens_node = &self.graph[syntax_node_ref];
+                Some(definiens_node.clone())
+            } else {
+                None
+            };
+
+            let export_node = if let Some(export_node) = node.attributes.get(EXPORT_NODE_ATTR) {
+                Some(self.node_handle_for_graph_node(export_node.as_graph_node_ref()?))
+            } else {
+                None
+            };
+
+            let import_nodes = if let Some(import_nodes) = node.attributes.get(IMPORT_NODES_ATTR) {
+                import_nodes
+                    .as_list()?
+                    .iter()
+                    .flat_map(|value| {
+                        value
+                            .as_graph_node_ref()
+                            .map(|id| self.node_handle_for_graph_node(id))
+                    })
+                    .collect()
+            } else {
+                Vec::new()
+            };
+
+            self.definitions_info.insert(
+                node_handle,
+                DefinitionBindingInfo {
+                    definiens,
+                    selector,
+                    parents,
+                    export_node,
+                    import_nodes,
+                },
+            );
+        } else if stack_graph_node.is_reference() {
+            self.references_info
+                .insert(node_handle, ReferenceBindingInfo { parents });
         }
+
         Ok(())
     }
 
