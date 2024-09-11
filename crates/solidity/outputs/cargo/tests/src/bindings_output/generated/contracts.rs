@@ -15,13 +15,13 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
-fn reverse_inheritance() -> Result<()> {
-    run("contracts", "reverse_inheritance")
+fn super_scope() -> Result<()> {
+    run("contracts", "super_scope")
 }
 
 #[test]
-fn super_scope() -> Result<()> {
-    run("contracts", "super_scope")
+fn virtual_lookup() -> Result<()> {
+    run("contracts", "virtual_lookup")
 }
 
 #[test]
