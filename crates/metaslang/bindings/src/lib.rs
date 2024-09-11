@@ -231,7 +231,9 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         // Find all parents of the context
         let all_parents = self.find_all_parents(context_handle);
 
-        // Add stack graph edges to link to import nodes in all parents
+        // Add stack graph edges to link to import nodes in all parents. This
+        // makes definitions in the export node scope reachable directly from
+        // all import nodes in all the parents.
         for parent in &all_parents {
             let Some(parent_info) = self.definitions_info.get(parent) else {
                 continue;

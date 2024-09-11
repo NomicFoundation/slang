@@ -197,7 +197,6 @@ inherit .enclosing_def
   node @contract.def
   node @contract.members
   node @contract.type_members
-  node @contract.virtual_members
   node @contract.modifiers
 
   edge @contract.lexical_scope -> @contract.members
@@ -250,12 +249,19 @@ inherit .enclosing_def
 
   ;; This defines the sink of edges added from base contracts when setting this
   ;; contract as the compilation context
-  attr (@contract.def) export_node = @contract.virtual_members
+  attr (@contract.def) export_node = @contract.members
+
+  ;; This node will eventually connect to the contract's members being compiled
+  ;; and grants access to definitions in that contract and all its parents
+  ;; (recursively)
+  node super_import
+  attr (super_import) pop_symbol = "."
+  edge super -> super_import
 
   ;; This defines the source side of edges added to base contracts when setting
   ;; a contract as compilation context; this allows this contract (a base) to
   ;; access virtual methods in any sub-contract defined in the hierarchy
-  attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_scope]
+  attr (@contract.def) import_nodes = [@contract.lexical_scope, super_import]
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
@@ -355,10 +361,6 @@ inherit .enclosing_def
   ;; according to the C3 linerisation ordering
   attr (@function.def) selector = "c3"
   attr (@function.def) parents = [@contract.def]
-
-  ;; Make the function available to base contracts as well when we're compiling
-  ;; this or any sub-contract is being compiled
-  edge @contract.virtual_members -> @function.def
 }
 
 @contract [ContractDefinition members: [ContractMembers

@@ -44,7 +44,7 @@ struct ResolvedPath<'a, KT: KindTypes + 'static> {
     pub partial_path: PartialPath,
     pub definition: Definition<'a, KT>,
     pub score: f32,
-    //pub pushes_super: bool,
+    pub pushes_super: bool,
 }
 
 impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
@@ -83,8 +83,8 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 .iter()
                 .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
-                // TODO: we'll need this later when resolving virtual methods
-                let _pushes_super = self.path_pushes_super(reference_path);
+                // FIXME: find a better name for this
+                let pushes_super = self.path_pushes_super(reference_path);
                 self.results.push(ResolvedPath {
                     definition: self
                         .owner
@@ -92,12 +92,13 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                         .expect("path to end in a definition node"),
                     partial_path: reference_path.clone(),
                     score: 0.0,
+                    pushes_super,
                 });
             }
         }
     }
 
-    // TODO: this is very specific to Solidity; find a way to generalize the concept
+    // FIXME: this is very specific to Solidity; find a way to generalize the concept
     fn path_pushes_super(&mut self, path: &PartialPath) -> bool {
         for edge in path.edges.iter(&mut self.partials) {
             let source_node_handle = self
@@ -197,8 +198,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             return;
         };
 
-        // FIXME: if this is a `super` call we need to remove the linearised
-        // methods up to and including the caller's definition
+        let caller_context_index = mro.iter().position(|x| x == caller_context);
 
         // mark up methods tagged with the C3 selector according to the computed linearisation
         for result in &mut self.results {
@@ -210,10 +210,17 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                     // enclosing definition
                     continue;
                 };
+
                 // find the definition context in the linearised result
                 #[allow(clippy::cast_precision_loss)]
-                if let Some(order) = mro.iter().position(|x| x == definition_context) {
-                    result.score += 100.0 * (mro.len() - order) as f32;
+                if let Some(index) = mro.iter().position(|x| x == definition_context) {
+                    // if this is a super call, ignore all implementations at or
+                    // before (as in more derived) than the caller's
+                    if !result.pushes_super
+                        || (caller_context_index.is_none() || index > caller_context_index.unwrap())
+                    {
+                        result.score += 100.0 * (mro.len() - index) as f32;
+                    }
                 }
             }
         }

@@ -15,6 +15,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn super_linearisation() -> Result<()> {
+    run("contracts", "super_linearisation")
+}
+
+#[test]
 fn super_scope() -> Result<()> {
     run("contracts", "super_scope")
 }
