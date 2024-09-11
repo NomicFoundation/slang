@@ -360,6 +360,10 @@ inherit .enclosing_def
   ;; according to the C3 linerisation ordering
   attr (@function.def) selector = "c3"
   attr (@function.def) parents = [@contract.def]
+
+  ;; Make the function available to base contracts as well when we're compiling
+  ;; this or any sub-contract is being compiled
+  edge @contract.virtual_members -> @function.def
 }
 
 @contract [ContractDefinition members: [ContractMembers
