@@ -14,7 +14,7 @@ use slang_solidity::parse_output::ParseOutput;
 use super::graph::{render_dot_graph, render_graph};
 use super::renderer::render_bindings;
 use crate::generated::VERSION_BREAKS;
-use crate::multi_part_file::split_multi_file;
+use crate::multi_part_file::{split_multi_file, Part};
 use crate::resolver::TestsPathResolver;
 
 pub(crate) struct ParsedPart<'a> {
@@ -44,8 +44,12 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
 
-        let parts = split_multi_file(&contents);
-        for (path, contents) in &parts {
+        let multi_part = split_multi_file(&contents);
+        for Part {
+            name: path,
+            contents,
+        } in &multi_part.parts
+        {
             let parse_output = language.parse(Language::ROOT_KIND, contents);
             let graph = bindings.add_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {
@@ -57,6 +61,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         }
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
         let parse_status = if parse_success { "success" } else { "failure" };
+
+        // FIXME: set context
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed

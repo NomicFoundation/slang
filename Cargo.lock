@@ -2413,6 +2413,7 @@ dependencies = [
  "ariadne",
  "codegen_language_definition",
  "codegen_testing",
+ "indoc",
  "infra_utils",
  "metaslang_bindings",
  "metaslang_graph_builder",

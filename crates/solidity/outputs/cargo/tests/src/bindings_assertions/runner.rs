@@ -11,7 +11,7 @@ use crate::bindings_assertions::assertions::{
     check_assertions, collect_assertions_into, Assertions,
 };
 use crate::generated::VERSION_BREAKS;
-use crate::multi_part_file::split_multi_file;
+use crate::multi_part_file::{split_multi_file, Part};
 use crate::resolver::TestsPathResolver;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -35,9 +35,13 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
     let mut assertions = Assertions::new();
     let mut skipped = 0;
 
-    let parts = split_multi_file(contents);
+    let multi_part = split_multi_file(contents);
 
-    for (file_path, file_contents) in &parts {
+    for Part {
+        name: file_path,
+        contents: file_contents,
+    } in &multi_part.parts
+    {
         let parse_output = language.parse(Language::ROOT_KIND, file_contents);
 
         if !parse_output.is_valid() {
@@ -58,6 +62,8 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
             version,
         )?;
     }
+
+    // FIXME: set context
 
     let result = check_assertions(&bindings, &assertions, version);
 

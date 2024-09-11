@@ -15,6 +15,7 @@ solidity_language = { workspace = true }
 anyhow = { workspace = true }
 ariadne = { workspace = true }
 codegen_language_definition = { workspace = true }
+indoc = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
 metaslang_bindings = { workspace = true, features = [
