@@ -20,12 +20,12 @@ type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type CursorID = usize;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Selector {
+pub(crate) enum Selector {
     Alias,
     C3,
 }
 
-pub struct DefinitionBindingInfo<KT: KindTypes + 'static> {
+pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
     selector: Option<Selector>,
     parents: Vec<GraphHandle>,
@@ -35,7 +35,7 @@ pub struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     import_nodes: Vec<GraphHandle>,
 }
 
-pub struct ReferenceBindingInfo {
+pub(crate) struct ReferenceBindingInfo {
     parents: Vec<GraphHandle>,
 }
 

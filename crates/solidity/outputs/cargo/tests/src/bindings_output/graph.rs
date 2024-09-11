@@ -250,7 +250,7 @@ fn render_dot_subgraph<'a>(
                         "\t{node_id} [label = {node_label}, shape = \"invhouse\"]"
                     )?,
                     Some("pop_symbol") => {
-                        writeln!(f, "\t{node_id} [label = {node_label}, shape = \"house\"]")?
+                        writeln!(f, "\t{node_id} [label = {node_label}, shape = \"house\"]")?;
                     }
                     _ => writeln!(f, "\t{node_id} [label = {node_label}]")?,
                 }
