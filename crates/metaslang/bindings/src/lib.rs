@@ -1,7 +1,7 @@
 mod builder;
 mod resolver;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::{self, Debug, Display};
 use std::hash::Hash;
 use std::sync::Arc;
@@ -18,6 +18,7 @@ use stack_graphs::graph::StackGraph;
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type CursorID = usize;
+pub struct DefinitionHandle(GraphHandle);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Selector {
@@ -48,6 +49,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     references_info: HashMap<GraphHandle, ReferenceBindingInfo>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
+    context: Option<GraphHandle>,
 }
 
 pub trait PathResolver {
@@ -74,6 +76,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             references_info: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
+            context: None,
         }
     }
 
@@ -191,6 +194,78 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             })
             .collect()
     }
+
+    pub fn lookup_definition_by_name(&self, name: &str) -> Option<Definition<'_, KT>> {
+        self.all_definitions()
+            .find(|definition| definition.get_cursor().unwrap().node().unparse() == name)
+    }
+
+    pub fn get_context(&self) -> Option<Definition<'_, KT>> {
+        self.context.and_then(|handle| self.to_definition(handle))
+    }
+
+    pub fn set_context(&mut self, context: &DefinitionHandle) {
+        assert!(
+            self.context.is_none(),
+            "Changing current binding context is not supported"
+        );
+        let context_handle = context.0;
+
+        assert!(
+            self.to_definition(context_handle).is_some(),
+            "Not a definition"
+        );
+        self.context = Some(context_handle);
+
+        // Retrieve export node from context
+        let Some(info) = self.definitions_info.get(&context_handle) else {
+            // no extra information for the definition; this shouldn't happen,
+            // but in that case we have nothing else to do
+            return;
+        };
+        let Some(export_node) = info.export_node else {
+            // no export node in the context definition
+            return;
+        };
+
+        // Find all parents of the context
+        let all_parents = self.find_all_parents(context_handle);
+
+        // Add stack graph edges to link to import nodes in all parents
+        for parent in &all_parents {
+            let Some(parent_info) = self.definitions_info.get(parent) else {
+                continue;
+            };
+            for import_node in &parent_info.import_nodes {
+                self.stack_graph.add_edge(*import_node, export_node, 0);
+            }
+        }
+    }
+
+    fn find_all_parents(&self, definition_handle: GraphHandle) -> HashSet<GraphHandle> {
+        let mut results = HashSet::new();
+        let mut resolve_queue = Vec::new();
+        resolve_queue.push(definition_handle);
+
+        while let Some(definition) = resolve_queue.pop() {
+            let Some(definition_parents) = self
+                .definitions_info
+                .get(&definition)
+                .map(|info| &info.parents)
+            else {
+                continue;
+            };
+
+            let parents = self.resolve_handles(definition_parents);
+            for parent in &parents {
+                if !results.contains(&parent.handle) {
+                    resolve_queue.push(parent.handle);
+                }
+                results.insert(parent.handle);
+            }
+        }
+        results
+    }
 }
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
@@ -250,6 +325,10 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|info| &info.parents)
             .map(|handles| self.owner.resolve_handles(handles))
             .unwrap_or_default()
+    }
+
+    pub fn to_handle(self) -> DefinitionHandle {
+        DefinitionHandle(self.handle)
     }
 }
 

@@ -62,7 +62,13 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
         let parse_status = if parse_success { "success" } else { "failure" };
 
-        // FIXME: set context
+        if let Some(context) = multi_part.context {
+            let context_definition = bindings
+                .lookup_definition_by_name(context)
+                .expect("context definition to be found")
+                .to_handle();
+            bindings.set_context(&context_definition);
+        }
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed

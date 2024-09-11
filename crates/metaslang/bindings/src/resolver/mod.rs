@@ -176,17 +176,29 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     fn rank_c3_methods(&mut self) {
         // compute the linearisation to use for ranking
-        let parents = self.reference.resolve_parents();
-        let Some(context) = parents.first() else {
+        let caller_parents = self.reference.resolve_parents();
+        let Some(caller_context) = caller_parents.first() else {
             // the reference does not provide an enclosing definition, so nothing to do here
             return;
         };
-        let parents = Self::resolve_parents_all(context.clone());
-        let Some(mro) = c3::linearise(context, &parents) else {
+
+        // if the bindings has some context set, use it instead of the caller's
+        // to compute the full linearised ordering of methods
+        let resolution_context = if let Some(context) = self.owner.get_context() {
+            context
+        } else {
+            caller_context.clone()
+        };
+
+        let parents = Self::resolve_parents_all(resolution_context.clone());
+        let Some(mro) = c3::linearise(&resolution_context, &parents) else {
             // linearisation failed
-            eprintln!("Linearisation of {context} failed");
+            eprintln!("Linearisation of {resolution_context} failed");
             return;
         };
+
+        // FIXME: if this is a `super` call we need to remove the linearised
+        // methods up to and including the caller's definition
 
         // mark up methods tagged with the C3 selector according to the computed linearisation
         for result in &mut self.results {

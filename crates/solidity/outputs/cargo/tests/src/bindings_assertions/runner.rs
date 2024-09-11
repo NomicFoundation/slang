@@ -63,7 +63,13 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
         )?;
     }
 
-    // FIXME: set context
+    if let Some(context) = multi_part.context {
+        let context_definition = bindings
+            .lookup_definition_by_name(context)
+            .expect("context definition to be found")
+            .to_handle();
+        bindings.set_context(&context_definition);
+    }
 
     let result = check_assertions(&bindings, &assertions, version);
 
