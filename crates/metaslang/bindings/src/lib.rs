@@ -189,7 +189,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 } else {
                     // TODO: what should we do if the parent reference
                     // cannot be resolved at this point?
-                    self.to_reference(*handle).unwrap().jump_to_definition()
+                    self.to_reference(*handle)
+                        .unwrap()
+                        .jump_to_definition()
+                        .ok()
                 }
             })
             .collect()
@@ -381,6 +384,11 @@ pub struct Reference<'a, KT: KindTypes + 'static> {
     handle: GraphHandle,
 }
 
+pub enum ResolutionError<'a, KT: KindTypes + 'static> {
+    Unresolved,
+    AmbiguousDefinitions(Vec<Definition<'a, KT>>),
+}
+
 impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     pub fn get_cursor(&self) -> Option<Cursor<KT>> {
         self.owner.cursors.get(&self.handle).cloned()
@@ -392,7 +400,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub fn jump_to_definition(&self) -> Option<Definition<'a, KT>> {
+    pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         Resolver::build_for(self).first()
     }
 

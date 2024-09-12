@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::iter::once;
 
 use metaslang_cst::KindTypes;
@@ -6,7 +6,7 @@ use stack_graphs::graph::Node;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::{Bindings, Definition, Reference, Selector};
+use crate::{Bindings, Definition, Reference, ResolutionError, Selector};
 
 mod c3;
 
@@ -124,21 +124,27 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             .collect()
     }
 
-    pub fn first(&mut self) -> Option<Definition<'a, KT>> {
+    pub fn first(&mut self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         if self.results.len() > 1 {
             self.rank_results();
 
-            if (self.results[1].score - self.results[0].score).abs() < f32::EPSILON {
-                self.inspect_results();
-                panic!(
-                    "Reference {reference} resolved to multiple definitions that cannot be disambiguated",
-                    reference = self.reference,
-                );
+            let top_score = self.results[0].score;
+            let mut results = self
+                .results
+                .iter()
+                .take_while(|result| (result.score - top_score).abs() < f32::EPSILON)
+                .map(|result| result.definition.clone())
+                .collect::<Vec<_>>();
+            if results.len() > 1 {
+                Err(ResolutionError::AmbiguousDefinitions(results))
+            } else {
+                Ok(results.swap_remove(0))
             }
-
-            Some(self.results[0].definition.clone())
         } else {
-            self.results.first().map(|path| path.definition.clone())
+            self.results
+                .first()
+                .map(|path| path.definition.clone())
+                .ok_or(ResolutionError::Unresolved)
         }
     }
 
@@ -242,51 +248,5 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             results.insert(current, current_parents);
         }
         results
-    }
-
-    fn inspect_results(&self) {
-        let reference = &self.reference;
-        println!("Reference {reference} has parents:");
-        for parent in reference.resolve_parents() {
-            println!("  -> {parent}");
-            print_parents(&parent, 1, &mut HashSet::new());
-        }
-
-        println!("... and resolved to definitions:");
-        for (index, result) in self.results.iter().enumerate() {
-            let selector = result.definition.get_selector();
-            println!(
-                "  {index}. {definition} (score {score}, length {length}, selector {selector})",
-                index = index + 1,
-                definition = result.definition,
-                score = result.score,
-                length = result.len(),
-                selector = selector.map_or(String::from("<none>"), |s| format!("{s:?}")),
-            );
-
-            print_parents(&result.definition, 0, &mut HashSet::new());
-        }
-    }
-}
-
-fn print_parents<'a, KT: KindTypes + 'static>(
-    definition: &Definition<'a, KT>,
-    level: usize,
-    seen: &mut HashSet<Definition<'a, KT>>,
-) {
-    seen.insert((*definition).clone());
-    for parent in definition.resolve_parents() {
-        println!(
-            "  {indentation}-> {parent}",
-            indentation = "  ".repeat(level)
-        );
-        if seen.contains(&parent) {
-            println!(
-                "  {indentation}-> ...",
-                indentation = "  ".repeat(level + 1)
-            );
-        } else {
-            print_parents(&parent, level + 1, seen);
-        }
     }
 }

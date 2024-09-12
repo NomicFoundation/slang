@@ -415,21 +415,23 @@ fn check_reference_assertion(
                 let resolved_cursor = resolved_handle.get_cursor().unwrap();
                 let resolved_file = resolved_handle.get_file();
                 return Err(format!(
-                    "{assertion} failed: unexpected resolution to {resolved} (should not have resolved)",
+                    "{assertion} failed: expected not to resolve, but instead resolved to {resolved}",
                     resolved = DisplayCursor(&resolved_cursor, resolved_file)
                 ));
             }
         }
         (true, Some(_)) => {
             let Some(resolved_handle) = resolution else {
-                return Err(format!("{assertion} failed: did not resolve"));
+                return Err(format!(
+                    "{assertion} failed: did not resolve or ambiguous resolution"
+                ));
             };
             let resolved_cursor = resolved_handle.get_cursor().unwrap();
             let expected_handle = lookup_referenced_definition(bindings, definitions, assertion)?;
             let expected_cursor = expected_handle.get_cursor().unwrap();
             if expected_cursor != resolved_cursor {
                 return Err(format!(
-                    "{assertion} failed: unexpected resolution to {resolved} (should have resolved to {expected})",
+                    "{assertion} failed: expected resolve to {expected}, but instead resolved to {resolved}",
                     resolved = DisplayCursor(&resolved_cursor, resolved_handle.get_file()),
                     expected = DisplayCursor(&expected_cursor, expected_handle.get_file()),
                 ));
@@ -437,7 +439,9 @@ fn check_reference_assertion(
         }
         (false, None) => {
             if resolution.is_none() {
-                return Err(format!("{assertion} failed: expected to resolve"));
+                return Err(format!(
+                    "{assertion} failed: expected to resolve in this version"
+                ));
             }
         }
         (false, Some(_)) => {
@@ -448,7 +452,7 @@ fn check_reference_assertion(
                 let referenced_cursor = referenced_handle.get_cursor().unwrap();
                 if referenced_cursor == resolved_cursor {
                     return Err(format!(
-                        "{assertion} failed: expected to not resolve to {resolved}",
+                        "{assertion} failed: expected to not resolve to {resolved} in this version",
                         resolved = DisplayCursor(&resolved_cursor, resolved_handle.get_file()),
                     ));
                 }
@@ -469,7 +473,9 @@ fn find_and_resolve_reference<'a>(
         return Err(format!("{assertion} failed: not found"));
     };
 
-    Ok(reference.jump_to_definition())
+    // For the purpose of binding assertions, any failure to resolve to a single
+    // definition will be treated as if it was unresolved
+    Ok(reference.jump_to_definition().ok())
 }
 
 fn lookup_referenced_definition<'a>(

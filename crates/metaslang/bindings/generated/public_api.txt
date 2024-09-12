@@ -1,6 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 pub mod metaslang_bindings
+pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::KindTypes + 'static>
+pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
+pub metaslang_bindings::ResolutionError::Unresolved
+impl<'a, KT> core::marker::Freeze for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::marker::Send for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::marker::Sync for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> core::marker::Unpin for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::panic::unwind_safe::UnwindSafe for metaslang_bindings::ResolutionError<'a, KT>
+impl<T, U> core::convert::Into<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::From<T>
+pub fn metaslang_bindings::ResolutionError<'a, KT>::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::Into<T>
+pub type metaslang_bindings::ResolutionError<'a, KT>::Error = core::convert::Infallible
+pub fn metaslang_bindings::ResolutionError<'a, KT>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::TryFrom<T>
+pub type metaslang_bindings::ResolutionError<'a, KT>::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn metaslang_bindings::ResolutionError<'a, KT>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for metaslang_bindings::ResolutionError<'a, KT> where T: 'static + core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for metaslang_bindings::ResolutionError<'a, KT>
+pub fn metaslang_bindings::ResolutionError<'a, KT>::from(t: T) -> T
+impl<T> tap::conv::Conv for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> tap::conv::TryConv for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> tap::pipe::Pipe for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+impl<T> tap::tap::Tap for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> wyz::fmt::FmtForward for metaslang_bindings::ResolutionError<'a, KT>
 pub struct metaslang_bindings::Bindings<KT: metaslang_cst::KindTypes + 'static>
 impl<KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Bindings<KT>
 pub fn metaslang_bindings::Bindings<KT>::add_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
@@ -127,7 +157,7 @@ impl<'a, KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Reference<'
 pub fn metaslang_bindings::Reference<'a, KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
-pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::option::Option<metaslang_bindings::Definition<'a, KT>>
+pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::result::Result<metaslang_bindings::Definition<'a, KT>, metaslang_bindings::ResolutionError<'a, KT>>
 impl<'a, KT: core::clone::Clone + metaslang_cst::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>
 impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<'_, KT>
