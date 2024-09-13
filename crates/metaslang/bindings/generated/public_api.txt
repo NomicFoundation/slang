@@ -1,96 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 pub mod metaslang_bindings
-pub mod metaslang_bindings::builder
-pub enum metaslang_bindings::builder::BuildError
-pub metaslang_bindings::builder::BuildError::Cancelled(&'static str)
-pub metaslang_bindings::builder::BuildError::ConversionError(alloc::string::String, alloc::string::String, alloc::string::String)
-pub metaslang_bindings::builder::BuildError::ExecutionError(metaslang_graph_builder::execution::error::ExecutionError)
-pub metaslang_bindings::builder::BuildError::MissingNodeType(metaslang_graph_builder::graph::GraphNodeRef)
-pub metaslang_bindings::builder::BuildError::MissingScope(metaslang_graph_builder::graph::GraphNodeRef)
-pub metaslang_bindings::builder::BuildError::MissingSymbol(metaslang_graph_builder::graph::GraphNodeRef)
-pub metaslang_bindings::builder::BuildError::SymbolScopeError(alloc::string::String, alloc::string::String)
-pub metaslang_bindings::builder::BuildError::UnknownFlagType(alloc::string::String, alloc::string::String)
-pub metaslang_bindings::builder::BuildError::UnknownNodeType(alloc::string::String)
-pub metaslang_bindings::builder::BuildError::UnknownSymbolType(alloc::string::String)
-impl metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::display_pretty<'a>(&'a self, source_path: &'a std::path::Path, source: &'a str, tsg_path: &'a std::path::Path, tsg: &'a str) -> impl core::fmt::Display + 'a
-impl core::convert::From<metaslang_graph_builder::execution::error::ExecutionError> for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::from(value: metaslang_graph_builder::execution::error::ExecutionError) -> Self
-impl core::convert::From<stack_graphs::CancellationError> for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::from(value: stack_graphs::CancellationError) -> Self
-impl core::error::Error for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
-impl core::fmt::Debug for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Freeze for metaslang_bindings::builder::BuildError
-impl core::marker::Send for metaslang_bindings::builder::BuildError
-impl core::marker::Sync for metaslang_bindings::builder::BuildError
-impl core::marker::Unpin for metaslang_bindings::builder::BuildError
-impl core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::builder::BuildError
-impl core::panic::unwind_safe::UnwindSafe for metaslang_bindings::builder::BuildError
-impl<T, U> core::convert::Into<U> for metaslang_bindings::builder::BuildError where U: core::convert::From<T>
-pub fn metaslang_bindings::builder::BuildError::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::builder::BuildError where U: core::convert::Into<T>
-pub type metaslang_bindings::builder::BuildError::Error = core::convert::Infallible
-pub fn metaslang_bindings::builder::BuildError::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_bindings::builder::BuildError where U: core::convert::TryFrom<T>
-pub type metaslang_bindings::builder::BuildError::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_bindings::builder::BuildError::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::string::ToString for metaslang_bindings::builder::BuildError where T: core::fmt::Display + core::marker::Sized
-pub fn metaslang_bindings::builder::BuildError::to_string(&self) -> alloc::string::String
-impl<T> core::any::Any for metaslang_bindings::builder::BuildError where T: 'static + core::marker::Sized
-pub fn metaslang_bindings::builder::BuildError::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_bindings::builder::BuildError where T: core::marker::Sized
-pub fn metaslang_bindings::builder::BuildError::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_bindings::builder::BuildError where T: core::marker::Sized
-pub fn metaslang_bindings::builder::BuildError::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_bindings::builder::BuildError
-pub fn metaslang_bindings::builder::BuildError::from(t: T) -> T
-impl<T> tap::conv::Conv for metaslang_bindings::builder::BuildError
-impl<T> tap::conv::TryConv for metaslang_bindings::builder::BuildError
-impl<T> tap::pipe::Pipe for metaslang_bindings::builder::BuildError where T: core::marker::Sized
-impl<T> tap::tap::Tap for metaslang_bindings::builder::BuildError
-impl<T> wyz::fmt::FmtForward for metaslang_bindings::builder::BuildError
-pub struct metaslang_bindings::builder::NoCancellation
-impl metaslang_bindings::builder::CancellationFlag for metaslang_bindings::builder::NoCancellation
-pub fn metaslang_bindings::builder::NoCancellation::check(&self, _at: &'static str) -> core::result::Result<(), CancellationError>
-impl core::marker::Freeze for metaslang_bindings::builder::NoCancellation
-impl core::marker::Send for metaslang_bindings::builder::NoCancellation
-impl core::marker::Sync for metaslang_bindings::builder::NoCancellation
-impl core::marker::Unpin for metaslang_bindings::builder::NoCancellation
-impl core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::builder::NoCancellation
-impl core::panic::unwind_safe::UnwindSafe for metaslang_bindings::builder::NoCancellation
-impl<T, U> core::convert::Into<U> for metaslang_bindings::builder::NoCancellation where U: core::convert::From<T>
-pub fn metaslang_bindings::builder::NoCancellation::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::builder::NoCancellation where U: core::convert::Into<T>
-pub type metaslang_bindings::builder::NoCancellation::Error = core::convert::Infallible
-pub fn metaslang_bindings::builder::NoCancellation::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_bindings::builder::NoCancellation where U: core::convert::TryFrom<T>
-pub type metaslang_bindings::builder::NoCancellation::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_bindings::builder::NoCancellation::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for metaslang_bindings::builder::NoCancellation where T: 'static + core::marker::Sized
-pub fn metaslang_bindings::builder::NoCancellation::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_bindings::builder::NoCancellation where T: core::marker::Sized
-pub fn metaslang_bindings::builder::NoCancellation::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_bindings::builder::NoCancellation where T: core::marker::Sized
-pub fn metaslang_bindings::builder::NoCancellation::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_bindings::builder::NoCancellation
-pub fn metaslang_bindings::builder::NoCancellation::from(t: T) -> T
-impl<T> tap::conv::Conv for metaslang_bindings::builder::NoCancellation
-impl<T> tap::conv::TryConv for metaslang_bindings::builder::NoCancellation
-impl<T> tap::pipe::Pipe for metaslang_bindings::builder::NoCancellation where T: core::marker::Sized
-impl<T> tap::tap::Tap for metaslang_bindings::builder::NoCancellation
-impl<T> wyz::fmt::FmtForward for metaslang_bindings::builder::NoCancellation
-pub const metaslang_bindings::builder::FILE_PATH_VAR: &str
-pub const metaslang_bindings::builder::ROOT_NODE_VAR: &str
-pub trait metaslang_bindings::builder::CancellationFlag: core::marker::Sync
-pub fn metaslang_bindings::builder::CancellationFlag::check(&self, at: &'static str) -> core::result::Result<(), CancellationError>
-impl metaslang_bindings::builder::CancellationFlag for metaslang_bindings::builder::NoCancellation
-pub fn metaslang_bindings::builder::NoCancellation::check(&self, _at: &'static str) -> core::result::Result<(), CancellationError>
-pub fn metaslang_bindings::builder::default_functions<KT: metaslang_cst::KindTypes + 'static>(version: semver::Version, path_resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> metaslang_graph_builder::functions::Functions<KT>
+pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::KindTypes + 'static>
+pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
+pub metaslang_bindings::ResolutionError::Unresolved
+impl<'a, KT> core::marker::Freeze for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::marker::Send for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::marker::Sync for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> core::marker::Unpin for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::ResolutionError<'a, KT>
+impl<'a, KT> !core::panic::unwind_safe::UnwindSafe for metaslang_bindings::ResolutionError<'a, KT>
+impl<T, U> core::convert::Into<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::From<T>
+pub fn metaslang_bindings::ResolutionError<'a, KT>::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::Into<T>
+pub type metaslang_bindings::ResolutionError<'a, KT>::Error = core::convert::Infallible
+pub fn metaslang_bindings::ResolutionError<'a, KT>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for metaslang_bindings::ResolutionError<'a, KT> where U: core::convert::TryFrom<T>
+pub type metaslang_bindings::ResolutionError<'a, KT>::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn metaslang_bindings::ResolutionError<'a, KT>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for metaslang_bindings::ResolutionError<'a, KT> where T: 'static + core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+pub fn metaslang_bindings::ResolutionError<'a, KT>::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for metaslang_bindings::ResolutionError<'a, KT>
+pub fn metaslang_bindings::ResolutionError<'a, KT>::from(t: T) -> T
+impl<T> tap::conv::Conv for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> tap::conv::TryConv for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> tap::pipe::Pipe for metaslang_bindings::ResolutionError<'a, KT> where T: core::marker::Sized
+impl<T> tap::tap::Tap for metaslang_bindings::ResolutionError<'a, KT>
+impl<T> wyz::fmt::FmtForward for metaslang_bindings::ResolutionError<'a, KT>
 pub struct metaslang_bindings::Bindings<KT: metaslang_cst::KindTypes + 'static>
 impl<KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Bindings<KT>
 pub fn metaslang_bindings::Bindings<KT>::add_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
@@ -99,7 +39,10 @@ pub fn metaslang_bindings::Bindings<KT>::all_definitions(&self) -> impl core::it
 pub fn metaslang_bindings::Bindings<KT>::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<'_, KT>> + '_
 pub fn metaslang_bindings::Bindings<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> Self
 pub fn metaslang_bindings::Bindings<KT>::definition_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
+pub fn metaslang_bindings::Bindings<KT>::get_context(&self) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
+pub fn metaslang_bindings::Bindings<KT>::lookup_definition_by_name(&self, name: &str) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
 pub fn metaslang_bindings::Bindings<KT>::reference_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<'_, KT>>
+pub fn metaslang_bindings::Bindings<KT>::set_context(&mut self, context: &metaslang_bindings::DefinitionHandle)
 impl<KT> core::marker::Freeze for metaslang_bindings::Bindings<KT>
 impl<KT> !core::marker::Send for metaslang_bindings::Bindings<KT>
 impl<KT> !core::marker::Sync for metaslang_bindings::Bindings<KT>
@@ -132,18 +75,28 @@ impl<'a, KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Definition<
 pub fn metaslang_bindings::Definition<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Definition<'a, KT>::get_definiens_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Definition<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
+pub fn metaslang_bindings::Definition<'a, KT>::to_handle(self) -> metaslang_bindings::DefinitionHandle
 impl<'a, KT: core::clone::Clone + metaslang_cst::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::clone(&self) -> metaslang_bindings::Definition<'a, KT>
+impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::Eq for metaslang_bindings::Definition<'_, KT>
 impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Definition<'_, KT>
 pub fn metaslang_bindings::Definition<'_, KT>::eq(&self, other: &Self) -> bool
 impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::Definition<'_, KT>
 pub fn metaslang_bindings::Definition<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Definition<'_, KT>
+pub fn metaslang_bindings::Definition<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<KT: metaslang_cst::KindTypes + 'static> core::hash::Hash for metaslang_bindings::Definition<'_, KT>
+pub fn metaslang_bindings::Definition<'_, KT>::hash<H: core::hash::Hasher>(&self, state: &mut H)
 impl<'a, KT> core::marker::Freeze for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> !core::marker::Send for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> !core::marker::Sync for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> core::marker::Unpin for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> !core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::Definition<'a, KT>
 impl<'a, KT> !core::panic::unwind_safe::UnwindSafe for metaslang_bindings::Definition<'a, KT>
+impl<Q, K> equivalent::Equivalent<K> for metaslang_bindings::Definition<'a, KT> where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn metaslang_bindings::Definition<'a, KT>::equivalent(&self, key: &K) -> bool
+impl<Q, K> hashbrown::Equivalent<K> for metaslang_bindings::Definition<'a, KT> where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
+pub fn metaslang_bindings::Definition<'a, KT>::equivalent(&self, key: &K) -> bool
 impl<T, U> core::convert::Into<U> for metaslang_bindings::Definition<'a, KT> where U: core::convert::From<T>
 pub fn metaslang_bindings::Definition<'a, KT>::into(self) -> U
 impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::Definition<'a, KT> where U: core::convert::Into<T>
@@ -156,6 +109,8 @@ impl<T> alloc::borrow::ToOwned for metaslang_bindings::Definition<'a, KT> where 
 pub type metaslang_bindings::Definition<'a, KT>::Owned = T
 pub fn metaslang_bindings::Definition<'a, KT>::clone_into(&self, target: &mut T)
 pub fn metaslang_bindings::Definition<'a, KT>::to_owned(&self) -> T
+impl<T> alloc::string::ToString for metaslang_bindings::Definition<'a, KT> where T: core::fmt::Display + core::marker::Sized
+pub fn metaslang_bindings::Definition<'a, KT>::to_string(&self) -> alloc::string::String
 impl<T> core::any::Any for metaslang_bindings::Definition<'a, KT> where T: 'static + core::marker::Sized
 pub fn metaslang_bindings::Definition<'a, KT>::type_id(&self) -> core::any::TypeId
 impl<T> core::borrow::Borrow<T> for metaslang_bindings::Definition<'a, KT> where T: core::marker::Sized
@@ -169,16 +124,45 @@ impl<T> tap::conv::TryConv for metaslang_bindings::Definition<'a, KT>
 impl<T> tap::pipe::Pipe for metaslang_bindings::Definition<'a, KT> where T: core::marker::Sized
 impl<T> tap::tap::Tap for metaslang_bindings::Definition<'a, KT>
 impl<T> wyz::fmt::FmtForward for metaslang_bindings::Definition<'a, KT>
+pub struct metaslang_bindings::DefinitionHandle(_)
+impl core::marker::Freeze for metaslang_bindings::DefinitionHandle
+impl core::marker::Send for metaslang_bindings::DefinitionHandle
+impl core::marker::Sync for metaslang_bindings::DefinitionHandle
+impl core::marker::Unpin for metaslang_bindings::DefinitionHandle
+impl core::panic::unwind_safe::RefUnwindSafe for metaslang_bindings::DefinitionHandle
+impl core::panic::unwind_safe::UnwindSafe for metaslang_bindings::DefinitionHandle
+impl<T, U> core::convert::Into<U> for metaslang_bindings::DefinitionHandle where U: core::convert::From<T>
+pub fn metaslang_bindings::DefinitionHandle::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for metaslang_bindings::DefinitionHandle where U: core::convert::Into<T>
+pub type metaslang_bindings::DefinitionHandle::Error = core::convert::Infallible
+pub fn metaslang_bindings::DefinitionHandle::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for metaslang_bindings::DefinitionHandle where U: core::convert::TryFrom<T>
+pub type metaslang_bindings::DefinitionHandle::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn metaslang_bindings::DefinitionHandle::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for metaslang_bindings::DefinitionHandle where T: 'static + core::marker::Sized
+pub fn metaslang_bindings::DefinitionHandle::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for metaslang_bindings::DefinitionHandle where T: core::marker::Sized
+pub fn metaslang_bindings::DefinitionHandle::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for metaslang_bindings::DefinitionHandle where T: core::marker::Sized
+pub fn metaslang_bindings::DefinitionHandle::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for metaslang_bindings::DefinitionHandle
+pub fn metaslang_bindings::DefinitionHandle::from(t: T) -> T
+impl<T> tap::conv::Conv for metaslang_bindings::DefinitionHandle
+impl<T> tap::conv::TryConv for metaslang_bindings::DefinitionHandle
+impl<T> tap::pipe::Pipe for metaslang_bindings::DefinitionHandle where T: core::marker::Sized
+impl<T> tap::tap::Tap for metaslang_bindings::DefinitionHandle
+impl<T> wyz::fmt::FmtForward for metaslang_bindings::DefinitionHandle
 pub struct metaslang_bindings::Reference<'a, KT: metaslang_cst::KindTypes + 'static>
 impl<'a, KT: metaslang_cst::KindTypes + 'static> metaslang_bindings::Reference<'a, KT>
+pub fn metaslang_bindings::Reference<'a, KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
-pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::option::Option<metaslang_bindings::Definition<'a, KT>>
+pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::result::Result<metaslang_bindings::Definition<'a, KT>, metaslang_bindings::ResolutionError<'a, KT>>
 impl<'a, KT: core::clone::Clone + metaslang_cst::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>
 impl<KT: metaslang_cst::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::eq(&self, other: &Self) -> bool
-impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::Reference<'_, KT>
+impl<KT: metaslang_cst::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<'a, KT> core::marker::Freeze for metaslang_bindings::Reference<'a, KT>
 impl<'a, KT> !core::marker::Send for metaslang_bindings::Reference<'a, KT>
@@ -198,6 +182,8 @@ impl<T> alloc::borrow::ToOwned for metaslang_bindings::Reference<'a, KT> where T
 pub type metaslang_bindings::Reference<'a, KT>::Owned = T
 pub fn metaslang_bindings::Reference<'a, KT>::clone_into(&self, target: &mut T)
 pub fn metaslang_bindings::Reference<'a, KT>::to_owned(&self) -> T
+impl<T> alloc::string::ToString for metaslang_bindings::Reference<'a, KT> where T: core::fmt::Display + core::marker::Sized
+pub fn metaslang_bindings::Reference<'a, KT>::to_string(&self) -> alloc::string::String
 impl<T> core::any::Any for metaslang_bindings::Reference<'a, KT> where T: 'static + core::marker::Sized
 pub fn metaslang_bindings::Reference<'a, KT>::type_id(&self) -> core::any::TypeId
 impl<T> core::borrow::Borrow<T> for metaslang_bindings::Reference<'a, KT> where T: core::marker::Sized

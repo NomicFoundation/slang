@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── def: 1
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─  
+    │               ╰─── def: 2
+    │ 
+ 10 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── def: 3
+    │               │  
+    │               ╰── ref: 1
+ 11 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─                                ┬  
+    │               ╰──────────────────────────────────── def: 4
+    │                                                 │  
+    │                                                 ╰── ref: 1
+    │ 
+ 16 │ contract C is A {
+    │          ┬    ┬  
+    │          ╰─────── def: 5
+    │               │  
+    │               ╰── ref: 1
+ 17 │     function foo() public pure virtual override returns (string memory) {
+    │              ─┬─  
+    │               ╰─── def: 6
+    │ 
+ 22 │ contract D is B, C {
+    │          ┬    ┬  ┬  
+    │          ╰────────── def: 7
+    │               │  │  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 5
+    │ 
+ 24 │     function foo() public pure override(B, C) returns (string memory) {
+    │              ─┬─                        ┬  ┬  
+    │               ╰─────────────────────────────── def: 8
+    │                                         │  │  
+    │                                         ╰───── ref: 3
+    │                                            │  
+    │                                            ╰── ref: 5
+ 25 │         return super.foo();
+    │                ──┬── ─┬─  
+    │                  ╰──────── unresolved
+    │                       │   
+    │                       ╰─── ref: 6
+────╯

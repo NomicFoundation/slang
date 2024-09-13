@@ -3,17 +3,17 @@
 References and definitions: 
    ╭─[input.sol:1:1]
    │
- 4 │ function foo() returns (int) {
+ 3 │ function foo() returns (int) {
    │          ─┬─  
    │           ╰─── def: 1
- 5 │     return bar();
+ 4 │     return bar();
    │            ─┬─  
    │             ╰─── ref: 2
 ───╯
 References and definitions: 
    ╭─[other.sol:1:1]
    │
- 2 │ function bar() pure returns (int) {
+ 1 │ function bar() pure returns (int) {
    │          ─┬─  
    │           ╰─── def: 2
 ───╯

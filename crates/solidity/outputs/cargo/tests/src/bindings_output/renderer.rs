@@ -2,6 +2,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
+use metaslang_bindings::ResolutionError;
 use slang_solidity::bindings::{Bindings, Definition};
 use slang_solidity::diagnostic;
 
@@ -82,10 +83,22 @@ pub(crate) fn render_bindings(
 
             let definition = reference.jump_to_definition();
             let message = match definition {
-                None => "unresolved".to_string(),
-                Some(definition) => {
+                Ok(definition) => {
                     let def_id = definitions.iter().position(|d| *d == definition).unwrap();
                     format!("ref: {}", def_id + 1)
+                }
+                Err(ResolutionError::Unresolved) => "unresolved".to_string(),
+                Err(ResolutionError::AmbiguousDefinitions(ambiguous_definitions)) => {
+                    let ref_labels = ambiguous_definitions
+                        .iter()
+                        .filter_map(|ambiguous_definition| {
+                            definitions
+                                .iter()
+                                .position(|d| d == ambiguous_definition)
+                                .map(|index| format!("ref: {}", index + 1))
+                        })
+                        .collect::<Vec<_>>();
+                    format!("ambiguous: {}", ref_labels.join(", "))
                 }
             };
 

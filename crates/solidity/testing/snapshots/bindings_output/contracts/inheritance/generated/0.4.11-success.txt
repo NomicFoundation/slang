@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function base_func() returns (int) {
+   │              ────┬────  
+   │                  ╰────── def: 2
+   │ 
+ 7 │ contract Derived is Base {
+   │          ───┬───    ──┬─  
+   │             ╰───────────── def: 3
+   │                       │   
+   │                       ╰─── ref: 1
+ 8 │     function some_func() returns (int) {
+   │              ────┬────  
+   │                  ╰────── def: 4
+ 9 │         return 1 + base_func();
+   │                    ────┬────  
+   │                        ╰────── ref: 2
+───╯

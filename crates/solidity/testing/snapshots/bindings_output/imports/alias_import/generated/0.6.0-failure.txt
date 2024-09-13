@@ -2,28 +2,28 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[main.sol:4:1]
+   ╭─[main.sol:3:1]
    │
- 4 │ ╭─▶ function foo() returns (int) {
+ 3 │ ╭─▶ function foo() returns (int) {
    ┆ ┆   
- 7 │ ├─▶ 
+ 6 │ ├─▶ 
    │ │      
    │ ╰────── Error occurred here.
 ───╯
 References and definitions: 
    ╭─[main.sol:1:1]
    │
- 2 │ import "./other.sol" as other;
+ 1 │ import "./other.sol" as other;
    │                         ──┬──  
    │                           ╰──── def: 1
 ───╯
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[other.sol:2:1]
+   ╭─[other.sol:1:1]
    │
- 2 │ ╭─▶ function bar() pure returns (int) {
+ 1 │ ╭─▶ function bar() pure returns (int) {
    ┆ ┆   
- 4 │ ├─▶ }
+ 3 │ ├─▶ }
    │ │       
    │ ╰─────── Error occurred here.
 ───╯

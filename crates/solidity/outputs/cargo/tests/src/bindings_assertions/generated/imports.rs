@@ -18,3 +18,8 @@ fn named_imports() -> Result<()> {
 fn path_imports() -> Result<()> {
     run("imports", "path_imports")
 }
+
+#[test]
+fn unresolved_aliases() -> Result<()> {
+    run("imports", "unresolved_aliases")
+}
