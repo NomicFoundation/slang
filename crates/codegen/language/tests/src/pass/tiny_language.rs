@@ -1,8 +1,8 @@
 use std::path::Path;
 
 use codegen_language_definition::model::{
-    Field, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem, Topic,
-    TriviaParser,
+    Field, Item, Language, RawSource, Scanner, Section, StructItem, TokenDefinition, TokenItem,
+    Topic, TriviaParser,
 };
 use infra_utils::paths::PathExtensions;
 use semver::Version;
@@ -38,7 +38,8 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )]
-    )]
+    )],
+    builtins = RawSource("tiny builtins")
 ));
 
 #[test]
@@ -119,7 +120,10 @@ fn definition() {
                     ]
                     .into()
                 }],
-            }]
+            }],
+            builtins: Some(RawSource {
+                contents: "tiny builtins".into()
+            }),
         }
         .into(),
     );

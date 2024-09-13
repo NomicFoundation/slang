@@ -3,22 +3,35 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
+#[path = "generated/builtins.rs"]
+mod builtins;
+
 use std::sync::Arc;
 
 use metaslang_bindings::{self, PathResolver};
-use semver::Version;
 
 use crate::cst::KindTypes;
+use crate::language::Language;
 
 pub type Bindings = metaslang_bindings::Bindings<KindTypes>;
 pub type Definition<'a> = metaslang_bindings::Definition<'a, KindTypes>;
 pub type Reference<'a> = metaslang_bindings::Reference<'a, KindTypes>;
 
 pub fn create_with_resolver(
-    version: Version,
+    language: &Language,
     resolver: Arc<dyn PathResolver + Sync + Send>,
 ) -> Bindings {
-    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE, resolver)
+    let version = language.version.clone();
+    let builtins_parse_output =
+        language.parse(Language::ROOT_KIND, builtins::get_contents(&version));
+    assert!(
+        builtins_parse_output.is_valid(),
+        "built-ins parse without errors"
+    );
+
+    let mut bindings = Bindings::create(version, binding_rules::BINDING_RULES_SOURCE, resolver);
+    bindings.add_builtins(builtins_parse_output.create_tree_cursor());
+    bindings
 }
 
 #[cfg(feature = "__private_testing_utils")]

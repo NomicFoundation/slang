@@ -6607,5 +6607,14 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )
-    ]
+    ],
+    builtins = RawSource(
+        r#"
+library $$ {
+    function assert(bool);
+    function require(bool, string memory);
+    function revert(string memory);
+}
+"#
+    )
 ));

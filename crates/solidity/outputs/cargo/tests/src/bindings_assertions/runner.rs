@@ -30,8 +30,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let language = Language::new(version.clone())?;
-    let mut bindings =
-        bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
+    let mut bindings = bindings::create_with_resolver(&language, Arc::new(TestsPathResolver {}));
     let mut assertions = Assertions::new();
     let mut skipped = 0;
 

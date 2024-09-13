@@ -24,6 +24,7 @@ pub struct Language {
     pub versions: IndexSet<Version>,
 
     pub sections: Vec<Section>,
+    pub builtins: Option<RawSource>,
 }
 
 impl Language {
@@ -143,4 +144,10 @@ pub enum BuiltInLabel {
     RightOperand,
     LeadingTrivia,
     TrailingTrivia,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct RawSource {
+    pub contents: String,
 }

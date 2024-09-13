@@ -125,6 +125,7 @@ fn get_spanned_type(input: Type) -> Type {
         | "PrecedenceItem"
         | "PrecedenceOperator"
         | "PrimaryExpression"
+        | "RawSource"
         | "RepeatedItem"
         | "Scanner"
         | "Section"
