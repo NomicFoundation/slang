@@ -24,6 +24,7 @@ pub struct DefinitionHandle(GraphHandle);
 pub(crate) enum Tag {
     Alias,
     C3,
+    Super,
 }
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
@@ -37,6 +38,7 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
 }
 
 pub(crate) struct ReferenceBindingInfo {
+    tag: Option<Tag>,
     parents: Vec<GraphHandle>,
 }
 
@@ -408,6 +410,14 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
         Resolver::build_for(self).all()
+    }
+
+    pub(crate) fn has_tag(&self, tag: Tag) -> bool {
+        self.owner
+            .references_info
+            .get(&self.handle)
+            .and_then(|info| info.tag)
+            .is_some_and(|reference_tag| reference_tag == tag)
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {

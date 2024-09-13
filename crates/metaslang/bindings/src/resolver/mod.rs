@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::iter::once;
 
 use metaslang_cst::KindTypes;
-use stack_graphs::graph::Node;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
@@ -44,7 +43,6 @@ struct ResolvedPath<'a, KT: KindTypes + 'static> {
     pub partial_path: PartialPath,
     pub definition: Definition<'a, KT>,
     pub score: f32,
-    pub pushes_super: bool,
 }
 
 impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
@@ -83,8 +81,6 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 .iter()
                 .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
-                // FIXME: find a better name for this
-                let pushes_super = self.path_pushes_super(reference_path);
                 self.results.push(ResolvedPath {
                     definition: self
                         .owner
@@ -92,29 +88,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                         .expect("path to end in a definition node"),
                     partial_path: reference_path.clone(),
                     score: 0.0,
-                    pushes_super,
                 });
             }
         }
-    }
-
-    // FIXME: this is very specific to Solidity; find a way to generalize the concept
-    fn path_pushes_super(&mut self, path: &PartialPath) -> bool {
-        for edge in path.edges.iter(&mut self.partials) {
-            let source_node_handle = self
-                .owner
-                .stack_graph
-                .node_for_id(edge.source_node_id)
-                .unwrap();
-            let source_node = &self.owner.stack_graph[source_node_handle];
-            if matches!(source_node, Node::PushScopedSymbol(_) | Node::PushSymbol(_)) {
-                let symbol = &self.owner.stack_graph[source_node.symbol().unwrap()];
-                if "super" == symbol {
-                    return true;
-                }
-            }
-        }
-        false
     }
 
     pub fn all(&self) -> Vec<Definition<'a, KT>> {
@@ -204,6 +180,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         };
 
         let caller_context_index = mro.iter().position(|x| x == caller_context);
+        let super_call = self.reference.has_tag(Tag::Super);
 
         // mark up methods tagged C3 according to the computed linearisation
         for result in &mut self.results {
@@ -221,7 +198,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 if let Some(index) = mro.iter().position(|x| x == definition_context) {
                     // if this is a super call, ignore all implementations at or
                     // before (as in more derived) than the caller's
-                    if !result.pushes_super
+                    if !super_call
                         || (caller_context_index.is_none() || index > caller_context_index.unwrap())
                     {
                         result.score += 100.0 * (mro.len() - index) as f32;

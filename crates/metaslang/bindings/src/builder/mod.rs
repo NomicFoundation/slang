@@ -323,11 +323,19 @@ static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         SCOPE_ATTR,
         IS_REFERENCE_ATTR,
+        TAG_ATTR,
         PARENTS_ATTR,
     ])
 });
-static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
+static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+    HashSet::from([
+        TYPE_ATTR,
+        SYMBOL_ATTR,
+        IS_REFERENCE_ATTR,
+        TAG_ATTR,
+        PARENTS_ATTR,
+    ])
+});
 static SCOPE_ATTRS: Lazy<HashSet<&'static str>> =
     Lazy::new(|| HashSet::from([TYPE_ATTR, IS_EXPORTED_ATTR, IS_ENDPOINT_ATTR]));
 
@@ -830,16 +838,17 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             None => Vec::new(),
         };
 
-        if stack_graph_node.is_definition() {
-            let tag = match node.attributes.get(TAG_ATTR) {
-                Some(tag_value) => Some(match tag_value.as_str()? {
-                    "alias" => Tag::Alias,
-                    "c3" => Tag::C3,
-                    other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
-                }),
-                None => None,
-            };
+        let tag = match node.attributes.get(TAG_ATTR) {
+            Some(tag_value) => Some(match tag_value.as_str()? {
+                "alias" => Tag::Alias,
+                "c3" => Tag::C3,
+                "super" => Tag::Super,
+                other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
+            }),
+            None => None,
+        };
 
+        if stack_graph_node.is_definition() {
             let definiens = match node.attributes.get(DEFINIENS_NODE_ATTR) {
                 Some(definiens_node) => {
                     let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
@@ -881,7 +890,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             );
         } else if stack_graph_node.is_reference() {
             self.references_info
-                .insert(node_handle, ReferenceBindingInfo { parents });
+                .insert(node_handle, ReferenceBindingInfo { tag, parents });
         }
 
         Ok(())

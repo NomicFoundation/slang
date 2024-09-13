@@ -1447,17 +1447,26 @@ inherit .enclosing_def
     @operand operand: [Expression]
     @name member: [Identifier]
 ]] {
-  node ref
-  attr (ref) node_reference = @name
-  attr (ref) parents = [@expr.enclosing_def]
+  node @name.ref
+  attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@expr.enclosing_def]
 
   node member
   attr (member) push_symbol = "."
 
-  edge ref -> member
+  edge @name.ref -> member
   edge member -> @operand.output
 
-  edge @expr.output -> ref
+  edge @expr.output -> @name.ref
+}
+
+;; Special case: member accesses to `super` are tagged with "super" to rank
+;; virtual methods correctly
+[MemberAccessExpression
+    operand: [Expression ["super"]]
+    @name member: [Identifier]
+] {
+  attr (@name.ref) tag = "super"
 }
 
 ;; Index access expressions
