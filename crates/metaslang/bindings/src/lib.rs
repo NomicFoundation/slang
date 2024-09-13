@@ -316,11 +316,12 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub(crate) fn get_tag(&self) -> Option<Tag> {
+    pub(crate) fn has_tag(&self, tag: Tag) -> bool {
         self.owner
             .definitions_info
             .get(&self.handle)
             .and_then(|info| info.tag)
+            .is_some_and(|definition_tag| definition_tag == tag)
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
