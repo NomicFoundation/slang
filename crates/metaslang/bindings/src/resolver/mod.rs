@@ -191,10 +191,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
         // if the bindings has some context set, use it instead of the caller's
         // to compute the full linearised ordering of methods
-        let resolution_context = if let Some(context) = self.owner.get_context() {
-            context
-        } else {
-            caller_context.clone()
+        let resolution_context = match self.owner.get_context() {
+            Some(context) => context,
+            None => caller_context.clone(),
         };
 
         let parents = Self::resolve_parents_all(resolution_context.clone());

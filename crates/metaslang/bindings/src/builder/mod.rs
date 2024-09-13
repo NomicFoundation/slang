@@ -806,56 +806,9 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         let node_handle = self.node_handle_for_graph_node(node_ref);
         let stack_graph_node = &self.stack_graph[node_handle];
 
-        let parents = if let Some(parents) = node.attributes.get(PARENTS_ATTR) {
-            parents
-                .as_list()?
-                .iter()
-                .flat_map(|value| {
-                    value
-                        .as_graph_node_ref()
-                        .map(|id| self.node_handle_for_graph_node(id))
-                })
-                .flat_map(|parent| {
-                    // ensure parents are either definitions or references
-                    let parent_node = &self.stack_graph[parent];
-                    if !parent_node.is_definition() && !parent_node.is_reference() {
-                        Err(BuildError::InvalidParent(node_ref))
-                    } else {
-                        Ok(parent)
-                    }
-                })
-                .collect()
-        } else {
-            Vec::new()
-        };
-
-        if stack_graph_node.is_definition() {
-            let tag = if let Some(tag_value) = node.attributes.get(TAG_ATTR) {
-                Some(match tag_value.as_str()? {
-                    "alias" => Tag::Alias,
-                    "c3" => Tag::C3,
-                    other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
-                })
-            } else {
-                None
-            };
-
-            let definiens = if let Some(definiens_node) = node.attributes.get(DEFINIENS_NODE_ATTR) {
-                let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
-                let definiens_node = &self.graph[syntax_node_ref];
-                Some(definiens_node.clone())
-            } else {
-                None
-            };
-
-            let export_node = if let Some(export_node) = node.attributes.get(EXPORT_NODE_ATTR) {
-                Some(self.node_handle_for_graph_node(export_node.as_graph_node_ref()?))
-            } else {
-                None
-            };
-
-            let import_nodes = if let Some(import_nodes) = node.attributes.get(IMPORT_NODES_ATTR) {
-                import_nodes
+        let parents = match node.attributes.get(PARENTS_ATTR) {
+            Some(parents) => {
+                parents
                     .as_list()?
                     .iter()
                     .flat_map(|value| {
@@ -863,9 +816,57 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                             .as_graph_node_ref()
                             .map(|id| self.node_handle_for_graph_node(id))
                     })
+                    .flat_map(|parent| {
+                        // ensure parents are either definitions or references
+                        let parent_node = &self.stack_graph[parent];
+                        if !parent_node.is_definition() && !parent_node.is_reference() {
+                            Err(BuildError::InvalidParent(node_ref))
+                        } else {
+                            Ok(parent)
+                        }
+                    })
                     .collect()
-            } else {
-                Vec::new()
+            }
+            None => Vec::new(),
+        };
+
+        if stack_graph_node.is_definition() {
+            let tag = match node.attributes.get(TAG_ATTR) {
+                Some(tag_value) => Some(match tag_value.as_str()? {
+                    "alias" => Tag::Alias,
+                    "c3" => Tag::C3,
+                    other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
+                }),
+                None => None,
+            };
+
+            let definiens = match node.attributes.get(DEFINIENS_NODE_ATTR) {
+                Some(definiens_node) => {
+                    let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
+                    let definiens_node = &self.graph[syntax_node_ref];
+                    Some(definiens_node.clone())
+                }
+                None => None,
+            };
+
+            let export_node = match node.attributes.get(EXPORT_NODE_ATTR) {
+                Some(export_node) => {
+                    Some(self.node_handle_for_graph_node(export_node.as_graph_node_ref()?))
+                }
+                None => None,
+            };
+
+            let import_nodes = match node.attributes.get(IMPORT_NODES_ATTR) {
+                Some(import_nodes) => import_nodes
+                    .as_list()?
+                    .iter()
+                    .flat_map(|value| {
+                        value
+                            .as_graph_node_ref()
+                            .map(|id| self.node_handle_for_graph_node(id))
+                    })
+                    .collect(),
+                None => Vec::new(),
             };
 
             self.definitions_info.insert(

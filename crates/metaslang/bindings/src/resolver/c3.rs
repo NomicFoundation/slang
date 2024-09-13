@@ -35,13 +35,16 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
         let item_parents = &parents[&item];
         let mut merge_set = Vec::new();
         for parent in item_parents {
-            if let Some(parent_linearisation) = linearisations.get(parent) {
-                merge_set.push(parent_linearisation.clone());
-            } else {
-                // Queue the parent with missing linearisation at the front to
-                // resolve it first (unless it's already queued)
-                if !queue.iter().any(|queued| queued == parent) {
-                    queue.push_front(parent.clone());
+            match linearisations.get(parent) {
+                Some(parent_linearisation) => {
+                    merge_set.push(parent_linearisation.clone());
+                }
+                None => {
+                    // Queue the parent with missing linearisation at the front to
+                    // resolve it first (unless it's already queued)
+                    if !queue.iter().any(|queued| queued == parent) {
+                        queue.push_front(parent.clone());
+                    }
                 }
             }
         }
@@ -67,19 +70,22 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
             // We're missing linearisations of some parents, so re-enqueue the
             // current item at the end and try again later, after hopefully
             // recursively resolving the linearisation of the parents.
-            if let Some((ref check_item, items_linearised)) = checkpoint {
-                if *check_item == item {
-                    if items_linearised == linearisations.len() {
-                        // no progress since last checkpoint; this indicates a cycle
-                        eprintln!("Linearisation of {item} failed: cycle detected");
-                        return None;
+            match checkpoint {
+                Some((ref check_item, items_linearised)) => {
+                    if *check_item == item {
+                        if items_linearised == linearisations.len() {
+                            // no progress since last checkpoint; this indicates a cycle
+                            eprintln!("Linearisation of {item} failed: cycle detected");
+                            return None;
+                        }
+                        // Update progress and re-try
+                        checkpoint = Some((item.clone(), linearisations.len()));
                     }
-                    // Update progress and re-try
+                }
+                None => {
+                    // Create a checkpoint on the item we couldn't yet linearise.
                     checkpoint = Some((item.clone(), linearisations.len()));
                 }
-            } else {
-                // Create a checkpoint on the item we couldn't yet linearise.
-                checkpoint = Some((item.clone(), linearisations.len()));
             }
             queue.push_back(item);
         }
@@ -97,10 +103,10 @@ fn merge<Item: Clone + Debug + PartialEq>(mut set: Vec<Vec<Item>>) -> Option<Vec
     set = set
         .into_iter()
         .filter_map(|mut subset| {
-            subset.reverse();
             if subset.is_empty() {
                 None
             } else {
+                subset.reverse();
                 Some(subset)
             }
         })
@@ -111,15 +117,9 @@ fn merge<Item: Clone + Debug + PartialEq>(mut set: Vec<Vec<Item>>) -> Option<Vec
     }
 
     let mut result = Vec::new();
-    loop {
-        let found = find_candidate(&set);
-        if let Some(found) = found {
-            set = remove_candidate_from_set(set, &found);
-            result.push(found);
-        } else {
-            // No more candidates found
-            break;
-        }
+    while let Some(found) = find_candidate(&set) {
+        set = remove_candidate_from_set(set, &found);
+        result.push(found);
     }
     // If set is empty, we successfully merged the set.
     // Otherwise, linearisation is not possible.
@@ -137,13 +137,12 @@ fn find_candidate<Item: Clone + PartialEq>(set: &Vec<Vec<Item>>) -> Option<Item>
         let Some(candidate) = subset.last() else {
             continue;
         };
-        if set.iter().all(|subset| {
-            if let Some(position) = subset.iter().position(|item| item == candidate) {
-                position == subset.len() - 1
-            } else {
-                true
-            }
-        }) {
+        if set.iter().all(
+            |subset| match subset.iter().position(|item| item == candidate) {
+                Some(position) => position == subset.len() - 1,
+                None => true,
+            },
+        ) {
             return Some(candidate.clone());
         }
     }

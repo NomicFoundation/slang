@@ -32,21 +32,19 @@ pub(crate) struct MultiPart<'a> {
 /// path separator.
 ///
 pub fn split_multi_file(contents: &str) -> MultiPart<'_> {
+    let context_re = Regex::new(r"(?m)\A// -{3,} context: (.+)\s*\n").unwrap();
+    let (context, contents) = match context_re.captures(contents) {
+        Some(context_capture) => (
+            Some(context_capture.get(1).unwrap().as_str()),
+            &contents[context_capture.get(0).unwrap().end()..],
+        ),
+        None => (None, contents),
+    };
+
     let separator_re = Regex::new(r"(?m)^// -{3,} path: (.+)\s*\n").unwrap();
     let mut last_path: Option<&str> = None;
     let mut last_start = None;
     let mut parts = Vec::new();
-
-    let context_re = Regex::new(r"(?m)\A// -{3,} context: (.+)\s*\n").unwrap();
-    let (context, contents) = if let Some(context_capture) = context_re.captures(contents) {
-        let context = context_capture.get(1).unwrap().as_str();
-        (
-            Some(context),
-            &contents[context_capture.get(0).unwrap().end()..],
-        )
-    } else {
-        (None, contents)
-    };
 
     for captures in separator_re.captures_iter(contents) {
         let separator_match = captures.get(0).unwrap();
@@ -70,17 +68,17 @@ pub fn split_multi_file(contents: &str) -> MultiPart<'_> {
         last_path = Some(path_match.as_str());
     }
 
-    if let Some(start) = last_start {
-        parts.push(Part {
+    let last_part = match last_start {
+        Some(start) => Part {
             name: last_path.unwrap(),
             contents: &contents[start..],
-        });
-    } else {
-        parts.push(Part {
+        },
+        None => Part {
             name: "input.sol",
             contents,
-        });
-    }
+        },
+    };
+    parts.push(last_part);
 
     MultiPart { context, parts }
 }

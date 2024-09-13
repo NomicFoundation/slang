@@ -340,17 +340,18 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
 
 impl<KT: KindTypes + 'static> Display for Definition<'_, KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(cursor) = self.get_cursor() {
-            write!(
-                f,
-                "definition {}",
-                DisplayCursor {
-                    cursor: &cursor,
-                    file: self.get_file()
-                }
-            )
-        } else {
-            write!(f, "{}", self.handle.display(&self.owner.stack_graph))
+        match self.get_cursor() {
+            Some(cursor) => {
+                write!(
+                    f,
+                    "definition {}",
+                    DisplayCursor {
+                        cursor: &cursor,
+                        file: self.get_file()
+                    }
+                )
+            }
+            None => write!(f, "{}", self.handle.display(&self.owner.stack_graph)),
         }
     }
 }
@@ -421,17 +422,18 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
 
 impl<KT: KindTypes + 'static> Display for Reference<'_, KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(cursor) = self.get_cursor() {
-            write!(
-                f,
-                "reference {}",
-                DisplayCursor {
-                    cursor: &cursor,
-                    file: self.get_file()
-                }
-            )
-        } else {
-            write!(f, "{}", self.handle.display(&self.owner.stack_graph))
+        match self.get_cursor() {
+            Some(cursor) => {
+                write!(
+                    f,
+                    "reference {}",
+                    DisplayCursor {
+                        cursor: &cursor,
+                        file: self.get_file()
+                    }
+                )
+            }
+            None => write!(f, "{}", self.handle.display(&self.owner.stack_graph)),
         }
     }
 }
