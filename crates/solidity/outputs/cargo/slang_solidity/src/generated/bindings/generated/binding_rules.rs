@@ -164,7 +164,7 @@ inherit .enclosing_def
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @symbol
-  attr (def) selector = "alias"  ; deprioritize this definition
+  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -181,7 +181,7 @@ inherit .enclosing_def
   node def
   attr (def) node_definition = @alias
   attr (def) definiens_node = @symbol
-  attr (def) selector = "alias"  ; deprioritize this definition
+  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -364,7 +364,7 @@ inherit .enclosing_def
 
   ;; This may prioritize this definition (when there are multiple options)
   ;; according to the C3 linerisation ordering
-  attr (@function.def) selector = "c3"
+  attr (@function.def) tag = "c3"
   attr (@function.def) parents = [@contract.def]
 }
 

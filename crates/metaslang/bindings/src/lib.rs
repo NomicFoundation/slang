@@ -21,14 +21,14 @@ type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Selector {
+pub(crate) enum Tag {
     Alias,
     C3,
 }
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
-    selector: Option<Selector>,
+    tag: Option<Tag>,
     parents: Vec<GraphHandle>,
     #[allow(dead_code)]
     export_node: Option<GraphHandle>,
@@ -316,11 +316,11 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub(crate) fn get_selector(&self) -> Option<Selector> {
+    pub(crate) fn get_tag(&self) -> Option<Tag> {
         self.owner
             .definitions_info
             .get(&self.handle)
-            .and_then(|info| info.selector)
+            .and_then(|info| info.tag)
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {

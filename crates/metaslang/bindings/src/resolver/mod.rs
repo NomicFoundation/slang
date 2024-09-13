@@ -6,7 +6,7 @@ use stack_graphs::graph::Node;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::{Bindings, Definition, Reference, ResolutionError, Selector};
+use crate::{Bindings, Definition, Reference, ResolutionError, Tag};
 
 mod c3;
 
@@ -170,7 +170,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         for result in &mut self.results {
             // mark down alias definitions
             #[allow(clippy::cast_precision_loss)]
-            if matches!(result.definition.get_selector(), Some(Selector::Alias)) {
+            if matches!(result.definition.get_tag(), Some(Tag::Alias)) {
                 result.score -= 100.0;
 
                 // but prioritize longer paths so that we can still return a
@@ -206,9 +206,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
         let caller_context_index = mro.iter().position(|x| x == caller_context);
 
-        // mark up methods tagged with the C3 selector according to the computed linearisation
+        // mark up methods tagged C3 according to the computed linearisation
         for result in &mut self.results {
-            if matches!(result.definition.get_selector(), Some(Selector::C3)) {
+            if matches!(result.definition.get_tag(), Some(Tag::C3)) {
                 let definition_parents = result.definition.resolve_parents();
                 let Some(definition_context) = definition_parents.first() else {
                     // this should not normally happen: the definition is tagged

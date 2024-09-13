@@ -262,7 +262,7 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
-use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Selector};
+use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Tag};
 
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
@@ -284,10 +284,10 @@ static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
 static PARENTS_ATTR: &str = "parents";
 static SCOPE_ATTR: &str = "scope";
-static SELECTOR_ATTR: &str = "selector";
 static SOURCE_NODE_ATTR: &str = "source_node";
 static SYMBOL_ATTR: &str = "symbol";
 static SYNTAX_TYPE_ATTR: &str = "syntax_type";
+static TAG_ATTR: &str = "tag";
 static TYPE_ATTR: &str = "type";
 
 // Expected attributes per node type
@@ -297,7 +297,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
-        SELECTOR_ATTR,
+        TAG_ATTR,
         PARENTS_ATTR,
         EXPORT_NODE_ATTR,
         IMPORT_NODES_ATTR,
@@ -310,7 +310,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
-        SELECTOR_ATTR,
+        TAG_ATTR,
         PARENTS_ATTR,
         EXPORT_NODE_ATTR,
         IMPORT_NODES_ATTR,
@@ -486,8 +486,8 @@ pub enum BuildError {
     ExecutionError(ExecutionError),
     #[error("Expected exported symbol scope in {0}, got {1}")]
     SymbolScopeError(String, String),
-    #[error("Unknown selector ‘{0}’")]
-    UnknownSelector(String),
+    #[error("Unknown tag ‘{0}’")]
+    UnknownTag(String),
     #[error("Parent must be either a reference or definition")]
     InvalidParent(GraphNodeRef),
 }
@@ -799,7 +799,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             .expect("parent node exists in the stack graph")
     }
 
-    // Saves additional binding information from the loaded graph (eg. selector,
+    // Saves additional binding information from the loaded graph (eg. tag,
     // definiens, import/export nodes and parents).
     fn load_additional_info(&mut self, node_ref: GraphNodeRef) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
@@ -830,11 +830,11 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
         };
 
         if stack_graph_node.is_definition() {
-            let selector = if let Some(selector_value) = node.attributes.get(SELECTOR_ATTR) {
-                Some(match selector_value.as_str()? {
-                    "alias" => Selector::Alias,
-                    "c3" => Selector::C3,
-                    other_type => return Err(BuildError::UnknownSelector(other_type.to_string())),
+            let tag = if let Some(tag_value) = node.attributes.get(TAG_ATTR) {
+                Some(match tag_value.as_str()? {
+                    "alias" => Tag::Alias,
+                    "c3" => Tag::C3,
+                    other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
                 })
             } else {
                 None
@@ -872,7 +872,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                 node_handle,
                 DefinitionBindingInfo {
                     definiens,
-                    selector,
+                    tag,
                     parents,
                     export_node,
                     import_nodes,
