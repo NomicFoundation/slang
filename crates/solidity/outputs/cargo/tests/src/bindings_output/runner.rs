@@ -42,8 +42,14 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         let language = Language::new(version.clone())?;
         let mut bindings =
             bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
-        let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
 
+        // FIXME: this should be part of the bindings initialization itself
+        {
+            let parse_output = language.parse(Language::ROOT_KIND, builtin_contents());
+            bindings.add_builtins(parse_output.create_tree_cursor());
+        }
+
+        let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);
         for Part {
             name: path,
@@ -59,6 +65,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 graph,
             });
         }
+
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
         let parse_status = if parse_success { "success" } else { "failure" };
 
@@ -109,4 +116,16 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     }
 
     Ok(())
+}
+
+// FIXME: this should be generated from the language definition and moved into
+// the slang_solidity crate
+fn builtin_contents() -> &'static str {
+    r#"
+library $$ {
+    function assert(bool);
+    function require(bool, string memory);
+    function revert(string memory);
+}
+"#
 }

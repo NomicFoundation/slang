@@ -29,10 +29,30 @@ inherit .enclosing_def
   ;; This provides all the exported symbols from the file
   node @source_unit.defs
 
+  ;; Connect to ROOT_NODE to export our symbols
   node export
   attr (export) pop_symbol = FILE_PATH
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
+
+  ;; Automatically import language built-ins
+  if (not (eq FILE_PATH "@@builtins@@")) {
+    ;; All built-in symbols are defined in an internal library named '$$'
+    ;; so we need to construct an equivalent import path to reach them
+    node builtins
+    attr (builtins) push_symbol = "@@builtins@@"
+
+    node builtin_library
+    attr (builtin_library) push_symbol = "$$"
+
+    node builtin_member
+    attr (builtin_member) push_symbol = "."
+
+    edge @source_unit.lexical_scope -> builtin_member
+    edge builtin_member -> builtin_library
+    edge builtin_library -> builtins
+    edge builtins -> ROOT_NODE
+  }
 
   let @source_unit.enclosing_def = #null
 }
@@ -67,9 +87,9 @@ inherit .enclosing_def
          )]
      ]]
 ]] {
-   node @import.defs
-   edge @source_unit.defs -> @import.defs
-   edge @source_unit.lexical_scope -> @import.defs
+  node @import.defs
+  edge @source_unit.defs -> @import.defs
+  edge @source_unit.lexical_scope -> @import.defs
 }
 
 ;; Contracts need access to the parent scope to resolve bases. This is purely

@@ -17,8 +17,11 @@ use stack_graphs::graph::StackGraph;
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
+type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
+
+pub const BUILTINS_FILE_PATH: &str = "@@builtins@@";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Tag {
@@ -52,6 +55,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
+    builtins_file: Option<FileHandle>,
 }
 
 pub trait PathResolver {
@@ -79,11 +83,20 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
+            builtins_file: None,
         }
     }
 
+    pub fn add_builtins(&mut self, tree_cursor: Cursor<KT>) {
+        assert!(self.builtins_file.is_none(), "Built-ins already added");
+        let file = self.stack_graph.get_or_create_file(BUILTINS_FILE_PATH);
+        _ = self.add_file_internal(file, tree_cursor);
+        self.builtins_file = Some(file);
+    }
+
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        _ = self.add_file_internal(file_path, tree_cursor);
+        let file = self.stack_graph.get_or_create_file(file_path);
+        _ = self.add_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
@@ -92,13 +105,12 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let result = self.add_file_internal(file_path, tree_cursor);
+        let file = self.stack_graph.get_or_create_file(file_path);
+        let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
 
-    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
-        let file = self.stack_graph.get_or_create_file(file_path);
-
+    fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
         let builder = Builder::new(
             &self.graph_builder_file,
             &self.functions,
@@ -316,6 +328,10 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
         self.owner.stack_graph[self.handle]
             .file()
             .map(|file| self.owner.stack_graph[file].name())
+    }
+
+    pub fn is_builtin(&self) -> bool {
+        self.owner.stack_graph[self.handle].file() == self.owner.builtins_file
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {

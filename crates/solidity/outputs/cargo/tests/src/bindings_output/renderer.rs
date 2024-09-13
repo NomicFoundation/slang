@@ -16,7 +16,7 @@ pub(crate) fn render_bindings(
 
     let mut definitions: Vec<Definition<'_>> = Vec::new();
     for definition in bindings.all_definitions() {
-        if definition.get_cursor().is_some() {
+        if !definition.is_builtin() && definition.get_cursor().is_some() {
             definitions.push(definition);
         };
     }
@@ -84,8 +84,12 @@ pub(crate) fn render_bindings(
             let definition = reference.jump_to_definition();
             let message = match definition {
                 Ok(definition) => {
-                    let def_id = definitions.iter().position(|d| *d == definition).unwrap();
-                    format!("ref: {}", def_id + 1)
+                    if definition.is_builtin() {
+                        "ref: built-in".to_string()
+                    } else {
+                        let def_id = definitions.iter().position(|d| *d == definition).unwrap();
+                        format!("ref: {}", def_id + 1)
+                    }
                 }
                 Err(ResolutionError::Unresolved) => "unresolved".to_string(),
                 Err(ResolutionError::AmbiguousDefinitions(ambiguous_definitions)) => {
