@@ -156,6 +156,16 @@ pub enum BuiltIn {
     BuiltInVariable { item: Rc<TypedSlot> },
 }
 
+impl BuiltIn {
+    pub fn enabled(&self) -> Option<&VersionSpecifier> {
+        match self {
+            Self::BuiltInFunction { item } => item.enabled.as_ref(),
+            Self::BuiltInType { item } => item.enabled.as_ref(),
+            Self::BuiltInVariable { item } => item.enabled.as_ref(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInFunction {

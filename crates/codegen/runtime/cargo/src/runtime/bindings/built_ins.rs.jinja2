@@ -1,7 +1,20 @@
 use semver::Version;
 
-pub fn get_contents(_version: &Version) -> &'static str {
-r#####"
-    {{ model.bindings.builtins_source }}
-"#####
+#[allow(unused_variables)]
+pub fn get_contents(version: &Version) -> &'static str {
+    {%- if not rendering_in_stubs -%}
+        {%- for version, contents in model.bindings.built_ins_source %}
+            {%- if loop.last -%}
+                {
+                    r####"{{ contents }}"####
+                }
+            {%- else -%}
+                if *version < Version::new({{ version | split(pat=".") | join(sep=", ") }}) {
+                    r####"{{ contents }}"####
+                } else
+            {%- endif -%}
+      {%- endfor -%}
+  {%- else -%}
+      unreachable!("Built-ins not defined in stubs")
+  {%- endif -%}
 }

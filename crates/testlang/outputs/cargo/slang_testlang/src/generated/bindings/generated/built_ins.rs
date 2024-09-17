@@ -2,8 +2,9 @@
 
 use semver::Version;
 
-pub fn get_contents(_version: &Version) -> &'static str {
-    r#####"
-    
-"#####
+#[allow(unused_variables)]
+pub fn get_contents(version: &Version) -> &'static str {
+    {
+        r####""####
+    }
 }

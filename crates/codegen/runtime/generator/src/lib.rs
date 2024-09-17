@@ -21,7 +21,7 @@ use crate::parser::ParserModel;
 
 pub struct LanguageModel {
     pub definition: Rc<Language>,
-    pub render_built_ins: fn(&[BuiltIn]) -> String,
+    pub render_built_ins: fn(&[&BuiltIn]) -> String,
 }
 
 impl LanguageModel {
@@ -34,7 +34,7 @@ impl LanguageModel {
 
     pub fn from_definition_and_render_built_ins(
         definition: Rc<Language>,
-        render_built_ins: fn(&[BuiltIn]) -> String,
+        render_built_ins: fn(&[&BuiltIn]) -> String,
     ) -> Self {
         Self {
             definition,

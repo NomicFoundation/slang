@@ -5,11 +5,11 @@ mod definition;
 use codegen_language_definition::model::BuiltIn;
 pub use definition::SolidityDefinition;
 
-pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
+pub fn render_built_ins(built_ins: &[&BuiltIn]) -> String {
     let mut lines: Vec<String> = Vec::new();
     lines.push("library $$ {".into());
     for item in built_ins {
-       match item {
+        match item {
             BuiltIn::BuiltInFunction { item } => {
                 lines.push(format!("function {name}();", name = item.name));
             }
