@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use anyhow::Result;
-use codegen_language_definition::model::Language;
+use codegen_language_definition::model::{BuiltIn, Language};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenRuntime;
 use semver::Version;
@@ -19,13 +19,37 @@ use crate::bindings::BindingsModel;
 use crate::kinds::KindsModel;
 use crate::parser::ParserModel;
 
+pub struct LanguageModel {
+    pub definition: Rc<Language>,
+    pub render_built_ins: fn(&[BuiltIn]) -> String,
+}
+
+impl LanguageModel {
+    pub fn from_definition(definition: Rc<Language>) -> Self {
+        Self {
+            definition,
+            render_built_ins: |_| String::default(),
+        }
+    }
+
+    pub fn from_definition_and_render_built_ins(
+        definition: Rc<Language>,
+        render_built_ins: fn(&[BuiltIn]) -> String,
+    ) -> Self {
+        Self {
+            definition,
+            render_built_ins,
+        }
+    }
+}
+
 pub enum OutputLanguage {
     Cargo,
     Npm,
 }
 
 impl OutputLanguage {
-    pub fn generate_runtime(&self, language: &Rc<Language>, output_dir: &Path) -> Result<()> {
+    pub fn generate_runtime(&self, language: &LanguageModel, output_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
@@ -79,16 +103,16 @@ struct RuntimeModel {
 }
 
 impl RuntimeModel {
-    pub fn from_language(language: &Rc<Language>) -> Result<Self> {
+    pub fn from_language(language: &LanguageModel) -> Result<Self> {
         Ok(Self {
             slang_version: CargoWorkspace::local_version()?,
-            all_language_versions: language.versions.iter().cloned().collect(),
-            breaking_language_versions: language.collect_breaking_versions(),
+            all_language_versions: language.definition.versions.iter().cloned().collect(),
+            breaking_language_versions: language.definition.collect_breaking_versions(),
 
-            ast: AstModel::from_language(language),
+            ast: AstModel::from_language(&language.definition),
             bindings: BindingsModel::from_language(language)?,
-            parser: ParserModel::from_language(language),
-            kinds: KindsModel::from_language(language),
+            parser: ParserModel::from_language(&language.definition),
+            kinds: KindsModel::from_language(&language.definition),
         })
     }
 }

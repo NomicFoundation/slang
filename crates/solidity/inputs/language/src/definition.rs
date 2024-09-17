@@ -6608,13 +6608,35 @@ codegen_language_macros::compile!(Language(
             ]
         )
     ],
-    builtins = RawSource(
-        r#"
-library $$ {
-    function assert(bool);
-    function require(bool, string memory);
-    function revert(string memory);
-}
-"#
-    )
+    built_ins = [
+        BuiltInFunction(
+            name = "assert",
+            return_type = "void",
+            parameters = [TypedSlot(name = "condition", slot_type = "bool")]
+        ),
+        BuiltInFunction(
+            name = "require",
+            return_type = "void",
+            parameters = [TypedSlot(name = "condition", slot_type = "bool")],
+            enabled = From("0.5.0")
+        ),
+        BuiltInFunction(
+            name = "revert",
+            return_type = "void",
+            parameters = [TypedSlot(name = "reason", slot_type = "string memory")]
+        ),
+        BuiltInType(
+            name = "$builtin$Address",
+            fields = [TypedSlot(name = "balance", slot_type = "uint256")]
+        ),
+        BuiltInType(
+            name = "$builtin$TxType",
+            fields = [
+                TypedSlot(name = "gasprice", slot_type = "uint"),
+                TypedSlot(name = "origin", slot_type = "address payable")
+            ]
+        ),
+        BuiltInVariable(name = "now", slot_type = "uint"),
+        BuiltInVariable(name = "tx", slot_type = "$builtin$TxType")
+    ]
 ));

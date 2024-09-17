@@ -17,7 +17,8 @@ codegen_language_macros::compile!(Language(
                 definitions = [TokenDefinition(scanner = Atom("bar"))]
             )]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 fn main() {}

@@ -1,8 +1,8 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
-#[path = "generated/builtins.rs"]
-mod builtins;
+#[path = "generated/built_ins.rs"]
+mod built_ins;
 
 use std::sync::Arc;
 
@@ -21,7 +21,7 @@ pub fn create_with_resolver(
 ) -> Bindings {
     let version = language.version.clone();
     let builtins_parse_output =
-        language.parse(Language::ROOT_KIND, builtins::get_contents(&version));
+        language.parse(Language::ROOT_KIND, built_ins::get_contents(&version));
     assert!(
         builtins_parse_output.is_valid(),
         "built-ins parse without errors"
@@ -35,4 +35,9 @@ pub fn create_with_resolver(
 #[cfg(feature = "__private_testing_utils")]
 pub fn get_binding_rules() -> &'static str {
     binding_rules::BINDING_RULES_SOURCE
+}
+
+#[cfg(feature = "__private_testing_utils")]
+pub fn get_built_ins(version: &semver::Version) -> &'static str {
+    built_ins::get_contents(version)
 }
