@@ -29,6 +29,7 @@ mod pragma_directive;
 mod receive_function_definition;
 mod return_statement;
 mod source_unit;
+mod state_variable_definition;
 mod statements;
 mod string_literal;
 mod string_literals;

@@ -70,6 +70,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_8_22: bool,
     pub(crate) version_is_at_least_0_8_24: bool,
     pub(crate) version_is_at_least_0_8_25: bool,
+    pub(crate) version_is_at_least_0_8_27: bool,
     pub(crate) version: Version,
 }
 
@@ -173,6 +174,7 @@ impl Language {
         Version::new(0, 8, 24),
         Version::new(0, 8, 25),
         Version::new(0, 8, 26),
+        Version::new(0, 8, 27),
     ];
 
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
@@ -214,6 +216,7 @@ impl Language {
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= version,
                 version_is_at_least_0_8_24: Version::new(0, 8, 24) <= version,
                 version_is_at_least_0_8_25: Version::new(0, 8, 25) <= version,
+                version_is_at_least_0_8_27: Version::new(0, 8, 27) <= version,
                 version,
             })
         } else {
@@ -4337,6 +4340,13 @@ impl Language {
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ImmutableKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_8_27 {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::TransientKeyword,
                 );
                 choice.consider(input, result)?;
             }
@@ -10763,6 +10773,17 @@ impl Lexer for Language {
                                 }
                             }
                             Some('r') => match input.next() {
+                                Some('a') => {
+                                    if scan_chars!(input, 'n', 's', 'i', 'e', 'n', 't') {
+                                        if self.version_is_at_least_0_8_27 {
+                                            KeywordScan::Present(TerminalKind::TransientKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
                                         KeywordScan::Reserved(TerminalKind::TrueKeyword)

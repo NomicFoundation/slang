@@ -29,7 +29,7 @@ codegen_language_macros::compile!(Language(
         "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
-        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26"
+        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27"
     ],
     sections = [
         Section(
@@ -1423,6 +1423,15 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = TransientKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.27"),
+                                reserved = Never,
+                                value = Atom("transient")
+                            )]
+                        ),
+                        Keyword(
                             name = TrueKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(value = Atom("true"))]
@@ -2298,7 +2307,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = InternalKeyword),
                                 EnumVariant(reference = PrivateKeyword),
                                 EnumVariant(reference = PublicKeyword),
-                                EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5"))
+                                EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5")),
+                                EnumVariant(reference = TransientKeyword, enabled = From("0.8.27"))
                             ]
                         )
                     ]

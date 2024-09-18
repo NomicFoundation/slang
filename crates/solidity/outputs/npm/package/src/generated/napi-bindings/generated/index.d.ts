@@ -529,6 +529,7 @@ export declare namespace kinds {
     SzaboKeyword = "SzaboKeyword",
     ThrowKeyword = "ThrowKeyword",
     Tilde = "Tilde",
+    TransientKeyword = "TransientKeyword",
     TrueKeyword = "TrueKeyword",
     TryKeyword = "TryKeyword",
     TypeDefKeyword = "TypeDefKeyword",
