@@ -37,6 +37,15 @@ impl Binary {
         let mut binaries = language
             .versions
             .iter()
+            .filter(|version| {
+                match version {
+                    Version { major: 0, minor: 4, patch: 11, pre: _, build: _ } => {
+                        progress_bar.println(format!("solc v{version} SEGFAULTs on a multitude of parse errors. Let's skip it for now."));
+                        false
+                    }
+                    _ => true,
+                }
+            })
             .par_bridge()
             .map(|version| {
                 let local_path = binaries_dir.join(version.to_string());

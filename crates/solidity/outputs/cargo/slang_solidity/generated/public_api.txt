@@ -777,6 +777,7 @@ pub slang_solidity::kinds::TerminalKind::SwitchKeyword
 pub slang_solidity::kinds::TerminalKind::SzaboKeyword
 pub slang_solidity::kinds::TerminalKind::ThrowKeyword
 pub slang_solidity::kinds::TerminalKind::Tilde
+pub slang_solidity::kinds::TerminalKind::TransientKeyword
 pub slang_solidity::kinds::TerminalKind::TrueKeyword
 pub slang_solidity::kinds::TerminalKind::TryKeyword
 pub slang_solidity::kinds::TerminalKind::TypeDefKeyword

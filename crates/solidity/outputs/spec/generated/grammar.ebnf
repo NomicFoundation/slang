@@ -435,6 +435,10 @@ SZABO_KEYWORD = "szabo";
 (* Deprecated in 0.5.0 *)
 THROW_KEYWORD = "throw";
 
+(* Introduced in 0.8.27 *)
+(* Never reserved *)
+TRANSIENT_KEYWORD = "transient";
+
 TRUE_KEYWORD = "true";
 
 (* Introduced in 0.6.0 *)
@@ -703,7 +707,8 @@ StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0
                        | (* variant: *) INTERNAL_KEYWORD
                        | (* variant: *) PRIVATE_KEYWORD
                        | (* variant: *) PUBLIC_KEYWORD
-                       | (* variant: *) IMMUTABLE_KEYWORD; (* Introduced in 0.6.5 *)
+                       | (* variant: *) IMMUTABLE_KEYWORD (* Introduced in 0.6.5 *)
+                       | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
 
 (* 2.8. Functions: *)
 

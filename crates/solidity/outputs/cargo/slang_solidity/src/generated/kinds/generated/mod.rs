@@ -587,6 +587,7 @@ pub enum TerminalKind {
     SzaboKeyword,
     ThrowKeyword,
     Tilde,
+    TransientKeyword,
     TrueKeyword,
     TryKeyword,
     TypeDefKeyword,

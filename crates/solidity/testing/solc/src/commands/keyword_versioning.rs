@@ -254,17 +254,9 @@ impl TestCase {
         let output = match binary.run(&input) {
             Ok(output) => output,
             Err(error) => {
-                let error = format!("{error:#?}");
-                if binary.version == Version::new(0, 4, 11)
-                    && error.contains("Command failed with code 'UNKNOWN' and signal '11'")
-                {
-                    // solc 0.4.11 SEGFAULTs when a keyword exists in an identifier position.
-                    return false;
-                }
-
                 println!();
                 println!(
-                    "Invoking solc failed:\n{error}\n\nInput:\n{input}",
+                    "Invoking solc failed:\n{error:#?}\n\nInput:\n{input}",
                     input = serde_json::to_string_pretty(&input).unwrap(),
                 );
                 std::process::exit(1);

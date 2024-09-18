@@ -528,6 +528,7 @@ interface kinds {
                 %szabo-keyword,
                 %throw-keyword,
                 %tilde,
+                %transient-keyword,
                 %true-keyword,
                 %try-keyword,
                 %type-def-keyword,

@@ -562,6 +562,12 @@
 
 <pre ebnf-snippet="ThrowKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#ThrowKeyword"><span class="k">THROW_KEYWORD</span></a><span class="o"> = </span><span class="s2">"throw"</span><span class="o">;</span></pre>
 
+```{ .ebnf #TransientKeyword }
+
+```
+
+<pre ebnf-snippet="TransientKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.27 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#TransientKeyword"><span class="k">TRANSIENT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"transient"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #TrueKeyword }
 
 ```

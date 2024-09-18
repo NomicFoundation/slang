@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint transient foo;                                                              │ 0..19
+
+Errors: []
+
+Tree:
+  - (StateVariableDefinition): # "uint transient foo;\n" (0..20)
+      - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
+      - (attributes꞉ StateVariableAttributes): # " transient" (4..14)
+          - (item꞉ StateVariableAttribute): # " transient" (4..14)
+              - (leading_trivia꞉ Whitespace): " " # (4..5)
+              - (variant꞉ TransientKeyword): "transient" # (5..14)
+      - (leading_trivia꞉ Whitespace): " " # (14..15)
+      - (name꞉ Identifier): "foo" # (15..18)
+      - (semicolon꞉ Semicolon): ";" # (18..19)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
