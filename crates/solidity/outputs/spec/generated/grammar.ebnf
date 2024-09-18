@@ -1861,11 +1861,11 @@ YUL_BALANCE_KEYWORD = "balance";
 YUL_BASE_FEE_KEYWORD = "basefee";
 
 (* Introduced in 0.8.24 *)
-(* Reserved in 0.8.24 *)
+(* Reserved in 0.8.25 *)
 YUL_BLOB_BASE_FEE_KEYWORD = "blobbasefee";
 
 (* Introduced in 0.8.24 *)
-(* Reserved in 0.8.24 *)
+(* Reserved in 0.8.25 *)
 YUL_BLOB_HASH_KEYWORD = "blobhash";
 
 YUL_BLOCK_HASH_KEYWORD = "blockhash";
@@ -2101,7 +2101,7 @@ YUL_MEMORY_KEYWORD = "memory";
 YUL_MINUTES_KEYWORD = "minutes";
 
 (* Introduced in 0.8.24 *)
-(* Reserved in 0.8.24 *)
+(* Reserved in 0.8.25 *)
 YUL_M_COPY_KEYWORD = "mcopy";
 
 YUL_M_LOAD_KEYWORD = "mload";
@@ -2274,13 +2274,13 @@ YUL_TIMESTAMP_KEYWORD = "timestamp";
 YUL_THROW_KEYWORD = "throw";
 
 (* Introduced in 0.8.24 *)
-(* Reserved in 0.8.24 *)
+(* Reserved in 0.8.25 *)
 YUL_T_LOAD_KEYWORD = "tload";
 
 YUL_TRUE_KEYWORD = "true";
 
 (* Introduced in 0.8.24 *)
-(* Reserved in 0.8.24 *)
+(* Reserved in 0.8.25 *)
 YUL_T_STORE_KEYWORD = "tstore";
 
 (* Reserved until 0.7.1 *)

@@ -4682,7 +4682,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.8.24"),
-                                reserved = From("0.8.24"),
+                                reserved = From("0.8.25"),
                                 value = Atom("blobbasefee")
                             )]
                         ),
@@ -4691,7 +4691,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.8.24"),
-                                reserved = From("0.8.24"),
+                                reserved = From("0.8.25"),
                                 value = Atom("blobhash")
                             )]
                         ),
@@ -5660,7 +5660,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.8.24"),
-                                reserved = From("0.8.24"),
+                                reserved = From("0.8.25"),
                                 value = Atom("mcopy")
                             )]
                         ),
@@ -6130,7 +6130,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.8.24"),
-                                reserved = From("0.8.24"),
+                                reserved = From("0.8.25"),
                                 value = Atom("tload")
                             )]
                         ),
@@ -6144,7 +6144,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.8.24"),
-                                reserved = From("0.8.24"),
+                                reserved = From("0.8.25"),
                                 value = Atom("tstore")
                             )]
                         ),

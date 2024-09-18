@@ -69,6 +69,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_8_19: bool,
     pub(crate) version_is_at_least_0_8_22: bool,
     pub(crate) version_is_at_least_0_8_24: bool,
+    pub(crate) version_is_at_least_0_8_25: bool,
     pub(crate) version: Version,
 }
 
@@ -212,6 +213,7 @@ impl Language {
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= version,
                 version_is_at_least_0_8_24: Version::new(0, 8, 24) <= version,
+                version_is_at_least_0_8_25: Version::new(0, 8, 25) <= version,
                 version,
             })
         } else {
@@ -11300,8 +11302,12 @@ impl Lexer for Language {
                                             Some('b') => {
                                                 if scan_chars!(input, 'a', 's', 'e', 'f', 'e', 'e')
                                                 {
-                                                    if self.version_is_at_least_0_8_24 {
+                                                    if self.version_is_at_least_0_8_25 {
                                                         KeywordScan::Reserved(
+                                                            TerminalKind::YulBlobBaseFeeKeyword,
+                                                        )
+                                                    } else if self.version_is_at_least_0_8_24 {
+                                                        KeywordScan::Present(
                                                             TerminalKind::YulBlobBaseFeeKeyword,
                                                         )
                                                     } else {
@@ -11313,8 +11319,12 @@ impl Lexer for Language {
                                             }
                                             Some('h') => {
                                                 if scan_chars!(input, 'a', 's', 'h') {
-                                                    if self.version_is_at_least_0_8_24 {
+                                                    if self.version_is_at_least_0_8_25 {
                                                         KeywordScan::Reserved(
+                                                            TerminalKind::YulBlobHashKeyword,
+                                                        )
+                                                    } else if self.version_is_at_least_0_8_24 {
+                                                        KeywordScan::Present(
                                                             TerminalKind::YulBlobHashKeyword,
                                                         )
                                                     } else {
@@ -12357,8 +12367,10 @@ impl Lexer for Language {
                             },
                             Some('c') => {
                                 if scan_chars!(input, 'o', 'p', 'y') {
-                                    if self.version_is_at_least_0_8_24 {
+                                    if self.version_is_at_least_0_8_25 {
                                         KeywordScan::Reserved(TerminalKind::YulMCopyKeyword)
+                                    } else if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Present(TerminalKind::YulMCopyKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13212,8 +13224,10 @@ impl Lexer for Language {
                             }
                             Some('l') => {
                                 if scan_chars!(input, 'o', 'a', 'd') {
-                                    if self.version_is_at_least_0_8_24 {
+                                    if self.version_is_at_least_0_8_25 {
                                         KeywordScan::Reserved(TerminalKind::YulTLoadKeyword)
+                                    } else if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Present(TerminalKind::YulTLoadKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
@@ -13244,8 +13258,10 @@ impl Lexer for Language {
                             },
                             Some('s') => {
                                 if scan_chars!(input, 't', 'o', 'r', 'e') {
-                                    if self.version_is_at_least_0_8_24 {
+                                    if self.version_is_at_least_0_8_25 {
                                         KeywordScan::Reserved(TerminalKind::YulTStoreKeyword)
+                                    } else if self.version_is_at_least_0_8_24 {
+                                        KeywordScan::Present(TerminalKind::YulTStoreKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }

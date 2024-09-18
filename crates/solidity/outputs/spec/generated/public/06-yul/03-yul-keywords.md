@@ -92,13 +92,13 @@
 
 ```
 
-<pre ebnf-snippet="YulBlobBaseFeeKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.24 *)</span><br /><a href="#YulBlobBaseFeeKeyword"><span class="k">YUL_BLOB_BASE_FEE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"blobbasefee"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulBlobBaseFeeKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.25 *)</span><br /><a href="#YulBlobBaseFeeKeyword"><span class="k">YUL_BLOB_BASE_FEE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"blobbasefee"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulBlobHashKeyword }
 
 ```
 
-<pre ebnf-snippet="YulBlobHashKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.24 *)</span><br /><a href="#YulBlobHashKeyword"><span class="k">YUL_BLOB_HASH_KEYWORD</span></a><span class="o"> = </span><span class="s2">"blobhash"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulBlobHashKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.25 *)</span><br /><a href="#YulBlobHashKeyword"><span class="k">YUL_BLOB_HASH_KEYWORD</span></a><span class="o"> = </span><span class="s2">"blobhash"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulBlockHashKeyword }
 
@@ -614,7 +614,7 @@
 
 ```
 
-<pre ebnf-snippet="YulMCopyKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.24 *)</span><br /><a href="#YulMCopyKeyword"><span class="k">YUL_M_COPY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"mcopy"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulMCopyKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.25 *)</span><br /><a href="#YulMCopyKeyword"><span class="k">YUL_M_COPY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"mcopy"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulMLoadKeyword }
 
@@ -998,7 +998,7 @@
 
 ```
 
-<pre ebnf-snippet="YulTLoadKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.24 *)</span><br /><a href="#YulTLoadKeyword"><span class="k">YUL_T_LOAD_KEYWORD</span></a><span class="o"> = </span><span class="s2">"tload"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulTLoadKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.25 *)</span><br /><a href="#YulTLoadKeyword"><span class="k">YUL_T_LOAD_KEYWORD</span></a><span class="o"> = </span><span class="s2">"tload"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulTrueKeyword }
 
@@ -1010,7 +1010,7 @@
 
 ```
 
-<pre ebnf-snippet="YulTStoreKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.24 *)</span><br /><a href="#YulTStoreKeyword"><span class="k">YUL_T_STORE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"tstore"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulTStoreKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.24 *)</span><br /><span class="cm">(* Reserved in 0.8.25 *)</span><br /><a href="#YulTStoreKeyword"><span class="k">YUL_T_STORE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"tstore"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulTryKeyword }
 
