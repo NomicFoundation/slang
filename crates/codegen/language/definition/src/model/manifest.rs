@@ -153,40 +153,37 @@ pub enum BuiltInLabel {
 pub enum BuiltIn {
     BuiltInFunction { item: Rc<BuiltInFunction> },
     BuiltInType { item: Rc<BuiltInType> },
-    BuiltInVariable { item: Rc<TypedSlot> },
-}
-
-impl BuiltIn {
-    pub fn enabled(&self) -> Option<&VersionSpecifier> {
-        match self {
-            Self::BuiltInFunction { item } => item.enabled.as_ref(),
-            Self::BuiltInType { item } => item.enabled.as_ref(),
-            Self::BuiltInVariable { item } => item.enabled.as_ref(),
-        }
-    }
+    BuiltInVariable { item: Rc<BuiltInField> },
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInFunction {
     pub name: String,
-    pub return_type: String,
-    pub parameters: Vec<TypedSlot>,
+    pub return_type: Option<String>,
+    pub parameters: Vec<BuiltInParameter>,
     pub enabled: Option<VersionSpecifier>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct BuiltInParameter {
+    pub name: String,
+    pub parameter_type: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInType {
     pub name: String,
-    pub fields: Vec<TypedSlot>,
+    pub fields: Vec<BuiltInField>,
     pub enabled: Option<VersionSpecifier>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
-pub struct TypedSlot {
+pub struct BuiltInField {
     pub name: String,
-    pub slot_type: String,
+    pub field_type: String,
     pub enabled: Option<VersionSpecifier>,
 }

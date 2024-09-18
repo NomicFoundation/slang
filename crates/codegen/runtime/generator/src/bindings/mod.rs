@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use anyhow::Result;
-use codegen_language_definition::model::BuiltIn;
+use codegen_language_definition::model::{BuiltIn, BuiltInField, BuiltInFunction, BuiltInType};
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
@@ -47,16 +47,64 @@ impl BindingsModel {
     }
 }
 
-fn filter_built_ins_for_version<'a>(
-    built_ins: &'a [BuiltIn],
-    version: &Version,
-) -> Vec<&'a BuiltIn> {
+fn filter_built_ins_for_version(built_ins: &[BuiltIn], version: &Version) -> Vec<BuiltIn> {
     built_ins
         .iter()
-        .filter(|built_in| {
-            built_in
-                .enabled()
-                .map_or(true, |enabled| enabled.contains(version))
+        .filter_map(|built_in| match built_in {
+            BuiltIn::BuiltInFunction { item } => filter_built_in_function(item, version)
+                .map(|item| BuiltIn::BuiltInFunction { item: item.into() }),
+            BuiltIn::BuiltInType { item } => filter_built_in_type(item, version)
+                .map(|item| BuiltIn::BuiltInType { item: item.into() }),
+            BuiltIn::BuiltInVariable { item } => filter_built_in_field(item, version)
+                .map(|item| BuiltIn::BuiltInVariable { item: item.into() }),
         })
         .collect()
+}
+
+fn filter_built_in_function(
+    function: &BuiltInFunction,
+    version: &Version,
+) -> Option<BuiltInFunction> {
+    if function
+        .enabled
+        .as_ref()
+        .map_or(true, |enabled| enabled.contains(version))
+    {
+        Some(function.clone())
+    } else {
+        None
+    }
+}
+
+fn filter_built_in_field(field: &BuiltInField, version: &Version) -> Option<BuiltInField> {
+    if field
+        .enabled
+        .as_ref()
+        .map_or(true, |enabled| enabled.contains(version))
+    {
+        Some(field.clone())
+    } else {
+        None
+    }
+}
+
+fn filter_built_in_type(typ: &BuiltInType, version: &Version) -> Option<BuiltInType> {
+    if typ
+        .enabled
+        .as_ref()
+        .map_or(true, |enabled| enabled.contains(version))
+    {
+        let fields = typ
+            .fields
+            .iter()
+            .filter_map(|field| filter_built_in_field(field, version))
+            .collect();
+        Some(BuiltInType {
+            name: typ.name.clone(),
+            fields,
+            enabled: typ.enabled.clone(),
+        })
+    } else {
+        None
+    }
 }

@@ -6610,33 +6610,59 @@ codegen_language_macros::compile!(Language(
     ],
     built_ins = [
         BuiltInFunction(
+            name = "addmod",
+            return_type = "uint",
+            parameters = [
+                BuiltInParameter(name = "x", parameter_type = "uint"),
+                BuiltInParameter(name = "y", parameter_type = "uint"),
+                BuiltInParameter(name = "k", parameter_type = "uint")
+            ]
+        ),
+        BuiltInFunction(
             name = "assert",
-            return_type = "void",
-            parameters = [TypedSlot(name = "condition", slot_type = "bool")]
+            parameters = [BuiltInParameter(
+                name = "condition",
+                parameter_type = "bool"
+            )]
         ),
         BuiltInFunction(
             name = "require",
-            return_type = "void",
-            parameters = [TypedSlot(name = "condition", slot_type = "bool")],
+            parameters = [BuiltInParameter(
+                name = "condition",
+                parameter_type = "bool"
+            )],
+            enabled = From("0.5.0")
+        ),
+        BuiltInFunction(
+            name = "require",
+            parameters = [
+                BuiltInParameter(name = "condition", parameter_type = "bool"),
+                BuiltInParameter(name = "message", parameter_type = "string memory")
+            ],
             enabled = From("0.5.0")
         ),
         BuiltInFunction(
             name = "revert",
-            return_type = "void",
-            parameters = [TypedSlot(name = "reason", slot_type = "string memory")]
+            parameters = [BuiltInParameter(
+                name = "reason",
+                parameter_type = "string memory"
+            )]
         ),
         BuiltInType(
             name = "$builtin$Address",
-            fields = [TypedSlot(name = "balance", slot_type = "uint256")]
+            fields = [
+                BuiltInField(name = "balance", field_type = "uint256"),
+                BuiltInField(name = "code", field_type = "bytes", enabled = From("0.8.0"))
+            ]
         ),
         BuiltInType(
             name = "$builtin$TxType",
             fields = [
-                TypedSlot(name = "gasprice", slot_type = "uint"),
-                TypedSlot(name = "origin", slot_type = "address payable")
+                BuiltInField(name = "gasprice", field_type = "uint"),
+                BuiltInField(name = "origin", field_type = "address payable")
             ]
         ),
-        BuiltInVariable(name = "now", slot_type = "uint"),
-        BuiltInVariable(name = "tx", slot_type = "$builtin$TxType")
+        BuiltInVariable(name = "now", field_type = "uint"),
+        BuiltInVariable(name = "tx", field_type = "$builtin$TxType")
     ]
 ));

@@ -111,7 +111,9 @@ fn get_spanned_type(input: Type) -> Type {
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead:
         "BuiltIn"
+        | "BuiltInField"
         | "BuiltInFunction"
+        | "BuiltInParameter"
         | "BuiltInType"
         | "EnumItem"
         | "EnumVariant"
@@ -137,8 +139,7 @@ fn get_spanned_type(input: Type) -> Type {
         | "TokenItem"
         | "Topic"
         | "TriviaItem"
-        | "TriviaParser"
-        | "TypedSlot" => {
+        | "TriviaParser" => {
             let spanned_type = format_ident!("{}", add_spanned_prefix(type_name));
             parse_quote! {
                 crate::model::#spanned_type

@@ -15,7 +15,7 @@ References and definitions:
     │                    ╰─────── def: 3
   5 │         require(!locked, "No reentrancy");
     │         ───┬───  ───┬──  
-    │            ╰───────────── ref: built-in
+    │            ╰───────────── ambiguous: 
     │                     │    
     │                     ╰──── ref: 2
     │ 

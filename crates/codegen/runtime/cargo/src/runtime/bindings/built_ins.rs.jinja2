@@ -12,7 +12,7 @@ pub fn get_contents(version: &Version) -> &'static str {
                 if *version < Version::new({{ version | split(pat=".") | join(sep=", ") }}) {
                     r####"{{ contents }}"####
                 } else
-            {%- endif -%}
+            {% endif %}
       {%- endfor -%}
   {%- else -%}
       unreachable!("Built-ins not defined in stubs")
