@@ -5,7 +5,7 @@ use semver::Version;
 #[allow(unused_variables)]
 pub fn get_contents(version: &Version) -> &'static str {
     if *version < Version::new(0, 5, 0) {
-        r####"library $$ {
+        r####"contract $$ {
 function addmod(uint x, uint y, uint k) public returns (uint);
 function assert(bool condition) public;
 function revert(string memory reason) public;
@@ -20,7 +20,7 @@ uint now;
 $builtin$TxType tx;
 }"####
     } else if *version < Version::new(0, 8, 0) {
-        r####"library $$ {
+        r####"contract $$ {
 function addmod(uint x, uint y, uint k) public returns (uint);
 function assert(bool condition) public;
 function require(bool condition) public;
@@ -37,7 +37,7 @@ uint now;
 $builtin$TxType tx;
 }"####
     } else {
-        r####"library $$ {
+        r####"contract $$ {
 function addmod(uint x, uint y, uint k) public returns (uint);
 function assert(bool condition) public;
 function require(bool condition) public;

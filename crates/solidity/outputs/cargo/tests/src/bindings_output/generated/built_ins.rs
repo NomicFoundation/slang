@@ -6,5 +6,10 @@ use crate::bindings_output::runner::run;
 
 #[test]
 fn functions() -> Result<()> {
-    run("builtins", "functions")
+    run("built_ins", "functions")
+}
+
+#[test]
+fn global_properties() -> Result<()> {
+    run("built_ins", "global_properties")
 }

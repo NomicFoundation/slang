@@ -32,19 +32,27 @@ inherit .enclosing_def
 
   ;; Automatically import language built-ins
   if (not (eq FILE_PATH "@@builtins@@")) {
-    ;; All built-in symbols are defined in an internal library named '$$'
-    ;; so we need to construct an equivalent import path to reach them
+    ;; All built-in symbols are defined in an internal contract named '$$'
+    ;; so we need to construct an equivalent import path to reach them.
+    ;; We should have access to both type members (eg. defined enums & structs)
+    ;; as well as functions and state variables (see special case below), hence
+    ;; why we're introducing a path through `@typeof`.
     node builtins
     attr (builtins) push_symbol = "@@builtins@@"
 
     node builtin_library
     attr (builtin_library) push_symbol = "$$"
 
+    node builtin_typeof
+    attr (builtin_typeof) push_symbol = "@typeof"
+
     node builtin_member
     attr (builtin_member) push_symbol = "."
 
     edge @source_unit.lexical_scope -> builtin_member
     edge builtin_member -> builtin_library
+    edge builtin_member -> builtin_typeof
+    edge builtin_typeof -> builtin_library
     edge builtin_library -> builtins
     edge builtins -> ROOT_NODE
   }
@@ -369,6 +377,12 @@ inherit .enclosing_def
     )]
 ]] {
   edge @contract.lexical_scope -> @member.def
+
+  ;; Special case: for the built-ins file, export state variables in the
+  ;; contract's members so they can be seen as globals
+  if (eq FILE_PATH "@@builtins@@") {
+    edge @contract.members -> @member.def
+  }
 }
 
 @contract [ContractDefinition members: [ContractMembers
