@@ -453,11 +453,7 @@ fn check_built_in_field(
     built_in: &SpannedBuiltInField,
     enablement: &VersionSet,
 ) {
-    let SpannedBuiltInField {
-        name: _,
-        field_type: _,
-        enabled,
-    } = built_in;
+    let SpannedBuiltInField { def: _, enabled } = built_in;
 
     let _ = update_enablement(analysis, enablement, enabled);
 }

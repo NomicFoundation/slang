@@ -6613,56 +6613,47 @@ codegen_language_macros::compile!(Language(
             name = "addmod",
             return_type = "uint",
             parameters = [
-                BuiltInParameter(name = "x", parameter_type = "uint"),
-                BuiltInParameter(name = "y", parameter_type = "uint"),
-                BuiltInParameter(name = "k", parameter_type = "uint")
+                BuiltInParameter("uint x"),
+                BuiltInParameter("uint y"),
+                BuiltInParameter("uint k")
             ]
         ),
         BuiltInFunction(
             name = "assert",
-            parameters = [BuiltInParameter(
-                name = "condition",
-                parameter_type = "bool"
-            )]
+            parameters = [BuiltInParameter("bool condition")]
         ),
         BuiltInFunction(
             name = "require",
-            parameters = [BuiltInParameter(
-                name = "condition",
-                parameter_type = "bool"
-            )],
+            parameters = [BuiltInParameter("bool condition")],
             enabled = From("0.5.0")
         ),
         BuiltInFunction(
             name = "require",
             parameters = [
-                BuiltInParameter(name = "condition", parameter_type = "bool"),
-                BuiltInParameter(name = "message", parameter_type = "string memory")
+                BuiltInParameter("bool condition"),
+                BuiltInParameter("string memory message")
             ],
             enabled = From("0.5.0")
         ),
         BuiltInFunction(
             name = "revert",
-            parameters = [BuiltInParameter(
-                name = "reason",
-                parameter_type = "string memory"
-            )]
+            parameters = [BuiltInParameter("string memory reason")]
         ),
         BuiltInType(
             name = "$builtin$Address",
             fields = [
-                BuiltInField(name = "balance", field_type = "uint256"),
-                BuiltInField(name = "code", field_type = "bytes", enabled = From("0.8.0"))
+                BuiltInField(def = "uint256 balance"),
+                BuiltInField(def = "bytes code", enabled = From("0.8.0"))
             ]
         ),
         BuiltInType(
             name = "$builtin$TxType",
             fields = [
-                BuiltInField(name = "gasprice", field_type = "uint"),
-                BuiltInField(name = "origin", field_type = "address payable")
+                BuiltInField(def = "uint gasprice"),
+                BuiltInField(def = "address payable origin")
             ]
         ),
-        BuiltInVariable(name = "now", field_type = "uint"),
-        BuiltInVariable(name = "tx", field_type = "$builtin$TxType")
+        BuiltInVariable(def = "uint now"),
+        BuiltInVariable(def = "$builtin$TxType tx")
     ]
 ));

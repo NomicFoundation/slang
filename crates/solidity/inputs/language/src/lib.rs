@@ -19,13 +19,7 @@ pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
                 let parameters = item
                     .parameters
                     .iter()
-                    .map(|parameter| {
-                        format!(
-                            "{parameter_type} {name}",
-                            name = parameter.name,
-                            parameter_type = parameter.parameter_type
-                        )
-                    })
+                    .map(|parameter| parameter.def.clone())
                     .collect::<Vec<_>>()
                     .join(", ");
                 lines.push(format!(
@@ -37,23 +31,13 @@ pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
                 let fields = item
                     .fields
                     .iter()
-                    .map(|field| {
-                        format!(
-                            "  {field_type} {name};",
-                            field_type = field.field_type,
-                            name = field.name
-                        )
-                    })
+                    .map(|field| format!("  {field_def};", field_def = field.def))
                     .collect::<Vec<_>>()
                     .join("\n");
                 lines.push(format!("struct {name} {{\n{fields}\n}}", name = item.name));
             }
             BuiltIn::BuiltInVariable { item } => {
-                lines.push(format!(
-                    "{typ} {name};",
-                    typ = item.field_type,
-                    name = item.name
-                ));
+                lines.push(format!("{var_def};", var_def = item.def));
             }
         }
     }

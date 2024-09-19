@@ -168,8 +168,7 @@ pub struct BuiltInFunction {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInParameter {
-    pub name: String,
-    pub parameter_type: String,
+    pub def: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -183,7 +182,6 @@ pub struct BuiltInType {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInField {
-    pub name: String,
-    pub field_type: String,
+    pub def: String,
     pub enabled: Option<VersionSpecifier>,
 }
