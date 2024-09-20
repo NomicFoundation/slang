@@ -161,14 +161,8 @@ pub enum BuiltIn {
 pub struct BuiltInFunction {
     pub name: String,
     pub return_type: Option<String>,
-    pub parameters: Vec<BuiltInParameter>,
+    pub parameters: Vec<String>,
     pub enabled: Option<VersionSpecifier>,
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
-pub struct BuiltInParameter {
-    pub def: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

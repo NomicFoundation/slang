@@ -16,12 +16,7 @@ pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
                     .as_ref()
                     .map(|return_type| format!(" returns ({return_type})"))
                     .unwrap_or_default();
-                let parameters = item
-                    .parameters
-                    .iter()
-                    .map(|parameter| parameter.def.clone())
-                    .collect::<Vec<_>>()
-                    .join(", ");
+                let parameters = item.parameters.join(", ");
                 lines.push(format!(
                     "function {name}({parameters}) public{return_type};",
                     name = item.name

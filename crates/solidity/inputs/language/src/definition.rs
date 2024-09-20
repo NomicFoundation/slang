@@ -6612,33 +6612,20 @@ codegen_language_macros::compile!(Language(
         BuiltInFunction(
             name = "addmod",
             return_type = "uint",
-            parameters = [
-                BuiltInParameter("uint x"),
-                BuiltInParameter("uint y"),
-                BuiltInParameter("uint k")
-            ]
+            parameters = ["uint x", "uint y", "uint k"]
         ),
-        BuiltInFunction(
-            name = "assert",
-            parameters = [BuiltInParameter("bool condition")]
-        ),
+        BuiltInFunction(name = "assert", parameters = ["bool condition"]),
         BuiltInFunction(
             name = "require",
-            parameters = [BuiltInParameter("bool condition")],
+            parameters = ["bool condition"],
             enabled = From("0.5.0")
         ),
         BuiltInFunction(
             name = "require",
-            parameters = [
-                BuiltInParameter("bool condition"),
-                BuiltInParameter("string memory message")
-            ],
+            parameters = ["bool condition", "string memory message"],
             enabled = From("0.5.0")
         ),
-        BuiltInFunction(
-            name = "revert",
-            parameters = [BuiltInParameter("string memory reason")]
-        ),
+        BuiltInFunction(name = "revert", parameters = ["string memory reason"]),
         BuiltInType(
             name = "$BuiltIn$Address",
             fields = [
