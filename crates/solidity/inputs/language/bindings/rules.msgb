@@ -1,5 +1,6 @@
 global ROOT_NODE
 global FILE_PATH
+global BUILT_INS_FILE_PATH
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -31,14 +32,14 @@ inherit .enclosing_def
   edge export -> @source_unit.defs
 
   ;; Automatically import language built-ins
-  if (not (eq FILE_PATH "@@built-ins@@")) {
+  if (not (eq FILE_PATH BUILT_INS_FILE_PATH)) {
     ;; All built-in symbols are defined in an internal contract named '$$'
     ;; so we need to construct an equivalent import path to reach them.
     ;; We should have access to both type members (eg. defined enums & structs)
     ;; as well as functions and state variables (see special case below), hence
     ;; why we're introducing a path through `@typeof`.
     node built_ins
-    attr (built_ins) push_symbol = "@@built-ins@@"
+    attr (built_ins) push_symbol = BUILT_INS_FILE_PATH
 
     node built_in_library
     attr (built_in_library) push_symbol = "$$"
@@ -380,7 +381,7 @@ inherit .enclosing_def
 
   ;; Special case: for the built-ins file, export state variables in the
   ;; contract's members so they can be seen as globals
-  if (eq FILE_PATH "@@built-ins@@") {
+  if (eq FILE_PATH BUILT_INS_FILE_PATH) {
     edge @contract.members -> @member.def
   }
 }
