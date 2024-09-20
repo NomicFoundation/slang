@@ -96,10 +96,14 @@ pub(crate) fn render_bindings(
                     let ref_labels = ambiguous_definitions
                         .iter()
                         .filter_map(|ambiguous_definition| {
-                            definitions
-                                .iter()
-                                .position(|d| d == ambiguous_definition)
-                                .map(|index| format!("ref: {}", index + 1))
+                            if ambiguous_definition.is_builtin() {
+                                Some("built-in".to_string())
+                            } else {
+                                definitions
+                                    .iter()
+                                    .position(|d| d == ambiguous_definition)
+                                    .map(|index| format!("ref: {}", index + 1))
+                            }
                         })
                         .collect::<Vec<_>>();
                     format!("ambiguous: {}", ref_labels.join(", "))
