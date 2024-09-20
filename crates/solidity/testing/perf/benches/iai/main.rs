@@ -33,17 +33,13 @@ fn query(trees: Vec<Node>) {
     black_box(dataset::run_query(&trees));
 }
 
-#[library_benchmark]
-fn create_bindings() {
-    black_box(dataset::run_create_bindings());
-}
-
 #[library_benchmark(setup = dataset::run_parser)]
-fn bindings(trees: Vec<Node>) {
-    black_box(dataset::run_bindings(&trees));
+fn build_bindings(trees: Vec<Node>) {
+    black_box(dataset::run_build_bindings(&trees));
 }
 
-#[library_benchmark(setup = dataset::prepare_bindings)]
+#[library_benchmark(setup = dataset::run_build_bindings)]
+#[bench::run(args = (&dataset::run_parser()))]
 fn resolve_references(bindings: Vec<Bindings>) {
     black_box(dataset::run_resolve_references(&bindings));
 }
@@ -51,7 +47,7 @@ fn resolve_references(bindings: Vec<Bindings>) {
 library_benchmark_group!(
     name = benchmarks;
 
-    benchmarks = parser, cursor, query, create_bindings, bindings, resolve_references
+    benchmarks = parser, cursor, query, build_bindings, resolve_references
 );
 
 main!(

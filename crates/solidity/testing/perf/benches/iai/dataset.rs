@@ -255,11 +255,7 @@ impl PathResolver for NoOpResolver {
     }
 }
 
-pub fn run_create_bindings() {
-    let _ = bindings::create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
-}
-
-pub fn run_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
+pub fn run_build_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
     let mut result = vec![];
     let mut definition_count = 0_usize;
 
@@ -270,15 +266,12 @@ pub fn run_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
         result.push(bindings);
     }
 
-    // 723 definitions
-    println!("A total of {definition_count} definitions were found");
+    assert!(
+        definition_count >= 723,
+        "Only found {definition_count} definitions"
+    );
 
     result
-}
-
-pub fn prepare_bindings() -> Vec<Bindings> {
-    let trees = run_parser();
-    run_bindings(&trees)
 }
 
 pub fn run_resolve_references(bindings_vec: &Vec<Bindings>) {
@@ -295,6 +288,12 @@ pub fn run_resolve_references(bindings_vec: &Vec<Bindings>) {
         }
     }
 
-    // 1491 references, 1170 resolved
-    println!("Out of a total of {reference_count} references found, {resolved_references} were unambiguously resolved");
+    assert!(
+        reference_count >= 1491,
+        "Only found {reference_count} references"
+    );
+    assert!(
+        resolved_references >= 1170,
+        "Only resolved {resolved_references} references"
+    );
 }
