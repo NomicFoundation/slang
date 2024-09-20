@@ -40,7 +40,7 @@ fn build_bindings(trees: Vec<Node>) {
 
 #[library_benchmark(setup = dataset::run_build_bindings)]
 #[bench::run(args = (&dataset::run_parser()))]
-fn resolve_references(bindings: Vec<Bindings>) {
+fn resolve_references(bindings: Bindings) {
     black_box(dataset::run_resolve_references(&bindings));
 }
 

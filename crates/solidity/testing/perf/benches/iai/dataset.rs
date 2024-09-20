@@ -255,15 +255,14 @@ impl PathResolver for NoOpResolver {
     }
 }
 
-pub fn run_build_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
-    let mut result = vec![];
+pub fn run_build_bindings(trees: &[Node]) -> Bindings {
     let mut definition_count = 0_usize;
+    let mut bindings = bindings::create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
 
-    for tree in trees {
-        let mut bindings = bindings::create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
-        bindings.add_file("input.sol", tree.cursor_with_offset(TextIndex::ZERO));
+    for (index, tree) in trees.iter().enumerate() {
+        let path = format!("input{index}.sol");
+        bindings.add_file(&path, tree.cursor_with_offset(TextIndex::ZERO));
         definition_count += bindings.all_definitions().count();
-        result.push(bindings);
     }
 
     assert!(
@@ -271,20 +270,18 @@ pub fn run_build_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
         "Only found {definition_count} definitions"
     );
 
-    result
+    bindings
 }
 
-pub fn run_resolve_references(bindings_vec: &Vec<Bindings>) {
+pub fn run_resolve_references(bindings: &Bindings) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
 
-    for bindings in bindings_vec {
-        for reference in bindings.all_references() {
-            reference_count += 1;
-            let resolution = reference.jump_to_definition();
-            if resolution.is_ok() {
-                resolved_references += 1;
-            }
+    for reference in bindings.all_references() {
+        reference_count += 1;
+        let resolution = reference.jump_to_definition();
+        if resolution.is_ok() {
+            resolved_references += 1;
         }
     }
 
