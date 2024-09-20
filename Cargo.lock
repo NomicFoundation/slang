@@ -2460,6 +2460,7 @@ name = "solidity_testing_perf"
 version = "0.17.0"
 dependencies = [
  "iai-callgrind",
+ "metaslang_bindings",
  "semver",
  "slang_solidity",
 ]

@@ -1,6 +1,9 @@
 use std::collections::BTreeSet;
+use std::sync::Arc;
 
+use metaslang_bindings::PathResolver;
 use semver::Version;
+use slang_solidity::bindings::{self, Bindings};
 use slang_solidity::cst::Node;
 use slang_solidity::kinds::{EdgeLabel, NonterminalKind};
 use slang_solidity::language::Language;
@@ -242,4 +245,56 @@ pub fn run_query(trees: &Vec<Node>) {
         results.iter().eq(FUNCTION_NAMES.iter()),
         "Function names don't match: {results:#?}"
     );
+}
+
+struct NoOpResolver;
+
+impl PathResolver for NoOpResolver {
+    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
+        Some(path_to_resolve.to_string())
+    }
+}
+
+pub fn run_create_bindings() {
+    let _ = bindings::create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
+}
+
+pub fn run_bindings(trees: &Vec<Node>) -> Vec<Bindings> {
+    let mut result = vec![];
+    let mut definition_count = 0_usize;
+
+    for tree in trees {
+        let mut bindings = bindings::create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
+        bindings.add_file("input.sol", tree.cursor_with_offset(TextIndex::ZERO));
+        definition_count += bindings.all_definitions().count();
+        result.push(bindings);
+    }
+
+    // 723 definitions
+    println!("A total of {definition_count} definitions were found");
+
+    result
+}
+
+pub fn prepare_bindings() -> Vec<Bindings> {
+    let trees = run_parser();
+    run_bindings(&trees)
+}
+
+pub fn run_resolve_references(bindings_vec: &Vec<Bindings>) {
+    let mut reference_count = 0_usize;
+    let mut resolved_references = 0_usize;
+
+    for bindings in bindings_vec {
+        for reference in bindings.all_references() {
+            reference_count += 1;
+            let resolution = reference.jump_to_definition();
+            if resolution.is_ok() {
+                resolved_references += 1;
+            }
+        }
+    }
+
+    // 1491 references, 1170 resolved
+    println!("Out of a total of {reference_count} references found, {resolved_references} were unambiguously resolved");
 }

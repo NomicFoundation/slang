@@ -15,6 +15,7 @@ use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
+use slang_solidity::bindings::Bindings;
 use slang_solidity::cst::Node;
 
 #[library_benchmark]
@@ -32,10 +33,25 @@ fn query(trees: Vec<Node>) {
     black_box(dataset::run_query(&trees));
 }
 
+#[library_benchmark]
+fn create_bindings() {
+    black_box(dataset::run_create_bindings());
+}
+
+#[library_benchmark(setup = dataset::run_parser)]
+fn bindings(trees: Vec<Node>) {
+    black_box(dataset::run_bindings(&trees));
+}
+
+#[library_benchmark(setup = dataset::prepare_bindings)]
+fn resolve_references(bindings: Vec<Bindings>) {
+    black_box(dataset::run_resolve_references(&bindings));
+}
+
 library_benchmark_group!(
     name = benchmarks;
 
-    benchmarks = parser, cursor, query
+    benchmarks = parser, cursor, query, create_bindings, bindings, resolve_references
 );
 
 main!(
