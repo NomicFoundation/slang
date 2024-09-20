@@ -21,7 +21,7 @@ type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
 
-pub const BUILTINS_FILE_PATH: &str = "@@builtins@@";
+pub const BUILT_INS_FILE_PATH: &str = "@@built-ins@@";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Tag {
@@ -55,7 +55,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
-    builtins_file: Option<FileHandle>,
+    built_ins_file: Option<FileHandle>,
 }
 
 pub trait PathResolver {
@@ -83,15 +83,15 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
-            builtins_file: None,
+            built_ins_file: None,
         }
     }
 
-    pub fn add_builtins(&mut self, tree_cursor: Cursor<KT>) {
-        assert!(self.builtins_file.is_none(), "Built-ins already added");
-        let file = self.stack_graph.get_or_create_file(BUILTINS_FILE_PATH);
+    pub fn add_built_ins(&mut self, tree_cursor: Cursor<KT>) {
+        assert!(self.built_ins_file.is_none(), "Built-ins already added");
+        let file = self.stack_graph.get_or_create_file(BUILT_INS_FILE_PATH);
         _ = self.add_file_internal(file, tree_cursor);
-        self.builtins_file = Some(file);
+        self.built_ins_file = Some(file);
     }
 
     pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
@@ -330,8 +330,8 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|file| self.owner.stack_graph[file].name())
     }
 
-    pub fn is_builtin(&self) -> bool {
-        self.owner.stack_graph[self.handle].file() == self.owner.builtins_file
+    pub fn is_built_in(&self) -> bool {
+        self.owner.stack_graph[self.handle].file() == self.owner.built_ins_file
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {

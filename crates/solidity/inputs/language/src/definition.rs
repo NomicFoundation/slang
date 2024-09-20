@@ -6640,20 +6640,20 @@ codegen_language_macros::compile!(Language(
             parameters = [BuiltInParameter("string memory reason")]
         ),
         BuiltInType(
-            name = "$builtin$Address",
+            name = "$BuiltIn$Address",
             fields = [
                 BuiltInField(def = "uint256 balance"),
                 BuiltInField(def = "bytes code", enabled = From("0.8.0"))
             ]
         ),
         BuiltInType(
-            name = "$builtin$TxType",
+            name = "$BuiltIn$TxType",
             fields = [
                 BuiltInField(def = "uint gasprice"),
                 BuiltInField(def = "address payable origin")
             ]
         ),
         BuiltInVariable(def = "uint now"),
-        BuiltInVariable(def = "$builtin$TxType tx")
+        BuiltInVariable(def = "$BuiltIn$TxType tx")
     ]
 ));

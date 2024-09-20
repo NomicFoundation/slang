@@ -22,15 +22,15 @@ pub fn create_with_resolver(
     resolver: Arc<dyn PathResolver + Sync + Send>,
 ) -> Bindings {
     let version = language.version.clone();
-    let builtins_parse_output =
+    let built_ins_parse_output =
         language.parse(Language::ROOT_KIND, built_ins::get_contents(&version));
     assert!(
-        builtins_parse_output.is_valid(),
+        built_ins_parse_output.is_valid(),
         "built-ins parse without errors"
     );
 
     let mut bindings = Bindings::create(version, binding_rules::BINDING_RULES_SOURCE, resolver);
-    bindings.add_builtins(builtins_parse_output.create_tree_cursor());
+    bindings.add_built_ins(built_ins_parse_output.create_tree_cursor());
     bindings
 }
 
