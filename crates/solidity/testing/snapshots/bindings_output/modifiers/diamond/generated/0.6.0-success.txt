@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     modifier foo virtual { _; }
+    │              ─┬─           ┬  
+    │               ╰─────────────── def: 2
+    │                            │  
+    │                            ╰── unresolved
+    │ 
+  5 │ contract A is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── def: 3
+    │                 │   
+    │                 ╰─── ref: 1
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─                    ┬  
+    │               ╰──────────────────────── def: 4
+    │                                     │  
+    │                                     ╰── unresolved
+    │ 
+  9 │ contract B is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── def: 5
+    │                 │   
+    │                 ╰─── ref: 1
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─                    ┬  
+    │               ╰──────────────────────── def: 6
+    │                                     │  
+    │                                     ╰── unresolved
+    │ 
+ 13 │ contract Test is B, A {
+    │          ──┬─    ┬  ┬  
+    │            ╰─────────── def: 7
+    │                  │  │  
+    │                  ╰───── ref: 5
+    │                     │  
+    │                     ╰── ref: 3
+ 14 │     function test() public foo {}
+    │              ──┬─          ─┬─  
+    │                ╰──────────────── def: 8
+    │                             │   
+    │                             ╰─── ref: 4
+────╯

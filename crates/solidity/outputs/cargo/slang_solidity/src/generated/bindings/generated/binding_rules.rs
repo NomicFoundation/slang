@@ -17,6 +17,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Keeps a link to the enclosing contract definition to provide a parent for
 ;; method calls (to correctly resolve virtual methods)
 inherit .enclosing_def
+inherit .parent_scope
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -35,6 +36,11 @@ inherit .enclosing_def
   edge export -> @source_unit.defs
 
   let @source_unit.enclosing_def = #null
+
+  ;; This defines a parent_scope at the source unit level (this attribute is
+  ;; inherited) for contracts to resolve bases (both in inheritance lists and
+  ;; override specifiers)
+  let @source_unit.parent_scope = @source_unit.lexical_scope
 }
 
 ;; Top-level definitions...
@@ -70,16 +76,6 @@ inherit .enclosing_def
    node @import.defs
    edge @source_unit.defs -> @import.defs
    edge @source_unit.lexical_scope -> @import.defs
-}
-
-;; Contracts need access to the parent scope to resolve bases. This is purely
-;; for convenience, as contracts can only appear in SourceUnits so we could
-;; potentially connect this directly when connecting to the base contract
-;; identifiers (but that would make the query longer)
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition]]
-]] {
-  let @contract.parent_scope = @source_unit.lexical_scope
 }
 
 
@@ -206,7 +202,12 @@ inherit .enclosing_def
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
-  edge @contract.lexical_scope -> @contract.modifiers
+
+  ;; Modifiers are available as a contract type members through a special '@modifier' symbol
+  node modifier
+  attr (modifier) pop_symbol = "@modifier"
+  edge @contract.type_members -> modifier
+  edge modifier -> @contract.modifiers
 
   let @contract.enclosing_def = @contract.def
 }
@@ -359,7 +360,6 @@ inherit .enclosing_def
     [ContractMember @member (
           [FunctionDefinition]
         | [StateVariableDefinition]
-        | [ModifierDefinition]
     )]
 ]] {
   edge @contract.lexical_scope -> @member.def
@@ -390,17 +390,18 @@ inherit .enclosing_def
     item: [ContractMember @modifier variant: [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
+
+  ;; This may prioritize this definition (when there are multiple options)
+  ;; according to the C3 linerisation ordering
+  attr (@modifier.def) tag = "c3"
+  attr (@modifier.def) parents = [@contract.def]
 }
 
-@contract [ContractDefinition [ContractMembers [ContractMember
-    [FunctionDefinition [FunctionAttributes [FunctionAttribute
-        [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
-            @base_ident [IdentifierPath]
-        ]]]
-    ]]]
+@override [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
+    @base_ident [IdentifierPath]
 ]]] {
-  ;; Resolve overriden bases when listed in the function modifiers
-  edge @base_ident.left -> @contract.parent_scope
+  ;; Resolve overriden bases when listed in the function or modifiers modifiers
+  edge @base_ident.left -> @override.parent_scope
 }
 
 
@@ -638,9 +639,10 @@ inherit .enclosing_def
   node @id_path.right
 }
 
-[IdentifierPath @name [Identifier]] {
+@id_path [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@id_path.enclosing_def]
 }
 
 @id_path [IdentifierPath @name [Identifier] .] {
@@ -757,7 +759,11 @@ inherit .enclosing_def
 @modifier [ModifierInvocation @name [IdentifierPath]] {
   node @modifier.lexical_scope
 
-  edge @name.left -> @modifier.lexical_scope
+  node modifier
+  attr (modifier) push_symbol = "@modifier"
+
+  edge @name.left -> modifier
+  edge modifier -> @modifier.lexical_scope
 }
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
@@ -860,18 +866,18 @@ inherit .enclosing_def
 ;;; Function modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@modifier [ModifierDefinition] {
+  node @modifier.def
+  node @modifier.lexical_scope
+}
+
 @modifier [ModifierDefinition
     @name name: [Identifier]
     body: [FunctionBody @body [Block]]
 ] {
-  node @modifier.def
-  node @modifier.lexical_scope
+  attr (@modifier.def) node_definition = @name
+  attr (@modifier.def) definiens_node = @modifier
 
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @modifier
-
-  edge @modifier.def -> def
   edge @body.lexical_scope -> @modifier.lexical_scope
 }
 
