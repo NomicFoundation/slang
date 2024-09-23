@@ -238,6 +238,14 @@ inherit .enclosing_def
   edge @contract.def -> type_member
   edge type_member -> @contract.type_members
 
+  ;; Define "this" and connect it to the contract definition
+  node this
+  attr (this) pop_symbol = "this"
+  edge this -> member
+
+  ;; ... and make it available in the contract's lexical scope
+  edge @contract.lexical_scope -> this
+
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
   ;; super_scope will later connect to the base contract defs directly
   node super
@@ -783,6 +791,7 @@ inherit .enclosing_def
 @contract [ContractDefinition [ContractMembers [ContractMember
     @constructor [ConstructorDefinition]
 ]]] {
+  ;; This link allows calling a constructor with the named parameters syntax
   edge @contract.def -> @constructor.def
 }
 

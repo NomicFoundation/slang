@@ -40,6 +40,11 @@ fn super_scope() -> Result<()> {
 }
 
 #[test]
+fn this_scope() -> Result<()> {
+    run("contracts", "this_scope")
+}
+
+#[test]
 fn virtual_lookup() -> Result<()> {
     run("contracts", "virtual_lookup")
 }
