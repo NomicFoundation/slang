@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn constructor_invocation() -> Result<()> {
+    run("contracts", "constructor_invocation")
+}
+
+#[test]
 fn constructor_modifier() -> Result<()> {
     run("contracts", "constructor_modifier")
 }

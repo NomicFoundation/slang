@@ -780,6 +780,12 @@ inherit .enclosing_def
   edge @modifier.lexical_scope -> @constructor.lexical_scope
 }
 
+@contract [ContractDefinition [ContractMembers [ContractMember
+    @constructor [ConstructorDefinition]
+]]] {
+  edge @contract.def -> @constructor.def
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Fallback and receive functions
