@@ -360,6 +360,15 @@ inherit .enclosing_def
   edge @contract.lexical_scope -> @member.def
 }
 
+;; Public state variables are also exposed as external member functions
+@contract [ContractDefinition [ContractMembers [ContractMember
+    @state_var [StateVariableDefinition
+        [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
+    ]
+]]] {
+  edge @contract.members -> @state_var.def
+}
+
 @contract [ContractDefinition members: [ContractMembers
     item: [ContractMember @function variant: [FunctionDefinition]]
 ]] {
@@ -1243,17 +1252,16 @@ inherit .enclosing_def
     @type_name type_name: [TypeName]
     @name name: [Identifier]
 ] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @state_var
+  attr (@state_var.def) node_definition = @name
+  attr (@state_var.def) definiens_node = @state_var
 
-  edge @state_var.def -> def
+  edge @state_var.def -> @state_var.def
   edge @type_name.type_ref -> @state_var.lexical_scope
 
   node typeof
   attr (typeof) push_symbol = "@typeof"
 
-  edge def -> typeof
+  edge @state_var.def -> typeof
   edge typeof -> @type_name.output
 }
 

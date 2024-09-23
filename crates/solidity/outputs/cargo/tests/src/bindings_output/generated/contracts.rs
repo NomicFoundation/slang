@@ -30,6 +30,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn public_getters() -> Result<()> {
+    run("contracts", "public_getters")
+}
+
+#[test]
 fn super_linearisation() -> Result<()> {
     run("contracts", "super_linearisation")
 }
