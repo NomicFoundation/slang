@@ -5,6 +5,16 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn constructor_modifier() -> Result<()> {
+    run("contracts", "constructor_modifier")
+}
+
+#[test]
+fn constructors() -> Result<()> {
+    run("contracts", "constructors")
+}
+
+#[test]
 fn fallback_receive() -> Result<()> {
     run("contracts", "fallback_receive")
 }

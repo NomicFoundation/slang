@@ -325,6 +325,7 @@ inherit .enclosing_def
         | [ErrorDefinition]
         | [UserDefinedValueTypeDefinition]
         | [FunctionDefinition]
+        | [ConstructorDefinition]
         | [StateVariableDefinition]
         | [ModifierDefinition]
         | [FallbackFunctionDefinition]
@@ -744,6 +745,39 @@ inherit .enclosing_def
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
   edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Constructors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@constructor [ConstructorDefinition] {
+  node @constructor.lexical_scope
+  node @constructor.def
+}
+
+@constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @constructor.lexical_scope
+
+  ;; Input parameters are available in the constructor scope
+  edge @constructor.lexical_scope -> @params.defs
+  ;; ... and shadow other declarations
+  attr (@constructor.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @constructor.def -> @params.names
+}
+
+;; Connect the constructor body's block lexical scope to the constructor
+@constructor [ConstructorDefinition @block [Block]] {
+  edge @block.lexical_scope -> @constructor.lexical_scope
+}
+
+@constructor [ConstructorDefinition [ConstructorAttributes item: [ConstructorAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @constructor.lexical_scope
 }
 
 
