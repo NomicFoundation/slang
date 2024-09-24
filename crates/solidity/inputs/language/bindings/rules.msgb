@@ -184,6 +184,57 @@ inherit .parent_scope
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Common inheritance rules (apply to contracts and interfaces)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@specifier [InheritanceSpecifier [InheritanceTypes
+    [InheritanceType @type_name [IdentifierPath]]
+]] {
+  ;; This should point to the enclosing contract or interface definition
+  let heir = @specifier.heir
+
+  ;; Resolve base names through the parent scope of our heir (contract or
+  ;; interface), aka the source unit
+  edge @type_name.left -> heir.parent_scope
+
+  ;; Make base members accesible as our own members
+  node member
+  attr (member) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge heir.members -> member
+  edge member -> typeof
+  edge typeof -> @type_name.right
+
+  ;; Make base defs (eg. enums and structs) accessible as our own
+  node type_member
+  attr (type_member) push_symbol = "."
+
+  edge heir.type_members -> type_member
+  edge type_member -> @type_name.right
+}
+
+;; NOTE: we use anchors here to prevent the query engine from returning all the
+;; sublists of possible parents
+@specifier [InheritanceSpecifier [InheritanceTypes . @parents [_]+ .]] {
+  var parent_refs = []
+  for parent in @parents {
+    if (eq (node-type parent) "InheritanceType") {
+      ;; this is intentionally reversed because of how Solidity linearised the contract bases
+      set parent_refs = (concat [parent.ref] parent_refs)
+    }
+  }
+  let @specifier.parent_refs = parent_refs
+}
+
+@parent [InheritanceType @type_name [IdentifierPath]] {
+  let @parent.ref = @type_name.ref
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Contracts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -213,7 +264,7 @@ inherit .parent_scope
 
   ;; "instance" like access path
   ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
-  ;; and () -> . for accesses through a `new` invocation
+  ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
   edge member -> @contract.members
@@ -273,52 +324,16 @@ inherit .parent_scope
   attr (@contract.def) import_nodes = [@contract.lexical_scope, super_import]
 }
 
+@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @contract
+  attr (@contract.def) parents = @specifier.parent_refs
+}
+
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
     [InheritanceType @type_name [IdentifierPath]]
 ]]] {
-  ;; Resolve contract bases names through the parent scope of the contract (aka
-  ;; the source unit)
-  edge @type_name.left -> @contract.parent_scope
-
-  ;; Make base members accesible as our own members
-  node member
-  attr (member) push_symbol = "."
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge @contract.members -> member
-  edge member -> typeof
-  edge typeof -> @type_name.right
-
-  ;; Make base contract defs (eg. enums and structs) accessible as our own
-  node type_member
-  attr (type_member) push_symbol = "."
-
-  edge @contract.type_members -> type_member
-  edge type_member -> @type_name.right
-
-  ;; The base contract defs are directly accesible through our special super scope
+  ;; Base contract defs are directly accesible through our special super scope
   edge @contract.super_scope -> @type_name.right
-}
-
-@parent [InheritanceType @type_name [IdentifierPath]] {
-  let @parent.ref = @type_name.ref
-}
-
-;; NOTE: we use anchors here to prevent the query engine from returning all the
-;; sublists of possible parents
-@contract [ContractDefinition [InheritanceSpecifier
-    [InheritanceTypes . @parents [_]+ .]
-]] {
-  var parent_refs = []
-  for parent in @parents {
-    if (eq (node-type parent) "InheritanceType") {
-      ;; this is intentionally reversed because of how Solidity linearised the contract bases
-      set parent_refs = (concat [parent.ref] parent_refs)
-    }
-  }
-  attr (@contract.def) parents = parent_refs
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -415,26 +430,36 @@ inherit .parent_scope
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @interface
-
-  edge @interface.def -> def
+  attr (@interface.def) node_definition = @name
+  attr (@interface.def) definiens_node = @interface
 
   ;; "instance" like access path
-  node type_def
-  attr (type_def) pop_symbol = "@typeof"
+  ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
+  ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
-  edge def -> type_def
-  edge type_def -> member
   edge member -> @interface.members
+
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+  edge @interface.def -> typeof
+  edge typeof -> member
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge @interface.def -> call
+  edge call -> member
 
   ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
-  edge def -> type_member
+  edge @interface.def -> type_member
   edge type_member -> @interface.type_members
+}
+
+@interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @interface
+  attr (@interface.def) parents = @specifier.parent_refs
 }
 
 @interface [InterfaceDefinition [InterfaceMembers
