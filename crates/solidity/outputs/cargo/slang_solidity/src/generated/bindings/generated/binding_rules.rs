@@ -59,6 +59,8 @@ inherit .enclosing_def
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
   let @using.lexical_scope = @source_unit.lexical_scope
+  edge @source_unit.lexical_scope -> @using.def
+  ; FIXME: if the using directive is global, its def should also be linked to @source_unit.defs
 }
 
 ;; ... and imports
@@ -342,6 +344,7 @@ inherit .enclosing_def
     [ContractMember @using [UsingDirective]]
 ]] {
   let @using.lexical_scope = @contract.lexical_scope
+  edge @contract.lexical_scope -> @using.def
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -505,6 +508,7 @@ inherit .enclosing_def
     [ContractMember @using [UsingDirective]]
 ]] {
   let @using.lexical_scope = @library.lexical_scope
+  edge @library.lexical_scope -> @using.def
 }
 
 
@@ -512,21 +516,98 @@ inherit .enclosing_def
 ;;; Using directives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@using [UsingDirective] {
+  ; this node acts as a definition in the sense that provides an entry point
+  ; that pops the target type and pushes the library/functions to attach to the
+  ; target type
+  node @using.def
+
+  ; this node connects the other end of the popping path starting at .def and
+  ; resolves for the library/functions in the directive
+  node @using.clause
+}
+
 @using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
+  ; resolve the library to be used in the directive
   edge @id_path.left -> @using.lexical_scope
+
+  ; because we're using the whole library, we don't need to "consume" the
+  ; attached function (as when using the deconstruction syntax), but we still
+  ; need to verify that we're only using this path when resolving a function
+  ; access to the target type, not the target type itself
+  node dot_guard_pop
+  attr (dot_guard_pop) pop_symbol = "."
+  node dot_guard_push
+  attr (dot_guard_push) push_symbol = "."
+
+  edge @using.clause -> dot_guard_pop
+  edge dot_guard_pop -> dot_guard_push
+  edge dot_guard_push -> @id_path.right
 }
 
 @using [UsingDirective [UsingClause [UsingDeconstruction
     [UsingDeconstructionSymbols [UsingDeconstructionSymbol
-        @id_path [IdentifierPath]
+        @id_path [IdentifierPath @last_identifier [Identifier] .]
     ]]
 ]]] {
+  ; resolve the function to be used in the directive
   edge @id_path.left -> @using.lexical_scope
+
+  node dot
+  attr (dot) pop_symbol = "."
+  node last_identifier
+  attr (last_identifier) pop_symbol = (source-text @last_identifier)
+
+  edge @using.clause -> dot
+  edge dot -> last_identifier
+  edge last_identifier -> @id_path.right
 }
 
 @using [UsingDirective [UsingTarget @type_name [TypeName]]] {
+  ; resolve the target type of the directive
   edge @type_name.type_ref -> @using.lexical_scope
 }
+
+@using [UsingDirective [UsingTarget [TypeName @id_path [IdentifierPath]]]] {
+  node @id_path.target_left
+  node @id_path.target_right
+
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  edge @using.def -> @id_path.target_left
+  edge @id_path.target_right -> typeof
+  edge typeof -> @using.clause
+}
+
+;; Build a reverse path for the IdentifierPath that pops each identifier from
+;; left to right. This partial path "resolves" the target type and allows us to
+;; resume resolution from the attached library/function.
+
+[UsingTarget [TypeName [IdentifierPath @name [Identifier]]]] {
+  node @name.target_ref
+  attr (@name.target_ref) pop_symbol = (source-text @name)
+}
+
+[UsingTarget [TypeName @id_path [IdentifierPath @name [Identifier] .]]] {
+  edge @name.target_ref -> @id_path.target_right
+}
+
+[UsingTarget [TypeName [IdentifierPath
+    @left_name [Identifier] . [Period] . @right_name [Identifier]
+]]] {
+  node target_member
+  attr (target_member) pop_symbol = "."
+
+  edge @left_name.target_ref -> target_member
+  edge target_member -> @right_name.target_ref
+}
+
+[UsingTarget [TypeName @id_path [IdentifierPath . @name [Identifier]]]] {
+  edge @id_path.target_left -> @name.target_ref
+}
+
+; FIXME: handle array target types
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

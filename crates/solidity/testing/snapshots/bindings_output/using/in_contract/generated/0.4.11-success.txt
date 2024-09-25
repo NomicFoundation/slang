@@ -45,5 +45,5 @@ References and definitions:
     │         ┬ ────┬────  
     │         ╰──────────── ref: 8
     │               │      
-    │               ╰────── unresolved
+    │               ╰────── ref: 4
 ────╯
