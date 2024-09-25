@@ -12,5 +12,6 @@ mod libraries;
 mod mappings;
 mod modifiers;
 mod structs;
+mod using;
 mod variables;
 mod yul;

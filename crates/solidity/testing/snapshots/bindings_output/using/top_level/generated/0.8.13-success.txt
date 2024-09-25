@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ struct Counter {
+    │        ───┬───  
+    │           ╰───── def: 1
+  2 │     uint value;
+    │          ──┬──  
+    │            ╰──── def: 2
+    │ 
+  5 │ function increment(Counter memory _counter) public {}
+    │          ────┬──── ───┬───        ────┬───  
+    │              ╰────────────────────────────── def: 3
+    │                       │               │     
+    │                       ╰───────────────────── ref: 1
+    │                                       │     
+    │                                       ╰───── def: 4
+    │ 
+  7 │ using {increment} for Counter;
+    │        ────┬────      ───┬───  
+    │            ╰─────────────────── unresolved
+    │                          │     
+    │                          ╰───── unresolved
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 5
+ 10 │     function test(Counter memory c) public {
+    │              ──┬─ ───┬───        ┬  
+    │                ╰──────────────────── def: 6
+    │                      │           │  
+    │                      ╰────────────── ref: 1
+    │                                  │  
+    │                                  ╰── def: 7
+ 11 │         c.increment();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 7
+    │               │      
+    │               ╰────── unresolved
+────╯
