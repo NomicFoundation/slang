@@ -280,7 +280,7 @@ inherit .enclosing_def
 ]]] {
   ;; Resolve contract bases names through the parent scope of the contract (aka
   ;; the source unit)
-  edge @type_name.left -> @contract.parent_scope
+  edge @type_name.push_end -> @contract.parent_scope
 
   ;; Make base members accesible as our own members
   node member
@@ -291,21 +291,21 @@ inherit .enclosing_def
 
   edge @contract.members -> member
   edge member -> typeof
-  edge typeof -> @type_name.right
+  edge typeof -> @type_name.push_begin
 
   ;; Make base contract defs (eg. enums and structs) accessible as our own
   node type_member
   attr (type_member) push_symbol = "."
 
   edge @contract.type_members -> type_member
-  edge type_member -> @type_name.right
+  edge type_member -> @type_name.push_begin
 
   ;; The base contract defs are directly accesible through our special super scope
-  edge @contract.super_scope -> @type_name.right
+  edge @contract.super_scope -> @type_name.push_begin
 }
 
 @parent [InheritanceType @type_name [IdentifierPath]] {
-  let @parent.ref = @type_name.ref
+  let @parent.ref = @type_name.push_begin
 }
 
 ;; NOTE: we use anchors here to prevent the query engine from returning all the
@@ -395,7 +395,7 @@ inherit .enclosing_def
     ]]]
 ]]] {
   ;; Resolve overriden bases when listed in the function modifiers
-  edge @base_ident.left -> @contract.parent_scope
+  edge @base_ident.push_end -> @contract.parent_scope
 }
 
 
@@ -529,7 +529,7 @@ inherit .enclosing_def
 
 @using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
   ; resolve the library to be used in the directive
-  edge @id_path.left -> @using.lexical_scope
+  edge @id_path.push_end -> @using.lexical_scope
 
   ; because we're using the whole library, we don't need to "consume" the
   ; attached function (as when using the deconstruction syntax), but we still
@@ -542,25 +542,25 @@ inherit .enclosing_def
 
   edge @using.clause -> dot_guard_pop
   edge dot_guard_pop -> dot_guard_push
-  edge dot_guard_push -> @id_path.right
+  edge dot_guard_push -> @id_path.push_begin
 }
 
 @using [UsingDirective [UsingClause [UsingDeconstruction
     [UsingDeconstructionSymbols [UsingDeconstructionSymbol
-        @id_path [IdentifierPath @last_identifier [Identifier] .]
+        @id_path [IdentifierPath]
     ]]
 ]]] {
   ; resolve the function to be used in the directive
-  edge @id_path.left -> @using.lexical_scope
+  edge @id_path.push_end -> @using.lexical_scope
 
   node dot
   attr (dot) pop_symbol = "."
   node last_identifier
-  attr (last_identifier) pop_symbol = (source-text @last_identifier)
+  attr (last_identifier) pop_symbol = (source-text @id_path.rightmost_identifier)
 
   edge @using.clause -> dot
   edge dot -> last_identifier
-  edge last_identifier -> @id_path.right
+  edge last_identifier -> @id_path.push_begin
 }
 
 @using [UsingDirective [UsingTarget @type_name [TypeName]]] {
@@ -569,42 +569,12 @@ inherit .enclosing_def
 }
 
 @using [UsingDirective [UsingTarget [TypeName @id_path [IdentifierPath]]]] {
-  node @id_path.target_left
-  node @id_path.target_right
-
   node typeof
   attr (typeof) pop_symbol = "@typeof"
 
-  edge @using.def -> @id_path.target_left
-  edge @id_path.target_right -> typeof
+  edge @using.def -> @id_path.pop_begin
+  edge @id_path.pop_end -> typeof
   edge typeof -> @using.clause
-}
-
-;; Build a reverse path for the IdentifierPath that pops each identifier from
-;; left to right. This partial path "resolves" the target type and allows us to
-;; resume resolution from the attached library/function.
-
-[UsingTarget [TypeName [IdentifierPath @name [Identifier]]]] {
-  node @name.target_ref
-  attr (@name.target_ref) pop_symbol = (source-text @name)
-}
-
-[UsingTarget [TypeName @id_path [IdentifierPath @name [Identifier] .]]] {
-  edge @name.target_ref -> @id_path.target_right
-}
-
-[UsingTarget [TypeName [IdentifierPath
-    @left_name [Identifier] . [Period] . @right_name [Identifier]
-]]] {
-  node target_member
-  attr (target_member) pop_symbol = "."
-
-  edge @left_name.target_ref -> target_member
-  edge target_member -> @right_name.target_ref
-}
-
-[UsingTarget [TypeName @id_path [IdentifierPath . @name [Identifier]]]] {
-  edge @id_path.target_left -> @name.target_ref
 }
 
 ; FIXME: handle array target types
@@ -627,11 +597,11 @@ inherit .enclosing_def
   ;; For an identifier path used as a type, the left-most element is the one
   ;; that connects to the parent lexical scope, because the name resolution
   ;; starts at the left of the identifier.
-  edge @id_path.left -> @type_name.type_ref
+  edge @id_path.push_end -> @type_name.type_ref
 
   ;; Conversely, the complete type is found at the right-most name, and that's
   ;; where users of this type should link to (eg. a variable declaration).
-  edge @type_name.output -> @id_path.right
+  edge @type_name.output -> @id_path.push_begin
 }
 
 @type_name [TypeName @mapping [MappingType]] {
@@ -660,7 +630,7 @@ inherit .enclosing_def
 }
 
 @mapping [MappingType [MappingKey [MappingKeyType @key_ident [IdentifierPath]]]] {
-  edge @key_ident.left -> @mapping.lexical_scope
+  edge @key_ident.push_end -> @mapping.lexical_scope
 }
 
 @mapping [MappingType [MappingValue @value_type [TypeName]]] {
@@ -739,32 +709,48 @@ inherit .enclosing_def
 ;;; Identifier Paths (aka. references to custom types)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; The identifier path constructs a path of nodes connected from right to left
-@id_path [IdentifierPath] {
-  node @id_path.left
-  node @id_path.right
-}
+;; The identifier path builds two graph paths:
+;;
+;; - From right to left, pushing the identifiers and acting as a "reference".
+;;   This path begins at @id_path.push_begin and ends at @id_path.push_end.
+;;
+;; - From left to right, popping the identifiers (used as a definition sink in
+;;   using directives). This path begins at @id_path.pop_begin and ends at
+;;   @id_path.pop_end.
 
 [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
+
+  node @name.pop
+  attr (@name.pop) pop_symbol = (source-text @name)
 }
 
 @id_path [IdentifierPath @name [Identifier] .] {
-  edge @id_path.right -> @name.ref
+  let @id_path.rightmost_identifier = @name
   let @id_path.ref = @name.ref
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.pop_end = @name.pop
 }
 
 [IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
-  node member
-  attr (member) push_symbol = "."
+  node ref_member
+  attr (ref_member) push_symbol = "."
 
-  edge @right_name.ref -> member
-  edge member -> @left_name.ref
+  edge @right_name.ref -> ref_member
+  edge ref_member -> @left_name.ref
+
+  node pop_member
+  attr (pop_member) pop_symbol = "."
+
+  edge @left_name.pop -> pop_member
+  edge pop_member -> @right_name.pop
 }
 
 @id_path [IdentifierPath . @name [Identifier]] {
-  edge @name.ref -> @id_path.left
+  let @id_path.push_end = @name.ref
+  let @id_path.pop_begin = @name.pop
 }
 
 
@@ -864,7 +850,7 @@ inherit .enclosing_def
 @modifier [ModifierInvocation @name [IdentifierPath]] {
   node @modifier.lexical_scope
 
-  edge @name.left -> @modifier.lexical_scope
+  edge @name.push_end -> @modifier.lexical_scope
 }
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
@@ -1266,7 +1252,7 @@ inherit .enclosing_def
 ;;; Revert statements
 
 @stmt [Statement [RevertStatement @error_ident [IdentifierPath]]] {
-  edge @error_ident.left -> @stmt.lexical_scope
+  edge @error_ident.push_end -> @stmt.lexical_scope
 }
 
 @stmt [Statement [RevertStatement @args [ArgumentsDeclaration]]] {
@@ -1277,7 +1263,7 @@ inherit .enclosing_def
     @error_ident [IdentifierPath]
     @args [ArgumentsDeclaration]
 ]] {
-  edge @args.refs -> @error_ident.right
+  edge @args.refs -> @error_ident.push_begin
 }
 
 
@@ -1295,9 +1281,9 @@ inherit .enclosing_def
     @event_ident [IdentifierPath]
     @args [ArgumentsDeclaration]
 ]] {
-  edge @event_ident.left -> @stmt.lexical_scope
+  edge @event_ident.push_end -> @stmt.lexical_scope
   edge @args.lexical_scope -> @stmt.lexical_scope
-  edge @args.refs -> @event_ident.right
+  edge @args.refs -> @event_ident.push_begin
 }
 
 ;;; Unchecked
