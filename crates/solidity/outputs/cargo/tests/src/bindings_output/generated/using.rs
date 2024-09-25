@@ -10,6 +10,16 @@ fn deconstruction() -> Result<()> {
 }
 
 #[test]
+fn elementary() -> Result<()> {
+    run("using", "elementary")
+}
+
+#[test]
+fn elementary_arrays() -> Result<()> {
+    run("using", "elementary_arrays")
+}
+
+#[test]
 fn in_contract() -> Result<()> {
     run("using", "in_contract")
 }

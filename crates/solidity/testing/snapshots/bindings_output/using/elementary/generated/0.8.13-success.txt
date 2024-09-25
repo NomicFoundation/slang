@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ function square(int value) returns (int) {}
+   │          ───┬──     ──┬──  
+   │             ╰────────────── def: 1
+   │                       │    
+   │                       ╰──── def: 2
+   │ 
+ 3 │ using {square} for int;
+   │        ───┬──  
+   │           ╰──── ref: 1
+   │ 
+ 5 │ function test(int x) returns (int) {
+   │          ──┬─     ┬  
+   │            ╰───────── def: 3
+   │                   │  
+   │                   ╰── def: 4
+ 6 │     return x.square();
+   │            ┬ ───┬──  
+   │            ╰───────── ref: 4
+   │                 │    
+   │                 ╰──── unresolved
+───╯
