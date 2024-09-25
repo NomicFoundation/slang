@@ -516,14 +516,17 @@ inherit .enclosing_def
 ;;; Using directives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; The UsingDirective node requires the enclosing context to setup a
+;; .lexical_scope scoped variable for it to resolve both targets and subjects.
+
 @using [UsingDirective] {
-  ; this node acts as a definition in the sense that provides an entry point
+  ; This node acts as a definition in the sense that provides an entry point
   ; that pops the target type and pushes the library/functions to attach to the
   ; target type
   node @using.def
 
-  ; this node connects the other end of the popping path starting at .def and
-  ; resolves for the library/functions in the directive
+  ; This internal node connects the other end of the popping path starting at
+  ; .def and resolves for the library/functions in the directive
   node @using.clause
 }
 
@@ -577,6 +580,20 @@ inherit .enclosing_def
   edge typeof -> @using.clause
 }
 
+@using [UsingDirective [UsingTarget [TypeName @elementary [ElementaryType]]]] {
+  node type_pop
+  attr (type_pop) pop_symbol = @elementary.symbol
+
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  edge @using.def -> type_pop
+  edge type_pop -> typeof
+  edge typeof -> @using.clause
+}
+
+
+
 ; FIXME: handle array target types
 
 
@@ -588,11 +605,11 @@ inherit .enclosing_def
 ;;
 ;; - @type_name.type_ref represents the node in the graph where we're ready to
 ;;   resolve the type, and thus should generally be connected to a (lexical)
-;;   scope node (outgoing node).
+;;   scope node (source node, outside edges connect *from* here).
 ;;
 ;; - @type_name.output represents the other end of the type and corresponds to a
 ;;   state where the type has already been resolved so we can, for example
-;;   resolve its members (incoming node).
+;;   resolve its members (sink node, outside edges connect *to* here).
 
 @type_name [TypeName @elementary [ElementaryType]] {
   let @type_name.type_ref = @elementary.ref
@@ -751,6 +768,11 @@ inherit .enclosing_def
 ;; - From left to right, popping the identifiers (used as a definition sink in
 ;;   using directives). This path begins at @id_path.pop_begin and ends at
 ;;   @id_path.pop_end.
+;;
+;;   NOTE: most of the time, and unless this identifier path is the target of a
+;;   using directive this path will not be used and will form a disconnected
+;;   graph component. We currently have no way of determining when this path is
+;;   necessary, so we always construct it.
 ;;
 ;; Additionally the IdentifierPath defines another scoped variable
 ;; @id_path.rightmost_identifier which corresponds to the identifier in the last

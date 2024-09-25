@@ -22,5 +22,5 @@ References and definitions:
    │            ┬ ───┬──  
    │            ╰───────── ref: 4
    │                 │    
-   │                 ╰──── unresolved
+   │                 ╰──── ref: 1
 ───╯
