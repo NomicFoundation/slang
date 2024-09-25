@@ -26,11 +26,11 @@ References and definitions:
     │            ╰─── def: 6
  10 │     using Lib for Lib.Counter;
     │           ─┬─     ─┬─ ───┬───  
-    │            ╰─────────────────── unresolved
+    │            ╰─────────────────── ref: 1
     │                    │     │     
-    │                    ╰─────────── unresolved
+    │                    ╰─────────── ref: 1
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── ref: 2
     │ 
  12 │     function test(Lib.Counter memory c) public {
     │              ──┬─ ─┬─ ───┬───        ┬  

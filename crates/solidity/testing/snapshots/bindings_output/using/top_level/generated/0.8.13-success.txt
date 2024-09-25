@@ -20,9 +20,9 @@ References and definitions:
     │ 
   7 │ using {increment} for Counter;
     │        ────┬────      ───┬───  
-    │            ╰─────────────────── unresolved
+    │            ╰─────────────────── ref: 3
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── ref: 1
     │ 
   9 │ contract Test {
     │          ──┬─  

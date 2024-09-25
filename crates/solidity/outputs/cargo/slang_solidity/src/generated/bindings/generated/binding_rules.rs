@@ -57,6 +57,10 @@ inherit .enclosing_def
   edge @source_unit.defs -> @unit_member.def
 }
 
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
+  let @using.lexical_scope = @source_unit.lexical_scope
+}
+
 ;; ... and imports
 @source_unit [SourceUnit [SourceUnitMembers
      [SourceUnitMember [ImportDirective
@@ -335,6 +339,12 @@ inherit .enclosing_def
 }
 
 @contract [ContractDefinition [ContractMembers
+    [ContractMember @using [UsingDirective]]
+]] {
+  let @using.lexical_scope = @contract.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers
     [ContractMember @member (
           [EnumDefinition]
         | [StructDefinition]
@@ -443,6 +453,13 @@ inherit .enclosing_def
   edge @interface.members -> @function.def
 }
 
+[InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
+  ; using directives are not allowed in interfaces, but the grammar allows them
+  ; so we need to create an artificial node here to connect to created edges from
+  ; the internal nodes
+  let @using.lexical_scope = (node)
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Libraries
@@ -482,6 +499,33 @@ inherit .enclosing_def
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
   edge @library.members -> @member.def
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @using [UsingDirective]]
+]] {
+  let @using.lexical_scope = @library.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Using directives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
+  edge @id_path.left -> @using.lexical_scope
+}
+
+@using [UsingDirective [UsingClause [UsingDeconstruction
+    [UsingDeconstructionSymbols [UsingDeconstructionSymbol
+        @id_path [IdentifierPath]
+    ]]
+]]] {
+  edge @id_path.left -> @using.lexical_scope
+}
+
+@using [UsingDirective [UsingTarget @type_name [TypeName]]] {
+  edge @type_name.type_ref -> @using.lexical_scope
 }
 
 

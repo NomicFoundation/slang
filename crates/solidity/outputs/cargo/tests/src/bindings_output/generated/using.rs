@@ -5,11 +5,6 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
-fn aliased() -> Result<()> {
-    run("using", "aliased")
-}
-
-#[test]
 fn deconstruction() -> Result<()> {
     run("using", "deconstruction")
 }

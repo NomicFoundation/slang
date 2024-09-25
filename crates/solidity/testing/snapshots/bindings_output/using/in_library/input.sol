@@ -8,4 +8,8 @@ library Lib {
 
 library Utils {
     using Lib for Lib.Counter;
+
+    function test(Lib.Counter memory c) public {
+        c.increment();
+    }
 }
