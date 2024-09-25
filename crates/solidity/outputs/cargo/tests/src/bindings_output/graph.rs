@@ -245,12 +245,27 @@ fn render_dot_subgraph<'a>(
                 let node_id = self.node_id(node);
 
                 match node_type {
-                    Some("push_symbol") => writeln!(
-                        f,
-                        "\t{node_id} [label = {node_label}, shape = \"invhouse\"]"
-                    )?,
+                    Some("push_symbol") => {
+                        let extra_attrs = if graph_node.attributes.get("is_reference").is_some() {
+                            ", penwidth = 2, color = \"limegreen\", fontcolor = \"limegreen\""
+                        } else {
+                            ", color = \"lightgreen\", fontcolor = \"lightgreen\""
+                        };
+                        writeln!(
+                            f,
+                            "\t{node_id} [label = {node_label}, shape = \"invhouse\"{extra_attrs}]"
+                        )?;
+                    }
                     Some("pop_symbol") => {
-                        writeln!(f, "\t{node_id} [label = {node_label}, shape = \"house\"]")?;
+                        let extra_attrs = if graph_node.attributes.get("is_definition").is_some() {
+                            ", penwidth = 2, color = \"red\", fontcolor = \"red\""
+                        } else {
+                            ", color = \"coral\", fontcolor = \"coral\""
+                        };
+                        writeln!(
+                            f,
+                            "\t{node_id} [label = {node_label}, shape = \"house\"{extra_attrs}]"
+                        )?;
                     }
                     _ => writeln!(f, "\t{node_id} [label = {node_label}]")?,
                 }
