@@ -579,39 +579,73 @@ inherit .enclosing_def
 ;;; Type names
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@type_name [TypeName] {
-  ;; This node should connect to the parent lexical scope to resolve the type
-  node @type_name.type_ref
+;; TypeName nodes should define two scoped variables:
+;;
+;; - @type_name.type_ref represents the node in the graph where we're ready to
+;;   resolve the type, and thus should generally be connected to a (lexical)
+;;   scope node (outgoing node).
+;;
+;; - @type_name.output represents the other end of the type and corresponds to a
+;;   state where the type has already been resolved so we can, for example
+;;   resolve its members (incoming node).
 
-  ;; This represents the output of the type, ie. the node to which a variable
-  ;; that is of this type should connect through a @typeof node
-  node @type_name.output
+@type_name [TypeName @elementary [ElementaryType]] {
+  let @type_name.type_ref = @elementary.ref
+  let @type_name.output = @elementary.ref
 }
 
 @type_name [TypeName @id_path [IdentifierPath]] {
   ;; For an identifier path used as a type, the left-most element is the one
   ;; that connects to the parent lexical scope, because the name resolution
   ;; starts at the left of the identifier.
-  edge @id_path.push_end -> @type_name.type_ref
+  let @type_name.type_ref = @id_path.push_end
 
   ;; Conversely, the complete type is found at the right-most name, and that's
   ;; where users of this type should link to (eg. a variable declaration).
-  edge @type_name.output -> @id_path.push_begin
+  let @type_name.output = @id_path.push_begin
 }
 
 @type_name [TypeName @mapping [MappingType]] {
-  edge @mapping.lexical_scope -> @type_name.type_ref
-  edge @type_name.output -> @mapping.output
+  let @type_name.type_ref = @mapping.lexical_scope
+  let @type_name.output = @mapping.output
 }
 
 @type_name [TypeName @array [ArrayTypeName]] {
-  edge @array.lexical_scope -> @type_name.type_ref
-  edge @type_name.output -> @array.output
+  let @type_name.type_ref = @array.lexical_scope
+  let @type_name.output = @array.output
 }
 
 @type_name [TypeName @ftype [FunctionType]] {
-  edge @ftype.lexical_scope -> @type_name.type_ref
-  edge @type_name.output -> @ftype.output
+  let @type_name.type_ref = @ftype.lexical_scope
+  let @type_name.output = @ftype.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Elementary types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@elementary [ElementaryType] {
+  node @elementary.ref
+  attr (@elementary.ref) type = "push_symbol"
+  attr (@elementary.ref) source_node = @elementary, symbol = @elementary.symbol
+}
+
+@elementary [ElementaryType variant: [AddressType @address [AddressKeyword]]] {
+  let @elementary.symbol = (format "@builtInType@{}" (source-text @address))
+}
+
+@elementary [ElementaryType @keyword (
+      [BoolKeyword]
+    | [ByteKeyword]
+    | [BytesKeyword]
+    | [StringKeyword]
+    | [IntKeyword]
+    | [UintKeyword]
+    | [FixedKeyword]
+    | [UfixedKeyword]
+)] {
+  let @elementary.symbol = (format "@builtInType@{}" (source-text @keyword))
 }
 
 
@@ -712,6 +746,11 @@ inherit .enclosing_def
 ;; - From left to right, popping the identifiers (used as a definition sink in
 ;;   using directives). This path begins at @id_path.pop_begin and ends at
 ;;   @id_path.pop_end.
+;;
+;; Additionally the IdentifierPath defines another scoped variable
+;; @id_path.rightmost_identifier which corresponds to the identifier in the last
+;; position in the path, from left to right. Useful for the using directive to
+;; be able to pop the name of the attached function.
 
 [IdentifierPath @name [Identifier]] {
   node @name.ref
@@ -723,7 +762,6 @@ inherit .enclosing_def
 
 @id_path [IdentifierPath @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
-  let @id_path.ref = @name.ref
 
   let @id_path.push_begin = @name.ref
   let @id_path.pop_end = @name.pop
