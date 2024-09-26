@@ -60,7 +60,13 @@ inherit .enclosing_def
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
   let @using.lexical_scope = @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @using.def
-  ; FIXME: if the using directive is global, its def should also be linked to @source_unit.defs
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember
+    @using [UsingDirective [GlobalKeyword]]
+]]] {
+  ; global using directives are exported by this source unit
+  edge @source_unit.defs -> @using.def
 }
 
 ;; ... and imports
@@ -783,7 +789,8 @@ inherit .enclosing_def
 @ftype [FunctionType [ReturnsDeclaration
     [ParametersDeclaration [Parameters . @param [Parameter] .]]
 ]] {
-  ; variables of a function type type can be "called"
+  ; variables of a function type type can be "called" and resolve to the type of
+  ; the return parameter
   node typeof
   attr (typeof) pop_symbol = "@typeof"
 

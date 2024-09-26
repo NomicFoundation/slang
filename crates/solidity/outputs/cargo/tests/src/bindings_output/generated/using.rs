@@ -25,6 +25,11 @@ fn function_types() -> Result<()> {
 }
 
 #[test]
+fn global() -> Result<()> {
+    run("using", "global")
+}
+
+#[test]
 fn in_contract() -> Result<()> {
     run("using", "in_contract")
 }
