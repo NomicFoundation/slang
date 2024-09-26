@@ -780,6 +780,20 @@ inherit .enclosing_def
   edge @return_params.lexical_scope -> @ftype.lexical_scope
 }
 
+@ftype [FunctionType [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  ; variables of a function type type can be "called"
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @ftype.output -> typeof
+  edge typeof -> call
+  edge call -> @param.typeof
+}
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
