@@ -2,12 +2,12 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[input.sol:1:1]
-   │
- 1 │ ╭─▶ function first(uint[] memory values) returns (uint) {
-   ┆ ┆   
- 9 │ ├─▶ }
-   │ │       
-   │ ╰─────── Error occurred here.
-───╯
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─▶ using {invoke} for function(uint);
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
 References and definitions: 

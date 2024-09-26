@@ -2,20 +2,23 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or ContractKeyword or EnumKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:3:1]
+   ╭─[input.sol:5:1]
    │
- 3 │ ╭─▶ using {sum} for uint[];
+ 5 │ ╭─▶ using {first} for uint[];
    ┆ ┆   
- 7 │ ├─▶ }
+ 9 │ ├─▶ }
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
 References and definitions: 
    ╭─[input.sol:1:1]
    │
- 1 │ function sum(uint[] memory values) returns (uint) {}
-   │          ─┬─               ───┬──  
-   │           ╰──────────────────────── def: 1
-   │                               │    
-   │                               ╰──── def: 2
+ 1 │ function first(uint[] memory values) returns (uint) {
+   │          ──┬──               ───┬──  
+   │            ╰───────────────────────── def: 1
+   │                                 │    
+   │                                 ╰──── def: 2
+ 2 │     return values[0];
+   │            ───┬──  
+   │               ╰──── ref: 2
 ───╯

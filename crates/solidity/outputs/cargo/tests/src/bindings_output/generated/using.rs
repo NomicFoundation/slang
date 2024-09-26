@@ -20,6 +20,11 @@ fn elementary_arrays() -> Result<()> {
 }
 
 #[test]
+fn function_types() -> Result<()> {
+    run("using", "function_types")
+}
+
+#[test]
 fn in_contract() -> Result<()> {
     run("using", "in_contract")
 }

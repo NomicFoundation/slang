@@ -567,34 +567,17 @@ inherit .enclosing_def
 }
 
 @using [UsingDirective [UsingTarget @type_name [TypeName]]] {
+  ; pop the type symbols to connect to the attached function (via @using.clause)
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  edge @using.def -> @type_name.pop_begin
+  edge @type_name.pop_end -> typeof
+  edge typeof -> @using.clause
+
   ; resolve the target type of the directive
   edge @type_name.type_ref -> @using.lexical_scope
 }
-
-@using [UsingDirective [UsingTarget [TypeName @id_path [IdentifierPath]]]] {
-  node typeof
-  attr (typeof) pop_symbol = "@typeof"
-
-  edge @using.def -> @id_path.pop_begin
-  edge @id_path.pop_end -> typeof
-  edge typeof -> @using.clause
-}
-
-@using [UsingDirective [UsingTarget [TypeName @elementary [ElementaryType]]]] {
-  node type_pop
-  attr (type_pop) pop_symbol = @elementary.symbol
-
-  node typeof
-  attr (typeof) pop_symbol = "@typeof"
-
-  edge @using.def -> type_pop
-  edge type_pop -> typeof
-  edge typeof -> @using.clause
-}
-
-
-
-; FIXME: handle array target types
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -614,6 +597,8 @@ inherit .enclosing_def
 @type_name [TypeName @elementary [ElementaryType]] {
   let @type_name.type_ref = @elementary.ref
   let @type_name.output = @elementary.ref
+  let @type_name.pop_begin = @elementary.pop
+  let @type_name.pop_end = @elementary.pop
 }
 
 @type_name [TypeName @id_path [IdentifierPath]] {
@@ -625,21 +610,21 @@ inherit .enclosing_def
   ;; Conversely, the complete type is found at the right-most name, and that's
   ;; where users of this type should link to (eg. a variable declaration).
   let @type_name.output = @id_path.push_begin
+
+  let @type_name.pop_begin = @id_path.pop_begin
+  let @type_name.pop_end = @id_path.pop_end
+}
+
+@type_name [TypeName @type_variant ([ArrayTypeName] | [FunctionType])] {
+  let @type_name.type_ref = @type_variant.lexical_scope
+  let @type_name.output = @type_variant.output
+  let @type_name.pop_begin = @type_variant.pop_begin
+  let @type_name.pop_end = @type_variant.pop_end
 }
 
 @type_name [TypeName @mapping [MappingType]] {
   let @type_name.type_ref = @mapping.lexical_scope
   let @type_name.output = @mapping.output
-}
-
-@type_name [TypeName @array [ArrayTypeName]] {
-  let @type_name.type_ref = @array.lexical_scope
-  let @type_name.output = @array.output
-}
-
-@type_name [TypeName @ftype [FunctionType]] {
-  let @type_name.type_ref = @ftype.lexical_scope
-  let @type_name.output = @ftype.output
 }
 
 
@@ -651,10 +636,13 @@ inherit .enclosing_def
   node @elementary.ref
   attr (@elementary.ref) type = "push_symbol"
   attr (@elementary.ref) source_node = @elementary, symbol = @elementary.symbol
+
+  node @elementary.pop
+  attr (@elementary.pop) pop_symbol = @elementary.symbol
 }
 
 @elementary [ElementaryType variant: [AddressType @address [AddressKeyword]]] {
-  let @elementary.symbol = (format "@builtInType@{}" (source-text @address))
+  let @elementary.symbol = (format "%{}" (source-text @address))
 }
 
 @elementary [ElementaryType @keyword (
@@ -667,7 +655,7 @@ inherit .enclosing_def
     | [FixedKeyword]
     | [UfixedKeyword]
 )] {
-  let @elementary.symbol = (format "@builtInType@{}" (source-text @keyword))
+  let @elementary.symbol = (format "%{}" (source-text @keyword))
 }
 
 
@@ -681,12 +669,15 @@ inherit .enclosing_def
 }
 
 @mapping [MappingType [MappingKey [MappingKeyType @key_ident [IdentifierPath]]]] {
+  ; resolve key type
   edge @key_ident.push_end -> @mapping.lexical_scope
 }
 
 @mapping [MappingType [MappingValue @value_type [TypeName]]] {
-  edge @value_type.type_ref -> @mapping.lexical_scope
+  ; for mapping types we don't need to push the type itself, because we don't need it (yet)
+  ; ditto for the pop path, because a mapping type cannot be the target of a using directive
 
+  ;; The mapping's type exposes the `[]` operator that returns the value type
   node typeof_input
   attr (typeof_input) pop_symbol = "@typeof"
 
@@ -696,11 +687,13 @@ inherit .enclosing_def
   node typeof_output
   attr (typeof_output) push_symbol = "@typeof"
 
-  ;; The mapping's type exposes the `[]` operator that returns the value type
   edge @mapping.output -> typeof_input
   edge typeof_input -> index
   edge index -> typeof_output
   edge typeof_output -> @value_type.output
+
+  ; resolve the value type through our scope
+  edge @value_type.type_ref -> @mapping.lexical_scope
 }
 
 
@@ -714,8 +707,16 @@ inherit .enclosing_def
 }
 
 @array [ArrayTypeName @type_name [TypeName]] {
-  edge @type_name.type_ref -> @array.lexical_scope
+  ; This path pushes the array type to the symbol stack (ie. the [] marker +
+  ; element type)
+  node array_type
+  attr (array_type) push_symbol = "%[]"
 
+  edge @array.output -> array_type
+  edge array_type -> @type_name.output
+
+  ; Provide an index access `[]` operator that "returns" the type of the
+  ; elements of the array
   node typeof_input
   attr (typeof_input) pop_symbol = "@typeof"
 
@@ -725,11 +726,21 @@ inherit .enclosing_def
   node typeof_output
   attr (typeof_output) push_symbol = "@typeof"
 
-  ;; The array type exposes the `[]` operator that returns the value type
   edge @array.output -> typeof_input
   edge typeof_input -> index
   edge index -> typeof_output
   edge typeof_output -> @type_name.output
+
+  ; finally resolve the inner type through our parent scope
+  edge @type_name.type_ref -> @array.lexical_scope
+
+  ; the pop path for the using directive
+  node pop_array_type
+  attr (pop_array_type) pop_symbol = "%[]"
+
+  let @array.pop_begin = @type_name.pop_begin
+  edge @type_name.pop_end -> pop_array_type
+  let @array.pop_end = pop_array_type
 }
 
 @array [ArrayTypeName @size index: [Expression]] {
@@ -744,6 +755,21 @@ inherit .enclosing_def
 @ftype [FunctionType] {
   node @ftype.lexical_scope
   node @ftype.output
+
+  ; This path pushes the function type to the symbol stack
+  ; TODO: add parameter and return types to distinguish between different function types
+  node function_type
+  attr (function_type) push_symbol = "%function"
+
+  edge @ftype.output -> function_type
+  edge function_type -> @ftype.lexical_scope
+
+  ; the pop path for the using directive
+  node pop_function_type
+  attr (pop_function_type) pop_symbol = "%function"
+
+  let @ftype.pop_begin = pop_function_type
+  let @ftype.pop_end = pop_function_type
 }
 
 @ftype [FunctionType @params [ParametersDeclaration]] {
@@ -854,6 +880,16 @@ inherit .enclosing_def
 @function [FunctionDefinition] {
   node @function.lexical_scope
   node @function.def
+
+  ; this path from the function definition to the scope allows attaching
+  ; functions to this function's type
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type_function
+  attr (type_function) push_symbol = "%function"
+  edge @function.def -> typeof
+  edge typeof -> type_function
+  edge type_function -> @function.lexical_scope
 }
 
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
