@@ -6638,7 +6638,7 @@ codegen_language_macros::compile!(Language(
         ),
         BuiltInFunction(name = "revert", parameters = ["string memory reason"]),
         BuiltInType(
-            name = "$BuiltIn$Address",
+            name = "$address",
             fields = [
                 BuiltInField(definition = "uint256 balance"),
                 BuiltInField(definition = "bytes code", enabled = From("0.8.0"))
@@ -6650,7 +6650,7 @@ codegen_language_macros::compile!(Language(
             )]
         ),
         BuiltInType(
-            name = "$BuiltIn$TxType",
+            name = "$txType",
             fields = [
                 BuiltInField(definition = "uint gasprice"),
                 BuiltInField(definition = "address payable origin")
@@ -6658,6 +6658,6 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInVariable(definition = "uint now"),
-        BuiltInVariable(definition = "$BuiltIn$TxType tx")
+        BuiltInVariable(definition = "$txType tx")
     ]
 ));

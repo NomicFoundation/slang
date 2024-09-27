@@ -4,14 +4,14 @@ contract $BuiltIns$ {
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function revert(string memory reason) public;
-  struct $BuiltIn$Address {
+  struct $address {
     uint256 balance;
     function(uint256 amount) returns (bool) send;
   }
-  struct $BuiltIn$TxType {
+  struct $txType {
     uint gasprice;
     address payable origin;
   }
   uint now;
-  $BuiltIn$TxType tx;
+  $txType tx;
 }

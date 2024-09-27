@@ -6,15 +6,15 @@ contract $BuiltIns$ {
   function require(bool condition) public;
   function require(bool condition, string memory message) public;
   function revert(string memory reason) public;
-  struct $BuiltIn$Address {
+  struct $address {
     uint256 balance;
     bytes code;
     function(uint256 amount) returns (bool) send;
   }
-  struct $BuiltIn$TxType {
+  struct $txType {
     uint gasprice;
     address payable origin;
   }
   uint now;
-  $BuiltIn$TxType tx;
+  $txType tx;
 }
