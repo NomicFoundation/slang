@@ -82,11 +82,12 @@ inherit .parent_scope
 
 ;; Special case for built-ins: we want to export all symbols in the contract:
 ;; functions, types and state variables. All built-in symbols are defined in an
-;; internal contract named '$BuiltIns$' so we need to export all its members and
-;; type members directly as a source unit definition.
+;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
+;; to export all its members and type members directly as a source unit
+;; definition.
 ;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
 @source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["$BuiltIns$"]]]
+    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
 ]] {
   if (is-system-file FILE_PATH) {
     edge @source_unit.defs -> @contract.members
