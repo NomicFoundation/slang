@@ -21,6 +21,5 @@ contract $BuiltIns$ {
     uint gasprice;
     address payable origin;
   }
-  uint now;
   $txType tx;
 }

@@ -22,7 +22,7 @@ References and definitions:
    │                              │     │   
    │                              ╰───────── ref: 1
    │                                    │   
-   │                                    ╰─── unresolved
+   │                                    ╰─── ref: built-in
  5 │         Answer first = type(Answer).min;
    │         ───┬── ──┬──        ───┬──  ─┬─  
    │            ╰───────────────────────────── ref: 2
@@ -31,5 +31,5 @@ References and definitions:
    │                                │     │   
    │                                ╰───────── ref: 2
    │                                      │   
-   │                                      ╰─── unresolved
+   │                                      ╰─── ref: built-in
 ───╯

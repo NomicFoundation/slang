@@ -69,7 +69,7 @@ References and definitions:
     │                     ──────┬──────  ─┬─  
     │                           ╰───────────── ref: 2
     │                                     │   
-    │                                     ╰─── unresolved
+    │                                     ╰─── ref: built-in
     │ 
  29 │     function getSmallestValue() public pure returns (ActionChoices) {
     │              ────────┬───────                        ──────┬──────  
@@ -80,5 +80,5 @@ References and definitions:
     │                     ──────┬──────  ─┬─  
     │                           ╰───────────── ref: 2
     │                                     │   
-    │                                     ╰─── unresolved
+    │                                     ╰─── ref: built-in
 ────╯
