@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     uint last_time;
+   │          ────┬────  
+   │              ╰────── def: 2
+ 3 │     function foo() public {
+   │              ─┬─  
+   │               ╰─── def: 3
+ 4 │         address origin = tx.origin;
+   │                 ───┬──   ─┬ ───┬──  
+   │                    ╰──────────────── def: 4
+   │                           │    │    
+   │                           ╰───────── ref: built-in
+   │                                │    
+   │                                ╰──── ref: built-in
+ 5 │         last_time = now;
+   │         ────┬────   ─┬─  
+   │             ╰──────────── ref: 2
+   │                      │   
+   │                      ╰─── unresolved
+ 6 │         uint price = tx.gasprice;
+   │              ──┬──   ─┬ ────┬───  
+   │                ╰────────────────── def: 5
+   │                       │     │     
+   │                       ╰─────────── ref: built-in
+   │                             │     
+   │                             ╰───── ref: built-in
+───╯

@@ -4,8 +4,9 @@ pub use generated::*;
 
 #[cfg(feature = "__experimental_bindings_api")]
 pub fn transform_built_ins_node(node: &generated::cst::Node) -> generated::cst::Node {
-    use generated::cst::{Edge, Node, NonterminalNode, TerminalNode};
     use std::rc::Rc;
+
+    use generated::cst::{Edge, Node, NonterminalNode, TerminalNode};
 
     use crate::cst::TerminalKind;
 

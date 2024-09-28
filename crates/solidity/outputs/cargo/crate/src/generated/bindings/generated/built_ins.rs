@@ -6,8 +6,10 @@ use semver::Version;
 pub fn get_contents(version: &Version) -> &'static str {
     if *version < Version::new(0, 5, 0) {
         include_str!("./built_ins/0.4.11.sol")
-    } else if *version < Version::new(0, 8, 0) {
+    } else if *version < Version::new(0, 7, 0) {
         include_str!("./built_ins/0.5.0.sol")
+    } else if *version < Version::new(0, 8, 0) {
+        include_str!("./built_ins/0.7.0.sol")
     } else {
         include_str!("./built_ins/0.8.0.sol")
     }

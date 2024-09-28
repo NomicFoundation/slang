@@ -1,8 +1,9 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
+// This file is generated automatically. Do not edit by hand.
 contract $BuiltIns$ {
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
+  function require(bool condition) public;
+  function require(bool condition, string memory message) public;
   function revert(string memory reason) public;
   struct $address {
     uint256 balance;
@@ -20,6 +21,5 @@ contract $BuiltIns$ {
     uint gasprice;
     address payable origin;
   }
-  uint now;
   $txType tx;
 }

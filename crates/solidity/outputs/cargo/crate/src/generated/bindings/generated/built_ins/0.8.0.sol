@@ -11,10 +11,17 @@ contract $BuiltIns$ {
     bytes code;
     function(uint256 amount) returns (bool) send;
   }
+  struct $type {
+    string name;
+    bytes creationCode;
+    bytes runtimeCode;
+    bytes4 interfaceId;
+    int min;
+    int max;
+  }
   struct $txType {
     uint gasprice;
     address payable origin;
   }
-  uint now;
   $txType tx;
 }

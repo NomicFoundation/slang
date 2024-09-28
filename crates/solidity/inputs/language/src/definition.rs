@@ -6650,6 +6650,18 @@ codegen_language_macros::compile!(Language(
             )]
         ),
         BuiltInType(
+            name = "$type",
+            fields = [
+                BuiltInField(definition = "string name"),
+                BuiltInField(definition = "bytes creationCode"),
+                BuiltInField(definition = "bytes runtimeCode"),
+                BuiltInField(definition = "bytes4 interfaceId"),
+                BuiltInField(definition = "int min"),
+                BuiltInField(definition = "int max")
+            ],
+            functions = []
+        ),
+        BuiltInType(
             name = "$txType",
             fields = [
                 BuiltInField(definition = "uint gasprice"),
@@ -6657,7 +6669,7 @@ codegen_language_macros::compile!(Language(
             ],
             functions = []
         ),
-        BuiltInVariable(definition = "uint now"),
+        BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
         BuiltInVariable(definition = "$txType tx")
     ]
 ));
