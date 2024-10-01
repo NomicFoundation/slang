@@ -105,23 +105,27 @@ where
                 // Mark the rest of the unconsumed stream as skipped and report an error
                 // NOTE: IncompleteMatch internally consumes the stream when picked via choice,
                 // so needs a separate check here.
-                if start.utf8 < input.len() || is_incomplete || is_recovering {
+                if start < input.len() || is_incomplete || is_recovering {
                     let start = if is_recovering {
-                        topmost_node.text_len
+                        topmost_node.text_len.utf8
                     } else {
                         start
                     };
-                    let kind = if input[start.utf8..].is_empty() {
+                    let kind = if input[start..].is_empty() {
                         TerminalKind::MISSING
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
-                    let skipped_node = Node::terminal(kind, input[start.utf8..].to_string());
+                    let skipped_node = Node::terminal(kind, input[start..].to_string());
                     let mut new_children = topmost_node.children.clone();
                     new_children.push(Edge::anonymous(skipped_node));
 
+                    let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();
-                    errors.push(ParseError::new(start..input.into(), expected_terminals));
+                    errors.push(ParseError::new(
+                        start_index..input.into(),
+                        expected_terminals,
+                    ));
 
                     ParseOutput {
                         parse_tree: Node::nonterminal(topmost_node.kind, new_children),

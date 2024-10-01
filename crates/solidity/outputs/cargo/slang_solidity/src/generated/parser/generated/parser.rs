@@ -10959,7 +10959,7 @@ impl Lexer for Parser {
                         input.set_position(save);
 
                         // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+                        let ident_value = input.content(save..furthest_position);
 
                         for keyword_compound_scanner in [
                             Self::bytes_keyword,
@@ -13508,7 +13508,7 @@ impl Lexer for Parser {
                         input.set_position(save);
 
                         // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save.utf8..furthest_position.utf8);
+                        let ident_value = input.content(save..furthest_position);
 
                         for keyword_compound_scanner in [
                             Self::yul_bytes_keyword,
