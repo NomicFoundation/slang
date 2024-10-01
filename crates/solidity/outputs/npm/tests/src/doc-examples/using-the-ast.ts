@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 
 // --8<-- [start:imports]
 import assert from "node:assert";
-import { Language } from "@nomicfoundation/slang/parser";
+import { Parser } from "@nomicfoundation/slang/parser";
 import { NonterminalKind, NonterminalNode } from "@nomicfoundation/slang/cst";
 import { FunctionDefinition } from "@nomicfoundation/slang/ast";
 // --8<-- [end:imports]
@@ -13,9 +13,9 @@ test("using the ast", async () => {
   const source = (await fs.readFile(inputPath, "utf8")).trim();
 
   // --8<-- [start:parse-input]
-  const language = new Language("0.8.0");
+  const parser = new Parser("0.8.0");
 
-  const parseOutput = language.parse(NonterminalKind.FunctionDefinition, source);
+  const parseOutput = parser.parse(NonterminalKind.FunctionDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:create-node]

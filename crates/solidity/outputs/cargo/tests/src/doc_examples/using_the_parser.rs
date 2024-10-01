@@ -9,7 +9,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
     use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
-    use slang_solidity::parser::Language;
+    use slang_solidity::parser::Parser;
     // --8<-- [end:imports]
 
     let input_path = Path::repo_path("documentation/public/user-guide/inputs/using-the-parser.sol");
@@ -19,9 +19,9 @@ fn using_the_parser() -> Result<()> {
     let source = source.trim();
 
     // --8<-- [start:parse-input]
-    let language = Language::new(Version::parse("0.8.0")?)?;
+    let parser = Parser::new(Version::parse("0.8.0")?)?;
 
-    let parse_output = language.parse(NonterminalKind::ContractDefinition, source);
+    let parse_output = parser.parse(NonterminalKind::ContractDefinition, source);
     // --8<-- [end:parse-input]
 
     // --8<-- [start:print-errors]

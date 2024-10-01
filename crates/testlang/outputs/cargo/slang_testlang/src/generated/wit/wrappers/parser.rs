@@ -9,32 +9,32 @@ mod ffi {
     };
     pub use crate::wit::interface::exports::nomic_foundation::slang::diagnostic::Severity;
     pub use crate::wit::interface::exports::nomic_foundation::slang::parser::{
-        Guest, GuestLanguage, GuestParseError, GuestParseOutput, Language, LanguageBorrow,
-        NonterminalKind, ParseError, ParseErrorBorrow, ParseOutput, ParseOutputBorrow,
+        Guest, GuestParseError, GuestParseOutput, GuestParser, NonterminalKind, ParseError,
+        ParseErrorBorrow, ParseOutput, ParseOutputBorrow, Parser, ParserBorrow,
     };
 }
 
 mod rust {
-    pub use crate::parser::{Language, ParseError, ParseOutput};
+    pub use crate::parser::{ParseError, ParseOutput, Parser};
 }
 
 impl ffi::Guest for crate::wit::World {
-    type Language = LanguageWrapper;
+    type Parser = ParserWrapper;
     type ParseError = ParseErrorWrapper;
     type ParseOutput = ParseOutputWrapper;
 }
 
 //================================================
 //
-// resource language
+// resource parser
 //
 //================================================
 
-define_wrapper! { Language {
-    fn new(version: String) -> Result<ffi::Language, String> {
+define_wrapper! { Parser {
+    fn new(version: String) -> Result<ffi::Parser, String> {
         semver::Version::parse(&version)
             .map_err(|_| format!("Invalid version: {version}"))
-            .and_then(|version| rust::Language::new(version).map_err(|e| e.to_string()))
+            .and_then(|version| rust::Parser::new(version).map_err(|e| e.to_string()))
             .map(IntoFFI::_into_ffi)
     }
 
@@ -43,7 +43,7 @@ define_wrapper! { Language {
     }
 
     fn supported_versions() -> Vec<String> {
-        rust::Language::SUPPORTED_VERSIONS
+        rust::Parser::SUPPORTED_VERSIONS
             .iter()
             .map(|v| v.to_string())
             .collect()

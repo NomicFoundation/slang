@@ -10,7 +10,7 @@ Let's start with this simple source file, that contains a single contract:
 --8<-- "documentation/public/user-guide/inputs/using-the-parser.sol"
 ```
 
-We begin by creating a `Language` object with a specified version. This is an entry point for our parser API.
+We begin by creating a `Parser` object with a specified version. This is an entry point for our parser API.
 Then we can use it to parse the source file, specifying the top-level nonterminal to parse:
 
 ```{ .rust }

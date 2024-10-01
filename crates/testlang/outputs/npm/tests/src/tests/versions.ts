@@ -1,7 +1,7 @@
-import { Language } from "@slang-private/slang-testlang/parser";
+import { Parser } from "@slang-private/slang-testlang/parser";
 
 test("list supported versions", () => {
-  const versions = Language.supportedVersions();
+  const versions = Parser.supportedVersions();
 
   expect(versions.length).toBeGreaterThan(0);
 

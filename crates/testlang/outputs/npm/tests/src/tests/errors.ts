@@ -1,12 +1,12 @@
-import { Language } from "@slang-private/slang-testlang/parser";
+import { Parser } from "@slang-private/slang-testlang/parser";
 import { NonterminalKind, TextIndex } from "@slang-private/slang-testlang/cst";
 import { Severity } from "@slang-private/slang-testlang/diagnostic";
 
 test("render error reports", () => {
   const source = "tree [AB;";
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const errors = language.parse(NonterminalKind.SourceUnit, source).errors();
+  const errors = parser.parse(NonterminalKind.SourceUnit, source).errors();
   expect(errors).toHaveLength(1);
 
   expect(errors[0]!.severity()).toBe(Severity.Error);
@@ -16,9 +16,9 @@ test("render error reports", () => {
 });
 
 test("invalid semantic version", () => {
-  expect(() => new Language("foo_bar")).toThrow("Invalid semantic version 'foo_bar'.");
+  expect(() => new Parser("foo_bar")).toThrow("Invalid semantic version 'foo_bar'.");
 });
 
 test("unsupported language version", () => {
-  expect(() => new Language("0.0.0")).toThrow("Unsupported language version '0.0.0'.");
+  expect(() => new Parser("0.0.0")).toThrow("Unsupported language version '0.0.0'.");
 });

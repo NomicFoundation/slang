@@ -1,12 +1,12 @@
-import { Language } from "@slang-private/slang-testlang/parser";
+import { Parser } from "@slang-private/slang-testlang/parser";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
 import { Cursor, EdgeLabel, NodeType, NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
 
 test("use cursor", () => {
   const source = "tree [A [B C] D];";
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.SourceUnit, source);
+  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
   expectNonterminal(cursor.node(), NonterminalKind.SourceUnit);
@@ -93,8 +93,8 @@ test("use cursor", () => {
 
 test("access the node using its name", () => {
   const source = "tree [A [B C] D];";
-  const language = new Language("1.0.0");
-  const parseTree = language.parse(NonterminalKind.SourceUnit, source);
+  const parser = new Parser("1.0.0");
+  const parseTree = parser.parse(NonterminalKind.SourceUnit, source);
 
   const cursor = parseTree.createTreeCursor();
   let names: string[] = [];

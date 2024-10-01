@@ -2,7 +2,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::Version;
 use slang_solidity::cst::{NonterminalKind, Query, QueryMatchIterator};
-use slang_solidity::parser::Language;
+use slang_solidity::parser::Parser;
 
 static SNIPPET_MARKER_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new("// --8<-- \\[(start|end):([a-z0-9-]+)\\]").unwrap());
@@ -19,8 +19,8 @@ impl RemoveMkdocSnippetMarkers for &str {
 }
 
 fn assert_matches(query: &Query, kind: NonterminalKind, source: &str) -> QueryMatchIterator {
-    let language = Language::new(Version::new(0, 8, 12)).unwrap();
-    let cursor = language.parse(kind, source).create_tree_cursor();
+    let parser = Parser::new(Version::new(0, 8, 12)).unwrap();
+    let cursor = parser.parse(kind, source).create_tree_cursor();
 
     let tree = cursor.node();
     assert!(

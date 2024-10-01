@@ -879,22 +879,13 @@ pub fn slang_solidity::parser::ParseError::severity(&self) -> slang_solidity::di
 pub fn slang_solidity::parser::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
 pub fn slang_solidity::diagnostic::render<D: slang_solidity::diagnostic::Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> alloc::string::String
 pub mod slang_solidity::parser
-pub enum slang_solidity::parser::LanguageInitializationError
-pub slang_solidity::parser::LanguageInitializationError::UnsupportedLanguageVersion(semver::Version)
-impl core::error::Error for slang_solidity::parser::LanguageInitializationError
-impl core::fmt::Debug for slang_solidity::parser::LanguageInitializationError
-pub fn slang_solidity::parser::LanguageInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity::parser::LanguageInitializationError
-pub fn slang_solidity::parser::LanguageInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::parser::Language
-impl slang_solidity::parser::Language
-pub const slang_solidity::parser::Language::ROOT_KIND: slang_solidity::cst::NonterminalKind
-pub const slang_solidity::parser::Language::SUPPORTED_VERSIONS: &'static [semver::Version]
-pub fn slang_solidity::parser::Language::new(version: semver::Version) -> core::result::Result<Self, slang_solidity::parser::LanguageInitializationError>
-pub fn slang_solidity::parser::Language::parse(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput
-pub fn slang_solidity::parser::Language::version(&self) -> &semver::Version
-impl core::fmt::Debug for slang_solidity::parser::Language
-pub fn slang_solidity::parser::Language::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::parser::ParserInitializationError
+pub slang_solidity::parser::ParserInitializationError::UnsupportedLanguageVersion(semver::Version)
+impl core::error::Error for slang_solidity::parser::ParserInitializationError
+impl core::fmt::Debug for slang_solidity::parser::ParserInitializationError
+pub fn slang_solidity::parser::ParserInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::parser::ParserInitializationError
+pub fn slang_solidity::parser::ParserInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::parser::ParseError
 impl slang_solidity::parser::ParseError
 pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
@@ -924,4 +915,13 @@ pub fn slang_solidity::parser::ParseOutput::eq(&self, other: &slang_solidity::pa
 impl core::fmt::Debug for slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseOutput
+pub struct slang_solidity::parser::Parser
+impl slang_solidity::parser::Parser
+pub const slang_solidity::parser::Parser::ROOT_KIND: slang_solidity::cst::NonterminalKind
+pub const slang_solidity::parser::Parser::SUPPORTED_VERSIONS: &'static [semver::Version]
+pub fn slang_solidity::parser::Parser::new(version: semver::Version) -> core::result::Result<Self, slang_solidity::parser::ParserInitializationError>
+pub fn slang_solidity::parser::Parser::parse(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::Parser::version(&self) -> &semver::Version
+impl core::fmt::Debug for slang_solidity::parser::Parser
+pub fn slang_solidity::parser::Parser::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::wit
