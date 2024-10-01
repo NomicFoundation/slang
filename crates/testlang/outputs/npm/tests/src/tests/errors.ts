@@ -1,4 +1,4 @@
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 import { NonterminalKind, TextIndex } from "@slang-private/slang-testlang/cst";
 import { Severity } from "@slang-private/slang-testlang/diagnostic";
 

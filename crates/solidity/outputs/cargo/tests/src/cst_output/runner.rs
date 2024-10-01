@@ -5,7 +5,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::cst::NonterminalKind;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 use strum_macros::Display;
 
 use crate::cst_output::renderer::render;

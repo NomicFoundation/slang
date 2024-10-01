@@ -6,7 +6,7 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use semver::Version;
 use slang_solidity::cst::NonterminalKind;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 
 use crate::datasets::{DataSet, SourceFile};
 use crate::events::{Events, TestOutcome};

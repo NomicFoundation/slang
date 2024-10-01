@@ -1,4 +1,4 @@
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
 

@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use slang_solidity::cst::Node;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 
 use crate::dataset::{SourceFile, SOLC_VERSION};
 

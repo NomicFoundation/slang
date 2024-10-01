@@ -3,7 +3,7 @@ import path from "node:path";
 import assert from "node:assert";
 import fs from "node:fs/promises";
 
-import { Language } from "@nomicfoundation/slang/language";
+import { Language } from "@nomicfoundation/slang/parser";
 import { NonterminalKind, NonterminalNode, Query, QueryMatchIterator, TerminalNode } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(filePath: string) {

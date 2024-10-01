@@ -1,8 +1,6 @@
 pub mod cst;
 pub mod diagnostic;
-pub mod language;
-pub mod parse_error;
-pub mod parse_output;
+pub mod parser;
 
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;

@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 
 // --8<-- [start:imports]
 import assert from "node:assert";
-import { Language } from "@nomicfoundation/slang/language";
+import { Language } from "@nomicfoundation/slang/parser";
 import { NonterminalKind, NonterminalNode } from "@nomicfoundation/slang/cst";
 import { FunctionDefinition } from "@nomicfoundation/slang/ast";
 // --8<-- [end:imports]

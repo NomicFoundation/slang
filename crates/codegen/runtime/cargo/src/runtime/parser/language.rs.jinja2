@@ -1,0 +1,318 @@
+// This file is generated; we can't reasonably satisfy some of these lints.
+#![allow(
+    clippy::if_not_else,
+    clippy::too_many_lines,
+    clippy::unused_self,
+    clippy::struct_excessive_bools,
+    clippy::similar_names,
+    unused_imports
+)]
+
+use semver::Version;
+#[cfg(feature = "__private_napi_interfaces")]
+use napi_derive::napi;
+
+use crate::cst;
+use crate::cst::{
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
+};
+use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
+use crate::parser::parser_support::{
+    ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
+    ZeroOrMoreHelper,
+};
+use crate::parser::scanner_macros::{
+    scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
+    scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
+};
+#[cfg(feature = "__private_napi_interfaces")]
+use crate::napi_interface::parser::ParseOutput as NAPIParseOutput;
+use crate::parser::ParseOutput;
+
+#[derive(Debug)]
+#[cfg_attr(feature = "__private_napi_interfaces", napi(namespace = "parser"))]
+pub struct Language {
+    {%- if not rendering_in_stubs -%}
+        {%- for version in model.breaking_language_versions -%}
+            {% if loop.first %} {# The first supported version may not be referenced by the items #}
+            #[allow(dead_code)]
+            {% endif %}
+            pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
+        {%- endfor -%}
+    {%- endif -%}
+
+    pub(crate) version: Version,
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum LanguageInitializationError {
+    #[error("Unsupported language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+
+    #[cfg(feature = "__private_napi_interfaces")]
+    #[error("Invalid semantic version '{0}'.")]
+    InvalidSemanticVersion(String),
+}
+
+#[cfg(feature = "__private_napi_interfaces")]
+impl From<LanguageInitializationError> for napi::Error {
+    fn from(value: LanguageInitializationError) -> Self {
+        napi::Error::from_reason(value.to_string())
+    }
+}
+
+impl Language {
+    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
+        {%- if not rendering_in_stubs -%}
+            {% for version in model.all_language_versions %}
+                Version::new({{ version | split(pat=".") | join(sep=", ") }}),
+            {% endfor %}
+        {%- endif -%}
+    ];
+
+    pub const ROOT_KIND: NonterminalKind = NonterminalKind::{{ model.kinds.root_kind }};
+
+    pub fn new(version: Version) -> std::result::Result<Self, LanguageInitializationError> {
+        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
+            Ok(Self {
+                {%- if not rendering_in_stubs -%}
+                    {%- for version in model.breaking_language_versions %}
+                        version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
+                    {%- endfor -%}
+                {%- endif -%}
+
+                version,
+            })
+        } else {
+            Err(LanguageInitializationError::UnsupportedLanguageVersion(version))
+        }
+    }
+
+    pub fn version(&self) -> &Version {
+        &self.version
+    }
+
+    {%- if not rendering_in_stubs -%}
+
+        /********************************************
+        *         Parser Functions
+        ********************************************/
+
+        {% for parser_name, parser_code in model.parser.parser_functions %}
+            #[allow(unused_assignments, unused_parens)]
+            fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
+        {% endfor %}
+
+        {% for parser_name, parser_code in model.parser.trivia_parser_functions %}
+            #[allow(unused_assignments, unused_parens)]
+            fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
+        {% endfor %}
+
+        /********************************************
+        *         Scanner Functions
+        ********************************************/
+
+        {% for scanner_name, scanner_code in model.parser.scanner_functions %}
+            #[allow(unused_assignments, unused_parens)]
+            fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ scanner_code }} }
+        {% endfor %}
+
+        {%- for keyword_name, keyword_code in model.parser.keyword_compound_scanners %}
+            #[inline]
+            fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ keyword_code }} }
+        {% endfor %}
+
+    {% endif %}
+
+    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+        {%- if rendering_in_stubs -%}
+            unreachable!("Attempting to parse in stubs: {kind}: {input}")
+        {%- else -%}
+            match kind {
+                {%- for parser_name, _ in model.parser.parser_functions -%}
+                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
+                {%- endfor -%}
+            }
+        {%- endif -%}
+    }
+}
+
+impl Lexer for Language {
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+         {%- if rendering_in_stubs -%}
+            unreachable!("Invoking leading_trivia in stubs: {input:#?}")
+        {%- else -%}
+            Language::leading_trivia(self, input)
+        {%- endif -%}
+    }
+
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+         {%- if rendering_in_stubs -%}
+            unreachable!("Invoking trailing_trivia in stubs: {input:#?}")
+        {%- else -%}
+            Language::trailing_trivia(self, input)
+        {%- endif -%}
+    }
+
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
+        {%- if rendering_in_stubs -%}
+            unreachable!("Invoking delimiters in stubs.")
+        {%- else -%}
+            match LexCtx::value() {
+                {%- for context_name, context in model.parser.scanner_contexts %}
+                    LexicalContext::{{ context_name }} => &[
+                        {%- for open, close in context.delimiters %}
+                            (TerminalKind::{{ open }}, TerminalKind::{{ close }}),
+                        {%- endfor %}
+                    ],
+                {%- endfor %}
+            }
+        {%- endif -%}
+    }
+
+    fn next_terminal<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<ScannedTerminal> {
+        {%- if rendering_in_stubs -%}
+            unreachable!("Invoking next_terminal in stubs: {input:#?}")
+        {%- else -%}
+            let save = input.position();
+            let mut furthest_position = input.position();
+            let mut longest_terminal = None;
+
+            macro_rules! longest_match {
+                ($( { $kind:ident = $function:ident } )*) => {
+                    $(
+                        if self.$function(input) && input.position() > furthest_position {
+                            furthest_position = input.position();
+
+                            longest_terminal = Some(TerminalKind::$kind);
+                        }
+                        input.set_position(save);
+                    )*
+                };
+            }
+
+            match LexCtx::value() {
+                {%- for context_name, context in model.parser.scanner_contexts %}
+                    LexicalContext::{{ context_name }} => {
+                        if let Some(kind) = {{ context.literal_scanner }} {
+                            furthest_position = input.position();
+                            longest_terminal = Some(kind);
+                        }
+                        input.set_position(save);
+
+                        longest_match! {
+                            {%- for name in context.compound_scanner_names %}
+                                {%- if name not in context.promotable_identifier_scanners %}
+                            { {{name }} = {{ name | snake_case }} }
+                                {%- endif -%}
+                            {%- endfor %}
+                        }
+                        // Make sure promotable identifiers are last so they don't grab other things
+                        longest_match! {
+                            {%- for name in context.promotable_identifier_scanners %}
+                            { {{ name }} = {{ name | snake_case }} }
+                            {%- endfor %}
+                        }
+
+                        // We have an identifier; we need to check if it's a keyword
+                        if let Some(identifier) = longest_terminal.filter(|tok|
+                            [
+                                {% for name in context.promotable_identifier_scanners %}
+                                    TerminalKind::{{ name }},
+                                {% endfor %}
+                            ]
+                            .contains(tok)
+                        ) {
+                            let kw_scan = {{ context.keyword_trie_scanner }};
+                            let kw_scan = match kw_scan {
+                                // Strict prefix; we need to match the whole identifier to promote
+                                _ if input.position() < furthest_position => KeywordScan::Absent,
+                                value => value,
+                            };
+
+                            {% if context.keyword_compound_scanners | length > 0 %}
+                            // Perf: only scan for a compound keyword if we didn't already find one
+                            let mut kw_scan = kw_scan;
+                            if kw_scan == KeywordScan::Absent {
+                                input.set_position(save);
+
+                                // TODO(#1001): Don't allocate a string here
+                                let ident_value = input.content(save.utf8..furthest_position.utf8);
+
+                                for keyword_compound_scanner in [
+                                {%- for keyword_name, _ in context.keyword_compound_scanners %}
+                                    Self::{{ keyword_name | snake_case }},
+                                {%- endfor %}
+                                ] {
+                                    match keyword_compound_scanner(self, input, &ident_value) {
+                                        _ if input.position() < furthest_position => {/* Strict prefix */},
+                                        KeywordScan::Absent => {},
+                                        value => kw_scan = value,
+                                    }
+                                    input.set_position(save);
+                                }
+                            }
+                            {% endif %}
+
+                            input.set_position(furthest_position);
+                            return Some(ScannedTerminal::IdentifierOrKeyword { identifier, kw: kw_scan });
+                        }
+                    },
+                {%- endfor %}
+            }
+
+            match longest_terminal {
+                Some(terminal) => {
+                    input.set_position(furthest_position);
+                    Some(ScannedTerminal::Single(terminal))
+                },
+                // Skip a character if possible and if we didn't recognize a terminal
+                None if input.peek().is_some() => {
+                    let _ = input.next();
+                    Some(ScannedTerminal::Single(TerminalKind::UNRECOGNIZED))
+                },
+                None => None,
+            }
+
+        {%- endif -%}
+    }
+}
+
+#[cfg(feature = "__private_napi_interfaces")]
+// NAPI-exposed functions have to accept owned values.
+#[allow(clippy::needless_pass_by_value)]
+#[napi(namespace = "parser")]
+impl Language {
+
+    #[napi(constructor, catch_unwind)]
+    pub fn new_napi(version: String) -> std::result::Result<Self, napi::Error> {
+        let version = Version::parse(&version).map_err(|_| LanguageInitializationError::InvalidSemanticVersion(version))?;
+        Self::new(version).map_err(|e| e.into())
+    }
+
+    #[napi(getter, js_name = "version", catch_unwind)]
+    pub fn version_napi(&self) -> String {
+        self.version.to_string()
+    }
+
+    #[napi(js_name = "supportedVersions", catch_unwind)]
+    pub fn supported_versions_napi() -> Vec<String> {
+        return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
+    }
+
+    #[napi(js_name = "rootKind", ts_return_type = "cst.NonterminalKind", catch_unwind)]
+    pub fn root_kind_napi() -> NonterminalKind {
+        Self::ROOT_KIND
+    }
+
+    #[napi(js_name = "parse", ts_return_type = "parser.ParseOutput", catch_unwind)]
+    pub fn parse_napi(
+        &self,
+        #[napi(ts_arg_type = "cst.NonterminalKind")] kind: NonterminalKind,
+        input: String
+    ) -> NAPIParseOutput {
+        self.parse(kind, input.as_str()).into()
+    }
+
+}

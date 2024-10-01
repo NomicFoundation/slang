@@ -1,6 +1,6 @@
 import * as slang from "@slang-private/slang-testlang";
 import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 
 test("use namespace imports of the API", () => {
   expect(slang.cst.NonterminalKind.SourceUnit).toEqual("SourceUnit");

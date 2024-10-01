@@ -873,57 +873,55 @@ pub trait slang_solidity::diagnostic::Diagnostic
 pub fn slang_solidity::diagnostic::Diagnostic::message(&self) -> alloc::string::String
 pub fn slang_solidity::diagnostic::Diagnostic::severity(&self) -> slang_solidity::diagnostic::Severity
 pub fn slang_solidity::diagnostic::Diagnostic::text_range(&self) -> metaslang_cst::text_index::TextRange
-impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parse_error::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
-pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
+impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parser::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
+pub fn slang_solidity::parser::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
 pub fn slang_solidity::diagnostic::render<D: slang_solidity::diagnostic::Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> alloc::string::String
-pub mod slang_solidity::language
-pub enum slang_solidity::language::Error
-pub slang_solidity::language::Error::UnsupportedLanguageVersion(semver::Version)
-impl core::error::Error for slang_solidity::language::Error
-impl core::fmt::Debug for slang_solidity::language::Error
-pub fn slang_solidity::language::Error::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity::language::Error
-pub fn slang_solidity::language::Error::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::language::Language
-impl slang_solidity::language::Language
-pub const slang_solidity::language::Language::ROOT_KIND: slang_solidity::cst::NonterminalKind
-pub const slang_solidity::language::Language::SUPPORTED_VERSIONS: &'static [semver::Version]
-pub fn slang_solidity::language::Language::new(version: semver::Version) -> core::result::Result<Self, slang_solidity::language::Error>
-pub fn slang_solidity::language::Language::parse(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parse_output::ParseOutput
-pub fn slang_solidity::language::Language::version(&self) -> &semver::Version
-impl core::fmt::Debug for slang_solidity::language::Language
-pub fn slang_solidity::language::Language::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub mod slang_solidity::parse_error
-pub struct slang_solidity::parse_error::ParseError
-impl slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> &metaslang_cst::text_index::TextRange
-impl core::clone::Clone for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::clone(&self) -> slang_solidity::parse_error::ParseError
-impl core::cmp::Eq for slang_solidity::parse_error::ParseError
-impl core::cmp::PartialEq for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::eq(&self, other: &slang_solidity::parse_error::ParseError) -> bool
-impl core::fmt::Debug for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::parse_error::ParseError
-impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parse_error::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
-pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
-pub mod slang_solidity::parse_output
-pub struct slang_solidity::parse_output::ParseOutput
-impl slang_solidity::parse_output::ParseOutput
-pub fn slang_solidity::parse_output::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
-pub fn slang_solidity::parse_output::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parse_error::ParseError>
-pub fn slang_solidity::parse_output::ParseOutput::is_valid(&self) -> bool
-pub fn slang_solidity::parse_output::ParseOutput::tree(&self) -> slang_solidity::cst::Node
-impl core::cmp::PartialEq for slang_solidity::parse_output::ParseOutput
-pub fn slang_solidity::parse_output::ParseOutput::eq(&self, other: &slang_solidity::parse_output::ParseOutput) -> bool
-impl core::fmt::Debug for slang_solidity::parse_output::ParseOutput
-pub fn slang_solidity::parse_output::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::parse_output::ParseOutput
+pub mod slang_solidity::parser
+pub enum slang_solidity::parser::LanguageInitializationError
+pub slang_solidity::parser::LanguageInitializationError::UnsupportedLanguageVersion(semver::Version)
+impl core::error::Error for slang_solidity::parser::LanguageInitializationError
+impl core::fmt::Debug for slang_solidity::parser::LanguageInitializationError
+pub fn slang_solidity::parser::LanguageInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::parser::LanguageInitializationError
+pub fn slang_solidity::parser::LanguageInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::parser::Language
+impl slang_solidity::parser::Language
+pub const slang_solidity::parser::Language::ROOT_KIND: slang_solidity::cst::NonterminalKind
+pub const slang_solidity::parser::Language::SUPPORTED_VERSIONS: &'static [semver::Version]
+pub fn slang_solidity::parser::Language::new(version: semver::Version) -> core::result::Result<Self, slang_solidity::parser::LanguageInitializationError>
+pub fn slang_solidity::parser::Language::parse(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::Language::version(&self) -> &semver::Version
+impl core::fmt::Debug for slang_solidity::parser::Language
+pub fn slang_solidity::parser::Language::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::parser::ParseError
+impl slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parser::ParseError::text_range(&self) -> &metaslang_cst::text_index::TextRange
+impl core::clone::Clone for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::clone(&self) -> slang_solidity::parser::ParseError
+impl core::cmp::Eq for slang_solidity::parser::ParseError
+impl core::cmp::PartialEq for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::eq(&self, other: &slang_solidity::parser::ParseError) -> bool
+impl core::fmt::Debug for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseError
+impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parser::ParseError
+pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
+pub fn slang_solidity::parser::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
+pub fn slang_solidity::parser::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
+pub struct slang_solidity::parser::ParseOutput
+impl slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
+pub fn slang_solidity::parser::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
+pub fn slang_solidity::parser::ParseOutput::is_valid(&self) -> bool
+pub fn slang_solidity::parser::ParseOutput::tree(&self) -> slang_solidity::cst::Node
+impl core::cmp::PartialEq for slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::ParseOutput::eq(&self, other: &slang_solidity::parser::ParseOutput) -> bool
+impl core::fmt::Debug for slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseOutput
 pub mod slang_solidity::wit

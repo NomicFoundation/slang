@@ -107,13 +107,25 @@ export declare namespace cst {
     next(): QueryMatch | null;
   }
 }
-export declare namespace language {
+export declare namespace parser {
   export class Language {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;
     static rootKind(): cst.NonterminalKind;
-    parse(kind: cst.NonterminalKind, input: string): parse_output.ParseOutput;
+    parse(kind: cst.NonterminalKind, input: string): parser.ParseOutput;
+  }
+  export class ParseError {
+    severity(): diagnostic.Severity;
+    textRange(): cst.TextRange;
+    message(): string;
+  }
+  export class ParseOutput {
+    tree(): cst.Node;
+    errors(): Array<parser.ParseError>;
+    get isValid(): boolean;
+    /** Creates a cursor that starts at the root of the parse tree. */
+    createTreeCursor(): cst.Cursor;
   }
 }
 export declare namespace diagnostic {
@@ -136,22 +148,6 @@ export declare namespace diagnostic {
     textRange(): cst.TextRange;
     /** The primary message associated with this diagnostic. */
     message(): string;
-  }
-}
-export declare namespace parse_error {
-  export class ParseError {
-    severity(): diagnostic.Severity;
-    textRange(): cst.TextRange;
-    message(): string;
-  }
-}
-export declare namespace parse_output {
-  export class ParseOutput {
-    tree(): cst.Node;
-    errors(): Array<parse_error.ParseError>;
-    get isValid(): boolean;
-    /** Creates a cursor that starts at the root of the parse tree. */
-    createTreeCursor(): cst.Cursor;
   }
 }
 export declare namespace ast_internal {

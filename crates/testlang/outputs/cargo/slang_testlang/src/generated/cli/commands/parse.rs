@@ -7,7 +7,7 @@ use clap::Parser;
 use semver::Version;
 
 use crate::diagnostic;
-use crate::language::Language;
+use crate::parser::Language;
 
 #[derive(Parser, Debug)]
 pub struct ParseCommand {

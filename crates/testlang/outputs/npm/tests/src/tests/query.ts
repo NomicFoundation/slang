@@ -1,5 +1,5 @@
 import { NonterminalKind, TerminalKind, Query } from "@slang-private/slang-testlang/cst";
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 import { expectTerminal } from "../utils/cst-helpers";
 
 test("simple query", () => {

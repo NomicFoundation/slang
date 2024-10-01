@@ -291,11 +291,9 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const { cst, language, diagnostic, parse_error, parse_output, ast_internal } = nativeBinding;
+const { cst, parser, diagnostic, ast_internal } = nativeBinding;
 
 module.exports.cst = cst;
-module.exports.language = language;
+module.exports.parser = parser;
 module.exports.diagnostic = diagnostic;
-module.exports.parse_error = parse_error;
-module.exports.parse_output = parse_output;
 module.exports.ast_internal = ast_internal;

@@ -2,7 +2,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::Version;
 use slang_solidity::cst::{NonterminalKind, Query, QueryMatchIterator};
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 
 static SNIPPET_MARKER_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new("// --8<-- \\[(start|end):([a-z0-9-]+)\\]").unwrap());

@@ -8,8 +8,7 @@ use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
 use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
-use slang_solidity::language::Language;
-use slang_solidity::parse_output::ParseOutput;
+use slang_solidity::parser::{Language, ParseOutput};
 
 use super::graph::{render_dot_graph, render_graph};
 use super::renderer::render_bindings;

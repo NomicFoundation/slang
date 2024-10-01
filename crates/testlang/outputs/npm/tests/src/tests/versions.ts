@@ -1,4 +1,4 @@
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 
 test("list supported versions", () => {
   const versions = Language.supportedVersions();
