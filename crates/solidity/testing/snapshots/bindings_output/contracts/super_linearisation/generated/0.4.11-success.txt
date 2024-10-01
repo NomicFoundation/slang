@@ -20,7 +20,7 @@ References and definitions:
     │               ╰─── def: 4
   6 │         super.foo();
     │         ──┬── ─┬─  
-    │           ╰──────── unresolved
+    │           ╰──────── ref: built-in
     │                │   
     │                ╰─── ref: 2
     │ 
@@ -34,7 +34,7 @@ References and definitions:
     │               ╰─── def: 6
  11 │         super.foo();
     │         ──┬── ─┬─  
-    │           ╰──────── unresolved
+    │           ╰──────── ref: built-in
     │                │   
     │                ╰─── ref: 4
     │ 
@@ -50,7 +50,7 @@ References and definitions:
     │               ╰─── def: 8
  16 │         super.foo();
     │         ──┬── ─┬─  
-    │           ╰──────── unresolved
+    │           ╰──────── ref: built-in
     │                │   
     │                ╰─── ref: 6
 ────╯

@@ -18,7 +18,7 @@ References and definitions:
     │                   ╰────── def: 3
   7 │         revert("testing revert");
     │         ───┬──  
-    │            ╰──── ref: built-in
+    │            ╰──── refs: built-in, built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
