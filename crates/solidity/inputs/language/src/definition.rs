@@ -6627,6 +6627,32 @@ codegen_language_macros::compile!(Language(
         ),
         BuiltInFunction(name = "assert", parameters = ["bool condition"]),
         BuiltInFunction(
+            name = "blockhash",
+            parameters = ["uint blockNumber"],
+            return_type = "bytes32"
+        ),
+        BuiltInFunction(
+            name = "blobhash",
+            parameters = ["uint index"],
+            return_type = "bytes32"
+        ),
+        BuiltInFunction(
+            name = "ecrecover",
+            parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
+            return_type = "address"
+        ),
+        BuiltInFunction(name = "gasleft", parameters = [], return_type = "uint256"),
+        BuiltInFunction(
+            name = "keccak256",
+            parameters = ["bytes memory"],
+            return_type = "bytes32"
+        ),
+        BuiltInFunction(
+            name = "mulmod",
+            parameters = ["uint x", "uint y", "uint k"],
+            return_type = "uint"
+        ),
+        BuiltInFunction(
             name = "require",
             parameters = ["bool condition"],
             enabled = From("0.5.0")
@@ -6636,18 +6662,187 @@ codegen_language_macros::compile!(Language(
             parameters = ["bool condition", "string memory message"],
             enabled = From("0.5.0")
         ),
+        BuiltInFunction(name = "revert", parameters = []),
         BuiltInFunction(name = "revert", parameters = ["string memory reason"]),
+        BuiltInFunction(
+            name = "ripemd160",
+            parameters = ["bytes memory"],
+            return_type = "bytes20"
+        ),
+        BuiltInFunction(
+            name = "selfdestruct",
+            parameters = ["address payable recipient"]
+        ),
+        BuiltInFunction(
+            name = "sha256",
+            parameters = ["bytes memory"],
+            return_type = "bytes32"
+        ),
+        BuiltInFunction(
+            name = "sha3",
+            parameters = ["bytes memory"],
+            return_type = "bytes32",
+            enabled = Till("0.5.0")
+        ),
+        BuiltInFunction(
+            name = "suicide",
+            parameters = ["address payable recipient"],
+            enabled = Till("0.5.0")
+        ),
+        BuiltInType(
+            name = "$abiType",
+            fields = [],
+            functions = [
+                BuiltInFunction(
+                    name = "decode",
+                    parameters = ["bytes memory", "$args"],
+                    return_type = "$args"
+                ),
+                BuiltInFunction(
+                    name = "encode",
+                    parameters = ["$args"],
+                    return_type = "bytes memory"
+                ),
+                BuiltInFunction(
+                    name = "encodePacked",
+                    parameters = ["$args"],
+                    return_type = "bytes memory"
+                ),
+                BuiltInFunction(
+                    name = "encodeWithSelector",
+                    parameters = ["bytes4 selector", "$args"],
+                    return_type = "bytes memory"
+                ),
+                BuiltInFunction(
+                    name = "encodeWithSignature",
+                    parameters = ["string memory", "$args"],
+                    return_type = "bytes memory"
+                ),
+                BuiltInFunction(
+                    name = "encodeCall",
+                    parameters = ["function()", "$args"],
+                    return_type = "bytes memory"
+                )
+            ]
+        ),
         BuiltInType(
             name = "$address",
             fields = [
                 BuiltInField(definition = "uint256 balance"),
-                BuiltInField(definition = "bytes code", enabled = From("0.8.0"))
+                BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
+                BuiltInField(definition = "bytes32 codehash")
+            ],
+            functions = [
+                BuiltInFunction(
+                    name = "call",
+                    parameters = ["bytes memory"],
+                    return_type = "bool",
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "call",
+                    parameters = ["bytes memory"],
+                    return_type = "bool, bytes memory",
+                    enabled = From("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "callcode",
+                    parameters = ["bytes memory"],
+                    return_type = "bool, bytes memory",
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "delegatecall",
+                    parameters = ["bytes memory"],
+                    return_type = "bool",
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "delegatecall",
+                    parameters = ["bytes memory"],
+                    return_type = "bool, bytes memory",
+                    enabled = From("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "send",
+                    parameters = ["uint256"],
+                    return_type = "bool"
+                ),
+                BuiltInFunction(
+                    name = "staticcall",
+                    parameters = ["bytes memory"],
+                    return_type = "bool",
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "staticcall",
+                    parameters = ["bytes memory"],
+                    return_type = "bool, bytes memory",
+                    enabled = From("0.5.0")
+                ),
+                BuiltInFunction(name = "transfer", parameters = ["uint256"])
+            ]
+        ),
+        BuiltInType(
+            name = "$blockType",
+            fields = [
+                BuiltInField(definition = "uint basefee"),
+                BuiltInField(definition = "uint blobbasefee"),
+                BuiltInField(definition = "uint chainid"),
+                BuiltInField(definition = "address payable coinbase"),
+                BuiltInField(definition = "uint difficulty"),
+                BuiltInField(definition = "uint gaslimit"),
+                BuiltInField(definition = "uint number"),
+                BuiltInField(definition = "uint prevrandao"),
+                BuiltInField(definition = "uint timestamp")
             ],
             functions = [BuiltInFunction(
-                name = "send",
-                parameters = ["uint256 amount"],
-                return_type = "bool"
+                name = "blockhash",
+                parameters = ["uint"],
+                return_type = "bytes32",
+                enabled = Till("0.5.0")
             )]
+        ),
+        BuiltInType(
+            name = "$bytes",
+            fields = [],
+            functions = [BuiltInFunction(
+                name = "concat",
+                parameters = ["$args"],
+                return_type = "bytes memory"
+            )]
+        ),
+        BuiltInType(
+            name = "$msgType",
+            fields = [
+                BuiltInField(definition = "bytes data"),
+                BuiltInField(definition = "address sender"),
+                BuiltInField(definition = "bytes4 sig"),
+                BuiltInField(definition = "uint value")
+            ],
+            functions = [BuiltInFunction(
+                name = "gas",
+                parameters = [],
+                return_type = "uint256",
+                enabled = Till("0.5.0")
+            )]
+        ),
+        BuiltInType(
+            name = "$string",
+            fields = [],
+            functions = [BuiltInFunction(
+                name = "concat",
+                parameters = ["$args"],
+                return_type = "string memory"
+            )]
+        ),
+        BuiltInType(
+            name = "$txType",
+            fields = [
+                BuiltInField(definition = "uint gasprice"),
+                BuiltInField(definition = "address payable origin")
+            ],
+            functions = []
         ),
         BuiltInType(
             name = "$type",
@@ -6661,15 +6856,12 @@ codegen_language_macros::compile!(Language(
             ],
             functions = []
         ),
-        BuiltInType(
-            name = "$txType",
-            fields = [
-                BuiltInField(definition = "uint gasprice"),
-                BuiltInField(definition = "address payable origin")
-            ],
-            functions = []
-        ),
+        BuiltInVariable(definition = "$abiType abi"),
+        BuiltInVariable(definition = "$blockType block"),
+        BuiltInVariable(definition = "$msgType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
+        BuiltInVariable(definition = "$SuperType super"),
+        BuiltInVariable(definition = "$ThisType this"),
         BuiltInVariable(definition = "$txType tx")
     ]
 ));

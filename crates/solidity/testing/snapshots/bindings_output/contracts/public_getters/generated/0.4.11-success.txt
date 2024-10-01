@@ -29,7 +29,7 @@ References and definitions:
     │                ┬   ──┬─ ┬     ┬ ┬  
     │                ╰─────────────────── ref: 4
     │                      │  │     │ │  
-    │                      ╰───────────── unresolved
+    │                      ╰───────────── ref: built-in
     │                         │     │ │  
     │                         ╰────────── ref: 4
     │                               │ │  

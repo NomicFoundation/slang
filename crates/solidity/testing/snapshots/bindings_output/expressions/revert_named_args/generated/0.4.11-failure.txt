@@ -34,7 +34,7 @@ References and definitions:
    │                ╰─── def: 3
  8 │         revert Failure({severity: 100, cause: "Testing"});
    │         ───┬── ───┬───  
-   │            ╰──────────── ref: built-in
+   │            ╰──────────── refs: built-in, built-in
    │                   │     
    │                   ╰───── def: 4
 ───╯

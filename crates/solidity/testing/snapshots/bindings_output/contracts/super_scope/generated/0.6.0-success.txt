@@ -23,7 +23,7 @@ References and definitions:
     │                                                 ╰── ref: 1
  13 │         return super.foo();
     │                ──┬── ─┬─  
-    │                  ╰──────── unresolved
+    │                  ╰──────── ref: built-in
     │                       │   
     │                       ╰─── ref: 2
 ────╯
