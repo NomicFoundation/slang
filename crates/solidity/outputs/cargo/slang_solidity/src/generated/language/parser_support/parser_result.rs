@@ -2,11 +2,9 @@
 
 use std::ops::ControlFlow;
 
-use metaslang_cst::TerminalKind as _;
-
-use crate::cst::{self, Edge, Node};
-use crate::kinds::{EdgeLabel, NonterminalKind, TerminalKind};
-use crate::text_index::TextIndex;
+use crate::cst::{
+    Edge, EdgeLabel, Node, NonterminalKind, TerminalKind, TerminalKindExtensions, TextIndex,
+};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {
@@ -26,7 +24,7 @@ impl Default for ParserResult {
 }
 
 impl ParserResult {
-    pub fn r#match(nodes: Vec<cst::Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+    pub fn r#match(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
         ParserResult::Match(Match::new(nodes, expected_terminals))
     }
 
@@ -34,7 +32,7 @@ impl ParserResult {
         ParserResult::PrattOperatorMatch(PrattOperatorMatch::new(elements))
     }
 
-    pub fn incomplete_match(nodes: Vec<cst::Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+    pub fn incomplete_match(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
         ParserResult::IncompleteMatch(IncompleteMatch::new(nodes, expected_terminals))
     }
 
@@ -51,24 +49,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: NonterminalKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![Edge::anonymous(cst::Node::nonterminal(
-                    new_kind,
-                    r#match.nodes,
-                ))],
+                vec![Edge::anonymous(Node::nonterminal(new_kind, r#match.nodes))],
                 r#match.expected_terminals,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![Edge::anonymous(cst::Node::nonterminal(
+                vec![Edge::anonymous(Node::nonterminal(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_terminals,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![Edge::anonymous(cst::Node::nonterminal(
-                    new_kind,
-                    skipped.nodes,
-                ))],
+                nodes: vec![Edge::anonymous(Node::nonterminal(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(_) => self,
@@ -99,7 +91,7 @@ impl ParserResult {
     }
 
     /// Returns a significant (non-trivia) node if there is exactly one.
-    pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::Edge> {
+    pub(crate) fn significant_node_mut(&mut self) -> Option<&mut Edge> {
         let nodes = match self {
             ParserResult::Match(r#match) => &mut r#match.nodes[..],
             ParserResult::IncompleteMatch(incomplete_match) => &mut incomplete_match.nodes[..],
@@ -123,13 +115,13 @@ impl ParserResult {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
-    pub nodes: Vec<cst::Edge>,
+    pub nodes: Vec<Edge>,
     /// Terminals that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_terminals: Vec<TerminalKind>,
 }
 
 impl Match {
-    pub fn new(nodes: Vec<cst::Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+    pub fn new(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
         Self {
             nodes,
             expected_terminals,
@@ -151,34 +143,34 @@ impl Match {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum PrattElement {
     Expression {
-        nodes: Vec<cst::Edge>,
+        nodes: Vec<Edge>,
     },
     Prefix {
         kind: NonterminalKind,
-        nodes: Vec<cst::Edge>,
+        nodes: Vec<Edge>,
         right: u8,
     },
     Binary {
         kind: NonterminalKind,
-        nodes: Vec<cst::Edge>,
+        nodes: Vec<Edge>,
         left: u8,
         right: u8,
     },
     Postfix {
         kind: NonterminalKind,
-        nodes: Vec<cst::Edge>,
+        nodes: Vec<Edge>,
         left: u8,
     },
 }
 
 impl PrattElement {
-    pub fn into_nodes(self) -> Vec<cst::Edge> {
+    pub fn into_nodes(self) -> Vec<Edge> {
         match self {
             Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![Edge::anonymous(cst::Node::nonterminal(kind, nodes))]
+                vec![Edge::anonymous(Node::nonterminal(kind, nodes))]
             }
         }
     }
@@ -197,13 +189,13 @@ impl PrattOperatorMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct IncompleteMatch {
-    pub nodes: Vec<cst::Edge>,
+    pub nodes: Vec<Edge>,
     /// Terminals that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_terminals: Vec<TerminalKind>,
 }
 
 impl IncompleteMatch {
-    pub fn new(nodes: Vec<cst::Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+    pub fn new(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
         Self {
             nodes,
             expected_terminals,
@@ -252,7 +244,7 @@ impl NoMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct SkippedUntil {
-    pub nodes: Vec<cst::Edge>,
+    pub nodes: Vec<Edge>,
     /// Skipped text following the last node
     pub skipped: String,
     /// At which terminal was the stream pointing at when we bailed

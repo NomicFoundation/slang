@@ -56,12 +56,12 @@ pub enum TerminalKind {
 pub enum EdgeLabel {
     Name,
 }
-impl metaslang_cst::TerminalKind for TerminalKind {}
-impl metaslang_cst::NonterminalKind for NonterminalKind {}
-impl metaslang_cst::EdgeLabel for EdgeLabel {}
+impl metaslang_cst::kinds::TerminalKindExtensions for TerminalKind {}
+impl metaslang_cst::kinds::NonterminalKindExtensions for NonterminalKind {}
+impl metaslang_cst::kinds::EdgeLabelExtensions for EdgeLabel {}
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct KindTypes;
-impl metaslang_cst::KindTypes for KindTypes {
+impl metaslang_cst::kinds::KindTypes for KindTypes {
     type NonterminalKind = NonterminalKind;
     type TerminalKind = TerminalKind;
     type EdgeLabel = EdgeLabel;

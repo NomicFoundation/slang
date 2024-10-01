@@ -3,13 +3,10 @@
 use std::mem;
 use std::ops::ControlFlow;
 
-use metaslang_cst::TerminalKind as _;
-
-use crate::cst;
+use crate::cst::{Node, TerminalKindExtensions, TextIndex};
 use crate::language::parser_support::context::{Marker, ParserContext};
 use crate::language::parser_support::ParserResult;
 use crate::parse_error::ParseError;
-use crate::text_index::TextIndex;
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.
@@ -142,7 +139,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .iter()
         .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
-            cst::Node::Terminal(terminal) if terminal.kind.is_valid() => Some(terminal.text.len()),
+            Node::Terminal(terminal) if terminal.kind.is_valid() => Some(terminal.text.len()),
             _ => None,
         })
         .sum()

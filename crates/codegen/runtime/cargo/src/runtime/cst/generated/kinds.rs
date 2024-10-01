@@ -18,25 +18,15 @@ use napi_derive::napi;
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum NonterminalKind {
-    AdditionExpression,
-    Expression,
-    Literal,
-    MemberAccessExpression,
-    NegationExpression,
-    SeparatedIdentifiers,
-    SourceUnit,
-    SourceUnitMember,
-    SourceUnitMembers,
-    Tree,
-    TreeNode,
-    TreeNodeChild,
-    TreeNodeChildren,
+    Stub1,
+    Stub2,
+    Stub3,
 }
 
-impl metaslang_cst::NonterminalKind for NonterminalKind {}
+impl crate::cst::NonterminalKindExtensions for NonterminalKind {}
 
 // This needs to stay in sync with the wit-bindgen output
 #[repr(u8)]
@@ -54,7 +44,7 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
     strum_macros::IntoStaticStr,
 )]
 #[strum(serialize_all = "snake_case")]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
@@ -68,19 +58,12 @@ pub enum EdgeLabel {
     TrailingTrivia,
 
     // Generated:
-    CloseBracket,
-    Keyword,
-    Member,
-    Members,
-    Name,
-    Node,
-    OpenBracket,
-    Operator,
-    Period,
-    Semicolon,
+    Stub1,
+    Stub2,
+    Stub3,
 }
 
-impl metaslang_cst::EdgeLabel for EdgeLabel {}
+impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
 
 // This needs to stay in sync with the wit-bindgen output
 #[repr(u8)]
@@ -97,35 +80,23 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
+#[allow(clippy::upper_case_acronyms)]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
     MISSING,
 
     // Generated:
-    Bang,
-    CloseBracket,
-    DelimitedIdentifier,
-    EndOfLine,
-    Identifier,
-    MultiLineComment,
-    OpenBracket,
-    Period,
-    Plus,
-    Semicolon,
-    SingleLineComment,
-    StringLiteral,
-    TreeKeyword,
-    Whitespace,
+    Stub1,
+    Stub2,
+    Stub3,
 }
 
-impl metaslang_cst::TerminalKind for TerminalKind {
+impl crate::cst::TerminalKindExtensions for TerminalKind {
     fn is_trivia(&self) -> bool {
-        matches!(self, |Self::EndOfLine| Self::MultiLineComment
-            | Self::SingleLineComment
-            | Self::Whitespace)
+        false
     }
 
     fn is_valid(&self) -> bool {
@@ -138,8 +109,9 @@ impl metaslang_cst::TerminalKind for TerminalKind {
 #[repr(u8)]
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
-    Default,
-    Tree,
+    Stub1,
+    Stub2,
+    Stub3,
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
@@ -149,19 +121,4 @@ pub(crate) trait IsLexicalContext {
 }
 
 #[allow(non_snake_case)]
-pub(crate) mod LexicalContextType {
-    pub struct Default;
-
-    impl super::IsLexicalContext for Default {
-        fn value() -> super::LexicalContext {
-            super::LexicalContext::Default
-        }
-    }
-    pub struct Tree;
-
-    impl super::IsLexicalContext for Tree {
-        fn value() -> super::LexicalContext {
-            super::LexicalContext::Tree
-        }
-    }
-}
+pub(crate) mod LexicalContextType {}

@@ -1,6 +1,49 @@
 interface cst {
-    use kinds.{nonterminal-kind, terminal-kind};
-    use text-index.{text-index};
+    enum nonterminal-kind {
+        {%- if rendering_in_stubs %}
+            stub1,
+            stub2,
+            stub3,
+        {%- else %}
+            {%- for variant in model.kinds.nonterminal_kinds %}
+                {{ variant | wit_case }},
+            {%- endfor %}
+        {%- endif %}
+    }
+
+    enum edge-label {
+        // Built-in:
+        {%- for label in model.kinds.built_in_labels %}
+            {{ label | wit_case }},
+        {%- endfor %}
+
+        // Generated:
+        {%- if rendering_in_stubs %}
+            stub1,
+            stub2,
+            stub3,
+        {%- else %}
+            {%- for variant in model.kinds.labels %}
+                {{ variant | wit_case }},
+            {%- endfor %}
+        {%- endif %}
+    }
+
+    enum terminal-kind {
+        // Built-in:
+        skipped,
+
+        // Generated:
+        {%- if rendering_in_stubs %}
+            stub1,
+            stub2,
+            stub3,
+        {%- else %}
+            {%- for variant in model.kinds.terminal_kinds %}
+                {{ variant | wit_case }},
+            {%- endfor %}
+        {%- endif %}
+    }
 
     variant node {
         nonterminal(nonterminal-node),
@@ -11,8 +54,7 @@ interface cst {
         kind: func() -> nonterminal-kind;
         text-len: func() -> text-index;
         children: func() -> list<node>;
-        // TODO: re-enable once we solve circular references:
-        // create-cursor: func(text-offset: text-index) -> cursor;
+        create-cursor: func(text-offset: text-index) -> cursor;
         unparse: func() -> string;
     }
 
@@ -20,5 +62,78 @@ interface cst {
         kind: func() -> terminal-kind;
         text-len: func() -> text-index;
         text: func() -> string;
+    }
+
+    resource cursor {
+        reset: func();
+        complete: func();
+        is-completed: func() -> bool;
+
+        clone: func() -> cursor;
+        spawn: func() -> cursor;
+
+        node: func() -> node;
+        label: func() -> option<edge-label>;
+
+        text-offset: func() -> text-index;
+        text-range: func() -> text-range;
+
+        depth: func() -> u32;
+
+        ancestors: func() -> list<nonterminal-node>;
+
+        go-to-next: func() -> bool;
+        go-to-next-non-descendent: func() -> bool;
+        go-to-previous: func() -> bool;
+
+        go-to-parent: func() -> bool;
+
+        go-to-first-child: func() -> bool;
+        go-to-last-child: func() -> bool;
+        go-to-nth-child: func(child-number: u32) -> bool;
+
+        go-to-next-sibling: func() -> bool;
+        go-to-previous-sibling: func() -> bool;
+
+        go-to-next-terminal: func() -> bool;
+        go-to-next-terminal-with-kind: func(kind: terminal-kind) -> bool;
+        go-to-next-terminal-with-kinds: func(kinds: list<terminal-kind>) -> bool;
+
+        go-to-next-nonterminal: func() -> bool;
+        go-to-next-nonterminal-with-kind: func(kind: nonterminal-kind) -> bool;
+        go-to-next-nonterminal-with-kinds: func(kinds: list<nonterminal-kind>) -> bool;
+
+        query: func(queries: list<borrow<query>>) -> query-match-iterator;
+    }
+
+    resource query {
+        parse: static func(text: string) -> result<query, query-error>;
+    }
+
+    record query-error {
+        message: string,
+        row: u32,
+        column: u32,
+    }
+
+    record query-match {
+        query-number: u32,
+        captures: list<tuple<string, list<cursor>>>,
+    }
+
+    resource query-match-iterator {
+        next: func() -> option<query-match>;
+    }
+
+    record text-index {
+        utf8: u32,
+        utf16: u32,
+        line: u32,
+        column: u32,
+    }
+
+    record text-range {
+        start: text-index,
+        end: text-index,
     }
 }

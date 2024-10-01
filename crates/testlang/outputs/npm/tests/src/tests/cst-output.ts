@@ -1,5 +1,5 @@
 import { Language } from "@slang-private/slang-testlang/language";
-import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
 
 test("parse terminal", () => {

@@ -13,7 +13,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use log::trace;
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 
 use super::values::*;
 use super::EvaluationContext;

@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, Edge};
-use crate::kinds::{EdgeLabel, NonterminalKind};
+use crate::cst::{Edge, EdgeLabel, Node, NonterminalKind};
 use crate::language::parser_support::parser_result::PrattElement::{
     self, Binary, Expression, Postfix, Prefix,
 };
@@ -163,7 +162,7 @@ impl PrecedenceHelper {
 
             let make_expression = |left: Option<PrattElement>,
                                    kind: NonterminalKind,
-                                   nodes: Vec<cst::Edge>,
+                                   nodes: Vec<Edge>,
                                    right: Option<PrattElement>| {
                 assert!(left.is_some() || right.is_some());
 
@@ -178,7 +177,7 @@ impl PrecedenceHelper {
                     Some(Expression { nodes }) => {
                         vec![Edge {
                             label: Some(left_label),
-                            node: cst::Node::nonterminal(child_kind, nodes),
+                            node: Node::nonterminal(child_kind, nodes),
                         }]
                     }
                     None => vec![],
@@ -189,7 +188,7 @@ impl PrecedenceHelper {
                     Some(Expression { nodes }) => {
                         vec![Edge {
                             label: Some(right_label),
-                            node: cst::Node::nonterminal(child_kind, nodes),
+                            node: Node::nonterminal(child_kind, nodes),
                         }]
                     }
                     None => vec![],
@@ -201,7 +200,7 @@ impl PrecedenceHelper {
                 Expression {
                     nodes: vec![Edge {
                         label: Some(EdgeLabel::Variant),
-                        node: cst::Node::nonterminal(kind, children),
+                        node: Node::nonterminal(kind, children),
                     }],
                 }
             };

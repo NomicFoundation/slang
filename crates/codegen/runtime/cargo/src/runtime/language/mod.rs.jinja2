@@ -13,7 +13,7 @@ use semver::Version;
 use napi_derive::napi;
 
 use crate::cst;
-use crate::kinds::{
+use crate::cst::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
 use crate::language::lexer::{KeywordScan, Lexer, ScannedTerminal};
@@ -301,7 +301,7 @@ impl Language {
         return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
     }
 
-    #[napi(js_name = "rootKind", ts_return_type = "kinds.NonterminalKind", catch_unwind)]
+    #[napi(js_name = "rootKind", ts_return_type = "cst.NonterminalKind", catch_unwind)]
     pub fn root_kind_napi() -> NonterminalKind {
         Self::ROOT_KIND
     }
@@ -309,7 +309,7 @@ impl Language {
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput", catch_unwind)]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.NonterminalKind")] kind: NonterminalKind,
+        #[napi(ts_arg_type = "cst.NonterminalKind")] kind: NonterminalKind,
         input: String
     ) -> NAPIParseOutput {
         self.parse(kind, input.as_str()).into()

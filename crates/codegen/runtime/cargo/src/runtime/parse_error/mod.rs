@@ -1,8 +1,7 @@
 use std::fmt;
 
+use crate::cst::{TerminalKind, TextRange};
 use crate::diagnostic::{self, Diagnostic};
-use crate::kinds::TerminalKind;
-use crate::text_index::TextRange;
 
 /// Represents an error that occurred during parsing.
 ///

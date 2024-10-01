@@ -5,8 +5,8 @@
 // Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
 // ------------------------------------------------------------------------------------------------
 
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::{CaptureQuantifier, QueryMatch};
-use metaslang_cst::KindTypes;
 use thiserror::Error;
 
 use crate::ast::{CreateEdge, File, Stanza, Variable};

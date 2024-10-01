@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{self, Edge};
-use crate::kinds::{IsLexicalContext, TerminalKind};
+use crate::cst::{Edge, IsLexicalContext, Node, TerminalKind};
 use crate::language::parser_support::{ParserContext, ParserResult};
 
 /// Whether a keyword has been scanned and if so, whether it is reserved (unusable as an identifier)
@@ -102,7 +101,7 @@ pub(crate) trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![Edge::anonymous(cst::Node::terminal(
+            vec![Edge::anonymous(Node::terminal(
                 kind,
                 input.content(start.utf8..end.utf8),
             ))],
@@ -135,7 +134,7 @@ pub(crate) trait Lexer {
             return ParserResult::no_match(vec![kind]);
         }
         let end = input.position();
-        children.push(Edge::anonymous(cst::Node::terminal(
+        children.push(Edge::anonymous(Node::terminal(
             kind,
             input.content(start.utf8..end.utf8),
         )));

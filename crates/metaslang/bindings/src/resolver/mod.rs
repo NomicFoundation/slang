@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::iter::once;
 
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 

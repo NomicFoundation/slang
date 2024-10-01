@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use metaslang_bindings::PathResolver;
 use slang_solidity::bindings::{create_with_resolver, Bindings};
-use slang_solidity::text_index::TextIndex;
+use slang_solidity::cst::TextIndex;
 
 use crate::dataset::SOLC_VERSION;
 use crate::tests::parser::ParsedFile;

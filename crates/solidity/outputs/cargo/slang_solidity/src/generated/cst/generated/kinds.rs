@@ -18,7 +18,7 @@ use napi_derive::napi;
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum NonterminalKind {
     ABICoderPragma,
@@ -241,7 +241,7 @@ pub enum NonterminalKind {
     YulVariableNames,
 }
 
-impl metaslang_cst::NonterminalKind for NonterminalKind {}
+impl crate::cst::NonterminalKindExtensions for NonterminalKind {}
 
 // This needs to stay in sync with the wit-bindgen output
 #[repr(u8)]
@@ -259,7 +259,7 @@ impl metaslang_cst::NonterminalKind for NonterminalKind {}
     strum_macros::IntoStaticStr,
 )]
 #[strum(serialize_all = "snake_case")]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
 pub enum EdgeLabel {
     // Built-in:
@@ -399,7 +399,7 @@ pub enum EdgeLabel {
     WhileKeyword,
 }
 
-impl metaslang_cst::EdgeLabel for EdgeLabel {}
+impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
 
 // This needs to stay in sync with the wit-bindgen output
 #[repr(u16)]
@@ -416,8 +416,9 @@ impl metaslang_cst::EdgeLabel for EdgeLabel {}
     strum_macros::EnumString,
     strum_macros::IntoStaticStr,
 )]
-#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(feature = "__private_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "cst"))]
 #[cfg_attr(not(feature = "__private_napi_interfaces"), derive(Clone, Copy))]
+#[allow(clippy::upper_case_acronyms)]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
@@ -795,7 +796,7 @@ pub enum TerminalKind {
     YulYearsKeyword,
 }
 
-impl metaslang_cst::TerminalKind for TerminalKind {
+impl crate::cst::TerminalKindExtensions for TerminalKind {
     fn is_trivia(&self) -> bool {
         matches!(self, |Self::EndOfLine| Self::MultiLineComment
             | Self::MultiLineNatSpecComment

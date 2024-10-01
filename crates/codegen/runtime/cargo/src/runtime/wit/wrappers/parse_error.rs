@@ -2,6 +2,7 @@ use crate::diagnostic::Diagnostic;
 use crate::wit::utils::{define_wrapper, IntoFFI};
 
 mod ffi {
+    pub use crate::wit::interface::exports::nomic_foundation::slang::cst::TextRange;
     pub use crate::wit::interface::exports::nomic_foundation::slang::diagnostic::Severity;
     pub use crate::wit::interface::exports::nomic_foundation::slang::parse_error::{
         Guest, GuestParseError,
@@ -9,7 +10,6 @@ mod ffi {
     pub use crate::wit::interface::exports::nomic_foundation::slang::parse_output::{
         ParseError, ParseErrorBorrow,
     };
-    pub use crate::wit::interface::exports::nomic_foundation::slang::text_index::TextRange;
 }
 
 mod rust {

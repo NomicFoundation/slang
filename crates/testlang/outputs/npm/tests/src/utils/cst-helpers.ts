@@ -1,5 +1,10 @@
-import { NodeType, NonterminalNode, TerminalNode } from "@slang-private/slang-testlang/cst";
-import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import {
+  NodeType,
+  NonterminalKind,
+  NonterminalNode,
+  TerminalKind,
+  TerminalNode,
+} from "@slang-private/slang-testlang/cst";
 
 export function expectNonterminal(node: unknown, kind: NonterminalKind): asserts node is NonterminalNode {
   expect(node).toBeInstanceOf(NonterminalNode);

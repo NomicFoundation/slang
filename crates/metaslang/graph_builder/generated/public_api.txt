@@ -287,22 +287,22 @@ pub fn metaslang_graph_builder::ast::DeclareMutable::fmt(&self, f: &mut core::fm
 impl core::fmt::Display for metaslang_graph_builder::ast::DeclareMutable
 pub fn metaslang_graph_builder::ast::DeclareMutable::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::ast::DeclareMutable
-pub struct metaslang_graph_builder::ast::File<KT: metaslang_cst::KindTypes>
+pub struct metaslang_graph_builder::ast::File<KT: metaslang_cst::kinds::KindTypes>
 pub metaslang_graph_builder::ast::File::globals: alloc::vec::Vec<metaslang_graph_builder::ast::Global>
 pub metaslang_graph_builder::ast::File::inherited_variables: std::collections::hash::set::HashSet<metaslang_graph_builder::Identifier>
 pub metaslang_graph_builder::ast::File::shorthands: metaslang_graph_builder::ast::AttributeShorthands
 pub metaslang_graph_builder::ast::File::stanzas: alloc::vec::Vec<metaslang_graph_builder::ast::Stanza<KT>>
-impl<KT: metaslang_cst::KindTypes + 'static> metaslang_graph_builder::ast::File<KT>
+impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::execute<'tree>(&self, tree: &'tree metaslang_cst::cursor::Cursor<KT>, config: &metaslang_graph_builder::ExecutionConfig<'_, '_, KT>, cancellation_flag: &dyn metaslang_graph_builder::CancellationFlag) -> core::result::Result<metaslang_graph_builder::graph::Graph<KT>, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::ast::File<KT>::execute_into<'tree>(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, tree: &'tree metaslang_cst::cursor::Cursor<KT>, config: &metaslang_graph_builder::ExecutionConfig<'_, '_, KT>, cancellation_flag: &dyn metaslang_graph_builder::CancellationFlag) -> core::result::Result<(), metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::ast::File<KT>::try_visit_matches<'tree, E, F>(&self, tree: &'tree metaslang_cst::cursor::Cursor<KT>, lazy: bool, visit: F) -> core::result::Result<(), E> where F: core::ops::function::FnMut(metaslang_graph_builder::Match<KT>) -> core::result::Result<(), E>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::ast::File<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::check(&mut self) -> core::result::Result<(), CheckError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::ast::File<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::from_str(source: &str) -> core::result::Result<Self, metaslang_graph_builder::ParseError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::ast::File<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::new() -> metaslang_graph_builder::ast::File<KT>
-impl<KT: core::fmt::Debug + metaslang_cst::KindTypes> core::fmt::Debug for metaslang_graph_builder::ast::File<KT>
+impl<KT: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_graph_builder::ast::ForIn
 pub metaslang_graph_builder::ast::ForIn::location: metaslang_graph_builder::Location
@@ -485,13 +485,13 @@ pub fn metaslang_graph_builder::ast::SetLiteral::fmt(&self, f: &mut core::fmt::F
 impl core::fmt::Display for metaslang_graph_builder::ast::SetLiteral
 pub fn metaslang_graph_builder::ast::SetLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::ast::SetLiteral
-pub struct metaslang_graph_builder::ast::Stanza<KT: metaslang_cst::KindTypes>
+pub struct metaslang_graph_builder::ast::Stanza<KT: metaslang_cst::kinds::KindTypes>
 pub metaslang_graph_builder::ast::Stanza::query: metaslang_cst::query::model::Query<KT>
 pub metaslang_graph_builder::ast::Stanza::range: crate::parser::Range
 pub metaslang_graph_builder::ast::Stanza::statements: alloc::vec::Vec<metaslang_graph_builder::ast::Statement>
-impl<KT: metaslang_cst::KindTypes + 'static> metaslang_graph_builder::ast::Stanza<KT>
+impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_graph_builder::ast::Stanza<KT>
 pub fn metaslang_graph_builder::ast::Stanza<KT>::try_visit_matches<'tree, E, F>(&self, tree: &'tree metaslang_cst::cursor::Cursor<KT>, visit: F) -> core::result::Result<(), E> where F: core::ops::function::FnMut(metaslang_graph_builder::Match<KT>) -> core::result::Result<(), E>
-impl<KT: core::fmt::Debug + metaslang_cst::KindTypes> core::fmt::Debug for metaslang_graph_builder::ast::Stanza<KT>
+impl<KT: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_graph_builder::ast::Stanza<KT>
 pub fn metaslang_graph_builder::ast::Stanza<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_graph_builder::ast::StringConstant
 pub metaslang_graph_builder::ast::StringConstant::value: alloc::string::String
@@ -530,124 +530,124 @@ pub mod metaslang_graph_builder::functions
 pub mod metaslang_graph_builder::functions::stdlib
 pub mod metaslang_graph_builder::functions::stdlib::bool
 pub struct metaslang_graph_builder::functions::stdlib::bool::And
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::And
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::And
 pub fn metaslang_graph_builder::functions::stdlib::bool::And::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::bool::Not
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Not
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Not
 pub fn metaslang_graph_builder::functions::stdlib::bool::Not::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::bool::Or
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Or
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Or
 pub fn metaslang_graph_builder::functions::stdlib::bool::Or::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub mod metaslang_graph_builder::functions::stdlib::graph
 pub struct metaslang_graph_builder::functions::stdlib::graph::Node
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::graph::Node
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::graph::Node
 pub fn metaslang_graph_builder::functions::stdlib::graph::Node::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub mod metaslang_graph_builder::functions::stdlib::list
 pub struct metaslang_graph_builder::functions::stdlib::list::Concat
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Concat
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Concat
 pub fn metaslang_graph_builder::functions::stdlib::list::Concat::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::list::IsEmpty
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::IsEmpty
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::IsEmpty
 pub fn metaslang_graph_builder::functions::stdlib::list::IsEmpty::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::list::Join
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Join
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Join
 pub fn metaslang_graph_builder::functions::stdlib::list::Join::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::list::Length
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Length
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Length
 pub fn metaslang_graph_builder::functions::stdlib::list::Length::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub mod metaslang_graph_builder::functions::stdlib::math
 pub struct metaslang_graph_builder::functions::stdlib::math::Plus
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::math::Plus
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::math::Plus
 pub fn metaslang_graph_builder::functions::stdlib::math::Plus::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub mod metaslang_graph_builder::functions::stdlib::string
 pub struct metaslang_graph_builder::functions::stdlib::string::Format
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Format
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Format
 pub fn metaslang_graph_builder::functions::stdlib::string::Format::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::string::Replace
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Replace
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Replace
 pub fn metaslang_graph_builder::functions::stdlib::string::Replace::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub mod metaslang_graph_builder::functions::stdlib::syntax
 pub struct metaslang_graph_builder::functions::stdlib::syntax::EndColumn
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndColumn
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndColumn
 pub fn metaslang_graph_builder::functions::stdlib::syntax::EndColumn::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::EndRow
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndRow
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndRow
 pub fn metaslang_graph_builder::functions::stdlib::syntax::EndRow::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::NodeType
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NodeType
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NodeType
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NodeType::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::SourceText
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::SourceText
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::SourceText
 pub fn metaslang_graph_builder::functions::stdlib::syntax::SourceText::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::StartColumn
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartColumn
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartColumn
 pub fn metaslang_graph_builder::functions::stdlib::syntax::StartColumn::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::syntax::StartRow
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartRow
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartRow
 pub fn metaslang_graph_builder::functions::stdlib::syntax::StartRow::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::Eq
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::Eq
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::Eq
 pub fn metaslang_graph_builder::functions::stdlib::Eq::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub struct metaslang_graph_builder::functions::stdlib::IsNull
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::IsNull
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::IsNull
 pub fn metaslang_graph_builder::functions::stdlib::IsNull::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-pub struct metaslang_graph_builder::functions::Functions<KT: metaslang_cst::KindTypes>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Functions<KT>
+pub struct metaslang_graph_builder::functions::Functions<KT: metaslang_cst::kinds::KindTypes>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Functions<KT>
 pub fn metaslang_graph_builder::functions::Functions<KT>::add<F>(&mut self, name: metaslang_graph_builder::Identifier, function: F) where F: metaslang_graph_builder::functions::Function<KT> + core::marker::Send + core::marker::Sync + 'static
 pub fn metaslang_graph_builder::functions::Functions<KT>::call(&self, name: &metaslang_graph_builder::Identifier, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::functions::Functions<KT>::new() -> metaslang_graph_builder::functions::Functions<KT>
 pub fn metaslang_graph_builder::functions::Functions<KT>::stdlib() -> metaslang_graph_builder::functions::Functions<KT>
-impl<KT: core::default::Default + metaslang_cst::KindTypes> core::default::Default for metaslang_graph_builder::functions::Functions<KT>
+impl<KT: core::default::Default + metaslang_cst::kinds::KindTypes> core::default::Default for metaslang_graph_builder::functions::Functions<KT>
 pub fn metaslang_graph_builder::functions::Functions<KT>::default() -> metaslang_graph_builder::functions::Functions<KT>
-pub trait metaslang_graph_builder::functions::Function<KT: metaslang_cst::KindTypes>
+pub trait metaslang_graph_builder::functions::Function<KT: metaslang_cst::kinds::KindTypes>
 pub fn metaslang_graph_builder::functions::Function::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::Eq
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::Eq
 pub fn metaslang_graph_builder::functions::stdlib::Eq::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::IsNull
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::IsNull
 pub fn metaslang_graph_builder::functions::stdlib::IsNull::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::And
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::And
 pub fn metaslang_graph_builder::functions::stdlib::bool::And::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Not
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Not
 pub fn metaslang_graph_builder::functions::stdlib::bool::Not::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Or
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::bool::Or
 pub fn metaslang_graph_builder::functions::stdlib::bool::Or::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::graph::Node
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::graph::Node
 pub fn metaslang_graph_builder::functions::stdlib::graph::Node::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Concat
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Concat
 pub fn metaslang_graph_builder::functions::stdlib::list::Concat::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::IsEmpty
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::IsEmpty
 pub fn metaslang_graph_builder::functions::stdlib::list::IsEmpty::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Join
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Join
 pub fn metaslang_graph_builder::functions::stdlib::list::Join::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Length
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::list::Length
 pub fn metaslang_graph_builder::functions::stdlib::list::Length::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::math::Plus
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::math::Plus
 pub fn metaslang_graph_builder::functions::stdlib::math::Plus::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Format
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Format
 pub fn metaslang_graph_builder::functions::stdlib::string::Format::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Replace
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::string::Replace
 pub fn metaslang_graph_builder::functions::stdlib::string::Replace::call(&self, _graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndColumn
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndColumn
 pub fn metaslang_graph_builder::functions::stdlib::syntax::EndColumn::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndRow
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::EndRow
 pub fn metaslang_graph_builder::functions::stdlib::syntax::EndRow::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NamedChildCount::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NamedChildIndex::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NodeType
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::NodeType
 pub fn metaslang_graph_builder::functions::stdlib::syntax::NodeType::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::SourceText
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::SourceText
 pub fn metaslang_graph_builder::functions::stdlib::syntax::SourceText::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartColumn
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartColumn
 pub fn metaslang_graph_builder::functions::stdlib::syntax::StartColumn::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartRow
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::functions::Function<KT> for metaslang_graph_builder::functions::stdlib::syntax::StartRow
 pub fn metaslang_graph_builder::functions::stdlib::syntax::StartRow::call(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, parameters: &mut dyn metaslang_graph_builder::functions::Parameters) -> core::result::Result<metaslang_graph_builder::graph::Value, metaslang_graph_builder::ExecutionError>
 pub trait metaslang_graph_builder::functions::Parameters
 pub fn metaslang_graph_builder::functions::Parameters::finish(&mut self) -> core::result::Result<(), metaslang_graph_builder::ExecutionError>
@@ -677,11 +677,11 @@ pub fn metaslang_graph_builder::graph::Value::into_graph_node_ref(self) -> core:
 pub fn metaslang_graph_builder::graph::Value::into_integer(self) -> core::result::Result<u32, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::graph::Value::into_list(self) -> core::result::Result<alloc::vec::Vec<metaslang_graph_builder::graph::Value>, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::graph::Value::into_string(self) -> core::result::Result<alloc::string::String, metaslang_graph_builder::ExecutionError>
-pub fn metaslang_graph_builder::graph::Value::into_syntax_node<'a, KT: metaslang_cst::KindTypes>(self, graph: &'a metaslang_graph_builder::graph::Graph<KT>) -> core::result::Result<&'a metaslang_cst::cursor::Cursor<KT>, metaslang_graph_builder::ExecutionError>
+pub fn metaslang_graph_builder::graph::Value::into_syntax_node<'a, KT: metaslang_cst::kinds::KindTypes>(self, graph: &'a metaslang_graph_builder::graph::Graph<KT>) -> core::result::Result<&'a metaslang_cst::cursor::Cursor<KT>, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::graph::Value::into_syntax_node_ref(self) -> core::result::Result<metaslang_graph_builder::graph::SyntaxNodeRef, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::graph::Value::is_null(&self) -> bool
 impl metaslang_graph_builder::graph::Value
-pub fn metaslang_graph_builder::graph::Value::from_nodes<KT: metaslang_cst::KindTypes, CI: core::iter::traits::collect::IntoIterator<Item = metaslang_cst::cursor::Cursor<KT>>>(graph: &mut metaslang_graph_builder::graph::Graph<KT>, cursors: CI, quantifier: metaslang_cst::query::parser::CaptureQuantifier) -> metaslang_graph_builder::graph::Value
+pub fn metaslang_graph_builder::graph::Value::from_nodes<KT: metaslang_cst::kinds::KindTypes, CI: core::iter::traits::collect::IntoIterator<Item = metaslang_cst::cursor::Cursor<KT>>>(graph: &mut metaslang_graph_builder::graph::Graph<KT>, cursors: CI, quantifier: metaslang_cst::query::parser::CaptureQuantifier) -> metaslang_graph_builder::graph::Value
 impl core::clone::Clone for metaslang_graph_builder::graph::Value
 pub fn metaslang_graph_builder::graph::Value::clone(&self) -> metaslang_graph_builder::graph::Value
 impl core::cmp::Eq for metaslang_graph_builder::graph::Value
@@ -732,8 +732,8 @@ impl serde::ser::Serialize for metaslang_graph_builder::graph::Attributes
 pub fn metaslang_graph_builder::graph::Attributes::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 pub struct metaslang_graph_builder::graph::Edge
 pub metaslang_graph_builder::graph::Edge::attributes: metaslang_graph_builder::graph::Attributes
-pub struct metaslang_graph_builder::graph::Graph<KT: metaslang_cst::KindTypes>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::graph::Graph<KT>
+pub struct metaslang_graph_builder::graph::Graph<KT: metaslang_cst::kinds::KindTypes>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::add_graph_node(&mut self) -> metaslang_graph_builder::graph::GraphNodeRef
 pub fn metaslang_graph_builder::graph::Graph<KT>::add_syntax_node(&mut self, cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::SyntaxNodeRef
 pub fn metaslang_graph_builder::graph::Graph<KT>::display_json(&self, path: core::option::Option<&std::path::Path>) -> std::io::error::Result<()>
@@ -741,15 +741,15 @@ pub fn metaslang_graph_builder::graph::Graph<KT>::iter_nodes(&self) -> impl core
 pub fn metaslang_graph_builder::graph::Graph<KT>::new() -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::node_count(&self) -> usize
 pub fn metaslang_graph_builder::graph::Graph<KT>::pretty_print<'a>(&'a self) -> impl core::fmt::Display + 'a
-impl<KT: metaslang_cst::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_graph_builder::graph::GraphNode
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &metaslang_graph_builder::graph::GraphNode
-impl<KT: metaslang_cst::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::SyntaxNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::SyntaxNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, node_ref: metaslang_graph_builder::graph::SyntaxNodeRef) -> &metaslang_cst::cursor::Cursor<KT>
-impl<KT: metaslang_cst::KindTypes> core::ops::index::IndexMut<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::IndexMut<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::index_mut(&mut self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &mut metaslang_graph_builder::graph::GraphNode
-impl<KT: metaslang_cst::KindTypes> serde::ser::Serialize for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> serde::ser::Serialize for metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 pub struct metaslang_graph_builder::graph::GraphNode
 pub metaslang_graph_builder::graph::GraphNode::attributes: metaslang_graph_builder::graph::Attributes
@@ -781,10 +781,10 @@ impl core::hash::Hash for metaslang_graph_builder::graph::GraphNodeRef
 pub fn metaslang_graph_builder::graph::GraphNodeRef::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for metaslang_graph_builder::graph::GraphNodeRef
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::graph::GraphNodeRef
-impl<KT: metaslang_cst::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_graph_builder::graph::GraphNode
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &metaslang_graph_builder::graph::GraphNode
-impl<KT: metaslang_cst::KindTypes> core::ops::index::IndexMut<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::IndexMut<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::index_mut(&mut self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &mut metaslang_graph_builder::graph::GraphNode
 pub struct metaslang_graph_builder::graph::SyntaxNodeRef
 impl metaslang_graph_builder::graph::SyntaxNodeRef
@@ -808,7 +808,7 @@ impl core::hash::Hash for metaslang_graph_builder::graph::SyntaxNodeRef
 pub fn metaslang_graph_builder::graph::SyntaxNodeRef::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for metaslang_graph_builder::graph::SyntaxNodeRef
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::graph::SyntaxNodeRef
-impl<KT: metaslang_cst::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::SyntaxNodeRef> for metaslang_graph_builder::graph::Graph<KT>
+impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::SyntaxNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, node_ref: metaslang_graph_builder::graph::SyntaxNodeRef) -> &metaslang_cst::cursor::Cursor<KT>
 pub mod metaslang_graph_builder::reference
@@ -893,8 +893,8 @@ impl core::fmt::Debug for metaslang_graph_builder::CancellationError
 pub fn metaslang_graph_builder::CancellationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for metaslang_graph_builder::CancellationError
 pub fn metaslang_graph_builder::CancellationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct metaslang_graph_builder::ExecutionConfig<'a, 'g, KT: metaslang_cst::KindTypes>
-impl<'a, 'g, KT: metaslang_cst::KindTypes> metaslang_graph_builder::ExecutionConfig<'a, 'g, KT>
+pub struct metaslang_graph_builder::ExecutionConfig<'a, 'g, KT: metaslang_cst::kinds::KindTypes>
+impl<'a, 'g, KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ExecutionConfig<'a, 'g, KT>
 pub fn metaslang_graph_builder::ExecutionConfig<'a, 'g, KT>::debug_attributes(self, location_attr: metaslang_graph_builder::Identifier, variable_name_attr: metaslang_graph_builder::Identifier, match_node_attr: metaslang_graph_builder::Identifier) -> Self
 pub fn metaslang_graph_builder::ExecutionConfig<'a, 'g, KT>::lazy(self, lazy: bool) -> Self
 pub fn metaslang_graph_builder::ExecutionConfig<'a, 'g, KT>::new(functions: &'a metaslang_graph_builder::functions::Functions<KT>, globals: &'a metaslang_graph_builder::Variables<'g>) -> Self
@@ -949,8 +949,8 @@ impl core::fmt::Display for metaslang_graph_builder::Location
 pub fn metaslang_graph_builder::Location::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for metaslang_graph_builder::Location
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::Location
-pub struct metaslang_graph_builder::Match<KT: metaslang_cst::KindTypes>
-impl<KT: metaslang_cst::KindTypes> metaslang_graph_builder::Match<KT>
+pub struct metaslang_graph_builder::Match<KT: metaslang_cst::kinds::KindTypes>
+impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::Match<KT>
 pub fn metaslang_graph_builder::Match<KT>::capture_names(&self) -> impl core::iter::traits::iterator::Iterator<Item = &alloc::string::String>
 pub fn metaslang_graph_builder::Match<KT>::full_capture(&self) -> metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_graph_builder::Match<KT>::named_capture(&self, name: &str) -> core::option::Option<(metaslang_cst::query::parser::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<KT>>)>

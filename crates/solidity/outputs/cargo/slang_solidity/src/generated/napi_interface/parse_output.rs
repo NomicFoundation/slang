@@ -3,8 +3,8 @@
 use napi::Either;
 use napi_derive::napi;
 
-use crate::napi_interface::cst::{NAPINodeExtensions, NonterminalNode, TerminalNode};
-use crate::napi_interface::{cursor, parse_error, RustParseOutput};
+use crate::napi_interface::cst::{Cursor, NAPINodeExtensions, NonterminalNode, TerminalNode};
+use crate::napi_interface::{parse_error, RustParseOutput};
 
 #[napi(namespace = "parse_output")]
 pub struct ParseOutput(RustParseOutput);
@@ -33,8 +33,8 @@ impl ParseOutput {
     }
 
     /// Creates a cursor that starts at the root of the parse tree.
-    #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]
-    pub fn create_tree_cursor(&self) -> cursor::Cursor {
+    #[napi(ts_return_type = "cst.Cursor", catch_unwind)]
+    pub fn create_tree_cursor(&self) -> Cursor {
         self.0.create_tree_cursor().into()
     }
 }

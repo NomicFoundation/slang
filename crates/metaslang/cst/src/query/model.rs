@@ -2,9 +2,9 @@ use std::collections::BTreeMap;
 use std::fmt;
 use std::rc::Rc;
 
-use crate::cst::NodeKind;
+use crate::kinds::{BaseKind, KindTypes};
+use crate::nodes::NodeKind;
 use crate::query::{CaptureQuantifier, QueryError};
-use crate::{AbstractKind as _, KindTypes};
 
 #[derive(Clone, Debug)]
 pub struct Query<T: KindTypes> {

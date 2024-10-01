@@ -1,4 +1,11 @@
-use metaslang_cst::cst;
+#[path = "generated/kinds.rs"]
+mod kinds;
+
+pub use kinds::{EdgeLabel, NonterminalKind, TerminalKind};
+pub(crate) use kinds::{IsLexicalContext, LexicalContext, LexicalContextType};
+pub use metaslang_cst::kinds::{
+    EdgeLabelExtensions, NonterminalKindExtensions, TerminalKindExtensions,
+};
 
 // These derives are because default #[derive(...)] on a generic type implements only the trait
 // with default bounds also implied for the generic types as well, i.e.
@@ -14,13 +21,22 @@ use metaslang_cst::cst;
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub enum KindTypes {}
 
-impl metaslang_cst::KindTypes for KindTypes {
-    type NonterminalKind = crate::kinds::NonterminalKind;
-    type TerminalKind = crate::kinds::TerminalKind;
-    type EdgeLabel = crate::kinds::EdgeLabel;
+impl metaslang_cst::kinds::KindTypes for KindTypes {
+    type NonterminalKind = NonterminalKind;
+    type TerminalKind = TerminalKind;
+    type EdgeLabel = EdgeLabel;
 }
 
-pub type Node = cst::Node<KindTypes>;
-pub type NonterminalNode = cst::NonterminalNode<KindTypes>;
-pub type TerminalNode = cst::TerminalNode<KindTypes>;
-pub type Edge = cst::Edge<KindTypes>;
+pub type Node = metaslang_cst::nodes::Node<KindTypes>;
+pub type NonterminalNode = metaslang_cst::nodes::NonterminalNode<KindTypes>;
+pub type TerminalNode = metaslang_cst::nodes::TerminalNode<KindTypes>;
+pub type Edge = metaslang_cst::nodes::Edge<KindTypes>;
+
+pub type Cursor = metaslang_cst::cursor::Cursor<KindTypes>;
+pub type CursorWithEdges = metaslang_cst::cursor::CursorWithEdges<KindTypes>;
+
+pub type Query = metaslang_cst::query::Query<KindTypes>;
+pub type QueryMatch = metaslang_cst::query::QueryMatch<KindTypes>;
+pub type QueryMatchIterator = metaslang_cst::query::QueryMatchIterator<KindTypes>;
+pub use metaslang_cst::query::QueryError;
+pub use metaslang_cst::text_index::{TextIndex, TextRange, TextRangeExtensions};

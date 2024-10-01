@@ -1,5 +1,4 @@
-use slang_solidity::kinds::NonterminalKind;
-use slang_solidity::text_index::TextIndex;
+use slang_solidity::cst::{NonterminalKind, TextIndex};
 
 use crate::tests::parser::ParsedFile;
 

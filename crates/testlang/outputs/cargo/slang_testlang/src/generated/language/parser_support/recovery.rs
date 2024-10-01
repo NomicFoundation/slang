@@ -1,13 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst;
-use crate::kinds::{IsLexicalContext, TerminalKind};
+use crate::cst::{Edge, IsLexicalContext, TerminalKind, TextRange, TextRangeExtensions};
 use crate::language::lexer::{Lexer, ScannedTerminal};
 use crate::language::parser_support::context::ParserContext;
 use crate::language::parser_support::parser_result::SkippedUntil;
 use crate::language::parser_support::ParserResult;
 use crate::parse_error::ParseError;
-use crate::text_index::{TextRange, TextRangeExtensions};
 
 /// How many terminals have to be matched to trigger the error recovery.
 /// For ambiguous syntaxes this needs to be set to at least N, where N
@@ -18,7 +16,7 @@ pub struct TerminalAcceptanceThreshold(pub(crate) u8);
 fn opt_parse(
     input: &mut ParserContext<'_>,
     parse: impl Fn(&mut ParserContext<'_>) -> ParserResult,
-) -> Vec<cst::Edge> {
+) -> Vec<Edge> {
     let start = input.position();
     if let ParserResult::Match(r#match) = parse(input) {
         r#match.nodes
