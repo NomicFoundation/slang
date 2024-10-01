@@ -45,32 +45,6 @@ pub fn metaslang_cst::cst::Node<T>::from(terminal: alloc::rc::Rc<metaslang_cst::
 impl<T: metaslang_cst::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cst::Node<T>
 impl<T> serde::ser::Serialize for metaslang_cst::cst::Node<T> where T: serde::ser::Serialize + metaslang_cst::KindTypes
 pub fn metaslang_cst::cst::Node<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-impl<T> core::marker::Freeze for metaslang_cst::cst::Node<T>
-impl<T> !core::marker::Send for metaslang_cst::cst::Node<T>
-impl<T> !core::marker::Sync for metaslang_cst::cst::Node<T>
-impl<T> core::marker::Unpin for metaslang_cst::cst::Node<T>
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cst::Node<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cst::Node<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::cst::Node<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cst::Node<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cst::Node<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cst::Node<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cst::Node<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cst::Node<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cst::Node<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cst::Node<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cst::Node<T> where T: core::clone::Clone
-pub type metaslang_cst::cst::Node<T>::Owned = T
-pub fn metaslang_cst::cst::Node<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cst::Node<T>::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::cst::Node<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cst::Node<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cst::Node<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::Node<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cst::Node<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::Node<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cst::Node<T>
-pub fn metaslang_cst::cst::Node<T>::from(t: T) -> T
 pub enum metaslang_cst::cst::NodeKind<T: metaslang_cst::KindTypes>
 pub metaslang_cst::cst::NodeKind::Nonterminal(<T as metaslang_cst::KindTypes>::NonterminalKind)
 pub metaslang_cst::cst::NodeKind::Terminal(<T as metaslang_cst::KindTypes>::TerminalKind)
@@ -87,34 +61,6 @@ pub fn &'static str::from(val: metaslang_cst::cst::NodeKind<T>) -> Self
 impl<T: metaslang_cst::KindTypes> core::fmt::Display for metaslang_cst::cst::NodeKind<T>
 pub fn metaslang_cst::cst::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cst::NodeKind<T>
-impl<T> core::marker::Freeze for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Freeze, <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Freeze
-impl<T> core::marker::Send for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Send, <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Send
-impl<T> core::marker::Sync for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Sync, <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Sync
-impl<T> core::marker::Unpin for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Unpin, <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Unpin
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cst::NodeKind<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::UnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::UnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::cst::NodeKind<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cst::NodeKind<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cst::NodeKind<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cst::NodeKind<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cst::NodeKind<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cst::NodeKind<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cst::NodeKind<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cst::NodeKind<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cst::NodeKind<T> where T: core::clone::Clone
-pub type metaslang_cst::cst::NodeKind<T>::Owned = T
-pub fn metaslang_cst::cst::NodeKind<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cst::NodeKind<T>::to_owned(&self) -> T
-impl<T> alloc::string::ToString for metaslang_cst::cst::NodeKind<T> where T: core::fmt::Display + core::marker::Sized
-pub fn metaslang_cst::cst::NodeKind<T>::to_string(&self) -> alloc::string::String
-impl<T> core::any::Any for metaslang_cst::cst::NodeKind<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cst::NodeKind<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cst::NodeKind<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::NodeKind<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cst::NodeKind<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::NodeKind<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cst::NodeKind<T>
-pub fn metaslang_cst::cst::NodeKind<T>::from(t: T) -> T
 pub struct metaslang_cst::cst::Edge<T: metaslang_cst::KindTypes>
 pub metaslang_cst::cst::Edge::label: core::option::Option<<T as metaslang_cst::KindTypes>::EdgeLabel>
 pub metaslang_cst::cst::Edge::node: metaslang_cst::cst::Node<T>
@@ -133,32 +79,6 @@ pub type metaslang_cst::cst::Edge<T>::Target = metaslang_cst::cst::Node<T>
 pub fn metaslang_cst::cst::Edge<T>::deref(&self) -> &Self::Target
 impl<T> serde::ser::Serialize for metaslang_cst::cst::Edge<T> where T: serde::ser::Serialize + metaslang_cst::KindTypes
 pub fn metaslang_cst::cst::Edge<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-impl<T> core::marker::Freeze for metaslang_cst::cst::Edge<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::marker::Freeze
-impl<T> !core::marker::Send for metaslang_cst::cst::Edge<T>
-impl<T> !core::marker::Sync for metaslang_cst::cst::Edge<T>
-impl<T> core::marker::Unpin for metaslang_cst::cst::Edge<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::marker::Unpin
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cst::Edge<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cst::Edge<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::UnwindSafe + core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::cst::Edge<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cst::Edge<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cst::Edge<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cst::Edge<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cst::Edge<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cst::Edge<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cst::Edge<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cst::Edge<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cst::Edge<T> where T: core::clone::Clone
-pub type metaslang_cst::cst::Edge<T>::Owned = T
-pub fn metaslang_cst::cst::Edge<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cst::Edge<T>::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::cst::Edge<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cst::Edge<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cst::Edge<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::Edge<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cst::Edge<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::Edge<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cst::Edge<T>
-pub fn metaslang_cst::cst::Edge<T>::from(t: T) -> T
 pub struct metaslang_cst::cst::NonterminalNode<T: metaslang_cst::KindTypes>
 pub metaslang_cst::cst::NonterminalNode::children: alloc::vec::Vec<metaslang_cst::cst::Edge<T>>
 pub metaslang_cst::cst::NonterminalNode::kind: <T as metaslang_cst::KindTypes>::NonterminalKind
@@ -176,32 +96,6 @@ pub fn metaslang_cst::cst::NonterminalNode<T>::fmt(&self, f: &mut core::fmt::For
 impl<T: metaslang_cst::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cst::NonterminalNode<T>
 impl<T> serde::ser::Serialize for metaslang_cst::cst::NonterminalNode<T> where T: serde::ser::Serialize + metaslang_cst::KindTypes, <T as metaslang_cst::KindTypes>::NonterminalKind: serde::ser::Serialize
 pub fn metaslang_cst::cst::NonterminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-impl<T> core::marker::Freeze for metaslang_cst::cst::NonterminalNode<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Freeze
-impl<T> !core::marker::Send for metaslang_cst::cst::NonterminalNode<T>
-impl<T> !core::marker::Sync for metaslang_cst::cst::NonterminalNode<T>
-impl<T> core::marker::Unpin for metaslang_cst::cst::NonterminalNode<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::marker::Unpin, <T as metaslang_cst::KindTypes>::EdgeLabel: core::marker::Unpin
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cst::NonterminalNode<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cst::NonterminalNode<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::UnwindSafe + core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::UnwindSafe + core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::cst::NonterminalNode<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cst::NonterminalNode<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cst::NonterminalNode<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cst::NonterminalNode<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cst::NonterminalNode<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cst::NonterminalNode<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cst::NonterminalNode<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cst::NonterminalNode<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cst::NonterminalNode<T> where T: core::clone::Clone
-pub type metaslang_cst::cst::NonterminalNode<T>::Owned = T
-pub fn metaslang_cst::cst::NonterminalNode<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cst::NonterminalNode<T>::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::cst::NonterminalNode<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cst::NonterminalNode<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cst::NonterminalNode<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::NonterminalNode<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cst::NonterminalNode<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::NonterminalNode<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cst::NonterminalNode<T>
-pub fn metaslang_cst::cst::NonterminalNode<T>::from(t: T) -> T
 pub struct metaslang_cst::cst::TerminalNode<T: metaslang_cst::KindTypes>
 pub metaslang_cst::cst::TerminalNode::kind: <T as metaslang_cst::KindTypes>::TerminalKind
 pub metaslang_cst::cst::TerminalNode::text: alloc::string::String
@@ -215,32 +109,6 @@ pub fn metaslang_cst::cst::TerminalNode<T>::fmt(&self, f: &mut core::fmt::Format
 impl<T: metaslang_cst::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cst::TerminalNode<T>
 impl<T: metaslang_cst::KindTypes> serde::ser::Serialize for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: serde::ser::Serialize
 pub fn metaslang_cst::cst::TerminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-impl<T> core::marker::Freeze for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Freeze
-impl<T> core::marker::Send for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Send
-impl<T> core::marker::Sync for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Sync
-impl<T> core::marker::Unpin for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::marker::Unpin
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cst::TerminalNode<T> where <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::UnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::cst::TerminalNode<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cst::TerminalNode<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cst::TerminalNode<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cst::TerminalNode<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cst::TerminalNode<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cst::TerminalNode<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cst::TerminalNode<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cst::TerminalNode<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cst::TerminalNode<T> where T: core::clone::Clone
-pub type metaslang_cst::cst::TerminalNode<T>::Owned = T
-pub fn metaslang_cst::cst::TerminalNode<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cst::TerminalNode<T>::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::cst::TerminalNode<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cst::TerminalNode<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cst::TerminalNode<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::TerminalNode<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cst::TerminalNode<T> where T: core::marker::Sized
-pub fn metaslang_cst::cst::TerminalNode<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cst::TerminalNode<T>
-pub fn metaslang_cst::cst::TerminalNode<T>::from(t: T) -> T
 pub mod metaslang_cst::cursor
 pub struct metaslang_cst::cursor::Cursor<T: metaslang_cst::KindTypes>
 impl<T: metaslang_cst::KindTypes + 'static> metaslang_cst::cursor::Cursor<T>
@@ -286,36 +154,6 @@ impl<T: metaslang_cst::KindTypes> core::iter::traits::iterator::Iterator for met
 pub type metaslang_cst::cursor::Cursor<T>::Item = metaslang_cst::cst::Node<T>
 pub fn metaslang_cst::cursor::Cursor<T>::next(&mut self) -> core::option::Option<Self::Item>
 impl<T: metaslang_cst::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cursor::Cursor<T>
-impl<T> core::marker::Freeze for metaslang_cst::cursor::Cursor<T>
-impl<T> !core::marker::Send for metaslang_cst::cursor::Cursor<T>
-impl<T> !core::marker::Sync for metaslang_cst::cursor::Cursor<T>
-impl<T> core::marker::Unpin for metaslang_cst::cursor::Cursor<T>
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cursor::Cursor<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cursor::Cursor<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<I> core::iter::traits::collect::IntoIterator for metaslang_cst::cursor::Cursor<T> where I: core::iter::traits::iterator::Iterator
-pub type metaslang_cst::cursor::Cursor<T>::IntoIter = I
-pub type metaslang_cst::cursor::Cursor<T>::Item = <I as core::iter::traits::iterator::Iterator>::Item
-pub fn metaslang_cst::cursor::Cursor<T>::into_iter(self) -> I
-impl<T, U> core::convert::Into<U> for metaslang_cst::cursor::Cursor<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cursor::Cursor<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cursor::Cursor<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cursor::Cursor<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cursor::Cursor<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cursor::Cursor<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cursor::Cursor<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cursor::Cursor<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::cursor::Cursor<T> where T: core::clone::Clone
-pub type metaslang_cst::cursor::Cursor<T>::Owned = T
-pub fn metaslang_cst::cursor::Cursor<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::cursor::Cursor<T>::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::cursor::Cursor<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cursor::Cursor<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cursor::Cursor<T> where T: core::marker::Sized
-pub fn metaslang_cst::cursor::Cursor<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cursor::Cursor<T> where T: core::marker::Sized
-pub fn metaslang_cst::cursor::Cursor<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cursor::Cursor<T>
-pub fn metaslang_cst::cursor::Cursor<T>::from(t: T) -> T
 pub struct metaslang_cst::cursor::CursorWithEdges<T: metaslang_cst::KindTypes>
 impl<T: metaslang_cst::KindTypes> metaslang_cst::cursor::CursorWithEdges<T>
 pub fn metaslang_cst::cursor::CursorWithEdges<T>::without_edges(self) -> metaslang_cst::cursor::Cursor<T>
@@ -329,32 +167,6 @@ pub type metaslang_cst::cursor::CursorWithEdges<T>::Target = metaslang_cst::curs
 pub fn metaslang_cst::cursor::CursorWithEdges<T>::deref(&self) -> &Self::Target
 impl<T: metaslang_cst::KindTypes> core::ops::deref::DerefMut for metaslang_cst::cursor::CursorWithEdges<T>
 pub fn metaslang_cst::cursor::CursorWithEdges<T>::deref_mut(&mut self) -> &mut Self::Target
-impl<T> core::marker::Freeze for metaslang_cst::cursor::CursorWithEdges<T>
-impl<T> !core::marker::Send for metaslang_cst::cursor::CursorWithEdges<T>
-impl<T> !core::marker::Sync for metaslang_cst::cursor::CursorWithEdges<T>
-impl<T> core::marker::Unpin for metaslang_cst::cursor::CursorWithEdges<T>
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::cursor::CursorWithEdges<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::cursor::CursorWithEdges<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<I> core::iter::traits::collect::IntoIterator for metaslang_cst::cursor::CursorWithEdges<T> where I: core::iter::traits::iterator::Iterator
-pub type metaslang_cst::cursor::CursorWithEdges<T>::IntoIter = I
-pub type metaslang_cst::cursor::CursorWithEdges<T>::Item = <I as core::iter::traits::iterator::Iterator>::Item
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::into_iter(self) -> I
-impl<T, U> core::convert::Into<U> for metaslang_cst::cursor::CursorWithEdges<T> where U: core::convert::From<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::cursor::CursorWithEdges<T> where U: core::convert::Into<T>
-pub type metaslang_cst::cursor::CursorWithEdges<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::cursor::CursorWithEdges<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::cursor::CursorWithEdges<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for metaslang_cst::cursor::CursorWithEdges<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::cursor::CursorWithEdges<T> where T: core::marker::Sized
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::cursor::CursorWithEdges<T> where T: core::marker::Sized
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::cursor::CursorWithEdges<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::from(t: T) -> T
 pub mod metaslang_cst::query
 pub enum metaslang_cst::query::CaptureQuantifier
 pub metaslang_cst::query::CaptureQuantifier::One
@@ -370,32 +182,6 @@ impl core::fmt::Debug for metaslang_cst::query::CaptureQuantifier
 pub fn metaslang_cst::query::CaptureQuantifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for metaslang_cst::query::CaptureQuantifier
 impl core::marker::StructuralPartialEq for metaslang_cst::query::CaptureQuantifier
-impl core::marker::Freeze for metaslang_cst::query::CaptureQuantifier
-impl core::marker::Send for metaslang_cst::query::CaptureQuantifier
-impl core::marker::Sync for metaslang_cst::query::CaptureQuantifier
-impl core::marker::Unpin for metaslang_cst::query::CaptureQuantifier
-impl core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::query::CaptureQuantifier
-impl core::panic::unwind_safe::UnwindSafe for metaslang_cst::query::CaptureQuantifier
-impl<T, U> core::convert::Into<U> for metaslang_cst::query::CaptureQuantifier where U: core::convert::From<T>
-pub fn metaslang_cst::query::CaptureQuantifier::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::query::CaptureQuantifier where U: core::convert::Into<T>
-pub type metaslang_cst::query::CaptureQuantifier::Error = core::convert::Infallible
-pub fn metaslang_cst::query::CaptureQuantifier::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::query::CaptureQuantifier where U: core::convert::TryFrom<T>
-pub type metaslang_cst::query::CaptureQuantifier::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::query::CaptureQuantifier::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::query::CaptureQuantifier where T: core::clone::Clone
-pub type metaslang_cst::query::CaptureQuantifier::Owned = T
-pub fn metaslang_cst::query::CaptureQuantifier::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::query::CaptureQuantifier::to_owned(&self) -> T
-impl<T> core::any::Any for metaslang_cst::query::CaptureQuantifier where T: 'static + core::marker::Sized
-pub fn metaslang_cst::query::CaptureQuantifier::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::query::CaptureQuantifier where T: core::marker::Sized
-pub fn metaslang_cst::query::CaptureQuantifier::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::query::CaptureQuantifier where T: core::marker::Sized
-pub fn metaslang_cst::query::CaptureQuantifier::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::query::CaptureQuantifier
-pub fn metaslang_cst::query::CaptureQuantifier::from(t: T) -> T
 pub struct metaslang_cst::query::Query<T: metaslang_cst::KindTypes>
 pub metaslang_cst::query::Query::ast_node: ASTNode<T>
 pub metaslang_cst::query::Query::capture_quantifiers: alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
@@ -407,34 +193,6 @@ impl<T: core::fmt::Debug + metaslang_cst::KindTypes> core::fmt::Debug for metasl
 pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::KindTypes> core::fmt::Display for metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<T> core::marker::Freeze for metaslang_cst::query::Query<T>
-impl<T> !core::marker::Send for metaslang_cst::query::Query<T>
-impl<T> !core::marker::Sync for metaslang_cst::query::Query<T>
-impl<T> core::marker::Unpin for metaslang_cst::query::Query<T>
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::query::Query<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::query::Query<T> where <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::query::Query<T> where U: core::convert::From<T>
-pub fn metaslang_cst::query::Query<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::query::Query<T> where U: core::convert::Into<T>
-pub type metaslang_cst::query::Query<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::query::Query<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::query::Query<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::query::Query<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::query::Query<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::query::Query<T> where T: core::clone::Clone
-pub type metaslang_cst::query::Query<T>::Owned = T
-pub fn metaslang_cst::query::Query<T>::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::query::Query<T>::to_owned(&self) -> T
-impl<T> alloc::string::ToString for metaslang_cst::query::Query<T> where T: core::fmt::Display + core::marker::Sized
-pub fn metaslang_cst::query::Query<T>::to_string(&self) -> alloc::string::String
-impl<T> core::any::Any for metaslang_cst::query::Query<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::query::Query<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::query::Query<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::Query<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::query::Query<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::Query<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::query::Query<T>
-pub fn metaslang_cst::query::Query<T>::from(t: T) -> T
 pub struct metaslang_cst::query::QueryError
 pub metaslang_cst::query::QueryError::column: usize
 pub metaslang_cst::query::QueryError::message: alloc::string::String
@@ -446,34 +204,6 @@ impl core::fmt::Debug for metaslang_cst::query::QueryError
 pub fn metaslang_cst::query::QueryError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for metaslang_cst::query::QueryError
 pub fn metaslang_cst::query::QueryError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Freeze for metaslang_cst::query::QueryError
-impl core::marker::Send for metaslang_cst::query::QueryError
-impl core::marker::Sync for metaslang_cst::query::QueryError
-impl core::marker::Unpin for metaslang_cst::query::QueryError
-impl core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::query::QueryError
-impl core::panic::unwind_safe::UnwindSafe for metaslang_cst::query::QueryError
-impl<T, U> core::convert::Into<U> for metaslang_cst::query::QueryError where U: core::convert::From<T>
-pub fn metaslang_cst::query::QueryError::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::query::QueryError where U: core::convert::Into<T>
-pub type metaslang_cst::query::QueryError::Error = core::convert::Infallible
-pub fn metaslang_cst::query::QueryError::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::query::QueryError where U: core::convert::TryFrom<T>
-pub type metaslang_cst::query::QueryError::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::query::QueryError::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::query::QueryError where T: core::clone::Clone
-pub type metaslang_cst::query::QueryError::Owned = T
-pub fn metaslang_cst::query::QueryError::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::query::QueryError::to_owned(&self) -> T
-impl<T> alloc::string::ToString for metaslang_cst::query::QueryError where T: core::fmt::Display + core::marker::Sized
-pub fn metaslang_cst::query::QueryError::to_string(&self) -> alloc::string::String
-impl<T> core::any::Any for metaslang_cst::query::QueryError where T: 'static + core::marker::Sized
-pub fn metaslang_cst::query::QueryError::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::query::QueryError where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryError::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::query::QueryError where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryError::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::query::QueryError
-pub fn metaslang_cst::query::QueryError::from(t: T) -> T
 pub struct metaslang_cst::query::QueryMatch<T: metaslang_cst::KindTypes>
 pub metaslang_cst::query::QueryMatch::captures: alloc::collections::btree::map::BTreeMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::cursor::Cursor<T>>>
 pub metaslang_cst::query::QueryMatch::queries: alloc::rc::Rc<alloc::vec::Vec<metaslang_cst::query::Query<T>>>
@@ -484,58 +214,10 @@ pub fn metaslang_cst::query::QueryMatch<T>::capture(&self, name: &str) -> core::
 pub fn metaslang_cst::query::QueryMatch<T>::capture_names(&self) -> impl core::iter::traits::iterator::Iterator<Item = &alloc::string::String>
 pub fn metaslang_cst::query::QueryMatch<T>::captures(&self) -> impl core::iter::traits::iterator::Iterator<Item = (&alloc::string::String, metaslang_cst::query::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<T>>)>
 pub fn metaslang_cst::query::QueryMatch<T>::query(&self) -> &metaslang_cst::query::Query<T>
-impl<T> core::marker::Freeze for metaslang_cst::query::QueryMatch<T>
-impl<T> !core::marker::Send for metaslang_cst::query::QueryMatch<T>
-impl<T> !core::marker::Sync for metaslang_cst::query::QueryMatch<T>
-impl<T> core::marker::Unpin for metaslang_cst::query::QueryMatch<T>
-impl<T> core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::query::QueryMatch<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T> core::panic::unwind_safe::UnwindSafe for metaslang_cst::query::QueryMatch<T> where <T as metaslang_cst::KindTypes>::NonterminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::TerminalKind: core::panic::unwind_safe::RefUnwindSafe, <T as metaslang_cst::KindTypes>::EdgeLabel: core::panic::unwind_safe::RefUnwindSafe
-impl<T, U> core::convert::Into<U> for metaslang_cst::query::QueryMatch<T> where U: core::convert::From<T>
-pub fn metaslang_cst::query::QueryMatch<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::query::QueryMatch<T> where U: core::convert::Into<T>
-pub type metaslang_cst::query::QueryMatch<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::query::QueryMatch<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::query::QueryMatch<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::query::QueryMatch<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::query::QueryMatch<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for metaslang_cst::query::QueryMatch<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::query::QueryMatch<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::query::QueryMatch<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryMatch<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::query::QueryMatch<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryMatch<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::query::QueryMatch<T>
-pub fn metaslang_cst::query::QueryMatch<T>::from(t: T) -> T
 pub struct metaslang_cst::query::QueryMatchIterator<T: metaslang_cst::KindTypes>
 impl<T: metaslang_cst::KindTypes + 'static> core::iter::traits::iterator::Iterator for metaslang_cst::query::QueryMatchIterator<T>
 pub type metaslang_cst::query::QueryMatchIterator<T>::Item = metaslang_cst::query::QueryMatch<T>
 pub fn metaslang_cst::query::QueryMatchIterator<T>::next(&mut self) -> core::option::Option<Self::Item>
-impl<T> core::marker::Freeze for metaslang_cst::query::QueryMatchIterator<T>
-impl<T> !core::marker::Send for metaslang_cst::query::QueryMatchIterator<T>
-impl<T> !core::marker::Sync for metaslang_cst::query::QueryMatchIterator<T>
-impl<T> core::marker::Unpin for metaslang_cst::query::QueryMatchIterator<T>
-impl<T> !core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::query::QueryMatchIterator<T>
-impl<T> !core::panic::unwind_safe::UnwindSafe for metaslang_cst::query::QueryMatchIterator<T>
-impl<I> core::iter::traits::collect::IntoIterator for metaslang_cst::query::QueryMatchIterator<T> where I: core::iter::traits::iterator::Iterator
-pub type metaslang_cst::query::QueryMatchIterator<T>::IntoIter = I
-pub type metaslang_cst::query::QueryMatchIterator<T>::Item = <I as core::iter::traits::iterator::Iterator>::Item
-pub fn metaslang_cst::query::QueryMatchIterator<T>::into_iter(self) -> I
-impl<T, U> core::convert::Into<U> for metaslang_cst::query::QueryMatchIterator<T> where U: core::convert::From<T>
-pub fn metaslang_cst::query::QueryMatchIterator<T>::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::query::QueryMatchIterator<T> where U: core::convert::Into<T>
-pub type metaslang_cst::query::QueryMatchIterator<T>::Error = core::convert::Infallible
-pub fn metaslang_cst::query::QueryMatchIterator<T>::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::query::QueryMatchIterator<T> where U: core::convert::TryFrom<T>
-pub type metaslang_cst::query::QueryMatchIterator<T>::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::query::QueryMatchIterator<T>::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for metaslang_cst::query::QueryMatchIterator<T> where T: 'static + core::marker::Sized
-pub fn metaslang_cst::query::QueryMatchIterator<T>::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::query::QueryMatchIterator<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryMatchIterator<T>::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::query::QueryMatchIterator<T> where T: core::marker::Sized
-pub fn metaslang_cst::query::QueryMatchIterator<T>::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::query::QueryMatchIterator<T>
-pub fn metaslang_cst::query::QueryMatchIterator<T>::from(t: T) -> T
 pub mod metaslang_cst::text_index
 pub struct metaslang_cst::text_index::TextIndex
 pub metaslang_cst::text_index::TextIndex::column: usize
@@ -575,34 +257,6 @@ impl serde::ser::Serialize for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<T: core::convert::AsRef<str>> core::convert::From<T> for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::from(s: T) -> Self
-impl core::marker::Freeze for metaslang_cst::text_index::TextIndex
-impl core::marker::Send for metaslang_cst::text_index::TextIndex
-impl core::marker::Sync for metaslang_cst::text_index::TextIndex
-impl core::marker::Unpin for metaslang_cst::text_index::TextIndex
-impl core::panic::unwind_safe::RefUnwindSafe for metaslang_cst::text_index::TextIndex
-impl core::panic::unwind_safe::UnwindSafe for metaslang_cst::text_index::TextIndex
-impl<T, U> core::convert::Into<U> for metaslang_cst::text_index::TextIndex where U: core::convert::From<T>
-pub fn metaslang_cst::text_index::TextIndex::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for metaslang_cst::text_index::TextIndex where U: core::convert::Into<T>
-pub type metaslang_cst::text_index::TextIndex::Error = core::convert::Infallible
-pub fn metaslang_cst::text_index::TextIndex::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for metaslang_cst::text_index::TextIndex where U: core::convert::TryFrom<T>
-pub type metaslang_cst::text_index::TextIndex::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn metaslang_cst::text_index::TextIndex::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for metaslang_cst::text_index::TextIndex where T: core::clone::Clone
-pub type metaslang_cst::text_index::TextIndex::Owned = T
-pub fn metaslang_cst::text_index::TextIndex::clone_into(&self, target: &mut T)
-pub fn metaslang_cst::text_index::TextIndex::to_owned(&self) -> T
-impl<T> alloc::string::ToString for metaslang_cst::text_index::TextIndex where T: core::fmt::Display + core::marker::Sized
-pub fn metaslang_cst::text_index::TextIndex::to_string(&self) -> alloc::string::String
-impl<T> core::any::Any for metaslang_cst::text_index::TextIndex where T: 'static + core::marker::Sized
-pub fn metaslang_cst::text_index::TextIndex::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for metaslang_cst::text_index::TextIndex where T: core::marker::Sized
-pub fn metaslang_cst::text_index::TextIndex::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for metaslang_cst::text_index::TextIndex where T: core::marker::Sized
-pub fn metaslang_cst::text_index::TextIndex::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for metaslang_cst::text_index::TextIndex
-pub fn metaslang_cst::text_index::TextIndex::from(t: T) -> T
 pub trait metaslang_cst::text_index::TextRangeExtensions
 pub fn metaslang_cst::text_index::TextRangeExtensions::line(&self) -> core::ops::range::Range<usize>
 pub fn metaslang_cst::text_index::TextRangeExtensions::utf16(&self) -> core::ops::range::Range<usize>

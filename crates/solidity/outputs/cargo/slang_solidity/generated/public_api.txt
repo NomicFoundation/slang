@@ -25,41 +25,6 @@ pub type slang_solidity::cst::KindTypes::NonterminalKind = slang_solidity::kinds
 pub type slang_solidity::cst::KindTypes::TerminalKind = slang_solidity::kinds::TerminalKind
 impl serde::ser::Serialize for slang_solidity::cst::KindTypes
 pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-impl core::marker::Freeze for slang_solidity::cst::KindTypes
-impl core::marker::Send for slang_solidity::cst::KindTypes
-impl core::marker::Sync for slang_solidity::cst::KindTypes
-impl core::marker::Unpin for slang_solidity::cst::KindTypes
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::cst::KindTypes
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::cst::KindTypes
-impl<Q, K> equivalent::Equivalent<K> for slang_solidity::cst::KindTypes where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::cst::KindTypes::equivalent(&self, key: &K) -> bool
-impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::cst::KindTypes where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::cst::KindTypes::equivalent(&self, key: &K) -> bool
-impl<T, U> core::convert::Into<U> for slang_solidity::cst::KindTypes where U: core::convert::From<T>
-pub fn slang_solidity::cst::KindTypes::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::cst::KindTypes where U: core::convert::Into<T>
-pub type slang_solidity::cst::KindTypes::Error = core::convert::Infallible
-pub fn slang_solidity::cst::KindTypes::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::cst::KindTypes where U: core::convert::TryFrom<T>
-pub type slang_solidity::cst::KindTypes::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::cst::KindTypes::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for slang_solidity::cst::KindTypes where T: core::clone::Clone
-pub type slang_solidity::cst::KindTypes::Owned = T
-pub fn slang_solidity::cst::KindTypes::clone_into(&self, target: &mut T)
-pub fn slang_solidity::cst::KindTypes::to_owned(&self) -> T
-impl<T> core::any::Any for slang_solidity::cst::KindTypes where T: 'static + core::marker::Sized
-pub fn slang_solidity::cst::KindTypes::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::cst::KindTypes where T: core::marker::Sized
-pub fn slang_solidity::cst::KindTypes::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::cst::KindTypes where T: core::marker::Sized
-pub fn slang_solidity::cst::KindTypes::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::cst::KindTypes
-impl<T> tap::conv::TryConv for slang_solidity::cst::KindTypes
-impl<T> tap::pipe::Pipe for slang_solidity::cst::KindTypes where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::cst::KindTypes
-impl<T> wyz::fmt::FmtForward for slang_solidity::cst::KindTypes
 pub type slang_solidity::cst::Edge = metaslang_cst::cst::Edge<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Node = metaslang_cst::cst::Node<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::NonterminalNode = metaslang_cst::cst::NonterminalNode<slang_solidity::cst::KindTypes>
@@ -73,33 +38,6 @@ pub slang_solidity::diagnostic::Severity::Error = 1
 pub slang_solidity::diagnostic::Severity::Hint = 4
 pub slang_solidity::diagnostic::Severity::Information = 3
 pub slang_solidity::diagnostic::Severity::Warning = 2
-impl core::marker::Freeze for slang_solidity::diagnostic::Severity
-impl core::marker::Send for slang_solidity::diagnostic::Severity
-impl core::marker::Sync for slang_solidity::diagnostic::Severity
-impl core::marker::Unpin for slang_solidity::diagnostic::Severity
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::diagnostic::Severity
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::diagnostic::Severity
-impl<T, U> core::convert::Into<U> for slang_solidity::diagnostic::Severity where U: core::convert::From<T>
-pub fn slang_solidity::diagnostic::Severity::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::diagnostic::Severity where U: core::convert::Into<T>
-pub type slang_solidity::diagnostic::Severity::Error = core::convert::Infallible
-pub fn slang_solidity::diagnostic::Severity::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::diagnostic::Severity where U: core::convert::TryFrom<T>
-pub type slang_solidity::diagnostic::Severity::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::diagnostic::Severity::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for slang_solidity::diagnostic::Severity where T: 'static + core::marker::Sized
-pub fn slang_solidity::diagnostic::Severity::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::diagnostic::Severity where T: core::marker::Sized
-pub fn slang_solidity::diagnostic::Severity::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::diagnostic::Severity where T: core::marker::Sized
-pub fn slang_solidity::diagnostic::Severity::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::diagnostic::Severity
-pub fn slang_solidity::diagnostic::Severity::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::diagnostic::Severity
-impl<T> tap::conv::TryConv for slang_solidity::diagnostic::Severity
-impl<T> tap::pipe::Pipe for slang_solidity::diagnostic::Severity where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::diagnostic::Severity
-impl<T> wyz::fmt::FmtForward for slang_solidity::diagnostic::Severity
 pub trait slang_solidity::diagnostic::Diagnostic
 pub fn slang_solidity::diagnostic::Diagnostic::message(&self) -> alloc::string::String
 pub fn slang_solidity::diagnostic::Diagnostic::severity(&self) -> slang_solidity::diagnostic::Severity
@@ -275,49 +213,6 @@ impl serde::ser::Serialize for slang_solidity::kinds::EdgeLabel
 pub fn slang_solidity::kinds::EdgeLabel::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::EdgeLabel> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::EdgeLabel) -> &'static str
-impl core::marker::Freeze for slang_solidity::kinds::EdgeLabel
-impl core::marker::Send for slang_solidity::kinds::EdgeLabel
-impl core::marker::Sync for slang_solidity::kinds::EdgeLabel
-impl core::marker::Unpin for slang_solidity::kinds::EdgeLabel
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::EdgeLabel
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::EdgeLabel
-impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::compare(&self, key: &K) -> core::cmp::Ordering
-impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::equivalent(&self, key: &K) -> bool
-impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::EdgeLabel where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::equivalent(&self, key: &K) -> bool
-impl<T, U> core::convert::Into<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::From<T>
-pub fn slang_solidity::kinds::EdgeLabel::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::Into<T>
-pub type slang_solidity::kinds::EdgeLabel::Error = core::convert::Infallible
-pub fn slang_solidity::kinds::EdgeLabel::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::EdgeLabel where U: core::convert::TryFrom<T>
-pub type slang_solidity::kinds::EdgeLabel::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::kinds::EdgeLabel::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::EdgeLabel where T: core::clone::Clone
-pub type slang_solidity::kinds::EdgeLabel::Owned = T
-pub fn slang_solidity::kinds::EdgeLabel::clone_into(&self, target: &mut T)
-pub fn slang_solidity::kinds::EdgeLabel::to_owned(&self) -> T
-impl<T> alloc::string::ToString for slang_solidity::kinds::EdgeLabel where T: core::fmt::Display + core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::to_string(&self) -> alloc::string::String
-impl<T> ariadne::draw::Fmt for slang_solidity::kinds::EdgeLabel where T: core::fmt::Display
-impl<T> core::any::Any for slang_solidity::kinds::EdgeLabel where T: 'static + core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
-pub fn slang_solidity::kinds::EdgeLabel::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::kinds::EdgeLabel
-pub fn slang_solidity::kinds::EdgeLabel::from(t: T) -> T
-impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::EdgeLabel where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
-pub fn slang_solidity::kinds::EdgeLabel::as_static_str(&self) -> &'static str
-pub fn slang_solidity::kinds::EdgeLabel::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
-impl<T> tap::conv::Conv for slang_solidity::kinds::EdgeLabel
-impl<T> tap::conv::TryConv for slang_solidity::kinds::EdgeLabel
-impl<T> tap::pipe::Pipe for slang_solidity::kinds::EdgeLabel where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::kinds::EdgeLabel
-impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::EdgeLabel
 #[repr(u8)] pub enum slang_solidity::kinds::NonterminalKind
 pub slang_solidity::kinds::NonterminalKind::ABICoderPragma
 pub slang_solidity::kinds::NonterminalKind::AdditiveExpression
@@ -569,49 +464,6 @@ impl serde::ser::Serialize for slang_solidity::kinds::NonterminalKind
 pub fn slang_solidity::kinds::NonterminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::NonterminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::NonterminalKind) -> &'static str
-impl core::marker::Freeze for slang_solidity::kinds::NonterminalKind
-impl core::marker::Send for slang_solidity::kinds::NonterminalKind
-impl core::marker::Sync for slang_solidity::kinds::NonterminalKind
-impl core::marker::Unpin for slang_solidity::kinds::NonterminalKind
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::NonterminalKind
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::NonterminalKind
-impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::compare(&self, key: &K) -> core::cmp::Ordering
-impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::equivalent(&self, key: &K) -> bool
-impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::NonterminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::equivalent(&self, key: &K) -> bool
-impl<T, U> core::convert::Into<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::From<T>
-pub fn slang_solidity::kinds::NonterminalKind::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::Into<T>
-pub type slang_solidity::kinds::NonterminalKind::Error = core::convert::Infallible
-pub fn slang_solidity::kinds::NonterminalKind::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::NonterminalKind where U: core::convert::TryFrom<T>
-pub type slang_solidity::kinds::NonterminalKind::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::kinds::NonterminalKind::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::NonterminalKind where T: core::clone::Clone
-pub type slang_solidity::kinds::NonterminalKind::Owned = T
-pub fn slang_solidity::kinds::NonterminalKind::clone_into(&self, target: &mut T)
-pub fn slang_solidity::kinds::NonterminalKind::to_owned(&self) -> T
-impl<T> alloc::string::ToString for slang_solidity::kinds::NonterminalKind where T: core::fmt::Display + core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::to_string(&self) -> alloc::string::String
-impl<T> ariadne::draw::Fmt for slang_solidity::kinds::NonterminalKind where T: core::fmt::Display
-impl<T> core::any::Any for slang_solidity::kinds::NonterminalKind where T: 'static + core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
-pub fn slang_solidity::kinds::NonterminalKind::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::kinds::NonterminalKind
-pub fn slang_solidity::kinds::NonterminalKind::from(t: T) -> T
-impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::NonterminalKind where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
-pub fn slang_solidity::kinds::NonterminalKind::as_static_str(&self) -> &'static str
-pub fn slang_solidity::kinds::NonterminalKind::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
-impl<T> tap::conv::Conv for slang_solidity::kinds::NonterminalKind
-impl<T> tap::conv::TryConv for slang_solidity::kinds::NonterminalKind
-impl<T> tap::pipe::Pipe for slang_solidity::kinds::NonterminalKind where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::kinds::NonterminalKind
-impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::NonterminalKind
 #[repr(u16)] pub enum slang_solidity::kinds::TerminalKind
 pub slang_solidity::kinds::TerminalKind::AbicoderKeyword
 pub slang_solidity::kinds::TerminalKind::AbstractKeyword
@@ -1018,49 +870,6 @@ impl serde::ser::Serialize for slang_solidity::kinds::TerminalKind
 pub fn slang_solidity::kinds::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::kinds::TerminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::kinds::TerminalKind) -> &'static str
-impl core::marker::Freeze for slang_solidity::kinds::TerminalKind
-impl core::marker::Send for slang_solidity::kinds::TerminalKind
-impl core::marker::Sync for slang_solidity::kinds::TerminalKind
-impl core::marker::Unpin for slang_solidity::kinds::TerminalKind
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::kinds::TerminalKind
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::kinds::TerminalKind
-impl<Q, K> equivalent::Comparable<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Ord + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::compare(&self, key: &K) -> core::cmp::Ordering
-impl<Q, K> equivalent::Equivalent<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::equivalent(&self, key: &K) -> bool
-impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::kinds::TerminalKind where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::equivalent(&self, key: &K) -> bool
-impl<T, U> core::convert::Into<U> for slang_solidity::kinds::TerminalKind where U: core::convert::From<T>
-pub fn slang_solidity::kinds::TerminalKind::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::kinds::TerminalKind where U: core::convert::Into<T>
-pub type slang_solidity::kinds::TerminalKind::Error = core::convert::Infallible
-pub fn slang_solidity::kinds::TerminalKind::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::kinds::TerminalKind where U: core::convert::TryFrom<T>
-pub type slang_solidity::kinds::TerminalKind::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::kinds::TerminalKind::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for slang_solidity::kinds::TerminalKind where T: core::clone::Clone
-pub type slang_solidity::kinds::TerminalKind::Owned = T
-pub fn slang_solidity::kinds::TerminalKind::clone_into(&self, target: &mut T)
-pub fn slang_solidity::kinds::TerminalKind::to_owned(&self) -> T
-impl<T> alloc::string::ToString for slang_solidity::kinds::TerminalKind where T: core::fmt::Display + core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::to_string(&self) -> alloc::string::String
-impl<T> ariadne::draw::Fmt for slang_solidity::kinds::TerminalKind where T: core::fmt::Display
-impl<T> core::any::Any for slang_solidity::kinds::TerminalKind where T: 'static + core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
-pub fn slang_solidity::kinds::TerminalKind::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::kinds::TerminalKind
-pub fn slang_solidity::kinds::TerminalKind::from(t: T) -> T
-impl<T> metaslang_cst::AbstractKind for slang_solidity::kinds::TerminalKind where T: core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
-pub fn slang_solidity::kinds::TerminalKind::as_static_str(&self) -> &'static str
-pub fn slang_solidity::kinds::TerminalKind::try_from_str(str: &str) -> core::result::Result<T, alloc::string::String>
-impl<T> tap::conv::Conv for slang_solidity::kinds::TerminalKind
-impl<T> tap::conv::TryConv for slang_solidity::kinds::TerminalKind
-impl<T> tap::pipe::Pipe for slang_solidity::kinds::TerminalKind where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::kinds::TerminalKind
-impl<T> wyz::fmt::FmtForward for slang_solidity::kinds::TerminalKind
 pub mod slang_solidity::language
 pub enum slang_solidity::language::Error
 pub slang_solidity::language::Error::UnsupportedLanguageVersion(semver::Version)
@@ -1069,36 +878,6 @@ impl core::fmt::Debug for slang_solidity::language::Error
 pub fn slang_solidity::language::Error::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity::language::Error
 pub fn slang_solidity::language::Error::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Freeze for slang_solidity::language::Error
-impl core::marker::Send for slang_solidity::language::Error
-impl core::marker::Sync for slang_solidity::language::Error
-impl core::marker::Unpin for slang_solidity::language::Error
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::language::Error
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::language::Error
-impl<T, U> core::convert::Into<U> for slang_solidity::language::Error where U: core::convert::From<T>
-pub fn slang_solidity::language::Error::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::language::Error where U: core::convert::Into<T>
-pub type slang_solidity::language::Error::Error = core::convert::Infallible
-pub fn slang_solidity::language::Error::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::language::Error where U: core::convert::TryFrom<T>
-pub type slang_solidity::language::Error::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::language::Error::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::string::ToString for slang_solidity::language::Error where T: core::fmt::Display + core::marker::Sized
-pub fn slang_solidity::language::Error::to_string(&self) -> alloc::string::String
-impl<T> ariadne::draw::Fmt for slang_solidity::language::Error where T: core::fmt::Display
-impl<T> core::any::Any for slang_solidity::language::Error where T: 'static + core::marker::Sized
-pub fn slang_solidity::language::Error::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::language::Error where T: core::marker::Sized
-pub fn slang_solidity::language::Error::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::language::Error where T: core::marker::Sized
-pub fn slang_solidity::language::Error::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::language::Error
-pub fn slang_solidity::language::Error::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::language::Error
-impl<T> tap::conv::TryConv for slang_solidity::language::Error
-impl<T> tap::pipe::Pipe for slang_solidity::language::Error where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::language::Error
-impl<T> wyz::fmt::FmtForward for slang_solidity::language::Error
 pub struct slang_solidity::language::Language
 impl slang_solidity::language::Language
 pub const slang_solidity::language::Language::ROOT_KIND: slang_solidity::kinds::NonterminalKind
@@ -1108,33 +887,6 @@ pub fn slang_solidity::language::Language::parse(&self, kind: slang_solidity::ki
 pub fn slang_solidity::language::Language::version(&self) -> &semver::Version
 impl core::fmt::Debug for slang_solidity::language::Language
 pub fn slang_solidity::language::Language::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Freeze for slang_solidity::language::Language
-impl core::marker::Send for slang_solidity::language::Language
-impl core::marker::Sync for slang_solidity::language::Language
-impl core::marker::Unpin for slang_solidity::language::Language
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::language::Language
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::language::Language
-impl<T, U> core::convert::Into<U> for slang_solidity::language::Language where U: core::convert::From<T>
-pub fn slang_solidity::language::Language::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::language::Language where U: core::convert::Into<T>
-pub type slang_solidity::language::Language::Error = core::convert::Infallible
-pub fn slang_solidity::language::Language::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::language::Language where U: core::convert::TryFrom<T>
-pub type slang_solidity::language::Language::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::language::Language::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for slang_solidity::language::Language where T: 'static + core::marker::Sized
-pub fn slang_solidity::language::Language::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::language::Language where T: core::marker::Sized
-pub fn slang_solidity::language::Language::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::language::Language where T: core::marker::Sized
-pub fn slang_solidity::language::Language::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::language::Language
-pub fn slang_solidity::language::Language::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::language::Language
-impl<T> tap::conv::TryConv for slang_solidity::language::Language
-impl<T> tap::pipe::Pipe for slang_solidity::language::Language where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::language::Language
-impl<T> wyz::fmt::FmtForward for slang_solidity::language::Language
 pub mod slang_solidity::parse_error
 pub struct slang_solidity::parse_error::ParseError
 impl slang_solidity::parse_error::ParseError
@@ -1154,44 +906,6 @@ impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parse_error::Par
 pub fn slang_solidity::parse_error::ParseError::message(&self) -> alloc::string::String
 pub fn slang_solidity::parse_error::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
 pub fn slang_solidity::parse_error::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
-impl core::marker::Freeze for slang_solidity::parse_error::ParseError
-impl core::marker::Send for slang_solidity::parse_error::ParseError
-impl core::marker::Sync for slang_solidity::parse_error::ParseError
-impl core::marker::Unpin for slang_solidity::parse_error::ParseError
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::parse_error::ParseError
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::parse_error::ParseError
-impl<Q, K> equivalent::Equivalent<K> for slang_solidity::parse_error::ParseError where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::equivalent(&self, key: &K) -> bool
-impl<Q, K> hashbrown::Equivalent<K> for slang_solidity::parse_error::ParseError where Q: core::cmp::Eq + core::marker::Sized, K: core::borrow::Borrow<Q> + core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::equivalent(&self, key: &K) -> bool
-impl<T, U> core::convert::Into<U> for slang_solidity::parse_error::ParseError where U: core::convert::From<T>
-pub fn slang_solidity::parse_error::ParseError::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::parse_error::ParseError where U: core::convert::Into<T>
-pub type slang_solidity::parse_error::ParseError::Error = core::convert::Infallible
-pub fn slang_solidity::parse_error::ParseError::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::parse_error::ParseError where U: core::convert::TryFrom<T>
-pub type slang_solidity::parse_error::ParseError::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::parse_error::ParseError::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for slang_solidity::parse_error::ParseError where T: core::clone::Clone
-pub type slang_solidity::parse_error::ParseError::Owned = T
-pub fn slang_solidity::parse_error::ParseError::clone_into(&self, target: &mut T)
-pub fn slang_solidity::parse_error::ParseError::to_owned(&self) -> T
-impl<T> alloc::string::ToString for slang_solidity::parse_error::ParseError where T: core::fmt::Display + core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::to_string(&self) -> alloc::string::String
-impl<T> ariadne::draw::Fmt for slang_solidity::parse_error::ParseError where T: core::fmt::Display
-impl<T> core::any::Any for slang_solidity::parse_error::ParseError where T: 'static + core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::parse_error::ParseError where T: core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::parse_error::ParseError where T: core::marker::Sized
-pub fn slang_solidity::parse_error::ParseError::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::parse_error::ParseError
-pub fn slang_solidity::parse_error::ParseError::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::parse_error::ParseError
-impl<T> tap::conv::TryConv for slang_solidity::parse_error::ParseError
-impl<T> tap::pipe::Pipe for slang_solidity::parse_error::ParseError where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::parse_error::ParseError
-impl<T> wyz::fmt::FmtForward for slang_solidity::parse_error::ParseError
 pub mod slang_solidity::parse_output
 pub struct slang_solidity::parse_output::ParseOutput
 impl slang_solidity::parse_output::ParseOutput
@@ -1204,33 +918,6 @@ pub fn slang_solidity::parse_output::ParseOutput::eq(&self, other: &slang_solidi
 impl core::fmt::Debug for slang_solidity::parse_output::ParseOutput
 pub fn slang_solidity::parse_output::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::parse_output::ParseOutput
-impl core::marker::Freeze for slang_solidity::parse_output::ParseOutput
-impl !core::marker::Send for slang_solidity::parse_output::ParseOutput
-impl !core::marker::Sync for slang_solidity::parse_output::ParseOutput
-impl core::marker::Unpin for slang_solidity::parse_output::ParseOutput
-impl core::panic::unwind_safe::RefUnwindSafe for slang_solidity::parse_output::ParseOutput
-impl core::panic::unwind_safe::UnwindSafe for slang_solidity::parse_output::ParseOutput
-impl<T, U> core::convert::Into<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::From<T>
-pub fn slang_solidity::parse_output::ParseOutput::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::Into<T>
-pub type slang_solidity::parse_output::ParseOutput::Error = core::convert::Infallible
-pub fn slang_solidity::parse_output::ParseOutput::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for slang_solidity::parse_output::ParseOutput where U: core::convert::TryFrom<T>
-pub type slang_solidity::parse_output::ParseOutput::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn slang_solidity::parse_output::ParseOutput::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for slang_solidity::parse_output::ParseOutput where T: 'static + core::marker::Sized
-pub fn slang_solidity::parse_output::ParseOutput::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
-pub fn slang_solidity::parse_output::ParseOutput::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
-pub fn slang_solidity::parse_output::ParseOutput::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for slang_solidity::parse_output::ParseOutput
-pub fn slang_solidity::parse_output::ParseOutput::from(t: T) -> T
-impl<T> tap::conv::Conv for slang_solidity::parse_output::ParseOutput
-impl<T> tap::conv::TryConv for slang_solidity::parse_output::ParseOutput
-impl<T> tap::pipe::Pipe for slang_solidity::parse_output::ParseOutput where T: core::marker::Sized
-impl<T> tap::tap::Tap for slang_solidity::parse_output::ParseOutput
-impl<T> wyz::fmt::FmtForward for slang_solidity::parse_output::ParseOutput
 pub mod slang_solidity::query
 pub type slang_solidity::query::Query = metaslang_cst::query::model::Query<slang_solidity::cst::KindTypes>
 pub type slang_solidity::query::QueryError = metaslang_cst::query::parser::QueryError
