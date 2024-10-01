@@ -1,5 +1,5 @@
 use semver::Version;
-use slang_testlang::language::Language;
+use slang_testlang::parser::Language;
 
 #[test]
 fn list_supported_versions() {

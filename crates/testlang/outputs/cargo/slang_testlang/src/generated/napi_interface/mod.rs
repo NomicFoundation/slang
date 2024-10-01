@@ -2,8 +2,7 @@
 
 pub mod cst;
 pub mod diagnostic;
-pub mod parse_error;
-pub mod parse_output;
+pub mod parser;
 
 #[path = "generated/ast_selectors.rs"]
 pub mod ast_selectors;
@@ -11,8 +10,8 @@ pub mod ast_selectors;
 type RustCursor = crate::cst::Cursor;
 type RustEdge = crate::cst::Edge;
 type RustNode = crate::cst::Node;
-type RustParseError = crate::parse_error::ParseError;
-type RustParseOutput = crate::parse_output::ParseOutput;
+type RustParseError = crate::parser::ParseError;
+type RustParseOutput = crate::parser::ParseOutput;
 type RustQuery = crate::cst::Query;
 type RustQueryMatch = crate::cst::QueryMatch;
 type RustQueryMatchIterator = crate::cst::QueryMatchIterator;

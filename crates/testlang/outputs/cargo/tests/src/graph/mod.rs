@@ -3,7 +3,7 @@ use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use semver::Version;
 use slang_testlang::cst::NonterminalKind;
-use slang_testlang::language::Language;
+use slang_testlang::parser::Language;
 
 #[test]
 fn builds_a_graph() {

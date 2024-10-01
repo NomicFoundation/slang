@@ -4,7 +4,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 use slang_solidity::{bindings, diagnostic};
 
 use crate::bindings_assertions::assertions::{

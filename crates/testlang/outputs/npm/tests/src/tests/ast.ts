@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { Language } from "@slang-private/slang-testlang/language";
+import { Language } from "@slang-private/slang-testlang/parser";
 import {
   AdditionExpression,
   Expression,

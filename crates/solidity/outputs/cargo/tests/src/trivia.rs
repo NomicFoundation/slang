@@ -1,7 +1,7 @@
 use anyhow::Result;
 use semver::Version;
 use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
-use slang_solidity::language::Language;
+use slang_solidity::parser::Language;
 
 #[test]
 fn end_of_line() -> Result<()> {

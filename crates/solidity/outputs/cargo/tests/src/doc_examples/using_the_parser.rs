@@ -9,7 +9,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
     use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
-    use slang_solidity::language::Language;
+    use slang_solidity::parser::Language;
     // --8<-- [end:imports]
 
     let input_path = Path::repo_path("documentation/public/user-guide/inputs/using-the-parser.sol");
