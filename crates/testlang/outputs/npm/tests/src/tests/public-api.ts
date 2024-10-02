@@ -1,11 +1,11 @@
 import * as slang from "@slang-private/slang-testlang";
-import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
-import { Language } from "@slang-private/slang-testlang/language";
+import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/cst";
+import { Parser } from "@slang-private/slang-testlang/parser";
 
 test("use namespace imports of the API", () => {
-  expect(slang.kinds.NonterminalKind.SourceUnit).toEqual("SourceUnit");
-  expect(slang.kinds.NonterminalKind.TreeNode).toEqual("TreeNode");
-  expect(slang.kinds.TerminalKind.Identifier).toEqual("Identifier");
+  expect(slang.cst.NonterminalKind.SourceUnit).toEqual("SourceUnit");
+  expect(slang.cst.NonterminalKind.TreeNode).toEqual("TreeNode");
+  expect(slang.cst.TerminalKind.Identifier).toEqual("Identifier");
 });
 
 test("use nested imports of the API", () => {
@@ -15,5 +15,5 @@ test("use nested imports of the API", () => {
 });
 
 test("language exposes a root kind", () => {
-  expect(Language.rootKind()).toEqual(NonterminalKind.SourceUnit);
+  expect(Parser.rootKind()).toEqual(NonterminalKind.SourceUnit);
 });

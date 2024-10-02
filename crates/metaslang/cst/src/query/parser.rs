@@ -17,9 +17,9 @@ use super::model::{
     ASTNode, AlternativesASTNode, CaptureASTNode, NodeMatchASTNode, NodeSelector, OneOrMoreASTNode,
     OptionalASTNode, SequenceASTNode,
 };
-use crate::cst::NodeKind;
+use crate::kinds::{BaseKind, KindTypes, TerminalKindExtensions};
+use crate::nodes::NodeKind;
 use crate::text_index::TextIndex;
-use crate::{AbstractKind as _, KindTypes, TerminalKind as _};
 
 // ----------------------------------------------------------------------------
 // Parse errors

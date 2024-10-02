@@ -26,12 +26,12 @@ use {
 pub enum DummyKind {
     Module,
 }
-impl metaslang_cst::TerminalKind for DummyKind {}
-impl metaslang_cst::NonterminalKind for DummyKind {}
-impl metaslang_cst::EdgeLabel for DummyKind {}
+impl metaslang_cst::kinds::TerminalKindExtensions for DummyKind {}
+impl metaslang_cst::kinds::NonterminalKindExtensions for DummyKind {}
+impl metaslang_cst::kinds::EdgeLabelExtensions for DummyKind {}
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct KindTypes;
-impl metaslang_cst::KindTypes for KindTypes {
+impl metaslang_cst::kinds::KindTypes for KindTypes {
     type NonterminalKind = DummyKind;
     type TerminalKind = DummyKind;
     type EdgeLabel = DummyKind;
@@ -76,7 +76,7 @@ fn can_iterate_graph_edges() {
 #[test]
 fn can_display_graph() {
     let tree =
-        metaslang_cst::cst::Node::<KindTypes>::terminal(DummyKind::Module, "pass".to_owned());
+        metaslang_cst::nodes::Node::<KindTypes>::terminal(DummyKind::Module, "pass".to_owned());
     let cursor = tree.cursor_with_offset(metaslang_cst::text_index::TextIndex::ZERO);
 
     let mut graph = Graph::<KindTypes>::new();

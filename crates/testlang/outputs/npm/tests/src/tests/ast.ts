@@ -1,6 +1,5 @@
 import assert from "node:assert";
-import { Language } from "@slang-private/slang-testlang/language";
-import { NonterminalKind, TerminalKind } from "@slang-private/slang-testlang/kinds";
+import { Parser } from "@slang-private/slang-testlang/parser";
 import {
   AdditionExpression,
   Expression,
@@ -13,14 +12,14 @@ import {
   TreeNodeChild,
 } from "@slang-private/slang-testlang/ast";
 import { expectNonterminal, expectTerminal } from "../utils/cst-helpers";
-import { TerminalNode } from "@slang-private/slang-testlang/cst";
+import { NonterminalKind, TerminalKind, TerminalNode } from "@slang-private/slang-testlang/cst";
 
 test("create and use sequence types", () => {
   const source = `tree [A B C];`.trim();
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -35,9 +34,9 @@ test("create and use sequence types", () => {
 test("create and use choice types", () => {
   const source = `[B]`.trim();
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.TreeNodeChild, source);
+  const parseOutput = parser.parse(NonterminalKind.TreeNodeChild, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -57,9 +56,9 @@ test("create and use choice types", () => {
 test("create and use repeated types", () => {
   const source = `tree [A B C];`.trim();
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -80,9 +79,9 @@ test("create and use repeated types", () => {
 test("create and use separated types", () => {
   const source = `Foo.Bar.Baz`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.SeparatedIdentifiers, source);
+  const parseOutput = parser.parse(NonterminalKind.SeparatedIdentifiers, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -101,9 +100,9 @@ test("create and use separated types", () => {
 test("throws an exception on initializing the wrong type", () => {
   const source = `tree [A];`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -115,9 +114,9 @@ test("throws an exception on initializing the wrong type", () => {
 test("throws an exception on on using an incorrect/incomplete CST node", () => {
   const source = `tree`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parse(NonterminalKind.Tree, source);
   expect(parseOutput.errors()).toHaveLength(1);
 
   const cst = parseOutput.tree();
@@ -140,9 +139,9 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
 test("create and use prefix expressions", () => {
   const source = `!foo`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -159,9 +158,9 @@ test("create and use prefix expressions", () => {
 test("create and use postfix expressions", () => {
   const source = `foo.bar`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();
@@ -179,9 +178,9 @@ test("create and use postfix expressions", () => {
 test("create and use binary expressions", () => {
   const source = `foo + bar`;
 
-  const language = new Language("1.0.0");
+  const parser = new Parser("1.0.0");
 
-  const parseOutput = language.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parse(NonterminalKind.Expression, source);
   expect(parseOutput.errors()).toHaveLength(0);
 
   const cst = parseOutput.tree();

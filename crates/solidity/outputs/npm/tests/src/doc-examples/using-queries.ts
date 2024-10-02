@@ -3,16 +3,14 @@ import path from "node:path";
 import assert from "node:assert";
 import fs from "node:fs/promises";
 
-import { Language } from "@nomicfoundation/slang/language";
-import { NonterminalKind } from "@nomicfoundation/slang/kinds";
-import { Query, QueryMatchIterator } from "@nomicfoundation/slang/query";
-import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { Parser } from "@nomicfoundation/slang/parser";
+import { NonterminalKind, NonterminalNode, Query, QueryMatchIterator, TerminalNode } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(filePath: string) {
   const inputPath = path.join(repoPath("documentation/public/user-guide/inputs"), filePath);
   const source = await fs.readFile(inputPath, "utf8").then((source) => source.trim());
-  const language = new Language("0.8.0");
-  return language.parse(NonterminalKind.SourceUnit, source);
+  const parser = new Parser("0.8.0");
+  return parser.parse(NonterminalKind.SourceUnit, source);
 }
 
 test("using queries", async () => {

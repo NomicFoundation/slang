@@ -10,7 +10,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 
 use crate::execution::error::ExecutionError;
 use crate::graph::{Graph, Value};
@@ -166,7 +166,7 @@ impl<KT: KindTypes> Functions<KT> {
 
 /// Implementations of the [standard library functions][`crate::reference::functions`]
 pub mod stdlib {
-    use metaslang_cst::KindTypes;
+    use metaslang_cst::kinds::KindTypes;
     use regex::Regex;
 
     use super::{Function, Parameters};

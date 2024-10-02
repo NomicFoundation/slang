@@ -8,8 +8,7 @@ use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
 use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
-use slang_solidity::language::Language;
-use slang_solidity::parse_output::ParseOutput;
+use slang_solidity::parser::{ParseOutput, Parser};
 
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
@@ -40,7 +39,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let mut last_bindings_output = None;
 
     for version in &VERSION_BREAKS {
-        let language = Language::new(version.clone())?;
+        let parser = Parser::new(version.clone())?;
         let mut bindings =
             bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
@@ -51,7 +50,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             contents,
         } in &multi_part.parts
         {
-            let parse_output = language.parse(Language::ROOT_KIND, contents);
+            let parse_output = parser.parse(Parser::ROOT_KIND, contents);
             let graph = bindings.add_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {
                 path,

@@ -1,13 +1,12 @@
 use std::fs;
 use std::path::PathBuf;
 
-use clap::Parser;
 use semver::Version;
 
 use crate::diagnostic;
-use crate::language::Language;
+use crate::parser::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct ParseCommand {
     /// File path to the source file to parse
     file_path: PathBuf,
@@ -34,8 +33,8 @@ impl ParseCommand {
             .unwrap_or_else(|_| panic!("File not found: {file_path:?}"));
 
         let input = fs::read_to_string(&file_path).unwrap();
-        let language = Language::new(version).unwrap();
-        let parse_output = language.parse(Language::ROOT_KIND, &input);
+        let parser = Parser::new(version).unwrap();
+        let parse_output = parser.parse(Parser::ROOT_KIND, &input);
 
         if !parse_output.is_valid() {
             const COLOR: bool = true;

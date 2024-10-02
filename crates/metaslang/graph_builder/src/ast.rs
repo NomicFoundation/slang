@@ -10,8 +10,8 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::{CaptureQuantifier, Query};
-use metaslang_cst::KindTypes;
 use regex::Regex;
 
 // use tree_sitter::{CaptureQuantifier, Language, Query};
