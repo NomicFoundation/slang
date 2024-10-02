@@ -2,7 +2,7 @@
 
 use semver::Version;
 
-pub const VERSION_BREAKS: [Version; 33] = [
+pub const VERSION_BREAKS: [Version; 35] = [
     Version::new(0, 4, 11),
     Version::new(0, 4, 12),
     Version::new(0, 4, 14),
@@ -36,4 +36,6 @@ pub const VERSION_BREAKS: [Version; 33] = [
     Version::new(0, 8, 19),
     Version::new(0, 8, 22),
     Version::new(0, 8, 24),
+    Version::new(0, 8, 25),
+    Version::new(0, 8, 27),
 ];

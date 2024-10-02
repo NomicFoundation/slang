@@ -1,15 +1,15 @@
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
-use super::super::cst::Node;
 use super::super::cursor::Cursor;
+use super::super::nodes::Node;
 use super::model::{
     ASTNode, AlternativesASTNode, CaptureASTNode, NodeMatchASTNode, NodeSelector, OneOrMoreASTNode,
     OptionalASTNode, Query, SequenceASTNode,
 };
-use crate::cst::NodeKind;
+use crate::kinds::{KindTypes, TerminalKindExtensions};
+use crate::nodes::NodeKind;
 use crate::query::CaptureQuantifier;
-use crate::{KindTypes, TerminalKind as _};
 
 impl<T: KindTypes + 'static> Cursor<T> {
     pub fn query(self, queries: Vec<Query<T>>) -> QueryMatchIterator<T> {

@@ -4,7 +4,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Parser;
 use slang_solidity::{bindings, diagnostic};
 
 use crate::bindings_assertions::assertions::{
@@ -29,8 +29,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 }
 
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
-    let language = Language::new(version.clone())?;
-    let mut bindings = bindings::create_with_resolver(&language, Arc::new(TestsPathResolver {}));
+    let parser = Parser::new(version.clone())?;
+    let mut bindings = bindings::create_with_resolver(&parser, Arc::new(TestsPathResolver {}));
     let mut assertions = Assertions::new();
     let mut skipped = 0;
 
@@ -41,7 +41,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
         contents: file_contents,
     } in &multi_part.parts
     {
-        let parse_output = language.parse(Language::ROOT_KIND, file_contents);
+        let parse_output = parser.parse(Parser::ROOT_KIND, file_contents);
 
         if !parse_output.is_valid() {
             let report = parse_output

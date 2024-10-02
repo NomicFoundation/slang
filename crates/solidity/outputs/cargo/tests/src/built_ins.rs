@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::language::Language;
+use slang_solidity::parser::Parser;
 use slang_solidity::{bindings, diagnostic};
 
 use crate::generated::VERSION_BREAKS;
@@ -8,8 +8,8 @@ use crate::generated::VERSION_BREAKS;
 fn test_built_ins_parse_successfully() -> Result<()> {
     for version in &VERSION_BREAKS {
         let built_ins = bindings::get_built_ins(version);
-        let language = Language::new(version.clone())?;
-        let parse_output = language.parse(Language::ROOT_KIND, built_ins);
+        let parser = Parser::new(version.clone())?;
+        let parse_output = parser.parse(Parser::ROOT_KIND, built_ins);
 
         let report = parse_output
             .errors()

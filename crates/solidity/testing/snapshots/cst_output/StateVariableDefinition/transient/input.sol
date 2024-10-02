@@ -1,0 +1,1 @@
+uint transient foo;

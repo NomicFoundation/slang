@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Test {                                                                  │ 0..15
+  2  │   field;                                                                         │ 16..24
+  3  │ }                                                                                │ 25..26
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword or TransientKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:8]
+       │
+     2 │   field;
+       │        │ 
+       │        ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - (ContractDefinition): # "contract Test {\n  field;\n}\n" (0..27)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Test" # (9..13)
+      - (leading_trivia꞉ Whitespace): " " # (13..14)
+      - (open_brace꞉ OpenBrace): "{" # (14..15)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (15..16)
+      - (members꞉ ContractMembers): # "  field;\n" (16..25)
+          - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  field;\n" (16..25)
+              - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  field" (16..23)
+                  - (leading_trivia꞉ Whitespace): "  " # (16..18)
+                  - (item꞉ Identifier): "field" # (18..23)
+              - (attributes꞉ StateVariableAttributes): [] # (23..23)
+              - (MISSING): "" # (23..23)
+              - (semicolon꞉ Semicolon): ";" # (23..24)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (24..25)
+      - (close_brace꞉ CloseBrace): "}" # (25..26)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (26..27)

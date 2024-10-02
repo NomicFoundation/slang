@@ -7,8 +7,8 @@
 
 use std::collections::{BTreeSet, HashMap, HashSet};
 
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::QueryMatch;
-use metaslang_cst::KindTypes;
 
 // use tree_sitter::{QueryCursor, QueryMatch, Tree};
 use crate::ast::{

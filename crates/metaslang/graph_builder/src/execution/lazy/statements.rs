@@ -11,7 +11,7 @@ use std::convert::From;
 use std::fmt;
 
 use log::{debug, trace};
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 
 use super::store::DebugInfo;
 use super::values::*;

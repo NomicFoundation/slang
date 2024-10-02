@@ -1,0 +1,7 @@
+{
+  "name": "@slang-private/solidity-testing-perf",
+  "private": true,
+  "devDependencies": {
+    "@openzeppelin/contracts": "5.0.0"
+  }
+}

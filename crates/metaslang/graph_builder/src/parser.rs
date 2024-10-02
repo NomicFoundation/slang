@@ -10,9 +10,9 @@ use std::iter::Peekable;
 use std::path::Path;
 use std::str::Chars;
 
+use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::CaptureQuantifier::{self, One, OneOrMore, ZeroOrMore, ZeroOrOne};
 use metaslang_cst::query::{Query, QueryError};
-use metaslang_cst::KindTypes;
 use regex::Regex;
 use thiserror::Error;
 
@@ -349,9 +349,7 @@ impl<'a> Parser<'a> {
         Ok(quantifier)
     }
 
-    fn parse_stanza<TK: metaslang_cst::KindTypes>(
-        &mut self,
-    ) -> Result<ast::Stanza<TK>, ParseError> {
+    fn parse_stanza<TK: KindTypes>(&mut self) -> Result<ast::Stanza<TK>, ParseError> {
         let start = self.location;
         let query = self.parse_query()?;
         self.consume_whitespace();
@@ -365,7 +363,7 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_query<TK: metaslang_cst::KindTypes>(&mut self) -> Result<Query<TK>, ParseError> {
+    fn parse_query<TK: KindTypes>(&mut self) -> Result<Query<TK>, ParseError> {
         let location = self.location;
         let query_start = self.offset;
         self.skip_query()?;

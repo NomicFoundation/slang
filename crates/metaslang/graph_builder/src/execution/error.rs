@@ -7,7 +7,7 @@
 
 use std::path::Path;
 
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 use thiserror::Error;
 
 use crate::ast::{Stanza, Statement};

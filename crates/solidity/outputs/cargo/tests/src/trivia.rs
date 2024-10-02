@@ -1,8 +1,7 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::cst::Node;
-use slang_solidity::kinds::{NonterminalKind, TerminalKind};
-use slang_solidity::language::Language;
+use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
+use slang_solidity::parser::Parser;
 
 #[test]
 fn end_of_line() -> Result<()> {
@@ -23,9 +22,9 @@ fn end_of_line() -> Result<()> {
 
 fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let version = Version::parse("0.8.0")?;
-    let language = &Language::new(version)?;
+    let parser = Parser::new(version)?;
 
-    let output = language.parse(NonterminalKind::SourceUnit, input);
+    let output = parser.parse(NonterminalKind::SourceUnit, input);
     assert!(output.is_valid());
 
     let actual = output

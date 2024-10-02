@@ -252,7 +252,7 @@ use std::collections::{HashMap, HashSet};
 pub use cancellation::{CancellationFlag, NoCancellation};
 pub use functions::default_functions;
 use metaslang_cst::cursor::Cursor;
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File as GraphBuilderFile;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::graph::{Edge, Graph, GraphNode, GraphNodeRef, Value};

@@ -9,19 +9,18 @@ use std::sync::Arc;
 use metaslang_bindings::{self, PathResolver};
 
 use crate::cst::KindTypes;
-use crate::language::Language;
+use crate::parser::Parser;
 
 pub type Bindings = metaslang_bindings::Bindings<KindTypes>;
 pub type Definition<'a> = metaslang_bindings::Definition<'a, KindTypes>;
 pub type Reference<'a> = metaslang_bindings::Reference<'a, KindTypes>;
 
 pub fn create_with_resolver(
-    language: &Language,
+    parser: &Parser,
     resolver: Arc<dyn PathResolver + Sync + Send>,
 ) -> Bindings {
-    let version = language.version.clone();
-    let built_ins_parse_output =
-        language.parse(Language::ROOT_KIND, built_ins::get_contents(&version));
+    let version = parser.version.clone();
+    let built_ins_parse_output = parser.parse(Parser::ROOT_KIND, built_ins::get_contents(&version));
     assert!(
         built_ins_parse_output.is_valid(),
         "built-ins parse without errors"

@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::text_index::TextRange;
+use crate::cst::TextRange;
 
 /// The severity of a diagnostic.
 ///
