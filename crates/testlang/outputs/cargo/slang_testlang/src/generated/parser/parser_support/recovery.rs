@@ -143,7 +143,9 @@ pub(crate) fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
                 // Don't consume the delimiter; parent will consume it
                 input.set_position(save);
 
-                return Some((terminal, start..save));
+                let start_index = input.text_index_at(start);
+                let save_index = input.text_index_at(save);
+                return Some((terminal, start_index..save_index));
             }
             // Found the local closing delimiter, pop the stack
             Some(terminal) if local_delims.last() == Some(&terminal) => {

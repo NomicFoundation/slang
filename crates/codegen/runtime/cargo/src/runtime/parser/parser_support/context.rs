@@ -1,21 +1,31 @@
 use std::mem;
 use std::ops::Range;
 
+use super::ParserResult;
 use crate::cst::{TerminalKind, TextIndex};
 use crate::parser::ParseError;
 
 #[derive(Debug)]
+struct CachedParserResult {
+    start_position: usize,
+    end_position: usize,
+    result: ParserResult,
+}
+
+#[derive(Debug)]
 pub struct ParserContext<'s> {
     source: &'s str,
-    position: TextIndex,
-    undo_position: Option<TextIndex>,
+    position: usize,
+    undo_position: Option<usize>,
     errors: Vec<ParseError>,
     closing_delimiters: Vec<TerminalKind>,
+    last_text_index: TextIndex,
+    leading_trivia_cache: Option<CachedParserResult>,
 }
 
 #[derive(Copy, Clone)]
 pub struct Marker {
-    position: TextIndex,
+    position: usize,
     err_len: usize,
 }
 
@@ -23,10 +33,12 @@ impl<'s> ParserContext<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {
             source,
-            position: TextIndex::ZERO,
+            position: 0usize,
             undo_position: None,
             errors: vec![],
             closing_delimiters: vec![],
+            last_text_index: TextIndex::ZERO,
+            leading_trivia_cache: None,
         }
     }
 
@@ -76,29 +88,54 @@ impl<'s> ParserContext<'s> {
         &self.closing_delimiters
     }
 
-    pub fn position(&self) -> TextIndex {
+    pub fn text_index_at(&mut self, position: usize) -> TextIndex {
+        // This is a minor optimization: we remember the last computed TextIndex
+        // and if the requested position is after, we start from that last
+        // index and avoid advancing over the same characters again. Otherwise,
+        // we do start from the beginning.
+        let mut text_index = if self.last_text_index.utf8 <= position {
+            self.last_text_index
+        } else {
+            TextIndex::ZERO
+        };
+        let mut from_iter = self.source[text_index.utf8..].chars();
+        let Some(mut c) = from_iter.next() else {
+            return text_index;
+        };
+        let mut next_c = from_iter.next();
+        loop {
+            if text_index.utf8 >= position {
+                break;
+            }
+            text_index.advance(c, next_c.as_ref());
+            c = match next_c {
+                Some(ch) => ch,
+                None => break,
+            };
+            next_c = from_iter.next();
+        }
+        self.last_text_index = text_index;
+        text_index
+    }
+
+    pub fn position(&self) -> usize {
         self.position
     }
 
-    pub fn set_position(&mut self, position: TextIndex) {
+    pub fn set_position(&mut self, position: usize) {
         self.position = position;
     }
 
     pub fn peek(&self) -> Option<char> {
-        self.source[self.position.utf8..].chars().next()
-    }
-
-    pub fn peek_pair(&self) -> Option<(char, Option<char>)> {
-        let mut iter = self.source[self.position.utf8..].chars();
-        iter.next().map(|c| (c, iter.next()))
+        self.source[self.position..].chars().next()
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> Option<char> {
         self.undo_position = Some(self.position);
 
-        if let Some((c, n)) = self.peek_pair() {
-            self.position.advance(c, n.as_ref());
+        if let Some(c) = self.peek() {
+            self.position += c.len_utf8();
             Some(c)
         } else {
             None
@@ -112,6 +149,28 @@ impl<'s> ParserContext<'s> {
 
     pub fn content(&self, range: Range<usize>) -> String {
         self.source[range].to_owned()
+    }
+
+    pub fn cached_leading_trivia_or(
+        &mut self,
+        f: impl FnOnce(&mut Self) -> ParserResult,
+    ) -> ParserResult {
+        let position = self.position();
+        if let Some(cache) = &self.leading_trivia_cache {
+            if cache.start_position == position {
+                let result = cache.result.clone();
+                self.set_position(cache.end_position);
+                return result;
+            }
+        }
+
+        let result = f(self);
+        self.leading_trivia_cache = Some(CachedParserResult {
+            start_position: position,
+            end_position: self.position(),
+            result: result.clone(),
+        });
+        result
     }
 }
 

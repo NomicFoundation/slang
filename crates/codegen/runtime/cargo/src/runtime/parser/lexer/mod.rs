@@ -101,7 +101,7 @@ pub(crate) trait Lexer {
         ParserResult::r#match(
             vec![Edge::anonymous(Node::terminal(
                 kind,
-                input.content(start.utf8..end.utf8),
+                input.content(start..end),
             ))],
             vec![],
         )
@@ -134,7 +134,7 @@ pub(crate) trait Lexer {
         let end = input.position();
         children.push(Edge::anonymous(Node::terminal(
             kind,
-            input.content(start.utf8..end.utf8),
+            input.content(start..end),
         )));
 
         let restore = input.position();
