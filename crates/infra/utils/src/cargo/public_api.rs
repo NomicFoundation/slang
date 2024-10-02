@@ -37,7 +37,11 @@ mod public_api_snapshots {
             .toolchain(env!("RUST_NIGHTLY_VERSION"))
             .build()?;
 
-        let public_api = public_api::Builder::from_rustdoc_json(rustdoc_json).build()?;
+        let public_api = public_api::Builder::from_rustdoc_json(rustdoc_json)
+            .omit_auto_derived_impls(false)
+            .omit_auto_trait_impls(true)
+            .omit_blanket_impls(true)
+            .build()?;
 
         let output_path = crate_dir.join("generated/public_api.txt");
 

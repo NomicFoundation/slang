@@ -8,7 +8,7 @@ use std::sync::Arc;
 
 use builder::BuildResult;
 use metaslang_cst::cursor::Cursor;
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use resolver::Resolver;

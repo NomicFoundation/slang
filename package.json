@@ -15,6 +15,7 @@
     "crates/solidity/outputs/npm/package/platforms/win32-ia32-msvc",
     "crates/solidity/outputs/npm/package/platforms/win32-x64-msvc",
     "crates/solidity/outputs/npm/tests",
+    "crates/solidity/testing/perf",
     "crates/testlang/outputs/npm/package",
     "crates/testlang/outputs/npm/tests"
   ]

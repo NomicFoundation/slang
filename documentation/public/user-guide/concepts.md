@@ -5,14 +5,14 @@ This is a departure from the classic approach of "black-box" compilers, which ar
 
 ## Language Versions
 
-To use Slang, you start by initializing a `Language` object with a specific version of the language.
+To use Slang, you start by initializing a `Parser` object with a specific version of the language.
 The earliest Solidity version we support is `0.4.11`, and we plan on supporting all future versions as they are released.
 
-From a `Language` object, you can analyze any source text according to the nonterminals of that specific version.
+From a `Parser` object, you can analyze any source text according to the nonterminals of that specific version.
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
-You can use the `Language::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
+You can use the `Parser::getSupportedVersions()` API to get a list of all supported versions for the current Slang release.
 
-The `Language::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
+The `Parser::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
 Each `parse()` operation accepts the input source code, and a `NonterminalKind` variant.
 This allows callers to parse entire source files (`NonterminalKind::SourceUnit`), individual contracts (`NonterminalKind::ContractDefinition`),
 methods (`NonterminalKind::FunctionDefinition`), or any other syntax nodes.

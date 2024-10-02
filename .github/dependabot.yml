@@ -34,6 +34,9 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # openzeppelin contracts used in perf tests. don't update/change, to prevent variations/failures in results:
+      - dependency-name: "@openzeppelin/contracts"
 
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -4,8 +4,8 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity::kinds::NonterminalKind;
-use slang_solidity::language::Language;
+use slang_solidity::cst::NonterminalKind;
+use slang_solidity::parser::Parser;
 use strum_macros::Display;
 
 use crate::cst_output::renderer::render;
@@ -37,7 +37,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let tested_kind = NonterminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
-        let output = Language::new(version.clone())?.parse(tested_kind, &source);
+        let output = Parser::new(version.clone())?.parse(tested_kind, &source);
 
         let output = match last_output {
             // Skip this version if it produces the same output.

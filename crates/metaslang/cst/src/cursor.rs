@@ -2,9 +2,9 @@
 
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, NonterminalNode};
+use crate::kinds::KindTypes;
+use crate::nodes::{Edge, Node, NonterminalNode};
 use crate::text_index::{TextIndex, TextRange};
-use crate::KindTypes;
 
 /// A node in the ancestor path of a [`Cursor`].
 #[derive(Clone, Debug, PartialEq, Eq)]

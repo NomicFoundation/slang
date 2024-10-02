@@ -8,6 +8,7 @@
 #![allow(clippy::unit_arg)]
 
 mod dataset;
+mod tests;
 
 use std::hint::black_box;
 
@@ -15,27 +16,40 @@ use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
-use slang_solidity::cst::Node;
+use slang_solidity::bindings::Bindings;
 
-#[library_benchmark]
-fn parser() {
-    black_box(dataset::run_parser());
+use crate::dataset::SourceFile;
+use crate::tests::parser::ParsedFile;
+
+#[library_benchmark(setup = tests::parser::setup)]
+fn parser(files: Vec<SourceFile>) {
+    black_box(tests::parser::run(files));
 }
 
-#[library_benchmark(setup = dataset::run_parser)]
-fn cursor(trees: Vec<Node>) {
-    black_box(dataset::run_cursor(&trees));
+#[library_benchmark(setup = tests::cursor::setup)]
+fn cursor(files: Vec<ParsedFile>) {
+    black_box(tests::cursor::run(&files));
 }
 
-#[library_benchmark(setup = dataset::run_parser)]
-fn query(trees: Vec<Node>) {
-    black_box(dataset::run_query(&trees));
+#[library_benchmark(setup = tests::query::setup)]
+fn query(files: Vec<ParsedFile>) {
+    black_box(tests::query::run(&files));
+}
+
+#[library_benchmark(setup = tests::definitions::setup)]
+fn definitions(files: Vec<ParsedFile>) {
+    black_box(tests::definitions::run(&files));
+}
+
+#[library_benchmark(setup = tests::references::setup)]
+fn references(bindings: Bindings) {
+    black_box(tests::references::run(&bindings));
 }
 
 library_benchmark_group!(
     name = benchmarks;
 
-    benchmarks = parser, cursor, query
+    benchmarks = parser, cursor, query, definitions, references
 );
 
 main!(

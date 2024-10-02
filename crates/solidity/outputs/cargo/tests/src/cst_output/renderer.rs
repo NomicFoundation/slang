@@ -7,10 +7,7 @@ use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
-use slang_solidity::cst::Node;
-use slang_solidity::cursor::CursorWithEdges;
-use slang_solidity::kinds::NonterminalKind;
-use slang_solidity::text_index::TextRangeExtensions;
+use slang_solidity::cst::{CursorWithEdges, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
 pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithEdges) -> Result<String> {

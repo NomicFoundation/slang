@@ -3,9 +3,8 @@ import fs from "node:fs/promises";
 
 // --8<-- [start:imports]
 import assert from "node:assert";
-import { Language } from "@nomicfoundation/slang/language";
-import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/kinds";
-import { NonterminalNode, TerminalNode } from "@nomicfoundation/slang/cst";
+import { Parser } from "@nomicfoundation/slang/parser";
+import { NonterminalKind, NonterminalNode, TerminalKind, TerminalNode } from "@nomicfoundation/slang/cst";
 // --8<-- [end:imports]
 
 test("using the cursor", async () => {
@@ -13,9 +12,9 @@ test("using the cursor", async () => {
   const source = (await fs.readFile(inputPath, "utf8")).trim();
 
   // --8<-- [start:parse-input]
-  const language = new Language("0.8.0");
+  const parser = new Parser("0.8.0");
 
-  const parseOutput = language.parse(NonterminalKind.SourceUnit, source);
+  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
   // --8<-- [end:parse-input]
 
   {

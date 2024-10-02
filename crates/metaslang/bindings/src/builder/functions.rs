@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use metaslang_cst::KindTypes;
+use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::functions::Functions;
 use semver::Version;
 
@@ -17,7 +17,7 @@ pub fn default_functions<KT: KindTypes + 'static>(
 }
 
 mod version {
-    use metaslang_cst::KindTypes;
+    use metaslang_cst::kinds::KindTypes;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
     use metaslang_graph_builder::graph::{Graph, Value};
     use metaslang_graph_builder::ExecutionError;
@@ -58,7 +58,7 @@ mod version {
 mod resolver {
     use std::sync::Arc;
 
-    use metaslang_cst::KindTypes;
+    use metaslang_cst::kinds::KindTypes;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
     use metaslang_graph_builder::graph::{Graph, Value};
     use metaslang_graph_builder::ExecutionError;

@@ -11,7 +11,7 @@ export type Diagnostic = generated.diagnostic.Diagnostic;
 // NOTE(#987): napi-rs does not allow us to either export traits as interfaces
 // or interfaces with methods in general, so we define the interface ourselves.
 export interface DiagnosticInterface {
-  textRange(): generated.text_index.TextRange;
+  textRange(): generated.cst.TextRange;
   message(): string;
   severity(): Severity;
 }

@@ -1,6 +1,6 @@
 #![allow(clippy::needless_raw_string_hashes)]
 
-use slang_testlang::query::Query;
+use slang_testlang::cst::Query;
 
 fn run_parser_test(input: &str, result: &str) {
     assert_eq!(Query::parse(input).unwrap().to_string(), result);

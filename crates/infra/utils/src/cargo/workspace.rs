@@ -18,15 +18,11 @@ impl CargoWorkspace {
 
         let manifest = WorkspaceManifest::load()?;
 
-        let dependency = manifest
-            .workspace
-            .dependencies
-            .get(crate_name)
-            .with_context(|| format!("Cannot find dependency '{crate_name}' in workspace."))?;
-
         let mut command = Command::new("cargo")
             .args(["install", crate_name])
             .flag("--locked");
+
+        let dependency = manifest.dependency(crate_name)?;
 
         command = match dependency {
             Dependency::Local { path, version } => command
@@ -54,15 +50,8 @@ impl CargoWorkspace {
     }
 
     pub fn locate_source_crate(crate_name: impl AsRef<str>) -> Result<PathBuf> {
-        let crate_name = crate_name.as_ref();
-
         let manifest = WorkspaceManifest::load()?;
-
-        let dependency = manifest
-            .workspace
-            .dependencies
-            .get(crate_name)
-            .with_context(|| format!("Cannot find dependency '{crate_name}' in workspace."))?;
+        let dependency = manifest.dependency(crate_name)?;
 
         match dependency {
             Dependency::Local { path, version: _ } => Ok(Path::repo_path(path)),
@@ -76,7 +65,7 @@ impl CargoWorkspace {
     }
 
     pub fn local_version() -> Result<Version> {
-        Ok(WorkspaceManifest::load()?.workspace.package.version)
+        Ok(WorkspaceManifest::load()?.version().to_owned())
     }
 
     pub fn published_version(crate_name: impl AsRef<str>) -> Result<Version> {

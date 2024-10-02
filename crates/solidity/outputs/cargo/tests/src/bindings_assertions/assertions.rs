@@ -6,8 +6,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use semver::{Version, VersionReq};
 use slang_solidity::bindings::{Bindings, Definition};
-use slang_solidity::cursor::Cursor;
-use slang_solidity::kinds::TerminalKind;
+use slang_solidity::cst::{Cursor, TerminalKind};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
