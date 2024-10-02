@@ -9523,7 +9523,7 @@ impl Parser {
 
 impl Lexer for Parser {
     fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        Parser::leading_trivia(self, input)
+        input.cached_leading_trivia_or(|input| Parser::leading_trivia(self, input))
     }
 
     fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {

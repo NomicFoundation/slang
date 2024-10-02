@@ -1,8 +1,16 @@
 use std::mem;
 use std::ops::Range;
 
+use super::ParserResult;
 use crate::cst::{TerminalKind, TextIndex};
 use crate::parser::ParseError;
+
+#[derive(Debug)]
+struct CachedParserResult {
+    start_position: usize,
+    end_position: usize,
+    result: ParserResult,
+}
 
 #[derive(Debug)]
 pub struct ParserContext<'s> {
@@ -12,6 +20,7 @@ pub struct ParserContext<'s> {
     errors: Vec<ParseError>,
     closing_delimiters: Vec<TerminalKind>,
     last_text_index: TextIndex,
+    leading_trivia_cache: Option<CachedParserResult>,
 }
 
 #[derive(Copy, Clone)]
@@ -29,6 +38,7 @@ impl<'s> ParserContext<'s> {
             errors: vec![],
             closing_delimiters: vec![],
             last_text_index: TextIndex::ZERO,
+            leading_trivia_cache: None,
         }
     }
 
@@ -139,6 +149,28 @@ impl<'s> ParserContext<'s> {
 
     pub fn content(&self, range: Range<usize>) -> String {
         self.source[range].to_owned()
+    }
+
+    pub fn cached_leading_trivia_or(
+        &mut self,
+        f: impl FnOnce(&mut Self) -> ParserResult,
+    ) -> ParserResult {
+        let position = self.position();
+        if let Some(cache) = &self.leading_trivia_cache {
+            if cache.start_position == position {
+                let result = cache.result.clone();
+                self.set_position(cache.end_position);
+                return result;
+            }
+        }
+
+        let result = f(self);
+        self.leading_trivia_cache = Some(CachedParserResult {
+            start_position: position,
+            end_position: self.position(),
+            result: result.clone(),
+        });
+        result
     }
 }
 
