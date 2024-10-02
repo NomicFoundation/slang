@@ -10,7 +10,8 @@ use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::parser::{ParseOutput, Parser};
 
-use super::graph::{render_dot_graph, render_graph};
+use super::graph::graphviz::render as render_graphviz_graph;
+use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
@@ -73,7 +74,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             // Don't run this in CI, since the graph outputs are not committed
             // to the repository and hence we cannot verify their contents,
             // which is what `fs.write_file` does in CI.
-            let graph_output = render_graph(&parsed_parts);
+            let graph_output = render_mermaid_graph(&parsed_parts);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
@@ -84,7 +85,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                     fs.write_file(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
 
-                    let dot_output = render_dot_graph(&parsed_parts);
+                    let dot_output = render_graphviz_graph(&parsed_parts);
                     let dot_output_path = test_dir
                         .join("generated")
                         .join(format!("{version}-{parse_status}.dot"));
