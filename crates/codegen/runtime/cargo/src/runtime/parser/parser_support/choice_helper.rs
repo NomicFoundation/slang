@@ -14,7 +14,7 @@ pub struct ChoiceHelper {
     start_position: Marker,
     // Because we backtrack after every non-final pick, we store the progress
     // and the emitted errors from the time of a best pick, so that we can return to it later.
-    last_progress: TextIndex,
+    last_progress: usize,
     recovered_errors: Vec<ParseError>,
 }
 

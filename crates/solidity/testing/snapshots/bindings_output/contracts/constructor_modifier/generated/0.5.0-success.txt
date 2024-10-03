@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     modifier validAddress(address _addr) {
+   │              ──────┬─────         ──┬──  
+   │                    ╰───────────────────── def: 2
+   │                                     │    
+   │                                     ╰──── def: 3
+ 3 │         require(_addr != address(0), "Not valid address");
+   │         ───┬─── ──┬──  
+   │            ╰─────────── ambiguous: built-in, built-in
+   │                   │    
+   │                   ╰──── ref: 3
+ 4 │         _;
+   │         ┬  
+   │         ╰── unresolved
+   │ 
+ 7 │     constructor (address _addr) validAddress(_addr) {}
+   │                          ──┬──  ──────┬───── ──┬──  
+   │                            ╰──────────────────────── def: 4
+   │                                       │        │    
+   │                                       ╰───────────── ref: 2
+   │                                                │    
+   │                                                ╰──── ref: 4
+───╯

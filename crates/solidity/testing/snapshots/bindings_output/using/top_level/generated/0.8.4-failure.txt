@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:7:1]
+    │
+  7 │ ╭─▶ using {increment} for Counter;
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ struct Counter {
+   │        ───┬───  
+   │           ╰───── def: 1
+ 2 │     uint value;
+   │          ──┬──  
+   │            ╰──── def: 2
+   │ 
+ 5 │ function increment(Counter memory _counter) public {}
+   │          ────┬──── ───┬───        ────┬───  
+   │              ╰────────────────────────────── def: 3
+   │                       │               │     
+   │                       ╰───────────────────── ref: 1
+   │                                       │     
+   │                                       ╰───── def: 4
+───╯
