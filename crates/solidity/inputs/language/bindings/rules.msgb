@@ -12,6 +12,7 @@ attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, i
 ;; Keeps a link to the enclosing contract definition to provide a parent for
 ;; method calls (to correctly resolve virtual methods)
 inherit .enclosing_def
+inherit .parent_scope
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -30,6 +31,11 @@ inherit .enclosing_def
   edge export -> @source_unit.defs
 
   let @source_unit.enclosing_def = #null
+
+  ;; This defines a parent_scope at the source unit level (this attribute is
+  ;; inherited) for contracts to resolve bases (both in inheritance lists and
+  ;; override specifiers)
+  let @source_unit.parent_scope = @source_unit.lexical_scope
 }
 
 ;; Top-level definitions...
@@ -77,16 +83,6 @@ inherit .enclosing_def
    node @import.defs
    edge @source_unit.defs -> @import.defs
    edge @source_unit.lexical_scope -> @import.defs
-}
-
-;; Contracts need access to the parent scope to resolve bases. This is purely
-;; for convenience, as contracts can only appear in SourceUnits so we could
-;; potentially connect this directly when connecting to the base contract
-;; identifiers (but that would make the query longer)
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition]]
-]] {
-  let @contract.parent_scope = @source_unit.lexical_scope
 }
 
 
@@ -200,6 +196,57 @@ inherit .enclosing_def
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Common inheritance rules (apply to contracts and interfaces)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@specifier [InheritanceSpecifier [InheritanceTypes
+    [InheritanceType @type_name [IdentifierPath]]
+]] {
+  ;; This should point to the enclosing contract or interface definition
+  let heir = @specifier.heir
+
+  ;; Resolve base names through the parent scope of our heir (contract or
+  ;; interface), aka the source unit
+  edge @type_name.push_end -> heir.parent_scope
+
+  ;; Make base members accesible as our own members
+  node member
+  attr (member) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge heir.members -> member
+  edge member -> typeof
+  edge typeof -> @type_name.push_begin
+
+  ;; Make base defs (eg. enums and structs) accessible as our own
+  node type_member
+  attr (type_member) push_symbol = "."
+
+  edge heir.type_members -> type_member
+  edge type_member -> @type_name.push_begin
+}
+
+;; NOTE: we use anchors here to prevent the query engine from returning all the
+;; sublists of possible parents
+@specifier [InheritanceSpecifier [InheritanceTypes . @parents [_]+ .]] {
+  var parent_refs = []
+  for parent in @parents {
+    if (eq (node-type parent) "InheritanceType") {
+      ;; this is intentionally reversed because of how Solidity linearised the contract bases
+      set parent_refs = (concat [parent.ref] parent_refs)
+    }
+  }
+  let @specifier.parent_refs = parent_refs
+}
+
+@parent [InheritanceType @type_name [IdentifierPath]] {
+  let @parent.ref = @type_name.push_begin
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Contracts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -213,7 +260,12 @@ inherit .enclosing_def
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
-  edge @contract.lexical_scope -> @contract.modifiers
+
+  ;; Modifiers are available as a contract type members through a special '@modifier' symbol
+  node modifier
+  attr (modifier) pop_symbol = "@modifier"
+  edge @contract.type_members -> modifier
+  edge modifier -> @contract.modifiers
 
   let @contract.enclosing_def = @contract.def
 }
@@ -224,7 +276,7 @@ inherit .enclosing_def
 
   ;; "instance" like access path
   ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
-  ;; and () -> . for accesses through a `new` invocation
+  ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
   edge member -> @contract.members
@@ -244,6 +296,14 @@ inherit .enclosing_def
   attr (type_member) pop_symbol = "."
   edge @contract.def -> type_member
   edge type_member -> @contract.type_members
+
+  ;; Define "this" and connect it to the contract definition
+  node this
+  attr (this) pop_symbol = "this"
+  edge this -> member
+
+  ;; ... and make it available in the contract's lexical scope
+  edge @contract.lexical_scope -> this
 
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
   ;; super_scope will later connect to the base contract defs directly
@@ -276,52 +336,16 @@ inherit .enclosing_def
   attr (@contract.def) import_nodes = [@contract.lexical_scope, super_import]
 }
 
+@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @contract
+  attr (@contract.def) parents = @specifier.parent_refs
+}
+
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
     [InheritanceType @type_name [IdentifierPath]]
 ]]] {
-  ;; Resolve contract bases names through the parent scope of the contract (aka
-  ;; the source unit)
-  edge @type_name.push_end -> @contract.parent_scope
-
-  ;; Make base members accesible as our own members
-  node member
-  attr (member) push_symbol = "."
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge @contract.members -> member
-  edge member -> typeof
-  edge typeof -> @type_name.push_begin
-
-  ;; Make base contract defs (eg. enums and structs) accessible as our own
-  node type_member
-  attr (type_member) push_symbol = "."
-
-  edge @contract.type_members -> type_member
-  edge type_member -> @type_name.push_begin
-
   ;; The base contract defs are directly accesible through our special super scope
   edge @contract.super_scope -> @type_name.push_begin
-}
-
-@parent [InheritanceType @type_name [IdentifierPath]] {
-  let @parent.ref = @type_name.push_begin
-}
-
-;; NOTE: we use anchors here to prevent the query engine from returning all the
-;; sublists of possible parents
-@contract [ContractDefinition [InheritanceSpecifier
-    [InheritanceTypes . @parents [_]+ .]
-]] {
-  var parent_refs = []
-  for parent in @parents {
-    if (eq (node-type parent) "InheritanceType") {
-      ;; this is intentionally reversed because of how Solidity linearised the contract bases
-      set parent_refs = (concat [parent.ref] parent_refs)
-    }
-  }
-  attr (@contract.def) parents = parent_refs
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -332,6 +356,7 @@ inherit .enclosing_def
         | [ErrorDefinition]
         | [UserDefinedValueTypeDefinition]
         | [FunctionDefinition]
+        | [ConstructorDefinition]
         | [StateVariableDefinition]
         | [ModifierDefinition]
         | [FallbackFunctionDefinition]
@@ -364,10 +389,18 @@ inherit .enclosing_def
     [ContractMember @member (
           [FunctionDefinition]
         | [StateVariableDefinition]
-        | [ModifierDefinition]
     )]
 ]] {
   edge @contract.lexical_scope -> @member.def
+}
+
+;; Public state variables are also exposed as external member functions
+@contract [ContractDefinition [ContractMembers [ContractMember
+    @state_var [StateVariableDefinition
+        [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
+    ]
+]]] {
+  edge @contract.members -> @state_var.def
 }
 
 @contract [ContractDefinition members: [ContractMembers
@@ -386,17 +419,18 @@ inherit .enclosing_def
     item: [ContractMember @modifier variant: [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
+
+  ;; This may prioritize this definition (when there are multiple options)
+  ;; according to the C3 linerisation ordering
+  attr (@modifier.def) tag = "c3"
+  attr (@modifier.def) parents = [@contract.def]
 }
 
-@contract [ContractDefinition [ContractMembers [ContractMember
-    [FunctionDefinition [FunctionAttributes [FunctionAttribute
-        [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
-            @base_ident [IdentifierPath]
-        ]]]
-    ]]]
+@override [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
+    @base_ident [IdentifierPath]
 ]]] {
-  ;; Resolve overriden bases when listed in the function modifiers
-  edge @base_ident.push_end -> @contract.parent_scope
+  ;; Resolve overriden bases when listed in the function or modifiers modifiers
+  edge @base_ident.push_end -> @override.parent_scope
 }
 
 
@@ -415,26 +449,36 @@ inherit .enclosing_def
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @interface
-
-  edge @interface.def -> def
+  attr (@interface.def) node_definition = @name
+  attr (@interface.def) definiens_node = @interface
 
   ;; "instance" like access path
-  node type_def
-  attr (type_def) pop_symbol = "@typeof"
+  ;; we have two distinct paths: @typeof -> . for accesses to variables of the contract's type
+  ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
-  edge def -> type_def
-  edge type_def -> member
   edge member -> @interface.members
+
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+  edge @interface.def -> typeof
+  edge typeof -> member
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge @interface.def -> call
+  edge call -> member
 
   ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
-  edge def -> type_member
+  edge @interface.def -> type_member
   edge type_member -> @interface.type_members
+}
+
+@interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @interface
+  attr (@interface.def) parents = @specifier.parent_refs
 }
 
 @interface [InterfaceDefinition [InterfaceMembers
@@ -821,9 +865,10 @@ inherit .enclosing_def
 ;; position in the path, from left to right. Useful for the using directive to
 ;; be able to pop the name of the attached function.
 
-[IdentifierPath @name [Identifier]] {
+@id_path [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@id_path.enclosing_def]
 
   node @name.pop
   attr (@name.pop) pop_symbol = (source-text @name)
@@ -962,11 +1007,55 @@ inherit .enclosing_def
 @modifier [ModifierInvocation @name [IdentifierPath]] {
   node @modifier.lexical_scope
 
-  edge @name.push_end -> @modifier.lexical_scope
+  node modifier
+  attr (modifier) push_symbol = "@modifier"
+
+  edge @name.push_end -> modifier
+  edge modifier -> @modifier.lexical_scope
 }
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
   edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Constructors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@constructor [ConstructorDefinition] {
+  node @constructor.lexical_scope
+  node @constructor.def
+}
+
+@constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @constructor.lexical_scope
+
+  ;; Input parameters are available in the constructor scope
+  edge @constructor.lexical_scope -> @params.defs
+  ;; ... and shadow other declarations
+  attr (@constructor.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @constructor.def -> @params.names
+}
+
+;; Connect the constructor body's block lexical scope to the constructor
+@constructor [ConstructorDefinition @block [Block]] {
+  edge @block.lexical_scope -> @constructor.lexical_scope
+}
+
+@constructor [ConstructorDefinition [ConstructorAttributes item: [ConstructorAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @constructor.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers [ContractMember
+    @constructor [ConstructorDefinition]
+]]] {
+  ;; This link allows calling a constructor with the named parameters syntax
+  edge @contract.def -> @constructor.def
 }
 
 
@@ -1025,18 +1114,18 @@ inherit .enclosing_def
 ;;; Function modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@modifier [ModifierDefinition] {
+  node @modifier.def
+  node @modifier.lexical_scope
+}
+
 @modifier [ModifierDefinition
     @name name: [Identifier]
     body: [FunctionBody @body [Block]]
 ] {
-  node @modifier.def
-  node @modifier.lexical_scope
+  attr (@modifier.def) node_definition = @name
+  attr (@modifier.def) definiens_node = @modifier
 
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @modifier
-
-  edge @modifier.def -> def
   edge @body.lexical_scope -> @modifier.lexical_scope
 }
 
@@ -1422,17 +1511,16 @@ inherit .enclosing_def
     @type_name type_name: [TypeName]
     @name name: [Identifier]
 ] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @state_var
+  attr (@state_var.def) node_definition = @name
+  attr (@state_var.def) definiens_node = @state_var
 
-  edge @state_var.def -> def
+  edge @state_var.def -> @state_var.def
   edge @type_name.type_ref -> @state_var.lexical_scope
 
   node typeof
   attr (typeof) push_symbol = "@typeof"
 
-  edge def -> typeof
+  edge @state_var.def -> typeof
   edge typeof -> @type_name.output
 }
 

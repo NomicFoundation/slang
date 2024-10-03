@@ -5,6 +5,21 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn constructor_invocation() -> Result<()> {
+    run("contracts", "constructor_invocation")
+}
+
+#[test]
+fn constructor_modifier() -> Result<()> {
+    run("contracts", "constructor_modifier")
+}
+
+#[test]
+fn constructors() -> Result<()> {
+    run("contracts", "constructors")
+}
+
+#[test]
 fn fallback_receive() -> Result<()> {
     run("contracts", "fallback_receive")
 }
@@ -15,6 +30,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn public_getters() -> Result<()> {
+    run("contracts", "public_getters")
+}
+
+#[test]
 fn super_linearisation() -> Result<()> {
     run("contracts", "super_linearisation")
 }
@@ -22,6 +42,11 @@ fn super_linearisation() -> Result<()> {
 #[test]
 fn super_scope() -> Result<()> {
     run("contracts", "super_scope")
+}
+
+#[test]
+fn this_scope() -> Result<()> {
+    run("contracts", "this_scope")
 }
 
 #[test]
