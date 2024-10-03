@@ -6621,8 +6621,8 @@ codegen_language_macros::compile!(Language(
     built_ins = [
         BuiltInFunction(
             name = "addmod",
-            return_type = "uint",
-            parameters = ["uint x", "uint y", "uint k"]
+            parameters = ["uint x", "uint y", "uint k"],
+            return_type = "uint"
         ),
         BuiltInFunction(name = "assert", parameters = ["bool condition"]),
         BuiltInFunction(
@@ -6639,18 +6639,24 @@ codegen_language_macros::compile!(Language(
         BuiltInType(
             name = "$BuiltIn$Address",
             fields = [
-                BuiltInField(def = "uint256 balance"),
-                BuiltInField(def = "bytes code", enabled = From("0.8.0"))
-            ]
+                BuiltInField(definition = "uint256 balance"),
+                BuiltInField(definition = "bytes code", enabled = From("0.8.0"))
+            ],
+            functions = [BuiltInFunction(
+                name = "send",
+                parameters = ["uint256 amount"],
+                return_type = "bool"
+            )]
         ),
         BuiltInType(
             name = "$BuiltIn$TxType",
             fields = [
-                BuiltInField(def = "uint gasprice"),
-                BuiltInField(def = "address payable origin")
-            ]
+                BuiltInField(definition = "uint gasprice"),
+                BuiltInField(definition = "address payable origin")
+            ],
+            functions = []
         ),
-        BuiltInVariable(def = "uint now"),
-        BuiltInVariable(def = "$BuiltIn$TxType tx")
+        BuiltInVariable(definition = "uint now"),
+        BuiltInVariable(definition = "$BuiltIn$TxType tx")
     ]
 ));

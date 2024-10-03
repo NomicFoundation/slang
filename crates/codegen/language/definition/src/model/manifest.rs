@@ -160,8 +160,8 @@ pub enum BuiltIn {
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInFunction {
     pub name: String,
-    pub return_type: Option<String>,
     pub parameters: Vec<String>,
+    pub return_type: Option<String>,
     pub enabled: Option<VersionSpecifier>,
 }
 
@@ -170,12 +170,13 @@ pub struct BuiltInFunction {
 pub struct BuiltInType {
     pub name: String,
     pub fields: Vec<BuiltInField>,
+    pub functions: Vec<BuiltInFunction>,
     pub enabled: Option<VersionSpecifier>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct BuiltInField {
-    pub def: String,
+    pub definition: String,
     pub enabled: Option<VersionSpecifier>,
 }

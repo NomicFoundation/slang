@@ -99,9 +99,16 @@ fn filter_built_in_type(typ: &BuiltInType, version: &Version) -> Option<BuiltInT
             .iter()
             .filter_map(|field| filter_built_in_field(field, version))
             .collect();
+        let functions = typ
+            .functions
+            .iter()
+            .filter_map(|function| filter_built_in_function(function, version))
+            .collect();
+
         Some(BuiltInType {
             name: typ.name.clone(),
             fields,
+            functions,
             enabled: typ.enabled.clone(),
         })
     } else {

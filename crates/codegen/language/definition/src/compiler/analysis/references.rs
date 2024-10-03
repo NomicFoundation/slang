@@ -438,6 +438,7 @@ fn check_built_in_type(
     let SpannedBuiltInType {
         name: _,
         fields,
+        functions,
         enabled,
     } = built_in;
 
@@ -446,6 +447,9 @@ fn check_built_in_type(
     for field in fields {
         check_built_in_field(analysis, field, &enablement);
     }
+    for function in functions {
+        check_built_in_function(analysis, function, &enablement);
+    }
 }
 
 fn check_built_in_field(
@@ -453,7 +457,10 @@ fn check_built_in_field(
     built_in: &SpannedBuiltInField,
     enablement: &VersionSet,
 ) {
-    let SpannedBuiltInField { def: _, enabled } = built_in;
+    let SpannedBuiltInField {
+        definition: _,
+        enabled,
+    } = built_in;
 
     let _ = update_enablement(analysis, enablement, enabled);
 }

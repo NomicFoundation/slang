@@ -11,10 +11,12 @@ function assert(bool condition) public;
 function revert(string memory reason) public;
 struct $BuiltIn$Address {
   uint256 balance;
+  function(uint256 amount) returns (bool) send;
 }
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
+
 }
 uint now;
 $BuiltIn$TxType tx;
@@ -28,10 +30,12 @@ function require(bool condition, string memory message) public;
 function revert(string memory reason) public;
 struct $BuiltIn$Address {
   uint256 balance;
+  function(uint256 amount) returns (bool) send;
 }
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
+
 }
 uint now;
 $BuiltIn$TxType tx;
@@ -46,10 +50,12 @@ function revert(string memory reason) public;
 struct $BuiltIn$Address {
   uint256 balance;
   bytes code;
+  function(uint256 amount) returns (bool) send;
 }
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
+
 }
 uint now;
 $BuiltIn$TxType tx;

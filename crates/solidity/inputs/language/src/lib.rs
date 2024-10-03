@@ -26,13 +26,33 @@ pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
                 let fields = item
                     .fields
                     .iter()
-                    .map(|field| format!("  {field_def};", field_def = field.def))
+                    .map(|field| format!("  {field_def};", field_def = field.definition))
                     .collect::<Vec<_>>()
                     .join("\n");
-                lines.push(format!("struct {name} {{\n{fields}\n}}", name = item.name));
+                let functions = item
+                    .functions
+                    .iter()
+                    .map(|function| {
+                        format!(
+                            "  function({parameters}){return_type} {name};",
+                            parameters = function.parameters.join(", "),
+                            return_type = function
+                                .return_type
+                                .as_deref()
+                                .map(|return_type| format!(" returns ({return_type})"))
+                                .unwrap_or_default(),
+                            name = function.name
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                lines.push(format!(
+                    "struct {name} {{\n{fields}\n{functions}\n}}",
+                    name = item.name
+                ));
             }
             BuiltIn::BuiltInVariable { item } => {
-                lines.push(format!("{var_def};", var_def = item.def));
+                lines.push(format!("{var_def};", var_def = item.definition));
             }
         }
     }
