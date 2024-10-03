@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ using {invoke} for function(uint);
+    │        ───┬──  
+    │           ╰──── ref: 1
+    │ 
+  3 │ function invoke(function(uint) x) {
+    │          ───┬──                ┬  
+    │             ╰───────────────────── def: 1
+    │                                │  
+    │                                ╰── def: 2
+  4 │     x(1);
+    │     ┬  
+    │     ╰── ref: 2
+    │ 
+  7 │ function foo(uint x) {}
+    │          ─┬─      ┬  
+    │           ╰────────── def: 3
+    │                   │  
+    │                   ╰── def: 4
+    │ 
+  9 │ function test() {
+    │          ──┬─  
+    │            ╰─── def: 5
+ 10 │     foo.invoke();
+    │     ─┬─ ───┬──  
+    │      ╰────────── ref: 3
+    │            │    
+    │            ╰──── ref: 1
+    │ 
+ 12 │     function (uint) bar = foo;
+    │                     ─┬─   ─┬─  
+    │                      ╰───────── def: 6
+    │                            │   
+    │                            ╰─── ref: 3
+ 13 │     bar.invoke();
+    │     ─┬─ ───┬──  
+    │      ╰────────── ref: 6
+    │            │    
+    │            ╰──── ref: 1
+────╯
