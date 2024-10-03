@@ -41,7 +41,7 @@ pub(crate) fn analyze_references(analysis: &mut Analysis) {
         check_item(analysis, item, &enablement);
     }
 
-    for built_in in language.built_ins() {
+    for built_in in &language.built_ins {
         check_built_in(analysis, built_in, &enablement);
     }
 }

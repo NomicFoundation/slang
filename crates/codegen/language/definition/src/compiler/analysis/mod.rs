@@ -13,7 +13,7 @@ use crate::compiler::analysis::reachability::analyze_reachability;
 use crate::compiler::analysis::references::analyze_references;
 use crate::compiler::version_set::VersionSet;
 use crate::internals::{ErrorsCollection, ParseOutput, Spanned};
-use crate::model::{Identifier, SpannedBuiltIn, SpannedItem, SpannedLanguage};
+use crate::model::{Identifier, SpannedItem, SpannedLanguage};
 
 pub(crate) struct Analysis {
     pub errors: ErrorsCollection,
@@ -74,9 +74,5 @@ impl SpannedLanguage {
             .iter()
             .flat_map(|section| &section.topics)
             .flat_map(|topic| &topic.items);
-    }
-
-    fn built_ins(&self) -> impl Iterator<Item = &SpannedBuiltIn> {
-        return self.built_ins.iter();
     }
 }
