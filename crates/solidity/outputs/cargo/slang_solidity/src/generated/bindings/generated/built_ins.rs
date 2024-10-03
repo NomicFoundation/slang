@@ -16,11 +16,11 @@ struct $BuiltIn$Address {
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
-
 }
 uint now;
 $BuiltIn$TxType tx;
-}"####
+}
+"####
     } else if *version < Version::new(0, 8, 0) {
         r####"contract $$ {
 function addmod(uint x, uint y, uint k) public returns (uint);
@@ -35,11 +35,11 @@ struct $BuiltIn$Address {
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
-
 }
 uint now;
 $BuiltIn$TxType tx;
-}"####
+}
+"####
     } else {
         r####"contract $$ {
 function addmod(uint x, uint y, uint k) public returns (uint);
@@ -55,10 +55,10 @@ struct $BuiltIn$Address {
 struct $BuiltIn$TxType {
   uint gasprice;
   address payable origin;
-
 }
 uint now;
 $BuiltIn$TxType tx;
-}"####
+}
+"####
     }
 }
