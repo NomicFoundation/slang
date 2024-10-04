@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - (PragmaDirective): # "pragma abicoder foo;" (0..20)
       - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-      - (pragma꞉ Pragma) ► (variant꞉ ABICoderPragma): # " abicoder foo" (6..19)
+      - (pragma꞉ Pragma) ► (variant꞉ AbicoderPragma): # " abicoder foo" (6..19)
           - (leading_trivia꞉ Whitespace): " " # (6..7)
           - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (7..15)
           - (leading_trivia꞉ Whitespace): " " # (15..16)

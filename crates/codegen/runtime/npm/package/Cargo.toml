@@ -1,0 +1,16 @@
+[package]
+name = "codegen_runtime_npm_package"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+description = "TypeScript runtime copied over by codegen"
+
+[build-dependencies]
+anyhow = { workspace = true }
+infra_utils = { workspace = true }
+codegen_runtime_generator = { workspace = true }
+
+[lints]
+workspace = true

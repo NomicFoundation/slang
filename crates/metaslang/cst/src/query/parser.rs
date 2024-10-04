@@ -27,7 +27,7 @@ use crate::text_index::TextIndex;
 #[derive(Clone, Debug, Error)]
 pub struct QueryError {
     pub message: String,
-    pub row: usize,
+    pub line: usize,
     pub column: usize,
 }
 
@@ -133,7 +133,7 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
             let text_index = compute_row_and_column(e.errors[0].0, input);
             QueryError {
                 message: e.to_string(),
-                row: text_index.line,
+                line: text_index.line,
                 column: text_index.column,
             }
         })

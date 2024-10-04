@@ -1,0 +1,40 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = true
+
+name = "slang_solidity_cli"
+description = "This crate contains the 'slang_solidity' CLI/cargo binary. Please see the 'slang_solidity' crate for more information."
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+  "Nomic Foundation <packages@nomic.foundation>",
+  "Antony Blakey <antony@nomic.foundation>",
+  "Igor Matuszewski <igor@nomic.foundation>",
+  "Omar Tawfik <omar@nomic.foundation>",
+]
+
+readme = "README.md"
+license = "MIT"
+keywords = ["code-analysis", "parser", "sol", "solidity", "yul"]
+categories = [
+  "compilers",
+  "development-tools",
+  "parsing",
+  "parser-implementations",
+  "text-editors",
+]
+
+[[bin]]
+name = "slang_solidity"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+serde_json = { workspace = true }
+semver = { workspace = true }
+slang_solidity = { workspace = true, features = ["__private_ariadne_errors"] }
+
+[lints]
+workspace = true

@@ -22,7 +22,7 @@ fn end_of_line() -> Result<()> {
 
 fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let version = Version::parse("0.8.0")?;
-    let parser = Parser::new(version)?;
+    let parser = Parser::create(version)?;
 
     let output = parser.parse(NonterminalKind::SourceUnit, input);
     assert!(output.is_valid());

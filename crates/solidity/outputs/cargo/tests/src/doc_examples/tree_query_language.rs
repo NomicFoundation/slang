@@ -19,7 +19,7 @@ impl RemoveMkdocSnippetMarkers for &str {
 }
 
 fn assert_matches(query: &Query, kind: NonterminalKind, source: &str) -> QueryMatchIterator {
-    let parser = Parser::new(Version::new(0, 8, 12)).unwrap();
+    let parser = Parser::create(Version::new(0, 8, 12)).unwrap();
     let cursor = parser.parse(kind, source).create_tree_cursor();
 
     let tree = cursor.node();

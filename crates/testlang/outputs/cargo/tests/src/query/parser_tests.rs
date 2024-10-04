@@ -57,7 +57,7 @@ fn test_parsing_error() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_\n");
-            assert_eq!((e.row, e.column), (0, 8));
+            assert_eq!((e.line, e.column), (0, 8));
         }
     }
 }
@@ -73,7 +73,7 @@ fn test_parsing_error_with_invalid_edge_label() {
                 e.message,
                 "Parse error:\n'Name' is not a valid edge label at: Name: [_]]\n",
             );
-            assert_eq!((e.row, e.column), (0, 12));
+            assert_eq!((e.line, e.column), (0, 12));
         }
     }
 }
@@ -88,7 +88,7 @@ fn test_parsing_error_with_invalid_node_kind() {
                 e.message,
                 "Parse error:\n'tree_node' is not a valid node kind at: tree_node]]\n",
             );
-            assert_eq!((e.row, e.column), (0, 7));
+            assert_eq!((e.line, e.column), (0, 7));
         }
     }
 }
@@ -103,7 +103,7 @@ fn test_parsing_error_with_kind_beginning_with_underscore() {
                 e.message,
                 "Parse error:\n'_tree_node' is not a valid node kind at: _tree_node]]\n",
             );
-            assert_eq!((e.row, e.column), (0, 7));
+            assert_eq!((e.line, e.column), (0, 7));
         }
     }
 }

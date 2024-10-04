@@ -4,7 +4,7 @@ mod kinds;
 mod parser;
 
 use std::collections::BTreeSet;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::rc::Rc;
 
 use anyhow::Result;
@@ -19,41 +19,33 @@ use crate::bindings::BindingsModel;
 use crate::kinds::KindsModel;
 use crate::parser::ParserModel;
 
-pub enum OutputLanguage {
-    Cargo,
-    Npm,
-}
+pub struct RuntimeGenerator;
 
-impl OutputLanguage {
-    pub fn generate_runtime(&self, language: &Rc<Language>, output_dir: &Path) -> Result<()> {
+impl RuntimeGenerator {
+    pub fn generate_product(
+        language: &Rc<Language>,
+        input_dir: &Path,
+        output_dir: &Path,
+    ) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
-        let mut runtime = CodegenRuntime::new(self.source_dir()?)?;
+        let mut runtime = CodegenRuntime::new(input_dir)?;
 
-        runtime.render_directory(model, output_dir)
+        runtime.render_product(model, output_dir)
     }
 
-    pub fn generate_stubs(&self) -> Result<()> {
+    pub fn generate_stubs(source_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,
             model: RuntimeModel::default(),
         };
 
-        let mut runtime = CodegenRuntime::new(self.source_dir()?)?;
+        let mut runtime = CodegenRuntime::new(source_dir)?;
 
         runtime.render_stubs(&model)
-    }
-
-    fn source_dir(&self) -> Result<PathBuf> {
-        let crate_name = match self {
-            Self::Cargo => "codegen_runtime_cargo",
-            Self::Npm => "codegen_runtime_npm",
-        };
-
-        Ok(CargoWorkspace::locate_source_crate(crate_name)?.join("src/runtime"))
     }
 }
 
@@ -79,7 +71,7 @@ struct RuntimeModel {
 }
 
 impl RuntimeModel {
-    pub fn from_language(language: &Rc<Language>) -> Result<Self> {
+    fn from_language(language: &Rc<Language>) -> Result<Self> {
         Ok(Self {
             slang_version: CargoWorkspace::local_version()?,
             all_language_versions: language.versions.iter().cloned().collect(),

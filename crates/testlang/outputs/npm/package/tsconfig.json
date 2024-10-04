@@ -1,17 +1,9 @@
 {
   "extends": "../../../../../tsconfig.json",
 
-  "include": ["./src/**/*.ts"],
+  "include": ["./**/*"],
 
   "compilerOptions": {
-    /* Modules */
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "rootDir": "./src/generated",
-
-    /* Language and Environment */
-    "target": "ES2016",
-
     /* Projects */
     "composite": true,
     "incremental": true,

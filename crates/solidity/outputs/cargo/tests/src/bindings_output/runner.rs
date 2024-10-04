@@ -39,7 +39,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let mut last_bindings_output = None;
 
     for version in &VERSION_BREAKS {
-        let parser = Parser::new(version.clone())?;
+        let parser = Parser::create(version.clone())?;
         let mut bindings =
             bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();

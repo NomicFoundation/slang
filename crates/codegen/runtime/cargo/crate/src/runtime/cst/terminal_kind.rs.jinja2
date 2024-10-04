@@ -1,0 +1,53 @@
+{# This needs to stay in sync with the wit-bindgen output #}
+{% if model.kinds.terminal_kinds|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[derive(Clone, Copy)] 
+#[allow(clippy::upper_case_acronyms)]
+pub enum TerminalKind {
+    // Built-in:
+    UNRECOGNIZED,
+    MISSING,
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {%- for variant in model.kinds.terminal_kinds -%}
+            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+            {{ variant }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl crate::cst::TerminalKindExtensions for TerminalKind {
+    fn is_trivia(&self) -> bool {
+        {%- if rendering_in_stubs -%}
+            false
+        {%- else -%}
+            matches!(
+                self,
+                {%- for variant in model.kinds.trivia_scanner_names -%}
+                    | Self::{{ variant }}
+                {%- endfor -%}
+            )
+        {%- endif -%}
+    }
+
+    fn is_valid(&self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
+    }
+}

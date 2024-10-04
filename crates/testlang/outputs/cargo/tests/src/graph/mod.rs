@@ -8,7 +8,7 @@ use slang_testlang::parser::Parser;
 #[test]
 fn builds_a_graph() {
     let version = Version::parse("1.0.0").unwrap();
-    let parser = Parser::new(version).unwrap();
+    let parser = Parser::create(version).unwrap();
 
     let msgb_source = r"
         @tree [Tree] {

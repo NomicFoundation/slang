@@ -25,7 +25,7 @@ impl<T: KindTypes> Query<T> {
                     if capture_quantifiers.contains_key(&capture.name) {
                         return Err(QueryError {
                             message: format!("Capture name '{}' used more than once", capture.name),
-                            row: 0,
+                            line: 0,
                             column: 0,
                         });
                     }
@@ -70,7 +70,7 @@ impl<T: KindTypes> Query<T> {
                             return Err(QueryError {
                                 message: "Quantification over quantification is not allowed"
                                     .to_string(),
-                                row: 0,
+                                line: 0,
                                 column: 0,
                             })
                         }

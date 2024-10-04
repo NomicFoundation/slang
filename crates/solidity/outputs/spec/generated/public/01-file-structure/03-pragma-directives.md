@@ -14,13 +14,13 @@
 
 ```
 
-<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
 
-```{ .ebnf #ABICoderPragma }
+```{ .ebnf #AbicoderPragma }
 
 ```
 
-<pre ebnf-snippet="ABICoderPragma" style="display: none;"><a href="#ABICoderPragma"><span class="k">ABICoderPragma</span></a><span class="o"> = </span><span class="cm">(* abicoder_keyword: *)</span><span class="o"> </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* version: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderPragma" style="display: none;"><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><span class="o"> = </span><span class="cm">(* abicoder_keyword: *)</span><span class="o"> </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* version: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalPragma }
 

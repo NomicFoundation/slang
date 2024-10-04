@@ -3,10 +3,6 @@
 //!
 //! So, we let changesets bump the version of the single NPM package we ship, and generate its changelog.
 //! Then our build process copies the new version and the single changelog to other packages and crates.
-//!
-//! Additionally, changesets can only bump versions of packages in the root workspace.
-//! However, NAPI platform-specific packages cannot be added to the workspace, because other platforms will fail "npm install".
-//! So we have to bump the versions over ourselves anyways.
 
 use anyhow::Result;
 use clap::Parser;
@@ -14,7 +10,8 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
-use crate::toolchains::napi::{NapiConfig, NapiResolver};
+use crate::toolchains::npm::Npm;
+use crate::toolchains::wasm::WasmPackage;
 
 #[derive(Clone, Debug, Parser)]
 pub struct ChangesetsController {}
@@ -22,10 +19,10 @@ pub struct ChangesetsController {}
 impl ChangesetsController {
     #[allow(clippy::unused_self)] // for compatibility with other controllers:
     pub fn execute(&self) -> Result<()> {
-        let resolver = NapiResolver::Solidity;
-        let package_dir = resolver.main_package_dir();
+        let package = WasmPackage::Solidity;
+        let package_dir = CargoWorkspace::locate_source_crate(package.npm_crate())?;
 
-        let package_version = NapiConfig::local_version(&package_dir)?;
+        let package_version = Npm::local_version(&package_dir)?;
         println!("Package version: {package_version}");
 
         let workspace_version = CargoWorkspace::local_version()?;
@@ -43,7 +40,7 @@ impl ChangesetsController {
 
         Command::new("changeset").arg("version").run();
 
-        let updated_version = NapiConfig::local_version(&package_dir)?;
+        let updated_version = Npm::local_version(&package_dir)?;
         println!("Updated version: {updated_version}");
 
         if package_version == updated_version {
@@ -53,7 +50,6 @@ impl ChangesetsController {
 
         // Format the updated package files:
 
-        let package_dir = resolver.main_package_dir();
         Command::new("prettier")
             .property("--write", package_dir.unwrap_str())
             .run();

@@ -1,0 +1,28 @@
+[package]
+name = "solidity_cargo_wasm"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+# At the time of writing, building 'cdylib' plugins with Cargo has limited support
+# (see <https://github.com/rust-lang/cargo/issues/8628> for the general tracking issue).
+# To workaround some of the issues, we create a separate 'cdylib' crate that defines the WASM wrappers.
+[lib]
+crate-type = ["cdylib"]
+
+[build-dependencies]
+anyhow = { workspace = true }
+codegen_runtime_generator = { workspace = true }
+infra_utils = { workspace = true }
+solidity_language = { workspace = true }
+
+[dependencies]
+paste = { workspace = true }
+semver = { workspace = true }
+serde_json = { workspace = true }
+slang_solidity = { workspace = true }
+wit-bindgen = { workspace = true }
+
+[lints]
+workspace = true
