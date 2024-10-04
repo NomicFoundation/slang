@@ -59,9 +59,6 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             });
         }
 
-        let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
-        let parse_status = if parse_success { "success" } else { "failure" };
-
         if let Some(context) = multi_part.context {
             let context_definition = bindings
                 .lookup_definition_by_name(context)
@@ -69,6 +66,11 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 .to_handle();
             bindings.set_context(&context_definition);
         }
+
+        let (bindings_output, all_resolved) = render_bindings(&bindings, &parsed_parts)?;
+
+        let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
+        let status = if parse_success && all_resolved { "success" } else { "failure" };
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
@@ -80,7 +82,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 _ => {
                     let snapshot_path = test_dir
                         .join("generated")
-                        .join(format!("{version}-{parse_status}.mmd"));
+                        .join(format!("{version}-{status}.mmd"));
 
                     fs.write_file(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
@@ -88,19 +90,18 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                     let dot_output = render_graphviz_graph(&parsed_parts);
                     let dot_output_path = test_dir
                         .join("generated")
-                        .join(format!("{version}-{parse_status}.dot"));
+                        .join(format!("{version}-{status}.dot"));
                     fs.write_file(dot_output_path, &dot_output)?;
                 }
             };
         }
 
-        let bindings_output = render_bindings(&bindings, &parsed_parts)?;
         match last_bindings_output {
             Some(ref last) if last == &bindings_output => (),
             _ => {
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{version}-{parse_status}.txt"));
+                    .join(format!("{version}-{status}.txt"));
 
                 fs.write_file(snapshot_path, &bindings_output)?;
                 last_bindings_output = Some(bindings_output);

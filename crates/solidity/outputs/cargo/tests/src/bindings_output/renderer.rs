@@ -14,8 +14,9 @@ type ReportSpan<'a> = (&'a str, Range<usize>);
 pub(crate) fn render_bindings(
     bindings: &Bindings,
     parsed_parts: &[ParsedPart<'_>],
-) -> Result<String> {
+) -> Result<(String, bool)> {
     let mut buffer: Vec<u8> = Vec::new();
+    let mut all_resolved = true;
 
     let all_definitions = collect_all_definitions(bindings);
 
@@ -31,7 +32,9 @@ pub(crate) fn render_bindings(
             let ref_file = reference.get_file().expect("reference should be in a file");
             ref_file == part.path
         });
-        let bindings_report = build_report_for_part(part, &all_definitions, part_references);
+        let (bindings_report, part_all_resolved) =
+            build_report_for_part(part, &all_definitions, part_references);
+        all_resolved = all_resolved && part_all_resolved;
 
         let file_cache = FnCache::new(
             (move |id| Err(Box::new(format!("Failed to fetch source '{id}'")) as _)) as fn(&_) -> _,
@@ -45,7 +48,7 @@ pub(crate) fn render_bindings(
     }
 
     let result = String::from_utf8(buffer)?;
-    Ok(result)
+    Ok((result, all_resolved))
 }
 
 // We collect all non built-in definitions in a vector to be able to identify
@@ -75,7 +78,7 @@ fn build_report_for_part<'a>(
     part: &'a ParsedPart<'a>,
     all_definitions: &'a [Definition<'a>],
     part_references: impl Iterator<Item = Reference<'a>> + 'a,
-) -> Report<'a, ReportSpan<'a>> {
+) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
         ReportKind::Custom("References and definitions", Color::Unset),
         part.path,
@@ -105,6 +108,8 @@ fn build_report_for_part<'a>(
         builder = builder.with_label(Label::new((part.path, range)).with_message(message));
     }
 
+    let mut all_resolved = true;
+
     for reference in part_references {
         let Some(cursor) = reference.get_cursor() else {
             continue;
@@ -130,7 +135,10 @@ fn build_report_for_part<'a>(
                     format!("ref: {}", def_id + 1)
                 }
             }
-            Err(ResolutionError::Unresolved) => "unresolved".to_string(),
+            Err(ResolutionError::Unresolved) => {
+                all_resolved = false;
+                "unresolved".to_string()
+            }
             Err(ResolutionError::AmbiguousDefinitions(ambiguous_definitions)) => {
                 let ref_labels = ambiguous_definitions
                     .iter()
@@ -152,5 +160,5 @@ fn build_report_for_part<'a>(
         builder = builder.with_label(Label::new((part.path, range)).with_message(message));
     }
 
-    builder.finish()
+    (builder.finish(), all_resolved)
 }
