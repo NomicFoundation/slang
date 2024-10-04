@@ -70,7 +70,11 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         let (bindings_output, all_resolved) = render_bindings(&bindings, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
-        let status = if parse_success && all_resolved { "success" } else { "failure" };
+        let status = if parse_success && all_resolved {
+            "success"
+        } else {
+            "failure"
+        };
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
