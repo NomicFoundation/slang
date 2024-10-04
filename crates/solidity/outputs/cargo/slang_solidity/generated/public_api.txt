@@ -2,7 +2,7 @@
 
 pub mod slang_solidity
 pub mod slang_solidity::bindings
-pub fn slang_solidity::bindings::create_with_resolver(parser: &slang_solidity::parser::Parser, resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> slang_solidity::bindings::Bindings
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> slang_solidity::bindings::Bindings
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
 pub fn slang_solidity::bindings::get_built_ins(version: &semver::Version) -> &'static str
 pub type slang_solidity::bindings::Bindings = metaslang_bindings::Bindings<slang_solidity::cst::KindTypes>

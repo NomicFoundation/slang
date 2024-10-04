@@ -1,29 +1,32 @@
-use std::sync::Arc;
-
-use metaslang_bindings::PathResolver;
-use slang_solidity::bindings::{create_with_resolver, Bindings};
+use slang_solidity::bindings::Bindings;
 use slang_solidity::cst::TextIndex;
-use slang_solidity::parser::Parser;
 
-use crate::dataset::SOLC_VERSION;
 use crate::tests::parser::ParsedFile;
 
-pub fn setup() -> Vec<ParsedFile> {
-    let files = super::parser::setup();
-
-    super::parser::run(files)
+pub struct Dependencies {
+    pub bindings: Bindings,
+    pub files: Vec<ParsedFile>,
 }
 
-pub fn run(files: &[ParsedFile]) -> Bindings {
+pub fn setup() -> Dependencies {
+    let bindings = super::bindings::run();
+    let files = super::parser::run(super::parser::setup());
+
+    Dependencies { bindings, files }
+}
+
+pub fn run(dependencies: Dependencies) -> Bindings {
     let mut definition_count = 0_usize;
-    let parser = Parser::new(SOLC_VERSION).unwrap();
-    let mut bindings = create_with_resolver(&parser, Arc::new(NoOpResolver {}));
+    let Dependencies {
+        mut bindings,
+        files,
+    } = dependencies;
 
     for ParsedFile {
         path,
         contents: _,
         tree,
-    } in files
+    } in &files
     {
         bindings.add_file(
             path.to_str().unwrap(),
@@ -39,12 +42,4 @@ pub fn run(files: &[ParsedFile]) -> Bindings {
     );
 
     bindings
-}
-
-struct NoOpResolver;
-
-impl PathResolver for NoOpResolver {
-    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
-        Some(path_to_resolve.to_string())
-    }
 }
