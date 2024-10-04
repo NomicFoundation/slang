@@ -12,7 +12,7 @@ use anyhow::Result;
 pub use built_ins::render_built_ins;
 use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenRuntime;
+use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use semver::Version;
 use serde::Serialize;
 
@@ -27,15 +27,21 @@ pub enum OutputLanguage {
 }
 
 impl OutputLanguage {
-    pub fn generate_runtime(&self, language: &Rc<Language>, output_dir: &Path) -> Result<()> {
+    pub fn generate_runtime(
+        &self,
+        language: &Rc<Language>,
+        output_dir: &Path,
+        generate_extra_fn: impl FnOnce(&mut CodegenFileSystem) -> Result<()>,
+    ) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
-        let mut runtime = CodegenRuntime::new(self.source_dir()?)?;
+        let runtime = CodegenRuntime::new(self.source_dir()?)?;
 
-        runtime.render_directory(model, output_dir)
+        let mut file_system = runtime.render_directory(model, output_dir)?;
+        generate_extra_fn(&mut file_system)
     }
 
     pub fn generate_stubs(&self) -> Result<()> {

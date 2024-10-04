@@ -8,5 +8,5 @@ fn main() -> Result<()> {
 
     let output_dir = CargoWorkspace::locate_source_crate("slang_testlang")?.join("src/generated");
 
-    OutputLanguage::Cargo.generate_runtime(&language, &output_dir)
+    OutputLanguage::Cargo.generate_runtime(&language, &output_dir, |_| Ok(()))
 }

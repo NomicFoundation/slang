@@ -9,5 +9,5 @@ fn main() -> Result<()> {
     let output_dir =
         CargoWorkspace::locate_source_crate("solidity_npm_package")?.join("src/generated");
 
-    OutputLanguage::Npm.generate_runtime(&language, &output_dir)
+    OutputLanguage::Npm.generate_runtime(&language, &output_dir, |_| Ok(()))
 }

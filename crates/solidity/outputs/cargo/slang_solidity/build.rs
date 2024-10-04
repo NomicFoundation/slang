@@ -11,8 +11,13 @@ fn main() -> Result<()> {
 
     let output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/generated");
 
-    OutputLanguage::Cargo.generate_runtime(&language, &output_dir)?;
-
-    let built_ins_output_dir = output_dir.join("bindings/generated/built_ins");
-    codegen_runtime_generator::render_built_ins(&language, &built_ins_output_dir, render_built_ins)
+    OutputLanguage::Cargo.generate_runtime(&language, &output_dir, |fs| {
+        let built_ins_output_dir = output_dir.join("bindings/generated/built_ins");
+        codegen_runtime_generator::render_built_ins(
+            fs,
+            &language,
+            &built_ins_output_dir,
+            render_built_ins,
+        )
+    })
 }

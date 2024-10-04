@@ -5,9 +5,11 @@ use anyhow::Result;
 use codegen_language_definition::model::{
     BuiltIn, BuiltInField, BuiltInFunction, BuiltInType, Language,
 };
+use infra_utils::codegen::CodegenFileSystem;
 use semver::Version;
 
 pub fn render_built_ins(
+    file_system: &mut CodegenFileSystem,
     language: &Rc<Language>,
     output_dir: &Path,
     render_fn: impl Fn(&[BuiltIn]) -> String,
@@ -19,7 +21,8 @@ pub fn render_built_ins(
         let contents = render_fn(&built_ins);
 
         let output_path = output_dir.join(format!("{version}{file_extension}"));
-        std::fs::write(output_path, contents)?;
+        std::fs::write(&output_path, contents)?;
+        file_system.mark_generated_file(output_path)?;
     }
     Ok(())
 }
