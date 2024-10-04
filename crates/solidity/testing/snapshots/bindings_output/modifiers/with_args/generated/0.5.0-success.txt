@@ -17,7 +17,7 @@ References and definitions:
     │                                     ╰──── def: 4
   5 │         require(_addr != address(0), "Not valid address");
     │         ───┬─── ──┬──  
-    │            ╰─────────── ambiguous: built-in, built-in
+    │            ╰─────────── refs: built-in, built-in
     │                   │    
     │                   ╰──── ref: 4
   6 │         _;

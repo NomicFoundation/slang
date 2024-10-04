@@ -13,7 +13,7 @@ References and definitions:
    │                                     ╰──── def: 3
  3 │         require(_addr != address(0), "Not valid address");
    │         ───┬─── ──┬──  
-   │            ╰─────────── ambiguous: built-in, built-in
+   │            ╰─────────── refs: built-in, built-in
    │                   │    
    │                   ╰──── ref: 3
  4 │         _;

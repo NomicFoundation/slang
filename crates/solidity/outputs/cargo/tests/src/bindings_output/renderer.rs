@@ -141,11 +141,11 @@ fn build_report_for_part<'a>(
                             all_definitions
                                 .iter()
                                 .position(|d| d == ambiguous_definition)
-                                .map(|index| format!("ref: {}", index + 1))
+                                .map(|index| format!("{}", index + 1))
                         }
                     })
                     .collect::<Vec<_>>();
-                format!("ambiguous: {}", ref_labels.join(", "))
+                format!("refs: {ref_labels}", ref_labels = ref_labels.join(", "))
             }
         };
 
