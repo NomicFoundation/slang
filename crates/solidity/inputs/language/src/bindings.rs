@@ -12,7 +12,8 @@ fn try_render_built_ins(built_ins: &[BuiltIn]) -> Result<String, Error> {
         buffer,
         "// This file is generated automatically. Do not edit by hand."
     )?;
-    writeln!(buffer, "contract $$ {{")?;
+    // __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with binding rules
+    writeln!(buffer, "contract $BuiltIns$ {{")?;
     for item in built_ins {
         match item {
             BuiltIn::BuiltInFunction { item } => {

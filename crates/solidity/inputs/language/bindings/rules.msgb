@@ -34,16 +34,18 @@ inherit .parent_scope
 
   ;; Automatically import language built-ins
   if (not (eq FILE_PATH BUILT_INS_FILE_PATH)) {
-    ;; All built-in symbols are defined in an internal contract named '$$'
-    ;; so we need to construct an equivalent import path to reach them.
-    ;; We should have access to both type members (eg. defined enums & structs)
-    ;; as well as functions and state variables (see special case below), hence
-    ;; why we're introducing a path through `@typeof`.
+    ;; All built-in symbols are defined in an internal contract named
+    ;; '$BuiltIns$' (see __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__) so we need
+    ;; to construct an equivalent import path to reach them. We should have
+    ;; access to both type members (eg. defined enums & structs) as well as
+    ;; functions and state variables (see special case below), hence why we're
+    ;; introducing a path through `@typeof`.
     node built_ins
     attr (built_ins) push_symbol = BUILT_INS_FILE_PATH
 
-    node built_in_library
-    attr (built_in_library) push_symbol = "$$"
+    node built_in_contract
+    ; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation
+    attr (built_in_contract) push_symbol = "$BuiltIns$"
 
     node built_in_typeof
     attr (built_in_typeof) push_symbol = "@typeof"
@@ -52,10 +54,10 @@ inherit .parent_scope
     attr (built_in_member) push_symbol = "."
 
     edge @source_unit.lexical_scope -> built_in_member
-    edge built_in_member -> built_in_library
+    edge built_in_member -> built_in_contract
     edge built_in_member -> built_in_typeof
-    edge built_in_typeof -> built_in_library
-    edge built_in_library -> built_ins
+    edge built_in_typeof -> built_in_contract
+    edge built_in_contract -> built_ins
     edge built_ins -> ROOT_NODE
   }
 
