@@ -5,60 +5,10 @@ use semver::Version;
 #[allow(unused_variables)]
 pub fn get_contents(version: &Version) -> &'static str {
     if *version < Version::new(0, 5, 0) {
-        r####"contract $$ {
-function addmod(uint x, uint y, uint k) public returns (uint);
-function assert(bool condition) public;
-function revert(string memory reason) public;
-struct $BuiltIn$Address {
-  uint256 balance;
-  function(uint256 amount) returns (bool) send;
-}
-struct $BuiltIn$TxType {
-  uint gasprice;
-  address payable origin;
-}
-uint now;
-$BuiltIn$TxType tx;
-}
-"####
+        include_str!("./built_ins/0.4.11.sol")
     } else if *version < Version::new(0, 8, 0) {
-        r####"contract $$ {
-function addmod(uint x, uint y, uint k) public returns (uint);
-function assert(bool condition) public;
-function require(bool condition) public;
-function require(bool condition, string memory message) public;
-function revert(string memory reason) public;
-struct $BuiltIn$Address {
-  uint256 balance;
-  function(uint256 amount) returns (bool) send;
-}
-struct $BuiltIn$TxType {
-  uint gasprice;
-  address payable origin;
-}
-uint now;
-$BuiltIn$TxType tx;
-}
-"####
+        include_str!("./built_ins/0.5.0.sol")
     } else {
-        r####"contract $$ {
-function addmod(uint x, uint y, uint k) public returns (uint);
-function assert(bool condition) public;
-function require(bool condition) public;
-function require(bool condition, string memory message) public;
-function revert(string memory reason) public;
-struct $BuiltIn$Address {
-  uint256 balance;
-  bytes code;
-  function(uint256 amount) returns (bool) send;
-}
-struct $BuiltIn$TxType {
-  uint gasprice;
-  address payable origin;
-}
-uint now;
-$BuiltIn$TxType tx;
-}
-"####
+        include_str!("./built_ins/0.8.0.sol")
     }
 }

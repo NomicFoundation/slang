@@ -1,10 +1,10 @@
 use anyhow::Result;
-use codegen_runtime_generator::{LanguageModel, OutputLanguage};
+use codegen_runtime_generator::OutputLanguage;
 use infra_utils::cargo::CargoWorkspace;
 use solidity_language::SolidityDefinition;
 
 fn main() -> Result<()> {
-    let language = LanguageModel::from_definition(SolidityDefinition::create());
+    let language = SolidityDefinition::create();
 
     let output_dir =
         CargoWorkspace::locate_source_crate("solidity_npm_package")?.join("src/generated");
