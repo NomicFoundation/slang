@@ -415,7 +415,7 @@ fn check_reference_assertion(
                 let resolved_file = resolved_handle.get_file();
                 return Err(format!(
                     "{assertion} failed: expected not to resolve, but instead resolved to {resolved}",
-                    resolved = DisplayCursor(&resolved_cursor, resolved_file)
+                    resolved = DisplayCursor(&resolved_cursor, resolved_file.get_path())
                 ));
             }
         }
@@ -431,8 +431,8 @@ fn check_reference_assertion(
             if expected_cursor != resolved_cursor {
                 return Err(format!(
                     "{assertion} failed: expected resolve to {expected}, but instead resolved to {resolved}",
-                    resolved = DisplayCursor(&resolved_cursor, resolved_handle.get_file()),
-                    expected = DisplayCursor(&expected_cursor, expected_handle.get_file()),
+                    resolved = DisplayCursor(&resolved_cursor, resolved_handle.get_file().get_path()),
+                    expected = DisplayCursor(&expected_cursor, expected_handle.get_file().get_path()),
                 ));
             }
         }
@@ -452,7 +452,8 @@ fn check_reference_assertion(
                 if referenced_cursor == resolved_cursor {
                     return Err(format!(
                         "{assertion} failed: expected to not resolve to {resolved} in this version",
-                        resolved = DisplayCursor(&resolved_cursor, resolved_handle.get_file()),
+                        resolved =
+                            DisplayCursor(&resolved_cursor, resolved_handle.get_file().get_path()),
                     ));
                 }
             }

@@ -53,7 +53,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
             eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
         }
 
-        bindings.add_file(file_path, parse_output.create_tree_cursor());
+        bindings.add_user_file(file_path, parse_output.create_tree_cursor());
         skipped += collect_assertions_into(
             &mut assertions,
             parse_output.create_tree_cursor(),

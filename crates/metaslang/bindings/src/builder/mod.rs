@@ -262,7 +262,7 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
-use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Tag, BUILT_INS_FILE_PATH};
+use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Tag};
 
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
@@ -347,8 +347,6 @@ static PRECEDENCE_ATTR: &str = "precedence";
 pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
-/// Name of the variable used to pass the built-ins file path.
-pub const BUILT_INS_FILE_PATH_VAR: &str = "BUILT_INS_FILE_PATH";
 
 pub(crate) struct Builder<'a, KT: KindTypes + 'static> {
     msgb: &'a GraphBuilderFile<KT>,
@@ -401,10 +399,6 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         variables
             .add(FILE_PATH_VAR.into(), file_path.into())
             .expect("Failed to add FILE_PATH variable");
-
-        variables
-            .add(BUILT_INS_FILE_PATH_VAR.into(), BUILT_INS_FILE_PATH.into())
-            .expect("Failed to add BUILT_INS_FILE_PATH variable");
 
         let root_node = self.inject_node(NodeID::root());
         variables

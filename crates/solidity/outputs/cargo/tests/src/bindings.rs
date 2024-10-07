@@ -17,6 +17,6 @@ pub fn create_bindings(version: &Version) -> Result<Bindings> {
         built_ins_parse_output.is_valid(),
         "built-ins parse without errors"
     );
-    bindings.add_built_ins(built_ins_parse_output.create_tree_cursor());
+    bindings.add_system_file("built_ins.sol", built_ins_parse_output.create_tree_cursor());
     Ok(bindings)
 }

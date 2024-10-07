@@ -21,8 +21,6 @@ type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
 
-pub const BUILT_INS_FILE_PATH: &str = "@@built-ins@@";
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Tag {
     Alias,
@@ -55,11 +53,71 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
-    built_ins_file: Option<FileHandle>,
+}
+
+pub enum FileKind {
+    Unknown,
+    User(String),
+    System(String),
+}
+
+impl FileKind {
+    // Internal function to convert a FileKind to a string for representation inside the stack graph
+    pub(crate) fn as_string(&self) -> String {
+        self.as_string_or_else(|| unreachable!("cannot convert an Unknown file kind to string"))
+    }
+
+    pub(crate) fn as_string_or_else(&self, f: impl FnOnce() -> String) -> String {
+        match self {
+            Self::User(path) => format!("user:{path}"),
+            Self::System(path) => format!("system:{path}"),
+            Self::Unknown => f(),
+        }
+    }
+
+    pub fn get_path(&self) -> Option<&str> {
+        match self {
+            Self::User(path) => Some(path),
+            Self::System(path) => Some(path),
+            Self::Unknown => None,
+        }
+    }
+
+    pub fn is_system(&self) -> bool {
+        matches!(self, Self::System(_))
+    }
+
+    pub fn is_user(&self) -> bool {
+        matches!(self, Self::User(_))
+    }
+}
+
+impl From<&str> for FileKind {
+    fn from(value: &str) -> Self {
+        if let Some(path) = value.strip_prefix("user:") {
+            FileKind::User(path.into())
+        } else if let Some(path) = value.strip_prefix("system:") {
+            FileKind::System(path.into())
+        } else {
+            FileKind::Unknown
+        }
+    }
+}
+
+impl From<String> for FileKind {
+    fn from(value: String) -> Self {
+        Self::from(&value as &str)
+    }
+}
+
+impl From<&String> for FileKind {
+    fn from(value: &String) -> Self {
+        Self::from(value as &str)
+    }
 }
 
 pub trait PathResolver {
-    fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
+    fn resolve_path(&self, context_path: &FileKind, path_to_resolve: &str) -> FileKind;
 }
 
 impl<KT: KindTypes + 'static> Bindings<KT> {
@@ -83,29 +141,29 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
-            built_ins_file: None,
         }
     }
 
-    pub fn add_built_ins(&mut self, tree_cursor: Cursor<KT>) {
-        assert!(self.built_ins_file.is_none(), "Built-ins already added");
-        let file = self.stack_graph.get_or_create_file(BUILT_INS_FILE_PATH);
+    pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileKind::System(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
-        self.built_ins_file = Some(file);
     }
 
-    pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let file = self.stack_graph.get_or_create_file(file_path);
+    pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileKind::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
-    pub fn add_file_returning_graph(
+    pub fn add_user_file_returning_graph(
         &mut self,
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let file = self.stack_graph.get_or_create_file(file_path);
+        let file_kind = FileKind::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
@@ -289,7 +347,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
     cursor: &'a Cursor<KT>,
-    file: Option<&'a str>,
+    file: FileKind,
 }
 
 impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
@@ -299,7 +357,7 @@ impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
             f,
             "`{}` at {}:{}:{}",
             self.cursor.node().unparse(),
-            self.file.unwrap_or("<unknown_file>"),
+            self.file.get_path().unwrap_or("<unknown_file>"),
             offset.line + 1,
             offset.column + 1,
         )
@@ -324,14 +382,12 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .and_then(|info| info.definiens.clone())
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileKind {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
-    }
-
-    pub fn is_built_in(&self) -> bool {
-        self.owner.stack_graph[self.handle].file() == self.owner.built_ins_file
+            .map_or(FileKind::Unknown, |file| {
+                self.owner.stack_graph[file].name().into()
+            })
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
@@ -414,10 +470,12 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileKind {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
+            .map_or(FileKind::Unknown, |file| {
+                self.owner.stack_graph[file].name().into()
+            })
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {

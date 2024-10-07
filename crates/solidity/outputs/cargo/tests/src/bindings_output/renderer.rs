@@ -29,8 +29,8 @@ pub(crate) fn render_bindings(
         }
 
         let part_references = bindings.all_references().filter(|reference| {
-            let ref_file = reference.get_file().expect("reference should be in a file");
-            ref_file == part.path
+            let ref_file = reference.get_file();
+            ref_file.is_user() && ref_file.get_path().unwrap() == part.path
         });
         let (bindings_report, part_all_resolved) =
             build_report_for_part(part, &all_definitions, part_references);
@@ -56,7 +56,7 @@ pub(crate) fn render_bindings(
 fn collect_all_definitions(bindings: &Bindings) -> Vec<Definition<'_>> {
     let mut definitions: Vec<Definition<'_>> = Vec::new();
     for definition in bindings.all_definitions() {
-        if !definition.is_built_in() && definition.get_cursor().is_some() {
+        if definition.get_file().is_user() && definition.get_cursor().is_some() {
             definitions.push(definition);
         }
     }
@@ -90,10 +90,11 @@ fn build_report_for_part<'a>(
         let Some(cursor) = definition.get_cursor() else {
             continue;
         };
-        let def_file = definition
-            .get_file()
-            .expect("definition should be in a file");
-        if def_file != part.path {
+        let def_file = definition.get_file();
+        if !def_file.is_user() {
+            continue;
+        }
+        if def_file.get_path().unwrap() != part.path {
             continue;
         }
 
@@ -125,7 +126,7 @@ fn build_report_for_part<'a>(
         let definition = reference.jump_to_definition();
         let message = match definition {
             Ok(definition) => {
-                if definition.is_built_in() {
+                if definition.get_file().is_system() {
                     "ref: built-in".to_string()
                 } else {
                     let def_id = all_definitions
@@ -143,7 +144,7 @@ fn build_report_for_part<'a>(
                 let ref_labels = ambiguous_definitions
                     .iter()
                     .filter_map(|ambiguous_definition| {
-                        if ambiguous_definition.is_built_in() {
+                        if ambiguous_definition.get_file().is_system() {
                             Some("built-in".to_string())
                         } else {
                             all_definitions

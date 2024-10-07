@@ -28,7 +28,7 @@ pub fn run(dependencies: Dependencies) -> Bindings {
         tree,
     } in &files
     {
-        bindings.add_file(
+        bindings.add_user_file(
             path.to_str().unwrap(),
             tree.cursor_with_offset(TextIndex::ZERO),
         );

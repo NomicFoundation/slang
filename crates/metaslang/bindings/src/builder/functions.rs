@@ -63,13 +63,14 @@ mod resolver {
     use metaslang_graph_builder::graph::{Graph, Value};
     use metaslang_graph_builder::ExecutionError;
 
-    use crate::PathResolver;
+    use crate::{FileKind, PathResolver};
 
     pub fn add_functions<KT: KindTypes + 'static>(
         functions: &mut Functions<KT>,
         path_resolver: Arc<dyn PathResolver + Sync + Send>,
     ) {
         functions.add("resolve-path".into(), ResolvePath { path_resolver });
+        functions.add("is-system-file".into(), IsSystemFile {});
     }
 
     struct ResolvePath {
@@ -86,11 +87,12 @@ mod resolver {
             let path_to_resolve = parameters.param()?.into_string()?;
             parameters.finish()?;
 
+            let context_path_kind = FileKind::from(&context_path);
             let resolved_path = self
                 .path_resolver
                 .as_ref()
-                .resolve_path(&context_path, &path_to_resolve)
-                .unwrap_or_else(|| {
+                .resolve_path(&context_path_kind, &path_to_resolve)
+                .as_string_or_else(|| {
                     // In case we cannot resolve the path, we return a special value that is unique
                     // per context/path pait. This way, we can still run incrementally and resolve
                     // other symbols in the file:
@@ -98,6 +100,22 @@ mod resolver {
                 });
 
             Ok(resolved_path.into())
+        }
+    }
+
+    struct IsSystemFile {}
+
+    impl<KT: KindTypes> Function<KT> for IsSystemFile {
+        fn call(
+            &self,
+            _graph: &mut Graph<KT>,
+            parameters: &mut dyn Parameters,
+        ) -> Result<Value, ExecutionError> {
+            let file_path = parameters.param()?.into_string()?;
+            parameters.finish()?;
+
+            let is_system_file = FileKind::from(file_path).is_system();
+            Ok(is_system_file.into())
         }
     }
 }

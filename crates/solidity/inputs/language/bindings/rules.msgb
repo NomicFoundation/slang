@@ -1,6 +1,5 @@
 global ROOT_NODE
 global FILE_PATH
-global BUILT_INS_FILE_PATH
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -28,14 +27,21 @@ inherit .parent_scope
 
   ;; Connect to ROOT_NODE to export our symbols
   node export
-  attr (export) pop_symbol = FILE_PATH
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
 
-  ;; Automatically import language built-ins
-  if (not (eq FILE_PATH BUILT_INS_FILE_PATH)) {
+  if (is-system-file FILE_PATH) {
+    ; If this is a system file (aka. built-ins), export everything through this
+    ; special symbol (which is automatically imported below)
+    attr (export) pop_symbol = "@@built-ins@@"
+
+  } else {
+    ; This is a user file, so we want to export under the file's path symbol
+    attr (export) pop_symbol = FILE_PATH
+
+    ; ... and also import the global built-ins
     node built_ins
-    attr (built_ins) push_symbol = BUILT_INS_FILE_PATH
+    attr (built_ins) push_symbol = "@@built-ins@@"
 
     edge @source_unit.lexical_scope -> built_ins
     edge built_ins -> ROOT_NODE
@@ -77,7 +83,7 @@ inherit .parent_scope
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract [ContractDefinition name: ["$BuiltIns$"]]]
 ]] {
-  if (eq FILE_PATH BUILT_INS_FILE_PATH) {
+  if (is-system-file FILE_PATH) {
     edge @source_unit.defs -> @contract.members
     edge @source_unit.defs -> @contract.type_members
     edge @source_unit.defs -> @contract.state_vars
