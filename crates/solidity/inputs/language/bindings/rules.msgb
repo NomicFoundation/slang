@@ -34,30 +34,10 @@ inherit .parent_scope
 
   ;; Automatically import language built-ins
   if (not (eq FILE_PATH BUILT_INS_FILE_PATH)) {
-    ;; All built-in symbols are defined in an internal contract named
-    ;; '$BuiltIns$' (see __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__) so we need
-    ;; to construct an equivalent import path to reach them. We should have
-    ;; access to both type members (eg. defined enums & structs) as well as
-    ;; functions and state variables (see special case below), hence why we're
-    ;; introducing a path through `@typeof`.
     node built_ins
     attr (built_ins) push_symbol = BUILT_INS_FILE_PATH
 
-    node built_in_contract
-    ; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation
-    attr (built_in_contract) push_symbol = "$BuiltIns$"
-
-    node built_in_typeof
-    attr (built_in_typeof) push_symbol = "@typeof"
-
-    node built_in_member
-    attr (built_in_member) push_symbol = "."
-
-    edge @source_unit.lexical_scope -> built_in_member
-    edge built_in_member -> built_in_contract
-    edge built_in_member -> built_in_typeof
-    edge built_in_typeof -> built_in_contract
-    edge built_in_contract -> built_ins
+    edge @source_unit.lexical_scope -> built_ins
     edge built_ins -> ROOT_NODE
   }
 
@@ -87,6 +67,21 @@ inherit .parent_scope
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @unit_member.def
   edge @source_unit.defs -> @unit_member.def
+}
+
+;; Special case for built-ins: we want to export all symbols in the contract:
+;; functions, types and state variables. All built-in symbols are defined in an
+;; internal contract named '$BuiltIns$' so we need to export all its members and
+;; type members directly as a source unit definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["$BuiltIns$"]]]
+]] {
+  if (eq FILE_PATH BUILT_INS_FILE_PATH) {
+    edge @source_unit.defs -> @contract.members
+    edge @source_unit.defs -> @contract.type_members
+    edge @source_unit.defs -> @contract.state_vars
+  }
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
@@ -288,9 +283,11 @@ inherit .parent_scope
   node @contract.members
   node @contract.type_members
   node @contract.modifiers
+  node @contract.state_vars
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
+  edge @contract.lexical_scope -> @contract.state_vars
 
   ;; Modifiers are available as a contract type members through a special '@modifier' symbol
   node modifier
@@ -417,31 +414,22 @@ inherit .parent_scope
 }
 
 @contract [ContractDefinition [ContractMembers
-    [ContractMember @member (
-          [FunctionDefinition]
-        | [StateVariableDefinition]
-    )]
+    [ContractMember @state_var [StateVariableDefinition]]
 ]] {
-  edge @contract.lexical_scope -> @member.def
-
-  ;; Special case: for the built-ins file, export state variables in the
-  ;; contract's members so they can be seen as globals
-  if (eq FILE_PATH BUILT_INS_FILE_PATH) {
-    edge @contract.members -> @member.def
-  }
+  edge @contract.state_vars -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
-@contract [ContractDefinition [ContractMembers [ContractMember
-    @state_var [StateVariableDefinition
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @state_var [StateVariableDefinition
         [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
-    ]
-]]] {
+    ]]
+]] {
   edge @contract.members -> @state_var.def
 }
 
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition]]
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
@@ -453,7 +441,7 @@ inherit .parent_scope
 }
 
 @contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @modifier variant: [ModifierDefinition]]
+    [ContractMember @modifier [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
 
@@ -1551,7 +1539,6 @@ inherit .parent_scope
   attr (@state_var.def) node_definition = @name
   attr (@state_var.def) definiens_node = @state_var
 
-  edge @state_var.def -> @state_var.def
   edge @type_name.type_ref -> @state_var.lexical_scope
 
   node typeof
