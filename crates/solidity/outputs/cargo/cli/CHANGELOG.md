@@ -1,5 +1,35 @@
 # changelog
 
+## 0.18.0
+
+### Minor Changes
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - migrate NAPI front-end to WASM and ESM
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `TerminalKindExtensions.is_valid()` API to distinguish correctly-parsed and erroneous nodes
+
+-   [#1117](https://github.com/NomicFoundation/slang/pull/1117) [`be7bb79`](https://github.com/NomicFoundation/slang/commit/be7bb79c8f497e5283674878dacaa0fd1ec6e68a) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `Language` API to `Parser`, in preparation for introducing a multi-file compilation API.
+
+-   [#1116](https://github.com/NomicFoundation/slang/pull/1116) [`c88f9b5`](https://github.com/NomicFoundation/slang/commit/c88f9b5d50dabe111b9d1b6cb4e6b6b9e276f1da) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - merge `language`, `parse_error`, `parse_output` namespaces into the `parser` namespace.
+
+-   [#1115](https://github.com/NomicFoundation/slang/pull/1115) [`96df645`](https://github.com/NomicFoundation/slang/commit/96df64514ffec22ac41af38cc9f91e7b1e260a25) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - merge `cursor`, `kinds`, `query`, and `text_index` namespaces into the `cst` namespace.
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - unify API methods on `TerminalNode` and `NonTerminalNode`, and add type assertions and guards to both types
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - expose edges and edge labels on CST nodes via `Node.children()` method. This allows distinguishing between children of the same node based on their label/role in the parent, even if they have the same kind.
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `TerminalNode.id` and `Nonterminal.id` properties to get a numeric ID that can be used in indexing/comparison at runtime.
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `TerminalKindExtensions.is_trivia()` API to distinguish between trivia nodes and other contentful nodes
+
+### Patch Changes
+
+-   [#1096](https://github.com/NomicFoundation/slang/pull/1096) [`15c437c`](https://github.com/NomicFoundation/slang/commit/15c437c6c4902cd43e0027f750ba59e8f22f47f9) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add support for Solidity `0.8.27`.
+
+-   [#1120](https://github.com/NomicFoundation/slang/pull/1120) [`25eef3e`](https://github.com/NomicFoundation/slang/commit/25eef3e8c64aa03e195aefbba0867bfa7646b821) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - change `Parser::new()` constructor to `Parser::create()` static method.
+
+-   [#1097](https://github.com/NomicFoundation/slang/pull/1097) [`e17af22`](https://github.com/NomicFoundation/slang/commit/e17af22cc4c1d373be751e525963f45ddf4dd3c3) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Fix the grammar of keywords (`blobbasefee`, `blobhash`, `mcopy`, `tload`, `tstore`) added in `0.8.24`, as they were actually reserved in `0.8.25`.
+
 ## 0.17.0
 
 ### Minor Changes
