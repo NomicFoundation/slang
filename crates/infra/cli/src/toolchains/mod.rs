@@ -1,3 +1,4 @@
 pub mod mkdocs;
-pub mod napi;
+pub mod npm;
 pub mod pipenv;
+pub mod wasm;

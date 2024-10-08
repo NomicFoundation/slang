@@ -43,12 +43,16 @@ pub struct TerminalNode<T: KindTypes> {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NonterminalNode<T: KindTypes> {
     pub kind: T::NonterminalKind,
+
+    // skip serde since this doesn't exist on `TerminalNode`. We can add to both in the future if found useful.
+    #[serde(skip)]
     pub text_len: TextIndex,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+
     pub children: Vec<Edge<T>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(untagged)]
 pub enum Node<T: KindTypes> {
     Nonterminal(Rc<NonterminalNode<T>>),
     Terminal(Rc<TerminalNode<T>>),
@@ -94,8 +98,8 @@ impl<T: KindTypes> Node<T> {
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(&self) -> usize {
         match self {
-            Self::Nonterminal(node) => Rc::as_ptr(node) as usize,
-            Self::Terminal(node) => Rc::as_ptr(node) as usize,
+            Self::Nonterminal(node) => node.id(),
+            Self::Terminal(node) => node.id(),
         }
     }
 
@@ -135,11 +139,11 @@ impl<T: KindTypes> Node<T> {
         Cursor::new(self.clone(), text_offset)
     }
 
-    /// Reconstructs the original source code from the parse tree.
-    pub fn unparse(self) -> String {
+    /// Reconstructs the original source code from the node and its sub-tree.
+    pub fn unparse(&self) -> String {
         match self {
-            Self::Nonterminal(nonterminal) => nonterminal.unparse(),
-            Self::Terminal(terminal) => terminal.text.clone(),
+            Self::Nonterminal(node) => node.unparse(),
+            Self::Terminal(node) => node.unparse(),
         }
     }
 
@@ -243,20 +247,43 @@ impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
 }
 
 impl<T: KindTypes> NonterminalNode<T> {
+    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// and cannot be used in a persistent/serialised sense.
+    pub fn id(self: &Rc<Self>) -> usize {
+        Rc::as_ptr(self) as usize
+    }
+
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
         Cursor::new(Node::Nonterminal(self), text_offset)
     }
 
-    /// Reconstructs the original source code from the parse tree.
-    pub fn unparse(self: Rc<Self>) -> String {
-        let acc = String::with_capacity(self.text_len.utf8);
+    /// Reconstructs the original source code from the node and its sub-tree.
+    pub fn unparse(&self) -> String {
+        fn aux(parent: &NonterminalNode<impl KindTypes>, buffer: &mut String) {
+            for child in &parent.children {
+                match &child.node {
+                    Node::Nonterminal(node) => aux(node, buffer),
+                    Node::Terminal(node) => buffer.push_str(&node.text),
+                };
+            }
+        }
 
-        self.cursor_with_offset(TextIndex::ZERO)
-            .filter_map(|node| node.into_terminal())
-            .fold(acc, |mut acc, terminal| {
-                acc.push_str(&terminal.text);
-                acc
-            })
+        let mut buffer = String::with_capacity(self.text_len.utf8);
+        aux(self, &mut buffer);
+        buffer
+    }
+}
+
+impl<T: KindTypes> TerminalNode<T> {
+    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// and cannot be used in a persistent/serialised sense.
+    pub fn id(self: &Rc<Self>) -> usize {
+        Rc::as_ptr(self) as usize
+    }
+
+    /// Reconstructs the original source code from the node and its sub-tree.
+    pub fn unparse(&self) -> String {
+        self.text.clone()
     }
 }

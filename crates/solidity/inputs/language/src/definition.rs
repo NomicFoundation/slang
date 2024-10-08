@@ -93,13 +93,13 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
-                                EnumVariant(reference = ABICoderPragma),
+                                EnumVariant(reference = AbicoderPragma),
                                 EnumVariant(reference = ExperimentalPragma),
                                 EnumVariant(reference = VersionPragma)
                             ]
                         ),
                         Struct(
-                            name = ABICoderPragma,
+                            name = AbicoderPragma,
                             fields = (
                                 abicoder_keyword = Required(AbicoderKeyword),
                                 version = Required(Identifier)

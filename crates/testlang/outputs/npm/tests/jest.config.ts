@@ -1,17 +1,11 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  rootDir: __dirname,
-  testMatch: ["<rootDir>/src/tests/**/*.ts"],
+  testMatch: ["<rootDir>/src/tests/**/*.mts"],
 
-  moduleNameMapper: {
-    // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)
-    "^@slang-private/slang-testlang$": "<rootDir>/../package/target/npm/main",
-    "^@slang-private/slang-testlang/(.*)?$": "<rootDir>/../package/target/npm/main/$1",
-  },
-
-  testEnvironment: "node",
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
+  resolver: "ts-jest-resolver",
+  moduleFileExtensions: ["js", "mjs", "cjs", "jsx", "ts", "mts", "cts", "tsx", "json", "node"],
 
   cacheDirectory: "<rootDir>/target/jest/cache",
   slowTestThreshold: 5,

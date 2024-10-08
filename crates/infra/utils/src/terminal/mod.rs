@@ -5,7 +5,7 @@ use num_format::ToFormattedString;
 pub struct Terminal;
 
 impl Terminal {
-    pub fn wrap_execution(operation: impl FnOnce() -> Result<()>) {
+    pub fn wrap_execution(operation: impl FnOnce() -> Result<()>) -> Result<()> {
         let std_hook = std::panic::take_hook();
 
         std::panic::set_hook(Box::new(move |info| {
@@ -17,8 +17,11 @@ impl Terminal {
             Self::banner(Color::Red, "Failure");
         }));
 
-        operation().unwrap();
+        operation()?;
+
         Self::banner(Color::Green, "Success");
+
+        Ok(())
     }
 
     pub fn step(message: impl Into<String>) {

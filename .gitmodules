@@ -1,0 +1,4 @@
+[submodule "submodules/jco"]
+	path = "submodules/jco"
+	url = "https://github.com/NomicFoundation/jco"
+	branch = "nomic-enhancements-release"

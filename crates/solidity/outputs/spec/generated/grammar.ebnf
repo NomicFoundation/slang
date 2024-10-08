@@ -34,11 +34,11 @@ PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
                   (* pragma: *) Pragma
                   (* semicolon: *) SEMICOLON;
 
-Pragma = (* variant: *) ABICoderPragma
+Pragma = (* variant: *) AbicoderPragma
        | (* variant: *) ExperimentalPragma
        | (* variant: *) VersionPragma;
 
-ABICoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
+AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
                  (* version: *) IDENTIFIER;
 
 ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD

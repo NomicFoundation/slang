@@ -13,6 +13,9 @@ pub trait PathExtensions {
 
     fn strip_repo_root(&self) -> Result<&Path>;
 
+    fn replace_prefix(&self, old_prefix: impl AsRef<Path>, new_prefix: impl AsRef<Path>)
+        -> PathBuf;
+
     fn unwrap_str(&self) -> &str;
 
     fn unwrap_string(&self) -> String;
@@ -20,6 +23,8 @@ pub trait PathExtensions {
     fn unwrap_name(&self) -> &str;
 
     fn unwrap_parent(&self) -> &Path;
+
+    fn unwrap_ext(&self) -> &str;
 
     fn read_to_string(&self) -> Result<String>;
 
@@ -70,6 +75,22 @@ impl PathExtensions for Path {
             .with_context(|| format!("Failed to strip repo root from: {self:?}"));
     }
 
+    fn replace_prefix(
+        &self,
+        old_prefix: impl AsRef<Path>,
+        new_prefix: impl AsRef<Path>,
+    ) -> PathBuf {
+        let old_prefix = old_prefix.as_ref();
+        let new_prefix = new_prefix.as_ref();
+
+        let suffix = self
+            .strip_prefix(old_prefix)
+            .with_context(|| format!("Failed to strip prefix: {old_prefix:?} from: {self:?}"))
+            .unwrap();
+
+        new_prefix.join(suffix)
+    }
+
     fn unwrap_str(&self) -> &str {
         return self
             .to_str()
@@ -95,6 +116,15 @@ impl PathExtensions for Path {
         return self
             .parent()
             .with_context(|| format!("Failed to extract parent directory of: {self:?}"))
+            .unwrap();
+    }
+
+    fn unwrap_ext(&self) -> &str {
+        return self
+            .extension()
+            .unwrap_or_default()
+            .to_str()
+            .with_context(|| format!("Failed to convert extension to str: {self:?}"))
             .unwrap();
     }
 

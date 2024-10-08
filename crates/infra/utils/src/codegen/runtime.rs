@@ -40,7 +40,7 @@ impl CodegenRuntime {
         Ok(())
     }
 
-    pub fn render_directory(
+    pub fn render_product(
         &mut self,
         model: impl Serialize,
         output_dir: impl AsRef<Path>,
@@ -52,7 +52,7 @@ impl CodegenRuntime {
 
         for template_path in self.tera.find_all_templates()? {
             let stub_path = Self::get_stub_path(&template_path).with_extension("");
-            let rendered_path = self.get_output_path(&stub_path, output_dir)?;
+            let rendered_path = stub_path.replace_prefix(&self.input_dir, output_dir);
             let rendered = self.tera.render(&template_path, &context)?;
 
             self.fs.write_file(&rendered_path, rendered)?;
@@ -65,7 +65,7 @@ impl CodegenRuntime {
             .find_all()?
             .filter(|source_path| !handled.contains(source_path))
         {
-            let output_path = self.get_output_path(&source_path, output_dir)?;
+            let output_path = source_path.replace_prefix(&self.input_dir, output_dir);
 
             // Preserve the source of otherwise-generated files:
             if source_path.generated_dir().is_ok() {
@@ -85,9 +85,5 @@ impl CodegenRuntime {
             .unwrap_parent()
             .join("generated")
             .join(base_name)
-    }
-
-    fn get_output_path(&self, source_path: &Path, output_dir: &Path) -> Result<PathBuf> {
-        Ok(output_dir.join(source_path.strip_prefix(&self.input_dir)?))
     }
 }

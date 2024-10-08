@@ -1,0 +1,10 @@
+# Ignore Everything:
+**/**
+
+# Except:
+!target/generated/**
+!wasm/**
+!CHANGELOG.md
+!LICENSE
+!package.json
+!README.md

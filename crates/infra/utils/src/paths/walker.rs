@@ -38,6 +38,10 @@ impl FileWalker {
             // Since we allow hidden (dot) files below, we need to explicitly ignore the .git directory:
             builder.add("!.git/")?;
 
+            // Skip git submodules used in this repository:
+            builder.add("!submodules/")?;
+
+            // Add user-provided globs:
             for glob in globs {
                 builder.add(glob.as_ref())?;
             }

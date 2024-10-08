@@ -24,43 +24,37 @@ fn generate_header(file_path: &Path) -> String {
     let warning_line =
         "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
-    return match get_extension(file_path) {
-        "ebnf" => format!("(* {warning_line} *)"),
-        "json" => String::new(),
-        "html" | "md" => format!("<!-- {warning_line} -->"),
-        "dot" | "js" | "rs" | "ts" | "wit" => format!("// {warning_line}"),
-        "yml" | "txt" => format!("# {warning_line}"),
-        "mmd" => format!("%% {warning_line}"),
-        ext => panic!("Unsupported extension to generate a header for: {ext}"),
-    };
-}
+    match (file_path.unwrap_name(), file_path.unwrap_ext()) {
+        // Known names:
+        (".gitignore", _) => format!("# {warning_line}"),
 
-fn get_extension(file_path: &Path) -> &str {
-    return file_path
-        .extension()
-        .with_context(|| format!("Cannot get extension of file: {file_path:?}"))
-        .unwrap()
-        .to_str()
-        .with_context(|| format!("Cannot read extension of file: {file_path:?}"))
-        .unwrap();
+        // Known extensions:
+        (_, "ebnf") => format!("(* {warning_line} *)"),
+        (_, "json") => String::new(),
+        (_, "html" | "md") => format!("<!-- {warning_line} -->"),
+        (_, "dot" | "js" | "mts" | "rs" | "ts" | "wit") => format!("// {warning_line}"),
+        (_, "yml" | "txt") => format!("# {warning_line}"),
+        (_, "mmd") => format!("%% {warning_line}"),
+
+        _ => panic!("Unsupported path to generate a header for: {file_path:?}"),
+    }
 }
 
 fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
-    return match get_extension(file_path) {
-        "js" | "json" | "ts" => run_prettier(file_path, contents),
-        "rs" => run_rustfmt(contents),
-        "html" | "md" | "yml" => {
-            // We already generate formatted content for these, so no need to run expensive formatting.
-            Ok(contents.to_owned())
-        }
-        "dot" | "ebnf" | "mmd" | "txt" | "wit" => {
-            // No formatters available for these (yet).
-            Ok(contents.to_owned())
-        }
-        ext => {
-            panic!("Unsupported extension to format: {ext}");
-        }
-    };
+    match (file_path.unwrap_name(), file_path.unwrap_ext()) {
+        // We have formatters available for these:
+        (_, "js" | "json" | "mts" | "ts") => run_prettier(file_path, contents),
+        (_, "rs") => run_rustfmt(contents),
+
+        // No formatters available for these yet:
+        (".gitignore", _) => Ok(contents.to_owned()),
+        (_, "dot" | "ebnf" | "mmd" | "txt" | "wit") => Ok(contents.to_owned()),
+
+        // We already generate formatted content for these, so no need to run expensive formatting:
+        (_, "html" | "md" | "yml") => Ok(contents.to_owned()),
+
+        _ => panic!("Unsupported path to format: {file_path:?}"),
+    }
 }
 
 fn run_prettier(file_path: &Path, contents: &str) -> Result<String> {

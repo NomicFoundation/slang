@@ -2,13 +2,14 @@ mod commands;
 mod toolchains;
 mod utils;
 
+use anyhow::Result;
 use clap::Parser;
 use infra_utils::terminal::Terminal;
 
 use crate::commands::Cli;
 
-fn main() {
-    Terminal::wrap_execution(|| Cli::parse().execute());
+fn main() -> Result<()> {
+    Terminal::wrap_execution(|| Cli::parse().execute())
 }
 
 #[test]

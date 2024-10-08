@@ -6,7 +6,7 @@ use infra_utils::terminal::Terminal;
 use strum::IntoEnumIterator;
 
 use crate::toolchains::mkdocs::Mkdocs;
-use crate::toolchains::napi::{NapiCompiler, NapiProfile, NapiResolver};
+use crate::toolchains::wasm::WasmPackage;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
@@ -72,8 +72,8 @@ fn check_rustdoc() {
 }
 
 fn check_npm() -> Result<()> {
-    for resolver in NapiResolver::iter() {
-        NapiCompiler::run(resolver, NapiProfile::Debug)?;
+    for package in WasmPackage::iter() {
+        package.build()?;
     }
 
     Ok(())

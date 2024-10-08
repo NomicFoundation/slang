@@ -1,5 +1,4 @@
 use std::path::Path;
-use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -19,7 +18,7 @@ fn using_the_parser() -> Result<()> {
     let source = source.trim();
 
     // --8<-- [start:parse-input]
-    let parser = Parser::new(Version::parse("0.8.0")?)?;
+    let parser = Parser::create(Version::parse("0.8.0")?)?;
 
     let parse_output = parser.parse(NonterminalKind::ContractDefinition, source);
     // --8<-- [end:parse-input]
@@ -60,8 +59,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [end:inspect-tree]
 
     // --8<-- [start:unparse-node]
-    let contract_source = Rc::clone(contract).unparse();
-    assert_eq!(contract_source, "contract Foo {}");
+    assert_eq!(contract.unparse(), "contract Foo {}");
     // --8<-- [end:unparse-node]
 
     Ok(())

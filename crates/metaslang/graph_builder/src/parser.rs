@@ -93,7 +93,7 @@ impl std::fmt::Display for DisplayParseErrorPretty<'_> {
             ParseError::InvalidRegex(_, location) => *location,
             ParseError::InvalidRegexCapture(location) => *location,
             ParseError::QueryError(err) => Location {
-                row: err.row,
+                row: err.line,
                 column: err.column,
             },
             ParseError::UnexpectedCharacter(_, _, location) => *location,
@@ -372,11 +372,11 @@ impl<'a> Parser<'a> {
         let query = Query::parse(query_source).map_err(|mut e| {
             // the column of the first row of a query pattern must be shifted by the whitespace
             // that was already consumed
-            if e.row == 0 {
+            if e.line == 0 {
                 // must come before we update e.row!
                 e.column += location.column;
             }
-            e.row += location.row;
+            e.line += location.row;
             // TODO: we should advance the other offsets, but this parser only tracks utf8
             // e.offset += query_start;
             e

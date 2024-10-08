@@ -1,16 +1,9 @@
 {
   "extends": "../../../../../tsconfig.json",
 
-  "include": ["./src/**/*.ts", "./jest.config.ts"],
+  "include": ["./**/*"],
 
   "compilerOptions": {
-    /* Modules */
-    "paths": {
-      // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)
-      "@nomicfoundation/slang": ["../package/target/npm/main"],
-      "@nomicfoundation/slang/*": ["../package/target/npm/main/*"]
-    },
-
     /* Projects */
     "composite": true,
     "incremental": true,

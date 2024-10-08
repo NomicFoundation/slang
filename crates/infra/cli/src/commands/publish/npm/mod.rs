@@ -1,13 +1,11 @@
-use std::path::Path;
-
 use anyhow::Result;
 use clap::Parser;
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
-use crate::toolchains::napi::{
-    NapiCompiler, NapiConfig, NapiPackageKind, NapiProfile, NapiResolver,
-};
+use crate::toolchains::npm::Npm;
+use crate::toolchains::wasm::WasmPackage;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -18,59 +16,34 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let resolver = NapiResolver::Solidity;
+        let package = WasmPackage::Solidity;
+        let package_dir = CargoWorkspace::locate_source_crate(package.npm_crate())?;
 
-        NapiCompiler::run(resolver, NapiProfile::Release)?;
+        package.build()?;
 
-        // Publish platform-specific packages first, as the main package now depends on their latest version:
+        println!("Publishing: {package_dir:?}");
 
-        for platform_dir in resolver.platforms_dir().collect_children()? {
-            let platform = platform_dir.unwrap_name().to_owned();
-            publish_package(
-                resolver,
-                &platform_dir,
-                &NapiPackageKind::Platform(platform),
-                self.dry_run,
-            )?;
+        let local_version = Npm::local_version(&package_dir)?;
+        println!("Local version: {local_version}");
+
+        let published_version = Npm::published_version(&package_dir)?;
+        println!("Published version: {published_version}");
+
+        if local_version == published_version {
+            println!("Skipping package, since the local version is already published.");
+            return Ok(());
         }
 
-        //  Then publish the main package, that depends on the previously published platform-specific packages:
+        let mut command = Command::new("npm")
+            .args(["publish", package_dir.unwrap_str()])
+            .property("--access", "public");
 
-        let package_dir = resolver.main_package_dir();
-        publish_package(resolver, &package_dir, &NapiPackageKind::Main, self.dry_run)
+        if self.dry_run.get() {
+            command = command.flag("--dry-run");
+        }
+
+        command.run();
+
+        Ok(())
     }
-}
-
-fn publish_package(
-    resolver: NapiResolver,
-    package_dir: &Path,
-    kind: &NapiPackageKind,
-    dry_run: DryRun,
-) -> Result<()> {
-    println!("Publishing: {package_dir:?}");
-
-    let local_version = NapiConfig::local_version(package_dir)?;
-    println!("Local version: {local_version}");
-
-    let published_version = NapiConfig::published_version(package_dir)?;
-    println!("Published version: {published_version}");
-
-    if local_version == published_version {
-        println!("Skipping package, since the local version is already published.");
-        return Ok(());
-    }
-
-    let output_dir = resolver.npm_output_dir(kind);
-
-    let mut command = Command::new("npm")
-        .args(["publish", output_dir.unwrap_str()])
-        .property("--access", "public");
-
-    if dry_run.get() {
-        command = command.flag("--dry-run");
-    }
-
-    command.run();
-
-    Ok(())
 }

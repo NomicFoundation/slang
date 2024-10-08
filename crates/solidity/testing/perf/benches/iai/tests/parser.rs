@@ -19,7 +19,7 @@ pub fn setup() -> Vec<SourceFile> {
 }
 
 pub fn run(files: Vec<SourceFile>) -> Vec<ParsedFile> {
-    let parser = Parser::new(SOLC_VERSION).unwrap();
+    let parser = Parser::create(SOLC_VERSION).unwrap();
 
     let mut results = vec![];
 

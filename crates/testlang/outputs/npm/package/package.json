@@ -1,17 +1,16 @@
 {
-  "name": "@slang-private/slang-testlang",
+  "name": "@slang-private/testlang-npm-package",
   "private": true,
-  "type": "commonjs",
-  "devDependencies": {
-    "@napi-rs/cli": "2.18.4"
+  "type": "module",
+  "__exports_comment__": "__SLANG_NPM_PACKAGE_EXPORTS__ (keep in sync)",
+  "exports": {
+    ".": "./target/generated/index.mjs",
+    "./ast": "./target/generated/ast/index.mjs",
+    "./cst": "./target/generated/cst/index.mjs",
+    "./parser": "./target/generated/parser/index.mjs"
   },
-  "napi": {
-    "triples": {
-      "defaults": false,
-      "additional": []
-    }
-  },
-  "engines": {
-    "node": ">= 10"
+  "__dependencies_comment__": "__SLANG_NPM_PACKAGE_DEPENDENCIES__ (keep in sync)",
+  "dependencies": {
+    "@bytecodealliance/preview2-shim": "0.17.0"
   }
 }

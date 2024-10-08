@@ -98,7 +98,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
         .replace("&#39;", "\"");
 
-    let parser = Parser::new(version.clone())?;
+    let parser = Parser::create(version.clone())?;
     let output = parser.parse(NonterminalKind::SourceUnit, &source);
 
     if output.is_valid() {

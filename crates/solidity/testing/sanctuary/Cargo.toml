@@ -17,7 +17,7 @@ rayon = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-slang_solidity = { workspace = true, features = ["__private_testing_utils"] }
+slang_solidity = { workspace = true, features = ["__private_ariadne_errors"] }
 strum_macros = { workspace = true }
 url = { workspace = true }
 
