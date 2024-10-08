@@ -9,12 +9,6 @@ impl metaslang_bindings::FileKind
 pub fn metaslang_bindings::FileKind::get_path(&self) -> core::option::Option<&str>
 pub fn metaslang_bindings::FileKind::is_system(&self) -> bool
 pub fn metaslang_bindings::FileKind::is_user(&self) -> bool
-impl core::convert::From<&alloc::string::String> for metaslang_bindings::FileKind
-pub fn metaslang_bindings::FileKind::from(value: &alloc::string::String) -> Self
-impl core::convert::From<&str> for metaslang_bindings::FileKind
-pub fn metaslang_bindings::FileKind::from(value: &str) -> Self
-impl core::convert::From<alloc::string::String> for metaslang_bindings::FileKind
-pub fn metaslang_bindings::FileKind::from(value: alloc::string::String) -> Self
 pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
 pub metaslang_bindings::ResolutionError::Unresolved

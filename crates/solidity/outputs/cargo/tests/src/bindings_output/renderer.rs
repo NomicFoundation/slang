@@ -91,10 +91,7 @@ fn build_report_for_part<'a>(
             continue;
         };
         let def_file = definition.get_file();
-        if !def_file.is_user() {
-            continue;
-        }
-        if def_file.get_path().unwrap() != part.path {
+        if !def_file.is_user() || def_file.get_path().unwrap() != part.path {
             continue;
         }
 

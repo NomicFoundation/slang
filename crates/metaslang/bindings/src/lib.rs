@@ -62,7 +62,7 @@ pub enum FileKind {
 }
 
 impl FileKind {
-    // Internal function to convert a FileKind to a string for representation inside the stack graph
+    // Internal functions to convert a FileKind to a string for representation inside the stack graph
     pub(crate) fn as_string(&self) -> String {
         self.as_string_or_else(|| unreachable!("cannot convert an Unknown file kind to string"))
     }
@@ -72,6 +72,16 @@ impl FileKind {
             Self::User(path) => format!("user:{path}"),
             Self::System(path) => format!("system:{path}"),
             Self::Unknown => f(),
+        }
+    }
+
+    pub(crate) fn from_string(value: &str) -> Self {
+        if let Some(path) = value.strip_prefix("user:") {
+            FileKind::User(path.into())
+        } else if let Some(path) = value.strip_prefix("system:") {
+            FileKind::System(path.into())
+        } else {
+            FileKind::Unknown
         }
     }
 
@@ -89,30 +99,6 @@ impl FileKind {
 
     pub fn is_user(&self) -> bool {
         matches!(self, Self::User(_))
-    }
-}
-
-impl From<&str> for FileKind {
-    fn from(value: &str) -> Self {
-        if let Some(path) = value.strip_prefix("user:") {
-            FileKind::User(path.into())
-        } else if let Some(path) = value.strip_prefix("system:") {
-            FileKind::System(path.into())
-        } else {
-            FileKind::Unknown
-        }
-    }
-}
-
-impl From<String> for FileKind {
-    fn from(value: String) -> Self {
-        Self::from(&value as &str)
-    }
-}
-
-impl From<&String> for FileKind {
-    fn from(value: &String) -> Self {
-        Self::from(value as &str)
     }
 }
 
@@ -386,7 +372,7 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
         self.owner.stack_graph[self.handle]
             .file()
             .map_or(FileKind::Unknown, |file| {
-                self.owner.stack_graph[file].name().into()
+                FileKind::from_string(self.owner.stack_graph[file].name())
             })
     }
 
@@ -474,7 +460,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         self.owner.stack_graph[self.handle]
             .file()
             .map_or(FileKind::Unknown, |file| {
-                self.owner.stack_graph[file].name().into()
+                FileKind::from_string(self.owner.stack_graph[file].name())
             })
     }
 
