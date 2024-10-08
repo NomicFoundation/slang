@@ -10,7 +10,7 @@ References and definitions:
    │              ─┬─   ┬  
    │               ╰─────── def: 2
    │                    │  
-   │                    ╰── unresolved
+   │                    ╰── ref: built-in
    │ 
  5 │ contract Test is Base {
    │          ──┬─    ──┬─  

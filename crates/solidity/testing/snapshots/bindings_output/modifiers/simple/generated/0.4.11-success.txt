@@ -24,7 +24,7 @@ References and definitions:
     │            ╰──── ref: 2
   8 │         _;
     │         ┬  
-    │         ╰── unresolved
+    │         ╰── ref: built-in
   9 │         locked = false;
     │         ───┬──  
     │            ╰──── ref: 2

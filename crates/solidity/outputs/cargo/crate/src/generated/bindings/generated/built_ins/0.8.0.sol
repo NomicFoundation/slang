@@ -4,7 +4,6 @@ contract $BuiltIns$ {
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function blockhash(uint blockNumber) public returns (bytes32);
-  function blobhash(uint index) public returns (bytes32);
   function ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) public returns (address);
   function gasleft() public returns (uint256);
   function keccak256(bytes memory) public returns (bytes32);
@@ -22,7 +21,6 @@ contract $BuiltIns$ {
     function($args) returns (bytes memory) encodePacked;
     function(bytes4 selector, $args) returns (bytes memory) encodeWithSelector;
     function(string memory, $args) returns (bytes memory) encodeWithSignature;
-    function(function(), $args) returns (bytes memory) encodeCall;
   }
   struct $address {
     uint256 balance;
@@ -34,19 +32,28 @@ contract $BuiltIns$ {
     function(bytes memory) returns (bool, bytes memory) staticcall;
     function(uint256) transfer;
   }
+  struct $array {
+    uint length;
+    function() returns ($arg) push;
+    function($arg) push;
+    function() returns ($arg) pop;
+  }
   struct $blockType {
-    uint basefee;
-    uint blobbasefee;
     uint chainid;
     address payable coinbase;
     uint difficulty;
     uint gaslimit;
     uint number;
-    uint prevrandao;
     uint timestamp;
   }
   struct $bytes {
     function($args) returns (bytes memory) concat;
+  }
+  struct $fixedArray {
+    int length;
+  }
+  struct $function {
+    $selector selector;
   }
   struct $msgType {
     bytes data;
@@ -59,7 +66,7 @@ contract $BuiltIns$ {
   }
   struct $txType {
     uint gasprice;
-    address payable origin;
+    address origin;
   }
   struct $type {
     string name;
@@ -69,6 +76,7 @@ contract $BuiltIns$ {
     int min;
     int max;
   }
+  $function _;
   $abiType abi;
   $blockType block;
   $msgType msg;

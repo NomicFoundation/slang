@@ -11,14 +11,11 @@ References and definitions:
     │                   ╰─────── def: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
-    │            ╰───── unresolved
+    │            ╰───── refs: built-in, built-in, built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── def: 3
-  7 │         revert("testing revert");
-    │         ───┬──  
-    │            ╰──── refs: built-in, built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
