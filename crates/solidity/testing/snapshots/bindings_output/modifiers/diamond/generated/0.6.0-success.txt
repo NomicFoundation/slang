@@ -10,7 +10,7 @@ References and definitions:
     │              ─┬─           ┬  
     │               ╰─────────────── def: 2
     │                            │  
-    │                            ╰── unresolved
+    │                            ╰── ref: built-in
     │ 
   5 │ contract A is Base {
     │          ┬    ──┬─  
@@ -21,7 +21,7 @@ References and definitions:
     │              ─┬─                    ┬  
     │               ╰──────────────────────── def: 4
     │                                     │  
-    │                                     ╰── unresolved
+    │                                     ╰── ref: built-in
     │ 
   9 │ contract B is Base {
     │          ┬    ──┬─  
@@ -32,7 +32,7 @@ References and definitions:
     │              ─┬─                    ┬  
     │               ╰──────────────────────── def: 6
     │                                     │  
-    │                                     ╰── unresolved
+    │                                     ╰── ref: built-in
     │ 
  13 │ contract Test is B, A {
     │          ──┬─    ┬  ┬  

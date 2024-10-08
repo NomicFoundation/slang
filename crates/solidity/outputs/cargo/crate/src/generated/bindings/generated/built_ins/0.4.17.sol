@@ -47,6 +47,7 @@ contract $BuiltIns$ {
     int length;
   }
   struct $function {
+    $selector selector;
     function(uint) returns ($function) gas;
     function(uint) returns ($function) value;
   }
