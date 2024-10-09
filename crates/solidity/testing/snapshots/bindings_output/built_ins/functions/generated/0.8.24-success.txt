@@ -11,7 +11,7 @@ References and definitions:
     │                   ╰─────── def: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
-    │            ╰───── refs: built-in, built-in, built-in
+    │            ╰───── refs: built-in, built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
