@@ -28,3 +28,8 @@ fn functions() -> Result<()> {
 fn global_properties() -> Result<()> {
     run("built_ins", "global_properties")
 }
+
+#[test]
+fn type_expr() -> Result<()> {
+    run("built_ins", "type_expr")
+}
