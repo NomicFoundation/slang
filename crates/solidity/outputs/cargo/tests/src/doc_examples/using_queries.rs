@@ -11,7 +11,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
     let source = input_path.read_to_string()?;
 
-    let parser = Parser::new(Version::new(0, 8, 0))?;
+    let parser = Parser::create(Version::new(0, 8, 0))?;
 
     Ok(parser.parse(NonterminalKind::SourceUnit, source.trim()))
 }

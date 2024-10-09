@@ -1,0 +1,26 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+interface parser {
+    use cst.{cursor, node, nonterminal-kind, text-range};
+
+    resource parser {
+        root-kind: static func() -> nonterminal-kind;
+        supported-versions: static func() -> list<string>;
+        create: static func(version: string) -> result<parser, string>;
+
+        version: func() -> string;
+        parse: func(kind: nonterminal-kind, input: string) -> parse-output;
+    }
+
+    resource parse-error {
+        text-range: func() -> text-range;
+        message: func() -> string;
+    }
+
+    resource parse-output {
+        tree: func() -> node;
+        errors: func() -> list<parse-error>;
+        is-valid: func() -> bool;
+        create-tree-cursor: func() -> cursor;
+    }
+}

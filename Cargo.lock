@@ -391,7 +391,7 @@ checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
 name = "codegen_ebnf"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "codegen_language_definition",
@@ -401,7 +401,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_definition"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "codegen_language_internal_macros",
@@ -420,7 +420,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_internal_macros"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "itertools 0.13.0",
  "proc-macro2",
@@ -430,14 +430,14 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_macros"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "codegen_language_definition",
 ]
 
 [[package]]
 name = "codegen_language_tests"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -448,28 +448,39 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_runtime_cargo"
-version = "0.17.0"
+name = "codegen_runtime_cargo_crate"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "clap",
  "codegen_runtime_generator",
+ "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "paste",
  "semver",
  "serde",
- "serde_json",
  "strum",
  "strum_macros",
  "thiserror",
+]
+
+[[package]]
+name = "codegen_runtime_cargo_wasm"
+version = "0.18.0"
+dependencies = [
+ "anyhow",
+ "codegen_runtime_cargo_crate",
+ "codegen_runtime_generator",
+ "infra_utils",
+ "paste",
+ "semver",
+ "serde_json",
  "wit-bindgen",
 ]
 
 [[package]]
 name = "codegen_runtime_generator"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -486,32 +497,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_runtime_node_addon"
-version = "0.17.0"
-dependencies = [
- "metaslang_cst",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
- "thiserror",
-]
-
-[[package]]
-name = "codegen_runtime_npm"
-version = "0.17.0"
+name = "codegen_runtime_npm_package"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
+ "infra_utils",
 ]
 
 [[package]]
 name = "codegen_spec"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -524,7 +520,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_testing"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -569,15 +565,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "convert_case"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
-dependencies = [
- "unicode-segmentation",
 ]
 
 [[package]]
@@ -646,16 +633,6 @@ checksum = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
 dependencies = [
  "generic-array",
  "typenum",
-]
-
-[[package]]
-name = "ctor"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f34ba9a9bcb8645379e9de8cb3ecfcf4d1c85ba66d90deb3259206fa5aa193b"
-dependencies = [
- "quote",
- "syn 2.0.79",
 ]
 
 [[package]]
@@ -1254,7 +1231,7 @@ checksum = "b248f5224d1d606005e02c97f5aa4e88eeb230488bcc03bc9ca4d7991399f2b5"
 
 [[package]]
 name = "infra_cli"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1262,20 +1239,18 @@ dependencies = [
  "infra_utils",
  "itertools 0.13.0",
  "markdown",
- "regex",
  "semver",
  "serde",
  "serde_json",
  "strum",
  "strum_macros",
  "tempfile",
- "tera",
  "toml",
 ]
 
 [[package]]
 name = "infra_utils"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1367,16 +1342,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "561d97a539a36e26a9a5fad1ea11a3039a67714694aaa379433e580854bc3dc5"
 
 [[package]]
-name = "libloading"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c571b676ddfc9a8c12f1f3d3085a7b163966a8fd8098a90640953ce5f6170161"
-dependencies = [
- "cfg-if",
- "windows-sys 0.48.0",
-]
-
-[[package]]
 name = "libm"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1432,7 +1397,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_bindings"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "metaslang_cst",
  "metaslang_graph_builder",
@@ -1444,7 +1409,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_cst"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "nom",
  "serde",
@@ -1453,7 +1418,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_graph_builder"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "env_logger",
  "indoc",
@@ -1499,65 +1464,6 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "napi"
-version = "2.16.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53575dfa17f208dd1ce3a2da2da4659aae393b256a472f2738a8586a6c4107fd"
-dependencies = [
- "bitflags 2.5.0",
- "ctor",
- "napi-derive",
- "napi-sys",
- "once_cell",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "napi-build"
-version = "2.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1c0f5d67ee408a4685b61f5ab7e58605c8ae3f2b4189f0127d804ff13d5560a"
-
-[[package]]
-name = "napi-derive"
-version = "2.16.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17435f7a00bfdab20b0c27d9c56f58f6499e418252253081bfff448099da31d1"
-dependencies = [
- "cfg-if",
- "convert_case",
- "napi-derive-backend",
- "proc-macro2",
- "quote",
- "syn 2.0.79",
-]
-
-[[package]]
-name = "napi-derive-backend"
-version = "1.0.74"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "967c485e00f0bf3b1bdbe510a38a4606919cf1d34d9a37ad41f25a81aa077abe"
-dependencies = [
- "convert_case",
- "once_cell",
- "proc-macro2",
- "quote",
- "regex",
- "semver",
- "syn 2.0.79",
-]
-
-[[package]]
-name = "napi-sys"
-version = "2.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "427802e8ec3a734331fec1035594a210ce1ff4dc5bc1950530920ab717964ea3"
-dependencies = [
- "libloading",
 ]
 
 [[package]]
@@ -2298,84 +2204,47 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "clap",
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "paste",
  "semver",
  "serde",
- "serde_json",
  "solidity_language",
  "strum",
  "strum_macros",
  "thiserror",
- "wit-bindgen",
 ]
 
 [[package]]
 name = "slang_solidity_cli"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
+ "clap",
+ "semver",
+ "serde_json",
  "slang_solidity",
 ]
 
 [[package]]
-name = "slang_solidity_node_addon"
-version = "0.17.0"
-dependencies = [
- "metaslang_cst",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
- "thiserror",
-]
-
-[[package]]
 name = "slang_testlang"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "clap",
  "codegen_runtime_generator",
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
- "paste",
  "semver",
  "serde",
- "serde_json",
  "strum",
  "strum_macros",
  "testlang_language",
- "thiserror",
- "wit-bindgen",
-]
-
-[[package]]
-name = "slang_testlang_node_addon"
-version = "0.17.0"
-dependencies = [
- "metaslang_cst",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
  "thiserror",
 ]
 
@@ -2406,7 +2275,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2427,8 +2296,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_cargo_wasm"
+version = "0.18.0"
+dependencies = [
+ "anyhow",
+ "codegen_runtime_generator",
+ "infra_utils",
+ "paste",
+ "semver",
+ "serde_json",
+ "slang_solidity",
+ "solidity_language",
+ "wit-bindgen",
+]
+
+[[package]]
 name = "solidity_language"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2437,7 +2321,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_package"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",
@@ -2447,7 +2331,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_spec"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "codegen_spec",
@@ -2457,7 +2341,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_perf"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "iai-callgrind",
  "infra_utils",
@@ -2468,7 +2352,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sanctuary"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -2488,11 +2372,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "0.17.0"
+version = "0.18.0"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -2701,7 +2585,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_cargo_tests"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "metaslang_graph_builder",
  "semver",
@@ -2709,8 +2593,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "testlang_cargo_wasm"
+version = "0.18.0"
+dependencies = [
+ "anyhow",
+ "codegen_runtime_generator",
+ "infra_utils",
+ "paste",
+ "semver",
+ "serde_json",
+ "slang_testlang",
+ "testlang_language",
+ "wit-bindgen",
+]
+
+[[package]]
 name = "testlang_language"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2719,7 +2618,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_npm_package"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "anyhow",
  "codegen_runtime_generator",

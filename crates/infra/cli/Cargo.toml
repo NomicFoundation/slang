@@ -14,14 +14,12 @@ clap_complete = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 markdown = { workspace = true }
-regex = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 tempfile = { workspace = true }
-tera = { workspace = true }
 toml = { workspace = true }
 
 [lints]

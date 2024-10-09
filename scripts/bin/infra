@@ -11,7 +11,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 # Additionally, we cannot use 'cargo run --bin infra_cli' directly, because 'cargo run' sets a bunch
 # of 'CARGO_*' environment variables, and they get propagated to any child `cargo` commands that are
 # spawned by 'infra_cli'. We have to build and run the binary directly to ensure it has a clean env.
-# Otherwise, they leak into things like cross-platform NAPI builds, and cause build failures.
+# Otherwise, they leak into cross-platform or multi-target builds, and cause build failures.
 #
 
 (

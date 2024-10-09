@@ -8,7 +8,7 @@ use crate::generated::VERSION_BREAKS;
 fn test_built_ins_parse_successfully() -> Result<()> {
     for version in &VERSION_BREAKS {
         let built_ins = bindings::get_built_ins(version);
-        let parser = Parser::new(version.clone())?;
+        let parser = Parser::create(version.clone())?;
         let parse_output = parser.parse(Parser::ROOT_KIND, built_ins);
 
         let report = parse_output

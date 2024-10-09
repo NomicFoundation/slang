@@ -5,7 +5,7 @@
   ],
 
   "references": [
-    { "path": "./crates/codegen/runtime/npm/tsconfig.json" },
+    { "path": "./crates/codegen/runtime/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
     { "path": "./crates/testlang/outputs/npm/package/tsconfig.json" },
@@ -45,8 +45,8 @@
     "useUnknownInCatchVariables": true,
 
     /* Modules */
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
     /* Emit */
     "noEmit": true,
@@ -60,8 +60,7 @@
     "esModuleInterop": true,
 
     /* Language and Environment */
-    "target": "ES2016",
-    "lib": ["DOM", "DOM.Iterable"],
+    "target": "ES6",
 
     /* Projects */
     "composite": true,

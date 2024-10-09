@@ -57,5 +57,8 @@ fn test_cargo() -> Result<()> {
 }
 
 fn test_npm() {
-    Command::new("jest").run();
+    Command::new("jest")
+        .env("NODE_OPTIONS", "--experimental-vm-modules") // because we are executing ESM tests
+        .env("NODE_NO_WARNINGS", "1") // disable warnings about experimental feature above (too much noise)
+        .run();
 }

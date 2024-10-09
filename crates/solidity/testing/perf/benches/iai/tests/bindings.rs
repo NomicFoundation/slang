@@ -7,7 +7,7 @@ use slang_solidity::parser::Parser;
 use crate::dataset::SOLC_VERSION;
 
 pub fn run() -> Bindings {
-    let parser = Parser::new(SOLC_VERSION).unwrap();
+    let parser = Parser::create(SOLC_VERSION).unwrap();
     let mut bindings = create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
 
     let built_ins_parse_output = parser.parse(Parser::ROOT_KIND, get_built_ins(&SOLC_VERSION));

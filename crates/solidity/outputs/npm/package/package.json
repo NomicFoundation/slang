@@ -1,6 +1,7 @@
 {
   "name": "@nomicfoundation/slang",
-  "version": "0.17.0",
+  "version": "0.18.0",
+  "type": "module",
   "description": "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.",
   "homepage": "https://nomicfoundation.github.io/slang/",
   "license": "MIT",
@@ -27,43 +28,6 @@
       "email": "omar@nomic.foundation"
     }
   ],
-  "type": "commonjs",
-  "devDependencies": {
-    "@napi-rs/cli": "2.18.4"
-  },
-  "dependencies": {
-    "@nomicfoundation/slang-darwin-arm64": "0.17.0",
-    "@nomicfoundation/slang-win32-arm64-msvc": "0.17.0",
-    "@nomicfoundation/slang-linux-arm64-gnu": "0.17.0",
-    "@nomicfoundation/slang-linux-arm64-musl": "0.17.0",
-    "@nomicfoundation/slang-win32-ia32-msvc": "0.17.0",
-    "@nomicfoundation/slang-darwin-x64": "0.17.0",
-    "@nomicfoundation/slang-win32-x64-msvc": "0.17.0",
-    "@nomicfoundation/slang-linux-x64-gnu": "0.17.0",
-    "@nomicfoundation/slang-linux-x64-musl": "0.17.0"
-  },
-  "napi": {
-    "triples": {
-      "defaults": false,
-      "additional": [
-        "aarch64-apple-darwin",
-        "aarch64-pc-windows-msvc",
-        "aarch64-unknown-linux-gnu",
-        "aarch64-unknown-linux-musl",
-        "i686-pc-windows-msvc",
-        "x86_64-apple-darwin",
-        "x86_64-pc-windows-msvc",
-        "x86_64-unknown-linux-gnu",
-        "x86_64-unknown-linux-musl"
-      ]
-    }
-  },
-  "slangMetadata": {
-    "targetGlibc": "2.28"
-  },
-  "engines": {
-    "node": ">= 10"
-  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -77,5 +41,16 @@
     "smart-contracts",
     "solidity",
     "tooling"
-  ]
+  ],
+  "__exports_comment__": "__SLANG_NPM_PACKAGE_EXPORTS__ (keep in sync)",
+  "exports": {
+    ".": "./target/generated/index.mjs",
+    "./ast": "./target/generated/ast/index.mjs",
+    "./cst": "./target/generated/cst/index.mjs",
+    "./parser": "./target/generated/parser/index.mjs"
+  },
+  "__dependencies_comment__": "__SLANG_NPM_PACKAGE_DEPENDENCIES__ (keep in sync)",
+  "dependencies": {
+    "@bytecodealliance/preview2-shim": "0.17.0"
+  }
 }

@@ -1,16 +1,9 @@
 {
   "extends": "../../../../../tsconfig.json",
 
-  "include": ["./src/**/*.ts", "./jest.config.ts"],
+  "include": ["./**/*"],
 
   "compilerOptions": {
-    /* Modules */
-    "paths": {
-      // __SLANG_NPM_PACKAGE_MAIN_OUTPUT_DIR__ (keep in sync)
-      "@slang-private/slang-testlang": ["../package/target/npm/main"],
-      "@slang-private/slang-testlang/*": ["../package/target/npm/main/*"]
-    },
-
     /* Projects */
     "composite": true,
     "incremental": true,

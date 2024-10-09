@@ -1,0 +1,36 @@
+{# This needs to stay in sync with the wit-bindgen output #}
+{% if model.kinds.labels|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[strum(serialize_all = "snake_case")]
+#[derive(Clone, Copy)]
+pub enum EdgeLabel {
+    // Built-in:
+    {% for label in model.kinds.built_in_labels -%}
+        {{ label | pascal_case }},
+    {%- endfor %}
+
+    // Generated:
+    {% if rendering_in_stubs -%}
+        Stub1,
+        Stub2,
+        Stub3,
+    {%- else -%}
+        {% for variant in model.kinds.labels -%}
+            {{ variant | pascal_case }},
+        {%- endfor -%}
+    {%- endif -%}
+}
+
+impl crate::cst::EdgeLabelExtensions for EdgeLabel {}

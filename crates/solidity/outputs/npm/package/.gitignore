@@ -1,0 +1,3 @@
+# WASM binaries and bindgen files generated during the build:
+wasm/generated/*.js
+wasm/generated/*.wasm

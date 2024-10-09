@@ -1,6 +1,8 @@
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
+use crate::toolchains::wasm::WASM_TARGET;
+
 pub fn setup_cargo() {
     // The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'
     // installs the 'minimal' profile of the '$RUST_STABLE_VERSION' toolchain.
@@ -29,8 +31,19 @@ pub fn setup_cargo() {
     rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"));
     rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt", "rust-docs"]);
 
+    // Needed for the TypeScript packages:
+    rustup_add_targets(env!("RUST_STABLE_VERSION"), [WASM_TARGET]);
+
     // Make sure we have the latest dependencies:
     run_cargo_fetch();
+}
+
+fn rustup_add_targets(toolchain: &str, targets: impl IntoIterator<Item = impl Into<String>>) {
+    Command::new("rustup")
+        .args(["target", "add"])
+        .property("--toolchain", toolchain)
+        .args(targets)
+        .run();
 }
 
 fn rustup_install_toolchain(toolchain: &str) {

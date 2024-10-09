@@ -8,7 +8,7 @@ use slang_solidity::parser::Parser;
 use crate::resolver::TestsPathResolver;
 
 pub fn create_bindings(version: &Version) -> Result<Bindings> {
-    let parser = Parser::new(version.clone())?;
+    let parser = Parser::create(version.clone())?;
     let mut bindings =
         bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
 

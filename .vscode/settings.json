@@ -3,7 +3,7 @@
   "editor.rulers": [120],
   "files.associations": {
     "**/documentation/overrides/**/*.html": "jinja-html",
-    "*.ts.jinja2": "jinja-js", // until 'jinja-ts' is released: https://github.com/samuelcolvin/jinjahtml-vscode/pull/148
+    "*.{ts,mts}.jinja2": "jinja-js", // until 'jinja-ts' is released: https://github.com/samuelcolvin/jinjahtml-vscode/pull/148
     "*.wit.jinja2": "wai"
   },
   "editor.unicodeHighlight.allowedCharacters": {

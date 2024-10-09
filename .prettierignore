@@ -1,6 +1,9 @@
 # Scripts controlled by Hermit:
 bin/
 
+# Git Submodules
+submodules/
+
 # Ember Templates
 documentation/overrides/**/*.html
 
@@ -10,6 +13,9 @@ documentation/overrides/**/*.html
 # Packages and Dependencies
 **/.hermit/
 **/node_modules/
+
+# Generated WASM bindings
+**/wasm/generated/*.js
 
 # Generated Artifacts
 **/target/

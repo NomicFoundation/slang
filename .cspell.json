@@ -2,11 +2,12 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v5.19.2/cspell.schema.json",
   "language": "en-US",
   "files": ["**/*.md"],
-  "ignorePaths": ["**/generated/**", "CHANGELOG.md"],
+  "ignorePaths": ["submodules/**", "**/generated/**", "CHANGELOG.md"],
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
     "codegen",
+    "contentful",
     "devcontainer",
     "doxygen",
     "ebnf",

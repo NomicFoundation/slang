@@ -1,5 +1,4 @@
 use std::path::Path;
-use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -19,7 +18,7 @@ fn using_the_cursor() -> Result<()> {
     let source = source.trim();
 
     // --8<-- [start:parse-input]
-    let parser = Parser::new(Version::parse("0.8.0")?)?;
+    let parser = Parser::create(Version::parse("0.8.0")?)?;
 
     let parse_output = parser.parse(NonterminalKind::SourceUnit, source);
     // --8<-- [end:parse-input]
@@ -71,7 +70,7 @@ fn using_the_cursor() -> Result<()> {
 
         while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
             let range = cursor.text_range().utf8();
-            let text = Rc::clone(cursor.node().as_nonterminal().unwrap()).unparse();
+            let text = cursor.node().unparse();
 
             contracts.push((range, text.trim().to_owned()));
         }
