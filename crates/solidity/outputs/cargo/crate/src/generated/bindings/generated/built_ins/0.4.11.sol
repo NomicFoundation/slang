@@ -44,9 +44,6 @@ contract $BuiltIns$ {
   struct $bytes {
     function($args) returns (bytes memory) concat;
   }
-  struct $fixedArray {
-    int length;
-  }
   struct $function {
     function(uint) returns ($function) gas;
     function(uint) returns ($function) value;

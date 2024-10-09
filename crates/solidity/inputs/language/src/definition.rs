@@ -6874,11 +6874,6 @@ codegen_language_macros::compile!(Language(
             )]
         ),
         BuiltInType(
-            name = "$fixedArray",
-            fields = [BuiltInField(definition = "int length")],
-            functions = []
-        ),
-        BuiltInType(
             name = "$function",
             fields = [
                 BuiltInField(definition = "$address $address", enabled = From("0.8.2")),
