@@ -11,11 +11,14 @@ References and definitions:
     │                   ╰─────── def: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
-    │            ╰───── refs: built-in, built-in, built-in
+    │            ╰───── refs: built-in, built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── def: 3
+  7 │         revert("testing revert");
+    │         ───┬──  
+    │            ╰──── refs: built-in, built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
@@ -45,7 +48,7 @@ References and definitions:
     │                 ─┬   ────┬───  
     │                  ╰───────────── def: 9
     │                          │     
-    │                          ╰───── ref: built-in
+    │                          ╰───── unresolved
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── def: 10
@@ -126,7 +129,7 @@ References and definitions:
     │                            │       │       │      │     
     │                            ╰──────────────────────────── ref: built-in
     │                                    │       │      │     
-    │                                    ╰──────────────────── ref: built-in
+    │                                    ╰──────────────────── unresolved
     │                                            │      │     
     │                                            ╰──────────── ref: built-in
     │                                                   │     
