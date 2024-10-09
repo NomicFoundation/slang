@@ -1,4 +1,4 @@
-# Installation
+# Install NPM Package
 
 You can install [Slang NPM package](https://www.npmjs.com/package/@nomicfoundation/slang) simply by running the following `npm` command:
 

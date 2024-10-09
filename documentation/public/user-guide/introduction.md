@@ -21,7 +21,3 @@ While it's good for a programming language to evolve and better serve the needs 
 Because of that, Slang must be able to reason about different versions of Solidity; how the language grammar, name capture rules, and semantics have changed [across different versions](../solidity-specification/supported-versions.md). One of our goals is to document differences as part of our [Solidity Specification](../solidity-specification/index.md).
 
 This is why, instead of having to download separate versions of the tool for each Solidity version, you can access the Slang language APIs by simply specifying the Solidity version that you want to work with.
-
-## Distributions
-
-Slang itself is written in Rust and we maintain a public Rust package on [crates.io](https://crates.io/crates/slang_solidity). At the moment, we also distribute it as an [npm package](https://www.npmjs.com/package/@nomicfoundation/slang) with TypeScript interface. In the future, we plan on expanding the language captures with Python and possibly more.

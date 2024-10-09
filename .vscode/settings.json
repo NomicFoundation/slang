@@ -30,6 +30,8 @@
     "**/node_modules/": true,
     // Generated Artifacts
     "**/target/": true,
+    // Git submodules
+    "**/submodules/": true,
     // Lock Files
     "**/Cargo.lock": true,
     "**/package-lock.json": true,
