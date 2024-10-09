@@ -8,3 +8,8 @@ use crate::bindings_output::runner::run;
 fn call() -> Result<()> {
     run("function_types", "call")
 }
+
+#[test]
+fn reference() -> Result<()> {
+    run("function_types", "reference")
+}

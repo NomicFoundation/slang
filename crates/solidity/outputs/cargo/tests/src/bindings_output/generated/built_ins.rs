@@ -15,6 +15,11 @@ fn arrays() -> Result<()> {
 }
 
 #[test]
+fn function_type() -> Result<()> {
+    run("built_ins", "function_type")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("built_ins", "functions")
 }

@@ -10,6 +10,11 @@ contract First {
         return choice;
         //     ^ref:3
     }
+    function internal_get_choice() private returns (Choice) {
+        //   ^def:6
+        return choice;
+        //     ^ref:3
+    }
 }
 
 contract Second {
@@ -24,10 +29,12 @@ contract Second {
         return choice;
         //     ^ref:5
     }
-    function get_first_choice() public returns (First.Choice) {
-        return First.get_choice();
-        //     ^ref:1
-        //           ^ref:!  -- cannot access a member function through the contract type
+    function get_first_choice() public {
+        First.Choice c = First.internal_get_choice();
+        //               ^ref:1
+        //                     ^ref:!  -- cannot access a private/internal function through the contract type
+        bytes4 sel = First.get_choice.selector;
+        //                 ^ref:4  -- we can reference the public function to get the selector
     }
     function other_choice() public returns (First.Choice) {
         return First.choice;
