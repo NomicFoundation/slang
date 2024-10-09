@@ -2,7 +2,8 @@
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
-publish = true
+# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
+# publish = true
 
 name = "metaslang_bindings"
 description = "Computes semantic language bindings from parsed source code"

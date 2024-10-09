@@ -1,8 +1,8 @@
-# Using the Parser
+# Parse Source Files
 
 Using the API directly provides us with a more fine-grained control over the parsing process. It allows us to parse not just the input as a top-level source unit, but also individual constructs like contracts, various definitions, and even expressions.
 
-## Parsing Source Files
+## Using the Parser
 
 Let's start with this simple source file, that contains a single contract:
 

@@ -1,4 +1,4 @@
-# Using the Cursor
+# Use CST Cursors
 
 This guide will walk you through the basics of using a [CST cursor](../concepts.md#cst-cursors) in your project.
 Let's start with this source file, that contains three contracts:
