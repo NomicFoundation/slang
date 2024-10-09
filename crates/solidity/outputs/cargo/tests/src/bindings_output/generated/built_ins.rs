@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn address() -> Result<()> {
+    run("built_ins", "address")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("built_ins", "functions")
 }
