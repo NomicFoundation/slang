@@ -15,4 +15,11 @@ contract Test {
         uint v8 = block.prevrandao;
         uint v9 = block.timestamp;
     }
+
+    function testMsg() public {
+        bytes v1 = msg.data;
+        address v2 = msg.sender;
+        bytes4 v3 = msg.sig;
+        uint v4 = msg.value;
+    }
 }
