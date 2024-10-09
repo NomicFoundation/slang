@@ -1,0 +1,93 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     function testTx() public {
+    │              ───┬──  
+    │                 ╰──── def: 2
+  3 │         address origin = tx.origin;
+    │                 ───┬──   ─┬ ───┬──  
+    │                    ╰──────────────── def: 3
+    │                           │    │    
+    │                           ╰───────── ref: built-in
+    │                                │    
+    │                                ╰──── ref: built-in
+  4 │         uint price = tx.gasprice;
+    │              ──┬──   ─┬ ────┬───  
+    │                ╰────────────────── def: 4
+    │                       │     │     
+    │                       ╰─────────── ref: built-in
+    │                             │     
+    │                             ╰───── ref: built-in
+    │ 
+  7 │     function testBlock() public {
+    │              ────┬────  
+    │                  ╰────── def: 5
+  8 │         uint v1 = block.basefee;
+    │              ─┬   ──┬── ───┬───  
+    │               ╰────────────────── def: 6
+    │                     │      │     
+    │                     ╰──────────── ref: built-in
+    │                            │     
+    │                            ╰───── ref: built-in
+  9 │         uint v2 = block.blobbasefee;
+    │              ─┬   ──┬── ─────┬─────  
+    │               ╰────────────────────── def: 7
+    │                     │        │       
+    │                     ╰──────────────── ref: built-in
+    │                              │       
+    │                              ╰─────── ref: built-in
+ 10 │         uint v3 = block.chainid;
+    │              ─┬   ──┬── ───┬───  
+    │               ╰────────────────── def: 8
+    │                     │      │     
+    │                     ╰──────────── ref: built-in
+    │                            │     
+    │                            ╰───── ref: built-in
+ 11 │         address v4 = block.coinbase;
+    │                 ─┬   ──┬── ────┬───  
+    │                  ╰─────────────────── def: 9
+    │                        │       │     
+    │                        ╰───────────── ref: built-in
+    │                                │     
+    │                                ╰───── ref: built-in
+ 12 │         uint v5 = block.difficulty;
+    │              ─┬   ──┬── ─────┬────  
+    │               ╰───────────────────── def: 10
+    │                     │        │      
+    │                     ╰─────────────── ref: built-in
+    │                              │      
+    │                              ╰────── ref: built-in
+ 13 │         uint v6 = block.gaslimit;
+    │              ─┬   ──┬── ────┬───  
+    │               ╰─────────────────── def: 11
+    │                     │       │     
+    │                     ╰───────────── ref: built-in
+    │                             │     
+    │                             ╰───── ref: built-in
+ 14 │         uint v7 = block.number;
+    │              ─┬   ──┬── ───┬──  
+    │               ╰───────────────── def: 12
+    │                     │      │    
+    │                     ╰─────────── ref: built-in
+    │                            │    
+    │                            ╰──── ref: built-in
+ 15 │         uint v8 = block.prevrandao;
+    │              ─┬   ──┬── ─────┬────  
+    │               ╰───────────────────── def: 13
+    │                     │        │      
+    │                     ╰─────────────── ref: built-in
+    │                              │      
+    │                              ╰────── ref: built-in
+ 16 │         uint v9 = block.timestamp;
+    │              ─┬   ──┬── ────┬────  
+    │               ╰──────────────────── def: 14
+    │                     │       │      
+    │                     ╰────────────── ref: built-in
+    │                             │      
+    │                             ╰────── ref: built-in
+────╯
