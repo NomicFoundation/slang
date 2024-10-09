@@ -90,4 +90,36 @@ References and definitions:
     │                     ╰────────────── ref: built-in
     │                             │      
     │                             ╰────── ref: built-in
+    │ 
+ 19 │     function testMsg() public {
+    │              ───┬───  
+    │                 ╰───── def: 15
+ 20 │         bytes v1 = msg.data;
+    │               ─┬   ─┬─ ──┬─  
+    │                ╰───────────── def: 16
+    │                     │    │   
+    │                     ╰──────── ref: built-in
+    │                          │   
+    │                          ╰─── ref: built-in
+ 21 │         address v2 = msg.sender;
+    │                 ─┬   ─┬─ ───┬──  
+    │                  ╰─────────────── def: 17
+    │                       │     │    
+    │                       ╰────────── ref: built-in
+    │                             │    
+    │                             ╰──── ref: built-in
+ 22 │         bytes4 v3 = msg.sig;
+    │                ─┬   ─┬─ ─┬─  
+    │                 ╰──────────── def: 18
+    │                      │   │   
+    │                      ╰─────── ref: built-in
+    │                          │   
+    │                          ╰─── ref: built-in
+ 23 │         uint v4 = msg.value;
+    │              ─┬   ─┬─ ──┬──  
+    │               ╰────────────── def: 19
+    │                    │    │    
+    │                    ╰───────── ref: built-in
+    │                         │    
+    │                         ╰──── ref: built-in
 ────╯
