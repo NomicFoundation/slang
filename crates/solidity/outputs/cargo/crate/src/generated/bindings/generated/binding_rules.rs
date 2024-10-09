@@ -452,6 +452,15 @@ inherit .parent_scope
   attr (@function.def) parents = [@contract.def]
 }
 
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition
+        [FunctionAttributes [FunctionAttribute ([ExternalKeyword] | [PublicKeyword])]]
+    ]]
+]] {
+  ; public or external functions are also accessible through the contract type
+  edge @contract.type_members -> @function.def
+}
+
 @contract [ContractDefinition members: [ContractMembers
     [ContractMember @modifier [ModifierDefinition]]
 ]] {
@@ -521,6 +530,7 @@ inherit .parent_scope
 @interface [InterfaceDefinition [InterfaceMembers
     [ContractMember @member (
           [EnumDefinition]
+        | [FunctionDefinition]
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
@@ -531,6 +541,8 @@ inherit .parent_scope
   edge @interface.type_members -> @member.def
 }
 
+;; Allow references (eg. variables of the interface type) to the interface to
+;; access functions
 @interface [InterfaceDefinition members: [InterfaceMembers
     item: [ContractMember @function variant: [FunctionDefinition]]
 ]] {
@@ -559,15 +571,12 @@ inherit .parent_scope
 }
 
 @library [LibraryDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @library
-
-  edge @library.def -> def
+  attr (@library.def) node_definition = @name
+  attr (@library.def) definiens_node = @library
 
   node member
   attr (member) pop_symbol = "."
-  edge def -> member
+  edge @library.def -> member
 
   edge member -> @library.members
 }
