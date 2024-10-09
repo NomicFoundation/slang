@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     uint[] a;
+   │            ┬  
+   │            ╰── def: 2
+ 3 │     function testArray() public {
+   │              ────┬────  
+   │                  ╰────── def: 3
+ 4 │         uint[] memory b = new uint[](5);
+   │                       ┬  
+   │                       ╰── def: 4
+ 5 │         assert(b.length == 5);
+   │         ───┬── ┬ ───┬──  
+   │            ╰───────────── ref: built-in
+   │                │    │    
+   │                ╰───────── ref: 4
+   │                     │    
+   │                     ╰──── ref: built-in
+   │ 
+ 7 │         a.push();
+   │         ┬ ──┬─  
+   │         ╰─────── ref: 2
+   │             │   
+   │             ╰─── ref: built-in
+ 8 │         a.push(1);
+   │         ┬ ──┬─  
+   │         ╰─────── ref: 2
+   │             │   
+   │             ╰─── ref: built-in
+ 9 │         a.pop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 2
+   │            │   
+   │            ╰─── ref: built-in
+───╯

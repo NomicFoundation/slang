@@ -6841,7 +6841,7 @@ codegen_language_macros::compile!(Language(
                     parameters = ["$arg"],
                     enabled = From("0.6.0")
                 ),
-                BuiltInFunction(name = "pop", parameters = [], return_type = "$arg")
+                BuiltInFunction(name = "pop", parameters = [])
             ]
         ),
         BuiltInType(

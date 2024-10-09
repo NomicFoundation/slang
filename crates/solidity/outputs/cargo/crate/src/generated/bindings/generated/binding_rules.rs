@@ -789,13 +789,17 @@ inherit .parent_scope
 }
 
 @array [ArrayTypeName @type_name [TypeName]] {
-  ; This path pushes the array type to the symbol stack (ie. the [] marker +
-  ; element type)
+  ; We push the array type `%array` to the symbol stack (such that we can use
+  ; generic array built-ins) and the specific type of the array for more
+  ; detailed resolution (eg. a `using` directive).
   node array_type
-  attr (array_type) push_symbol = "%[]"
+  attr (array_type) push_symbol = "%array"
 
   edge @array.output -> array_type
+  ; Connect to the array value type
   edge array_type -> @type_name.output
+  ; ... and also to the lexical scope directly (to resolve a "generic" array)
+  edge array_type -> @array.lexical_scope
 
   ; Provide an index access `[]` operator that "returns" the type of the
   ; elements of the array
@@ -818,7 +822,7 @@ inherit .parent_scope
 
   ; the pop path for the using directive
   node pop_array_type
-  attr (pop_array_type) pop_symbol = "%[]"
+  attr (pop_array_type) pop_symbol = "%array"
 
   let @array.pop_begin = @type_name.pop_begin
   edge @type_name.pop_end -> pop_array_type

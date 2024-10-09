@@ -36,7 +36,7 @@ contract $BuiltIns$ {
     uint length;
     function() returns ($arg) push;
     function($arg) push;
-    function() returns ($arg) pop;
+    function() pop;
   }
   struct $blockType {
     uint chainid;
