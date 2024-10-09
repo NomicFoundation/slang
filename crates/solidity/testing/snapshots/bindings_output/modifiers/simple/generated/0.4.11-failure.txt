@@ -13,11 +13,11 @@ References and definitions:
   4 │     modifier noReentrancy() {
     │              ──────┬─────  
     │                    ╰─────── def: 3
-  5 │         require(!locked, "No reentrancy");
-    │         ───┬───  ───┬──  
-    │            ╰───────────── unresolved
-    │                     │    
-    │                     ╰──── ref: 2
+  5 │         assert(!locked);
+    │         ───┬──  ───┬──  
+    │            ╰──────────── ref: built-in
+    │                    │    
+    │                    ╰──── ref: 2
     │ 
   7 │         locked = true;
     │         ───┬──  

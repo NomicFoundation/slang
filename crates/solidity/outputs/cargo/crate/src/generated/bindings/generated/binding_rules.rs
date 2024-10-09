@@ -30,10 +30,27 @@ inherit .parent_scope
   ;; This provides all the exported symbols from the file
   node @source_unit.defs
 
+  ;; Connect to ROOT_NODE to export our symbols
   node export
-  attr (export) pop_symbol = FILE_PATH
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
+
+  if (is-system-file FILE_PATH) {
+    ; If this is a system file (aka. built-ins), export everything through this
+    ; special symbol (which is automatically imported below)
+    attr (export) pop_symbol = "@@built-ins@@"
+
+  } else {
+    ; This is a user file, so we want to export under the file's path symbol
+    attr (export) pop_symbol = FILE_PATH
+
+    ; ... and also import the global built-ins
+    node built_ins
+    attr (built_ins) push_symbol = "@@built-ins@@"
+
+    edge @source_unit.lexical_scope -> built_ins
+    edge built_ins -> ROOT_NODE
+  }
 
   let @source_unit.enclosing_def = #null
 
@@ -63,6 +80,21 @@ inherit .parent_scope
   edge @source_unit.defs -> @unit_member.def
 }
 
+;; Special case for built-ins: we want to export all symbols in the contract:
+;; functions, types and state variables. All built-in symbols are defined in an
+;; internal contract named '$BuiltIns$' so we need to export all its members and
+;; type members directly as a source unit definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["$BuiltIns$"]]]
+]] {
+  if (is-system-file FILE_PATH) {
+    edge @source_unit.defs -> @contract.members
+    edge @source_unit.defs -> @contract.type_members
+    edge @source_unit.defs -> @contract.state_vars
+  }
+}
+
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
   let @using.lexical_scope = @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @using.def
@@ -85,9 +117,9 @@ inherit .parent_scope
          )]
      ]]
 ]] {
-   node @import.defs
-   edge @source_unit.defs -> @import.defs
-   edge @source_unit.lexical_scope -> @import.defs
+  node @import.defs
+  edge @source_unit.defs -> @import.defs
+  edge @source_unit.lexical_scope -> @import.defs
 }
 
 
@@ -262,9 +294,11 @@ inherit .parent_scope
   node @contract.members
   node @contract.type_members
   node @contract.modifiers
+  node @contract.state_vars
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
+  edge @contract.lexical_scope -> @contract.state_vars
 
   ;; Modifiers are available as a contract type members through a special '@modifier' symbol
   node modifier
@@ -391,25 +425,22 @@ inherit .parent_scope
 }
 
 @contract [ContractDefinition [ContractMembers
-    [ContractMember @member (
-          [FunctionDefinition]
-        | [StateVariableDefinition]
-    )]
+    [ContractMember @state_var [StateVariableDefinition]]
 ]] {
-  edge @contract.lexical_scope -> @member.def
+  edge @contract.state_vars -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
-@contract [ContractDefinition [ContractMembers [ContractMember
-    @state_var [StateVariableDefinition
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @state_var [StateVariableDefinition
         [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
-    ]
-]]] {
+    ]]
+]] {
   edge @contract.members -> @state_var.def
 }
 
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition]]
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
@@ -421,7 +452,7 @@ inherit .parent_scope
 }
 
 @contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @modifier variant: [ModifierDefinition]]
+    [ContractMember @modifier [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
 
@@ -1519,7 +1550,6 @@ inherit .parent_scope
   attr (@state_var.def) node_definition = @name
   attr (@state_var.def) definiens_node = @state_var
 
-  edge @state_var.def -> @state_var.def
   edge @type_name.type_ref -> @state_var.lexical_scope
 
   node typeof

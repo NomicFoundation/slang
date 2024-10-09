@@ -1,5 +1,6 @@
 mod ast;
 mod bindings;
+mod built_ins;
 mod kinds;
 mod parser;
 
@@ -8,9 +9,10 @@ use std::path::Path;
 use std::rc::Rc;
 
 use anyhow::Result;
+pub use built_ins::render_built_ins;
 use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenRuntime;
+use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use semver::Version;
 use serde::Serialize;
 
@@ -26,13 +28,13 @@ impl RuntimeGenerator {
         language: &Rc<Language>,
         input_dir: &Path,
         output_dir: &Path,
-    ) -> Result<()> {
+    ) -> Result<CodegenFileSystem> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
-        let mut runtime = CodegenRuntime::new(input_dir)?;
+        let runtime = CodegenRuntime::new(input_dir)?;
 
         runtime.render_product(model, output_dir)
     }

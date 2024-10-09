@@ -1,10 +1,12 @@
 use std::collections::BTreeSet;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexSet;
 use semver::Version;
 use serde::{Deserialize, Serialize};
+use strum_macros::EnumDiscriminants;
 
 use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
@@ -15,6 +17,7 @@ pub struct Language {
 
     pub documentation_dir: PathBuf,
     pub binding_rules_file: PathBuf,
+    pub file_extension: Option<String>,
 
     pub root_item: Identifier,
 
@@ -24,6 +27,7 @@ pub struct Language {
     pub versions: IndexSet<Version>,
 
     pub sections: Vec<Section>,
+    pub built_ins: Vec<BuiltIn>,
 }
 
 impl Language {
@@ -104,6 +108,47 @@ impl Language {
 
         res
     }
+
+    /// Collects all versions that change the language built-ins.
+    ///
+    /// Includes the first supported version. Returns an empty set if there are
+    /// no built-ins defined.
+    pub fn collect_built_ins_versions(&self) -> BTreeSet<Version> {
+        if self.built_ins.is_empty() {
+            return BTreeSet::new();
+        }
+
+        let first = self.versions.first().unwrap().clone();
+        let mut res = BTreeSet::from_iter([first]);
+
+        let mut add_spec = |spec: &Option<VersionSpecifier>| {
+            if let Some(spec) = spec {
+                res.extend(spec.versions().cloned());
+            }
+        };
+
+        for item in &self.built_ins {
+            match item {
+                BuiltIn::BuiltInFunction { item } => {
+                    add_spec(&item.enabled);
+                }
+                BuiltIn::BuiltInType { item } => {
+                    add_spec(&item.enabled);
+                    for field in &item.fields {
+                        add_spec(&field.enabled);
+                    }
+                    for function in &item.functions {
+                        add_spec(&function.enabled);
+                    }
+                }
+                BuiltIn::BuiltInVariable { item } => {
+                    add_spec(&item.enabled);
+                }
+            }
+        }
+
+        res
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -143,4 +188,37 @@ pub enum BuiltInLabel {
     RightOperand,
     LeadingTrivia,
     TrailingTrivia,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, EnumDiscriminants, ParseInputTokens, WriteOutputTokens)]
+pub enum BuiltIn {
+    BuiltInFunction { item: Rc<BuiltInFunction> },
+    BuiltInType { item: Rc<BuiltInType> },
+    BuiltInVariable { item: Rc<BuiltInField> },
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct BuiltInFunction {
+    pub name: String,
+    pub parameters: Vec<String>,
+    pub return_type: Option<String>,
+    pub enabled: Option<VersionSpecifier>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct BuiltInType {
+    pub name: String,
+    pub fields: Vec<BuiltInField>,
+    pub functions: Vec<BuiltInFunction>,
+    pub enabled: Option<VersionSpecifier>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct BuiltInField {
+    pub definition: String,
+    pub enabled: Option<VersionSpecifier>,
 }

@@ -17,6 +17,7 @@ use stack_graphs::graph::StackGraph;
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
+type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
 
@@ -54,8 +55,55 @@ pub struct Bindings<KT: KindTypes + 'static> {
     context: Option<GraphHandle>,
 }
 
+pub enum FileKind {
+    Unknown,
+    User(String),
+    System(String),
+}
+
+impl FileKind {
+    // Internal functions to convert a FileKind to a string for representation inside the stack graph
+    pub(crate) fn as_string(&self) -> String {
+        self.as_string_or_else(|| unreachable!("cannot convert an Unknown file kind to string"))
+    }
+
+    pub(crate) fn as_string_or_else(&self, f: impl FnOnce() -> String) -> String {
+        match self {
+            Self::User(path) => format!("user:{path}"),
+            Self::System(path) => format!("system:{path}"),
+            Self::Unknown => f(),
+        }
+    }
+
+    pub(crate) fn from_string(value: &str) -> Self {
+        if let Some(path) = value.strip_prefix("user:") {
+            FileKind::User(path.into())
+        } else if let Some(path) = value.strip_prefix("system:") {
+            FileKind::System(path.into())
+        } else {
+            FileKind::Unknown
+        }
+    }
+
+    pub fn get_path(&self) -> Option<&str> {
+        match self {
+            Self::User(path) => Some(path),
+            Self::System(path) => Some(path),
+            Self::Unknown => None,
+        }
+    }
+
+    pub fn is_system(&self) -> bool {
+        matches!(self, Self::System(_))
+    }
+
+    pub fn is_user(&self) -> bool {
+        matches!(self, Self::User(_))
+    }
+}
+
 pub trait PathResolver {
-    fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
+    fn resolve_path(&self, context_path: &FileKind, path_to_resolve: &str) -> FileKind;
 }
 
 impl<KT: KindTypes + 'static> Bindings<KT> {
@@ -82,23 +130,31 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
     }
 
-    pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        _ = self.add_file_internal(file_path, tree_cursor);
+    pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileKind::System(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        _ = self.add_file_internal(file, tree_cursor);
+    }
+
+    pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileKind::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        _ = self.add_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
-    pub fn add_file_returning_graph(
+    pub fn add_user_file_returning_graph(
         &mut self,
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let result = self.add_file_internal(file_path, tree_cursor);
+        let file_kind = FileKind::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
 
-    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
-        let file = self.stack_graph.get_or_create_file(file_path);
-
+    fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
         let builder = Builder::new(
             &self.graph_builder_file,
             &self.functions,
@@ -277,7 +333,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
     cursor: &'a Cursor<KT>,
-    file: Option<&'a str>,
+    file: FileKind,
 }
 
 impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
@@ -287,7 +343,7 @@ impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
             f,
             "`{}` at {}:{}:{}",
             self.cursor.node().unparse(),
-            self.file.unwrap_or("<unknown_file>"),
+            self.file.get_path().unwrap_or("<unknown_file>"),
             offset.line + 1,
             offset.column + 1,
         )
@@ -312,10 +368,12 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .and_then(|info| info.definiens.clone())
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileKind {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
+            .map_or(FileKind::Unknown, |file| {
+                FileKind::from_string(self.owner.stack_graph[file].name())
+            })
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
@@ -398,10 +456,12 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileKind {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
+            .map_or(FileKind::Unknown, |file| {
+                FileKind::from_string(self.owner.stack_graph[file].name())
+            })
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {

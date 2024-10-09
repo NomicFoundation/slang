@@ -398,7 +398,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         let file_path = self.stack_graph[self.file].name();
         variables
             .add(FILE_PATH_VAR.into(), file_path.into())
-            .expect("failed to add FILE_PATH variable");
+            .expect("Failed to add FILE_PATH variable");
 
         let root_node = self.inject_node(NodeID::root());
         variables

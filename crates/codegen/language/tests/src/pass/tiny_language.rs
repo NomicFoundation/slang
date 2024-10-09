@@ -11,6 +11,7 @@ codegen_language_macros::compile!(Language(
     name = Tiny,
     documentation_dir = "tiny/docs",
     binding_rules_file = "tiny/bindings/rules.msgb",
+    file_extension = ".tiny",
     root_item = Foo,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
@@ -38,7 +39,8 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 #[test]
@@ -49,6 +51,7 @@ fn definition() {
             name: "Tiny".into(),
             documentation_dir: Path::repo_path("tiny/docs"),
             binding_rules_file: Path::repo_path("tiny/bindings/rules.msgb"),
+            file_extension: Some(".tiny".into()),
             root_item: "Foo".into(),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
             trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
@@ -119,7 +122,8 @@ fn definition() {
                     ]
                     .into()
                 }],
-            }]
+            }],
+            built_ins: [].into(),
         }
         .into(),
     );
