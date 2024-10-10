@@ -159,6 +159,7 @@ impl Parser {
         Version::new(0, 8, 25),
         Version::new(0, 8, 26),
         Version::new(0, 8, 27),
+        Version::new(0, 8, 28),
     ];
 
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
