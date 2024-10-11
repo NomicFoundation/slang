@@ -1,4 +1,4 @@
-pub mod bindings;
+pub mod init_bindings;
 pub mod cursor;
 pub mod definitions;
 pub mod parser;

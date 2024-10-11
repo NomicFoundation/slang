@@ -37,8 +37,8 @@ fn query(files: Vec<ParsedFile>) {
 }
 
 #[library_benchmark]
-fn bindings() {
-    black_box(tests::bindings::run());
+fn init_bindings() {
+    black_box(tests::init_bindings::run());
 }
 
 #[library_benchmark(setup = tests::definitions::setup)]
@@ -54,7 +54,7 @@ fn references(bindings: Bindings) {
 library_benchmark_group!(
     name = benchmarks;
 
-    benchmarks = parser, cursor, query, bindings, definitions, references
+    benchmarks = parser, cursor, query, init_bindings, definitions, references
 );
 
 main!(
