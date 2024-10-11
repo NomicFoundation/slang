@@ -1,5 +1,11 @@
 # changelog
 
+## 0.18.1
+
+### Patch Changes
+
+-   [#1123](https://github.com/NomicFoundation/slang/pull/1123) [`bdb0ef3`](https://github.com/NomicFoundation/slang/commit/bdb0ef3167eb6d4496b33147437d3adc9714b92c) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix a minor issue with npm package ESM imports
+
 ## 0.18.0
 
 ### Minor Changes
