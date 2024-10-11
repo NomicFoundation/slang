@@ -87,17 +87,30 @@ mod resolver {
             let path_to_resolve = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            let context_path_kind = FileDescriptor::from_string(&context_path);
+            let context_file_descriptor = FileDescriptor::from_string(&context_path);
+            let Ok(FileDescriptor::User(context_user_path)) = context_file_descriptor else {
+                // Since the path resolver should only map to user paths from
+                // user paths, it is an error to attempt to resolve a path in
+                // the context of a system file
+                return Err(ExecutionError::FunctionFailed(
+                    "resolve-path".into(),
+                    "Cannot execute with a non-user context file path".into(),
+                ));
+            };
+
             let resolved_path = self
                 .path_resolver
                 .as_ref()
-                .resolve_path(&context_path_kind, &path_to_resolve)
-                .as_string_or_else(|| {
-                    // In case we cannot resolve the path, we return a special value that is unique
-                    // per context/path pait. This way, we can still run incrementally and resolve
-                    // other symbols in the file:
-                    format!("__SLANG_UNRESOLVED_PATH__{context_path}__{path_to_resolve}__")
-                });
+                .resolve_path(&context_user_path, &path_to_resolve)
+                .map_or_else(
+                    || {
+                        // In case we cannot resolve the path, we return a special value that is unique
+                        // per context/path pait. This way, we can still run incrementally and resolve
+                        // other symbols in the file:
+                        format!("__SLANG_UNRESOLVED_PATH__{context_path}__{path_to_resolve}__")
+                    },
+                    |resolved_path| FileDescriptor::User(resolved_path).as_string(),
+                );
 
             Ok(resolved_path.into())
         }
@@ -114,8 +127,13 @@ mod resolver {
             let file_path = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            let is_system_file = FileDescriptor::from_string(&file_path).is_system();
-            Ok(is_system_file.into())
+            let Ok(file_descriptor) = FileDescriptor::from_string(&file_path) else {
+                return Err(ExecutionError::FunctionFailed(
+                    "is-system-file".into(),
+                    "Parameter is not a valid file path".into(),
+                ));
+            };
+            Ok(file_descriptor.is_system().into())
         }
     }
 }

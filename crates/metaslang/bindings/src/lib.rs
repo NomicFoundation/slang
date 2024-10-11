@@ -56,40 +56,37 @@ pub struct Bindings<KT: KindTypes + 'static> {
 }
 
 pub enum FileDescriptor {
-    Unknown,
     User(String),
     System(String),
 }
 
-impl FileDescriptor {
-    // Internal functions to convert a FileKind to a string for representation inside the stack graph
-    pub(crate) fn as_string(&self) -> String {
-        self.as_string_or_else(|| unreachable!("cannot convert an Unknown file kind to string"))
-    }
+pub(crate) struct FileDescriptorError;
 
-    pub(crate) fn as_string_or_else(&self, f: impl FnOnce() -> String) -> String {
+impl FileDescriptor {
+    // Internal functions to convert a FileDescriptor to and from a string for
+    // representation inside the stack graph
+
+    pub(crate) fn as_string(&self) -> String {
         match self {
             Self::User(path) => format!("user:{path}"),
             Self::System(path) => format!("system:{path}"),
-            Self::Unknown => f(),
         }
     }
 
-    pub(crate) fn from_string(value: &str) -> Self {
+    pub(crate) fn from_string(value: &str) -> Result<Self, FileDescriptorError> {
         if let Some(path) = value.strip_prefix("user:") {
-            FileDescriptor::User(path.into())
+            Ok(FileDescriptor::User(path.into()))
         } else if let Some(path) = value.strip_prefix("system:") {
-            FileDescriptor::System(path.into())
+            Ok(FileDescriptor::System(path.into()))
         } else {
-            FileDescriptor::Unknown
+            Err(FileDescriptorError)
         }
     }
 
-    pub fn get_path(&self) -> Option<&str> {
+    pub fn get_path(&self) -> &str {
         match self {
-            Self::User(path) => Some(path),
-            Self::System(path) => Some(path),
-            Self::Unknown => None,
+            Self::User(path) => path,
+            Self::System(path) => path,
         }
     }
 
@@ -100,10 +97,14 @@ impl FileDescriptor {
     pub fn is_user(&self) -> bool {
         matches!(self, Self::User(_))
     }
+
+    pub fn is_user_path(&self, path: &str) -> bool {
+        matches!(self, Self::User(user_path) if user_path == path)
+    }
 }
 
 pub trait PathResolver {
-    fn resolve_path(&self, context_path: &FileDescriptor, path_to_resolve: &str) -> FileDescriptor;
+    fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
 }
 
 impl<KT: KindTypes + 'static> Bindings<KT> {
@@ -343,7 +344,7 @@ impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
             f,
             "`{}` at {}:{}:{}",
             self.cursor.node().unparse(),
-            self.file.get_path().unwrap_or("<unknown_file>"),
+            self.file.get_path(),
             offset.line + 1,
             offset.column + 1,
         )
@@ -371,9 +372,8 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map_or(FileDescriptor::Unknown, |file| {
-                FileDescriptor::from_string(self.owner.stack_graph[file].name())
-            })
+            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
+            .unwrap_or_else(|| unreachable!("Definition does not have a valid file descriptor"))
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
@@ -459,9 +459,8 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map_or(FileDescriptor::Unknown, |file| {
-                FileDescriptor::from_string(self.owner.stack_graph[file].name())
-            })
+            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
+            .unwrap_or_else(|| unreachable!("Reference does not have a valid file descriptor"))
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {

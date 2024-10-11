@@ -28,10 +28,9 @@ pub(crate) fn render_bindings(
             buffer.push(b'\n');
         }
 
-        let part_references = bindings.all_references().filter(|reference| {
-            let ref_file = reference.get_file();
-            ref_file.is_user() && ref_file.get_path().unwrap() == part.path
-        });
+        let part_references = bindings
+            .all_references()
+            .filter(|reference| reference.get_file().is_user_path(part.path));
         let (bindings_report, part_all_resolved) =
             build_report_for_part(part, &all_definitions, part_references);
         all_resolved = all_resolved && part_all_resolved;
@@ -90,8 +89,7 @@ fn build_report_for_part<'a>(
         let Some(cursor) = definition.get_cursor() else {
             continue;
         };
-        let def_file = definition.get_file();
-        if !def_file.is_user() || def_file.get_path().unwrap() != part.path {
+        if !definition.get_file().is_user_path(part.path) {
             continue;
         }
 

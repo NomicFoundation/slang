@@ -87,7 +87,7 @@ impl<'a> fmt::Display for DefinitionAssertion<'a> {
             f,
             "Assert Definition {id} {cursor}",
             id = self.id,
-            cursor = DisplayCursor(&self.cursor, Some(self.file)),
+            cursor = DisplayCursor(&self.cursor, self.file),
         )
     }
 }
@@ -103,11 +103,11 @@ impl<'a> fmt::Display for ReferenceAssertion<'a> {
         if let Some(version_req) = &self.version_req {
             write!(f, " in versions {version_req}")?;
         }
-        write!(f, " {}", DisplayCursor(&self.cursor, Some(self.file)))
+        write!(f, " {}", DisplayCursor(&self.cursor, self.file))
     }
 }
 
-struct DisplayCursor<'a>(&'a Cursor, Option<&'a str>);
+struct DisplayCursor<'a>(&'a Cursor, &'a str);
 
 impl<'a> fmt::Display for DisplayCursor<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -116,7 +116,7 @@ impl<'a> fmt::Display for DisplayCursor<'a> {
             f,
             "`{}` at {}:{}:{}",
             self.0.node().unparse(),
-            self.1.unwrap_or("<unknown_file>"),
+            self.1,
             offset.line + 1,
             offset.column + 1,
         )

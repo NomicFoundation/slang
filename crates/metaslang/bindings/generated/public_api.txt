@@ -3,12 +3,12 @@
 pub mod metaslang_bindings
 pub enum metaslang_bindings::FileDescriptor
 pub metaslang_bindings::FileDescriptor::System(alloc::string::String)
-pub metaslang_bindings::FileDescriptor::Unknown
 pub metaslang_bindings::FileDescriptor::User(alloc::string::String)
 impl metaslang_bindings::FileDescriptor
-pub fn metaslang_bindings::FileDescriptor::get_path(&self) -> core::option::Option<&str>
+pub fn metaslang_bindings::FileDescriptor::get_path(&self) -> &str
 pub fn metaslang_bindings::FileDescriptor::is_system(&self) -> bool
 pub fn metaslang_bindings::FileDescriptor::is_user(&self) -> bool
+pub fn metaslang_bindings::FileDescriptor::is_user_path(&self, path: &str) -> bool
 pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
 pub metaslang_bindings::ResolutionError::Unresolved
@@ -56,4 +56,4 @@ pub fn metaslang_bindings::Reference<'_, KT>::eq(&self, other: &Self) -> bool
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub trait metaslang_bindings::PathResolver
-pub fn metaslang_bindings::PathResolver::resolve_path(&self, context_path: &metaslang_bindings::FileDescriptor, path_to_resolve: &str) -> metaslang_bindings::FileDescriptor
+pub fn metaslang_bindings::PathResolver::resolve_path(&self, context_path: &str, path_to_resolve: &str) -> core::option::Option<alloc::string::String>
