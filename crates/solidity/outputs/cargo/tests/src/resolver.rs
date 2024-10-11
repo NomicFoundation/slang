@@ -1,20 +1,20 @@
-use metaslang_bindings::{FileKind, PathResolver};
+use metaslang_bindings::{FileDescriptor, PathResolver};
 
 pub struct TestsPathResolver;
 
 impl PathResolver for TestsPathResolver {
-    fn resolve_path(&self, context_path: &FileKind, path_to_resolve: &str) -> FileKind {
-        let FileKind::User(context_path) = context_path else {
-            return FileKind::Unknown;
+    fn resolve_path(&self, context_path: &FileDescriptor, path_to_resolve: &str) -> FileDescriptor {
+        let FileDescriptor::User(context_path) = context_path else {
+            return FileDescriptor::Unknown;
         };
         if is_relative_path(path_to_resolve) {
             // Relative import: the actual path will be computed using the
             // context path (ie. the path of the importing source unit)
             normalize_path(path_to_resolve, get_parent_path(context_path))
-                .map_or(FileKind::Unknown, FileKind::User)
+                .map_or(FileDescriptor::Unknown, FileDescriptor::User)
         } else {
             // Direct import: this path will be used as-is
-            FileKind::User(path_to_resolve.to_string())
+            FileDescriptor::User(path_to_resolve.to_string())
         }
     }
 }

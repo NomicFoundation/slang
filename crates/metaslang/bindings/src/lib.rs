@@ -55,13 +55,13 @@ pub struct Bindings<KT: KindTypes + 'static> {
     context: Option<GraphHandle>,
 }
 
-pub enum FileKind {
+pub enum FileDescriptor {
     Unknown,
     User(String),
     System(String),
 }
 
-impl FileKind {
+impl FileDescriptor {
     // Internal functions to convert a FileKind to a string for representation inside the stack graph
     pub(crate) fn as_string(&self) -> String {
         self.as_string_or_else(|| unreachable!("cannot convert an Unknown file kind to string"))
@@ -77,11 +77,11 @@ impl FileKind {
 
     pub(crate) fn from_string(value: &str) -> Self {
         if let Some(path) = value.strip_prefix("user:") {
-            FileKind::User(path.into())
+            FileDescriptor::User(path.into())
         } else if let Some(path) = value.strip_prefix("system:") {
-            FileKind::System(path.into())
+            FileDescriptor::System(path.into())
         } else {
-            FileKind::Unknown
+            FileDescriptor::Unknown
         }
     }
 
@@ -103,7 +103,7 @@ impl FileKind {
 }
 
 pub trait PathResolver {
-    fn resolve_path(&self, context_path: &FileKind, path_to_resolve: &str) -> FileKind;
+    fn resolve_path(&self, context_path: &FileDescriptor, path_to_resolve: &str) -> FileDescriptor;
 }
 
 impl<KT: KindTypes + 'static> Bindings<KT> {
@@ -131,13 +131,13 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let file_kind = FileKind::System(file_path.into());
+        let file_kind = FileDescriptor::System(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let file_kind = FileKind::User(file_path.into());
+        let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
@@ -148,7 +148,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let file_kind = FileKind::User(file_path.into());
+        let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
         let result = self.add_file_internal(file, tree_cursor);
         result.graph
@@ -333,7 +333,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
     cursor: &'a Cursor<KT>,
-    file: FileKind,
+    file: FileDescriptor,
 }
 
 impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
@@ -368,11 +368,11 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .and_then(|info| info.definiens.clone())
     }
 
-    pub fn get_file(&self) -> FileKind {
+    pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map_or(FileKind::Unknown, |file| {
-                FileKind::from_string(self.owner.stack_graph[file].name())
+            .map_or(FileDescriptor::Unknown, |file| {
+                FileDescriptor::from_string(self.owner.stack_graph[file].name())
             })
     }
 
@@ -456,11 +456,11 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn get_file(&self) -> FileKind {
+    pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map_or(FileKind::Unknown, |file| {
-                FileKind::from_string(self.owner.stack_graph[file].name())
+            .map_or(FileDescriptor::Unknown, |file| {
+                FileDescriptor::from_string(self.owner.stack_graph[file].name())
             })
     }
 

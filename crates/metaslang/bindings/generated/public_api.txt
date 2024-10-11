@@ -1,14 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 pub mod metaslang_bindings
-pub enum metaslang_bindings::FileKind
-pub metaslang_bindings::FileKind::System(alloc::string::String)
-pub metaslang_bindings::FileKind::Unknown
-pub metaslang_bindings::FileKind::User(alloc::string::String)
-impl metaslang_bindings::FileKind
-pub fn metaslang_bindings::FileKind::get_path(&self) -> core::option::Option<&str>
-pub fn metaslang_bindings::FileKind::is_system(&self) -> bool
-pub fn metaslang_bindings::FileKind::is_user(&self) -> bool
+pub enum metaslang_bindings::FileDescriptor
+pub metaslang_bindings::FileDescriptor::System(alloc::string::String)
+pub metaslang_bindings::FileDescriptor::Unknown
+pub metaslang_bindings::FileDescriptor::User(alloc::string::String)
+impl metaslang_bindings::FileDescriptor
+pub fn metaslang_bindings::FileDescriptor::get_path(&self) -> core::option::Option<&str>
+pub fn metaslang_bindings::FileDescriptor::is_system(&self) -> bool
+pub fn metaslang_bindings::FileDescriptor::is_user(&self) -> bool
 pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
 pub metaslang_bindings::ResolutionError::Unresolved
@@ -29,7 +29,7 @@ pub struct metaslang_bindings::Definition<'a, KT: metaslang_cst::kinds::KindType
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Definition<'a, KT>::get_definiens_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
-pub fn metaslang_bindings::Definition<'a, KT>::get_file(&self) -> metaslang_bindings::FileKind
+pub fn metaslang_bindings::Definition<'a, KT>::get_file(&self) -> metaslang_bindings::FileDescriptor
 pub fn metaslang_bindings::Definition<'a, KT>::to_handle(self) -> metaslang_bindings::DefinitionHandle
 impl<'a, KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::clone(&self) -> metaslang_bindings::Definition<'a, KT>
@@ -47,7 +47,7 @@ pub struct metaslang_bindings::Reference<'a, KT: metaslang_cst::kinds::KindTypes
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
-pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> metaslang_bindings::FileKind
+pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> metaslang_bindings::FileDescriptor
 pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::result::Result<metaslang_bindings::Definition<'a, KT>, metaslang_bindings::ResolutionError<'a, KT>>
 impl<'a, KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>
@@ -56,4 +56,4 @@ pub fn metaslang_bindings::Reference<'_, KT>::eq(&self, other: &Self) -> bool
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Reference<'_, KT>
 pub fn metaslang_bindings::Reference<'_, KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub trait metaslang_bindings::PathResolver
-pub fn metaslang_bindings::PathResolver::resolve_path(&self, context_path: &metaslang_bindings::FileKind, path_to_resolve: &str) -> metaslang_bindings::FileKind
+pub fn metaslang_bindings::PathResolver::resolve_path(&self, context_path: &metaslang_bindings::FileDescriptor, path_to_resolve: &str) -> metaslang_bindings::FileDescriptor

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use metaslang_bindings::{FileKind, PathResolver};
+use metaslang_bindings::{FileDescriptor, PathResolver};
 use slang_solidity::bindings::{create_with_resolver, get_built_ins, Bindings};
 use slang_solidity::parser::Parser;
 
@@ -22,7 +22,11 @@ pub fn run() -> Bindings {
 struct NoOpResolver;
 
 impl PathResolver for NoOpResolver {
-    fn resolve_path(&self, _context_path: &FileKind, path_to_resolve: &str) -> FileKind {
-        FileKind::User(path_to_resolve.to_string())
+    fn resolve_path(
+        &self,
+        _context_path: &FileDescriptor,
+        path_to_resolve: &str,
+    ) -> FileDescriptor {
+        FileDescriptor::User(path_to_resolve.to_string())
     }
 }

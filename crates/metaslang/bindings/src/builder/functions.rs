@@ -63,7 +63,7 @@ mod resolver {
     use metaslang_graph_builder::graph::{Graph, Value};
     use metaslang_graph_builder::ExecutionError;
 
-    use crate::{FileKind, PathResolver};
+    use crate::{FileDescriptor, PathResolver};
 
     pub fn add_functions<KT: KindTypes + 'static>(
         functions: &mut Functions<KT>,
@@ -87,7 +87,7 @@ mod resolver {
             let path_to_resolve = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            let context_path_kind = FileKind::from_string(&context_path);
+            let context_path_kind = FileDescriptor::from_string(&context_path);
             let resolved_path = self
                 .path_resolver
                 .as_ref()
@@ -114,7 +114,7 @@ mod resolver {
             let file_path = parameters.param()?.into_string()?;
             parameters.finish()?;
 
-            let is_system_file = FileKind::from_string(&file_path).is_system();
+            let is_system_file = FileDescriptor::from_string(&file_path).is_system();
             Ok(is_system_file.into())
         }
     }
