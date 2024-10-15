@@ -1,5 +1,13 @@
 # changelog
 
+## 0.18.2
+
+### Patch Changes
+
+-   [#1126](https://github.com/NomicFoundation/slang/pull/1126) [`e1d9748`](https://github.com/NomicFoundation/slang/commit/e1d974860d5ea7d8e6a700ba126ef7d3e08254f0) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix wasm type exports for the npm package
+
+-   [#1122](https://github.com/NomicFoundation/slang/pull/1122) [`bbb5323`](https://github.com/NomicFoundation/slang/commit/bbb53231efac2b46e3add2c007aaba81e4699b8c) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support Solidity `0.8.28` release
+
 ## 0.18.1
 
 ### Patch Changes
