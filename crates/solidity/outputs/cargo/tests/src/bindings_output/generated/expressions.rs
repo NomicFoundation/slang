@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn call_options() -> Result<()> {
+    run("expressions", "call_options")
+}
+
+#[test]
 fn emit_named_args() -> Result<()> {
     run("expressions", "emit_named_args")
 }
