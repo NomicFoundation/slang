@@ -17,6 +17,7 @@ use stack_graphs::graph::StackGraph;
 
 type Builder<'a, KT> = builder::Builder<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
+type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 pub struct DefinitionHandle(GraphHandle);
 
@@ -54,6 +55,54 @@ pub struct Bindings<KT: KindTypes + 'static> {
     context: Option<GraphHandle>,
 }
 
+pub enum FileDescriptor {
+    User(String),
+    System(String),
+}
+
+pub(crate) struct FileDescriptorError;
+
+impl FileDescriptor {
+    // Internal functions to convert a FileDescriptor to and from a string for
+    // representation inside the stack graph
+
+    pub(crate) fn as_string(&self) -> String {
+        match self {
+            Self::User(path) => format!("user:{path}"),
+            Self::System(path) => format!("system:{path}"),
+        }
+    }
+
+    pub(crate) fn from_string(value: &str) -> Result<Self, FileDescriptorError> {
+        if let Some(path) = value.strip_prefix("user:") {
+            Ok(FileDescriptor::User(path.into()))
+        } else if let Some(path) = value.strip_prefix("system:") {
+            Ok(FileDescriptor::System(path.into()))
+        } else {
+            Err(FileDescriptorError)
+        }
+    }
+
+    pub fn get_path(&self) -> &str {
+        match self {
+            Self::User(path) => path,
+            Self::System(path) => path,
+        }
+    }
+
+    pub fn is_system(&self) -> bool {
+        matches!(self, Self::System(_))
+    }
+
+    pub fn is_user(&self) -> bool {
+        matches!(self, Self::User(_))
+    }
+
+    pub fn is_user_path(&self, path: &str) -> bool {
+        matches!(self, Self::User(user_path) if user_path == path)
+    }
+}
+
 pub trait PathResolver {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String>;
 }
@@ -82,23 +131,31 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
     }
 
-    pub fn add_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        _ = self.add_file_internal(file_path, tree_cursor);
+    pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileDescriptor::System(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        _ = self.add_file_internal(file, tree_cursor);
+    }
+
+    pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
+        let file_kind = FileDescriptor::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        _ = self.add_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
-    pub fn add_file_returning_graph(
+    pub fn add_user_file_returning_graph(
         &mut self,
         file_path: &str,
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
-        let result = self.add_file_internal(file_path, tree_cursor);
+        let file_kind = FileDescriptor::User(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
 
-    fn add_file_internal(&mut self, file_path: &str, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
-        let file = self.stack_graph.get_or_create_file(file_path);
-
+    fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
         let builder = Builder::new(
             &self.graph_builder_file,
             &self.functions,
@@ -277,7 +334,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
     cursor: &'a Cursor<KT>,
-    file: Option<&'a str>,
+    file: FileDescriptor,
 }
 
 impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
@@ -287,7 +344,7 @@ impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
             f,
             "`{}` at {}:{}:{}",
             self.cursor.node().unparse(),
-            self.file.unwrap_or("<unknown_file>"),
+            self.file.get_path(),
             offset.line + 1,
             offset.column + 1,
         )
@@ -312,10 +369,11 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .and_then(|info| info.definiens.clone())
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
+            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
+            .unwrap_or_else(|| unreachable!("Definition does not have a valid file descriptor"))
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
@@ -398,10 +456,11 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         self.owner.cursors.get(&self.handle).cloned()
     }
 
-    pub fn get_file(&self) -> Option<&'a str> {
+    pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .map(|file| self.owner.stack_graph[file].name())
+            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
+            .unwrap_or_else(|| unreachable!("Reference does not have a valid file descriptor"))
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {

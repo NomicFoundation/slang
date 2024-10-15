@@ -12,5 +12,5 @@ fn main() -> Result<()> {
     let output_dir =
         CargoWorkspace::locate_source_crate("solidity_npm_package")?.join("src/generated");
 
-    RuntimeGenerator::generate_product(&language, &input_dir, &output_dir)
+    RuntimeGenerator::generate_product(&language, &input_dir, &output_dir).map(|_| ())
 }

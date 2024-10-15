@@ -1,0 +1,24 @@
+use semver::Version;
+
+#[allow(unused_variables)]
+pub fn get_contents(version: &Version) -> &'static str {
+    {%- if not rendering_in_stubs -%}
+        {%- for version in model.bindings.built_ins_versions %}
+            {%- if not loop.first -%}
+                if *version < Version::new({{ version | split(pat=".") | join(sep=", ") }}) {
+                    include_str!("./built_ins/{{ prev_version }}{{ model.bindings.file_extension }}")
+                } else
+            {% endif %}
+            {% if loop.last %}
+                {
+                    include_str!("./built_ins/{{ version }}{{ model.bindings.file_extension }}")
+                }
+            {% endif %}
+            {% set_global prev_version = version %}
+        {%- else -%}
+            ""
+        {%- endfor -%}
+    {%- else -%}
+        unreachable!("Built-ins not defined in stubs")
+    {%- endif -%}
+}

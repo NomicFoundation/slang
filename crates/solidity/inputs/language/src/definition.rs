@@ -4,6 +4,7 @@ codegen_language_macros::compile!(Language(
     name = Solidity,
     documentation_dir = "crates/solidity/inputs/language/docs",
     binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
+    file_extension = ".sol",
     root_item = SourceUnit,
     // TODO(#1020): Define the end-of-file trivia explicitly rather than
     // implicitly reusing the leading trivia in the generater parser code.
@@ -6617,5 +6618,46 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )
+    ],
+    built_ins = [
+        BuiltInFunction(
+            name = "addmod",
+            parameters = ["uint x", "uint y", "uint k"],
+            return_type = "uint"
+        ),
+        BuiltInFunction(name = "assert", parameters = ["bool condition"]),
+        BuiltInFunction(
+            name = "require",
+            parameters = ["bool condition"],
+            enabled = From("0.5.0")
+        ),
+        BuiltInFunction(
+            name = "require",
+            parameters = ["bool condition", "string memory message"],
+            enabled = From("0.5.0")
+        ),
+        BuiltInFunction(name = "revert", parameters = ["string memory reason"]),
+        BuiltInType(
+            name = "$BuiltIn$Address",
+            fields = [
+                BuiltInField(definition = "uint256 balance"),
+                BuiltInField(definition = "bytes code", enabled = From("0.8.0"))
+            ],
+            functions = [BuiltInFunction(
+                name = "send",
+                parameters = ["uint256 amount"],
+                return_type = "bool"
+            )]
+        ),
+        BuiltInType(
+            name = "$BuiltIn$TxType",
+            fields = [
+                BuiltInField(definition = "uint gasprice"),
+                BuiltInField(definition = "address payable origin")
+            ],
+            functions = []
+        ),
+        BuiltInVariable(definition = "uint now"),
+        BuiltInVariable(definition = "$BuiltIn$TxType tx")
     ]
 ));
