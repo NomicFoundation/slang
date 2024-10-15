@@ -14,8 +14,10 @@ pub fn get_contents(version: &Version) -> &'static str {
         include_str!("./built_ins/0.5.0.sol")
     } else if *version < Version::new(0, 6, 0) {
         include_str!("./built_ins/0.5.3.sol")
-    } else if *version < Version::new(0, 6, 7) {
+    } else if *version < Version::new(0, 6, 2) {
         include_str!("./built_ins/0.6.0.sol")
+    } else if *version < Version::new(0, 6, 7) {
+        include_str!("./built_ins/0.6.2.sol")
     } else if *version < Version::new(0, 6, 8) {
         include_str!("./built_ins/0.6.7.sol")
     } else if *version < Version::new(0, 7, 0) {

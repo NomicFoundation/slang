@@ -6874,6 +6874,16 @@ codegen_language_macros::compile!(Language(
             )]
         ),
         BuiltInType(
+            name = "$callOptions",
+            fields = [
+                BuiltInField(definition = "uint gas"),
+                BuiltInField(definition = "uint salt"),
+                BuiltInField(definition = "uint value")
+            ],
+            functions = [],
+            enabled = From("0.6.2")
+        ),
+        BuiltInType(
             name = "$function",
             fields = [
                 BuiltInField(definition = "$address $address", enabled = From("0.8.2")),

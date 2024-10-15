@@ -55,6 +55,11 @@ contract $BuiltIns$ {
   struct $bytes {
     function($args) returns (bytes memory) concat;
   }
+  struct $callOptions {
+    uint gas;
+    uint salt;
+    uint value;
+  }
   struct $function {
     $address $address;
     $selector selector;

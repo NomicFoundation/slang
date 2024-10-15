@@ -1915,13 +1915,26 @@ inherit .parent_scope
 
 ;;; Call options
 
-@expr [Expression [CallOptionsExpression @operand [Expression]]] {
+@expr [Expression [CallOptionsExpression @operand [Expression] @options [CallOptions]]] {
   edge @expr.output -> @operand.output
+
+  node @options.refs
+  attr (@options.refs) push_symbol = "@param_names"
+
+  node call_options
+  attr (call_options) push_symbol = "%callOptions"
+
+  edge @options.refs -> call_options
+  edge call_options -> @expr.lexical_scope
 }
 
-@expr [Expression [CallOptionsExpression options: [CallOptions @named_arg [NamedArgument]]]] {
+@expr [Expression [CallOptionsExpression
+    @options [CallOptions @named_arg [NamedArgument]]
+]] {
   edge @named_arg.lexical_scope -> @expr.lexical_scope
+  edge @named_arg.ref -> @options.refs
 }
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
