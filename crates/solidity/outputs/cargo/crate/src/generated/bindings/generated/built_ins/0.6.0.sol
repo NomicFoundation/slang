@@ -74,7 +74,7 @@ contract $BuiltIns$ {
     bytes creationCode;
     bytes runtimeCode;
   }
-  $function _;
+  $function $placeholder;
   $abiType abi;
   $blockType block;
   $msgType msg;

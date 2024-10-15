@@ -80,7 +80,7 @@ contract $BuiltIns$ {
     bytes runtimeCode;
     bytes4 interfaceId;
   }
-  $function _;
+  $function $placeholder;
   $abiType abi;
   $blockType block;
   $msgType msg;

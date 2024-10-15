@@ -6952,7 +6952,7 @@ codegen_language_macros::compile!(Language(
             ],
             functions = []
         ),
-        BuiltInVariable(definition = "$function _"),
+        BuiltInVariable(definition = "$function $placeholder"),
         BuiltInVariable(definition = "$abiType abi"),
         BuiltInVariable(definition = "$blockType block"),
         BuiltInVariable(definition = "$msgType msg"),

@@ -79,7 +79,7 @@ contract $BuiltIns$ {
     int min;
     int max;
   }
-  $function _;
+  $function $placeholder;
   $abiType abi;
   $blockType block;
   $msgType msg;

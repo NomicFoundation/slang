@@ -65,7 +65,7 @@ contract $BuiltIns$ {
   struct $type {
     string name;
   }
-  $function _;
+  $function $placeholder;
   $abiType abi;
   $blockType block;
   $msgType msg;
