@@ -1,9 +1,9 @@
 use slang_solidity::bindings::Bindings;
 
 pub fn setup() -> Bindings {
-    let trees = super::definitions::setup();
+    let dependencies = super::definitions::setup();
 
-    super::definitions::run(&trees)
+    super::definitions::run(dependencies)
 }
 
 pub fn run(bindings: &Bindings) {

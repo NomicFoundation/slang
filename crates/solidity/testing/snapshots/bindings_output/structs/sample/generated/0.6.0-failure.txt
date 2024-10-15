@@ -112,24 +112,24 @@ References and definitions:
     │                                               │    │     │       │     │    │    
     │                                               ╰────────────────────────────────── unresolved
     │                                                    │     │       │     │    │    
-    │                                                    ╰───────────────────────────── unresolved
+    │                                                    ╰───────────────────────────── ref: built-in
     │                                                          │       │     │    │    
-    │                                                          ╰─────────────────────── unresolved
+    │                                                          ╰─────────────────────── ref: built-in
     │                                                                  │     │    │    
     │                                                                  ╰─────────────── unresolved
     │                                                                        │    │    
-    │                                                                        ╰───────── unresolved
+    │                                                                        ╰───────── ref: built-in
     │                                                                             │    
-    │                                                                             ╰──── unresolved
+    │                                                                             ╰──── ref: built-in
  28 │         c.amount += msg.value;
     │         ┬ ───┬──    ─┬─ ──┬──  
     │         ╰────────────────────── ref: 20
     │              │       │    │    
     │              ╰───────────────── ref: 9
     │                      │    │    
-    │                      ╰───────── unresolved
+    │                      ╰───────── ref: built-in
     │                           │    
-    │                           ╰──── unresolved
+    │                           ╰──── ref: built-in
     │ 
  31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
     │              ────────┬───────      ─────┬────                       ───┬───  
@@ -175,7 +175,7 @@ References and definitions:
     │                │          │       │    
     │                ╰─────────────────────── ref: 6
     │                           │       │    
-    │                           ╰──────────── unresolved
+    │                           ╰──────────── ref: built-in
     │                                   │    
     │                                   ╰──── ref: 25
 ────╯

@@ -41,10 +41,10 @@ impl CodegenRuntime {
     }
 
     pub fn render_product(
-        &mut self,
+        mut self,
         model: impl Serialize,
         output_dir: impl AsRef<Path>,
-    ) -> Result<()> {
+    ) -> Result<CodegenFileSystem> {
         let context = tera::Context::from_serialize(model)?;
         let output_dir = output_dir.as_ref();
 
@@ -75,7 +75,7 @@ impl CodegenRuntime {
             }
         }
 
-        Ok(())
+        Ok(self.fs)
     }
 
     fn get_stub_path(template_path: &Path) -> PathBuf {

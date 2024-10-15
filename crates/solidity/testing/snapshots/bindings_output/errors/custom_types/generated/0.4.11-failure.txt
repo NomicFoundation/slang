@@ -44,7 +44,7 @@ References and definitions:
     │                ╰─── def: 6
  13 │         revert Failure(Severity.ERROR, "Testing");
     │         ───┬── ───┬───  
-    │            ╰──────────── unresolved
+    │            ╰──────────── ref: built-in
     │                   │     
     │                   ╰───── def: 7
 ────╯

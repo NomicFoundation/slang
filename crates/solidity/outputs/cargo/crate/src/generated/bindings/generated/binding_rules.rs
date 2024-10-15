@@ -30,10 +30,27 @@ inherit .parent_scope
   ;; This provides all the exported symbols from the file
   node @source_unit.defs
 
+  ;; Connect to ROOT_NODE to export our symbols
   node export
-  attr (export) pop_symbol = FILE_PATH
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
+
+  if (is-system-file FILE_PATH) {
+    ; If this is a system file (aka. built-ins), export everything through this
+    ; special symbol (which is automatically imported below)
+    attr (export) pop_symbol = "@@built-ins@@"
+
+  } else {
+    ; This is a user file, so we want to export under the file's path symbol
+    attr (export) pop_symbol = FILE_PATH
+
+    ; ... and also import the global built-ins
+    node built_ins
+    attr (built_ins) push_symbol = "@@built-ins@@"
+
+    edge @source_unit.lexical_scope -> built_ins
+    edge built_ins -> ROOT_NODE
+  }
 
   let @source_unit.enclosing_def = #null
 
@@ -63,6 +80,22 @@ inherit .parent_scope
   edge @source_unit.defs -> @unit_member.def
 }
 
+;; Special case for built-ins: we want to export all symbols in the contract:
+;; functions, types and state variables. All built-in symbols are defined in an
+;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
+;; to export all its members and type members directly as a source unit
+;; definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
+]] {
+  if (is-system-file FILE_PATH) {
+    edge @source_unit.defs -> @contract.members
+    edge @source_unit.defs -> @contract.type_members
+    edge @source_unit.defs -> @contract.state_vars
+  }
+}
+
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
   let @using.lexical_scope = @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @using.def
@@ -85,9 +118,9 @@ inherit .parent_scope
          )]
      ]]
 ]] {
-   node @import.defs
-   edge @source_unit.defs -> @import.defs
-   edge @source_unit.lexical_scope -> @import.defs
+  node @import.defs
+  edge @source_unit.defs -> @import.defs
+  edge @source_unit.lexical_scope -> @import.defs
 }
 
 
@@ -262,9 +295,11 @@ inherit .parent_scope
   node @contract.members
   node @contract.type_members
   node @contract.modifiers
+  node @contract.state_vars
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
+  edge @contract.lexical_scope -> @contract.state_vars
 
   ;; Modifiers are available as a contract type members through a special '@modifier' symbol
   node modifier
@@ -391,25 +426,22 @@ inherit .parent_scope
 }
 
 @contract [ContractDefinition [ContractMembers
-    [ContractMember @member (
-          [FunctionDefinition]
-        | [StateVariableDefinition]
-    )]
+    [ContractMember @state_var [StateVariableDefinition]]
 ]] {
-  edge @contract.lexical_scope -> @member.def
+  edge @contract.state_vars -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
-@contract [ContractDefinition [ContractMembers [ContractMember
-    @state_var [StateVariableDefinition
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @state_var [StateVariableDefinition
         [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
-    ]
-]]] {
+    ]]
+]] {
   edge @contract.members -> @state_var.def
 }
 
-@contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @function variant: [FunctionDefinition]]
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition]]
 ]] {
   ;; Contract functions are also accessible for an instance of the contract
   edge @contract.members -> @function.def
@@ -420,8 +452,17 @@ inherit .parent_scope
   attr (@function.def) parents = [@contract.def]
 }
 
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition
+        [FunctionAttributes [FunctionAttribute ([ExternalKeyword] | [PublicKeyword])]]
+    ]]
+]] {
+  ; public or external functions are also accessible through the contract type
+  edge @contract.type_members -> @function.def
+}
+
 @contract [ContractDefinition members: [ContractMembers
-    item: [ContractMember @modifier variant: [ModifierDefinition]]
+    [ContractMember @modifier [ModifierDefinition]]
 ]] {
   edge @contract.modifiers -> @modifier.def
 
@@ -489,6 +530,7 @@ inherit .parent_scope
 @interface [InterfaceDefinition [InterfaceMembers
     [ContractMember @member (
           [EnumDefinition]
+        | [FunctionDefinition]
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
@@ -499,6 +541,8 @@ inherit .parent_scope
   edge @interface.type_members -> @member.def
 }
 
+;; Allow references (eg. variables of the interface type) to the interface to
+;; access functions
 @interface [InterfaceDefinition members: [InterfaceMembers
     item: [ContractMember @function variant: [FunctionDefinition]]
 ]] {
@@ -527,15 +571,12 @@ inherit .parent_scope
 }
 
 @library [LibraryDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @library
-
-  edge @library.def -> def
+  attr (@library.def) node_definition = @name
+  attr (@library.def) definiens_node = @library
 
   node member
   attr (member) pop_symbol = "."
-  edge def -> member
+  edge @library.def -> member
 
   edge member -> @library.members
 }
@@ -757,13 +798,17 @@ inherit .parent_scope
 }
 
 @array [ArrayTypeName @type_name [TypeName]] {
-  ; This path pushes the array type to the symbol stack (ie. the [] marker +
-  ; element type)
+  ; We push the array type `%array` to the symbol stack (such that we can use
+  ; generic array built-ins) and the specific type of the array for more
+  ; detailed resolution (eg. a `using` directive).
   node array_type
-  attr (array_type) push_symbol = "%[]"
+  attr (array_type) push_symbol = "%array"
 
   edge @array.output -> array_type
+  ; Connect to the array value type
   edge array_type -> @type_name.output
+  ; ... and also to the lexical scope directly (to resolve a "generic" array)
+  edge array_type -> @array.lexical_scope
 
   ; Provide an index access `[]` operator that "returns" the type of the
   ; elements of the array
@@ -786,7 +831,7 @@ inherit .parent_scope
 
   ; the pop path for the using directive
   node pop_array_type
-  attr (pop_array_type) pop_symbol = "%[]"
+  attr (pop_array_type) pop_symbol = "%array"
 
   let @array.pop_begin = @type_name.pop_begin
   edge @type_name.pop_end -> pop_array_type
@@ -1519,7 +1564,6 @@ inherit .parent_scope
   attr (@state_var.def) node_definition = @name
   attr (@state_var.def) definiens_node = @state_var
 
-  edge @state_var.def -> @state_var.def
   edge @type_name.type_ref -> @state_var.lexical_scope
 
   node typeof
@@ -1804,6 +1848,15 @@ inherit .parent_scope
 ;; Type expressions
 @type_expr [Expression [TypeExpression @type [TypeName]]] {
   edge @type.type_ref -> @type_expr.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type
+  attr (type) push_symbol = "%type"
+
+  edge @type_expr.output -> typeof
+  edge typeof -> type
+  edge type -> @type_expr.lexical_scope
 }
 
 ;; New expressions

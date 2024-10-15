@@ -15,14 +15,14 @@ References and definitions:
     │                    ╰───────────────────── def: 3
     │                                     │    
     │                                     ╰──── def: 4
-  5 │         require(_addr != address(0), "Not valid address");
-    │         ───┬─── ──┬──  
-    │            ╰─────────── unresolved
-    │                   │    
-    │                   ╰──── ref: 4
+  5 │         assert(_addr != address(0));
+    │         ───┬── ──┬──  
+    │            ╰────────── ref: built-in
+    │                  │    
+    │                  ╰──── ref: 4
   6 │         _;
     │         ┬  
-    │         ╰── unresolved
+    │         ╰── ref: built-in
     │ 
   9 │     function changeOwner(address _newOwner)
     │              ─────┬─────         ────┬────  

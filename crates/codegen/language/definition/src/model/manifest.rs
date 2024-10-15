@@ -6,7 +6,7 @@ use indexmap::IndexSet;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
+use crate::model::{BuiltIn, Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -15,6 +15,7 @@ pub struct Language {
 
     pub documentation_dir: PathBuf,
     pub binding_rules_file: PathBuf,
+    pub file_extension: Option<String>,
 
     pub root_item: Identifier,
 
@@ -24,6 +25,7 @@ pub struct Language {
     pub versions: IndexSet<Version>,
 
     pub sections: Vec<Section>,
+    pub built_ins: Vec<BuiltIn>,
 }
 
 impl Language {
@@ -99,6 +101,47 @@ impl Language {
                 }
                 Item::Fragment { item } => add_spec(&item.enabled),
                 Item::Trivia { .. } => {}
+            }
+        }
+
+        res
+    }
+
+    /// Collects all versions that change the language built-ins.
+    ///
+    /// Includes the first supported version. Returns an empty set if there are
+    /// no built-ins defined.
+    pub fn collect_built_ins_versions(&self) -> BTreeSet<Version> {
+        if self.built_ins.is_empty() {
+            return BTreeSet::new();
+        }
+
+        let first = self.versions.first().unwrap().clone();
+        let mut res = BTreeSet::from_iter([first]);
+
+        let mut add_spec = |spec: &Option<VersionSpecifier>| {
+            if let Some(spec) = spec {
+                res.extend(spec.versions().cloned());
+            }
+        };
+
+        for item in &self.built_ins {
+            match item {
+                BuiltIn::BuiltInFunction { item } => {
+                    add_spec(&item.enabled);
+                }
+                BuiltIn::BuiltInType { item } => {
+                    add_spec(&item.enabled);
+                    for field in &item.fields {
+                        add_spec(&field.enabled);
+                    }
+                    for function in &item.functions {
+                        add_spec(&function.enabled);
+                    }
+                }
+                BuiltIn::BuiltInVariable { item } => {
+                    add_spec(&item.enabled);
+                }
             }
         }
 

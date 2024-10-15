@@ -2,7 +2,7 @@ contract FunctionModifier {
     bool public locked;
 
     modifier noReentrancy() {
-        require(!locked, "No reentrancy");
+        assert(!locked);
 
         locked = true;
         _;

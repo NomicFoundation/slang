@@ -1,0 +1,88 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Sample {}
+    │          ───┬──  
+    │             ╰──── def: 1
+    │ 
+  3 │ interface ISample {}
+    │           ───┬───  
+    │              ╰───── def: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 3
+  6 │     enum Direction { North, South, West, East }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── def: 4
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── def: 5
+    │                               │      │     │   
+    │                               ╰──────────────── def: 6
+    │                                      │     │   
+    │                                      ╰───────── def: 7
+    │                                            │   
+    │                                            ╰─── def: 8
+    │ 
+  8 │         function test() public {
+    │                  ──┬─  
+    │                    ╰─── def: 9
+  9 │         string memory v1 = type(Sample).name;
+    │                       ─┬        ───┬──  ──┬─  
+    │                        ╰────────────────────── def: 10
+    │                                    │      │   
+    │                                    ╰────────── ref: 1
+    │                                           │   
+    │                                           ╰─── ref: built-in
+ 10 │         bytes memory v2 = type(Sample).creationCode;
+    │                      ─┬        ───┬──  ──────┬─────  
+    │                       ╰────────────────────────────── def: 11
+    │                                   │          │       
+    │                                   ╰────────────────── ref: 1
+    │                                              │       
+    │                                              ╰─────── ref: built-in
+ 11 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                      ─┬        ───┬──  ─────┬─────  
+    │                       ╰───────────────────────────── def: 12
+    │                                   │         │       
+    │                                   ╰───────────────── ref: 1
+    │                                             │       
+    │                                             ╰─────── ref: built-in
+ 12 │         bytes4 v4 = type(ISample).interfaceId;
+    │                ─┬        ───┬───  ─────┬─────  
+    │                 ╰────────────────────────────── def: 13
+    │                             │          │       
+    │                             ╰────────────────── ref: 2
+    │                                        │       
+    │                                        ╰─────── unresolved
+ 13 │         Direction v5 = type(Direction).min;
+    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │             ╰─────────────────────────────── ref: 4
+    │                    │            │       │   
+    │                    ╰──────────────────────── def: 14
+    │                                 │       │   
+    │                                 ╰─────────── ref: 4
+    │                                         │   
+    │                                         ╰─── unresolved
+ 14 │         Direction v6 = type(Direction).max;
+    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │             ╰─────────────────────────────── ref: 4
+    │                    │            │       │   
+    │                    ╰──────────────────────── def: 15
+    │                                 │       │   
+    │                                 ╰─────────── ref: 4
+    │                                         │   
+    │                                         ╰─── unresolved
+ 15 │         uint v7 = type(uint).min;
+    │              ─┬              ─┬─  
+    │               ╰─────────────────── def: 16
+    │                               │   
+    │                               ╰─── unresolved
+ 16 │         uint v8 = type(uint).max;
+    │              ─┬              ─┬─  
+    │               ╰─────────────────── def: 17
+    │                               │   
+    │                               ╰─── unresolved
+────╯
