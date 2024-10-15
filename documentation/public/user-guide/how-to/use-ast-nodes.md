@@ -1,4 +1,4 @@
-# Using the AST
+# Use AST Nodes
 
 Let's try to analyze the following Solidity source file, containing a simple function:
 
