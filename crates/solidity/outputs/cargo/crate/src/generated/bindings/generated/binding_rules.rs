@@ -1626,11 +1626,8 @@ inherit .parent_scope
 }
 
 @struct [StructDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @struct
-
-  edge @struct.def -> def
+  attr (@struct.def) node_definition = @name
+  attr (@struct.def) definiens_node = @struct
 
   node type_def
   attr (type_def) pop_symbol = "@typeof"
@@ -1638,9 +1635,15 @@ inherit .parent_scope
   node member
   attr (member) pop_symbol = "."
 
-  edge def -> type_def
+  edge @struct.def -> type_def
   edge type_def -> member
   edge member -> @struct.members
+
+  ; Bind member names when using construction with named arguments
+  node param_names
+  attr (param_names) pop_symbol = "@param_names"
+  edge @struct.def -> param_names
+  edge param_names -> @struct.members
 }
 
 @struct [StructDefinition [StructMembers @member item: [StructMember]]] {
