@@ -839,7 +839,7 @@ inherit .parent_scope
 }
 
 @array [ArrayTypeName @size index: [Expression]] {
-  edge @size.lexical_scope -> @array.lexical_scope
+  let @size.lexical_scope = @array.lexical_scope
 }
 
 
@@ -1287,7 +1287,7 @@ inherit .parent_scope
 }
 
 @expr_stmt [ExpressionStatement @expr [Expression]] {
-  edge @expr.lexical_scope -> @expr_stmt.lexical_scope
+  let @expr.lexical_scope = @expr_stmt.lexical_scope
 }
 
 
@@ -1306,7 +1306,7 @@ inherit .parent_scope
 @var_decl [VariableDeclarationStatement
     value: [VariableDeclarationValue @expr [Expression]]
 ] {
-  edge @expr.lexical_scope -> @var_decl.lexical_scope
+  let @expr.lexical_scope = @var_decl.lexical_scope
 }
 
 @var_decl [VariableDeclarationStatement
@@ -1343,7 +1343,7 @@ inherit .parent_scope
 @tuple_decon [TupleDeconstructionStatement
     @expr expression: [Expression]
 ] {
-  edge @expr.lexical_scope -> @tuple_decon.lexical_scope
+  let @expr.lexical_scope = @tuple_decon.lexical_scope
 }
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
@@ -1390,7 +1390,7 @@ inherit .parent_scope
 ;; If conditionals
 
 @stmt [Statement [IfStatement @condition condition: [Expression]]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
+  let @condition.lexical_scope = @stmt.lexical_scope
 }
 
 @stmt [Statement [IfStatement @body body: [Statement]]] {
@@ -1428,6 +1428,10 @@ inherit .parent_scope
 }
 
 @stmt [Statement [ForStatement @iter_expr iterator: [Expression]]] {
+  ; for the iterator expression we need an independent scope node that can
+  ; connect to both the for-statement *and* the definitions in the init
+  ; expression
+  node @iter_expr.lexical_scope
   edge @iter_expr.lexical_scope -> @stmt.lexical_scope
   edge @iter_expr.lexical_scope -> @stmt.init_defs
 }
@@ -1446,7 +1450,7 @@ inherit .parent_scope
 ;; While loops
 
 @stmt [Statement [WhileStatement @condition condition: [Expression]]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
+  let @condition.lexical_scope = @stmt.lexical_scope
 }
 
 @stmt [Statement [WhileStatement @body body: [Statement]]] {
@@ -1466,7 +1470,7 @@ inherit .parent_scope
 }
 
 @stmt [Statement [DoWhileStatement @condition condition: [Expression]]] {
-  edge @condition.lexical_scope -> @stmt.lexical_scope
+  let @condition.lexical_scope = @stmt.lexical_scope
 }
 
 
@@ -1477,7 +1481,7 @@ inherit .parent_scope
 ;;; Try-catch statements
 
 @stmt [Statement [TryStatement @expr expression: [Expression]]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
+  let @expr.lexical_scope = @stmt.lexical_scope
 }
 
 @stmt [Statement [TryStatement @body body: [Block]]] {
@@ -1535,7 +1539,7 @@ inherit .parent_scope
 
 ;;; Return
 @stmt [Statement [ReturnStatement @expr [Expression]]] {
-  edge @expr.lexical_scope -> @stmt.lexical_scope
+  let @expr.lexical_scope = @stmt.lexical_scope
 }
 
 ;;; Emit
@@ -1587,7 +1591,7 @@ inherit .parent_scope
 @state_var [StateVariableDefinition
     value: [StateVariableDefinitionValue @expr [Expression]]
 ] {
-  edge @expr.lexical_scope -> @state_var.lexical_scope
+  let @expr.lexical_scope = @state_var.lexical_scope
 }
 
 
@@ -1771,7 +1775,7 @@ inherit .parent_scope
 
   edge @constant.def -> def
 
-  edge @value.lexical_scope -> @constant.lexical_scope
+  let @value.lexical_scope = @constant.lexical_scope
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
@@ -1793,22 +1797,27 @@ inherit .parent_scope
 ;;; Expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Expressions have two important scoped variables:
+;; - @expr.lexical_scope should be set by the enclosing node to provide a scope
+;;   for name resolution
+;; - @expr.output is a node provided by the expression and represents the output
+;;   of the expression for chaining eg. with a member access
+
 @expr [Expression] {
-  node @expr.lexical_scope
-  ;; this is an output scope for use in member access
+  ;; this is an output scope for use in member access (and other uses)
   node @expr.output
 }
 
 ;; General case for nested expressions
 @expr [Expression variant: [_ @child [Expression]]] {
-  edge @child.lexical_scope -> @expr.lexical_scope
+  let @child.lexical_scope = @expr.lexical_scope
 }
 
 ;; Tuple expressions
 @tuple_expr [Expression [TupleExpression
     items: [TupleValues [TupleValue @expr [Expression]]]
 ]] {
-  edge @expr.lexical_scope -> @tuple_expr.lexical_scope
+  let @expr.lexical_scope = @tuple_expr.lexical_scope
 }
 
 ;; Identifier expressions
@@ -1893,13 +1902,13 @@ inherit .parent_scope
 @args [ArgumentsDeclaration [PositionalArgumentsDeclaration
     [PositionalArguments @argument [Expression]]
 ]] {
-  edge @argument.lexical_scope -> @args.lexical_scope
+  let @argument.lexical_scope = @args.lexical_scope
 }
 
 @named_arg [NamedArgument @name [Identifier] [Colon] @value [Expression]] {
   node @named_arg.lexical_scope
 
-  edge @value.lexical_scope -> @named_arg.lexical_scope
+  let @value.lexical_scope = @named_arg.lexical_scope
 
   node @named_arg.ref
   attr (@named_arg.ref) node_reference = @name
