@@ -10,7 +10,10 @@ const VARIABLE_DEBUG_ATTR: &str = "debug_msgb_variable";
 pub(crate) fn render(parsed_parts: &[ParsedPart<'_>]) -> String {
     let mut result = Vec::new();
     result.push("digraph {".to_string());
+
+    // special nodes, outside of any source part
     result.push("ROOT_NODE".to_string());
+    result.push("JUMP_TO_SCOPE_NODE".to_string());
 
     for (index, part) in parsed_parts.iter().enumerate() {
         let title = if part.parse_output.is_valid() {
@@ -41,38 +44,33 @@ struct DotSubGraph<'a> {
 }
 
 impl<'a> DotSubGraph<'a> {
-    fn root_node(&self) -> GraphNodeRef {
-        self.graph
-            .iter_nodes()
-            .next()
-            .expect("graph should have at least the root node")
+    fn special_node(&self, node: GraphNodeRef) -> bool {
+        node.index() <= 1
     }
 
     fn node_id(&self, node: GraphNodeRef) -> String {
-        if node == self.root_node() {
+        let index = node.index();
+        if index == 0 {
             // special case: ROOT_NODE
             "ROOT_NODE".to_string()
+        } else if index == 1 {
+            // special case: JUMP_TO_SCOPE_NODE
+            "JUMP_TO_SCOPE_NODE".to_string()
         } else {
-            format!(
-                "{graph_id}N{index}",
-                graph_id = self.graph_id,
-                index = node.index()
-            )
+            format!("{graph_id}N{index}", graph_id = self.graph_id,)
         }
     }
 }
 
 impl<'a> fmt::Display for DotSubGraph<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let root = self.root_node();
-
-        // we need to print edges connecting to the ROOT NODE outside of the subgraph
+        // we need to print edges connecting to the special nodes outside of the subgraph
         for node in self.graph.iter_nodes() {
             let graph_node = &self.graph[node];
             let node_id = self.node_id(node);
 
             for (sink, _edge) in graph_node.iter_edges() {
-                if node == root || sink == root {
+                if self.special_node(node) || self.special_node(sink) {
                     writeln!(f, "{node_id} -> {sink_id}", sink_id = self.node_id(sink))?;
                 }
             }
@@ -87,13 +85,13 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
         )?;
 
         for node in self.graph.iter_nodes() {
-            if node == root {
-                // we already rendered the ROOT NODE and all its edges
+            if self.special_node(node) {
+                // we already rendered the special nodes all its edges
                 continue;
             }
 
             let graph_node = &self.graph[node];
-            let node_label = if let Some(symbol) = graph_node.attributes.get("symbol") {
+            let mut node_label = if let Some(symbol) = graph_node.attributes.get("symbol") {
                 symbol.to_string()
             } else if let Some(variable) = graph_node.attributes.get(VARIABLE_DEBUG_ATTR) {
                 variable.to_string()
@@ -101,7 +99,6 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
                 format!("{}", node.index())
             };
 
-            let node_label = format!("\"{node_label}\"");
             let node_type = graph_node
                 .attributes
                 .get("type")
@@ -109,34 +106,55 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
             let node_id = self.node_id(node);
 
             match node_type {
-                Some("push_symbol") => {
+                Some("push_symbol") | Some("push_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_reference").is_some() {
                         ", penwidth = 2, color = \"limegreen\", fontcolor = \"limegreen\""
                     } else {
-                        ", color = \"lightgreen\", fontcolor = \"lightgreen\""
+                        ", color = \"lightgreen\", fontcolor = \"lightgreen\", style = \"dashed\""
                     };
                     writeln!(
                         f,
-                        "\t{node_id} [label = {node_label}, shape = \"invhouse\"{extra_attrs}]"
+                        "\t{node_id} [label = \"{node_label}\", shape = \"invhouse\"{extra_attrs}]"
                     )?;
+                    if let Some(scope) = graph_node
+                        .attributes
+                        .get("scope")
+                        .and_then(|scope| scope.as_graph_node_ref().ok())
+                    {
+                        writeln!(
+                            f,
+                            "\t{node_id} -> {scope_id} [style = \"dashed\"]",
+                            scope_id = self.node_id(scope)
+                        )?;
+                    }
                 }
-                Some("pop_symbol") => {
+                Some("pop_symbol") | Some("pop_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_definition").is_some() {
                         ", penwidth = 2, color = \"red\", fontcolor = \"red\""
                     } else {
-                        ", color = \"coral\", fontcolor = \"coral\""
+                        ", color = \"coral\", fontcolor = \"coral\", style = \"dashed\""
                     };
+                    if let Some("pop_scoped_symbol") = node_type {
+                        node_label += " \u{2b24}";
+                    }
                     writeln!(
                         f,
-                        "\t{node_id} [label = {node_label}, shape = \"house\"{extra_attrs}]"
+                        "\t{node_id} [label = \"{node_label}\", shape = \"house\"{extra_attrs}]"
                     )?;
                 }
-                _ => writeln!(f, "\t{node_id} [label = {node_label}]")?,
+                _ => {
+                    let extra_attrs = if graph_node.attributes.get("is_exported").is_some() {
+                        ", shape = \"circle\", width = 1, penwidth = 2, fixedsize = true, color = \"purple\""
+                    } else {
+                        ""
+                    };
+                    writeln!(f, "\t{node_id} [label = \"{node_label}\"{extra_attrs}]")?;
+                }
             }
 
             for (sink, _edge) in graph_node.iter_edges() {
-                if sink == root {
-                    // we already rendered the edges going to ROOT NODE
+                if self.special_node(sink) {
+                    // we already rendered the edges going to special nodes
                     continue;
                 }
                 writeln!(f, "\t{node_id} -> {sink_id}", sink_id = self.node_id(sink))?;

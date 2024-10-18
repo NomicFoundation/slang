@@ -1,5 +1,6 @@
 global ROOT_NODE
 global FILE_PATH
+global JUMP_TO_SCOPE_NODE
 
 attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
 attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
@@ -8,6 +9,11 @@ attribute pop_symbol = symbol        => type = "pop_symbol", symbol = symbol
 attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
 attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
 attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
+
+attribute scoped_node_definition = node => type = "pop_scoped_symbol", node_symbol = node, is_definition
+attribute scoped_node_reference  = node => type = "push_scoped_symbol", node_symbol = node, is_reference
+attribute pop_scoped_symbol = symbol    => type = "pop_scoped_symbol", symbol = symbol
+attribute push_scoped_symbol = symbol   => type = "push_scoped_symbol", symbol = symbol
 
 ;; Keeps a link to the enclosing contract definition to provide a parent for
 ;; method calls (to correctly resolve virtual methods)
