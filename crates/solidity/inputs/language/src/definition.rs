@@ -6825,6 +6825,11 @@ codegen_language_macros::compile!(Language(
             fields = [BuiltInField(definition = "uint length")],
             functions = [
                 BuiltInFunction(
+                    name = "$index",
+                    parameters = ["uint"],
+                    return_type = "$element"
+                ),
+                BuiltInFunction(
                     name = "push",
                     parameters = [],
                     return_type = "$element",

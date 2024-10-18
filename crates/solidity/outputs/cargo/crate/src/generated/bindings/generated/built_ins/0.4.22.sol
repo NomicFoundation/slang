@@ -38,6 +38,7 @@ contract $BuiltIns$ {
   }
   struct $array {
     uint length;
+    function(uint) returns ($element) $index;
     function($element) returns (uint) push;
     function() pop;
   }
