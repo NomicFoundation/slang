@@ -13,7 +13,9 @@ pub(crate) fn render(parsed_parts: &[ParsedPart<'_>]) -> String {
 
     // special nodes, outside of any source part
     result.push("ROOT_NODE".to_string());
-    result.push("JUMP_TO_SCOPE_NODE".to_string());
+    result.push(
+        "JUMP_TO_SCOPE_NODE [label = \"\", shape = circle, style = filled, color = purple]".to_string(),
+    );
 
     for (index, part) in parsed_parts.iter().enumerate() {
         let title = if part.parse_output.is_valid() {
@@ -108,13 +110,16 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
             match node_type {
                 Some("push_symbol") | Some("push_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_reference").is_some() {
-                        ", penwidth = 2, color = \"limegreen\", fontcolor = \"limegreen\""
+                        ", penwidth = 2, color = limegreen, fontcolor = limegreen"
                     } else {
-                        ", color = \"lightgreen\", fontcolor = \"lightgreen\", style = \"dashed\""
+                        ", color = lightgreen, fontcolor = lightgreen, style = dashed"
                     };
+                    if let Some("push_scoped_symbol") = node_type {
+                        node_label += " \u{25ef}";
+                    }
                     writeln!(
                         f,
-                        "\t{node_id} [label = \"{node_label}\", shape = \"invhouse\"{extra_attrs}]"
+                        "\t{node_id} [label = \"{node_label}\", shape = invhouse{extra_attrs}]"
                     )?;
                     if let Some(scope) = graph_node
                         .attributes
@@ -123,28 +128,31 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
                     {
                         writeln!(
                             f,
-                            "\t{node_id} -> {scope_id} [style = \"dashed\"]",
+                            "\t{node_id} -> {scope_id} [style = dashed]",
                             scope_id = self.node_id(scope)
                         )?;
                     }
                 }
                 Some("pop_symbol") | Some("pop_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_definition").is_some() {
-                        ", penwidth = 2, color = \"red\", fontcolor = \"red\""
+                        ", penwidth = 2, color = red, fontcolor = red"
                     } else {
-                        ", color = \"coral\", fontcolor = \"coral\", style = \"dashed\""
+                        ", color = coral, fontcolor = coral, style = dashed"
                     };
                     if let Some("pop_scoped_symbol") = node_type {
                         node_label += " \u{2b24}";
                     }
                     writeln!(
                         f,
-                        "\t{node_id} [label = \"{node_label}\", shape = \"house\"{extra_attrs}]"
+                        "\t{node_id} [label = \"{node_label}\", shape = house{extra_attrs}]"
                     )?;
+                }
+                Some("drop_scopes") => {
+                    writeln!(f, "\t{node_id} [label = \"DROP\", shape = box]")?;
                 }
                 _ => {
                     let extra_attrs = if graph_node.attributes.get("is_exported").is_some() {
-                        ", shape = \"circle\", width = 1, penwidth = 2, fixedsize = true, color = \"purple\""
+                        ", shape = circle, width = 1, penwidth = 2, fixedsize = true, color = purple"
                     } else {
                         ""
                     };
