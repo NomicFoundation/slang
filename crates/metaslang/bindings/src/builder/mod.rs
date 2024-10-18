@@ -345,7 +345,7 @@ static PRECEDENCE_ATTR: &str = "precedence";
 // Global variables
 /// Name of the variable used to pass the root node.
 pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
-/// Name of the variable used to pass the "jump_to_scope" node.
+/// Name of the variable used to pass the jump to scope node.
 pub const JUMP_TO_SCOPE_NODE_VAR: &str = "JUMP_TO_SCOPE_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";

@@ -14,7 +14,8 @@ pub(crate) fn render(parsed_parts: &[ParsedPart<'_>]) -> String {
     // special nodes, outside of any source part
     result.push("ROOT_NODE".to_string());
     result.push(
-        "JUMP_TO_SCOPE_NODE [label = \"\", shape = circle, style = filled, color = purple]".to_string(),
+        "JUMP_TO_SCOPE_NODE [label = \"\", shape = circle, style = filled, color = purple]"
+            .to_string(),
     );
 
     for (index, part) in parsed_parts.iter().enumerate() {
@@ -45,11 +46,11 @@ struct DotSubGraph<'a> {
     title: String,
 }
 
-impl<'a> DotSubGraph<'a> {
-    fn special_node(&self, node: GraphNodeRef) -> bool {
-        node.index() <= 1
-    }
+fn special_node(node: GraphNodeRef) -> bool {
+    node.index() <= 1
+}
 
+impl<'a> DotSubGraph<'a> {
     fn node_id(&self, node: GraphNodeRef) -> String {
         let index = node.index();
         if index == 0 {
@@ -72,7 +73,7 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
             let node_id = self.node_id(node);
 
             for (sink, _edge) in graph_node.iter_edges() {
-                if self.special_node(node) || self.special_node(sink) {
+                if special_node(node) || special_node(sink) {
                     writeln!(f, "{node_id} -> {sink_id}", sink_id = self.node_id(sink))?;
                 }
             }
@@ -87,7 +88,7 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
         )?;
 
         for node in self.graph.iter_nodes() {
-            if self.special_node(node) {
+            if special_node(node) {
                 // we already rendered the special nodes all its edges
                 continue;
             }
@@ -108,13 +109,13 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
             let node_id = self.node_id(node);
 
             match node_type {
-                Some("push_symbol") | Some("push_scoped_symbol") => {
+                Some("push_symbol" | "push_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_reference").is_some() {
                         ", penwidth = 2, color = limegreen, fontcolor = limegreen"
                     } else {
                         ", color = lightgreen, fontcolor = lightgreen, style = dashed"
                     };
-                    if let Some("push_scoped_symbol") = node_type {
+                    if node_type == Some("push_scoped_symbol") {
                         node_label += " \u{25ef}";
                     }
                     writeln!(
@@ -133,13 +134,13 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
                         )?;
                     }
                 }
-                Some("pop_symbol") | Some("pop_scoped_symbol") => {
+                Some("pop_symbol" | "pop_scoped_symbol") => {
                     let extra_attrs = if graph_node.attributes.get("is_definition").is_some() {
                         ", penwidth = 2, color = red, fontcolor = red"
                     } else {
                         ", color = coral, fontcolor = coral, style = dashed"
                     };
-                    if let Some("pop_scoped_symbol") = node_type {
+                    if node_type == Some("pop_scoped_symbol") {
                         node_label += " \u{2b24}";
                     }
                     writeln!(
@@ -161,7 +162,7 @@ impl<'a> fmt::Display for DotSubGraph<'a> {
             }
 
             for (sink, _edge) in graph_node.iter_edges() {
-                if self.special_node(sink) {
+                if special_node(sink) {
                     // we already rendered the edges going to special nodes
                     continue;
                 }
