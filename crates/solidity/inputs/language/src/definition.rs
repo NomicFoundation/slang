@@ -6827,18 +6827,18 @@ codegen_language_macros::compile!(Language(
                 BuiltInFunction(
                     name = "push",
                     parameters = [],
-                    return_type = "$arg",
+                    return_type = "$element",
                     enabled = From("0.6.0")
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$arg"],
+                    parameters = ["$element"],
                     return_type = "uint",
                     enabled = Till("0.6.0")
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$arg"],
+                    parameters = ["$element"],
                     enabled = From("0.6.0")
                 ),
                 BuiltInFunction(name = "pop", parameters = [])

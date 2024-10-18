@@ -37,8 +37,8 @@ contract $BuiltIns$ {
   }
   struct $array {
     uint length;
-    function() returns ($arg) push;
-    function($arg) push;
+    function() returns ($element) push;
+    function($element) push;
     function() pop;
   }
   struct $blockType {
