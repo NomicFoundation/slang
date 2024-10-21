@@ -74,10 +74,15 @@ contract $BuiltIns$ {
     uint gasprice;
     address payable origin;
   }
-  struct $type {
+  struct $typeContractType {
     string name;
     bytes creationCode;
     bytes runtimeCode;
+  }
+  struct $typeInterfaceType {
+    string name;
+  }
+  struct $typeIntType {
   }
   $function $placeholder;
   $abiType abi;

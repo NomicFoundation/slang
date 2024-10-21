@@ -375,6 +375,15 @@ inherit .parent_scope
   ;; a contract as compilation context; this allows this contract (a base) to
   ;; access virtual methods in any sub-contract defined in the hierarchy
   attr (@contract.def) import_nodes = [@contract.lexical_scope, super_import]
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_contract_type
+  attr (type_contract_type) push_symbol = "%typeContractType"
+  edge @contract.def -> type
+  edge type -> type_contract_type
+  edge type_contract_type -> @contract.lexical_scope
 }
 
 @contract [ContractDefinition @specifier [InheritanceSpecifier]] {
@@ -521,6 +530,15 @@ inherit .parent_scope
   attr (type_member) pop_symbol = "."
   edge @interface.def -> type_member
   edge type_member -> @interface.type_members
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_interface_type
+  attr (type_interface_type) push_symbol = "%typeInterfaceType"
+  edge @interface.def -> type
+  edge type -> type_interface_type
+  edge type_interface_type -> @interface.lexical_scope
 }
 
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
@@ -580,6 +598,15 @@ inherit .parent_scope
   edge @library.def -> member
 
   edge member -> @library.members
+
+  ; Path to resolve the built-in type for type() expressions (same as contracts)
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_library_type
+  attr (type_library_type) push_symbol = "%typeContractType"
+  edge @library.def -> type
+  edge type -> type_library_type
+  edge type_library_type -> @library.lexical_scope
 }
 
 @library [LibraryDefinition [LibraryMembers
@@ -1615,17 +1642,23 @@ inherit .parent_scope
 }
 
 @enum [EnumDefinition @name name: [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @enum
-
-  edge @enum.def -> def
+  attr (@enum.def) node_definition = @name
+  attr (@enum.def) definiens_node = @enum
 
   node member
   attr (member) pop_symbol = "."
 
-  edge def -> member
+  edge @enum.def -> member
   edge member -> @enum.members
+
+  ; Path to resolve the built-in type for enums (which is the same as for integer types)
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_enum_type
+  attr (type_enum_type) push_symbol = "%typeIntType"
+  edge @enum.def -> type
+  edge type -> type_enum_type
+  edge type_enum_type -> @enum.lexical_scope
 }
 
 @enum [EnumDefinition
@@ -1650,7 +1683,9 @@ inherit .parent_scope
 }
 
 @struct [StructDefinition @name name: [Identifier]] {
-  ; Since we use structs to define built-in types and some of them (ie. array) have have a parametric type, we define two distinct paths to define a struct:
+  ; Since we use structs to define built-in types and some of them (ie. array)
+  ; have have a parametric type, we define two distinct paths to define a
+  ; struct:
   ; 1. the normal, non parametric path, should drop scopes in the scope stack first of all
   ; 2. the parametric path, that pops a scope to resolve the parametric type
   ; Both of these connect to the node that pops the struct identifier symbol
@@ -1908,7 +1943,22 @@ inherit .parent_scope
 ;; Type expressions
 @type_expr [Expression [TypeExpression @type [TypeName]]] {
   edge @type.type_ref -> @type_expr.lexical_scope
+}
 
+@type_expr [Expression [TypeExpression [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]]] {
+  ; For integer types the type's type is fixed
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type
+  attr (type) push_symbol = "%typeIntType"
+
+  edge @type_expr.output -> typeof
+  edge typeof -> type
+  edge type -> @type_expr.lexical_scope
+}
+
+@type_expr [Expression [TypeExpression [TypeName @id_path [IdentifierPath]]]] {
+  ; For other identifiers, resolve it through a pseudo-member `%type`
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node type
@@ -1916,7 +1966,7 @@ inherit .parent_scope
 
   edge @type_expr.output -> typeof
   edge typeof -> type
-  edge type -> @type_expr.lexical_scope
+  edge type -> @id_path.push_begin
 }
 
 ;; New expressions

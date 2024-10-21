@@ -2,60 +2,88 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:9:28]
-   │
- 9 │         string memory v1 = type(Sample).name;
-   │                            ────────┬────────  
-   │                                    ╰────────── Error occurred here.
-───╯
-Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:10:27]
+    ╭─[input.sol:11:28]
     │
- 10 │         bytes memory v2 = type(Sample).creationCode;
+ 11 │         string memory v1 = type(Sample).name;
+    │                            ────────┬────────  
+    │                                    ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:12:27]
+    │
+ 12 │         bytes memory v2 = type(Sample).creationCode;
     │                           ────────────┬────────────  
     │                                       ╰────────────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:11:27]
+    ╭─[input.sol:13:27]
     │
- 11 │         bytes memory v3 = type(Sample).runtimeCode;
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
     │                           ────────────┬───────────  
     │                                       ╰───────────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:12:21]
+    ╭─[input.sol:15:28]
     │
- 12 │         bytes4 v4 = type(ISample).interfaceId;
+ 15 │         string memory v4 = type(ISample).name;
+    │                            ─────────┬────────  
+    │                                     ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:16:21]
+    │
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
     │                     ────────────┬────────────  
     │                                 ╰────────────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:13:24]
+    ╭─[input.sol:18:24]
     │
- 13 │         Direction v5 = type(Direction).min;
+ 18 │         Direction v6 = type(Direction).min;
     │                        ─────────┬─────────  
     │                                 ╰─────────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:14:24]
+    ╭─[input.sol:19:24]
     │
- 14 │         Direction v6 = type(Direction).max;
+ 19 │         Direction v7 = type(Direction).max;
     │                        ─────────┬─────────  
     │                                 ╰─────────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:15:19]
+    ╭─[input.sol:21:19]
     │
- 15 │         uint v7 = type(uint).min;
+ 21 │         uint v8 = type(uint).min;
     │                   ───────┬──────  
     │                          ╰──────── Error occurred here.
 ────╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:16:19]
+    ╭─[input.sol:22:19]
     │
- 16 │         uint v8 = type(uint).max;
+ 22 │         uint v9 = type(uint).max;
     │                   ───────┬──────  
     │                          ╰──────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:24:29]
+    │
+ 24 │         string memory v10 = type(Utils).name;
+    │                             ────────┬───────  
+    │                                     ╰───────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:25:28]
+    │
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                            ────────────┬───────────  
+    │                                        ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:26:28]
+    │
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                            ───────────┬───────────  
+    │                                       ╰───────────── Error occurred here.
 ────╯
 References and definitions: 
     ╭─[input.sol:1:1]
@@ -68,50 +96,70 @@ References and definitions:
     │           ───┬───  
     │              ╰───── def: 2
     │ 
-  5 │ contract Test {
-    │          ──┬─  
-    │            ╰─── def: 3
-  6 │     enum Direction { North, South, West, East }
-    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
-    │              ╰───────────────────────────────── def: 4
-    │                        │      │      │     │   
-    │                        ╰─────────────────────── def: 5
-    │                               │      │     │   
-    │                               ╰──────────────── def: 6
-    │                                      │     │   
-    │                                      ╰───────── def: 7
-    │                                            │   
-    │                                            ╰─── def: 8
+  5 │ library Utils {}
+    │         ──┬──  
+    │           ╰──── def: 3
     │ 
-  8 │         function test() public {
-    │                  ──┬─  
-    │                    ╰─── def: 9
-  9 │         string memory v1 = type(Sample).name;
+  7 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 4
+  8 │     enum Direction { North, South, West, East }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── def: 5
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── def: 6
+    │                               │      │     │   
+    │                               ╰──────────────── def: 7
+    │                                      │     │   
+    │                                      ╰───────── def: 8
+    │                                            │   
+    │                                            ╰─── def: 9
+    │ 
+ 10 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 10
+ 11 │         string memory v1 = type(Sample).name;
     │                       ─┬  
-    │                        ╰── def: 10
- 10 │         bytes memory v2 = type(Sample).creationCode;
-    │                      ─┬  
-    │                       ╰── def: 11
- 11 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                        ╰── def: 11
+ 12 │         bytes memory v2 = type(Sample).creationCode;
     │                      ─┬  
     │                       ╰── def: 12
- 12 │         bytes4 v4 = type(ISample).interfaceId;
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                      ─┬  
+    │                       ╰── def: 13
+    │ 
+ 15 │         string memory v4 = type(ISample).name;
+    │                       ─┬  
+    │                        ╰── def: 14
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
     │                ─┬  
-    │                 ╰── def: 13
- 13 │         Direction v5 = type(Direction).min;
+    │                 ╰── def: 15
+    │ 
+ 18 │         Direction v6 = type(Direction).min;
     │         ────┬──── ─┬  
-    │             ╰───────── ref: 4
+    │             ╰───────── ref: 5
     │                    │  
-    │                    ╰── def: 14
- 14 │         Direction v6 = type(Direction).max;
+    │                    ╰── def: 16
+ 19 │         Direction v7 = type(Direction).max;
     │         ────┬──── ─┬  
-    │             ╰───────── ref: 4
+    │             ╰───────── ref: 5
     │                    │  
-    │                    ╰── def: 15
- 15 │         uint v7 = type(uint).min;
+    │                    ╰── def: 17
+    │ 
+ 21 │         uint v8 = type(uint).min;
     │              ─┬  
-    │               ╰── def: 16
- 16 │         uint v8 = type(uint).max;
+    │               ╰── def: 18
+ 22 │         uint v9 = type(uint).max;
     │              ─┬  
-    │               ╰── def: 17
+    │               ╰── def: 19
+    │ 
+ 24 │         string memory v10 = type(Utils).name;
+    │                       ─┬─  
+    │                        ╰─── def: 20
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                      ─┬─  
+    │                       ╰─── def: 21
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                      ─┬─  
+    │                       ╰─── def: 22
 ────╯

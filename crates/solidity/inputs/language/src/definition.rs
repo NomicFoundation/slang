@@ -6946,12 +6946,26 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$type",
+            name = "$typeContractType",
             fields = [
                 BuiltInField(definition = "string name"),
                 BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
                 BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
-                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7")),
+                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+            ],
+            functions = []
+        ),
+        BuiltInType(
+            name = "$typeInterfaceType",
+            fields = [
+                BuiltInField(definition = "string name"),
+                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+            ],
+            functions = []
+        ),
+        BuiltInType(
+            name = "$typeIntType",
+            fields = [
                 BuiltInField(definition = "int min", enabled = From("0.6.8")),
                 BuiltInField(definition = "int max", enabled = From("0.6.8"))
             ],
