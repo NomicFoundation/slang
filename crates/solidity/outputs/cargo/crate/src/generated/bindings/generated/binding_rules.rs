@@ -23,7 +23,10 @@ attribute push_scoped_symbol = symbol   => type = "push_scoped_symbol", symbol =
 ;; Keeps a link to the enclosing contract definition to provide a parent for
 ;; method calls (to correctly resolve virtual methods)
 inherit .enclosing_def
+
 inherit .parent_scope
+inherit .lexical_scope
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -103,7 +106,6 @@ inherit .parent_scope
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
-  let @using.lexical_scope = @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @using.def
 }
 
@@ -424,7 +426,6 @@ inherit .parent_scope
 @contract [ContractDefinition [ContractMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  let @using.lexical_scope = @contract.lexical_scope
   edge @contract.lexical_scope -> @using.def
 }
 
@@ -631,7 +632,6 @@ inherit .parent_scope
 @library [LibraryDefinition [LibraryMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  let @using.lexical_scope = @library.lexical_scope
   edge @library.lexical_scope -> @using.def
 }
 
@@ -877,10 +877,6 @@ inherit .parent_scope
   let @array.pop_begin = @type_name.pop_begin
   edge @type_name.pop_end -> pop_array
   let @array.pop_end = pop_array
-}
-
-@array [ArrayTypeName @size index: [Expression]] {
-  let @size.lexical_scope = @array.lexical_scope
 }
 
 
@@ -1327,10 +1323,6 @@ inherit .parent_scope
   node @expr_stmt.defs
 }
 
-@expr_stmt [ExpressionStatement @expr [Expression]] {
-  let @expr.lexical_scope = @expr_stmt.lexical_scope
-}
-
 
 ;;; Variable declaration statements
 
@@ -1342,12 +1334,6 @@ inherit .parent_scope
 @var_decl [VariableDeclarationStatement] {
   node @var_decl.lexical_scope
   node @var_decl.defs
-}
-
-@var_decl [VariableDeclarationStatement
-    value: [VariableDeclarationValue @expr [Expression]]
-] {
-  let @expr.lexical_scope = @var_decl.lexical_scope
 }
 
 @var_decl [VariableDeclarationStatement
@@ -1379,12 +1365,6 @@ inherit .parent_scope
 @tuple_decon [TupleDeconstructionStatement] {
   node @tuple_decon.lexical_scope
   node @tuple_decon.defs
-}
-
-@tuple_decon [TupleDeconstructionStatement
-    @expr expression: [Expression]
-] {
-  let @expr.lexical_scope = @tuple_decon.lexical_scope
 }
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
@@ -1429,10 +1409,6 @@ inherit .parent_scope
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; If conditionals
-
-@stmt [Statement [IfStatement @condition condition: [Expression]]] {
-  let @condition.lexical_scope = @stmt.lexical_scope
-}
 
 @stmt [Statement [IfStatement @body body: [Statement]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
@@ -1490,10 +1466,6 @@ inherit .parent_scope
 
 ;; While loops
 
-@stmt [Statement [WhileStatement @condition condition: [Expression]]] {
-  let @condition.lexical_scope = @stmt.lexical_scope
-}
-
 @stmt [Statement [WhileStatement @body body: [Statement]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
   if (version-matches "< 0.5.0") {
@@ -1510,20 +1482,12 @@ inherit .parent_scope
   }
 }
 
-@stmt [Statement [DoWhileStatement @condition condition: [Expression]]] {
-  let @condition.lexical_scope = @stmt.lexical_scope
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Error handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Try-catch statements
-
-@stmt [Statement [TryStatement @expr expression: [Expression]]] {
-  let @expr.lexical_scope = @stmt.lexical_scope
-}
 
 @stmt [Statement [TryStatement @body body: [Block]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
@@ -1578,11 +1542,6 @@ inherit .parent_scope
 ;;; Other statements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Return
-@stmt [Statement [ReturnStatement @expr [Expression]]] {
-  let @expr.lexical_scope = @stmt.lexical_scope
-}
-
 ;;; Emit
 @stmt [Statement [EmitStatement
     @event_ident [IdentifierPath]
@@ -1627,12 +1586,6 @@ inherit .parent_scope
 
   edge @state_var.def -> typeof
   edge typeof -> @type_name.output
-}
-
-@state_var [StateVariableDefinition
-    value: [StateVariableDefinitionValue @expr [Expression]]
-] {
-  let @expr.lexical_scope = @state_var.lexical_scope
 }
 
 
@@ -1732,11 +1685,6 @@ inherit .parent_scope
   edge param_names -> @struct.members
 }
 
-@struct [StructDefinition [StructMembers @member item: [StructMember]]] {
-  node @member.lexical_scope
-  edge @member.lexical_scope -> @struct.lexical_scope
-}
-
 @struct [StructDefinition [StructMembers
     @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
 ]] {
@@ -1746,7 +1694,7 @@ inherit .parent_scope
 
   edge @struct.members -> def
 
-  edge @type_name.type_ref -> @member.lexical_scope
+  edge @type_name.type_ref -> @struct.lexical_scope
 
   node typeof
   attr (typeof) push_symbol = "@typeof"
@@ -1838,7 +1786,6 @@ inherit .parent_scope
 @constant [ConstantDefinition
     @type_name type_name: [TypeName]
     @name name: [Identifier]
-    @value value: [Expression]
 ] {
   node def
   attr (def) node_definition = @name
@@ -1846,7 +1793,6 @@ inherit .parent_scope
 
   edge @constant.def -> def
 
-  let @value.lexical_scope = @constant.lexical_scope
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
@@ -1877,18 +1823,6 @@ inherit .parent_scope
 @expr [Expression] {
   ;; this is an output scope for use in member access (and other uses)
   node @expr.output
-}
-
-;; General case for nested expressions
-@expr [Expression variant: [_ @child [Expression]]] {
-  let @child.lexical_scope = @expr.lexical_scope
-}
-
-;; Tuple expressions
-@tuple_expr [Expression [TupleExpression
-    items: [TupleValues [TupleValue @expr [Expression]]]
-]] {
-  let @expr.lexical_scope = @tuple_expr.lexical_scope
 }
 
 ;; Identifier expressions
@@ -1991,16 +1925,8 @@ inherit .parent_scope
   attr (@args.refs) push_symbol = "@param_names"
 }
 
-@args [ArgumentsDeclaration [PositionalArgumentsDeclaration
-    [PositionalArguments @argument [Expression]]
-]] {
-  let @argument.lexical_scope = @args.lexical_scope
-}
-
-@named_arg [NamedArgument @name [Identifier] [Colon] @value [Expression]] {
+@named_arg [NamedArgument @name [Identifier] [Colon] [Expression]] {
   node @named_arg.lexical_scope
-
-  let @value.lexical_scope = @named_arg.lexical_scope
 
   node @named_arg.ref
   attr (@named_arg.ref) node_reference = @name
