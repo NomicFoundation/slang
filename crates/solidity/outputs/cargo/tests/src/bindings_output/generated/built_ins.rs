@@ -35,6 +35,11 @@ fn global_properties() -> Result<()> {
 }
 
 #[test]
+fn shadowing() -> Result<()> {
+    run("built_ins", "shadowing")
+}
+
+#[test]
 fn type_expr() -> Result<()> {
     run("built_ins", "type_expr")
 }
