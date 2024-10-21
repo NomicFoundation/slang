@@ -8,10 +8,6 @@ pub fn render_built_ins(built_ins: &[BuiltIn]) -> String {
 
 fn try_render_built_ins(built_ins: &[BuiltIn]) -> Result<String, Error> {
     let mut buffer = String::new();
-    writeln!(
-        buffer,
-        "// This file is generated automatically. Do not edit by hand."
-    )?;
     // __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with binding rules
     writeln!(buffer, "contract $BuiltIns$ {{")?;
     for item in built_ins {

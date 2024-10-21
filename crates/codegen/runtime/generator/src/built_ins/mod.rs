@@ -21,8 +21,7 @@ pub fn render_built_ins(
         let contents = render_fn(&built_ins);
 
         let output_path = output_dir.join(format!("{version}{file_extension}"));
-        std::fs::write(&output_path, contents)?;
-        file_system.mark_generated_file(output_path)?;
+        file_system.write_file(output_path, contents)?;
     }
     Ok(())
 }
