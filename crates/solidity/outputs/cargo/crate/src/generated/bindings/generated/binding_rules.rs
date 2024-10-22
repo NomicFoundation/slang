@@ -703,7 +703,8 @@ inherit .lexical_scope
   edge @type_name.type_ref -> @using.lexical_scope
 }
 
-@using [UsingDirective [UsingTarget [Asterisk]]] {
+[ContractMember @using [UsingDirective [UsingTarget [Asterisk]]]] {
+  ; using X for * is only allowed inside contracts
   node star
   attr (star) pop_symbol = "@*"
   edge @using.def -> star
