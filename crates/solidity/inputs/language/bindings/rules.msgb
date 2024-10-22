@@ -698,6 +698,13 @@ inherit .lexical_scope
   edge @type_name.type_ref -> @using.lexical_scope
 }
 
+@using [UsingDirective [UsingTarget [Asterisk]]] {
+  node star
+  attr (star) pop_symbol = "@*"
+  edge @using.def -> star
+  edge star -> @using.clause
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Type names
@@ -1862,6 +1869,12 @@ inherit .lexical_scope
   edge member -> @operand.output
 
   edge @expr.output -> @name.ref
+
+  ; Shortcut path for expressions inside contracts with using X for * directives
+  node star
+  attr (star) push_symbol = "@*"
+  edge member -> star
+  edge star -> @expr.lexical_scope
 }
 
 ;; Special case: member accesses to `super` are tagged with "super" to rank
