@@ -18,7 +18,8 @@ codegen_language_macros::compile!(Language(
                 Struct(name = Bar2, fields = (field = Required(Bar1)))
             ]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 fn main() {}

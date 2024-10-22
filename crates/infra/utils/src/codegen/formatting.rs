@@ -32,7 +32,7 @@ fn generate_header(file_path: &Path) -> String {
         (_, "ebnf") => format!("(* {warning_line} *)"),
         (_, "json") => String::new(),
         (_, "html" | "md") => format!("<!-- {warning_line} -->"),
-        (_, "dot" | "js" | "mts" | "rs" | "ts" | "wit") => format!("// {warning_line}"),
+        (_, "dot" | "js" | "mts" | "rs" | "sol" | "ts" | "wit") => format!("// {warning_line}"),
         (_, "yml" | "txt") => format!("# {warning_line}"),
         (_, "mmd") => format!("%% {warning_line}"),
 
@@ -48,7 +48,7 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
 
         // No formatters available for these yet:
         (".gitignore", _) => Ok(contents.to_owned()),
-        (_, "dot" | "ebnf" | "mmd" | "txt" | "wit") => Ok(contents.to_owned()),
+        (_, "dot" | "ebnf" | "mmd" | "sol" | "txt" | "wit") => Ok(contents.to_owned()),
 
         // We already generate formatted content for these, so no need to run expensive formatting:
         (_, "html" | "md" | "yml") => Ok(contents.to_owned()),

@@ -110,7 +110,12 @@ fn get_spanned_type(input: Type) -> Type {
     match type_name.as_str() {
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead:
-        "EnumItem"
+        "BuiltIn"
+        | "BuiltInField"
+        | "BuiltInFunction"
+        | "BuiltInParameter"
+        | "BuiltInType"
+        | "EnumItem"
         | "EnumVariant"
         | "Field"
         | "FieldDelimiters"

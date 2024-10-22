@@ -11,5 +11,5 @@ fn main() -> Result<()> {
 
     let output_dir = CargoWorkspace::locate_source_crate("slang_testlang")?.join("src/generated");
 
-    RuntimeGenerator::generate_product(&language, &input_dir, &output_dir)
+    RuntimeGenerator::generate_product(&language, &input_dir, &output_dir).map(|_| ())
 }

@@ -29,7 +29,8 @@ codegen_language_macros::compile!(Language(
                 )
             ]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 fn main() {}

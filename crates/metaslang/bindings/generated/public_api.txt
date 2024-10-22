@@ -1,13 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 pub mod metaslang_bindings
+pub enum metaslang_bindings::FileDescriptor
+pub metaslang_bindings::FileDescriptor::System(alloc::string::String)
+pub metaslang_bindings::FileDescriptor::User(alloc::string::String)
+impl metaslang_bindings::FileDescriptor
+pub fn metaslang_bindings::FileDescriptor::get_path(&self) -> &str
+pub fn metaslang_bindings::FileDescriptor::is_system(&self) -> bool
+pub fn metaslang_bindings::FileDescriptor::is_user(&self) -> bool
+pub fn metaslang_bindings::FileDescriptor::is_user_path(&self, path: &str) -> bool
 pub enum metaslang_bindings::ResolutionError<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 pub metaslang_bindings::ResolutionError::AmbiguousDefinitions(alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>)
 pub metaslang_bindings::ResolutionError::Unresolved
 pub struct metaslang_bindings::Bindings<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Bindings<KT>
-pub fn metaslang_bindings::Bindings<KT>::add_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
-pub fn metaslang_bindings::Bindings<KT>::add_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
+pub fn metaslang_bindings::Bindings<KT>::add_system_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
+pub fn metaslang_bindings::Bindings<KT>::add_user_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
+pub fn metaslang_bindings::Bindings<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_bindings::Bindings<KT>::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<'_, KT>> + '_
 pub fn metaslang_bindings::Bindings<KT>::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<'_, KT>> + '_
 pub fn metaslang_bindings::Bindings<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> Self
@@ -20,7 +29,7 @@ pub struct metaslang_bindings::Definition<'a, KT: metaslang_cst::kinds::KindType
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
 pub fn metaslang_bindings::Definition<'a, KT>::get_definiens_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
-pub fn metaslang_bindings::Definition<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
+pub fn metaslang_bindings::Definition<'a, KT>::get_file(&self) -> metaslang_bindings::FileDescriptor
 pub fn metaslang_bindings::Definition<'a, KT>::to_handle(self) -> metaslang_bindings::DefinitionHandle
 impl<'a, KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::clone(&self) -> metaslang_bindings::Definition<'a, KT>
@@ -38,7 +47,7 @@ pub struct metaslang_bindings::Reference<'a, KT: metaslang_cst::kinds::KindTypes
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
 pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> core::option::Option<metaslang_cst::cursor::Cursor<KT>>
-pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> core::option::Option<&'a str>
+pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> metaslang_bindings::FileDescriptor
 pub fn metaslang_bindings::Reference<'a, KT>::jump_to_definition(&self) -> core::result::Result<metaslang_bindings::Definition<'a, KT>, metaslang_bindings::ResolutionError<'a, KT>>
 impl<'a, KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>

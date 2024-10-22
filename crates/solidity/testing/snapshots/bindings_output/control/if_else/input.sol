@@ -9,7 +9,7 @@ contract Test {
             int w = 4;
             y = x + 20;
         }
-        int r = y + z + w;
+        int r = x + y;
         return r;
     }
 }

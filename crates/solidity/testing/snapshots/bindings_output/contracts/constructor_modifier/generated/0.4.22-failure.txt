@@ -11,11 +11,11 @@ References and definitions:
    │                    ╰───────────────────── def: 2
    │                                     │    
    │                                     ╰──── def: 3
- 3 │         require(_addr != address(0), "Not valid address");
-   │         ───┬─── ──┬──  
-   │            ╰─────────── unresolved
-   │                   │    
-   │                   ╰──── ref: 3
+ 3 │         assert(_addr != address(0));
+   │         ───┬── ──┬──  
+   │            ╰────────── ref: built-in
+   │                  │    
+   │                  ╰──── ref: 3
  4 │         _;
    │         ┬  
    │         ╰── unresolved

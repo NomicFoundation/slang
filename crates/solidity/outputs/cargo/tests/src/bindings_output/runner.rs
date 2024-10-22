@@ -1,21 +1,18 @@
-use std::sync::Arc;
-
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
-use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::parser::{ParseOutput, Parser};
 
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
+use crate::bindings::create_bindings;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
-use crate::resolver::TestsPathResolver;
 
 pub(crate) struct ParsedPart<'a> {
     pub path: &'a str,
@@ -40,10 +37,9 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
-        let mut bindings =
-            bindings::create_with_resolver(version.clone(), Arc::new(TestsPathResolver {}));
-        let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
+        let mut bindings = create_bindings(version)?;
 
+        let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);
         for Part {
             name: path,
@@ -51,7 +47,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         } in &multi_part.parts
         {
             let parse_output = parser.parse(Parser::ROOT_KIND, contents);
-            let graph = bindings.add_file_returning_graph(path, parse_output.create_tree_cursor());
+            let graph =
+                bindings.add_user_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {
                 path,
                 contents,
@@ -59,8 +56,6 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 graph,
             });
         }
-        let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
-        let parse_status = if parse_success { "success" } else { "failure" };
 
         if let Some(context) = multi_part.context {
             let context_definition = bindings
@@ -69,6 +64,15 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 .to_handle();
             bindings.set_context(&context_definition);
         }
+
+        let (bindings_output, all_resolved) = render_bindings(&bindings, &parsed_parts)?;
+
+        let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
+        let status = if parse_success && all_resolved {
+            "success"
+        } else {
+            "failure"
+        };
 
         if !GitHub::is_running_in_ci() {
             // Don't run this in CI, since the graph outputs are not committed
@@ -80,7 +84,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                 _ => {
                     let snapshot_path = test_dir
                         .join("generated")
-                        .join(format!("{version}-{parse_status}.mmd"));
+                        .join(format!("{version}-{status}.mmd"));
 
                     fs.write_file(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
@@ -88,19 +92,18 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                     let dot_output = render_graphviz_graph(&parsed_parts);
                     let dot_output_path = test_dir
                         .join("generated")
-                        .join(format!("{version}-{parse_status}.dot"));
+                        .join(format!("{version}-{status}.dot"));
                     fs.write_file(dot_output_path, &dot_output)?;
                 }
             };
         }
 
-        let bindings_output = render_bindings(&bindings, &parsed_parts)?;
         match last_bindings_output {
             Some(ref last) if last == &bindings_output => (),
             _ => {
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{version}-{parse_status}.txt"));
+                    .join(format!("{version}-{status}.txt"));
 
                 fs.write_file(snapshot_path, &bindings_output)?;
                 last_bindings_output = Some(bindings_output);
