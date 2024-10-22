@@ -1145,6 +1145,22 @@ inherit .lexical_scope
   edge @contract.def -> @constructor.def
 }
 
+;; Solidity < 0.5.0 constructors were declared as functions of the contract's name
+@contract [ContractDefinition
+    @contract_name [Identifier]
+    [ContractMembers [ContractMember [FunctionDefinition
+        [FunctionName @function_name [Identifier]]
+        @params [ParametersDeclaration]
+    ]]]
+] {
+  if (version-matches "< 0.5.0") {
+    if (eq (source-text @contract_name) (source-text @function_name)) {
+      ; Connect to paramaters for named argument resolution
+      edge @contract.def -> @params.names
+    }
+  }
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Fallback and receive functions
