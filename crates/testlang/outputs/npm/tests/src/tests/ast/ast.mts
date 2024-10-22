@@ -201,3 +201,22 @@ test("create and use binary expressions", () => {
   assertIsTerminalNode(operator, TerminalKind.Plus, "+");
   assertIsTerminalNode(rightOperand.variant, TerminalKind.Identifier, "bar");
 });
+
+it("can reuse the same CST nodes after selectors", () => {
+  // Bug: https://github.com/NomicFoundation/slang/issues/1128
+
+  const source = `foo + bar`;
+
+  const parser = Parser.create("1.0.0");
+  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
+  parseOutput.isValid(); // true
+
+  const cst = parseOutput.tree.asNonterminalNode()!;
+  const ast = new SourceUnit(cst);
+
+  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
+
+  expect(ast.members.cst.kind).toBe(NonterminalKind.SourceUnitMembers);
+
+  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
+});
