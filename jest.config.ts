@@ -1,11 +1,39 @@
 import type { Config } from "jest";
 
-const config: Config = {
-  projects: [
-    // List all directories with package-level "jest.config.ts" files:
-    "<rootDir>/crates/solidity/outputs/npm/tests/",
-    "<rootDir>/crates/testlang/outputs/npm/tests/",
-  ],
-};
+export default {
+  testMatch: ["<rootDir>/**/*.test.mts"],
 
-export default config;
+  testPathIgnorePatterns: [".*/\\.hermit/", ".*/node_modules/", ".*/submodules/", ".*/target/"],
+
+  moduleFileExtensions: [
+    /*  Plain: */ ["js", "ts"],
+    /*  ESM:   */ ["mjs", "mts"],
+    /*  CJS:   */ ["cjs", "cts"],
+    /*  JSX:   */ ["jsx", "tsx"],
+    /*  Other: */ ["json", "node", "wasm"],
+  ].flat(),
+
+  extensionsToTreatAsEsm: [
+    // ".mjs" is already included.
+    ".mts",
+  ],
+
+  cacheDirectory: "<rootDir>/target/jest/cache",
+
+  slowTestThreshold: 5,
+
+  clearMocks: true,
+  resetMocks: true,
+
+  resolver: "ts-jest-resolver",
+
+  transform: {
+    "^.+\\.m?[tj]sx?$": [
+      "ts-jest",
+      {
+        isolatedModules: true,
+        useESM: true,
+      },
+    ],
+  },
+} satisfies Config;

@@ -11,26 +11,26 @@ to create the CST type. Since it is a node of kind `FunctionDefinition`, we are 
 the AST type of the same name to analyze it:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.mts:imports"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.test.mts:imports"
 
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.mts:parse-input"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.test.mts:parse-input"
 ```
 
 The `FunctionDefinition` type has named fields to access all its children.
 For example, we can check the name of the function:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.mts:create-node"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.test.mts:create-node"
 ```
 
 We can also list its parameters:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.mts:list-parameters"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.test.mts:list-parameters"
 ```
 
 Or attributes:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.mts:list-attributes"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-ast.test.mts:list-attributes"
 ```
