@@ -842,6 +842,14 @@ inherit .lexical_scope
   node @array.output
 }
 
+@array [ArrayTypeName [TypeName] index: [Expression]] {
+  let @array.type = "%arrayFixed"
+}
+
+@array [ArrayTypeName [OpenBracket] . [CloseBracket]] {
+  let @array.type = "%array"
+}
+
 @array [ArrayTypeName @type_name [TypeName]] {
   ; First define the normal, reference route:
 
@@ -849,7 +857,7 @@ inherit .lexical_scope
   ; 1. the typed path, which will use a jump scope entry to resolve the element type
   ; 2. the hard-coded path to connect to any `using` directive
   node array
-  attr (array) push_symbol = "%array"
+  attr (array) push_symbol = @array.type
   edge @array.output -> array
 
   ; For the first path, we need to define a scope jump entry for resolving the element type of the array
@@ -875,7 +883,7 @@ inherit .lexical_scope
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is essentially the reverse of the second path above
   node pop_array
-  attr (pop_array) pop_symbol = "%array"
+  attr (pop_array) pop_symbol = @array.type
 
   let @array.pop_begin = @type_name.pop_begin
   edge @type_name.pop_end -> pop_array

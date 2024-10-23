@@ -39,6 +39,10 @@ contract $BuiltIns$ {
     function($element) push;
     function() pop;
   }
+  struct $arrayFixed {
+    uint length;
+    function(uint) returns ($element) $index;
+  }
   struct $blockType {
     uint basefee;
     uint chainid;

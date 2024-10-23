@@ -6850,6 +6850,15 @@ codegen_language_macros::compile!(Language(
             ]
         ),
         BuiltInType(
+            name = "$arrayFixed",
+            fields = [BuiltInField(definition = "uint length")],
+            functions = [BuiltInFunction(
+                name = "$index",
+                parameters = ["uint"],
+                return_type = "$element"
+            )]
+        ),
+        BuiltInType(
             name = "$blockType",
             fields = [
                 BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),

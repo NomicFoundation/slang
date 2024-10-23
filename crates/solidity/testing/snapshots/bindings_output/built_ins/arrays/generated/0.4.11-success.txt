@@ -12,9 +12,9 @@ References and definitions:
   3 │     function testArray() public {
     │              ────┬────  
     │                  ╰────── def: 3
-  4 │         uint[] memory b = new uint[](5);
-    │                       ┬  
-    │                       ╰── def: 4
+  4 │         uint[] storage b = new uint[](5);
+    │                        ┬  
+    │                        ╰── def: 4
   5 │         assert(b.length == 5);
     │         ───┬── ┬ ───┬──  
     │            ╰───────────── ref: built-in
