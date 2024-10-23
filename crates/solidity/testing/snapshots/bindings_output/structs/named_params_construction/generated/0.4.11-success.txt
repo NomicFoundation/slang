@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     struct Funder {
+   │            ───┬──  
+   │               ╰──── def: 2
+ 3 │         address addr;
+   │                 ──┬─  
+   │                   ╰─── def: 3
+ 4 │         uint amount;
+   │              ───┬──  
+   │                 ╰──── def: 4
+   │ 
+ 7 │     function buildFunder() public payable returns (Funder memory) {
+   │              ─────┬─────                           ───┬──  
+   │                   ╰──────────────────────────────────────── def: 5
+   │                                                       │    
+   │                                                       ╰──── ref: 2
+ 8 │         return Funder({addr: msg.sender, amount: msg.value});
+   │                ───┬──  ──┬─  ─┬─ ───┬──  ───┬──  ─┬─ ──┬──  
+   │                   ╰───────────────────────────────────────── ref: 2
+   │                          │    │     │       │     │    │    
+   │                          ╰────────────────────────────────── ref: 3
+   │                               │     │       │     │    │    
+   │                               ╰───────────────────────────── ref: built-in
+   │                                     │       │     │    │    
+   │                                     ╰─────────────────────── ref: built-in
+   │                                             │     │    │    
+   │                                             ╰─────────────── ref: 4
+   │                                                   │    │    
+   │                                                   ╰───────── ref: built-in
+   │                                                        │    
+   │                                                        ╰──── ref: built-in
+───╯

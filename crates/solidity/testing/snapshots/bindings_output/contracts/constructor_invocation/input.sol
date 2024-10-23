@@ -1,4 +1,6 @@
 contract A {
+    function A(int _x) {}
+
     constructor(int _x) {}
 }
 

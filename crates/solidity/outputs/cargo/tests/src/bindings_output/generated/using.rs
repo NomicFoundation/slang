@@ -40,6 +40,11 @@ fn in_library() -> Result<()> {
 }
 
 #[test]
+fn star() -> Result<()> {
+    run("using", "star")
+}
+
+#[test]
 fn top_level() -> Result<()> {
     run("using", "top_level")
 }

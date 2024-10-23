@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract A {
+   │          ┬  
+   │          ╰── def: 1
+ 2 │     function A(int _x) {}
+   │              ┬     ─┬  
+   │              ╰───────── def: 2
+   │                     │  
+   │                     ╰── def: 3
+   │ 
+ 4 │     constructor(int _x) {}
+   │                     ─┬  
+   │                      ╰── def: 4
+   │ 
+ 7 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 5
+ 8 │     function foo() public {
+   │              ─┬─  
+   │               ╰─── def: 6
+ 9 │         new A({_x: 2});
+   │             ┬  ─┬  
+   │             ╰────── ref: 1
+   │                 │  
+   │                 ╰── ref: 4
+───╯

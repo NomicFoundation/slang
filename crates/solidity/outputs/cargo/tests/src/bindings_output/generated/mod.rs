@@ -1,5 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+mod arrays;
 mod built_ins;
 mod contracts;
 mod control;

@@ -2,9 +2,9 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:2:16]
+   ╭─[input.sol:4:16]
    │
- 2 │     constructor(int _x) {}
+ 4 │     constructor(int _x) {}
    │                ──────┬─────  
    │                      ╰─────── Error occurred here.
 ───╯
@@ -14,19 +14,25 @@ References and definitions:
  1 │ contract A {
    │          ┬  
    │          ╰── def: 1
- 2 │     constructor(int _x) {}
+ 2 │     function A(int _x) {}
+   │              ┬     ─┬  
+   │              ╰───────── def: 2
+   │                     │  
+   │                     ╰── def: 3
+   │ 
+ 4 │     constructor(int _x) {}
    │     ─────┬─────  
    │          ╰─────── unresolved
    │ 
- 5 │ contract Test {
+ 7 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 2
- 6 │     function foo() public {
+   │            ╰─── def: 4
+ 8 │     function foo() public {
    │              ─┬─  
-   │               ╰─── def: 3
- 7 │         new A({_x: 2});
+   │               ╰─── def: 5
+ 9 │         new A({_x: 2});
    │             ┬  ─┬  
    │             ╰────── ref: 1
    │                 │  
-   │                 ╰── unresolved
+   │                 ╰── ref: 3
 ───╯

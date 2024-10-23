@@ -345,6 +345,8 @@ static PRECEDENCE_ATTR: &str = "precedence";
 // Global variables
 /// Name of the variable used to pass the root node.
 pub const ROOT_NODE_VAR: &str = "ROOT_NODE";
+/// Name of the variable used to pass the jump to scope node.
+pub const JUMP_TO_SCOPE_NODE_VAR: &str = "JUMP_TO_SCOPE_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
@@ -405,6 +407,11 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             .add(ROOT_NODE_VAR.into(), root_node.into())
             .expect("Failed to set ROOT_NODE");
 
+        let jump_to_scope_node = self.inject_node(NodeID::jump_to());
+        variables
+            .add(JUMP_TO_SCOPE_NODE_VAR.into(), jump_to_scope_node.into())
+            .expect("Failed to set JUMP_TO_SCOPE_NODE");
+
         #[cfg(feature = "__private_testing_utils")]
         {
             // For debugging purposes only
@@ -418,6 +425,17 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
                     ROOT_NODE_VAR.to_string(),
                 )
                 .expect("Failed to set ROOT_NODE variable name for debugging");
+
+            self.graph[jump_to_scope_node]
+                .attributes
+                .add(
+                    [DEBUG_ATTR_PREFIX, "msgb_variable"]
+                        .concat()
+                        .as_str()
+                        .into(),
+                    JUMP_TO_SCOPE_NODE_VAR.to_string(),
+                )
+                .expect("Failed to set JUMP_TO_SCOPE_NODE variable name for debugging");
         }
 
         variables

@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_assertions::runner::run;
 
 #[test]
+fn constructor_invocation() -> Result<()> {
+    run("contracts", "constructor_invocation")
+}
+
+#[test]
 fn diamond() -> Result<()> {
     run("contracts", "diamond")
 }

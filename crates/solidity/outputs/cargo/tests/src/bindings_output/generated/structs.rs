@@ -10,6 +10,11 @@ fn declaration() -> Result<()> {
 }
 
 #[test]
+fn named_params_construction() -> Result<()> {
+    run("structs", "named_params_construction")
+}
+
+#[test]
 fn nested() -> Result<()> {
     run("structs", "nested")
 }
