@@ -10,6 +10,11 @@ fn call() -> Result<()> {
 }
 
 #[test]
+fn externals() -> Result<()> {
+    run("function_types", "externals")
+}
+
+#[test]
 fn reference() -> Result<()> {
     run("function_types", "reference")
 }

@@ -895,21 +895,30 @@ inherit .lexical_scope
 ;;; Function types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@ftype [FunctionType] {
+@ftype [FunctionType @attrs [FunctionTypeAttributes]] {
+  ; Compute the built-in type of the function
+  ; %functionExternal provides access to .selector and .address
+  var type = "%function"
+  scan (source-text @attrs) {
+    "external" {
+      set type = "%functionExternal"
+    }
+  }
+
   node @ftype.lexical_scope
   node @ftype.output
 
   ; This path pushes the function type to the symbol stack
   ; TODO: add parameter and return types to distinguish between different function types
   node function_type
-  attr (function_type) push_symbol = "%function"
+  attr (function_type) push_symbol = type
 
   edge @ftype.output -> function_type
   edge function_type -> @ftype.lexical_scope
 
   ; the pop path for the using directive
   node pop_function_type
-  attr (pop_function_type) pop_symbol = "%function"
+  attr (pop_function_type) pop_symbol = type
 
   let @ftype.pop_begin = pop_function_type
   let @ftype.pop_end = pop_function_type
@@ -1036,7 +1045,14 @@ inherit .lexical_scope
   edge @params.defs -> @param.def
 }
 
-@function [FunctionDefinition] {
+@function [FunctionDefinition @attrs [FunctionAttributes]] {
+  var function_type = "%function"
+  scan (source-text @attrs) {
+    "\\b(public|external)\\b" {
+      set function_type = "%functionExternal"
+    }
+  }
+
   node @function.lexical_scope
   node @function.def
 
@@ -1045,7 +1061,7 @@ inherit .lexical_scope
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node type_function
-  attr (type_function) push_symbol = "%function"
+  attr (type_function) push_symbol = function_type
   edge @function.def -> typeof
   edge typeof -> type_function
   edge type_function -> @function.lexical_scope

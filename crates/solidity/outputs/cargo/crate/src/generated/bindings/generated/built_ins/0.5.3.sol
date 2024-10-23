@@ -55,7 +55,7 @@ contract $BuiltIns$ {
   struct $bytes {
     function($args) returns (bytes memory) concat;
   }
-  struct $function {
+  struct $functionExternal {
     $selector selector;
     function(uint) returns ($function) gas;
     function(uint) returns ($function) value;

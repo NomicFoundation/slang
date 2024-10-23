@@ -59,7 +59,7 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
-  struct $function {
+  struct $functionExternal {
     $selector selector;
   }
   struct $msgType {
