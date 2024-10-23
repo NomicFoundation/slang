@@ -1,5 +1,11 @@
 # changelog
 
+## 0.18.3
+
+### Patch Changes
+
+-   [#1130](https://github.com/NomicFoundation/slang/pull/1130) [`a97b27d`](https://github.com/NomicFoundation/slang/commit/a97b27d918c9719edddbb2816db3486f43f7ec24) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix a bug where CST nodes are invalidated after using AST types
+
 ## 0.18.2
 
 ### Patch Changes
