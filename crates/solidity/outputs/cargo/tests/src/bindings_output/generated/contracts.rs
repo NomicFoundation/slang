@@ -30,6 +30,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn multi_inheritance() -> Result<()> {
+    run("contracts", "multi_inheritance")
+}
+
+#[test]
 fn public_getters() -> Result<()> {
     run("contracts", "public_getters")
 }
