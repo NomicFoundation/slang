@@ -268,6 +268,31 @@ fn test_one_or_more() {
 }
 
 #[test]
+fn test_one_or_more_anonymous() {
+    run_query_test(
+        &common_test_tree(),
+        "[TreeNode (@x [_])+ .]",
+        query_matches! {
+            {x: ["A", "B", "C", "DE"]}
+            {x: ["B", "C", "DE"]}
+            {x: ["C", "DE"]}
+            {x: ["DE"]}
+        },
+    );
+}
+
+#[test]
+fn test_one_or_more_anonymous_both_adjacent() {
+    run_query_test(
+        &common_test_tree(),
+        "[TreeNode . (@x [_])+ .]",
+        query_matches! {
+            {x: ["A", "B", "C", "DE"]}
+        },
+    );
+}
+
+#[test]
 fn test_zero_or_more() {
     run_query_test(
         &common_test_tree(),
@@ -337,6 +362,17 @@ fn test_adjacency_at_end_skips_trivia() {
         "[TreeNodeChild @x [DelimitedIdentifier] .]",
         query_matches! {
             {x: ["E"]}
+        },
+    );
+}
+
+#[test]
+fn test_one_or_more_anonymous_both_adjacent_with_trivia() {
+    run_query_test(
+        &common_test_tree_with_trivia(),
+        "[TreeNodeChild . @children [_]+ .]",
+        query_matches! {
+            {children: ["D", "E"]}
         },
     );
 }
