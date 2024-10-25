@@ -438,7 +438,15 @@ inherit .lexical_scope
 @contract [ContractDefinition [ContractMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  edge @contract.lexical_scope -> @using.def
+  if (version-matches "< 0.7.0") {
+    ; In Solidity < 0.7.0 using directives are inherited to derived contracts
+    ; Hence we make @using.def accessible through members, which is accessible
+    ; from derived contract's lexical scopes.
+    edge @contract.members -> @using.def
+  } else {
+    ; For Solidity >= 0.7.0, using directives are restricted to this contract only.
+    edge @contract.lexical_scope -> @using.def
+  }
 }
 
 @contract [ContractDefinition [ContractMembers

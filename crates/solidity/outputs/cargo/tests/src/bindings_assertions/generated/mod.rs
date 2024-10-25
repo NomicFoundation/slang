@@ -16,5 +16,6 @@ mod mappings;
 mod modifiers;
 mod scoping;
 mod user_types;
+mod using;
 mod variables;
 mod yul;
