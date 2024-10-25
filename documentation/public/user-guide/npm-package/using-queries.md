@@ -2,7 +2,7 @@
 
 It's often more convenient to use the declarative `Query` API to traverse the CST, as they allow you to express your intent more concisely and can largely replace the need for both internal (cursor), and external (visitor) iterator patterns.
 
-The [query language](./../tree-query-language.md) is based on pattern matching, and the execution semantics are closer to unification than to regular expression matching. A query returns all possible matches, not just the longest/shortest/first/last match.
+The [Tree Query Language](./../tree-query-language.md) is based on pattern matching, and the execution semantics are closer to unification than to regular expression matching. A query returns all possible matches, not just the longest/shortest/first/last match.
 
 If not specified otherwise, let's assume we already parsed a Solidity source and have a `cursor` pointing to the root node of the CST (created with `createTreeCursor`, see [Using the Cursor](./using-the-cursor.md)).
 

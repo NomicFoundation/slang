@@ -24,4 +24,4 @@ This is why, instead of having to download separate versions of the tool for eac
 
 ## Distributions
 
-Slang itself is written in Rust and we maintain a public Rust package on [crates.io](https://crates.io/crates/slang_solidity). At the moment, we also distribute it as an [npm package](https://www.npmjs.com/package/@nomicfoundation/slang) with TypeScript interface. In the future, we plan on expanding the language captures with Python and possibly more.
+Slang itself is written in Rust, compiled as a WASM component, and distributed as an [npm package](https://www.npmjs.com/package/@nomicfoundation/slang) with a TypeScript interface. In the future, we are also looking into publishing it as a Rust crate, a Python library, and possibly more.
