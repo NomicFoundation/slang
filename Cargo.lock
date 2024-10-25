@@ -2367,6 +2367,7 @@ dependencies = [
  "indicatif",
  "infra_utils",
  "itertools 0.13.0",
+ "metaslang_bindings",
  "once_cell",
  "rayon",
  "semver",

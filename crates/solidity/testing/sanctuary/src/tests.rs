@@ -1,12 +1,15 @@
 use std::cmp::min;
 use std::path::Path;
+use std::sync::Arc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
+use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::cst::NonterminalKind;
+use slang_solidity::cst::{NonterminalKind, TextIndex};
 use slang_solidity::parser::Parser;
+use slang_solidity::{bindings, transform_built_ins_node};
 
 use crate::datasets::{DataSet, SourceFile};
 use crate::events::{Events, TestOutcome};
@@ -102,7 +105,42 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let output = parser.parse(NonterminalKind::SourceUnit, &source);
 
     if output.is_valid() {
-        events.test(TestOutcome::Passed);
+        let mut bindings =
+            bindings::create_with_resolver(version.clone(), Arc::new(NoOpResolver {}));
+        let built_ins_tree = parser
+            .parse(
+                NonterminalKind::SourceUnit,
+                bindings::get_built_ins(&version),
+            )
+            .tree();
+        let built_ins_cursor =
+            transform_built_ins_node(&built_ins_tree).cursor_with_offset(TextIndex::ZERO);
+
+        bindings.add_system_file("built_ins.sol", built_ins_cursor);
+        bindings.add_user_file(
+            file.path.strip_repo_root()?.unwrap_str(),
+            output.create_tree_cursor(),
+        );
+        let mut outcome = TestOutcome::Passed;
+        for reference in bindings.all_references() {
+            if reference.get_file().is_system() {
+                continue;
+            }
+            if reference.definitions().is_empty() {
+                outcome = TestOutcome::Failed;
+                let cursor = reference.get_cursor().unwrap();
+                let report = format!(
+                    "Unresolved reference to {symbol} at {file}:{line}:{col}",
+                    symbol = cursor.node().unparse(),
+                    file = reference.get_file().get_path(),
+                    line = cursor.text_offset().line,
+                    col = cursor.text_offset().column,
+                );
+                events.parse_error(format!("[{version}] {report}"));
+            }
+        }
+
+        events.test(outcome);
         return Ok(());
     }
 
@@ -118,6 +156,14 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     }
 
     Ok(())
+}
+
+struct NoOpResolver;
+
+impl PathResolver for NoOpResolver {
+    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
+        Some(path_to_resolve.to_string())
+    }
 }
 
 fn extract_compiler_version(compiler: &str) -> Option<Version> {
