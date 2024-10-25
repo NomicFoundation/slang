@@ -645,6 +645,7 @@ inherit .lexical_scope
         | [StructDefinition]
         | [EventDefinition]
         | [ErrorDefinition]
+        | [StateVariableDefinition [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]]
         | [UserDefinedValueTypeDefinition]
     )]
 ]] {
