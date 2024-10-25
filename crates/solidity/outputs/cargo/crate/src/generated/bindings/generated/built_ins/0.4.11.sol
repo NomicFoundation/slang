@@ -1,6 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 contract $BuiltIns$ {
+  function $address() public returns ($address);
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) public returns (address);
@@ -47,6 +48,9 @@ contract $BuiltIns$ {
     function(uint) returns (bytes32) blockhash;
   }
   struct $bytes {
+    uint length;
+  }
+  struct $bytesType {
     function($args) returns (bytes memory) concat;
   }
   struct $functionExternal {
@@ -60,7 +64,7 @@ contract $BuiltIns$ {
     bytes4 sig;
     uint value;
   }
-  struct $string {
+  struct $stringType {
     function($args) returns (string memory) concat;
   }
   struct $txType {
@@ -78,7 +82,9 @@ contract $BuiltIns$ {
   $function $placeholder;
   $abiType abi;
   $blockType block;
+  $bytesType $bytes;
   $msgType msg;
   uint now;
+  $stringType $string;
   $txType tx;
 }

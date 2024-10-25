@@ -1,6 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 contract $BuiltIns$ {
+  function $address() public returns ($address);
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function blockhash(uint blockNumber) public returns (bytes32);
@@ -57,6 +58,9 @@ contract $BuiltIns$ {
     uint timestamp;
   }
   struct $bytes {
+    uint length;
+  }
+  struct $bytesType {
     function($args) returns (bytes memory) concat;
   }
   struct $callOptions {
@@ -74,7 +78,7 @@ contract $BuiltIns$ {
     bytes4 sig;
     uint value;
   }
-  struct $string {
+  struct $stringType {
     function($args) returns (string memory) concat;
   }
   struct $txType {
@@ -98,6 +102,8 @@ contract $BuiltIns$ {
   $function $placeholder;
   $abiType abi;
   $blockType block;
+  $bytesType $bytes;
   $msgType msg;
+  $stringType $string;
   $txType tx;
 }

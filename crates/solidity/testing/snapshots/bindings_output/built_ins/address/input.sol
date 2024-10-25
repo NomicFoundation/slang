@@ -6,5 +6,6 @@ contract Test {
         (bool v7, bytes memory v8) = recipient.staticcall(x1);
         recipient.transfer(1);
         bool v9 = recipient.send(1);
+        uint256 v10 = address(this).balance;
     }
 }

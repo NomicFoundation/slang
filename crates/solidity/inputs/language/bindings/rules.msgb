@@ -1936,6 +1936,12 @@ inherit .lexical_scope
   attr (@name.ref) tag = "super"
 }
 
+;; Elementary types used as expressions (eg. for type casting, or for built-ins like `string.concat`)
+@expr [Expression @type [ElementaryType]] {
+  edge @expr.output -> @type.ref
+  edge @type.ref -> @expr.lexical_scope
+}
+
 ;; Index access expressions
 @expr [Expression [IndexAccessExpression
     @operand operand: [Expression]

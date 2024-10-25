@@ -6627,6 +6627,11 @@ codegen_language_macros::compile!(Language(
     ],
     built_ins = [
         BuiltInFunction(
+            name = "$address",
+            parameters = [],
+            return_type = "$address"
+        ),
+        BuiltInFunction(
             name = "addmod",
             parameters = ["uint x", "uint y", "uint k"],
             return_type = "uint"
@@ -6886,6 +6891,11 @@ codegen_language_macros::compile!(Language(
         ),
         BuiltInType(
             name = "$bytes",
+            fields = [BuiltInField(definition = "uint length")],
+            functions = []
+        ),
+        BuiltInType(
+            name = "$bytesType",
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
@@ -6940,7 +6950,7 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$string",
+            name = "$stringType",
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
@@ -6989,8 +6999,10 @@ codegen_language_macros::compile!(Language(
         BuiltInVariable(definition = "$function $placeholder"),
         BuiltInVariable(definition = "$abiType abi"),
         BuiltInVariable(definition = "$blockType block"),
+        BuiltInVariable(definition = "$bytesType $bytes"),
         BuiltInVariable(definition = "$msgType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
+        BuiltInVariable(definition = "$stringType $string"),
         BuiltInVariable(definition = "$txType tx")
     ]
 ));

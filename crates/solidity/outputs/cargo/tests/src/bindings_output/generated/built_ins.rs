@@ -20,6 +20,11 @@ fn arrays() -> Result<()> {
 }
 
 #[test]
+fn bytes() -> Result<()> {
+    run("built_ins", "bytes")
+}
+
+#[test]
 fn function_type() -> Result<()> {
     run("built_ins", "function_type")
 }
