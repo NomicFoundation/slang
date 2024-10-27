@@ -14,7 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="AddressKeyword" style="display: none;"><a href="#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AddressKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AfterKeyword }
 

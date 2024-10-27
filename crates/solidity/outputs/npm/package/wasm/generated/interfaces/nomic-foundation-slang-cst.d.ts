@@ -217,7 +217,6 @@ export declare enum NonterminalKind {
   YulParameters = "YulParameters",
   YulParametersDeclaration = "YulParametersDeclaration",
   YulPath = "YulPath",
-  YulPathComponent = "YulPathComponent",
   YulPaths = "YulPaths",
   YulReturnsDeclaration = "YulReturnsDeclaration",
   YulStackAssignmentOperator = "YulStackAssignmentOperator",

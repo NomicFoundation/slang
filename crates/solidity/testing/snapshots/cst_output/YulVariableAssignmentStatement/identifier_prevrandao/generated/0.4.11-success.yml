@@ -9,7 +9,7 @@ Tree:
   - (YulVariableAssignmentStatement): # "prevrandao := 0\n" (0..16)
       - (variables꞉ YulPaths): # "prevrandao" (0..10)
           - (item꞉ YulPath): # "prevrandao" (0..10)
-              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "prevrandao" # (0..10)
+              - (item꞉ YulIdentifier): "prevrandao" # (0..10)
       - (assignment꞉ YulAssignmentOperator): # " :=" (10..13)
           - (leading_trivia꞉ Whitespace): " " # (10..11)
           - (variant꞉ ColonEqual): ":=" # (11..13)

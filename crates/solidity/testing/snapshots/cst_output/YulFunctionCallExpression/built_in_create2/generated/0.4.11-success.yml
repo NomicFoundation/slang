@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - (YulFunctionCallExpression): # "create2()\n" (0..10)
       - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "create2" (0..7)
-          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "create2" # (0..7)
+          - (item꞉ YulIdentifier): "create2" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (arguments꞉ YulArguments): [] # (8..8)
       - (close_paren꞉ CloseParen): ")" # (8..9)

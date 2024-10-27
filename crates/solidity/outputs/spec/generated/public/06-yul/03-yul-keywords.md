@@ -26,7 +26,7 @@
 
 ```
 
-<pre ebnf-snippet="YulAddressKeyword" style="display: none;"><a href="#YulAddressKeyword"><span class="k">YUL_ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulAddressKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#YulAddressKeyword"><span class="k">YUL_ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulAfterKeyword }
 
