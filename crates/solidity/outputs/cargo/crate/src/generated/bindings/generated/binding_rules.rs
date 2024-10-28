@@ -67,13 +67,16 @@ inherit .lexical_scope
   ;; inherited) for contracts to resolve bases (both in inheritance lists and
   ;; override specifiers)
   let @source_unit.parent_scope = @source_unit.lexical_scope
+
+  ; We may jump to scope here to resolve using the dynamic scope provided by
+  ; extensions declared with `using` directive
+  edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
 }
 
-;; Top-level definitions...
+;; Top-level definitions (except contract handled below)...
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @unit_member (
-          [ContractDefinition]
-        | [InterfaceDefinition]
+          [InterfaceDefinition]
         | [LibraryDefinition]
         | [StructDefinition]
         | [EnumDefinition]
@@ -88,6 +91,28 @@ inherit .lexical_scope
   edge @source_unit.lexical_scope -> @unit_member.def
   edge @source_unit.defs -> @unit_member.def
 }
+
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition]]
+]] {
+  edge @source_unit.lexical_scope -> @contract.def
+  edge @source_unit.defs -> @contract.def
+
+  ; When "leaving" the contract lexical scope, ensure that the dynamic scope
+  ; (ie. `using` directives extensions) is propagated
+  node @contract.dynamic
+  attr (@contract.dynamic) is_exported
+
+  node push
+  attr (push) push_scoped_symbol = "@dynamic", scope = @contract.dynamic
+  node pop
+  attr (pop) pop_scoped_symbol = "@dynamic"
+
+  edge @contract.lexical_scope -> push
+  edge push -> pop
+  edge pop -> @source_unit.lexical_scope
+}
+
 
 ;; Special case for built-ins: we want to export all symbols in the contract:
 ;; functions, types and state variables. All built-in symbols are defined in an
@@ -319,6 +344,13 @@ inherit .lexical_scope
   edge modifier -> @contract.modifiers
 
   let @contract.enclosing_def = @contract.def
+
+  if (version-matches "< 0.7.0") {
+    ; In Solidity < 0.7.0 using directives are inherited to derived contracts.
+    ; Hence we make out dynamic scope accessible through members, which is accessible
+    ; from derived contract's lexical scopes.
+    edge @contract.members -> @contract.dynamic
+  }
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -438,15 +470,8 @@ inherit .lexical_scope
 @contract [ContractDefinition [ContractMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  if (version-matches "< 0.7.0") {
-    ; In Solidity < 0.7.0 using directives are inherited to derived contracts
-    ; Hence we make @using.def accessible through members, which is accessible
-    ; from derived contract's lexical scopes.
-    edge @contract.members -> @using.def
-  } else {
-    ; For Solidity >= 0.7.0, using directives are restricted to this contract only.
-    edge @contract.lexical_scope -> @using.def
-  }
+  ; Expose the using directive from the dynamic scope
+  edge @contract.dynamic -> @using.def
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -1716,14 +1741,9 @@ inherit .lexical_scope
   ; Since we use structs to define built-in types and some of them (ie. array)
   ; have have a parametric type, we define two distinct paths to define a
   ; struct:
-  ; 1. the normal, non parametric path, should drop scopes in the scope stack first of all
+  ; 1. the normal, non parametric path
   ; 2. the parametric path, that pops a scope to resolve the parametric type
   ; Both of these connect to the node that pops the struct identifier symbol
-
-  ; First the normal path
-  node struct_drop
-  attr (struct_drop) type = "drop_scopes"
-  edge @struct.def -> struct_drop
 
   ; Second path, pops the scope
   node typed_params
@@ -1734,7 +1754,8 @@ inherit .lexical_scope
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @struct
-  edge struct_drop -> def
+
+  edge @struct.def -> def
   edge typed_params -> def
 
   ; On the other end, to properly close the second path we need to jump to the popped scope

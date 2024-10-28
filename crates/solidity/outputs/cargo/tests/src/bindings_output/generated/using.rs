@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn chained_calls() -> Result<()> {
+    run("using", "chained_calls")
+}
+
+#[test]
 fn deconstruction() -> Result<()> {
     run("using", "deconstruction")
 }
