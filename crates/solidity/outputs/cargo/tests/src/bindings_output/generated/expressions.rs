@@ -10,6 +10,11 @@ fn call_options() -> Result<()> {
 }
 
 #[test]
+fn elementary_casting() -> Result<()> {
+    run("expressions", "elementary_casting")
+}
+
+#[test]
 fn emit_named_args() -> Result<()> {
     run("expressions", "emit_named_args")
 }

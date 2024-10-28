@@ -1776,6 +1776,12 @@ inherit .lexical_scope
   attr (param_names) pop_symbol = "@param_names"
   edge def -> param_names
   edge param_names -> @struct.members
+
+  ; Used as a function call, should bind to itself
+  node call
+  attr (call) pop_symbol = "()"
+  edge def -> call
+  edge call -> member
 }
 
 @struct [StructDefinition [StructMembers
@@ -1967,6 +1973,16 @@ inherit .lexical_scope
 @expr [Expression @type [ElementaryType]] {
   edge @expr.output -> @type.ref
   edge @type.ref -> @expr.lexical_scope
+
+  ; Elementary types can also be used for casting; instead of defining built-in
+  ; struct for each available elementary type, we define a special path here
+  node call
+  attr (call) pop_symbol = "()"
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  edge @expr.output -> call
+  edge call -> typeof
+  edge typeof -> @type.ref
 }
 
 ;; Index access expressions
@@ -2083,6 +2099,17 @@ inherit .lexical_scope
 ]] {
   edge @named_arg.lexical_scope -> @expr.lexical_scope
   edge @named_arg.ref -> @options.refs
+}
+
+
+;;; Payable
+; These work like `address`, should they should bind to `%address`
+@expr [Expression [PayableKeyword]] {
+  node ref
+  attr (ref) push_symbol = "%address"
+
+  edge ref -> @expr.lexical_scope
+  edge @expr.output -> ref
 }
 
 

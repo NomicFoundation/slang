@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 4
+    │ 
+  4 │     function test(address a) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── def: 2
+    │                           │  
+    │                           ╰── def: 3
+  5 │         address(this).balance;
+    │                 ──┬─  ───┬───  
+    │                   ╰──────────── ref: built-in
+    │                          │     
+    │                          ╰───── ref: built-in
+  6 │         payable(a).call("");
+    │                 ┬  ──┬─  
+    │                 ╰──────── ref: 3
+    │                      │   
+    │                      ╰─── ref: built-in
+  7 │         uint(10).noop();
+    │                  ──┬─  
+    │                    ╰─── ref: 5
+    │ 
+ 11 │ library Lib {
+    │         ─┬─  
+    │          ╰─── def: 4
+ 12 │     function noop(uint x) public returns (uint) {}
+    │              ──┬─      ┬  
+    │                ╰────────── def: 5
+    │                        │  
+    │                        ╰── def: 6
+────╯

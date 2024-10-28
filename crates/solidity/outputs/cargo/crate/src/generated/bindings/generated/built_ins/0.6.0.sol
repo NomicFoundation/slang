@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 contract $BuiltIns$ {
-  function $address() public returns ($address);
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function blockhash(uint blockNumber) public returns (bytes32);

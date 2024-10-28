@@ -6627,11 +6627,6 @@ codegen_language_macros::compile!(Language(
     ],
     built_ins = [
         BuiltInFunction(
-            name = "$address",
-            parameters = [],
-            return_type = "$address"
-        ),
-        BuiltInFunction(
             name = "addmod",
             parameters = ["uint x", "uint y", "uint k"],
             return_type = "uint"
