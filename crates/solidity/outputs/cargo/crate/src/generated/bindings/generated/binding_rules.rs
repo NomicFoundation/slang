@@ -1180,6 +1180,10 @@ inherit .lexical_scope
 
   edge @name.push_end -> modifier
   edge modifier -> @modifier.lexical_scope
+
+  ; This allows resolving @name in the more general scope in constructors (since
+  ; calling a parent constructor is parsed as a modifier invocation)
+  let @modifier.identifier = @name.push_end
 }
 
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
@@ -1217,6 +1221,7 @@ inherit .lexical_scope
     @modifier [ModifierInvocation]
 ]]] {
   edge @modifier.lexical_scope -> @constructor.lexical_scope
+  edge @modifier.identifier -> @constructor.lexical_scope
 }
 
 @contract [ContractDefinition [ContractMembers [ContractMember
