@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn binary_operators() -> Result<()> {
+    run("expressions", "binary_operators")
+}
+
+#[test]
 fn call_options() -> Result<()> {
     run("expressions", "call_options")
 }

@@ -2118,6 +2118,110 @@ inherit .lexical_scope
 }
 
 
+;;; Tuple expressions
+
+; Parenthesized expressions are parsed as tuples of a single value
+@expr [Expression [TupleExpression [TupleValues . [TupleValue @operand [Expression]] .]]] {
+  edge @expr.output -> @operand.output
+}
+
+;;; Arithmetic, bitwise & logical operators, etc
+
+; Bind to the left operand only: assignment expressions, shift expressions, exponentiation
+@expr [Expression [_
+    @left_operand left_operand: [Expression]
+    (
+          [Equal]
+        | [BarEqual]
+        | [PlusEqual]
+        | [MinusEqual]
+        | [CaretEqual]
+        | [SlashEqual]
+        | [PercentEqual]
+        | [AsteriskEqual]
+        | [AmpersandEqual]
+        | [LessThanLessThanEqual]
+        | [GreaterThanGreaterThanEqual]
+        | [GreaterThanGreaterThanGreaterThanEqual]
+
+        | [LessThanLessThan]
+        | [GreaterThanGreaterThan]
+        | [GreaterThanGreaterThanGreaterThan]
+
+        | [AsteriskAsterisk]
+    )
+]] {
+  edge @expr.output -> @left_operand.output
+}
+
+; Unary operators postfix
+@expr [Expression [_
+    @operand operand: [Expression]
+    ([PlusPlus] | [MinusMinus])
+]] {
+  edge @expr.output -> @operand.output
+}
+
+; Unary operators prefix
+@expr [Expression [_
+    ([PlusPlus] | [MinusMinus] | [Tilde] | [Bang] | [Minus] | [Plus])
+    @operand operand: [Expression]
+]] {
+  edge @expr.output -> @operand.output
+}
+
+; Bind to both operands: logical and/or, arithmetic, bit-wise expressions
+@expr [Expression [_
+    @left_operand left_operand: [Expression]
+    (
+          [BarBar]
+        | [AmpersandAmpersand]
+
+        | [Plus]
+        | [Minus]
+        | [Asterisk]
+        | [Slash]
+        | [Percent]
+
+        | [Bar]
+        | [Caret]
+        | [Ampersand]
+    )
+    @right_operand right_operand: [Expression]
+]] {
+  edge @expr.output -> @left_operand.output
+  edge @expr.output -> @right_operand.output
+}
+
+; Comparison operators bind to bool type
+@expr [Expression [_
+    (
+          [EqualEqual]
+        | [BangEqual]
+        | [LessThan]
+        | [GreaterThan]
+        | [LessThanEqual]
+        | [GreaterThanEqual]
+    )
+]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node bool
+  attr (bool) push_symbol = "%bool"
+  edge @expr.output -> typeof
+  edge typeof -> bool
+  edge bool -> @expr.lexical_scope
+}
+
+; Ternary conditional expression binds to both branches
+@expr [Expression [ConditionalExpression
+    @true_expression true_expression: [Expression]
+    @false_expression false_expression: [Expression]
+]] {
+  edge @expr.output -> @true_expression.output
+  edge @expr.output -> @false_expression.output
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Yul
