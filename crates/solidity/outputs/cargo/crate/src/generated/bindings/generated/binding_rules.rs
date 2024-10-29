@@ -73,11 +73,12 @@ inherit .lexical_scope
   edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
 }
 
-;; Top-level definitions (except contract handled below)...
+;; (Most) Top-level definitions...
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @unit_member (
-          [InterfaceDefinition]
+          [ContractDefinition]
         | [LibraryDefinition]
+        | [InterfaceDefinition]
         | [StructDefinition]
         | [EnumDefinition]
         | [FunctionDefinition]
@@ -87,34 +88,38 @@ inherit .lexical_scope
         | [EventDefinition]
     )]
 ]] {
-  edge @unit_member.lexical_scope -> @source_unit.lexical_scope
   edge @source_unit.lexical_scope -> @unit_member.def
   edge @source_unit.defs -> @unit_member.def
+
+  ; In the general case, the lexical scope of the definition connects directly
+  ; to the source unit's
+  edge @unit_member.lexical_scope -> @source_unit.lexical_scope
 }
 
+;; For contracts (and libraries) navigating to the source unit lexical scope
+;; *also* needs to propagate the dynamic scope to be able to correctly bind
+;; `using` attached functions.
 @source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition]]
+    [SourceUnitMember @contract_or_library ([ContractDefinition] | [LibraryDefinition])]
 ]] {
-  edge @source_unit.lexical_scope -> @contract.def
-  edge @source_unit.defs -> @contract.def
-
   ; When "leaving" the contract lexical scope, ensure that the dynamic scope
   ; (ie. `using` directives extensions) is propagated
-  node @contract.dynamic
-  attr (@contract.dynamic) is_exported
+  node @contract_or_library.dynamic
+  attr (@contract_or_library.dynamic) is_exported
 
   node push
-  attr (push) push_scoped_symbol = "@dynamic", scope = @contract.dynamic
+  attr (push) push_scoped_symbol = "@dynamic", scope = @contract_or_library.dynamic
   node pop
   attr (pop) pop_scoped_symbol = "@dynamic"
 
-  edge @contract.lexical_scope -> push
+  edge @contract_or_library.lexical_scope -> push
   edge push -> pop
   edge pop -> @source_unit.lexical_scope
 
   ; The .parent_scope for contracts also needs to propagate the dynamic scope
-  ; otherwise when resolving for contract bases we lose it.
-  let @contract.parent_scope = push
+  ; otherwise when resolving for contract bases we lose it. This is not relevant
+  ; for libraries, but it doesn't matter that it's defined.
+  let @contract_or_library.parent_scope = push
 }
 
 
@@ -704,7 +709,8 @@ inherit .lexical_scope
 @library [LibraryDefinition [LibraryMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  edge @library.lexical_scope -> @using.def
+  ; Expose the using directive from the dynamic scope
+  edge @library.dynamic -> @using.def
 }
 
 
