@@ -35,6 +35,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn internal_visibility() -> Result<()> {
+    run("contracts", "internal_visibility")
+}
+
+#[test]
 fn multi_inheritance() -> Result<()> {
     run("contracts", "multi_inheritance")
 }

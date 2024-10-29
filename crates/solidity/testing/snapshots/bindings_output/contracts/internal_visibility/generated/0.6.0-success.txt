@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ abstract contract Ownable {
+   │                   ───┬───  
+   │                      ╰───── def: 1
+ 2 │     address internal owner;
+   │                      ──┬──  
+   │                        ╰──── def: 2
+ 3 │     address default_visibility;
+   │             ─────────┬────────  
+   │                      ╰────────── def: 3
+   │ 
+ 5 │ contract Test is Ownable {
+   │          ──┬─    ───┬───  
+   │            ╰────────────── def: 4
+   │                     │     
+   │                     ╰───── ref: 1
+ 6 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 5
+ 7 │         owner;
+   │         ──┬──  
+   │           ╰──── ref: 2
+ 8 │         default_visibility;
+   │         ─────────┬────────  
+   │                  ╰────────── ref: 3
+───╯

@@ -295,6 +295,12 @@ inherit .lexical_scope
   edge member -> typeof
   edge typeof -> @type_name.push_begin
 
+  ; Make internal members (state variables) accessible through the lexical scope
+  node internal
+  attr (internal) push_symbol = "@internal"
+  edge heir.lexical_scope -> internal
+  edge internal -> @type_name.push_begin
+
   ;; Make base defs (eg. enums and structs) accessible as our own
   node type_member
   attr (type_member) push_symbol = "."
@@ -336,6 +342,7 @@ inherit .lexical_scope
   node @contract.type_members
   node @contract.modifiers
   node @contract.state_vars
+  node @contract.internal
 
   edge @contract.lexical_scope -> @contract.members
   edge @contract.lexical_scope -> @contract.type_members
@@ -383,6 +390,12 @@ inherit .lexical_scope
   attr (type_member) pop_symbol = "."
   edge @contract.def -> type_member
   edge type_member -> @contract.type_members
+
+  ; Finally there's an @internal path used by derived contracts to access our internal state variables
+  node internal
+  attr (internal) pop_symbol = "@internal"
+  edge @contract.def -> internal
+  edge internal -> @contract.internal
 
   ;; Define "this" and connect it to the contract definition
   node this
@@ -494,6 +507,12 @@ inherit .lexical_scope
     [ContractMember @state_var [StateVariableDefinition]]
 ]] {
   edge @contract.state_vars -> @state_var.def
+
+  ; State variables are available to derived contracts.
+  ; TODO: this also exposes private state variables to derived contracts, but we
+  ; can't easily express that because we don't have negative assertions in our
+  ; query language
+  edge @contract.internal -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
