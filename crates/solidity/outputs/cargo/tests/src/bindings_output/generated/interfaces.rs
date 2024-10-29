@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn inherit_dynamic_scope() -> Result<()> {
+    run("interfaces", "inherit_dynamic_scope")
+}
+
+#[test]
 fn inheritance() -> Result<()> {
     run("interfaces", "inheritance")
 }

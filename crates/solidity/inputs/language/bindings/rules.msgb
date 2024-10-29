@@ -106,6 +106,10 @@ inherit .lexical_scope
   edge @contract.lexical_scope -> push
   edge push -> pop
   edge pop -> @source_unit.lexical_scope
+
+  ; The .parent_scope for contracts also needs to propagate the dynamic scope
+  ; otherwise when resolving for contract bases we lose it.
+  let @contract.parent_scope = push
 }
 
 
