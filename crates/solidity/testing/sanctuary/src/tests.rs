@@ -105,8 +105,13 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let output = parser.parse(NonterminalKind::SourceUnit, &source);
 
     if output.is_valid() {
-        let mut bindings =
-            bindings::create_with_resolver(version.clone(), Arc::new(NoOpResolver {}));
+        let source_id = file.path.strip_repo_root()?.unwrap_str();
+        let mut bindings = bindings::create_with_resolver(
+            version.clone(),
+            Arc::new(SingleFileResolver {
+                source_id: source_id.into(),
+            }),
+        );
         let built_ins_tree = parser
             .parse(
                 NonterminalKind::SourceUnit,
@@ -117,10 +122,7 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
             transform_built_ins_node(&built_ins_tree).cursor_with_offset(TextIndex::ZERO);
 
         bindings.add_system_file("built_ins.sol", built_ins_cursor);
-        bindings.add_user_file(
-            file.path.strip_repo_root()?.unwrap_str(),
-            output.create_tree_cursor(),
-        );
+        bindings.add_user_file(source_id, output.create_tree_cursor());
         let mut outcome = TestOutcome::Passed;
         for reference in bindings.all_references() {
             if reference.get_file().is_system() {
@@ -158,11 +160,13 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     Ok(())
 }
 
-struct NoOpResolver;
+struct SingleFileResolver {
+    source_id: String,
+}
 
-impl PathResolver for NoOpResolver {
-    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
-        Some(path_to_resolve.to_string())
+impl PathResolver for SingleFileResolver {
+    fn resolve_path(&self, _context_path: &str, _path_to_resolve: &str) -> Option<String> {
+        Some(self.source_id.clone())
     }
 }
 
