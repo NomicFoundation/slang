@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IERC20 {
+   │           ───┬──  
+   │              ╰──── def: 1
+   │ 
+ 3 │ library SafeERC20 {
+   │         ────┬────  
+   │             ╰────── def: 2
+ 4 │     function safeApprove(IERC20 token) internal {}
+   │              ─────┬───── ───┬── ──┬──  
+   │                   ╰──────────────────── def: 3
+   │                             │     │    
+   │                             ╰────────── ref: 1
+   │                                   │    
+   │                                   ╰──── def: 4
+   │ 
+ 6 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 5
+ 7 │     using SafeERC20 for IERC20;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── ref: 2
+   │                            │    
+   │                            ╰──── ref: 1
+ 8 │     function test(address token) public {
+   │              ──┬─         ──┬──  
+   │                ╰───────────────── def: 6
+   │                             │    
+   │                             ╰──── def: 7
+ 9 │         IERC20(token).safeApprove();
+   │         ───┬── ──┬──  ─────┬─────  
+   │            ╰─────────────────────── ref: 1
+   │                  │         │       
+   │                  ╰───────────────── ref: 7
+   │                            │       
+   │                            ╰─────── ref: 3
+───╯

@@ -385,6 +385,17 @@ inherit .lexical_scope
   edge @contract.def -> call
   edge call -> member
 
+  ; From a call we may need to resolve using the dynamic scope, in case there's
+  ; a `using` directive on our type. This path ends up jumping to scope just to
+  ; handle that case.
+  node push_typeof
+  attr (push_typeof) push_symbol = "@typeof"
+  node push_name
+  attr (push_name) push_symbol = (source-text @name)
+  edge call -> push_typeof
+  edge push_typeof -> push_name
+  edge push_name -> JUMP_TO_SCOPE_NODE
+
   ;; "namespace" like access path
   node type_member
   attr (type_member) pop_symbol = "."
@@ -598,6 +609,17 @@ inherit .lexical_scope
   attr (call) pop_symbol = "()"
   edge @interface.def -> call
   edge call -> member
+
+  ; From a call we may need to resolve using the dynamic scope, in case there's
+  ; a `using` directive on our type. This path ends up jumping to scope just to
+  ; handle that case.
+  node push_typeof
+  attr (push_typeof) push_symbol = "@typeof"
+  node push_name
+  attr (push_name) push_symbol = (source-text @name)
+  edge call -> push_typeof
+  edge push_typeof -> push_name
+  edge push_name -> JUMP_TO_SCOPE_NODE
 
   ;; "namespace" like access path
   node type_member
