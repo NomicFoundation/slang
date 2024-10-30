@@ -1514,7 +1514,6 @@ inherit .lexical_scope
 
 @expr_stmt [ExpressionStatement] {
   node @expr_stmt.lexical_scope
-  node @expr_stmt.defs
 }
 
 
@@ -1522,31 +1521,45 @@ inherit .lexical_scope
 
 @stmt [Statement @var_decl [VariableDeclarationStatement]] {
   edge @var_decl.lexical_scope -> @stmt.lexical_scope
-  edge @stmt.defs -> @var_decl.defs
+  edge @stmt.defs -> @var_decl.def
 }
 
 @var_decl [VariableDeclarationStatement] {
   node @var_decl.lexical_scope
-  node @var_decl.defs
+  node @var_decl.def
 }
 
 @var_decl [VariableDeclarationStatement
     [VariableDeclarationType @var_type [TypeName]]
     @name name: [Identifier]
 ] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @var_decl
+  attr (@var_decl.def) node_definition = @name
+  attr (@var_decl.def) definiens_node = @var_decl
 
-  edge @var_decl.defs -> def
   edge @var_type.type_ref -> @var_decl.lexical_scope
 
   node typeof
   attr (typeof) push_symbol = "@typeof"
 
-  edge def -> typeof
+  edge @var_decl.def -> typeof
   edge typeof -> @var_type.output
 }
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType [VarKeyword]]
+    @name name: [Identifier]
+] {
+  attr (@var_decl.def) node_definition = @name
+  attr (@var_decl.def) definiens_node = @var_decl
+}
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType [VarKeyword]]
+    [VariableDeclarationValue @value [Expression]]
+] {
+  edge @var_decl.def -> @value.output
+}
+
 
 
 ;;; Tuple deconstruction statements
@@ -1621,11 +1634,20 @@ inherit .lexical_scope
 ;; For loops
 
 @stmt [Statement [ForStatement
-    initialization: [ForStatementInitialization
-        @init_stmt ([ExpressionStatement]
-                  | [VariableDeclarationStatement]
-                  | [TupleDeconstructionStatement])
-    ]
+    initialization: [ForStatementInitialization @init_stmt [ExpressionStatement]]
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization @init_stmt [VariableDeclarationStatement]]
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.init_defs -> @init_stmt.def
+}
+
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization @init_stmt [TupleDeconstructionStatement]]
 ]] {
   edge @init_stmt.lexical_scope -> @stmt.lexical_scope
   edge @stmt.init_defs -> @init_stmt.defs
