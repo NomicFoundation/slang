@@ -301,6 +301,13 @@ inherit .lexical_scope
   edge heir.lexical_scope -> internal
   edge internal -> @type_name.push_begin
 
+  ; Base members can also be accessed qualified with the base name (eg. `Base.something`)
+  node member_pop
+  attr (member_pop) pop_symbol = "."
+  edge heir.lexical_scope -> @type_name.pop_begin
+  edge @type_name.pop_end -> member_pop
+  edge member_pop -> member
+
   ;; Make base defs (eg. enums and structs) accessible as our own
   node type_member
   attr (type_member) push_symbol = "."
