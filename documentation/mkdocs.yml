@@ -18,6 +18,15 @@ edit_uri: "edit/main/documentation/public"
 docs_dir: "./public"
 site_dir: "./target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
+# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
+not_in_nav: |
+  user-guide/rust-crate/index.md
+  user-guide/rust-crate/installation.md
+  user-guide/rust-crate/using-queries.md
+  user-guide/rust-crate/using-the-cli.md
+  user-guide/rust-crate/using-the-cursor.md
+  user-guide/rust-crate/using-the-parser.md
+
 validation:
   nav:
     absolute_links: "warn"
@@ -25,6 +34,7 @@ validation:
     omitted_files: "warn"
   links:
     absolute_links: "warn"
+    anchors: "warn"
     not_found: "warn"
     unrecognized_links: "warn"
 

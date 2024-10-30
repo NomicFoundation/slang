@@ -145,5 +145,7 @@ impl CargoWorkspaceCommands for Command {
                 .unwrap(),
             ),
         )
+        // Print extra logs when build cache is invalidated:
+        .env("CARGO_LOG", "cargo::core::compiler::fingerprint=info")
     }
 }

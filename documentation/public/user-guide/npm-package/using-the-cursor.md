@@ -8,9 +8,9 @@ Let's start with this source file, that contains three contracts:
 ```
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.mts:imports"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.test.mts:imports"
 
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.mts:parse-input"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.test.mts:parse-input"
 ```
 
 ## Listing Contract Names
@@ -18,7 +18,7 @@ Let's start with this source file, that contains three contracts:
 The below example uses a cursor to list the names of all contracts in a source file:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.mts:listing-contract-names"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.test.mts:listing-contract-names"
 ```
 
 ## Visiting Only a Sub-tree
@@ -32,7 +32,7 @@ which cheaply creates a new cursor that starts at the given node, without copyin
 This lets us visit the sub-tree of each contract, without modifying the original cursor:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.mts:visiting-sub-tree"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.test.mts:visiting-sub-tree"
 ```
 
 ## Accessing Node Positions
@@ -41,5 +41,5 @@ The `Cursor` API also tracks the position and range of the current node it is vi
 Here is an example that records the source range of each contract, along with its text:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.mts:accessing-node-positions"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-cursor.test.mts:accessing-node-positions"
 ```

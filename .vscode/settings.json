@@ -25,6 +25,8 @@
   ],
   "rust-analyzer.server.path": "${workspaceFolder}/scripts/bin/rust-analyzer",
   "search.exclude": {
+    // Git Submodules
+    "submodules/**": true,
     // Packages and Dependencies
     "**/.hermit/": true,
     "**/node_modules/": true,

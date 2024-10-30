@@ -17,7 +17,10 @@ use crate::paths::{PathExtensions, PrivatePathExtensions};
 pub struct Command {
     name: String,
     args: Vec<String>,
+
     environment: HashMap<String, String>,
+    secrets: HashMap<String, String>,
+
     current_dir: Option<PathBuf>,
 }
 
@@ -27,7 +30,10 @@ impl Command {
         Self {
             name: name.into(),
             args: vec![],
+
             environment: HashMap::new(),
+            secrets: HashMap::new(),
+
             current_dir: None,
         }
     }
@@ -66,6 +72,13 @@ impl Command {
     #[must_use]
     pub fn env(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.environment.insert(key.into(), value.into());
+
+        self
+    }
+
+    #[must_use]
+    pub fn secret(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
+        self.secrets.insert(key.into(), value.into());
 
         self
     }
@@ -155,6 +168,7 @@ fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<C
         .envs(vars())
         // Then apply any user provided overrides:
         .envs(&command.environment)
+        .envs(&command.secrets)
         // Set up stdio:
         .stdin(stdio())
         .stdout(stdio())
@@ -222,7 +236,11 @@ impl Display for Command {
             parts.push("&&".to_owned());
         }
 
-        for key in self.environment.keys() {
+        for (key, value) in &self.environment {
+            parts.push(format!("{key}='{value}'"));
+        }
+
+        for key in self.secrets.keys() {
             // Note: GitHub CI might not be able to obfuscate all secrets. Let's err on the side of caution:
             parts.push(format!("{key}='XXX'"));
         }

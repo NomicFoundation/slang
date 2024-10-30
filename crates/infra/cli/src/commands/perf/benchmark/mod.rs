@@ -77,7 +77,7 @@ impl BenchmarkController {
             .property("--project", "slang")
             .property("--adapter", "rust_iai_callgrind")
             .property("--testbed", testbed)
-            .env("BENCHER_API_TOKEN", token);
+            .secret("BENCHER_API_TOKEN", token);
 
         if dry_run {
             command = command.flag("--dry-run");

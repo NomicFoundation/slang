@@ -14,9 +14,9 @@ We begin by creating a `Parser` object with a specified version. This is an entr
 Then we can use it to parse the source file, specifying the top-level nonterminal to parse:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:imports"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:imports"
 
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:parse-input"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:parse-input"
 ```
 
 ## Checking for Syntax Errors
@@ -24,13 +24,13 @@ Then we can use it to parse the source file, specifying the top-level nontermina
 If the file has errors, we can get them from the `ParseOutput` type, and print them out:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:print-errors"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:print-errors"
 ```
 
 Otherwise, we can check if input is valid using this helpful utility:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:assert-is-valid"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:assert-is-valid"
 ```
 
 ## Inspecting the Parse Tree
@@ -38,11 +38,11 @@ Otherwise, we can check if input is valid using this helpful utility:
 Now, let's try to inspect the resulting CST, and iterate on its children:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:inspect-tree"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:inspect-tree"
 ```
 
 Additionally, we can convert the CST node back into the input string:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.mts:unparse-node"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-the-parser.test.mts:unparse-node"
 ```

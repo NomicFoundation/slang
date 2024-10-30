@@ -10,7 +10,7 @@ mod ffi {
         Guest, GuestSelectors,
     };
     pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::cst::{
-        Node, NonterminalNode,
+        Node, NonterminalNodeBorrow,
     };
 }
 
@@ -29,25 +29,25 @@ impl ffi::Guest for crate::wasm_crate::World {
 pub struct SelectorsWrapper;
 
 impl ffi::GuestSelectors for SelectorsWrapper {
-    fn sequence(node: ffi::NonterminalNode) -> Result<Vec<Option<ffi::Node>>, String> {
+    fn sequence(node: ffi::NonterminalNodeBorrow<'_>) -> Result<Vec<Option<ffi::Node>>, String> {
         Ok(selectors::select_sequence(node._borrow_ffi())?
             .into_iter()
             .map(|opt| opt.map(|node| node._into_ffi()))
             .collect())
     }
 
-    fn choice(node: ffi::NonterminalNode) -> Result<ffi::Node, String> {
+    fn choice(node: ffi::NonterminalNodeBorrow<'_>) -> Result<ffi::Node, String> {
         Ok(selectors::select_choice(node._borrow_ffi())?._into_ffi())
     }
 
-    fn repeated(node: ffi::NonterminalNode) -> Result<Vec<ffi::Node>, String> {
+    fn repeated(node: ffi::NonterminalNodeBorrow<'_>) -> Result<Vec<ffi::Node>, String> {
         Ok(selectors::select_repeated(node._borrow_ffi())?
             .into_iter()
             .map(|node| node._into_ffi())
             .collect())
     }
 
-    fn separated(node: ffi::NonterminalNode) -> Result<Vec<Vec<ffi::Node>>, String> {
+    fn separated(node: ffi::NonterminalNodeBorrow<'_>) -> Result<Vec<Vec<ffi::Node>>, String> {
         Ok(selectors::select_separated(node._borrow_ffi())?
             .into_iter()
             .map(|vec| vec.into_iter().map(|node| node._into_ffi()).collect())

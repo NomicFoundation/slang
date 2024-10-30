@@ -2,7 +2,7 @@
 
 It's often more convenient to use the declarative `Query` API to traverse the CST, as they allow you to express your intent more concisely and can largely replace the need for both internal (cursor), and external (visitor) iterator patterns.
 
-The [query language](./../tree-query-language.md) is based on pattern matching, and the execution semantics are closer to unification than to regular expression matching. A query returns all possible matches, not just the longest/shortest/first/last match.
+The [Tree Query Language](./../tree-query-language.md) is based on pattern matching, and the execution semantics are closer to unification than to regular expression matching. A query returns all possible matches, not just the longest/shortest/first/last match.
 
 If not specified otherwise, let's assume we already parsed a Solidity source and have a `cursor` pointing to the root node of the CST (created with `createTreeCursor`, see [Using the Cursor](./using-the-cursor.md)).
 
@@ -13,7 +13,7 @@ You can create a `Query` object using `Query.parse`, which accepts a string valu
 You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning matches in the order they appear in input.
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:creating-a-query"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:creating-a-query"
 ```
 
 ## Iterating over node patterns
@@ -27,7 +27,7 @@ Let's use this to list all the contract definitions in the source file:
 ```
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:visiting-contracts"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:visiting-contracts"
 ```
 
 ### Multiple patterns simultaneously
@@ -35,7 +35,7 @@ Let's use this to list all the contract definitions in the source file:
 We can also intersperse multiple patterns in a single query, which will return all the matches for each pattern. This can be useful when you want to match multiple types of nodes in a single pass.
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:multiple-patterns"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:multiple-patterns"
 ```
 
 ## Matching on node's label
@@ -49,7 +49,7 @@ To do so, we use `[label: _]` syntax. Here, we also use `_` to allow matching an
 ```
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:matching-on-label"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:matching-on-label"
 ```
 
 ## Matching on node's literal content
@@ -63,7 +63,7 @@ Let's say we prefer our code to be explicit and prefer using `uint256` instead o
 ```
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:matching-on-literal-value"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:matching-on-literal-value"
 ```
 
 ## Example: Finding `tx.origin` patterns
@@ -79,5 +79,5 @@ Let's use the motivating example from [https://soliditylang.org](https://docs.so
 Now, we can above features to write a query that matches all `tx.origin` patterns:
 
 ```{ .ts }
---8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.mts:tx-origin"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/using-queries.test.mts:tx-origin"
 ```

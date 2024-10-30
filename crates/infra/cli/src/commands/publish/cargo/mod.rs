@@ -1,7 +1,7 @@
 use std::iter::once;
 use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{ensure, Result};
 use clap::Parser;
 use infra_utils::cargo::{CargoWorkspace, UserFacingCrate};
 use infra_utils::commands::Command;
@@ -20,6 +20,11 @@ pub struct CargoController {
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
+        ensure!(
+            false,
+            "__SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)"
+        );
+
         let mut changeset = TemporaryChangeset::new(
             "infra/cargo-publish",
             "prepare Cargo packages for publishing",

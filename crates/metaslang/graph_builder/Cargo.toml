@@ -2,7 +2,8 @@
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
-publish = true
+# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
+# publish = true
 
 name = "metaslang_graph_builder"
 description = "Construct graphs from parsed source code"
