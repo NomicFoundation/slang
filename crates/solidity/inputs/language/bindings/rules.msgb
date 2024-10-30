@@ -497,6 +497,7 @@ inherit .lexical_scope
         | [ModifierDefinition]
         | [FallbackFunctionDefinition]
         | [ReceiveFunctionDefinition]
+        | [UnnamedFunctionDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
@@ -1257,6 +1258,29 @@ inherit .lexical_scope
 @modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
   edge @args.lexical_scope -> @modifier.lexical_scope
 }
+
+;;; Unnamed functions (deprecated)
+@unnamed_function [UnnamedFunctionDefinition] {
+  node @unnamed_function.lexical_scope
+}
+
+@unnamed_function [UnnamedFunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @unnamed_function.lexical_scope
+
+  edge @unnamed_function.lexical_scope -> @params.defs
+  attr (@unnamed_function.lexical_scope -> @params.defs) precedence = 1
+}
+
+@unnamed_function [UnnamedFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @unnamed_function.lexical_scope
+}
+
+@unnamed_function [UnnamedFunctionDefinition
+    [UnnamedFunctionAttributes [UnnamedFunctionAttribute @modifier [ModifierInvocation]]]
+] {
+  edge @modifier.lexical_scope -> @unnamed_function.lexical_scope
+}
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

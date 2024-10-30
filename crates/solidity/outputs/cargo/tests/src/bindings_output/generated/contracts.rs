@@ -70,6 +70,11 @@ fn this_scope() -> Result<()> {
 }
 
 #[test]
+fn unnamed_function() -> Result<()> {
+    run("contracts", "unnamed_function")
+}
+
+#[test]
 fn virtual_lookup() -> Result<()> {
     run("contracts", "virtual_lookup")
 }
