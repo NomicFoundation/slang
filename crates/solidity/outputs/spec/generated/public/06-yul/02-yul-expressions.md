@@ -32,13 +32,7 @@
 
 ```
 
-<pre ebnf-snippet="YulPath" style="display: none;"><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
-
-```{ .ebnf #YulPathComponent }
-
-```
-
-<pre ebnf-snippet="YulPathComponent" style="display: none;"><a href="#YulPathComponent"><span class="k">YulPathComponent</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><br /><span class="o">                 | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulAddressKeyword"><span class="k">YUL_ADDRESS_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.10 *)</span></pre>
+<pre ebnf-snippet="YulPath" style="display: none;"><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulIdentifier }
 

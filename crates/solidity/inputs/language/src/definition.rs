@@ -486,7 +486,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = AddressKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("address"))]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = AfterKeyword,
@@ -3460,22 +3461,13 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
-                                    operators = [
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(Identifier)
-                                            )
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(AddressKeyword)
-                                            )
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            period = Required(Period),
+                                            member = Required(Identifier)
                                         )
-                                    ]
+                                    )]
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
@@ -4381,19 +4373,8 @@ codegen_language_macros::compile!(Language(
                         Separated(name = YulPaths, reference = YulPath, separator = Comma),
                         Separated(
                             name = YulPath,
-                            reference = YulPathComponent,
+                            reference = YulIdentifier,
                             separator = Period
-                        ),
-                        Enum(
-                            name = YulPathComponent,
-                            variants = [
-                                EnumVariant(reference = YulIdentifier),
-                                EnumVariant(
-                                    // Upstream grammar accepts built-ins but only `address` is valid:
-                                    reference = YulAddressKeyword,
-                                    enabled = From("0.8.10")
-                                )
-                            ]
                         ),
                         Token(
                             name = YulIdentifier,
@@ -4604,7 +4585,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulAddressKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("address"))]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = YulAfterKeyword,

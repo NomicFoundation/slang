@@ -220,7 +220,6 @@ pub enum NonterminalKind {
     YulParameters,
     YulParametersDeclaration,
     YulPath,
-    YulPathComponent,
     YulPaths,
     YulReturnsDeclaration,
     YulStackAssignmentOperator,

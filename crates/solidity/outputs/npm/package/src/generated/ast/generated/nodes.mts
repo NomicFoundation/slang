@@ -5101,22 +5101,6 @@ export class YulExpression {
   }
 }
 
-export class YulPathComponent {
-  private readonly fetch: () => TerminalNode = once(() => {
-    const variant = generated.ast.Selectors.choice(this.cst);
-
-    return variant as TerminalNode;
-  });
-
-  public constructor(public readonly cst: NonterminalNode) {
-    assertKind(this.cst.kind, NonterminalKind.YulPathComponent);
-  }
-
-  public get variant(): TerminalNode {
-    return this.fetch();
-  }
-}
-
 export class YulBuiltInFunction {
   private readonly fetch: () => TerminalNode = once(() => {
     const variant = generated.ast.Selectors.choice(this.cst);
@@ -5979,17 +5963,14 @@ export class YulPath {
   private readonly fetch = once(() => {
     const [items, separators] = generated.ast.Selectors.separated(this.cst);
 
-    return {
-      items: items!.map((item) => new YulPathComponent(item as NonterminalNode)),
-      separators: separators as TerminalNode[],
-    };
+    return { items: items as TerminalNode[], separators: separators as TerminalNode[] };
   });
 
   public constructor(public readonly cst: NonterminalNode) {
     assertKind(this.cst.kind, NonterminalKind.YulPath);
   }
 
-  public get items(): readonly YulPathComponent[] {
+  public get items(): readonly TerminalNode[] {
     return this.fetch().items;
   }
 

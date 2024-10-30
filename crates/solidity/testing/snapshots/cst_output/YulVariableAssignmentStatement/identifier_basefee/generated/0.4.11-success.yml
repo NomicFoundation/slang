@@ -9,7 +9,7 @@ Tree:
   - (YulVariableAssignmentStatement): # "basefee := 0\n" (0..13)
       - (variables꞉ YulPaths): # "basefee" (0..7)
           - (item꞉ YulPath): # "basefee" (0..7)
-              - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "basefee" # (0..7)
+              - (item꞉ YulIdentifier): "basefee" # (0..7)
       - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)
           - (leading_trivia꞉ Whitespace): " " # (7..8)
           - (variant꞉ ColonEqual): ":=" # (8..10)

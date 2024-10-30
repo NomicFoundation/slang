@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - (YulFunctionCallExpression): # "mcopy()\n" (0..8)
       - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "mcopy" (0..5)
-          - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "mcopy" # (0..5)
+          - (item꞉ YulIdentifier): "mcopy" # (0..5)
       - (open_paren꞉ OpenParen): "(" # (5..6)
       - (arguments꞉ YulArguments): [] # (6..6)
       - (close_paren꞉ CloseParen): ")" # (6..7)

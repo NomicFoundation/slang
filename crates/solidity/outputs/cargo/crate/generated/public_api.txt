@@ -400,7 +400,6 @@ pub slang_solidity::cst::NonterminalKind::YulLiteral
 pub slang_solidity::cst::NonterminalKind::YulParameters
 pub slang_solidity::cst::NonterminalKind::YulParametersDeclaration
 pub slang_solidity::cst::NonterminalKind::YulPath
-pub slang_solidity::cst::NonterminalKind::YulPathComponent
 pub slang_solidity::cst::NonterminalKind::YulPaths
 pub slang_solidity::cst::NonterminalKind::YulReturnsDeclaration
 pub slang_solidity::cst::NonterminalKind::YulStackAssignmentOperator

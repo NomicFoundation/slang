@@ -205,7 +205,6 @@ interface cst {
                 %yul-parameters,
                 %yul-parameters-declaration,
                 %yul-path,
-                %yul-path-component,
                 %yul-paths,
                 %yul-returns-declaration,
                 %yul-stack-assignment-operator,
