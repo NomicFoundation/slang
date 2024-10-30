@@ -240,4 +240,28 @@
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/using-the-parser/</loc>
          <lastmod>2024-10-30</lastmod>
     </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/installation/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-queries/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-cli/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-cursor/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-parser/</loc>
+         <lastmod>2024-10-30</lastmod>
+    </url>
 </urlset>
