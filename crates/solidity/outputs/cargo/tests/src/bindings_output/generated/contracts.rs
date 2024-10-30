@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn call_public_getter() -> Result<()> {
+    run("contracts", "call_public_getter")
+}
+
+#[test]
 fn constructor_call_parent() -> Result<()> {
     run("contracts", "constructor_call_parent")
 }

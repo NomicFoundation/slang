@@ -1744,11 +1744,22 @@ inherit .lexical_scope
 
   edge @type_name.type_ref -> @state_var.lexical_scope
 
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
+  node @state_var.typeof
+  attr (@state_var.typeof) push_symbol = "@typeof"
 
-  edge @state_var.def -> typeof
-  edge typeof -> @type_name.output
+  edge @state_var.def -> @state_var.typeof
+  edge @state_var.typeof -> @type_name.output
+}
+
+@state_var [StateVariableDefinition
+    [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
+] {
+  ; Public state variables are used as functions when invoked from an external contract
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @state_var.def -> call
+  edge call -> @state_var.typeof
 }
 
 

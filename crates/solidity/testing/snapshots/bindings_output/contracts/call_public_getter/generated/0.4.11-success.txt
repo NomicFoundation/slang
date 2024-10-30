@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     struct Value { int x; }
+   │            ──┬──       ┬  
+   │              ╰──────────── def: 2
+   │                        │  
+   │                        ╰── def: 3
+ 3 │     Value public value;
+   │     ──┬──        ──┬──  
+   │       ╰───────────────── ref: 2
+   │                    │    
+   │                    ╰──── def: 4
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 5
+ 6 │     function test(Base base) public {
+   │              ──┬─ ──┬─ ──┬─  
+   │                ╰───────────── def: 6
+   │                     │    │   
+   │                     ╰──────── ref: 1
+   │                          │   
+   │                          ╰─── def: 7
+ 7 │         base.value().x;
+   │         ──┬─ ──┬──   ┬  
+   │           ╰───────────── ref: 7
+   │                │     │  
+   │                ╰──────── ref: 4
+   │                      │  
+   │                      ╰── ref: 3
+───╯
