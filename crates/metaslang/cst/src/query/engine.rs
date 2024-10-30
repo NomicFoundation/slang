@@ -668,8 +668,16 @@ impl<T: KindTypes + 'static> Matcher<T> for OneOrMoreMatcher<T> {
             } else {
                 let tail = self.children.last_mut().unwrap();
                 if let Some(child_matcher_result) = tail.next() {
-                    if !child_matcher_result.cursor.is_completed() {
-                        self.result_for_next_repetition = Some(child_matcher_result.clone());
+                    // Skip over trivia before saving the result for next repetition
+                    let mut cursor = child_matcher_result.cursor.clone();
+                    while !cursor.is_completed() && cursor.node().is_trivia() {
+                        cursor.irrevocably_go_to_next_sibling();
+                    }
+                    if !cursor.is_completed() {
+                        self.result_for_next_repetition = Some(MatcherResult {
+                            cursor,
+                            ..child_matcher_result
+                        });
                     }
                     return Some(child_matcher_result);
                 }
