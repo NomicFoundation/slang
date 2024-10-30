@@ -40,6 +40,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn inherited_state_vars() -> Result<()> {
+    run("contracts", "inherited_state_vars")
+}
+
+#[test]
 fn internal_visibility() -> Result<()> {
     run("contracts", "internal_visibility")
 }
