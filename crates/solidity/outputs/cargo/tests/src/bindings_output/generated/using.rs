@@ -25,6 +25,11 @@ fn elementary_arrays() -> Result<()> {
 }
 
 #[test]
+fn fqn_library() -> Result<()> {
+    run("using", "fqn_library")
+}
+
+#[test]
 fn function_types() -> Result<()> {
     run("using", "function_types")
 }

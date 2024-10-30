@@ -706,6 +706,21 @@ inherit .lexical_scope
   edge @library.def -> type
   edge type -> type_library_type
   edge type_library_type -> @library.lexical_scope
+
+  ; Provide a path to the parent lexical context that pushes our own name to the
+  ; symbol stack. This allows a local symbol (eg. a struct) defined and resolved
+  ; in this library to be fully qualified in order for `using` directives that
+  ; attach our own functions to our own types to be used (see
+  ; bindings_output/using/fqn_library test).
+  ; TODO: we should probably apply this same pattern to aliases from import
+  ; statements.
+  node push_member
+  attr (push_member) push_symbol = "."
+  node push_name
+  attr (push_name) push_symbol = (source-text @name)
+  edge @library.lexical_scope -> push_member
+  edge push_member -> push_name
+  edge push_name -> @library.parent_scope
 }
 
 @library [LibraryDefinition [LibraryMembers
