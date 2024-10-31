@@ -915,7 +915,23 @@ inherit .lexical_scope
     | [FixedKeyword]
     | [UfixedKeyword]
 )] {
-  let @elementary.symbol = (format "%{}" (source-text @keyword))
+  var symbol = (source-text @keyword)
+  ; Normalize type aliases
+  scan (source-text @keyword) {
+    "^uint$" {
+      set symbol = "uint256"
+    }
+    "^int$" {
+      set symbol = "int256"
+    }
+    "^fixed$" {
+      set symbol = "fixed128x18"
+    }
+    "^ufixed$" {
+      set symbol = "ufixed128x18"
+    }
+  }
+  let @elementary.symbol = (format "%{}" symbol)
 }
 
 

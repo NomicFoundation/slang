@@ -58,3 +58,8 @@ fn star() -> Result<()> {
 fn top_level() -> Result<()> {
     run("using", "top_level")
 }
+
+#[test]
+fn uint_alias() -> Result<()> {
+    run("using", "uint_alias")
+}
