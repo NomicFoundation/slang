@@ -2374,6 +2374,23 @@ inherit .lexical_scope
 }
 
 
+;;; Literal Address Expressions
+@expr [Expression [HexNumberExpression @hex_literal [HexLiteral]]] {
+  scan (source-text @hex_literal) {
+    "0x[0-9a-fA-F]{40}" {
+      ; Treat it as a valid address
+      node typeof
+      attr (typeof) push_symbol = "@typeof"
+      node address
+      attr (address) push_symbol = "%address"
+      edge @expr.output -> typeof
+      edge typeof -> address
+      edge address -> @expr.lexical_scope
+    }
+  }
+}
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Yul
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

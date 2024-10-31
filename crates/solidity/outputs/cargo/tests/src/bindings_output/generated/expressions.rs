@@ -40,6 +40,11 @@ fn funcalls_output() -> Result<()> {
 }
 
 #[test]
+fn literal_address() -> Result<()> {
+    run("expressions", "literal_address")
+}
+
+#[test]
 fn new_output() -> Result<()> {
     run("expressions", "new_output")
 }
