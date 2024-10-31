@@ -45,6 +45,11 @@ fn shadowing() -> Result<()> {
 }
 
 #[test]
+fn this_as_address() -> Result<()> {
+    run("built_ins", "this_as_address")
+}
+
+#[test]
 fn type_expr() -> Result<()> {
     run("built_ins", "type_expr")
 }

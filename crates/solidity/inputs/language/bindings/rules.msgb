@@ -432,6 +432,17 @@ inherit .lexical_scope
   edge this -> name_push
   edge name_push -> @contract.lexical_scope
 
+  ; For Solidity < 0.5.0 `this` also acts like an `address`
+  if (version-matches "< 0.5.0") {
+    node address_ref
+    attr (address_ref) push_symbol = "%address"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    edge this -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @contract.lexical_scope
+  }
+
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
   ;; super_scope will later connect to the base contract defs directly
   node @contract.super
