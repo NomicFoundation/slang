@@ -56,7 +56,7 @@ Errors: # 10 total
        │                                              ╰────────────────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:9:50]
        │
      9 │ function empty() override(some.ident, /* empty */, other.arg.here, and.here);
@@ -80,7 +80,7 @@ Errors: # 10 total
         │                                                                    ╰──── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:83]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);

@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ x.address                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - (Expression) ► (variant꞉ MemberAccessExpression): # "x.address\n" (0..10)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
+      - (period꞉ Period): "." # (1..2)
+      - (member꞉ Identifier): "address" # (2..9)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

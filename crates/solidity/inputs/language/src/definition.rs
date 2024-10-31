@@ -1393,6 +1393,11 @@ codegen_language_macros::compile!(Language(
                             definitions = [KeywordDefinition(value = Atom("struct"))]
                         ),
                         Keyword(
+                            name = SuperKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(value = Atom("super"))]
+                        ),
+                        Keyword(
                             name = SupportsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
@@ -1415,6 +1420,11 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
+                        ),
+                        Keyword(
+                            name = ThisKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(value = Atom("this"))]
                         ),
                         Keyword(
                             name = ThrowKeyword,
@@ -3504,6 +3514,8 @@ codegen_language_macros::compile!(Language(
                                     reference = PayableKeyword,
                                     enabled = From("0.6.0")
                                 ),
+                                PrimaryExpression(reference = ThisKeyword),
+                                PrimaryExpression(reference = SuperKeyword),
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
@@ -6082,6 +6094,12 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = YulSuperKeyword,
+                            identifier = YulIdentifier,
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("super"))]
+                        ),
+                        Keyword(
                             name = YulSupportsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
@@ -6108,6 +6126,12 @@ codegen_language_macros::compile!(Language(
                             name = YulTimestampKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("timestamp"))]
+                        ),
+                        Keyword(
+                            name = YulThisKeyword,
+                            identifier = YulIdentifier,
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("this"))]
                         ),
                         Keyword(
                             name = YulThrowKeyword,

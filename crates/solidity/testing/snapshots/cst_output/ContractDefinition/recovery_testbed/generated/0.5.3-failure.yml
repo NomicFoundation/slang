@@ -24,7 +24,7 @@ Errors: # 3 total
        │                                  ╰──── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:6]
        │
      3 │        if(while == pair && !_isExcludedFromFee[to]){
@@ -32,7 +32,7 @@ Errors: # 3 total
        │                               ╰───────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:3]
         │
      10 │ ╭─▶        unchecked { invalid sequence }
