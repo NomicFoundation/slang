@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
 
       # Cache is updated in this workflow, and reused in subsequent workflows.
       # Always start with a fresh cache when running on the main branch.
