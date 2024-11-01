@@ -5,7 +5,6 @@
 
 #![allow(clippy::exit)]
 #![allow(clippy::needless_pass_by_value)]
-#![allow(clippy::unit_arg)]
 
 mod dataset;
 mod tests;
@@ -17,39 +16,27 @@ use iai_callgrind::{
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use slang_solidity::bindings::Bindings;
+use slang_solidity::parser::ParseOutput;
 
 use crate::dataset::SourceFile;
+use crate::tests::definitions::Dependencies;
 use crate::tests::parser::ParsedFile;
 
-#[library_benchmark(setup = tests::parser::setup)]
-fn parser(files: Vec<SourceFile>) {
-    black_box(tests::parser::run(files));
+macro_rules! define_benchmark {
+    ($name:ident, $payload:ty) => {
+        #[library_benchmark(setup = tests::$name::setup)]
+        fn $name(payload: $payload) {
+            black_box(tests::$name::run(payload));
+        }
+    };
 }
 
-#[library_benchmark(setup = tests::cursor::setup)]
-fn cursor(files: Vec<ParsedFile>) {
-    black_box(tests::cursor::run(&files));
-}
-
-#[library_benchmark(setup = tests::query::setup)]
-fn query(files: Vec<ParsedFile>) {
-    black_box(tests::query::run(&files));
-}
-
-#[library_benchmark]
-fn init_bindings() {
-    black_box(tests::init_bindings::run());
-}
-
-#[library_benchmark(setup = tests::definitions::setup)]
-fn definitions(dependencies: tests::definitions::Dependencies) {
-    black_box(tests::definitions::run(dependencies));
-}
-
-#[library_benchmark(setup = tests::references::setup)]
-fn references(bindings: Bindings) {
-    black_box(tests::references::run(&bindings));
-}
+define_benchmark!(parser, Vec<SourceFile>);
+define_benchmark!(cursor, Vec<ParsedFile>);
+define_benchmark!(query, Vec<ParsedFile>);
+define_benchmark!(init_bindings, ParseOutput);
+define_benchmark!(definitions, Dependencies);
+define_benchmark!(references, Bindings);
 
 library_benchmark_group!(
     name = benchmarks;

@@ -13,7 +13,7 @@ pub enum UserFacingCrate {
 
 #[cfg(test)]
 mod public_api_snapshots {
-    use anyhow::Result;
+    use anyhow::{Context, Result};
     use rayon::iter::{ParallelBridge, ParallelIterator};
     use strum::IntoEnumIterator;
 
@@ -22,6 +22,8 @@ mod public_api_snapshots {
 
     #[test]
     fn public_api_snapshots() {
+        assert!(env!("RUST_NIGHTLY_VERSION").ge(public_api::MINIMUM_NIGHTLY_RUST_VERSION));
+
         UserFacingCrate::iter()
             .filter(|&crate_name| has_library_target(crate_name))
             .par_bridge()
@@ -37,11 +39,12 @@ mod public_api_snapshots {
             .toolchain(env!("RUST_NIGHTLY_VERSION"))
             .build()?;
 
-        let public_api = public_api::Builder::from_rustdoc_json(rustdoc_json)
+        let public_api = public_api::Builder::from_rustdoc_json(&rustdoc_json)
             .omit_auto_derived_impls(false)
             .omit_auto_trait_impls(true)
             .omit_blanket_impls(true)
-            .build()?;
+            .build()
+            .with_context(|| format!("Failed to generate public API from {rustdoc_json:?}"))?;
 
         let output_path = crate_dir.join("generated/public_api.txt");
 
