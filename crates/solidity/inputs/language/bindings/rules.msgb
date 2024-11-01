@@ -71,9 +71,7 @@ inherit .lexical_scope
 ;; (Most) Top-level definitions...
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @unit_member (
-          [ContractDefinition]
-        | [LibraryDefinition]
-        | [InterfaceDefinition]
+          [InterfaceDefinition]
         | [StructDefinition]
         | [EnumDefinition]
         | [FunctionDefinition]
@@ -92,29 +90,36 @@ inherit .lexical_scope
 }
 
 ;; For contracts (and libraries) navigating to the source unit lexical scope
-;; *also* needs to propagate the dynamic scope to be able to correctly bind
-;; `using` attached functions.
+;; *also* needs to (optionally) propagate the dynamic scope to be able to
+;; correctly bind `using` attached functions.
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract_or_library ([ContractDefinition] | [LibraryDefinition])]
 ]] {
-  ; When "leaving" the contract lexical scope, ensure that the dynamic scope
-  ; (ie. `using` directives extensions) is propagated
+  edge @source_unit.lexical_scope -> @contract_or_library.def
+  edge @source_unit.defs -> @contract_or_library.def
+
+  ; When "leaving" the contract lexical scope we need to (optionally) propagate
+  ; the dynamic scope (ie. `using` directives extensions)
   node @contract_or_library.dynamic
   attr (@contract_or_library.dynamic) is_exported
+
+  node @contract_or_library.push_dynamic
 
   node push
   attr (push) push_scoped_symbol = "@dynamic", scope = @contract_or_library.dynamic
   node pop
   attr (pop) pop_scoped_symbol = "@dynamic"
 
-  edge @contract_or_library.lexical_scope -> push
+  edge @contract_or_library.lexical_scope -> @contract_or_library.push_dynamic
+  edge @contract_or_library.push_dynamic -> push
   edge push -> pop
   edge pop -> @source_unit.lexical_scope
+  edge @contract_or_library.push_dynamic -> @source_unit.lexical_scope
 
   ; The .parent_scope for contracts also needs to propagate the dynamic scope
   ; otherwise when resolving for contract bases we lose it. This is not relevant
   ; for libraries, but it doesn't matter that it's defined.
-  let @contract_or_library.parent_scope = push
+  let @contract_or_library.parent_scope = @contract_or_library.push_dynamic
 }
 
 

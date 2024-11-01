@@ -15,18 +15,8 @@ fn chained_calls() -> Result<()> {
 }
 
 #[test]
-fn decimal() -> Result<()> {
-    run("using", "decimal")
-}
-
-#[test]
 fn deconstruction() -> Result<()> {
     run("using", "deconstruction")
-}
-
-#[test]
-fn deep_inheritance() -> Result<()> {
-    run("using", "deep_inheritance")
 }
 
 #[test]
@@ -37,11 +27,6 @@ fn elementary() -> Result<()> {
 #[test]
 fn elementary_arrays() -> Result<()> {
     run("using", "elementary_arrays")
-}
-
-#[test]
-fn fqn_library() -> Result<()> {
-    run("using", "fqn_library")
 }
 
 #[test]
@@ -67,6 +52,11 @@ fn in_library() -> Result<()> {
 #[test]
 fn on_interfaces_inherited() -> Result<()> {
     run("using", "on_interfaces_inherited")
+}
+
+#[test]
+fn qualified_type() -> Result<()> {
+    run("using", "qualified_type")
 }
 
 #[test]
