@@ -10,6 +10,11 @@ fn constants() -> Result<()> {
 }
 
 #[test]
+fn modifiers() -> Result<()> {
+    run("libraries", "modifiers")
+}
+
+#[test]
 fn propagate_dynamic_scope() -> Result<()> {
     run("libraries", "propagate_dynamic_scope")
 }

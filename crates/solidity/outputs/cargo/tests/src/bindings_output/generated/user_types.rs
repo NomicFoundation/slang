@@ -5,11 +5,6 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
-fn indexing() -> Result<()> {
-    run("arrays", "indexing")
-}
-
-#[test]
-fn length() -> Result<()> {
-    run("arrays", "length")
+fn wrap_unwrap() -> Result<()> {
+    run("user_types", "wrap_unwrap")
 }

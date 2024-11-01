@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Test {
+   │         ──┬─  
+   │           ╰─── def: 1
+ 2 │     modifier withinRange() {
+   │              ─────┬─────  
+   │                   ╰─────── def: 2
+ 3 │         _;
+   │         ┬  
+   │         ╰── unresolved
+   │ 
+ 5 │     function test() internal withinRange() {}
+   │              ──┬─            ─────┬─────  
+   │                ╰────────────────────────── def: 3
+   │                                   │       
+   │                                   ╰─────── unresolved
+───╯

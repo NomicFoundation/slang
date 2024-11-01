@@ -20,6 +20,11 @@ fn loops() -> Result<()> {
 }
 
 #[test]
+fn slot_suffix() -> Result<()> {
+    run("yul", "slot_suffix")
+}
+
+#[test]
 fn variables() -> Result<()> {
     run("yul", "variables")
 }

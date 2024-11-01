@@ -1,5 +1,4 @@
 library Lib {
-    using Lib for Lib.Value;
     struct Value {
         int x;
     }

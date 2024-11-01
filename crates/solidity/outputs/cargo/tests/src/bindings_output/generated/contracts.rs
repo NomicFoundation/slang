@@ -50,6 +50,11 @@ fn internal_visibility() -> Result<()> {
 }
 
 #[test]
+fn legacy_constructors() -> Result<()> {
+    run("contracts", "legacy_constructors")
+}
+
+#[test]
 fn multi_inheritance() -> Result<()> {
     run("contracts", "multi_inheritance")
 }
@@ -57,6 +62,16 @@ fn multi_inheritance() -> Result<()> {
 #[test]
 fn public_getters() -> Result<()> {
     run("contracts", "public_getters")
+}
+
+#[test]
+fn qualified_inherited() -> Result<()> {
+    run("contracts", "qualified_inherited")
+}
+
+#[test]
+fn qualified_parent_call() -> Result<()> {
+    run("contracts", "qualified_parent_call")
 }
 
 #[test]

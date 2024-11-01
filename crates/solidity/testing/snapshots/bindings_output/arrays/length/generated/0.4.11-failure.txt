@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── def: 1
+ 2 │     function nop(uint x) internal {}
+   │              ─┬─      ┬  
+   │               ╰────────── def: 2
+   │                       │  
+   │                       ╰── def: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 4
+ 5 │     using Lib for uint;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     function test(uint256[] memory data) public {
+   │              ──┬─                  ──┬─  
+   │                ╰───────────────────────── def: 5
+   │                                      │   
+   │                                      ╰─── def: 6
+ 7 │         data.length.nop();
+   │         ──┬─ ───┬── ─┬─  
+   │           ╰────────────── ref: 6
+   │                 │    │   
+   │                 ╰──────── ref: built-in
+   │                      │   
+   │                      ╰─── unresolved
+───╯

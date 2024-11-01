@@ -40,8 +40,18 @@ fn funcalls_output() -> Result<()> {
 }
 
 #[test]
+fn legacy_call_options() -> Result<()> {
+    run("expressions", "legacy_call_options")
+}
+
+#[test]
 fn literal_address() -> Result<()> {
     run("expressions", "literal_address")
+}
+
+#[test]
+fn literal_integers() -> Result<()> {
+    run("expressions", "literal_integers")
 }
 
 #[test]

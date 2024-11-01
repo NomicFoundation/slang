@@ -5,13 +5,28 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn address() -> Result<()> {
+    run("using", "address")
+}
+
+#[test]
 fn chained_calls() -> Result<()> {
     run("using", "chained_calls")
 }
 
 #[test]
+fn decimal() -> Result<()> {
+    run("using", "decimal")
+}
+
+#[test]
 fn deconstruction() -> Result<()> {
     run("using", "deconstruction")
+}
+
+#[test]
+fn deep_inheritance() -> Result<()> {
+    run("using", "deep_inheritance")
 }
 
 #[test]
@@ -47,6 +62,11 @@ fn in_contract() -> Result<()> {
 #[test]
 fn in_library() -> Result<()> {
     run("using", "in_library")
+}
+
+#[test]
+fn on_interfaces_inherited() -> Result<()> {
+    run("using", "on_interfaces_inherited")
 }
 
 #[test]

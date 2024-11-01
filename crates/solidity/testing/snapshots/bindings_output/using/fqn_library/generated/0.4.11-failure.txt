@@ -6,26 +6,19 @@ References and definitions:
   1 │ library Lib {
     │         ─┬─  
     │          ╰─── def: 1
-  2 │     using Lib for Lib.Value;
-    │           ─┬─     ─┬─ ──┬──  
-    │            ╰───────────────── ref: 1
-    │                    │    │    
-    │                    ╰───────── ref: 1
-    │                         │    
-    │                         ╰──── ref: 2
-  3 │     struct Value {
+  2 │     struct Value {
     │            ──┬──  
     │              ╰──── def: 2
-  4 │         int x;
+  3 │         int x;
     │             ┬  
     │             ╰── def: 3
     │ 
-  6 │     function getValue() external returns (Value memory) {}
+  5 │     function getValue() external returns (Value memory) {}
     │              ────┬───                     ──┬──  
     │                  ╰─────────────────────────────── def: 4
     │                                             │    
     │                                             ╰──── ref: 2
-  7 │     function use(Value memory x) external {}
+  6 │     function use(Value memory x) external {}
     │              ─┬─ ──┬──        ┬  
     │               ╰────────────────── def: 5
     │                    │          │  
@@ -33,24 +26,24 @@ References and definitions:
     │                               │  
     │                               ╰── def: 6
     │ 
-  9 │ contract Test {
+  8 │ contract Test {
     │          ──┬─  
     │            ╰─── def: 7
- 10 │     using Lib for Lib.Value;
+  9 │     using Lib for Lib.Value;
     │           ─┬─     ─┬─ ──┬──  
     │            ╰───────────────── ref: 1
     │                    │    │    
     │                    ╰───────── ref: 1
     │                         │    
     │                         ╰──── ref: 2
- 11 │     function test() internal {
+ 10 │     function test() internal {
     │              ──┬─  
     │                ╰─── def: 8
- 12 │         Lib.getValue().use();
+ 11 │         Lib.getValue().use();
     │         ─┬─ ────┬───   ─┬─  
     │          ╰────────────────── ref: 1
     │                 │       │   
     │                 ╰─────────── ref: 4
     │                         │   
-    │                         ╰─── ref: 5
+    │                         ╰─── unresolved
 ────╯
