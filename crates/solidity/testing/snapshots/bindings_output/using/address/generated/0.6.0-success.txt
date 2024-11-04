@@ -27,5 +27,5 @@ References and definitions:
    │                 ──┬──  ────┬────  
    │                   ╰─────────────── ref: 6
    │                            │      
-   │                            ╰────── unresolved
+   │                            ╰────── ref: 2
 ───╯

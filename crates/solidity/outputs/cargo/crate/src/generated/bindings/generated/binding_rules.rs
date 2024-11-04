@@ -838,10 +838,14 @@ inherit .lexical_scope
   ; pop the type symbols to connect to the attached function (via @using.clause)
   node typeof
   attr (typeof) pop_symbol = "@typeof"
+  node cast
+  attr (cast) pop_symbol = "()"
 
   edge @using.def -> @type_name.pop_begin
   edge @type_name.pop_end -> typeof
   edge typeof -> @using.clause
+  edge @type_name.pop_end -> cast
+  edge cast -> @using.clause
 
   ; resolve the target type of the directive
   edge @type_name.type_ref -> @using.lexical_scope
