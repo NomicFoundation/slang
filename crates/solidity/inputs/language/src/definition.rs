@@ -6909,6 +6909,24 @@ codegen_language_macros::compile!(Language(
             enabled = From("0.6.2")
         ),
         BuiltInType(
+            name = "$function",
+            fields = [],
+            functions = [
+                BuiltInFunction(
+                    name = "gas",
+                    parameters = ["uint"],
+                    return_type = "$function",
+                    enabled = Till("0.7.0")
+                ),
+                BuiltInFunction(
+                    name = "value",
+                    parameters = ["uint"],
+                    return_type = "$function",
+                    enabled = Till("0.7.0")
+                )
+            ]
+        ),
+        BuiltInType(
             name = "$functionExternal",
             fields = [
                 BuiltInField(definition = "$address address", enabled = From("0.8.2")),

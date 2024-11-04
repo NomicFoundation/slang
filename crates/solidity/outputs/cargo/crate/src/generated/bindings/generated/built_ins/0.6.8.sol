@@ -64,6 +64,10 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
+  struct $function {
+    function(uint) returns ($function) gas;
+    function(uint) returns ($function) value;
+  }
   struct $functionExternal {
     $selector selector;
     function(uint) returns ($function) gas;

@@ -67,6 +67,8 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
+  struct $function {
+  }
   struct $functionExternal {
     $address address;
     $selector selector;
