@@ -310,14 +310,13 @@ inherit .lexical_scope
   ; be accessed)
   node internal
   attr (internal) push_symbol = "@internal"
-  edge heir.lexical_scope -> internal
   edge heir.internal -> internal
   edge internal -> @type_name.push_begin
 
   ; Base members can also be accessed qualified with the base name (eg. `Base.something`)
   node member_pop
   attr (member_pop) pop_symbol = "."
-  edge heir.lexical_scope -> @type_name.pop_begin
+  edge heir.internal -> @type_name.pop_begin
   edge @type_name.pop_end -> member_pop
   edge member_pop -> member
   ; Qualified access should also allow us to bind internal members of the parent contract
@@ -366,9 +365,11 @@ inherit .lexical_scope
   node @contract.state_vars
   node @contract.internal
 
-  edge @contract.lexical_scope -> @contract.members
-  edge @contract.lexical_scope -> @contract.type_members
-  edge @contract.lexical_scope -> @contract.state_vars
+  edge @contract.lexical_scope -> @contract.internal
+
+  edge @contract.internal -> @contract.members
+  edge @contract.internal -> @contract.type_members
+  edge @contract.internal -> @contract.state_vars
 
   ;; Modifiers are available as a contract type members through a special '@modifier' symbol
   node modifier
