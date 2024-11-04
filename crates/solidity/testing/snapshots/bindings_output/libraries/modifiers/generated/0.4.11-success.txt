@@ -11,11 +11,11 @@ References and definitions:
    │                   ╰─────── def: 2
  3 │         _;
    │         ┬  
-   │         ╰── unresolved
+   │         ╰── ref: built-in
    │ 
  5 │     function test() internal withinRange() {}
    │              ──┬─            ─────┬─────  
    │                ╰────────────────────────── def: 3
    │                                   │       
-   │                                   ╰─────── unresolved
+   │                                   ╰─────── ref: 2
 ───╯

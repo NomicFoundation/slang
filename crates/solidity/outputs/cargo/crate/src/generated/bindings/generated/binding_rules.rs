@@ -718,8 +718,14 @@ inherit .lexical_scope
   node @library.lexical_scope
   node @library.def
   node @library.members
+  node @library.modifiers
 
   edge @library.lexical_scope -> @library.members
+
+  node modifier
+  attr (modifier) pop_symbol = "@modifier"
+  edge @library.members -> modifier
+  edge modifier -> @library.modifiers
 }
 
 @library [LibraryDefinition @name name: [Identifier]] {
@@ -770,6 +776,13 @@ inherit .lexical_scope
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
   edge @library.members -> @member.def
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @modifier [ModifierDefinition]]
+]] {
+  edge @library.modifiers -> @modifier.def
+  edge @modifier.lexical_scope -> @library.lexical_scope
 }
 
 @library [LibraryDefinition [LibraryMembers
