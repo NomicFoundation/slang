@@ -2628,6 +2628,24 @@ inherit .lexical_scope
   attr (ref) node_reference = @name
 
   edge ref -> @path.lexical_scope
+
+  if (version-matches "< 0.7.0") {
+    ; Before Solidity 0.7.0 storage variables' `.offset` and `.slot` were
+    ; accessed by suffixing the name with `_offset` and `_slot`
+    scan (source-text @name) {
+      "^(.*)_(slot|offset)$" {
+        let symbol = $0
+        let without_suffix = $1
+        node pop_ref
+        attr (pop_ref) pop_symbol = symbol
+        node push_suffixless
+        attr (push_suffixless) push_symbol = without_suffix
+        edge ref -> pop_ref
+        edge pop_ref -> push_suffixless
+        edge push_suffixless -> @path.lexical_scope
+      }
+    }
+  }
 }
 
 @expr [YulExpression @funcall [YulFunctionCallExpression]] {
