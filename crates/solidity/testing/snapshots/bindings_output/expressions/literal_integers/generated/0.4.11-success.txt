@@ -23,5 +23,5 @@ References and definitions:
    │                ╰─── def: 5
  7 │         (50 * 10**uint(4)).nop();
    │                            ─┬─  
-   │                             ╰─── unresolved
+   │                             ╰─── ref: 2
 ───╯

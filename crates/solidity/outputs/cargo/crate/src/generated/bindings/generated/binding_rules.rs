@@ -2294,7 +2294,7 @@ inherit .lexical_scope
 
 ;;; Arithmetic, bitwise & logical operators, etc
 
-; Bind to the left operand only: assignment expressions, shift expressions, exponentiation
+; Bind to the left operand only: assignment expressions
 @expr [Expression [_
     @left_operand left_operand: [Expression]
     (
@@ -2310,12 +2310,6 @@ inherit .lexical_scope
         | [LessThanLessThanEqual]
         | [GreaterThanGreaterThanEqual]
         | [GreaterThanGreaterThanGreaterThanEqual]
-
-        | [LessThanLessThan]
-        | [GreaterThanGreaterThan]
-        | [GreaterThanGreaterThanGreaterThan]
-
-        | [AsteriskAsterisk]
     )
 ]] {
   edge @expr.output -> @left_operand.output
@@ -2349,10 +2343,15 @@ inherit .lexical_scope
         | [Asterisk]
         | [Slash]
         | [Percent]
+        | [AsteriskAsterisk]
 
         | [Bar]
         | [Caret]
         | [Ampersand]
+
+        | [LessThanLessThan]
+        | [GreaterThanGreaterThan]
+        | [GreaterThanGreaterThanGreaterThan]
     )
     @right_operand right_operand: [Expression]
 ]] {
