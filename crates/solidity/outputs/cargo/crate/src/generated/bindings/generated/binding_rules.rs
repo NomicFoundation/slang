@@ -2078,6 +2078,23 @@ inherit .lexical_scope
   attr (def) definiens_node = @user_type
 
   edge @user_type.def -> def
+
+  ; Provide member resolution through the built-in `%userTypeType`
+  ; Because the built-in is defined as a struct, we need to push an extra `@typeof`
+  node member_guard
+  attr (member_guard) pop_symbol = "."
+  node member
+  attr (member) push_symbol = "."
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node user_type_type
+  attr (user_type_type) push_symbol = "%userTypeType"
+
+  edge def -> member_guard
+  edge member_guard -> member
+  edge member -> typeof
+  edge typeof -> user_type_type
+  edge user_type_type -> @user_type.lexical_scope
 }
 
 

@@ -18,7 +18,6 @@ contract $BuiltIns$ {
   struct $abiType {
     function(bytes memory, $args) returns ($args) decode;
     function($args) returns (bytes memory) encode;
-    function(function(), $args) returns (bytes memory) encodeCall;
     function($args) returns (bytes memory) encodePacked;
     function(bytes4 selector, $args) returns (bytes memory) encodeWithSelector;
     function(string memory, $args) returns (bytes memory) encodeWithSignature;
@@ -67,7 +66,7 @@ contract $BuiltIns$ {
   struct $function {
   }
   struct $functionExternal {
-    $address address;
+    $address $address;
     $selector selector;
   }
   struct $msgType {
@@ -107,5 +106,7 @@ contract $BuiltIns$ {
   $bytesType $bytes;
   $msgType msg;
   $stringType $string;
+  $SuperType super;
+  $ThisType this;
   $txType tx;
 }

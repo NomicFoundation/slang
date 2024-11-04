@@ -23,14 +23,14 @@ References and definitions:
    │                              │        │    │   
    │                              ╰───────────────── ref: 1
    │                                       │    │   
-   │                                       ╰──────── unresolved
+   │                                       ╰──────── ref: built-in
    │                                            │   
    │                                            ╰─── ref: 4
  6 │         ShortString.unwrap(s);
    │         ─────┬───── ───┬── ┬  
    │              ╰──────────────── ref: 1
    │                        │   │  
-   │                        ╰────── unresolved
+   │                        ╰────── ref: built-in
    │                            │  
    │                            ╰── ref: 5
 ───╯

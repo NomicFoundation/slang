@@ -101,6 +101,10 @@ contract $BuiltIns$ {
     int min;
     int max;
   }
+  struct $userTypeType {
+    function($elementaryType) returns ($userType) wrap;
+    function($userType) returns ($elementaryType) unwrap;
+  }
   $function $placeholder;
   $abiType abi;
   $blockType block;

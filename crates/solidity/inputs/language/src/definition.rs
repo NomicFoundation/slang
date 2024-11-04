@@ -7009,6 +7009,23 @@ codegen_language_macros::compile!(Language(
             ],
             functions = []
         ),
+        BuiltInType(
+            name = "$userTypeType",
+            fields = [],
+            functions = [
+                BuiltInFunction(
+                    name = "wrap",
+                    parameters = ["$elementaryType"],
+                    return_type = "$userType"
+                ),
+                BuiltInFunction(
+                    name = "unwrap",
+                    parameters = ["$userType"],
+                    return_type = "$elementaryType"
+                )
+            ],
+            enabled = From("0.8.8")
+        ),
         BuiltInVariable(definition = "$function $placeholder"),
         BuiltInVariable(definition = "$abiType abi"),
         BuiltInVariable(definition = "$blockType block"),
