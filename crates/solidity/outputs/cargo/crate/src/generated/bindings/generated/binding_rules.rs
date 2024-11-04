@@ -1382,7 +1382,9 @@ inherit .lexical_scope
   edge @contract.def -> @constructor.def
 }
 
-;; Solidity < 0.5.0 constructors were declared as functions of the contract's name
+;; Solidity < 0.5.0 constructors
+;; They were declared as functions of the contract's name
+
 @contract [ContractDefinition
     @contract_name [Identifier]
     [ContractMembers [ContractMember [FunctionDefinition
@@ -1394,6 +1396,21 @@ inherit .lexical_scope
     if (eq (source-text @contract_name) (source-text @function_name)) {
       ; Connect to paramaters for named argument resolution
       edge @contract.def -> @params.names
+    }
+  }
+}
+
+[ContractDefinition
+    @contract_name [Identifier]
+    [ContractMembers [ContractMember @function [FunctionDefinition
+        [FunctionName @function_name [Identifier]]
+        [FunctionAttributes [FunctionAttribute @modifier [ModifierInvocation]]]
+    ]]]
+] {
+  if (version-matches "< 0.5.0") {
+    if (eq (source-text @contract_name) (source-text @function_name)) {
+      ; Parent constructor calls are parsed as modifier invocations
+      edge @modifier.identifier -> @function.lexical_scope
     }
   }
 }
