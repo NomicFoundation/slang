@@ -1,4 +1,4 @@
-abstract contract Base {
+contract Base {
     bool renounced;
 }
 contract Test is Base {

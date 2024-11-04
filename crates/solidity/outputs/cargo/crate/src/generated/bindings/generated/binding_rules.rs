@@ -320,6 +320,8 @@ inherit .lexical_scope
   edge heir.lexical_scope -> @type_name.pop_begin
   edge @type_name.pop_end -> member_pop
   edge member_pop -> member
+  ; Qualified access should also allow us to bind internal members of the parent contract
+  edge member_pop -> internal
 
   ;; Make base defs (eg. enums and structs) accessible as our own
   node type_member

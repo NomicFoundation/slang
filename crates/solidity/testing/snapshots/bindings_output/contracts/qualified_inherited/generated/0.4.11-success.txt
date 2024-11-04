@@ -3,9 +3,9 @@
 References and definitions: 
    ╭─[input.sol:1:1]
    │
- 1 │ abstract contract Base {
-   │                   ──┬─  
-   │                     ╰─── def: 1
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── def: 1
  2 │     bool renounced;
    │          ────┬────  
    │              ╰────── def: 2
@@ -22,5 +22,5 @@ References and definitions:
    │         ──┬─ ────┬────  
    │           ╰───────────── ref: 1
    │                  │      
-   │                  ╰────── unresolved
+   │                  ╰────── ref: 2
 ───╯
