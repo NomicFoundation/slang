@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
 
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
@@ -42,7 +42,7 @@ jobs:
 
       - name: "Create/Update Changesets Pull Request"
         id: "runChangesets"
-        uses: "changesets/action@3de3850952bec538fde60aac71731376e57b9b57"
+        uses: "changesets/action@c8bada60c408975afd1a20b3db81d6eee6789308"
         with:
           title: "Bump Slang Version"
           commit: "Bump Slang Version"
