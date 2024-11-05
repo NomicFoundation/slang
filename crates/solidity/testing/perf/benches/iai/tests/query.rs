@@ -8,7 +8,7 @@ pub fn setup() -> Vec<ParsedFile> {
     super::parser::run(files)
 }
 
-pub fn run(files: &[ParsedFile]) {
+pub fn run(files: Vec<ParsedFile>) {
     let mut functions_count = 0;
 
     let queries = vec![Query::parse(
@@ -18,7 +18,7 @@ pub fn run(files: &[ParsedFile]) {
     )
     .unwrap()];
 
-    for file in files {
+    for file in &files {
         let cursor = file.tree.cursor_with_offset(TextIndex::ZERO);
 
         for query_match in cursor.query(queries.clone()) {

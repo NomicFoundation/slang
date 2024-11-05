@@ -92,10 +92,9 @@ fn run_markdown_link_check() -> Result<()> {
 }
 
 fn run_markdown_lint() -> Result<()> {
-    let markdown_files = FileWalker::from_repo_root().find(["**/*.md"])?.map(|path| {
-        println!("{}", path.display());
-        path
-    });
+    let markdown_files = FileWalker::from_repo_root()
+        .find(["**/*.md"])?
+        .inspect(|path| println!("{}", path.display()));
 
     let mut command = Command::new("markdownlint").flag("--dot");
 
@@ -124,10 +123,7 @@ fn run_rustfmt() {
 fn run_shellcheck() -> Result<()> {
     let bash_files = FileWalker::from_repo_root()
         .find(["scripts/**"])?
-        .map(|path| {
-            println!("{}", path.display());
-            path
-        });
+        .inspect(|path| println!("{}", path.display()));
 
     Command::new("shellcheck").run_xargs(bash_files);
 
@@ -147,10 +143,7 @@ fn run_yamllint() -> Result<()> {
 
     let yaml_files = FileWalker::from_repo_root()
         .find(["**/*.yml"])?
-        .map(|path| {
-            println!("{}", path.display());
-            path
-        });
+        .inspect(|path| println!("{}", path.display()));
 
     PipEnv::run("yamllint")
         .flag("--strict")
