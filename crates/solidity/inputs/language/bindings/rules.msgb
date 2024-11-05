@@ -63,8 +63,8 @@ inherit .lexical_scope
   ;; override specifiers)
   let @source_unit.parent_scope = @source_unit.lexical_scope
 
-  ; We may jump to scope here to resolve using the dynamic scope provided by
-  ; extensions declared with `using` directive
+  ; We may jump to scope here to resolve using the extensions scope provided by
+  ; contract/libraries that contain `using` directives
   edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
 }
 
@@ -90,7 +90,7 @@ inherit .lexical_scope
 }
 
 ;; For contracts (and libraries) navigating to the source unit lexical scope
-;; *also* needs to (optionally) propagate the dynamic scope to be able to
+;; *also* needs to (optionally) propagate an extensions scope to be able to
 ;; correctly bind `using` attached functions.
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract_or_library ([ContractDefinition] | [LibraryDefinition])]
@@ -98,28 +98,29 @@ inherit .lexical_scope
   edge @source_unit.lexical_scope -> @contract_or_library.def
   edge @source_unit.defs -> @contract_or_library.def
 
-  ; When "leaving" the contract lexical scope we need to (optionally) propagate
-  ; the dynamic scope (ie. `using` directives extensions)
-  node @contract_or_library.dynamic
-  attr (@contract_or_library.dynamic) is_exported
+  ; When "leaving" the contract lexical scope to the parent scope (ie. the
+  ; source unit) we need to (optionally) propagate the extensions scope (ie.
+  ; `using` directives extensions). Thus we introduce a parent_node and we will
+  ; connect the path to push the extensions *if* the contract/library has a
+  ; `using` directive.
 
-  node @contract_or_library.push_dynamic
+  node @contract_or_library.parent_scope
+  edge @contract_or_library.lexical_scope -> @contract_or_library.parent_scope
+  edge @contract_or_library.parent_scope -> @source_unit.lexical_scope
 
-  node push
-  attr (push) push_scoped_symbol = "@dynamic", scope = @contract_or_library.dynamic
-  node pop
-  attr (pop) pop_scoped_symbol = "@dynamic"
+  ; This .extensions node is where `using` directives will hook
+  node @contract_or_library.extensions
+  attr (@contract_or_library.extensions) is_exported
 
-  edge @contract_or_library.lexical_scope -> @contract_or_library.push_dynamic
-  edge @contract_or_library.push_dynamic -> push
-  edge push -> pop
-  edge pop -> @source_unit.lexical_scope
-  edge @contract_or_library.push_dynamic -> @source_unit.lexical_scope
+  ; Now we define the path to push the .extensions scope into the scope stack
+  node @contract_or_library.push_extensions
+  attr (@contract_or_library.push_extensions) push_scoped_symbol = "@extend"
+  attr (@contract_or_library.push_extensions) scope = @contract_or_library.extensions
+  node pop_extensions
+  attr (pop_extensions) pop_scoped_symbol = "@extend"
 
-  ; The .parent_scope for contracts also needs to propagate the dynamic scope
-  ; otherwise when resolving for contract bases we lose it. This is not relevant
-  ; for libraries, but it doesn't matter that it's defined.
-  let @contract_or_library.parent_scope = @contract_or_library.push_dynamic
+  edge @contract_or_library.push_extensions -> pop_extensions
+  edge pop_extensions -> @source_unit.lexical_scope
 }
 
 
@@ -350,7 +351,6 @@ inherit .lexical_scope
 
 @contract [ContractDefinition] {
   node @contract.lexical_scope
-  node @contract.super_scope
   node @contract.def
   node @contract.members
   node @contract.ns
@@ -372,10 +372,19 @@ inherit .lexical_scope
 
   if (version-matches "< 0.7.0") {
     ; In Solidity < 0.7.0 using directives are inherited to derived contracts.
-    ; Hence we make out dynamic scope accessible through members, which is accessible
+    ; Hence we make our extensions scope accessible through members, which is accessible
     ; from derived contract's lexical scopes.
-    edge @contract.members -> @contract.dynamic
+    edge @contract.members -> @contract.extensions
   }
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_contract_type
+  attr (type_contract_type) push_symbol = "%typeContractType"
+  edge @contract.def -> type
+  edge type -> type_contract_type
+  edge type_contract_type -> @contract.lexical_scope
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -399,9 +408,9 @@ inherit .lexical_scope
   edge @contract.def -> call
   edge call -> member
 
-  ; From a call we may need to resolve using the dynamic scope, in case there's
-  ; a `using` directive on our type. This path ends up jumping to scope just to
-  ; handle that case.
+  ; From a call we may need to resolve using the extensions scope, in case
+  ; there's a `using` directive on our type. This path ends up jumping to scope
+  ; just to handle that case.
   node push_typeof
   attr (push_typeof) push_symbol = "@typeof"
   node push_name
@@ -447,11 +456,34 @@ inherit .lexical_scope
     edge address_ref -> @contract.lexical_scope
   }
 
+  ;; This defines the sink of edges added from base contracts when setting this
+  ;; contract as the compilation context
+  attr (@contract.def) export_node = @contract.internal
+
+  ;; This node will eventually connect to the contract's members being compiled
+  ;; and grants access to definitions in that contract and all its parents
+  ;; (recursively). It only makes sense if `super` is defined (ie. if we have
+  ;; parents), but we define it here to be able to use it in the declaration of
+  ;; import nodes
+  node @contract.super_import
+  attr (@contract.super_import) pop_symbol = "."
+
+  ;; This defines the source side of edges added to base contracts when setting
+  ;; a contract as compilation context; this allows this contract (a base) to
+  ;; access virtual methods in any sub-contract defined in the hierarchy
+  attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_import]
+}
+
+@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @contract
+  attr (@contract.def) parents = @specifier.parent_refs
+
+  node @contract.super_scope
+
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
   ;; super_scope will later connect to the base contract defs directly
   node @contract.super
   attr (@contract.super) pop_symbol = "super"
-
   node super_typeof
   attr (super_typeof) push_symbol = "@typeof"
 
@@ -464,35 +496,9 @@ inherit .lexical_scope
   ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
   ; See the related rules in the InheritanceSpecifier section above.
 
-  ;; This defines the sink of edges added from base contracts when setting this
-  ;; contract as the compilation context
-  attr (@contract.def) export_node = @contract.members
-
-  ;; This node will eventually connect to the contract's members being compiled
-  ;; and grants access to definitions in that contract and all its parents
-  ;; (recursively)
-  node super_import
-  attr (super_import) pop_symbol = "."
-  edge @contract.super -> super_import
-
-  ;; This defines the source side of edges added to base contracts when setting
-  ;; a contract as compilation context; this allows this contract (a base) to
-  ;; access virtual methods in any sub-contract defined in the hierarchy
-  attr (@contract.def) import_nodes = [@contract.lexical_scope, super_import]
-
-  ; Path to resolve the built-in type for type() expressions
-  node type
-  attr (type) pop_symbol = "%type"
-  node type_contract_type
-  attr (type_contract_type) push_symbol = "%typeContractType"
-  edge @contract.def -> type
-  edge type -> type_contract_type
-  edge type_contract_type -> @contract.lexical_scope
-}
-
-@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
-  let @specifier.heir = @contract
-  attr (@contract.def) parents = @specifier.parent_refs
+  ; This connects `super` to exported scopes from all contracts in the hierarchy
+  ; when setting a contract compilation target
+  edge @contract.super -> @contract.super_import
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
@@ -524,8 +530,11 @@ inherit .lexical_scope
 @contract [ContractDefinition [ContractMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  ; Expose the using directive from the dynamic scope
-  edge @contract.dynamic -> @using.def
+  ; Expose the using directive from the extensions scope
+  edge @contract.extensions -> @using.def
+
+  ; Connect the extensions push path
+  edge @contract.parent_scope -> @contract.push_extensions
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -636,7 +645,7 @@ inherit .lexical_scope
   edge @interface.def -> call
   edge call -> member
 
-  ; From a call we may need to resolve using the dynamic scope, in case there's
+  ; From a call we may need to resolve using the extensions scope, in case there's
   ; a `using` directive on our type. This path ends up jumping to scope just to
   ; handle that case.
   node push_typeof
@@ -744,7 +753,7 @@ inherit .lexical_scope
   ; symbol stack. This allows a local symbol (eg. a struct) defined and resolved
   ; in this library to be fully qualified in order for `using` directives that
   ; attach our own functions to our own types to be used (see
-  ; bindings_output/using/fqn_library test).
+  ; bindings_output/using/qualified_type test).
   ; TODO: we should probably apply this same pattern to aliases from import
   ; statements.
   node push_member
@@ -781,8 +790,11 @@ inherit .lexical_scope
 @library [LibraryDefinition [LibraryMembers
     [ContractMember @using [UsingDirective]]
 ]] {
-  ; Expose the using directive from the dynamic scope
-  edge @library.dynamic -> @using.def
+  ; Expose the using directive from the extensions scope
+  edge @library.extensions -> @using.def
+
+  ; Connect the extensions push path
+  edge @library.parent_scope -> @library.push_extensions
 }
 
 
