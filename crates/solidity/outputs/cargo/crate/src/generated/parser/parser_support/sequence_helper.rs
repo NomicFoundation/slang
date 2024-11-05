@@ -143,7 +143,7 @@ impl SequenceHelper {
                             Node::Terminal(terminal) if terminal.kind.is_trivia() => Ok(acc),
                             Node::Terminal(terminal) => {
                                 if acc.is_none() {
-                                     Ok(Some(terminal.kind))
+                                    Ok(Some(terminal.kind))
                                 } else {
                                     debug_assert!(false, "Recovery skipped to multiple terminals: {acc:?}, {terminal:?}");
                                     Err(())
