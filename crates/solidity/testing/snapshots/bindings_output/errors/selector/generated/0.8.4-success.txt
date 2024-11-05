@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     error TestError();
+   │           ────┬────  
+   │               ╰────── def: 2
+   │ 
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 3
+ 5 │         TestError.selector;
+   │         ────┬──── ────┬───  
+   │             ╰─────────────── ref: 2
+   │                       │     
+   │                       ╰───── ref: built-in
+───╯

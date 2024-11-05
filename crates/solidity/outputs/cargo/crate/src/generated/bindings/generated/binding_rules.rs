@@ -2061,6 +2061,15 @@ inherit .lexical_scope
   node @error.params
   attr (@error.params) pop_symbol = "@param_names"
   edge @error.def -> @error.params
+
+  ; Bind to built-in errorType for accessing built-in member `.selector`
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node error_type
+  attr (error_type) push_symbol = "%errorType"
+  edge @error.def -> typeof
+  edge typeof -> error_type
+  edge error_type -> @error.lexical_scope
 }
 
 @error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters

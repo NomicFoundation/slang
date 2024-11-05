@@ -44,7 +44,6 @@ contract $BuiltIns$ {
     function(uint) returns ($element) $index;
   }
   struct $blockType {
-    uint basefee;
     uint chainid;
     address payable coinbase;
     uint difficulty;
@@ -69,7 +68,7 @@ contract $BuiltIns$ {
   struct $function {
   }
   struct $functionExternal {
-    $address address;
+    $address $address;
     $selector selector;
   }
   struct $msgType {
@@ -105,5 +104,7 @@ contract $BuiltIns$ {
   $bytesType $bytes;
   $msgType msg;
   $stringType $string;
+  $SuperType super;
+  $ThisType this;
   $txType tx;
 }

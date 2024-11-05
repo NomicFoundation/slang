@@ -63,6 +63,9 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
+  struct $errorType {
+    bytes4 selector;
+  }
   struct $function {
   }
   struct $functionExternal {

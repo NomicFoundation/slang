@@ -6909,6 +6909,12 @@ codegen_language_macros::compile!(Language(
             enabled = From("0.6.2")
         ),
         BuiltInType(
+            name = "$errorType",
+            fields = [BuiltInField(definition = "bytes4 selector")],
+            functions = [],
+            enabled = From("0.8.4")
+        ),
+        BuiltInType(
             name = "$function",
             fields = [],
             functions = [
