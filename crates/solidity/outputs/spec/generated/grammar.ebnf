@@ -424,6 +424,8 @@ STRING_KEYWORD = "string";
 
 STRUCT_KEYWORD = "struct";
 
+SUPER_KEYWORD = "super";
+
 (* Reserved in 0.5.0 *)
 SUPPORTS_KEYWORD = "supports";
 
@@ -432,6 +434,8 @@ SWITCH_KEYWORD = "switch";
 (* Deprecated in 0.7.0 *)
 (* Reserved until 0.7.0 *)
 SZABO_KEYWORD = "szabo";
+
+THIS_KEYWORD = "this";
 
 (* Deprecated in 0.5.0 *)
 THROW_KEYWORD = "throw";
@@ -1177,6 +1181,8 @@ Expression = (* variant: *) AssignmentExpression
            | (* variant: *) StringExpression
            | (* variant: *) ElementaryType
            | (* variant: *) PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
+           | (* variant: *) THIS_KEYWORD
+           | (* variant: *) SUPER_KEYWORD
            | (* variant: *) TRUE_KEYWORD
            | (* variant: *) FALSE_KEYWORD
            | (* variant: *) IDENTIFIER;
@@ -2259,6 +2265,8 @@ YUL_SUB_KEYWORD = "sub";
 (* Reserved until 0.5.0 *)
 YUL_SUICIDE_KEYWORD = "suicide";
 
+YUL_SUPER_KEYWORD = "super";
+
 (* Reserved from 0.5.0 until 0.7.1 *)
 YUL_SUPPORTS_KEYWORD = "supports";
 
@@ -2268,6 +2276,8 @@ YUL_SWITCH_KEYWORD = "switch";
 YUL_SZABO_KEYWORD = "szabo";
 
 YUL_TIMESTAMP_KEYWORD = "timestamp";
+
+YUL_THIS_KEYWORD = "this";
 
 (* Reserved until 0.7.1 *)
 YUL_THROW_KEYWORD = "throw";

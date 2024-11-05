@@ -1783,8 +1783,10 @@ inherit .parent_scope
   edge @expr.lexical_scope -> @tuple_expr.lexical_scope
 }
 
-;; Identifier expressions
-@expr [Expression @name variant: [Identifier]] {
+;; primary expressions
+@expr [Expression @name (
+  variant: [Identifier] | variant: [SuperKeyword] | variant: [ThisKeyword] 
+)] {
   node ref
   attr (ref) node_reference = @name
   attr (ref) parents = [@expr.enclosing_def]
@@ -1814,7 +1816,7 @@ inherit .parent_scope
 ;; Special case: member accesses to `super` are tagged with "super" to rank
 ;; virtual methods correctly
 [MemberAccessExpression
-    operand: [Expression ["super"]]
+    operand: [Expression [SuperKeyword]]
     @name member: [Identifier]
 ] {
   attr (@name.ref) tag = "super"

@@ -964,6 +964,12 @@
 
 <pre ebnf-snippet="YulSuicideKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="cm">(* Reserved until 0.5.0 *)</span><br /><a href="#YulSuicideKeyword"><span class="k">YUL_SUICIDE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"suicide"</span><span class="o">;</span></pre>
 
+```{ .ebnf #YulSuperKeyword }
+
+```
+
+<pre ebnf-snippet="YulSuperKeyword" style="display: none;"><a href="#YulSuperKeyword"><span class="k">YUL_SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #YulSupportsKeyword }
 
 ```
@@ -987,6 +993,12 @@
 ```
 
 <pre ebnf-snippet="YulTimestampKeyword" style="display: none;"><a href="#YulTimestampKeyword"><span class="k">YUL_TIMESTAMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"timestamp"</span><span class="o">;</span></pre>
+
+```{ .ebnf #YulThisKeyword }
+
+```
+
+<pre ebnf-snippet="YulThisKeyword" style="display: none;"><a href="#YulThisKeyword"><span class="k">YUL_THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulThrowKeyword }
 

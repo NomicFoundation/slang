@@ -258,6 +258,11 @@ fn member_access() -> Result<()> {
 }
 
 #[test]
+fn member_access_address() -> Result<()> {
+    run("Expression", "member_access_address")
+}
+
+#[test]
 fn member_access_chain() -> Result<()> {
     run("Expression", "member_access_chain")
 }
@@ -290,6 +295,16 @@ fn member_access_rational() -> Result<()> {
 #[test]
 fn member_access_rational_leading_period() -> Result<()> {
     run("Expression", "member_access_rational_leading_period")
+}
+
+#[test]
+fn member_access_super() -> Result<()> {
+    run("Expression", "member_access_super")
+}
+
+#[test]
+fn member_access_this() -> Result<()> {
+    run("Expression", "member_access_this")
 }
 
 #[test]
