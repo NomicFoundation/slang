@@ -133,9 +133,7 @@ inherit .lexical_scope
     [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
 ]] {
   if (is-system-file FILE_PATH) {
-    edge @source_unit.defs -> @contract.members
-    edge @source_unit.defs -> @contract.type_members
-    edge @source_unit.defs -> @contract.state_vars
+    edge @source_unit.defs -> @contract.internal
   }
 }
 
@@ -318,11 +316,11 @@ inherit .lexical_scope
   edge member_pop -> internal
 
   ;; Make base defs (eg. enums and structs) accessible as our own
-  node type_member
-  attr (type_member) push_symbol = "."
+  node ns_member
+  attr (ns_member) push_symbol = "."
 
-  edge heir.type_members -> type_member
-  edge type_member -> @type_name.push_begin
+  edge heir.ns -> ns_member
+  edge ns_member -> @type_name.push_begin
 
   ; Resolve the "super" keyword to the inherited type
   edge heir.super -> @type_name.push_begin
@@ -355,21 +353,19 @@ inherit .lexical_scope
   node @contract.super_scope
   node @contract.def
   node @contract.members
-  node @contract.type_members
+  node @contract.ns
   node @contract.modifiers
-  node @contract.state_vars
   node @contract.internal
 
   edge @contract.lexical_scope -> @contract.internal
 
   edge @contract.internal -> @contract.members
-  edge @contract.internal -> @contract.type_members
-  edge @contract.internal -> @contract.state_vars
+  edge @contract.internal -> @contract.ns
 
   ;; Modifiers are available as a contract type members through a special '@modifier' symbol
   node modifier
   attr (modifier) pop_symbol = "@modifier"
-  edge @contract.type_members -> modifier
+  edge @contract.ns -> modifier
   edge modifier -> @contract.modifiers
 
   let @contract.enclosing_def = @contract.def
@@ -415,10 +411,10 @@ inherit .lexical_scope
   edge push_name -> JUMP_TO_SCOPE_NODE
 
   ;; "namespace" like access path
-  node type_member
-  attr (type_member) pop_symbol = "."
-  edge @contract.def -> type_member
-  edge type_member -> @contract.type_members
+  node ns_member
+  attr (ns_member) pop_symbol = "."
+  edge @contract.def -> ns_member
+  edge ns_member -> @contract.ns
 
   ; Finally there's an @internal path used by derived contracts to access our internal state variables
   node internal
@@ -541,14 +537,12 @@ inherit .lexical_scope
         | [UserDefinedValueTypeDefinition]
     )]
 ]] {
-  edge @contract.type_members -> @member.def
+  edge @contract.ns -> @member.def
 }
 
 @contract [ContractDefinition [ContractMembers
     [ContractMember @state_var [StateVariableDefinition]]
 ]] {
-  edge @contract.state_vars -> @state_var.def
-
   ; State variables are available to derived contracts.
   ; TODO: this also exposes private state variables to derived contracts, but we
   ; can't easily express that because we don't have negative assertions in our
@@ -583,7 +577,7 @@ inherit .lexical_scope
     ]]
 ]] {
   ; public or external functions are also accessible through the contract type
-  edge @contract.type_members -> @function.def
+  edge @contract.ns -> @function.def
 }
 
 @contract [ContractDefinition members: [ContractMembers
@@ -613,12 +607,12 @@ inherit .lexical_scope
   node @interface.lexical_scope
   node @interface.def
   node @interface.members
-  node @interface.type_members
+  node @interface.ns
   ; this is unused in interfaces, but required for the inheritance rules
   node @interface.internal
 
   edge @interface.lexical_scope -> @interface.members
-  edge @interface.lexical_scope -> @interface.type_members
+  edge @interface.lexical_scope -> @interface.ns
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
@@ -654,10 +648,10 @@ inherit .lexical_scope
   edge push_name -> JUMP_TO_SCOPE_NODE
 
   ;; "namespace" like access path
-  node type_member
-  attr (type_member) pop_symbol = "."
-  edge @interface.def -> type_member
-  edge type_member -> @interface.type_members
+  node ns_member
+  attr (ns_member) pop_symbol = "."
+  edge @interface.def -> ns_member
+  edge ns_member -> @interface.ns
 
   ; Path to resolve the built-in type for type() expressions
   node type
@@ -688,7 +682,7 @@ inherit .lexical_scope
     )]
 ]] {
   edge @member.lexical_scope -> @interface.lexical_scope
-  edge @interface.type_members -> @member.def
+  edge @interface.ns -> @member.def
 }
 
 ;; Allow references (eg. variables of the interface type) to the interface to
@@ -715,14 +709,15 @@ inherit .lexical_scope
 @library [LibraryDefinition] {
   node @library.lexical_scope
   node @library.def
-  node @library.members
+  node @library.ns
   node @library.modifiers
 
-  edge @library.lexical_scope -> @library.members
+  edge @library.lexical_scope -> @library.ns
 
+  ; Access to modifiers is guarded by a @modifier symbol
   node modifier
   attr (modifier) pop_symbol = "@modifier"
-  edge @library.members -> modifier
+  edge @library.ns -> modifier
   edge modifier -> @library.modifiers
 }
 
@@ -734,7 +729,7 @@ inherit .lexical_scope
   attr (member) pop_symbol = "."
   edge @library.def -> member
 
-  edge member -> @library.members
+  edge member -> @library.ns
 
   ; Path to resolve the built-in type for type() expressions (same as contracts)
   node type
@@ -773,7 +768,7 @@ inherit .lexical_scope
     )]
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
-  edge @library.members -> @member.def
+  edge @library.ns -> @member.def
 }
 
 @library [LibraryDefinition [LibraryMembers

@@ -69,7 +69,7 @@ contract $BuiltIns$ {
   struct $function {
   }
   struct $functionExternal {
-    $address $address;
+    $address address;
     $selector selector;
   }
   struct $msgType {
@@ -109,7 +109,5 @@ contract $BuiltIns$ {
   $bytesType $bytes;
   $msgType msg;
   $stringType $string;
-  $SuperType super;
-  $ThisType this;
   $txType tx;
 }
