@@ -21,6 +21,7 @@ inherit .enclosing_def
 
 inherit .parent_scope
 inherit .lexical_scope
+inherit .extended_scope
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,16 +63,21 @@ inherit .lexical_scope
   ;; inherited) for contracts to resolve bases (both in inheritance lists and
   ;; override specifiers)
   let @source_unit.parent_scope = @source_unit.lexical_scope
+  ; FIXME: we probably need to make extended scope different than lexical scope
+  ; and push an extension scope on that path
+  let @source_unit.extended_scope = @source_unit.lexical_scope
 
   ; We may jump to scope here to resolve using the extensions scope provided by
   ; contract/libraries that contain `using` directives
   edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
 }
 
-;; (Most) Top-level definitions...
+;; Top-level definitions...
 @source_unit [SourceUnit [SourceUnitMembers
     [SourceUnitMember @unit_member (
-          [InterfaceDefinition]
+          [ContractDefinition]
+        | [LibraryDefinition]
+        | [InterfaceDefinition]
         | [StructDefinition]
         | [EnumDefinition]
         | [FunctionDefinition]
@@ -89,24 +95,31 @@ inherit .lexical_scope
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
 }
 
+;; Definitions that need to resolve expressions do it through an extended_scope
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @unit_member (
+          [FunctionDefinition]
+        | [ConstantDefinition]
+    )]
+]] {
+  edge @unit_member.extended_scope -> @source_unit.extended_scope
+}
+
+
 ;; For contracts (and libraries) navigating to the source unit lexical scope
 ;; *also* needs to (optionally) propagate an extensions scope to be able to
 ;; correctly bind `using` attached functions.
-@source_unit [SourceUnit [SourceUnitMembers
+[SourceUnit [SourceUnitMembers
     [SourceUnitMember @contract_or_library ([ContractDefinition] | [LibraryDefinition])]
 ]] {
-  edge @source_unit.lexical_scope -> @contract_or_library.def
-  edge @source_unit.defs -> @contract_or_library.def
-
   ; When "leaving" the contract lexical scope to the parent scope (ie. the
   ; source unit) we need to (optionally) propagate the extensions scope (ie.
   ; `using` directives extensions). Thus we introduce a parent_node and we will
   ; connect the path to push the extensions *if* the contract/library has a
   ; `using` directive.
 
-  node @contract_or_library.parent_scope
-  edge @contract_or_library.lexical_scope -> @contract_or_library.parent_scope
-  edge @contract_or_library.parent_scope -> @source_unit.lexical_scope
+  node @contract_or_library.extended_scope
+  edge @contract_or_library.extended_scope -> @contract_or_library.lexical_scope
 
   ; This .extensions node is where `using` directives will hook
   node @contract_or_library.extensions
@@ -120,7 +133,7 @@ inherit .lexical_scope
   attr (pop_extensions) pop_scoped_symbol = "@extend"
 
   edge @contract_or_library.push_extensions -> pop_extensions
-  edge pop_extensions -> @source_unit.lexical_scope
+  edge pop_extensions -> @contract_or_library.lexical_scope
 }
 
 
@@ -437,7 +450,7 @@ inherit .lexical_scope
   edge this -> member
 
   ;; ... and make it available in the contract's lexical scope
-  edge @contract.lexical_scope -> this
+  edge @contract.extended_scope -> this
 
   ; Resolve the "this" keyword to the contract itself
   node name_push
@@ -490,8 +503,9 @@ inherit .lexical_scope
   edge @contract.super -> super_typeof
   edge super_typeof -> @contract.super_scope
 
-  ;; Finally make "super" available in the contract's lexical scope for function bodies to use
-  edge @contract.lexical_scope -> @contract.super
+  ;; Finally make "super" available in the contract's extended lexical scope for
+  ;; function bodies to use
+  edge @contract.extended_scope -> @contract.super
 
   ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
   ; See the related rules in the InheritanceSpecifier section above.
@@ -508,6 +522,7 @@ inherit .lexical_scope
   edge @contract.super_scope -> @type_name.push_begin
 }
 
+; Pure definitions that cannot contain expressions
 @contract [ContractDefinition [ContractMembers
     [ContractMember @member (
           [EnumDefinition]
@@ -515,16 +530,27 @@ inherit .lexical_scope
         | [EventDefinition]
         | [ErrorDefinition]
         | [UserDefinedValueTypeDefinition]
-        | [FunctionDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @contract.lexical_scope
+}
+
+; Definitions that can contain expressions need two scopes:
+; - normal lexical scope for resolving types
+; - extended scope (extended by using directives) for resolving expressions
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [FunctionDefinition]
         | [ConstructorDefinition]
-        | [StateVariableDefinition]
         | [ModifierDefinition]
         | [FallbackFunctionDefinition]
         | [ReceiveFunctionDefinition]
         | [UnnamedFunctionDefinition]
+        | [StateVariableDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
+  edge @member.extended_scope -> @contract.extended_scope
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -534,7 +560,7 @@ inherit .lexical_scope
   edge @contract.extensions -> @using.def
 
   ; Connect the extensions push path
-  edge @contract.parent_scope -> @contract.push_extensions
+  edge @contract.extended_scope -> @contract.push_extensions
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -622,6 +648,7 @@ inherit .lexical_scope
 
   edge @interface.lexical_scope -> @interface.members
   edge @interface.lexical_scope -> @interface.ns
+  let @interface.extended_scope = @interface.lexical_scope
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
@@ -699,8 +726,8 @@ inherit .lexical_scope
 @interface [InterfaceDefinition members: [InterfaceMembers
     item: [ContractMember @function variant: [FunctionDefinition]]
 ]] {
-  edge @function.lexical_scope -> @interface.lexical_scope
   edge @interface.members -> @function.def
+  edge @function.extended_scope -> @interface.extended_scope
 }
 
 [InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
@@ -748,35 +775,29 @@ inherit .lexical_scope
   edge @library.def -> type
   edge type -> type_library_type
   edge type_library_type -> @library.lexical_scope
+}
 
-  ; Provide a path to the parent lexical context that pushes our own name to the
-  ; symbol stack. This allows a local symbol (eg. a struct) defined and resolved
-  ; in this library to be fully qualified in order for `using` directives that
-  ; attach our own functions to our own types to be used (see
-  ; bindings_output/using/qualified_type test).
-  ; TODO: we should probably apply this same pattern to aliases from import
-  ; statements.
-  node push_member
-  attr (push_member) push_symbol = "."
-  node push_name
-  attr (push_name) push_symbol = (source-text @name)
-  edge @library.lexical_scope -> push_member
-  edge push_member -> push_name
-  edge push_name -> @library.parent_scope
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @library.lexical_scope
+  edge @library.ns -> @member.def
 }
 
 @library [LibraryDefinition [LibraryMembers
     [ContractMember @member (
           [FunctionDefinition]
-        | [EnumDefinition]
-        | [StructDefinition]
-        | [EventDefinition]
-        | [ErrorDefinition]
         | [StateVariableDefinition [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]]
-        | [UserDefinedValueTypeDefinition]
     )]
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
+  edge @member.extended_scope -> @library.extended_scope
   edge @library.ns -> @member.def
 }
 
@@ -794,7 +815,7 @@ inherit .lexical_scope
   edge @library.extensions -> @using.def
 
   ; Connect the extensions push path
-  edge @library.parent_scope -> @library.push_extensions
+  edge @library.extended_scope -> @library.push_extensions
 }
 
 
@@ -818,7 +839,7 @@ inherit .lexical_scope
 
 @using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
   ; resolve the library to be used in the directive
-  edge @id_path.push_end -> @using.lexical_scope
+  edge @id_path.push_end -> @using.extended_scope
 
   ; because we're using the whole library, we don't need to "consume" the
   ; attached function (as when using the deconstruction syntax), but we still
@@ -859,13 +880,16 @@ inherit .lexical_scope
   node cast
   attr (cast) pop_symbol = "()"
 
-  edge @using.def -> @type_name.pop_begin
+  ; We connect to all_pop_begin to be able to resolve both qualified and
+  ; unqualified instances of the target type
+  edge @using.def -> @type_name.all_pop_begin
   edge @type_name.pop_end -> typeof
   edge typeof -> @using.clause
   edge @type_name.pop_end -> cast
   edge cast -> @using.clause
 
-  ; resolve the target type of the directive
+  ; resolve the target type of the directive on the extended scope so the
+  ; extension scope gets re-pushed
   edge @type_name.type_ref -> @using.lexical_scope
 }
 
@@ -897,6 +921,7 @@ inherit .lexical_scope
   let @type_name.output = @elementary.ref
   let @type_name.pop_begin = @elementary.pop
   let @type_name.pop_end = @elementary.pop
+  let @type_name.all_pop_begin = @elementary.pop
 }
 
 @type_name [TypeName @id_path [IdentifierPath]] {
@@ -911,6 +936,7 @@ inherit .lexical_scope
 
   let @type_name.pop_begin = @id_path.pop_begin
   let @type_name.pop_end = @id_path.pop_end
+  let @type_name.all_pop_begin = @id_path.all_pop_begin
 }
 
 @type_name [TypeName @type_variant ([ArrayTypeName] | [FunctionType])] {
@@ -918,6 +944,7 @@ inherit .lexical_scope
   let @type_name.output = @type_variant.output
   let @type_name.pop_begin = @type_variant.pop_begin
   let @type_name.pop_end = @type_variant.pop_end
+  let @type_name.all_pop_begin = @type_variant.pop_begin
 }
 
 @type_name [TypeName @mapping [MappingType]] {
@@ -1159,6 +1186,14 @@ inherit .lexical_scope
 ;; position in the path, from left to right. Useful for the using directive to
 ;; be able to pop the name of the attached function.
 
+@id_path [IdentifierPath] {
+  ; This node connects to all parts of the path, for popping. This allows to
+  ; connect at any point of the path. Useful for `using` directives when the
+  ; target type is fully qualified but we want to resolve for the unqualified
+  ; name.
+  node @id_path.all_pop_begin
+}
+
 @id_path [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
@@ -1166,6 +1201,8 @@ inherit .lexical_scope
 
   node @name.pop
   attr (@name.pop) pop_symbol = (source-text @name)
+
+  edge @id_path.all_pop_begin -> @name.pop
 }
 
 @id_path [IdentifierPath @name [Identifier] .] {
@@ -1241,6 +1278,7 @@ inherit .lexical_scope
   }
 
   node @function.lexical_scope
+  node @function.extended_scope
   node @function.def
 
   ; this path from the function definition to the scope allows attaching
@@ -1260,12 +1298,12 @@ inherit .lexical_scope
 }
 
 @function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @function.lexical_scope
+  edge @params.lexical_scope -> @function.extended_scope
 
   ;; Input parameters are available in the function scope
-  edge @function.lexical_scope -> @params.defs
+  edge @function.extended_scope -> @params.defs
   ;; ... and shadow other declarations
-  attr (@function.lexical_scope -> @params.defs) precedence = 1
+  attr (@function.extended_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
   edge @function.def -> @params.names
@@ -1277,9 +1315,9 @@ inherit .lexical_scope
   edge @return_params.lexical_scope -> @function.lexical_scope
 
   ;; Return parameters are available in the function scope
-  edge @function.lexical_scope -> @return_params.defs
+  edge @function.extended_scope -> @return_params.defs
   ;; ... and shadow other declarations
-  attr (@function.lexical_scope -> @return_params.defs) precedence = 1
+  attr (@function.extended_scope -> @return_params.defs) precedence = 1
 }
 
 ;; Only functions that return a single value have an actual return type
@@ -1296,13 +1334,13 @@ inherit .lexical_scope
 
 ;; Connect the function body's block lexical scope to the function
 @function [FunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @function.lexical_scope
+  edge @block.lexical_scope -> @function.extended_scope
 }
 
 @function [FunctionDefinition [FunctionAttributes item: [FunctionAttribute
     @modifier [ModifierInvocation]
 ]]] {
-  edge @modifier.lexical_scope -> @function.lexical_scope
+  edge @modifier.lexical_scope -> @function.extended_scope
 }
 
 @modifier [ModifierInvocation @name [IdentifierPath]] {
@@ -1326,17 +1364,18 @@ inherit .lexical_scope
 ;;; Unnamed functions (deprecated)
 @unnamed_function [UnnamedFunctionDefinition] {
   node @unnamed_function.lexical_scope
+  node @unnamed_function.extended_scope
 }
 
 @unnamed_function [UnnamedFunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @unnamed_function.lexical_scope
+  edge @params.lexical_scope -> @unnamed_function.extended_scope
 
-  edge @unnamed_function.lexical_scope -> @params.defs
-  attr (@unnamed_function.lexical_scope -> @params.defs) precedence = 1
+  edge @unnamed_function.extended_scope -> @params.defs
+  attr (@unnamed_function.extended_scope -> @params.defs) precedence = 1
 }
 
 @unnamed_function [UnnamedFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @unnamed_function.lexical_scope
+  edge @block.lexical_scope -> @unnamed_function.extended_scope
 }
 
 @unnamed_function [UnnamedFunctionDefinition
@@ -1353,16 +1392,17 @@ inherit .lexical_scope
 
 @constructor [ConstructorDefinition] {
   node @constructor.lexical_scope
+  node @constructor.extended_scope
   node @constructor.def
 }
 
 @constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @constructor.lexical_scope
+  edge @params.lexical_scope -> @constructor.extended_scope
 
   ;; Input parameters are available in the constructor scope
-  edge @constructor.lexical_scope -> @params.defs
+  edge @constructor.extended_scope -> @params.defs
   ;; ... and shadow other declarations
-  attr (@constructor.lexical_scope -> @params.defs) precedence = 1
+  attr (@constructor.extended_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
   edge @constructor.def -> @params.names
@@ -1370,13 +1410,13 @@ inherit .lexical_scope
 
 ;; Connect the constructor body's block lexical scope to the constructor
 @constructor [ConstructorDefinition @block [Block]] {
-  edge @block.lexical_scope -> @constructor.lexical_scope
+  edge @block.lexical_scope -> @constructor.extended_scope
 }
 
 @constructor [ConstructorDefinition [ConstructorAttributes item: [ConstructorAttribute
     @modifier [ModifierInvocation]
 ]]] {
-  edge @modifier.lexical_scope -> @constructor.lexical_scope
+  edge @modifier.lexical_scope -> @constructor.extended_scope
   edge @modifier.identifier -> @constructor.lexical_scope
 }
 
@@ -1427,14 +1467,15 @@ inherit .lexical_scope
 
 @fallback [FallbackFunctionDefinition] {
   node @fallback.lexical_scope
+  node @fallback.extended_scope
 }
 
 @fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @fallback.lexical_scope
+  edge @params.lexical_scope -> @fallback.extended_scope
 
   ;; Input parameters are available in the fallback function scope
-  edge @fallback.lexical_scope -> @params.defs
-  attr (@fallback.lexical_scope -> @params.defs) precedence = 1
+  edge @fallback.extended_scope -> @params.defs
+  attr (@fallback.extended_scope -> @params.defs) precedence = 1
 }
 
 @fallback [FallbackFunctionDefinition returns: [ReturnsDeclaration
@@ -1443,12 +1484,12 @@ inherit .lexical_scope
   edge @return_params.lexical_scope -> @fallback.lexical_scope
 
   ;; Return parameters are available in the fallback function scope
-  edge @fallback.lexical_scope -> @return_params.defs
-  attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
+  edge @fallback.extended_scope -> @return_params.defs
+  attr (@fallback.extended_scope -> @return_params.defs) precedence = 1
 }
 
 @fallback [FallbackFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @fallback.lexical_scope
+  edge @block.lexical_scope -> @fallback.extended_scope
 }
 
 @fallback [FallbackFunctionDefinition [FallbackFunctionAttributes
@@ -1459,10 +1500,11 @@ inherit .lexical_scope
 
 @receive [ReceiveFunctionDefinition] {
   node @receive.lexical_scope
+  node @receive.extended_scope
 }
 
 @receive [ReceiveFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @receive.lexical_scope
+  edge @block.lexical_scope -> @receive.extended_scope
 }
 
 @receive [ReceiveFunctionDefinition [ReceiveFunctionAttributes
@@ -1479,6 +1521,7 @@ inherit .lexical_scope
 @modifier [ModifierDefinition] {
   node @modifier.def
   node @modifier.lexical_scope
+  node @modifier.extended_scope
 }
 
 @modifier [ModifierDefinition
@@ -1488,7 +1531,7 @@ inherit .lexical_scope
   attr (@modifier.def) node_definition = @name
   attr (@modifier.def) definiens_node = @modifier
 
-  edge @body.lexical_scope -> @modifier.lexical_scope
+  edge @body.lexical_scope -> @modifier.extended_scope
 
   ; Special case: bind the place holder statement `_` to the built-in
   ; `%placeholder`. This only happens in the body of a modifier.
@@ -1503,11 +1546,11 @@ inherit .lexical_scope
 }
 
 @modifier [ModifierDefinition @params [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @modifier.lexical_scope
+  edge @params.lexical_scope -> @modifier.extended_scope
 
   ;; Input parameters are available in the modifier scope
-  edge @modifier.lexical_scope -> @params.defs
-  attr (@modifier.lexical_scope -> @params.defs) precedence = 1
+  edge @modifier.extended_scope -> @params.defs
+  attr (@modifier.extended_scope -> @params.defs) precedence = 1
 }
 
 

@@ -10,6 +10,11 @@ fn address() -> Result<()> {
 }
 
 #[test]
+fn casting() -> Result<()> {
+    run("using", "casting")
+}
+
+#[test]
 fn chained_calls() -> Result<()> {
     run("using", "chained_calls")
 }
@@ -47,6 +52,11 @@ fn in_contract() -> Result<()> {
 #[test]
 fn in_library() -> Result<()> {
     run("using", "in_library")
+}
+
+#[test]
+fn inherited_types() -> Result<()> {
+    run("using", "inherited_types")
 }
 
 #[test]
