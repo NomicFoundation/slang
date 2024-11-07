@@ -70,6 +70,11 @@ fn on_interfaces_inherited() -> Result<()> {
 }
 
 #[test]
+fn on_parameters() -> Result<()> {
+    run("using", "on_parameters")
+}
+
+#[test]
 fn on_state_var_initialization() -> Result<()> {
     run("using", "on_state_var_initialization")
 }

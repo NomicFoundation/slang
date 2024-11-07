@@ -1335,7 +1335,7 @@ inherit .extended_scope
 @function [FunctionDefinition returns: [ReturnsDeclaration
     @return_params [ParametersDeclaration]
 ]] {
-  edge @return_params.lexical_scope -> @function.lexical_scope
+  edge @return_params.lexical_scope -> @function.extended_scope
 
   ;; Return parameters are available in the function scope
   edge @function.extended_scope -> @return_params.defs
