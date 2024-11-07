@@ -80,6 +80,11 @@ fn on_state_var_initialization() -> Result<()> {
 }
 
 #[test]
+fn on_super_calls() -> Result<()> {
+    run("using", "on_super_calls")
+}
+
+#[test]
 fn qualified_type() -> Result<()> {
     run("using", "qualified_type")
 }

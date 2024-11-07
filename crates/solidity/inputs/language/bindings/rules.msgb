@@ -460,7 +460,7 @@ inherit .extended_scope
   edge this -> member
 
   ;; ... and make it available in the contract's lexical scope
-  edge @contract.extended_scope -> this
+  edge @contract.lexical_scope -> this
 
   ; Resolve the "this" keyword to the contract itself
   node name_push
@@ -522,7 +522,7 @@ inherit .extended_scope
 
   ;; Finally make "super" available in the contract's extended lexical scope for
   ;; function bodies to use
-  edge @contract.extended_scope -> @contract.super
+  edge @contract.lexical_scope -> @contract.super
 
   ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
   ; See the related rules in the InheritanceSpecifier section above.
