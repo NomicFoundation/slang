@@ -55,6 +55,11 @@ fn legacy_constructors() -> Result<()> {
 }
 
 #[test]
+fn legacy_function_options() -> Result<()> {
+    run("contracts", "legacy_function_options")
+}
+
+#[test]
 fn multi_inheritance() -> Result<()> {
     run("contracts", "multi_inheritance")
 }
