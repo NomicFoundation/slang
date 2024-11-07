@@ -65,6 +65,11 @@ fn on_interfaces_inherited() -> Result<()> {
 }
 
 #[test]
+fn on_state_var_initialization() -> Result<()> {
+    run("using", "on_state_var_initialization")
+}
+
+#[test]
 fn qualified_type() -> Result<()> {
     run("using", "qualified_type")
 }

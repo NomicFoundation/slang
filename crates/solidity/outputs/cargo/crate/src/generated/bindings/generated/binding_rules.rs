@@ -1944,6 +1944,12 @@ inherit .extended_scope
   edge call -> @state_var.typeof
 }
 
+@state_var [StateVariableDefinition
+    [StateVariableDefinitionValue @value [Expression]]
+] {
+  let @value.lexical_scope = @state_var.extended_scope
+}
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Enum definitions
