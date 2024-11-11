@@ -129,10 +129,13 @@ inherit .extended_scope
   node @contract_or_library.push_extensions
   attr (@contract_or_library.push_extensions) push_scoped_symbol = "@extend"
   attr (@contract_or_library.push_extensions) scope = @contract_or_library.extensions
+  node drop_scopes
+  attr (drop_scopes) type = "drop_scopes"
   node pop_extensions
   attr (pop_extensions) pop_scoped_symbol = "@extend"
 
-  edge @contract_or_library.push_extensions -> pop_extensions
+  edge @contract_or_library.push_extensions -> drop_scopes
+  edge drop_scopes -> pop_extensions
   edge pop_extensions -> @contract_or_library.lexical_scope
 }
 
@@ -301,20 +304,8 @@ inherit .extended_scope
   ;; interface), aka the source unit
   edge @type_name.push_end -> heir.parent_scope
 
-  ;; Make base members accesible as our own members
-  node member
-  attr (member) push_symbol = "."
-
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
-
-  edge heir.members -> member
-  edge member -> typeof
-  edge typeof -> @type_name.push_begin
-
-  ; Make internal members (state variables) accessible through the lexical scope
-  ; and from the heir's internal scope (so that inherited internal variables can
-  ; be accessed)
+  ; Make instance members accessible through the lexical scope and from the
+  ; heir's internal scope (so that inherited internal variables can be accessed)
   node internal
   attr (internal) push_symbol = "@internal"
   edge heir.internal -> internal
@@ -325,7 +316,6 @@ inherit .extended_scope
   attr (member_pop) pop_symbol = "."
   edge heir.internal -> @type_name.pop_begin
   edge @type_name.pop_end -> member_pop
-  edge member_pop -> member
   ; Qualified access should also allow us to bind internal members of the parent contract
   edge member_pop -> internal
 
@@ -410,7 +400,7 @@ inherit .extended_scope
   ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
-  edge member -> @contract.members
+  edge member -> @contract.internal
 
   node type_def
   attr (type_def) pop_symbol = "@typeof"
@@ -439,20 +429,11 @@ inherit .extended_scope
   edge @contract.def -> ns_member
   edge ns_member -> @contract.ns
 
-  ; Finally there's an @internal path used by derived contracts to access our internal state variables
+  ; Finally there's an @internal path used by derived contracts to access instance accessible members
   node internal
   attr (internal) pop_symbol = "@internal"
   edge @contract.def -> internal
   edge internal -> @contract.internal
-
-  if (version-matches "< 0.7.0") {
-    ; Expose extensions through an `@extensions` guard on Solidity < 0.7.0 so
-    ; that they can be accessed from sub contract extension scopes
-    node extensions_guard
-    attr (extensions_guard) pop_symbol = "@extensions"
-    edge @contract.def -> extensions_guard
-    edge extensions_guard -> @contract.extensions
-  }
 
   ;; Define "this" and connect it to the contract definition
   node this
@@ -497,9 +478,16 @@ inherit .extended_scope
   attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_import]
 
   if (version-matches "< 0.7.0") {
-    ; For Solidity < 0.7.0 using directives are inherited, so we need to
-    ; *always* connect the push extensions to the extended scope, regardless of
-    ; whether this contract contains any `using` directive.
+    ; Expose extensions through an `@extensions` guard on Solidity < 0.7.0 so
+    ; that they can be accessed from sub contract extension scopes
+    node extensions_guard
+    attr (extensions_guard) pop_symbol = "@extensions"
+    edge @contract.def -> extensions_guard
+    edge extensions_guard -> @contract.extensions
+
+    ; Since using directives are inherited, we need to *always* connect the push
+    ; extensions to the extended scope, regardless of whether this contract
+    ; contains any `using` directive.
     edge @contract.extended_scope -> @contract.push_extensions
   }
 }
@@ -510,15 +498,22 @@ inherit .extended_scope
 
   node @contract.super_scope
 
-  ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
-  ;; super_scope will later connect to the base contract defs directly
+  ;; Define "super" effectively as if it was a state variable of a type
+  ;; connected by our super_scope super_scope will later connect to the base
+  ;; contract defs directly
   node @contract.super
   attr (@contract.super) pop_symbol = "super"
-  node super_typeof
-  attr (super_typeof) push_symbol = "@typeof"
 
-  edge @contract.super -> super_typeof
-  edge super_typeof -> @contract.super_scope
+  ; This connects `super` to exported scopes from all contracts in the hierarchy
+  ; when setting a contract compilation target
+  edge @contract.super -> @contract.super_import
+
+  ; This allows "instance"-like access to subtypes and implementors of this
+  ; interface
+  node super_internal
+  attr (super_internal) push_symbol = "@internal"
+  edge @contract.super_import -> super_internal
+  edge super_internal -> @contract.super_scope
 
   ;; Finally make "super" available in the contract's extended lexical scope for
   ;; function bodies to use
@@ -526,10 +521,6 @@ inherit .extended_scope
 
   ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
   ; See the related rules in the InheritanceSpecifier section above.
-
-  ; This connects `super` to exported scopes from all contracts in the hierarchy
-  ; when setting a contract compilation target
-  edge @contract.super -> @contract.super_import
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
@@ -664,9 +655,20 @@ inherit .extended_scope
   node @interface.internal
   node @interface.extensions
 
-  edge @interface.lexical_scope -> @interface.members
-  edge @interface.lexical_scope -> @interface.ns
+  edge @interface.lexical_scope -> @interface.internal
   let @interface.extended_scope = @interface.lexical_scope
+
+  edge @interface.internal -> @interface.members
+  edge @interface.internal -> @interface.ns
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "%type"
+  node type_interface_type
+  attr (type_interface_type) push_symbol = "%typeInterfaceType"
+  edge @interface.def -> type
+  edge type -> type_interface_type
+  edge type_interface_type -> @interface.lexical_scope
 }
 
 @interface [InterfaceDefinition @name name: [Identifier]] {
@@ -678,7 +680,7 @@ inherit .extended_scope
   ;; and () -> . for accesses through a `new` invocation (or casting)
   node member
   attr (member) pop_symbol = "."
-  edge member -> @interface.members
+  edge member -> @interface.internal
 
   node typeof
   attr (typeof) pop_symbol = "@typeof"
@@ -707,14 +709,11 @@ inherit .extended_scope
   edge @interface.def -> ns_member
   edge ns_member -> @interface.ns
 
-  ; Path to resolve the built-in type for type() expressions
-  node type
-  attr (type) pop_symbol = "%type"
-  node type_interface_type
-  attr (type_interface_type) push_symbol = "%typeInterfaceType"
-  edge @interface.def -> type
-  edge type -> type_interface_type
-  edge type_interface_type -> @interface.lexical_scope
+  ; Finally there's an @internal path used by derived contracts to access instance accessible members
+  node internal
+  attr (internal) pop_symbol = "@internal"
+  edge @interface.def -> internal
+  edge internal -> @interface.internal
 }
 
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {

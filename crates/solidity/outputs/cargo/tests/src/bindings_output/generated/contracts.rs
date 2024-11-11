@@ -80,6 +80,11 @@ fn qualified_parent_call() -> Result<()> {
 }
 
 #[test]
+fn super_deep() -> Result<()> {
+    run("contracts", "super_deep")
+}
+
+#[test]
 fn super_linearisation() -> Result<()> {
     run("contracts", "super_linearisation")
 }
