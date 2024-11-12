@@ -994,6 +994,9 @@ inherit .star_extension
 @type_name [TypeName @mapping [MappingType]] {
   let @type_name.type_ref = @mapping.lexical_scope
   let @type_name.output = @mapping.output
+  let @type_name.pop_begin = @mapping.pop_begin
+  let @type_name.pop_end = @mapping.pop_end
+  let @type_name.all_pop_begin = @mapping.pop_begin
 }
 
 
@@ -1008,6 +1011,15 @@ inherit .star_extension
 
   node @elementary.pop
   attr (@elementary.pop) pop_symbol = @elementary.symbol
+
+  ; These variables are a bit redundant, but necessary to easily use elementary
+  ; types as mapping keys
+  let @elementary.pop_begin = @elementary.pop
+  let @elementary.pop_end = @elementary.pop
+  let @elementary.all_pop_begin = @elementary.pop
+
+  let @elementary.push_begin = @elementary.ref
+  let @elementary.push_end = @elementary.ref
 }
 
 @elementary [ElementaryType variant: [AddressType @address [AddressKeyword]]] {
@@ -1048,19 +1060,22 @@ inherit .star_extension
 ;;; Mappings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@mapping [MappingType] {
+@mapping [MappingType
+    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
+    [MappingValue @value_type [TypeName]]
+] {
   node @mapping.lexical_scope
   node @mapping.output
-}
 
-@mapping [MappingType [MappingKey [MappingKeyType @key_ident [IdentifierPath]]]] {
-  ; resolve key type
-  edge @key_ident.push_end -> @mapping.lexical_scope
-}
+  node @mapping.type
+  attr (@mapping.type) push_symbol = "%mapping"
+  edge @mapping.output -> @mapping.type
 
-@mapping [MappingType [MappingValue @value_type [TypeName]]] {
-  ; for mapping types we don't need to push the type itself, because we don't need it (yet)
-  ; ditto for the pop path, because a mapping type cannot be the target of a using directive
+  edge @mapping.type -> @key_type.push_begin
+  edge @key_type.push_end -> @value_type.output
+  ; Both key and value types need to be resolved
+  edge @value_type.type_ref -> @mapping.lexical_scope
+  edge @key_type.push_end -> @mapping.lexical_scope
 
   ; The mapping's type exposes the `[]` operator that returns the value type.
 
@@ -1086,6 +1101,15 @@ inherit .star_extension
 
   ; resolve the value type through our scope
   edge @value_type.type_ref -> @mapping.lexical_scope
+
+  ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
+  node pop_mapping
+  attr (pop_mapping) pop_symbol = "%mapping"
+
+  let @mapping.pop_begin = @value_type.pop_begin
+  edge @value_type.pop_end -> @key_type.pop_begin
+  edge @key_type.pop_end -> pop_mapping
+  let @mapping.pop_end = pop_mapping
 }
 
 

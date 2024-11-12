@@ -65,6 +65,11 @@ fn inherited_types() -> Result<()> {
 }
 
 #[test]
+fn mappings() -> Result<()> {
+    run("using", "mappings")
+}
+
+#[test]
 fn on_interfaces_inherited() -> Result<()> {
     run("using", "on_interfaces_inherited")
 }
