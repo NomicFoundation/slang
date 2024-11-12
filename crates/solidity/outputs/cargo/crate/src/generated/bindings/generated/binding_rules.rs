@@ -1071,17 +1071,23 @@ inherit .star_extension
 
   node typeof_input
   attr (typeof_input) pop_symbol = "@typeof"
-
-  node index
-  attr (index) pop_symbol = "[]"
+  edge @mapping.output -> typeof_input
 
   node typeof_output
   attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @value_type.output
 
-  edge @mapping.output -> typeof_input
+  node index
+  attr (index) pop_symbol = "[]"
   edge typeof_input -> index
   edge index -> typeof_output
-  edge typeof_output -> @value_type.output
+
+  ; Special case for mapping public state variables: they can be called
+  ; like a function with a key, and it's effectively the same as indexing it.
+  node getter_call
+  attr (getter_call) pop_symbol = "()"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
 
   ; resolve the value type through our scope
   edge @value_type.type_ref -> @mapping.lexical_scope
@@ -1145,6 +1151,14 @@ inherit .star_extension
     edge push_built_in -> call
     edge call -> typeof_output
   }
+
+  ; Special case for public state variables of type array: they can be called
+  ; like a function with an index, and it's effectively the same as indexing the
+  ; array.
+  node getter_call
+  attr (getter_call) pop_symbol = "()"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is essentially the reverse of the second path above

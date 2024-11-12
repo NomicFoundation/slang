@@ -65,8 +65,18 @@ fn multi_inheritance() -> Result<()> {
 }
 
 #[test]
+fn public_array_getters() -> Result<()> {
+    run("contracts", "public_array_getters")
+}
+
+#[test]
 fn public_getters() -> Result<()> {
     run("contracts", "public_getters")
+}
+
+#[test]
+fn public_mapping_getters() -> Result<()> {
+    run("contracts", "public_mapping_getters")
 }
 
 #[test]
