@@ -29,5 +29,5 @@ References and definitions:
    │                 │    │   
    │                 ╰──────── ref: built-in
    │                      │   
-   │                      ╰─── unresolved
+   │                      ╰─── ref: 2
 ───╯

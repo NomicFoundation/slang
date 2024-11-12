@@ -37,13 +37,11 @@ contract $BuiltIns$ {
   }
   struct $array {
     uint length;
-    function(uint) returns ($element) $index;
     function($element) returns (uint) push;
     function() pop;
   }
   struct $arrayFixed {
     uint length;
-    function(uint) returns ($element) $index;
   }
   struct $blockType {
     address payable coinbase;

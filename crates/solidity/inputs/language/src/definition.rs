@@ -6831,11 +6831,6 @@ codegen_language_macros::compile!(Language(
             fields = [BuiltInField(definition = "uint length")],
             functions = [
                 BuiltInFunction(
-                    name = "$index",
-                    parameters = ["uint"],
-                    return_type = "$element"
-                ),
-                BuiltInFunction(
                     name = "push",
                     parameters = [],
                     return_type = "$element",
@@ -6858,11 +6853,7 @@ codegen_language_macros::compile!(Language(
         BuiltInType(
             name = "$arrayFixed",
             fields = [BuiltInField(definition = "uint length")],
-            functions = [BuiltInFunction(
-                name = "$index",
-                parameters = ["uint"],
-                return_type = "$element"
-            )]
+            functions = []
         ),
         BuiltInType(
             name = "$blockType",

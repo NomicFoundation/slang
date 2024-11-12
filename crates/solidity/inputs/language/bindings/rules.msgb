@@ -1035,28 +1035,20 @@ inherit .extended_scope
   ; for mapping types we don't need to push the type itself, because we don't need it (yet)
   ; ditto for the pop path, because a mapping type cannot be the target of a using directive
 
-  ; The mapping's type exposes the `%index` (ie. `[]`) operator that returns the value type
-  ; This is similar to arrays, only in that case we have a built-in type where
-  ; we can define an index function. For mappings we hard-code in the rules directly.
+  ; The mapping's type exposes the `[]` operator that returns the value type.
 
   node typeof_input
   attr (typeof_input) pop_symbol = "@typeof"
 
-  node index_member
-  attr (index_member) pop_symbol = "."
   node index
-  attr (index) pop_symbol = "%index"
-  node index_call
-  attr (index_call) pop_symbol = "()"
+  attr (index) pop_symbol = "[]"
 
   node typeof_output
   attr (typeof_output) push_symbol = "@typeof"
 
   edge @mapping.output -> typeof_input
-  edge typeof_input -> index_member
-  edge index_member -> index
-  edge index -> index_call
-  edge index_call -> typeof_output
+  edge typeof_input -> index
+  edge index -> typeof_output
   edge typeof_output -> @value_type.output
 
   ; resolve the value type through our scope
@@ -1082,34 +1074,45 @@ inherit .extended_scope
 }
 
 @array [ArrayTypeName @type_name [TypeName]] {
-  ; First define the normal, reference route:
-
-  ; We first push the array type `%array`, which should connect to two distinct paths:
-  ; 1. the typed path, which will use a jump scope entry to resolve the element type
-  ; 2. the hard-coded path to connect to any `using` directive
   node array
   attr (array) push_symbol = @array.type
   edge @array.output -> array
 
-  ; For the first path, we need to define a scope jump entry for resolving the element type of the array
-  node entry
-  attr (entry) is_exported
-  node element
-  attr (element) pop_symbol = "%element"
-  edge entry -> element
-  edge element -> @type_name.output
-
-  ; And then the path itself
-  node params
-  attr (params) push_scoped_symbol = "<>", scope = entry
-  edge array -> params
-
-  ; Second path, for `using` directives
   edge array -> @type_name.output
 
-  ; Finally, both ends connect to our lexical scope
-  edge params -> @array.lexical_scope
   edge @type_name.type_ref -> @array.lexical_scope
+  edge array -> @array.lexical_scope
+
+  ; Define some built-in functions and operators that return the element's type
+  ; typeof_input or member is where all these definitions begin
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+  node member
+  attr (member) pop_symbol = "."
+  edge @array.output -> typeof_input
+  edge typeof_input -> member
+
+  ; and all of them end in typeof_output connecting to the element type
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @type_name.output
+
+  ; Define the path to resolve index access (aka the `[]` operator)
+  node index
+  attr (index) pop_symbol = "[]"
+  edge typeof_input -> index
+  edge index -> typeof_output
+
+  ; Define the special `.push()` built-in that returns the element type (for Solidity >= 0.6.0)
+  if (version-matches ">= 0.6.0") {
+    node push_built_in
+    attr (push_built_in) pop_symbol = "push"
+    node call
+    attr (call) pop_symbol = "()"
+    edge member -> push_built_in
+    edge push_built_in -> call
+    edge call -> typeof_output
+  }
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is essentially the reverse of the second path above
@@ -1926,6 +1929,7 @@ inherit .extended_scope
 
 @state_var [StateVariableDefinition] {
   node @state_var.lexical_scope
+  node @state_var.extended_scope
   node @state_var.def
 }
 
@@ -2008,56 +2012,33 @@ inherit .extended_scope
 ;;; Structure definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@struct [StructDefinition] {
+@struct [StructDefinition @name name: [Identifier]] {
   node @struct.lexical_scope
   node @struct.def
   node @struct.members
-}
 
-@struct [StructDefinition @name name: [Identifier]] {
-  ; Since we use structs to define built-in types and some of them (ie. array)
-  ; have have a parametric type, we define two distinct paths to define a
-  ; struct:
-  ; 1. the normal, non parametric path
-  ; 2. the parametric path, that pops a scope to resolve the parametric type
-  ; Both of these connect to the node that pops the struct identifier symbol
-
-  ; Second path, pops the scope
-  node typed_params
-  attr (typed_params) pop_scoped_symbol = "<>"
-  edge @struct.def -> typed_params
-
-  ; Connect both to the struct identifier
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @struct
-
-  edge @struct.def -> def
-  edge typed_params -> def
-
-  ; On the other end, to properly close the second path we need to jump to the popped scope
-  ; (this is why on the other path we drop scopes)
-  edge @struct.lexical_scope -> JUMP_TO_SCOPE_NODE
+  attr (@struct.def) node_definition = @name
+  attr (@struct.def) definiens_node = @struct
 
   ; Now connect normally to the struct members
   node type_def
   attr (type_def) pop_symbol = "@typeof"
   node member
   attr (member) pop_symbol = "."
-  edge def -> type_def
+  edge @struct.def -> type_def
   edge type_def -> member
   edge member -> @struct.members
 
   ; Bind member names when using construction with named arguments
   node param_names
   attr (param_names) pop_symbol = "@param_names"
-  edge def -> param_names
+  edge @struct.def -> param_names
   edge param_names -> @struct.members
 
   ; Used as a function call, should bind to itself
   node call
   attr (call) pop_symbol = "()"
-  edge def -> call
+  edge @struct.def -> call
   edge call -> member
 }
 
@@ -2292,17 +2273,11 @@ inherit .extended_scope
 @expr [Expression [IndexAccessExpression
     @operand operand: [Expression]
 ]] {
-  node index_call
-  attr (index_call) push_symbol = "()"
   node index
-  attr (index) push_symbol = "%index"
-  node index_member
-  attr (index_member) push_symbol = "."
+  attr (index) push_symbol = "[]"
 
-  edge @expr.output -> index_call
-  edge index_call -> index
-  edge index -> index_member
-  edge index_member -> @operand.output
+  edge @expr.output -> index
+  edge index -> @operand.output
 }
 
 ;; Type expressions
