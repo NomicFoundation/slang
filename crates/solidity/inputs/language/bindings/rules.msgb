@@ -23,6 +23,11 @@ inherit .parent_scope
 inherit .lexical_scope
 inherit .extended_scope
 
+; Used to resolve extension methods for `using for *` directives
+; This is used as a minor optimization to avoid introducing new possible paths
+; when there are no `using for *` directives in the contract.
+inherit .star_extension
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Source unit (aka .sol file)
@@ -70,6 +75,10 @@ inherit .extended_scope
   ; We may jump to scope here to resolve using the extensions scope provided by
   ; contract/libraries that contain `using` directives
   edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
+
+  ; Provide a default star extension sink node that gets inherited. This is
+  ; connected to from expressions, and those can potentially happen anywhere.
+  node @source_unit.star_extension
 }
 
 ;; Top-level definitions...
@@ -388,7 +397,17 @@ inherit .extended_scope
   attr (type_contract_type) push_symbol = "%typeContractType"
   edge @contract.def -> type
   edge type -> type_contract_type
-  edge type_contract_type -> @contract.lexical_scope
+  edge type_contract_type -> @contract.parent_scope
+
+  ; This is the connection point to resolve attached function by `using for *`
+  node @contract.star_extension
+  attr (@contract.star_extension) push_symbol = "@*"
+  if (version-matches "< 0.7.0") {
+    ; For Solidity < 0.7.0 using directives are inherited, so we need to connect always
+    ; For newer versions, this connection only happens when there is a `using
+    ; for *` directive in the contract (see rule below)
+    edge @contract.star_extension -> @contract.extended_scope
+  }
 }
 
 @contract [ContractDefinition @name name: [Identifier]] {
@@ -639,6 +658,14 @@ inherit .extended_scope
 ]]] {
   ;; Resolve overriden bases when listed in the function or modifiers modifiers
   edge @base_ident.push_end -> @override.parent_scope
+}
+
+@contract [ContractDefinition [ContractMembers [ContractMember
+    [UsingDirective [UsingTarget [Asterisk]]]
+]]] {
+  ; Connect the star extension node to the resolution extended scope if there is
+  ; a `using for *` directive in the contract
+  edge @contract.star_extension -> @contract.extended_scope
 }
 
 
@@ -2263,10 +2290,7 @@ inherit .extended_scope
   edge @expr.output -> @name.ref
 
   ; Shortcut path for expressions inside contracts with using X for * directives
-  node star
-  attr (star) push_symbol = "@*"
-  edge member -> star
-  edge star -> @expr.lexical_scope
+  edge member -> @expr.star_extension
 }
 
 ;; Special case: member accesses to `super` are tagged with "super" to rank

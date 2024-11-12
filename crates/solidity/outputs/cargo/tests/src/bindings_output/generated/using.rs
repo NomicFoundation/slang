@@ -95,6 +95,11 @@ fn star() -> Result<()> {
 }
 
 #[test]
+fn star_inherited() -> Result<()> {
+    run("using", "star_inherited")
+}
+
+#[test]
 fn top_level() -> Result<()> {
     run("using", "top_level")
 }

@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── def: 1
+  2 │     function increment(uint x) public {}
+    │              ────┬────      ┬  
+    │                  ╰───────────── def: 2
+    │                             │  
+    │                             ╰── def: 3
+    │ 
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── def: 4
+  6 │     using Lib for *;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── def: 5
+    │                    │   
+    │                    ╰─── ref: 4
+ 10 │     function test(uint x) public {
+    │              ──┬─      ┬  
+    │                ╰────────── def: 6
+    │                        │  
+    │                        ╰── def: 7
+    │ 
+ 12 │         x.increment();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 7
+    │               │      
+    │               ╰────── unresolved
+────╯
