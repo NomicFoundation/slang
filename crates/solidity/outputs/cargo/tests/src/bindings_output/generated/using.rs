@@ -103,3 +103,8 @@ fn top_level() -> Result<()> {
 fn uint_alias() -> Result<()> {
     run("using", "uint_alias")
 }
+
+#[test]
+fn user_types() -> Result<()> {
+    run("using", "user_types")
+}

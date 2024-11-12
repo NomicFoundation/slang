@@ -2167,17 +2167,12 @@ inherit .extended_scope
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
-@user_type [UserDefinedValueTypeDefinition] {
+@user_type [UserDefinedValueTypeDefinition @name [Identifier] @value_type [ElementaryType]] {
   node @user_type.lexical_scope
   node @user_type.def
-}
 
-@user_type [UserDefinedValueTypeDefinition @name [Identifier]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @user_type
-
-  edge @user_type.def -> def
+  attr (@user_type.def) node_definition = @name
+  attr (@user_type.def) definiens_node = @user_type
 
   ; Provide member resolution through the built-in `%userTypeType`
   ; Because the built-in is defined as a struct, we need to push an extra `@typeof`
@@ -2190,11 +2185,41 @@ inherit .extended_scope
   node user_type_type
   attr (user_type_type) push_symbol = "%userTypeType"
 
-  edge def -> member_guard
+  edge @user_type.def -> member_guard
   edge member_guard -> member
   edge member -> typeof
   edge typeof -> user_type_type
   edge user_type_type -> @user_type.lexical_scope
+
+  ; Hard-code built-in functions `wrap` and `unwrap` in order to be able to
+  ; resolve their return types
+  node wrap
+  attr (wrap) pop_symbol = "wrap"
+  node wrap_call
+  attr (wrap_call) pop_symbol = "()"
+  node wrap_typeof
+  attr (wrap_typeof) push_symbol = "@typeof"
+
+  edge member_guard -> wrap
+  edge wrap -> wrap_call
+  edge wrap_call -> wrap_typeof
+  edge wrap_typeof -> @value_type.ref
+  edge @value_type.ref -> @user_type.lexical_scope
+
+  node unwrap
+  attr (unwrap) pop_symbol = "unwrap"
+  node unwrap_call
+  attr (unwrap_call) pop_symbol = "()"
+  node unwrap_typeof
+  attr (unwrap_typeof) push_symbol = "@typeof"
+  node type_ref
+  attr (type_ref) push_symbol = (source-text @name)
+
+  edge member_guard -> unwrap
+  edge unwrap -> unwrap_call
+  edge unwrap_call -> unwrap_typeof
+  edge unwrap_typeof -> type_ref
+  edge type_ref -> @user_type.lexical_scope
 }
 
 
