@@ -86,7 +86,5 @@ contract $BuiltIns$ {
   $blockType block;
   $msgType msg;
   uint now;
-  $SuperType super;
-  $ThisType this;
   $txType tx;
 }

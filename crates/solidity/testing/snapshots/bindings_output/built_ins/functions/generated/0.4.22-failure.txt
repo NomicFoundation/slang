@@ -131,7 +131,7 @@ References and definitions:
     │                                    │       │      │     
     │                                    ╰──────────────────── unresolved
     │                                            │      │     
-    │                                            ╰──────────── ref: built-in
+    │                                            ╰──────────── ref: 1
     │                                                   │     
     │                                                   ╰───── ref: 5
  37 │         bytes memory v4 = abi.encodePacked(10, 20);
@@ -149,7 +149,7 @@ References and definitions:
     │                                        │           │      │        │     
     │                                        ╰───────────────────────────────── ref: built-in
     │                                                    │      │        │     
-    │                                                    ╰───────────────────── ref: built-in
+    │                                                    ╰───────────────────── ref: 1
     │                                                           │        │     
     │                                                           ╰────────────── ref: 5
     │                                                                    │     

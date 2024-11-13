@@ -6991,8 +6991,6 @@ codegen_language_macros::compile!(Language(
         BuiltInVariable(definition = "$blockType block"),
         BuiltInVariable(definition = "$msgType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
-        BuiltInVariable(definition = "$SuperType super"),
-        BuiltInVariable(definition = "$ThisType this"),
         BuiltInVariable(definition = "$txType tx")
     ]
 ));

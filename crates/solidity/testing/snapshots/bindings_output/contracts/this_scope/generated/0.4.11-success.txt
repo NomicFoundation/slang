@@ -15,7 +15,7 @@ References and definitions:
    │               ╰─── def: 3
  5 │         this.foo();
    │         ──┬─ ─┬─  
-   │           ╰─────── ref: built-in
+   │           ╰─────── ref: 1
    │               │   
    │               ╰─── ref: 2
 ───╯

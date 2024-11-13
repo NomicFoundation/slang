@@ -272,6 +272,9 @@ inherit .lexical_scope
 
   edge heir.type_members -> type_member
   edge type_member -> @type_name.push_begin
+
+  ; Resolve the "super" keyword to the inherited type
+  edge heir.super -> @type_name.push_begin
 }
 
 ;; NOTE: we use anchors here to prevent the query engine from returning all the
@@ -353,19 +356,28 @@ inherit .lexical_scope
   ;; ... and make it available in the contract's lexical scope
   edge @contract.lexical_scope -> this
 
+  ; Resolve the "this" keyword to the contract itself
+  node name_push
+  attr (name_push) push_symbol = (source-text @name)
+  edge this -> name_push
+  edge name_push -> @contract.lexical_scope
+
   ;; Define "super" effectively as if it was a state variable of a type connected by our super_scope
   ;; super_scope will later connect to the base contract defs directly
-  node super
-  attr (super) pop_symbol = "super"
+  node @contract.super
+  attr (@contract.super) pop_symbol = "super"
 
   node super_typeof
   attr (super_typeof) push_symbol = "@typeof"
 
-  edge super -> super_typeof
+  edge @contract.super -> super_typeof
   edge super_typeof -> @contract.super_scope
 
   ;; Finally make "super" available in the contract's lexical scope for function bodies to use
-  edge @contract.lexical_scope -> super
+  edge @contract.lexical_scope -> @contract.super
+
+  ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
+  ; See the related rules in the InheritanceSpecifier section above.
 
   ;; This defines the sink of edges added from base contracts when setting this
   ;; contract as the compilation context
@@ -376,7 +388,7 @@ inherit .lexical_scope
   ;; (recursively)
   node super_import
   attr (super_import) pop_symbol = "."
-  edge super -> super_import
+  edge @contract.super -> super_import
 
   ;; This defines the source side of edges added to base contracts when setting
   ;; a contract as compilation context; this allows this contract (a base) to
@@ -550,6 +562,9 @@ inherit .lexical_scope
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
   let @specifier.heir = @interface
   attr (@interface.def) parents = @specifier.parent_refs
+
+  ; Define a dummy "super" node required by the rules for InheritanceSpecifier
+  node @interface.super
 }
 
 @interface [InterfaceDefinition [InterfaceMembers

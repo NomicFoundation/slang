@@ -96,7 +96,5 @@ contract $BuiltIns$ {
   $abiType abi;
   $blockType block;
   $msgType msg;
-  $SuperType super;
-  $ThisType this;
   $txType tx;
 }
