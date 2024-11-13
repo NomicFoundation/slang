@@ -18,6 +18,8 @@ References and definitions:
    │                │     
    │                ╰───── ref: built-in
  5 │         v1.address;
-   │         ─┬  
-   │          ╰── ref: 3
+   │         ─┬ ───┬───  
+   │          ╰────────── ref: 3
+   │               │     
+   │               ╰───── unresolved
 ───╯

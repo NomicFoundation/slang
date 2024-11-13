@@ -6906,7 +6906,7 @@ codegen_language_macros::compile!(Language(
         BuiltInType(
             name = "$functionExternal",
             fields = [
-                BuiltInField(definition = "$address $address", enabled = From("0.8.2")),
+                BuiltInField(definition = "$address address", enabled = From("0.8.2")),
                 BuiltInField(definition = "$selector selector", enabled = From("0.4.17"))
             ],
             functions = [

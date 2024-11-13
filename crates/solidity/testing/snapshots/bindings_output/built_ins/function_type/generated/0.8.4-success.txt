@@ -17,7 +17,7 @@ References and definitions:
     │                            │      │     
     │                            ╰──────────── ref: 2
     │                                   │     
-    │                                   ╰───── unresolved
+    │                                   ╰───── ref: built-in
   4 │         address v2 = this.test.address;
     │                 ─┬   ──┬─ ──┬─ ───┬───  
     │                  ╰────────────────────── def: 4
@@ -26,7 +26,7 @@ References and definitions:
     │                             │     │     
     │                             ╰─────────── ref: 2
     │                                   │     
-    │                                   ╰───── unresolved
+    │                                   ╰───── ref: built-in
     │ 
   6 │         bytes4 v3 = Foo.bar.selector;
     │                ─┬   ─┬─ ─┬─ ────┬───  
@@ -36,7 +36,7 @@ References and definitions:
     │                          │      │     
     │                          ╰──────────── ref: 11
     │                                 │     
-    │                                 ╰───── unresolved
+    │                                 ╰───── ref: built-in
     │ 
   8 │         Foo f1;
     │         ─┬─ ─┬  
@@ -51,7 +51,7 @@ References and definitions:
     │                         │      │     
     │                         ╰──────────── ref: 11
     │                                │     
-    │                                ╰───── unresolved
+    │                                ╰───── ref: built-in
  10 │         address v5 = f1.bar.address;
     │                 ─┬   ─┬ ─┬─ ───┬───  
     │                  ╰─────────────────── def: 8
@@ -60,7 +60,7 @@ References and definitions:
     │                          │     │     
     │                          ╰─────────── ref: 11
     │                                │     
-    │                                ╰───── unresolved
+    │                                ╰───── ref: built-in
     │ 
  12 │         bytes4 v6 = Baz.quux.selector;
     │                ─┬   ─┬─ ──┬─ ────┬───  
@@ -70,7 +70,7 @@ References and definitions:
     │                           │      │     
     │                           ╰──────────── ref: 13
     │                                  │     
-    │                                  ╰───── unresolved
+    │                                  ╰───── ref: built-in
     │ 
  16 │ interface Foo {
     │           ─┬─  

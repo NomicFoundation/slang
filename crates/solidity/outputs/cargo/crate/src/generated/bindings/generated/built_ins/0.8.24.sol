@@ -65,7 +65,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $functionExternal {
-    $address $address;
+    $address address;
     $selector selector;
   }
   struct $msgType {
